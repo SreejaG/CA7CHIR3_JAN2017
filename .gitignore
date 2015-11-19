@@ -1,0 +1,38 @@
+cd# OS X
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+!default.xcworkspace
+xcuserdata
+*.xccheckout
+profile
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+.idea/
+.metadata/*
+.svn
+/.svn/
+/*/.svn/
+
+RemoteSystemsTempFiles/*
+# Let's NOT include the workspace data :  *.xcworkspacedata
+*.xcuserstate
+*.xcbkptlist
+*.xcexplist
+svnversion.h
+xcshareddata
+*.orig
+
+# CocoaPods
+Pods
