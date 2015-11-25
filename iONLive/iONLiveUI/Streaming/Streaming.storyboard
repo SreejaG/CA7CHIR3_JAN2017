@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <scenes>
+        <!--UploadStreamViewController-->
+        <scene sceneID="IqA-Aw-ONn">
+            <objects>
+                <viewController storyboardIdentifier="UploadStreamViewController" id="f8C-tY-ONs" userLabel="UploadStreamViewController" customClass="UploadStreamViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ado-Y1-vTd"/>
+                        <viewControllerLayoutGuide type="bottom" id="5vg-Nv-Jsd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="IJh-4E-PEF" userLabel="MainView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6hQ-jg-7zD" userLabel="StreamingButtonView">
+                                <rect key="frame" x="113" y="220" width="375" height="160"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ioh-Br-rXa">
+                                        <rect key="frame" x="10" y="10" width="355" height="70"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.20000000000000001" green="0.81176470588235294" blue="0.8784313725490196" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="70" id="KTe-To-Pfk"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                        <state key="normal" title="START STREAM">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="selected">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="startStreamingClicked:" destination="f8C-tY-ONs" eventType="touchUpInside" id="t73-Gb-xgf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VX2-fg-OlZ">
+                                        <rect key="frame" x="10" y="80" width="355" height="70"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.94117647058823528" green="0.20784313725490194" blue="0.23921568627450979" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="70" id="FUc-oB-gmQ"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                        <state key="normal" title="STOP STREAM">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="stopStreamingClicked:" destination="f8C-tY-ONs" eventType="touchUpInside" id="XGg-D2-CrD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="VX2-fg-OlZ" firstAttribute="top" secondItem="ioh-Br-rXa" secondAttribute="bottom" id="46d-B0-Mvz"/>
+                                    <constraint firstItem="VX2-fg-OlZ" firstAttribute="top" secondItem="ioh-Br-rXa" secondAttribute="bottom" id="4qF-PD-Y3P"/>
+                                    <constraint firstItem="ioh-Br-rXa" firstAttribute="top" secondItem="6hQ-jg-7zD" secondAttribute="top" constant="10" id="53t-nS-HJQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="ioh-Br-rXa" secondAttribute="trailing" constant="10" id="Ofy-2j-uH8"/>
+                                    <constraint firstAttribute="height" constant="160" id="XzI-ah-G81"/>
+                                    <constraint firstItem="VX2-fg-OlZ" firstAttribute="leading" secondItem="6hQ-jg-7zD" secondAttribute="leading" constant="10" id="ht7-Ms-tGt"/>
+                                    <constraint firstAttribute="trailing" secondItem="VX2-fg-OlZ" secondAttribute="trailing" constant="10" id="iam-qo-8RQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="VX2-fg-OlZ" secondAttribute="bottom" constant="10" id="kXF-uC-itO"/>
+                                    <constraint firstAttribute="width" constant="375" id="kgS-da-OLG"/>
+                                    <constraint firstItem="ioh-Br-rXa" firstAttribute="leading" secondItem="6hQ-jg-7zD" secondAttribute="leading" constant="10" id="rm7-5U-9xv"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Streaming in progress...." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="528-xu-CXG" userLabel="indicatorlabel">
+                                <rect key="frame" x="123" y="430" width="355" height="44"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="76I-gL-qa9"/>
+                                    <constraint firstAttribute="width" constant="355" id="Ti1-Pl-3I3"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="veY-E7-pGy">
+                                <rect key="frame" x="290" y="400" width="20" height="20"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="3Mr-HV-XMh"/>
+                                    <constraint firstAttribute="height" constant="20" id="qLM-if-htr"/>
+                                </constraints>
+                            </activityIndicatorView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="veY-E7-pGy" firstAttribute="top" secondItem="6hQ-jg-7zD" secondAttribute="bottom" constant="20" id="2Pc-zA-V2k"/>
+                            <constraint firstItem="veY-E7-pGy" firstAttribute="centerX" secondItem="IJh-4E-PEF" secondAttribute="centerX" id="BWI-dQ-YbG"/>
+                            <constraint firstItem="528-xu-CXG" firstAttribute="centerX" secondItem="IJh-4E-PEF" secondAttribute="centerX" id="o9f-xG-a8X"/>
+                            <constraint firstItem="6hQ-jg-7zD" firstAttribute="centerY" secondItem="IJh-4E-PEF" secondAttribute="centerY" id="pvV-pW-KRa"/>
+                            <constraint firstItem="6hQ-jg-7zD" firstAttribute="centerX" secondItem="IJh-4E-PEF" secondAttribute="centerX" id="uOO-KK-ea0"/>
+                            <constraint firstItem="528-xu-CXG" firstAttribute="top" secondItem="veY-E7-pGy" secondAttribute="bottom" constant="10" id="wz9-kW-N0p"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="veY-E7-pGy" id="M0T-6y-5Pr"/>
+                        <outlet property="startStreamingButon" destination="ioh-Br-rXa" id="JqM-TZ-rMU"/>
+                        <outlet property="stopStreamingButton" destination="VX2-fg-OlZ" id="bKt-rp-bVr"/>
+                        <outlet property="streamingStatuslabel" destination="528-xu-CXG" id="unb-Ad-fns"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="n0R-dg-c5B" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="109" y="206"/>
+        </scene>
+        <!--streamsListViewController-->
+        <scene sceneID="DcK-dF-6V1">
+            <objects>
+                <viewController storyboardIdentifier="StreamsListViewController" id="kJD-wT-2pJ" userLabel="streamsListViewController" customClass="StreamsListViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="CC3-3m-R9F"/>
+                        <viewControllerLayoutGuide type="bottom" id="dhj-gJ-yvj"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="n8g-y0-fCY">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="aLE-XB-q3j">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="kJD-wT-2pJ" id="Axp-P9-9ol"/>
+                                    <outlet property="delegate" destination="kJD-wT-2pJ" id="lJ4-Kx-dTY"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="aLE-XB-q3j" firstAttribute="leading" secondItem="n8g-y0-fCY" secondAttribute="leading" id="6WW-SH-skJ"/>
+                            <constraint firstAttribute="trailing" secondItem="aLE-XB-q3j" secondAttribute="trailing" id="ZCv-No-2jJ"/>
+                            <constraint firstItem="dhj-gJ-yvj" firstAttribute="top" secondItem="aLE-XB-q3j" secondAttribute="bottom" id="it4-nK-75h"/>
+                            <constraint firstItem="aLE-XB-q3j" firstAttribute="top" secondItem="n8g-y0-fCY" secondAttribute="top" id="u9q-A7-FTb"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="liveStreamListTableView" destination="aLE-XB-q3j" id="xzL-P8-hQt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jxd-nH-mQS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="754" y="267"/>
+        </scene>
+    </scenes>
+</document>
