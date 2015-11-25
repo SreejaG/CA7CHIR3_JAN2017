@@ -39,6 +39,8 @@ class LoginViewController: UIViewController {
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         passwordTextField.attributedPlaceholder = NSAttributedString(string: "Password",
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+        userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
+        passwordTextField.autocorrectionType = UITextAutocorrectionType.No
         addObserver()
     }
     
@@ -95,14 +97,14 @@ class LoginViewController: UIViewController {
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
         let uploadStreamViewController = streamingStoryboard.instantiateViewControllerWithIdentifier(UploadStreamViewController.identifier)
-        self.navigationController?.showViewController(uploadStreamViewController, sender: nil)
+        self.navigationController?.pushViewController(uploadStreamViewController, animated: true)
     }
     
     func loadStreamsListView()
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
         let streamsListViewController = streamingStoryboard.instantiateViewControllerWithIdentifier(StreamsListViewController.identifier)
-        self.navigationController?.showViewController(streamsListViewController, sender: nil)
+        self.navigationController?.pushViewController(streamsListViewController, animated: true)
     }
     
     //PRAGMA MARK:- IBActions
@@ -225,16 +227,8 @@ class LoginViewController: UIViewController {
 
     func loadLiveStreamView()
     {
-//        var path:String = "rtsp://192.168.42.1:554/live";
-//        var newVal:NSString = path as NSString
-//        //newString.bridgeToObjectiveC().containsString("string")
-////        (path as NSString).containsString(path)
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"/*"rtsp://192.168.42.1:554/live"*/, parameters: nil , liveVideo: true) as! UIViewController
         self.navigationController?.pushViewController(vc, animated: false)
-
-//        self.presentViewController(vc, animated: false) { () -> Void in
-//        }
-
     }
 }
 
