@@ -9,3 +9,5 @@
 import Foundation
 let userLoginIdKey = "userLoginIdKey"
 let userAccessTockenKey = "userAccessTockenKey"
+
+let apiErrorMessageKey = "errorMessage"

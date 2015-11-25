@@ -31,6 +31,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Streaming Error", message: "\nWe're sorry, but an error occurred. Please try again.")
     }
     
+    func liveStreamFetchingError()
+    {
+        alert("Live Stream Fetching Error", message: "\nWe're sorry, but an error occurred. Please try again.")
+    }
+    
     
     func loginInvalidEmail()
     {

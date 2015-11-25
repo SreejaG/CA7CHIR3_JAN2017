@@ -22,7 +22,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         self.title = "STREAMS"
+        self.title = "STREAMS"
         getAllLiveStreams()
 
         // Do any additional setup after loading the view.
@@ -71,6 +71,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     }
     
     
+    //PRAGMA MARK:- API Handlers
     func getAllLiveStreams()
     {
         let userDefault = NSUserDefaults.standardUserDefaults()
@@ -81,35 +82,51 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         {
             showOverlay()
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
-                
-                self.removeOverlay()
-                if let json = response as? [String: AnyObject]
-                {
-                    print("success = \(json["liveStreams"])")
-                    self.dataSource = json["liveStreams"] as? [String]
-                    self.liveStreamListTableView.reloadData()
-                }
-                else
-                {
-                    ErrorManager.sharedInstance.inValidResponseError()
-                }
-                
+                self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
-                    
-                    self.removeOverlay()
-                    print("message = \(message)")
-                    
-                    if !self.requestManager.validConnection() {
-                        ErrorManager.sharedInstance.noNetworkConnection()
-                    } else {
-                        // ErrorManager.sharedInstance.loginError()
-                    }
+                    self.getAllStreamFailureHandler(error, message: message)
                     return
             })
         }
         else
         {
             ErrorManager.sharedInstance.authenticationIssue()
+        }
+    }
+    
+    
+    func getAllStreamSuccessHandler(response:AnyObject?)
+    {
+        self.removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            print("success = \(json["liveStreams"])")
+            self.dataSource = json["liveStreams"] as? [String]
+            if dataSource?.count == 0
+            {
+                ErrorManager.sharedInstance.alert("No Streams", message: "Sorry! you don't have any live streams")
+            }
+            self.liveStreamListTableView.reloadData()
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func getAllStreamFailureHandler(error: NSError?, message: String)
+    {
+        self.removeOverlay()
+        print("message = \(message)")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if message.isEmpty == false {
+            ErrorManager.sharedInstance.alert("Live Streams Fetching Error", message:message)
+        }
+        else{
+            ErrorManager.sharedInstance.liveStreamFetchingError()
         }
     }
     

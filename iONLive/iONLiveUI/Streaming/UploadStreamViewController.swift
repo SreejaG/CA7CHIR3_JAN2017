@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 class UploadStreamViewController: UIViewController {
     static let identifier = "UploadStreamViewController"
     
@@ -36,51 +34,31 @@ class UploadStreamViewController: UIViewController {
         activityIndicator.hidden = true
         currentStreamingTocken = nil
         
-        startStreamingButon.enabled = true
-        startStreamingButon.backgroundColor = UIColor(red: 51.0/225, green: 207.0/225, blue: 224.0/225, alpha: 1.0)
-        stopStreamingButton.enabled = false
-        stopStreamingButton.backgroundColor = UIColor(red: 240.0/225, green: 53.0/225, blue: 61.0/225, alpha: 0.5)
+        self.navigationController?.navigationBarHidden = false
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backItem
+        setStartStreamingButtonEnability(true)
+        setStopStreamingButtonEnability(false)
         
-    }
-    
-    func modifyButtonEnability(inout button:UIButton,enability:Bool)
-    {
-        button.enabled = enability
-        if(enability)
-        {
-            button.alpha = 1.0
-        }
-        else
-        {
-            button.alpha = 0.5
-        }
     }
     
     //PRAGMA MARK:- button actions
     @IBAction func startStreamingClicked(sender: AnyObject)
     {
-       //startStreamingButon.userInteractionEnabled = false
-       stopStreamingButton.enabled = true
-       stopStreamingButton.alpha = 1.0
-        
-        startStreamingButon.enabled = false
-        startStreamingButon.alpha = 0.5
-       initialiseLiveStreaming()
+        setStartStreamingButtonEnability(false)
+        setStopStreamingButtonEnability(true)
+        initialiseLiveStreaming()
     }
 
     @IBAction func stopStreamingClicked(sender: AnyObject)
     {
-        //startStreamingButon.userInteractionEnabled = true
         streamingStatuslabel.hidden = true
-        
-        stopStreamingButton.enabled = false
-        stopStreamingButton.alpha = 0.5
-        
-        startStreamingButon.enabled = false
-        startStreamingButon.alpha = 0.5
+        setStartStreamingButtonEnability(false)
+        setStopStreamingButtonEnability(false)
         stopLiveStreaming(self.currentStreamingTocken)
     }
     
+   //PRAGMA MARK :- API Helper
     
     func initialiseLiveStreaming()
     {
@@ -105,25 +83,13 @@ class UploadStreamViewController: UIViewController {
                 }
                 else
                 {
-                    self.activityIndicator.hidden = true
-                    self.streamingStatuslabel.hidden = true
+                    self.streamingFailureUIUpdatesHandler()
                     ErrorManager.sharedInstance.inValidResponseError()
-                    self.stopStreamingButton.enabled = false
-                    self.stopStreamingButton.alpha = 0.5
-                    
-                    self.startStreamingButon.enabled = true
-                    self.startStreamingButon.alpha = 1.0
                 }
                 
                 }, failure: { (error, message) -> () in
+                     self.streamingFailureUIUpdatesHandler()
                     
-                    self.activityIndicator.hidden = true
-                    self.streamingStatuslabel.hidden = true
-                    self.stopStreamingButton.enabled = false
-                    self.stopStreamingButton.alpha = 0.5
-                    
-                    self.startStreamingButon.enabled = true
-                    self.startStreamingButon.alpha = 1.0
                     print("message = \(message), error = \(error?.localizedDescription)")
                     if !self.requestManager.validConnection() {
                         ErrorManager.sharedInstance.noNetworkConnection()
@@ -139,11 +105,8 @@ class UploadStreamViewController: UIViewController {
         }
         else
         {
-            stopStreamingButton.enabled = false
-            stopStreamingButton.alpha = 0.5
-            
-            startStreamingButon.enabled = true
-            startStreamingButon.alpha = 1.0
+            setStartStreamingButtonEnability(true)
+            setStopStreamingButtonEnability(false)
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -169,25 +132,13 @@ class UploadStreamViewController: UIViewController {
                 }
                 else
                 {
-                    self.stopStreamingButton.enabled = false
-                    self.stopStreamingButton.alpha = 0.5
-                    
-                    self.startStreamingButon.enabled = true
-                    self.startStreamingButon.alpha = 1.0
-                    self.activityIndicator.hidden = true
-                    self.streamingStatuslabel.hidden = true
+                    self.streamingFailureUIUpdatesHandler()
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
                 }, failure: { (error, message) -> () in
+                     self.streamingFailureUIUpdatesHandler()
                     
-                    self.activityIndicator.hidden = true
-                    self.streamingStatuslabel.hidden = true
-                    self.stopStreamingButton.enabled = false
-                    self.stopStreamingButton.alpha = 0.5
-                    
-                    self.startStreamingButon.enabled = true
-                    self.startStreamingButon.alpha = 1.0
                     print("message = \(message)")
                     
                     if !self.requestManager.validConnection() {
@@ -204,16 +155,11 @@ class UploadStreamViewController: UIViewController {
         }
         else
         {
-            self.activityIndicator.hidden = true
-            self.streamingStatuslabel.hidden = true
-            self.stopStreamingButton.enabled = false
-            self.stopStreamingButton.alpha = 0.5
-            
-            self.startStreamingButon.enabled = true
-            self.startStreamingButon.alpha = 1.0
+            self.streamingFailureUIUpdatesHandler()
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
+    
     
     func stopLiveStreaming(streamTocken:String?)
     {
@@ -229,29 +175,22 @@ class UploadStreamViewController: UIViewController {
                 self.activityIndicator.hidden = true
                 if let json = response as? [String: AnyObject]
                 {
-                    self.stopStreamingButton.enabled = false
-                    self.stopStreamingButton.alpha = 0.5
-                    self.startStreamingButon.enabled = true
-                    self.startStreamingButon.alpha = 1.0
+                    self.setStartStreamingButtonEnability(true)
+                    self.setStopStreamingButtonEnability(false)
                     
                     print("success = \(json["streamToken"])")
                 }
                 else
                 {
                     ErrorManager.sharedInstance.inValidResponseError()
-                    
-                    self.stopStreamingButton.enabled = true
-                    self.stopStreamingButton.alpha = 1.0
-                    self.startStreamingButon.enabled = false
-                    self.startStreamingButon.alpha = 0.5
+                    self.setStartStreamingButtonEnability(false)
+                    self.setStopStreamingButtonEnability(true)
                 }
                 
                 }, failure: { (error, message) -> () in
+                    self.setStartStreamingButtonEnability(false)
+                    self.setStopStreamingButtonEnability(true)
                     
-                    self.stopStreamingButton.enabled = true
-                    self.stopStreamingButton.alpha = 1.0
-                    self.startStreamingButon.enabled = false
-                    self.startStreamingButon.alpha = 0.5
                     self.activityIndicator.hidden = true
                     print("message = \(message)")
                     
@@ -269,13 +208,50 @@ class UploadStreamViewController: UIViewController {
         }
         else
         {
-            self.stopStreamingButton.enabled = true
-            self.stopStreamingButton.alpha = 1.0
-            self.startStreamingButon.enabled = false
-            self.startStreamingButon.alpha = 0.5
+            self.setStartStreamingButtonEnability(false)
+            self.setStopStreamingButtonEnability(true)
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
+    
+// PRAGMA MARK :- Helper functions
+    
+    func setStartStreamingButtonEnability(enability:Bool)
+    {
+        if enability
+        {
+            startStreamingButon.enabled = true
+            startStreamingButon.alpha = 1.0
+        }
+        else
+        {
+            startStreamingButon.enabled = false
+            startStreamingButon.alpha = 5.0
+        }
+    }
+    
+    func setStopStreamingButtonEnability(enability:Bool)
+    {
+        if enability
+        {
+            stopStreamingButton.enabled = true
+            stopStreamingButton.alpha = 1.0
+        }
+        else
+        {
+            stopStreamingButton.enabled = false
+            stopStreamingButton.alpha = 5.0
+        }
+    }
+    
+    func streamingFailureUIUpdatesHandler()
+    {
+        self.activityIndicator.hidden = true
+        self.streamingStatuslabel.hidden = true
+        self.setStartStreamingButtonEnability(true)
+        self.setStopStreamingButtonEnability(false)
+    }
+    
     
     deinit
     {

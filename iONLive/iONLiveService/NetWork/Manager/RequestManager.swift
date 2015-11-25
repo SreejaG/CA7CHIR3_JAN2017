@@ -64,7 +64,7 @@ class RequestManager {
             {
                 do {
                     let jsonData = try NSJSONSerialization.JSONObjectWithData(errorData, options:NSJSONReadingOptions.MutableContainers ) as! NSDictionary
-                    if let errorMsg = jsonData["errorMessage"]
+                    if let errorMsg = jsonData[apiErrorMessageKey]
                     {
                         errorMessage = errorMsg as? String
                     }

@@ -71,8 +71,13 @@ class LiveStreamingManager: NSObject {
             }
             
             }, failure: { (operation, error) -> Void in
-                //The credentials were wrong or the network call failed
-                failure?(error: error, message: error.localizedDescription)
+                var failureErrorDesc:String = ""
+                //get the error message from API response if any
+                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                {
+                    failureErrorDesc = errorMessage
+                }
+                failure?(error: error, message:failureErrorDesc)
         })
     }
     
@@ -98,8 +103,13 @@ class LiveStreamingManager: NSObject {
             }
             
             }, failure: { (operation, error) -> Void in
-                //The credentials were wrong or the network call failed
-                failure?(error: error, message: error.localizedDescription)
+                var failureErrorDesc:String = ""
+                //get the error message from API response if any
+                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                {
+                    failureErrorDesc = errorMessage
+                }
+                failure?(error: error, message:failureErrorDesc)
         })
     }
     
@@ -123,9 +133,14 @@ class LiveStreamingManager: NSObject {
                 failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
             }
             
-            }, failure: { (operation, error) -> Void in
-                //The credentials were wrong or the network call failed
-                failure?(error: error, message: error.localizedDescription)
+            },failure: { (operation, error) -> Void in
+                var failureErrorDesc:String = ""
+                //get the error message from API response if any
+                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                {
+                    failureErrorDesc = errorMessage
+                }
+                failure?(error: error, message:failureErrorDesc)
         })
     }
 }
