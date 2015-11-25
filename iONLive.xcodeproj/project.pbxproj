@@ -350,10 +350,6 @@
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
-				599964DF1C05801B00D20FB2 /* libbz2.tbd */,
-				599964DD1C05801100D20FB2 /* libz.tbd */,
-				599964DB1C057FFF00D20FB2 /* libiconv.tbd */,
-				16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */,
 				167AF02D1BFDC1F6003CDF30 /* iONLive */,
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
@@ -450,6 +446,10 @@
 		167AF06F1BFDC3AD003CDF30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				599964DF1C05801B00D20FB2 /* libbz2.tbd */,
+				599964DD1C05801100D20FB2 /* libz.tbd */,
+				599964DB1C057FFF00D20FB2 /* libiconv.tbd */,
+				16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */,
 				59BC3F331BFF848600710905 /* AFNetworking */,
 				59BC3F471BFF848600710905 /* UIKit+AFNetworking */,
 				16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */,

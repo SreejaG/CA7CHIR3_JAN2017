@@ -209,36 +209,58 @@ static NSMutableDictionary * gHistory;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    [self setUpInitialView];
+    [self customizeUploadStreamButton];
+
+    if (_decoder) {
+
+        [self setupPresentView];
+    }
+}
+
+-(void)setUpInitialView
+{
     self.view.backgroundColor = [UIColor blackColor];
     self.view.tintColor = [UIColor blackColor];
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     topView.hidden = true;
     bottomView.hidden = true;
-    cameraButton.hidden = true;
-    uploadStream.clipsToBounds = YES;
-    uploadStream.layer.cornerRadius = 15;
+}
 
-    if (_liveVideo == false) {
-        bottomView.hidden = true;
-        topViewButton.hidden = true;
-        uploadStream.hidden = true;
-        backButton.hidden = false;
+-(void)setUpViewForLiveAndStreaming
+{
+    if (_liveVideo == true) {
+        [self customiseViewForLive];
     }
     else
     {
-        uploadStream.hidden = false;
-        bottomView.hidden = false;
-        topViewButton.hidden = false;
-        backButton.hidden = true;
+        [self customiseViewForStreaming];
     }
-    _activityIndicatorView.center = self.view.center;
-    _activityIndicatorView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+}
 
-    if (_decoder) {
+-(void)customizeUploadStreamButton
+{
+    uploadStream.clipsToBounds = YES;
+    uploadStream.layer.cornerRadius = 15;
+}
 
-        [self setupPresentView];
+-(void)customiseViewForLive
+{
+    bottomView.hidden = false;
+    topView.hidden = false;
+    uploadStream.hidden = false;
+    topViewButton.hidden = false;
+    backButton.hidden = true;
+}
 
-    }
+-(void)customiseViewForStreaming
+{
+    uploadStream.hidden = true;
+    bottomView.hidden = true;
+    topView.hidden = false;
+    backButton.hidden = false;
+    topViewButton.hidden = true;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -482,9 +504,10 @@ static NSMutableDictionary * gHistory;
     if (_decoder.validVideo) {
 
         _activityIndicatorView.hidden = true;
-        topView.hidden = false;
-        bottomView.hidden = false;
-        cameraButton.hidden = false;
+        [self setUpViewForLiveAndStreaming];
+//        topView.hidden = false;
+//        bottomView.hidden = false;
+//        cameraButton.hidden = false;
         isGlView = [glView initWithDecoder:_decoder];
 
         if (isGlView == false)
