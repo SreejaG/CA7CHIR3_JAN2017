@@ -179,7 +179,8 @@ class LoginViewController: UIViewController {
     {
         self.passwordTextField.text = ""
         self.removeOverlay()
-        self.loadUploadStreamingView()
+        loadLiveStreamView()
+//        self.loadUploadStreamingView()
         //self.loadStreamsListView()
         if let json = response as? [String: AnyObject]
         {
@@ -220,6 +221,20 @@ class LoginViewController: UIViewController {
     deinit
     {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
+    func loadLiveStreamView()
+    {
+//        var path:String = "rtsp://192.168.42.1:554/live";
+//        var newVal:NSString = path as NSString
+//        //newString.bridgeToObjectiveC().containsString("string")
+////        (path as NSString).containsString(path)
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"/*"rtsp://192.168.42.1:554/live"*/, parameters: nil , liveVideo: true) as! UIViewController
+        self.navigationController?.pushViewController(vc, animated: false)
+
+//        self.presentViewController(vc, animated: false) { () -> Void in
+//        }
+
     }
 }
 

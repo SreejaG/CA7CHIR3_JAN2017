@@ -11,3 +11,8 @@
 #import "AFHTTPSessionManager.h"
 #import "Connectivity.h"
 
+
+
+#import "avformat.h"
+#import "avcodec.h"
+#import "MovieViewController.h"
