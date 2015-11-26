@@ -30,6 +30,7 @@
 		167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0691BFDC32E003CDF30 /* Streaming.storyboard */; };
 		167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */; };
 		167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */; };
+		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
@@ -117,6 +118,8 @@
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
 		167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStreamViewController.swift; sourceTree = "<group>"; };
 		167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
+		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
+		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
@@ -470,6 +473,8 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				1689398B1C06C74600A47BDB /* rtsp_relay.c */,
+				1689398C1C06C74600A47BDB /* rtsp_relay.h */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
 				599964C11C057EF000D20FB2 /* kxmovie */,
 			);
@@ -903,6 +908,7 @@
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
+				1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
