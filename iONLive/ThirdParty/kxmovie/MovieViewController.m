@@ -894,6 +894,7 @@ static NSMutableDictionary * gHistory;
     return frame.duration;
 }
 - (IBAction)didTapUploadStream:(id)sender {
+    
     [self loadUploadStreamingView];
 }
 
@@ -904,6 +905,17 @@ static NSMutableDictionary * gHistory;
     [self.navigationController pushViewController:vc animated:true];
 }
 
+- (IBAction)didTapStreamThumb:(id)sender {
+    
+    [self loadStreamsListView];
+}
+
+-(void) loadStreamsListView
+{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"StreamsListViewController"];
+    [self.navigationController pushViewController:vc animated:true];
+}
 
 - (void) freeBufferedFrames
 {
@@ -919,6 +931,7 @@ static NSMutableDictionary * gHistory;
 
     _bufferedDuration = 0;
 }
+
 - (void) handleDecoderMovieError: (NSError *) error
 {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failure", nil)
@@ -929,7 +942,6 @@ static NSMutableDictionary * gHistory;
 
     [alertView show];
 }
-
 
 - (BOOL) interruptDecoder
 {

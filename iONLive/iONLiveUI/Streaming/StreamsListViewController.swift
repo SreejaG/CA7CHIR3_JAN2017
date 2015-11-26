@@ -23,6 +23,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "STREAMS"
+        self.showNavigationBar()
         getAllLiveStreams()
 
         // Do any additional setup after loading the view.
@@ -33,6 +34,12 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         // Dispose of any resources that can be recreated.
     }
     
+    func showNavigationBar()
+    {
+        self.navigationController?.navigationBarHidden = false
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backItem
+    }
     //PRAGMA MARK-: TableView dataSource and Delegates
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -67,9 +74,16 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("You selected cell #\(indexPath.row)!")
+        
+        //print("You selected cell #\(indexPath.row)!")
+        self.loadLiveStreamView()
     }
     
+    func loadLiveStreamView()
+    {
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"/*"rtsp://192.168.42.1:554/live"*/, parameters: nil , liveVideo: false) as! UIViewController
+        self.navigationController?.pushViewController(vc, animated: false)
+    }
     
     //PRAGMA MARK:- API Handlers
     func getAllLiveStreams()
