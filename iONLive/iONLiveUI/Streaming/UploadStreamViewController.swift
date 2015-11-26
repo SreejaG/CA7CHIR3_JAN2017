@@ -27,6 +27,11 @@ class UploadStreamViewController: UIViewController {
         initialize()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        self.navigationController?.navigationBarHidden = false
+    }
+    
     func initialize()
     {
         self.title = "LIVE STREAM"
@@ -34,12 +39,8 @@ class UploadStreamViewController: UIViewController {
         activityIndicator.hidden = true
         currentStreamingTocken = nil
         
-        self.navigationController?.navigationBarHidden = false
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem = backItem
         setStartStreamingButtonEnability(true)
         setStopStreamingButtonEnability(false)
-        
     }
     
     //PRAGMA MARK:- button actions
@@ -48,6 +49,7 @@ class UploadStreamViewController: UIViewController {
         setStartStreamingButtonEnability(false)
         setStopStreamingButtonEnability(true)
         initialiseLiveStreaming()
+        
     }
 
     @IBAction func stopStreamingClicked(sender: AnyObject)
@@ -116,7 +118,7 @@ class UploadStreamViewController: UIViewController {
         let userDefault = NSUserDefaults.standardUserDefaults()
         let loginId = userDefault.objectForKey(userLoginIdKey)
         let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        
+
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             streamingStatuslabel.text = "Starting Live Streaming.."
@@ -124,11 +126,28 @@ class UploadStreamViewController: UIViewController {
                 
                 self.streamingStatuslabel.text = "Live Streaming.."
                 
-                //TODO :- when uploading to wowza completed or camera connection lost etc hide the indicators
-                
                 if let json = response as? [String: AnyObject]
                 {
                     print("success = \(json["streamToken"])")
+                    let streamToken:String = json["streamToken"] as! String
+                    var baseStream = "rtmp://107.167.184.8:1935/live/"
+                    baseStream.appendContentsOf(streamToken)
+                    print("baseStream\(baseStream)")
+                    
+                    let fromServer = "rtsp://192.168.42.1:554/live"
+                    let fromServerPtr = strdup(fromServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
+                    let fromServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(fromServerPtr)
+                    
+                    let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
+                    let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+                    
+
+                    init_streams(fromServerName, baseStreamName)
+
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+                    {
+                        start_stream(baseStreamName)
+                    }
                 }
                 else
                 {
@@ -152,6 +171,7 @@ class UploadStreamViewController: UIViewController {
                     }
                     return
             })
+
         }
         else
         {
@@ -159,7 +179,6 @@ class UploadStreamViewController: UIViewController {
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
-    
     
     func stopLiveStreaming(streamTocken:String?)
     {
@@ -177,6 +196,8 @@ class UploadStreamViewController: UIViewController {
                 {
                     self.setStartStreamingButtonEnability(true)
                     self.setStopStreamingButtonEnability(false)
+                    
+                    stop_stream()
                     
                     print("success = \(json["streamToken"])")
                 }
