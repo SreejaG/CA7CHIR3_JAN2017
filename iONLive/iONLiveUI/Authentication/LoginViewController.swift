@@ -41,6 +41,7 @@ class LoginViewController: UIViewController {
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         passwordTextField.autocorrectionType = UITextAutocorrectionType.No
+        passwordTextField.secureTextEntry = true
         addObserver()
     }
     
@@ -207,7 +208,7 @@ class LoginViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, message: String)
     {
         self.removeOverlay()
-        print("message = \(message)")
+        print("message = \(message) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -227,7 +228,9 @@ class LoginViewController: UIViewController {
 
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"/*"rtsp://192.168.42.1:554/live"*/, parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
     }
 }

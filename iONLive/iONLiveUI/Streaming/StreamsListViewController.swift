@@ -18,15 +18,18 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
     
-    var dataSource:[String]?
+    var dataSource:[[String:String]]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "STREAMS"
-        self.showNavigationBar()
         getAllLiveStreams()
-
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        showNavigationBar()
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,8 +40,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     func showNavigationBar()
     {
         self.navigationController?.navigationBarHidden = false
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem = backItem
+        //self.navigationController?.navigationBar.backItem?.title = ""
     }
     //PRAGMA MARK-: TableView dataSource and Delegates
     
@@ -67,7 +69,12 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         {
             if dataSource.count > indexPath.row
             {
-                cell!.textLabel!.text = dataSource[indexPath.row]
+                var streamDict = dataSource[indexPath.row]
+                if let streamDesc = streamDict["streamDescription"]
+                {
+                    cell!.textLabel!.text = streamDesc
+                }
+                
             }
         }
         return cell!
@@ -75,13 +82,34 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        //print("You selected cell #\(indexPath.row)!")
-        self.loadLiveStreamView()
+        var tocken:String?
+        if let dataSource = dataSource
+        {
+            if dataSource.count > indexPath.row
+            {
+                var streamDict = dataSource[indexPath.row]
+                if let streamTocken = streamDict["streamToken"]
+                {
+                    tocken = streamTocken
+                }
+            }
+        }
+        
+        if let streamtocken = tocken
+        {
+            self.loadLiveStreamView(streamtocken)
+        }
+        else
+        {
+            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+        }
+        
     }
     
-    func loadLiveStreamView()
+    func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"/*"rtsp://192.168.42.1:554/live"*/, parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtmp://107.167.184.8:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        print("rtmp://192.168.16.64:1935/live/\(streamTocken)")
         self.navigationController?.pushViewController(vc, animated: false)
     }
     
@@ -115,7 +143,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         if let json = response as? [String: AnyObject]
         {
             print("success = \(json["liveStreams"])")
-            self.dataSource = json["liveStreams"] as? [String]
+            self.dataSource = json["liveStreams"] as? [[String:String]]
             if dataSource?.count == 0
             {
                 ErrorManager.sharedInstance.alert("No Streams", message: "Sorry! you don't have any live streams")

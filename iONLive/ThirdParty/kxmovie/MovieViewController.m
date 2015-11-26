@@ -134,10 +134,7 @@ static NSMutableDictionary * gHistory;
         gHistory = [NSMutableDictionary dictionary];
 }
 - (IBAction)touchBackButton:(id)sender {
-    [self dismissViewControllerAnimated:false completion:^{
-
-
-    }];
+    [self.navigationController popViewControllerAnimated:true];
 }
 
 - (BOOL)prefersStatusBarHidden { return YES; }
@@ -936,12 +933,21 @@ static NSMutableDictionary * gHistory;
 {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failure", nil)
                                                         message:[error localizedDescription]
-                                                       delegate:nil
+                                                       delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"Close", nil)
                                               otherButtonTitles:nil];
 
     [alertView show];
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0)
+    {
+        [self.navigationController popViewControllerAnimated:true];
+    }
+}
+
 
 - (BOOL) interruptDecoder
 {
