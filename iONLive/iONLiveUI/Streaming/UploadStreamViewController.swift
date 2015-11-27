@@ -130,7 +130,7 @@ class UploadStreamViewController: UIViewController {
                 {
                     print("success = \(json["streamToken"])")
                     let streamToken:String = json["streamToken"] as! String
-                    var baseStream = "rtmp://107.167.184.8:1935/live/"
+                    var baseStream = "rtmp://104.197.159.157:1935/live/"
                     baseStream.appendContentsOf(streamToken)
                     print("baseStream\(baseStream)")
                     
@@ -142,11 +142,18 @@ class UploadStreamViewController: UIViewController {
                     let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
                     
 
-                    init_streams(fromServerName, baseStreamName)
 
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
                     {
-                        start_stream(baseStreamName)
+                        if (init_streams(fromServerName, baseStreamName) == 0)
+                        {
+                            start_stream(baseStreamName)
+                        }
+                        else
+                        {
+                            ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
+                        }
+                        
                     }
                 }
                 else

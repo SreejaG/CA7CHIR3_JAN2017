@@ -1,7 +1,6 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include "rtsp_relay.h"
 AVFormatContext *m_informat=NULL,*m_outformat=NULL;
 AVStream *m_in_vid_strm,*m_out_vid_strm;
@@ -11,12 +10,26 @@ bool m_init_done;
 int EXIT_FLAG=0;
 AVPacket pkt;
 AVDictionary *options = NULL;
+
+int clean_all(){
+	
+	m_informat=NULL;
+	m_in_vid_strm=NULL;
+	options = NULL;
+	return 0;
+	}
+
 int init_streams(char *url_in ,char *url_out){
     int i,ret;
     av_register_all();
     avformat_network_init();
     printf("%s\n",url_in);
-    avformat_open_input( &m_informat, url_in, NULL,NULL);
+    ret=avformat_open_input( &m_informat, url_in, NULL,NULL);
+    printf("url=%s",url_in);
+	if(ret!=0){
+	printf("Error in connection\n");
+	return -1;
+	}
     if ((ret = avformat_find_stream_info(m_informat, 0))< 0){
         printf("Stream info not found");
         ret = -1;
@@ -71,16 +84,16 @@ int init_streams(char *url_in ,char *url_out){
 
     }
     return 0;
-    }
+}
 int start_stream(char* url_out){
     int ret;
     AVPacket pkt;
     AVDictionary *options = NULL;
     av_dict_set(&options, "rtsp_transport", "tcp", 0);
-
+	printf("url_out is %s\n",url_out);
     if (!(outfmt->flags & AVFMT_NOFILE)){
         if (avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options) < 0){
-            printf("Could Not Open File out");
+            printf("Could Not Open File out(Error in avio_open2)\n");
             ret = -1;
             return ret;
         }
@@ -89,7 +102,7 @@ int start_stream(char* url_out){
     /* Write the stream header, if any. */
     ret=avio_open(&m_outformat->pb, url_out, AVIO_FLAG_READ_WRITE);
     if (m_outformat->pb == NULL) {
-        printf("Error:%d\n",ret);
+        printf("Error in avio_open:%d\n",ret);
         return -1;
     }
     ret=avformat_write_header(m_outformat, &options);
@@ -100,27 +113,27 @@ int start_stream(char* url_out){
         return ret;
     }
     else{
-        printf("Written Output header ");
+        printf("Written Output header\n");
                 m_init_done = true;
     }
+	int i;
     while(av_read_frame(m_informat, &pkt) >= 0){
         if(pkt.stream_index == m_in_vid_strm_idx){
-            printf("Stream found\n");
-            av_write_frame(m_outformat, &pkt);    
-        }
+            //printf("Stream found\n");
+            ret=av_write_frame(m_outformat, &pkt);
+		}
         if(EXIT_FLAG==1){
-            m_informat=NULL;
-            m_outformat=NULL;
-            outfmt = NULL;
-            EXIT_FLAG = 0;
-        break;
+			EXIT_FLAG=0;
+        	break;
         }
     }
-return 0;
+	av_free_packet(&pkt);
+	return 0;
 }
 int stop_stream(){
-
     EXIT_FLAG=1;
     printf("Stream stopped\n");
-    return 0;
+	clean_all();
+    return -1;
     }
+

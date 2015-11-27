@@ -14,6 +14,7 @@
                 <outlet property="glView" destination="R2J-HD-A0s" id="pO5-Cs-rFc"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
+                <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
                 <outlet property="topViewButton" destination="lME-9O-IZZ" id="sC2-iH-c12"/>
                 <outlet property="uploadStream" destination="n6M-KO-3j3" id="Cwa-pv-Rbu"/>
@@ -36,6 +37,16 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2J-HD-A0s" userLabel="glView" customClass="KxMovieGLView">
                             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Camera not connected!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KZE-R5-aYy">
+                                    <rect key="frame" x="210" y="310" width="180" height="21"/>
+                                    <animations/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="21" id="wLP-RD-geD"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="fVQ-mp-3vZ">
                                     <rect key="frame" x="290" y="290" width="20" height="20"/>
                                     <animations/>
@@ -143,6 +154,7 @@
                             <animations/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
+                                <constraint firstItem="KZE-R5-aYy" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="1QZ-Em-Xnj"/>
                                 <constraint firstItem="fVQ-mp-3vZ" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="9dX-k5-Nz6"/>
                                 <constraint firstItem="BB9-od-AqJ" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="BeW-cL-yOw"/>
                                 <constraint firstItem="BB9-od-AqJ" firstAttribute="top" secondItem="R2J-HD-A0s" secondAttribute="top" id="CMz-IS-NFk"/>
@@ -151,6 +163,7 @@
                                 <constraint firstItem="fVQ-mp-3vZ" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="fL3-rv-SeA"/>
                                 <constraint firstAttribute="trailing" secondItem="BB9-od-AqJ" secondAttribute="trailing" id="hAG-r5-L4J"/>
                                 <constraint firstAttribute="bottom" secondItem="8cA-HV-eex" secondAttribute="bottom" id="ptr-Me-t4l"/>
+                                <constraint firstItem="KZE-R5-aYy" firstAttribute="top" secondItem="fVQ-mp-3vZ" secondAttribute="bottom" id="uq0-dX-TMo"/>
                             </constraints>
                         </view>
                     </subviews>

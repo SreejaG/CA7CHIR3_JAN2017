@@ -80,6 +80,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIButton *uploadStream;
     IBOutlet UIButton *cameraButton;
 
+    IBOutlet UILabel *noDataFound;
     BOOL                _interrupted;
     
     KxMovieDecoder      *_decoder;
@@ -207,13 +208,22 @@ static NSMutableDictionary * gHistory;
 {
     [super viewDidLoad];
 
-    [self setUpInitialView];
+    [self setUpInitialGLView];
     [self customizeUploadStreamButton];
 
     if (_decoder) {
 
         [self setupPresentView];
     }
+}
+
+-(void)setUpInitialGLView
+{
+    [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
+    [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]]; //colorWithAlphaComponent:0.6]];
+    noDataFound.hidden = true;
+    uploadStream.hidden = true;
+    topViewButton.hidden = true;
 }
 
 -(void)setUpInitialView
@@ -227,6 +237,8 @@ static NSMutableDictionary * gHistory;
 
 -(void)setUpViewForLiveAndStreaming
 {
+    noDataFound.hidden = true;
+    [glView setBackgroundColor:[UIColor whiteColor]];
     if (_liveVideo == true) {
         [self customiseViewForLive];
     }
@@ -944,7 +956,8 @@ static NSMutableDictionary * gHistory;
 {
     if (buttonIndex == 0)
     {
-        [self.navigationController popViewControllerAnimated:true];
+        noDataFound.hidden = false;
+//        [self.navigationController popViewControllerAnimated:true];
     }
 }
 
