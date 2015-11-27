@@ -221,7 +221,18 @@ static NSMutableDictionary * gHistory;
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]]; //colorWithAlphaComponent:0.6]];
-    noDataFound.hidden = true;
+    if (_liveVideo == true)
+    {
+        bottomView.hidden = false;
+        noDataFound.text = @"Camera not connected!";
+        noDataFound.hidden = false;
+    }
+    else
+    {
+        bottomView.hidden = true;
+        noDataFound.hidden = true;
+    }
+    
     uploadStream.hidden = true;
     topViewButton.hidden = true;
 }
@@ -375,8 +386,6 @@ static NSMutableDictionary * gHistory;
 
 - (void) applicationWillResignActive: (NSNotification *)notification
 {
-    [self pause];
-    
     LoggerStream(1, @"applicationWillResignActive");
 }
 
@@ -957,7 +966,15 @@ static NSMutableDictionary * gHistory;
     if (buttonIndex == 0)
     {
         noDataFound.hidden = false;
-//        [self.navigationController popViewControllerAnimated:true];
+        _activityIndicatorView.hidden = true;
+        if(_liveVideo == true)
+        {
+           noDataFound.text = @"Could not connect to camera!";
+        }
+        else{
+            noDataFound.text = @"No stream found!";
+        }
+        
     }
 }
 
