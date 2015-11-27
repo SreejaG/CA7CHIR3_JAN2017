@@ -12,10 +12,12 @@ AVPacket pkt;
 AVDictionary *options = NULL;
 
 int clean_all(){
-	
+	avformat_close_input(&m_informat);
+	avformat_free_context(m_outformat);
 	m_informat=NULL;
 	m_in_vid_strm=NULL;
 	options = NULL;
+	printf("cleaning success\n");
 	return 0;
 	}
 
@@ -25,7 +27,6 @@ int init_streams(char *url_in ,char *url_out){
     avformat_network_init();
     printf("%s\n",url_in);
     ret=avformat_open_input( &m_informat, url_in, NULL,NULL);
-    printf("url=%s",url_in);
 	if(ret!=0){
 	printf("Error in connection\n");
 	return -1;
@@ -124,16 +125,18 @@ int start_stream(char* url_out){
 		}
         if(EXIT_FLAG==1){
 			EXIT_FLAG=0;
+			printf("Endaro endo\n");
         	break;
         }
     }
-	av_free_packet(&pkt);
+	printf("Stream stopped from start\n");
+	//av_free_packet(&pkt);
+	clean_all();
 	return 0;
 }
 int stop_stream(){
     EXIT_FLAG=1;
     printf("Stream stopped\n");
-	clean_all();
     return -1;
     }
 
