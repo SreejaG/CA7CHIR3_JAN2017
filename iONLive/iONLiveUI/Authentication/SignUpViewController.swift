@@ -1,18 +1,18 @@
 //
-//  ViewController.swift
-//  iON_Live
+//  SignUpViewController.swift
+//  iONLive
 //
-//  Created by Gadgeon on 11/16/15.
+//  Created by Gadgeon on 11/30/15.
 //  Copyright © 2015 Gadgeon. All rights reserved.
 //
 
 import UIKit
 
-class LoginViewController: UIViewController {
-    
-    @IBOutlet weak var userNameTextfield: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var logInBottomConstraint: NSLayoutConstraint!
+class SignUpViewController: UIViewController {
+
+    @IBOutlet weak var emailTextfield: UITextField!
+    @IBOutlet weak var passwdTextField: UITextField!
+    @IBOutlet weak var signUpBottomConstraint: NSLayoutConstraint!
 
     var loadingOverlay: UIView?
     
@@ -30,21 +30,21 @@ class LoginViewController: UIViewController {
     
     func initialise()
     {
-        self.title = "LOG IN"
+        self.title = "SIGN UP"
         self.navigationController?.navigationBarHidden = false
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
-        userNameTextfield.attributedPlaceholder = NSAttributedString(string: "Username",
+        emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        passwordTextField.attributedPlaceholder = NSAttributedString(string: "Password",
+        passwdTextField.attributedPlaceholder = NSAttributedString(string: "New Password",
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
-        passwordTextField.autocorrectionType = UITextAutocorrectionType.No
-        passwordTextField.secureTextEntry = true
+        emailTextfield.autocorrectionType = UITextAutocorrectionType.No
+        passwdTextField.autocorrectionType = UITextAutocorrectionType.No
+        passwdTextField.secureTextEntry = true
         addObserver()
     }
-    
+  
     func addObserver()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardDidShowNotification , object: nil)
@@ -57,9 +57,9 @@ class LoginViewController: UIViewController {
     {
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        if logInBottomConstraint.constant == 0
+        if signUpBottomConstraint.constant == 0
         {
-            logInBottomConstraint.constant += keyboardFrame.size.height
+            signUpBottomConstraint.constant += keyboardFrame.size.height
         }
     }
     
@@ -67,9 +67,9 @@ class LoginViewController: UIViewController {
     {
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        if logInBottomConstraint.constant != 0
+        if signUpBottomConstraint.constant != 0
         {
-            logInBottomConstraint.constant -= keyboardFrame.size.height
+            signUpBottomConstraint.constant -= keyboardFrame.size.height
         }
     }
     
@@ -83,30 +83,23 @@ class LoginViewController: UIViewController {
     
     //PRAGMA MARK:- IBActions
     
-    @IBAction func forgetPasswordClicked(sender: AnyObject)
-    {
-        let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let forgotPasswordViewController = authenticationStoryboard.instantiateViewControllerWithIdentifier(ForgotPasswordViewController.identifier)
-        self.navigationController?.pushViewController(forgotPasswordViewController, animated: true)
-    }
-    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }
     
-    @IBAction func loginClicked(sender: AnyObject)
+    @IBAction func signUpClicked(sender: AnyObject)
     {
-        if userNameTextfield.text!.isEmpty
+        if emailTextfield.text!.isEmpty
         {
             ErrorManager.sharedInstance.loginNoEmailEnteredError()
         }
-        else if passwordTextField.text!.isEmpty
+        else if passwdTextField.text!.isEmpty
         {
             ErrorManager.sharedInstance.loginNoPasswordEnteredError()
         }
         else
         {
-            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, withLoginButton: true)
+            self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
         }
     }
     
@@ -133,7 +126,7 @@ class LoginViewController: UIViewController {
     
     
     //PRAGMA MARK:- API handlers
-    func loginUser(email: String, password: String, withLoginButton: Bool)
+    func signUpUser(email: String, password: String, withLoginButton: Bool)
     {
         //check for valid email
         let isEmailValid = isEmail(email) as Bool!
@@ -145,8 +138,8 @@ class LoginViewController: UIViewController {
         
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.authenticate(email: email, password: password, success: { (response) -> () in
-           self.authenticationSuccessHandler(response)
+        authenticationManager.signUp(email: email, password: password, success: { (response) -> () in
+            self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, message: message)
                 return
@@ -155,7 +148,7 @@ class LoginViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        self.passwordTextField.text = ""
+        self.passwdTextField.text = ""
         self.removeOverlay()
         loadLiveStreamView()
         if let json = response as? [String: AnyObject]
@@ -175,7 +168,7 @@ class LoginViewController: UIViewController {
         {
             ErrorManager.sharedInstance.loginError()
         }
-
+        
     }
     
     func authenticationFailureHandler(error: NSError?, message: String)
@@ -198,7 +191,7 @@ class LoginViewController: UIViewController {
     {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-
+    
     func loadLiveStreamView()
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
@@ -206,5 +199,5 @@ class LoginViewController: UIViewController {
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
     }
-}
 
+}
