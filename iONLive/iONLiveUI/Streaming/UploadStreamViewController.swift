@@ -131,6 +131,7 @@ class UploadStreamViewController: UIViewController {
                     print("success = \(json["streamToken"])")
                     let streamToken:String = json["streamToken"] as! String
                     var baseStream = "rtmp://104.197.159.157:1935/live/"
+//                    var baseStream = "rtmp://192.168.16.34:1935/live/"
                     baseStream.appendContentsOf(streamToken)
                     print("baseStream\(baseStream)")
                     
