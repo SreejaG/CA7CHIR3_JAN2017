@@ -24,6 +24,11 @@ class LoginViewController: UIViewController {
         initialise()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        self.navigationController?.navigationBarHidden = false
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -31,7 +36,6 @@ class LoginViewController: UIViewController {
     func initialise()
     {
         self.title = "LOG IN"
-        self.navigationController?.navigationBarHidden = false
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
