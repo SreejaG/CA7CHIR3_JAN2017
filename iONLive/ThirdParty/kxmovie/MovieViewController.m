@@ -176,7 +176,7 @@ static NSMutableDictionary * gHistory;
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
             NSError *error = nil;
-            [decoder openFile:path error:&error];
+            [decoder openFile:rtspFilePath error:&error];
             
             __strong MovieViewController *strongSelf = weakSelf;
             if (strongSelf) {
@@ -191,10 +191,11 @@ static NSMutableDictionary * gHistory;
     return self;
 }
 
--(void)initialiseDecoder//:(BOOL) streamStarted
+-(void)initialiseDecoder
 {
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    
     noDataFound.hidden = true;
     if (streamStarted == false) {
         
@@ -205,9 +206,11 @@ static NSMutableDictionary * gHistory;
         id<KxAudioManager> audioManager = [KxAudioManager audioManager];
         [audioManager activateAudioSession];
         
-        __weak MovieViewController *weakSelf = self;
         [_activityIndicatorView startAnimating];
         _activityIndicatorView.hidden = false;
+
+        __weak MovieViewController *weakSelf = self;
+
         KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
         
         decoder.interruptCallback = ^BOOL(){

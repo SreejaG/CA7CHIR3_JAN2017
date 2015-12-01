@@ -157,22 +157,24 @@ class UploadStreamViewController: UIViewController {
                 {
                     print("success = \(json["streamToken"])")
                     let streamToken:String = json["streamToken"] as! String
-                    var baseStream = "rtmp://104.197.159.157:1935/live/"
-//                    var baseStream = "rtmp://192.168.16.34:1935/live/"
-                    baseStream.appendContentsOf(streamToken)
-                    print("baseStream\(baseStream)")
+//                    var baseStream = "rtmp://104.197.159.157:1935/live/"
+////                    var baseStream = "rtmp://192.168.16.34:1935/live/"
+//                    baseStream.appendContentsOf(streamToken)
+//                    print("baseStream\(baseStream)")
                     
-                    let fromServer = "rtsp://192.168.42.1:554/live"
-                    let fromServerPtr = strdup(fromServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
-                    let fromServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(fromServerPtr)
+//                    let fromServer = "rtsp://192.168.42.1:554/live"
+//                    let fromServerPtr = strdup(fromServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
+//                    let fromServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(fromServerPtr)
                     
-                    let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
-                    let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+//                    let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
+//                    let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+                    let baseStreamName = self.getBaseStream(streamToken)
+                    let cameraServerName = self.getCameraServer()
                     
                     let defaults = NSUserDefaults .standardUserDefaults()
                     defaults.setValue(streamToken, forKey: streamingToken)
 
-                    if (init_streams(fromServerName, baseStreamName) == 0)
+                    if (init_streams(cameraServerName, baseStreamName) == 0)
                     {
                         self.streamingStatuslabel.text = "Live Streaming.."
                         defaults.setBool(true, forKey: startedStreaming)
@@ -221,6 +223,24 @@ class UploadStreamViewController: UIViewController {
         }
     }
     
+    func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
+    {
+        var baseStream = "rtmp://104.197.159.157:1935/live/"
+//      var baseStream = "rtmp://192.168.16.34:1935/live/"
+        baseStream.appendContentsOf(streamToken)
+        let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
+        let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+        return baseStreamName
+    }
+    
+    func getCameraServer() -> UnsafeMutablePointer<CChar>
+    {
+        let cameraServer = "rtsp://192.168.42.1:554/live"
+        let cameraServerPtr = strdup(cameraServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
+        let cameraServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(cameraServerPtr)
+        return cameraServerName
+    }
+    
     func stopLiveStreaming(streamTocken:String?)
     {
         let userDefault = NSUserDefaults.standardUserDefaults()
@@ -235,14 +255,14 @@ class UploadStreamViewController: UIViewController {
                 self.activityIndicator.hidden = true
                 if let json = response as? [String: AnyObject]
                 {
-                    self.setStartStreamingButtonEnability(true)
-                    self.setStopStreamingButtonEnability(false)
-                    let defaults = NSUserDefaults .standardUserDefaults()
-                    defaults.setValue(false, forKey: startedStreaming)
-
-//                    self.streamStarted =  false;
-                    stop_stream()
-                    
+//                    self.setStartStreamingButtonEnability(true)
+//                    self.setStopStreamingButtonEnability(false)
+//                    
+//                    let defaults = NSUserDefaults .standardUserDefaults()
+//                    defaults.setValue(false, forKey: startedStreaming)
+//                    stop_stream()
+//                    
+                    self.stopStreamingandUpdateButton()
                     print("success = \(json["streamToken"])")
                 }
                 else
@@ -277,6 +297,16 @@ class UploadStreamViewController: UIViewController {
             self.setStopStreamingButtonEnability(true)
             ErrorManager.sharedInstance.authenticationIssue()
         }
+    }
+    
+    func stopStreamingandUpdateButton()
+    {
+        self.setStartStreamingButtonEnability(true)
+        self.setStopStreamingButtonEnability(false)
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        defaults.setValue(false, forKey: startedStreaming)
+        stop_stream()
     }
     
 // PRAGMA MARK :- Helper functions
