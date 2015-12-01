@@ -19,6 +19,14 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         super.viewDidLoad()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        
+        let presentingViewController :UIViewController! = self.presentingViewController;
+        let vc:MovieViewController = presentingViewController as! MovieViewController
+        vc.initialiseDecoder()
+
+    }
+    
 //    override func viewWillAppear(animated: Bool) {
 //            self.view.backgroundColor = UIColor.clearColor()
 //            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
@@ -64,11 +72,27 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-//       switch(indexPath.row)
-//       {
-//       case 0: break
-//          //live stream
-//       }
+        
+       switch(indexPath.row)
+       {
+       case 0 :
+        
+            let streamingStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
+            let uploadStreamViewController = streamingStoryboard.instantiateViewControllerWithIdentifier(UploadStreamViewController.identifier)
+            
+            self.presentViewController(uploadStreamViewController, animated: true, completion: { () -> Void in
+            })
+            
+            break
+        
+       case 1:
+        
+            self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        })
+
+       default :
+            break
+       }
         
     }
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat

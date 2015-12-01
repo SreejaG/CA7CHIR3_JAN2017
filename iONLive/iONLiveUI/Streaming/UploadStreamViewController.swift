@@ -33,14 +33,10 @@ class UploadStreamViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         
-        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
-            
-            if viewControllers.contains(self) == false{
-                
-                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
-                
-                vc.initialiseDecoder()
-            }
+        if let viewController = self.parentViewController?.parentViewController
+        {
+            let vc:MovieViewController = viewController as! MovieViewController
+            vc.initialiseDecoder()
         }
         
     }
@@ -347,6 +343,11 @@ class UploadStreamViewController: UIViewController {
         self.setStopStreamingButtonEnability(false)
     }
     
+    @IBAction func didTapDoneButton(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true) { () -> Void in
+            
+        }
+    }
     
     deinit
     {

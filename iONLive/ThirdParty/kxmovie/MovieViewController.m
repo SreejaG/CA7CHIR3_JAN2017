@@ -236,10 +236,17 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
-        [self.view setBackgroundColor:[UIColor whiteColor]];
-        noDataFound.text = @"Live Streaming in Progress! , Stop Streaming to resume Live";
-        noDataFound.textColor = [UIColor redColor];
-        noDataFound.hidden = false;
+//        [self setupPresentView];
+//        [self.view setBackgroundColor:[UIColor whiteColor]];
+//        [glView setBackgroundColor:[UIColor blueColor]];
+//        [imageView setBackgroundColor:[UIColor yellowColor]];
+//        [mainView setBackgroundColor:[UIColor brownColor]];
+//        [self.view bringSubviewToFront:glView];
+//        [self.view.window setBackgroundColor:[UIColor grayColor]];
+//        [UIApplication sharedApplication].keyWindow.backgroundColor = [UIColor redColor];
+//        noDataFound.text = @"Live Streaming in Progress! , Stop Streaming to resume Live";
+//        noDataFound.textColor = [UIColor redColor];
+//        noDataFound.hidden = false;
     }
 }
 
@@ -304,14 +311,14 @@ static NSMutableDictionary * gHistory;
     cameraSelectionButton.hidden = true;
 }
 
--(void)setUpInitialView
-{
-    self.view.backgroundColor = [UIColor blackColor];
-    self.view.tintColor = [UIColor blackColor];
-    [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-    topView.hidden = true;
-    bottomView.hidden = true;
-}
+//-(void)setUpInitialView
+//{
+////    self.view.backgroundColor = [UIColor blackColor];
+////    self.view.tintColor = [UIColor blackColor];
+////    [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
+//    topView.hidden = true;
+//    bottomView.hidden = true;
+//}
 
 -(void)setUpViewForLiveAndStreaming
 {
@@ -995,7 +1002,7 @@ static NSMutableDictionary * gHistory;
 }
 - (IBAction)didTapUploadStream:(id)sender {
     
-    [self loadUploadStreamingView];
+    //[self loadUploadStreamingView];
 }
 
 -(void)loadUploadStreamingView
