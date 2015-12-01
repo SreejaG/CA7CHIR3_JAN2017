@@ -15,6 +15,10 @@
 		1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3D21C05698F004E3832 /* ErrorManager.swift */; };
 		1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3D41C05698F004E3832 /* AuthenticationManager.swift */; };
 		1644B3D81C05698F004E3832 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3D51C05698F004E3832 /* Login.swift */; };
+		164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 164989EE1C0D5C1D007C912C /* Settings.storyboard */; };
+		164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */; };
+		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
+		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
@@ -98,6 +102,10 @@
 		1644B3D21C05698F004E3832 /* ErrorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorManager.swift; sourceTree = "<group>"; };
 		1644B3D41C05698F004E3832 /* AuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		1644B3D51C05698F004E3832 /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		164989EE1C0D5C1D007C912C /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamSelectViewController.swift; sourceTree = "<group>"; };
+		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
+		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
@@ -354,6 +362,17 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		164989ED1C0D5C0F007C912C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				164989EE1C0D5C1D007C912C /* Settings.storyboard */,
+				164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */,
+				164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */,
+				164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
@@ -422,6 +441,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				164989ED1C0D5C0F007C912C /* Settings */,
 				160F47AF1BFEEF5100599AA7 /* Common */,
 				167AF05E1BFDC2C1003CDF30 /* Authentication */,
 				167AF05F1BFDC2C1003CDF30 /* Streaming */,
@@ -868,6 +888,7 @@
 				167AF0361BFDC1F6003CDF30 /* Assets.xcassets in Resources */,
 				16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */,
 				167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */,
+				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
 			);
@@ -924,13 +945,16 @@
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
+				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
+				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				1644B3C81C05687B004E3832 /* Connectivity.m in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
+				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
