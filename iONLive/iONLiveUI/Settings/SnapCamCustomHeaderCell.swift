@@ -21,4 +21,9 @@ class SnapCamCustomHeaderCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func snapcamButtonClicked(sender: AnyObject)
+    {
+        
+    }
+   
 }
