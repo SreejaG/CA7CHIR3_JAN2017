@@ -75,7 +75,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet KxMovieGLView *glView;
     IBOutlet UIView *mainView;
     IBOutlet UIView *bottomView;
-    IBOutlet UIButton *topViewButton;
+    IBOutlet UIButton *cameraSelectionButton;
     IBOutlet UIButton *backButton;
     IBOutlet UIButton *uploadStream;
     IBOutlet UIButton *cameraButton;
@@ -301,7 +301,7 @@ static NSMutableDictionary * gHistory;
     }
     
     uploadStream.hidden = true;
-    topViewButton.hidden = true;
+    cameraSelectionButton.hidden = true;
 }
 
 -(void)setUpInitialView
@@ -337,7 +337,7 @@ static NSMutableDictionary * gHistory;
     bottomView.hidden = false;
     topView.hidden = false;
     uploadStream.hidden = false;
-    topViewButton.hidden = false;
+    cameraSelectionButton.hidden = false;
     backButton.hidden = true;
 }
 
@@ -347,7 +347,7 @@ static NSMutableDictionary * gHistory;
     bottomView.hidden = true;
     topView.hidden = false;
     backButton.hidden = false;
-    topViewButton.hidden = true;
+    cameraSelectionButton.hidden = true;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -1066,6 +1066,16 @@ static NSMutableDictionary * gHistory;
     //if (!_decoder)
     //    return NO;
     return _interrupted;
+}
+
+- (IBAction)camSelectionButtonClick:(id)sender
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
+    UIViewController *snapCamSelectVC = [storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    self.definesPresentationContext = YES; //self is presenting view controller
+    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    [self presentViewController:snapCamSelectVC animated:YES completion:nil];
+    
 }
 
 @end

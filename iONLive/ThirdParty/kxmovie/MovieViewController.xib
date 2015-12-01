@@ -11,12 +11,12 @@
                 <outlet property="backButton" destination="ogj-ER-apE" id="GUw-Fi-ZDX"/>
                 <outlet property="bottomView" destination="8cA-HV-eex" id="PPk-2D-Ayo"/>
                 <outlet property="cameraButton" destination="Fzv-Kt-ME1" id="xLN-vZ-og4"/>
+                <outlet property="cameraSelectionButton" destination="lME-9O-IZZ" id="6cY-ph-zgr"/>
                 <outlet property="glView" destination="R2J-HD-A0s" id="pO5-Cs-rFc"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
-                <outlet property="topViewButton" destination="lME-9O-IZZ" id="sC2-iH-c12"/>
                 <outlet property="uploadStream" destination="n6M-KO-3j3" id="Cwa-pv-Rbu"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -54,7 +54,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BB9-od-AqJ">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lME-9O-IZZ">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lME-9O-IZZ" userLabel="Camera Selection Button">
                                             <rect key="frame" x="18" y="25" width="26" height="25"/>
                                             <animations/>
                                             <constraints>
@@ -62,6 +62,9 @@
                                                 <constraint firstAttribute="width" constant="26" id="zOk-MF-xeS"/>
                                             </constraints>
                                             <state key="normal" image="Live_now_t"/>
+                                            <connections>
+                                                <action selector="camSelectionButtonClick:" destination="-1" eventType="touchUpInside" id="ptU-Eh-YRg"/>
+                                            </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ogj-ER-apE" userLabel="backButton">
                                             <rect key="frame" x="10" y="22" width="12" height="21"/>
