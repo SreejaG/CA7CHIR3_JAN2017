@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <scenes>
+        <!--Snap Cam Select View Controller-->
+        <scene sceneID="Cab-de-eu7">
+            <objects>
+                <viewController storyboardIdentifier="SnapCamSelectViewController" id="FLA-8t-Aaj" customClass="SnapCamSelectViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Fkd-nu-9nb"/>
+                        <viewControllerLayoutGuide type="bottom" id="Kzj-Oc-NDJ"/>
+                    </layoutGuides>
+                    <view key="view" alpha="0.20000000000000001" contentMode="scaleToFill" id="MOu-Yi-ihb">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uci-ze-ZQz">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnapCamCustomHeaderCell" id="vtg-gA-Mh6" customClass="SnapCamCustomHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vtg-gA-Mh6" id="W6S-g0-BmD">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2NI-TZ-i97">
+                                                    <rect key="frame" x="558" y="0.0" width="42" height="43"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g6k-3N-NpE">
+                                                            <rect key="frame" x="6" y="7" width="30" height="30"/>
+                                                            <animations/>
+                                                            <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </button>
+                                                    </subviews>
+                                                    <animations/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="42" id="75y-pb-nuE"/>
+                                                        <constraint firstItem="g6k-3N-NpE" firstAttribute="centerX" secondItem="2NI-TZ-i97" secondAttribute="centerX" id="JT3-YR-fur"/>
+                                                        <constraint firstItem="g6k-3N-NpE" firstAttribute="centerY" secondItem="2NI-TZ-i97" secondAttribute="centerY" id="j2B-l0-u0b"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JuL-nq-uCk">
+                                                    <rect key="frame" x="42" y="0.0" width="516" height="43"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OzZ-wP-Tec">
+                                                    <rect key="frame" x="0.0" y="0.0" width="42" height="43"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nhk-nI-Ocz">
+                                                            <rect key="frame" x="6" y="7" width="30" height="30"/>
+                                                            <animations/>
+                                                            <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </button>
+                                                    </subviews>
+                                                    <animations/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="42" id="NQc-80-n4q"/>
+                                                        <constraint firstItem="Nhk-nI-Ocz" firstAttribute="centerX" secondItem="OzZ-wP-Tec" secondAttribute="centerX" id="d4G-nI-fTR"/>
+                                                        <constraint firstItem="Nhk-nI-Ocz" firstAttribute="centerY" secondItem="OzZ-wP-Tec" secondAttribute="centerY" id="dh2-hA-WZw"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="OzZ-wP-Tec" firstAttribute="top" secondItem="W6S-g0-BmD" secondAttribute="top" id="2cB-5x-BIr"/>
+                                                <constraint firstItem="JuL-nq-uCk" firstAttribute="leading" secondItem="OzZ-wP-Tec" secondAttribute="trailing" id="68E-1F-62o"/>
+                                                <constraint firstItem="OzZ-wP-Tec" firstAttribute="leading" secondItem="W6S-g0-BmD" secondAttribute="leading" id="A3F-z8-UCU"/>
+                                                <constraint firstAttribute="bottom" secondItem="JuL-nq-uCk" secondAttribute="bottom" id="J6f-5J-uMa"/>
+                                                <constraint firstAttribute="bottom" secondItem="2NI-TZ-i97" secondAttribute="bottom" id="Sxc-v5-mZe"/>
+                                                <constraint firstAttribute="bottom" secondItem="OzZ-wP-Tec" secondAttribute="bottom" id="Us0-O9-sd3"/>
+                                                <constraint firstItem="2NI-TZ-i97" firstAttribute="height" secondItem="W6S-g0-BmD" secondAttribute="height" id="VQU-RA-YJP"/>
+                                                <constraint firstAttribute="trailing" secondItem="2NI-TZ-i97" secondAttribute="trailing" id="Z2z-hz-xin"/>
+                                                <constraint firstItem="OzZ-wP-Tec" firstAttribute="height" secondItem="W6S-g0-BmD" secondAttribute="height" id="aoY-DQ-fMa"/>
+                                                <constraint firstItem="2NI-TZ-i97" firstAttribute="top" secondItem="W6S-g0-BmD" secondAttribute="top" id="avY-ue-Ewb"/>
+                                                <constraint firstItem="2NI-TZ-i97" firstAttribute="leading" secondItem="JuL-nq-uCk" secondAttribute="trailing" id="wX5-AS-qJS"/>
+                                                <constraint firstItem="JuL-nq-uCk" firstAttribute="top" secondItem="W6S-g0-BmD" secondAttribute="top" id="zFC-z7-vOm"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnapCamTableViewCell" rowHeight="80" id="42a-Z2-A57" customClass="SnapCamTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="72" width="600" height="80"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="42a-Z2-A57" id="B55-j3-pb2">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="79"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zIr-s4-g1F">
+                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="79"/>
+                                                    <animations/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="zIr-s4-g1F" secondAttribute="bottom" id="Aef-ZC-RI1"/>
+                                                <constraint firstItem="zIr-s4-g1F" firstAttribute="top" secondItem="B55-j3-pb2" secondAttribute="top" id="KCw-kE-gSd"/>
+                                                <constraint firstItem="zIr-s4-g1F" firstAttribute="leading" secondItem="B55-j3-pb2" secondAttribute="leading" id="cIt-Ni-BiR"/>
+                                                <constraint firstAttribute="trailing" secondItem="zIr-s4-g1F" secondAttribute="trailing" id="llU-NV-1ye"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="optionlabel" destination="zIr-s4-g1F" id="Qra-ya-z91"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="FLA-8t-Aaj" id="SFZ-FR-mDI"/>
+                                    <outlet property="delegate" destination="FLA-8t-Aaj" id="sM7-if-kMM"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="uci-ze-ZQz" firstAttribute="leading" secondItem="MOu-Yi-ihb" secondAttribute="leading" id="9Jp-3Z-LRc"/>
+                            <constraint firstItem="Kzj-Oc-NDJ" firstAttribute="top" secondItem="uci-ze-ZQz" secondAttribute="bottom" id="BFR-kE-VYa"/>
+                            <constraint firstItem="uci-ze-ZQz" firstAttribute="top" secondItem="Fkd-nu-9nb" secondAttribute="bottom" id="WpH-AR-CB4"/>
+                            <constraint firstAttribute="trailing" secondItem="uci-ze-ZQz" secondAttribute="trailing" id="bQU-wc-f38"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="snapCamSettingsTableView" destination="uci-ze-ZQz" id="aSo-4u-GgB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zgo-n5-hRi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="374" y="223"/>
+        </scene>
+    </scenes>
+</document>
