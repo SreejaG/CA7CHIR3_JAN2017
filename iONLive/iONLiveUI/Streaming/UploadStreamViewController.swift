@@ -18,8 +18,7 @@ class UploadStreamViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
-    var currentStreamingTocken:String?
-    
+    var currentStreamingTocken:String?    
     
     override func viewDidLoad()
     {
@@ -32,15 +31,43 @@ class UploadStreamViewController: UIViewController {
         self.navigationController?.navigationBarHidden = false
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        
+        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
+            
+            if viewControllers.contains(self) == false{
+                
+                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
+                
+                vc.initialiseDecoder()
+            }
+        }
+        
+    }
+    
     func initialize()
     {
         self.title = "LIVE STREAM"
-        streamingStatuslabel.hidden = true
-        activityIndicator.hidden = true
-        currentStreamingTocken = nil
-        
-        setStartStreamingButtonEnability(true)
-        setStopStreamingButtonEnability(false)
+
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let streaming = defaults.boolForKey(startedStreaming)
+        if streaming
+        {
+            streamingStatuslabel.text = "Live Streaming.."
+            activityIndicator.hidden = false
+            currentStreamingTocken = defaults.valueForKey(streamingToken) as? String
+            setStartStreamingButtonEnability(false)
+            setStopStreamingButtonEnability(true)
+        }
+        else
+        {
+            streamingStatuslabel.hidden = true
+            activityIndicator.hidden = true
+            currentStreamingTocken = nil
+            
+            setStartStreamingButtonEnability(true)
+            setStopStreamingButtonEnability(false)
+        }
     }
     
     //PRAGMA MARK:- button actions
@@ -124,7 +151,7 @@ class UploadStreamViewController: UIViewController {
             streamingStatuslabel.text = "Starting Live Streaming.."
             livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
                 
-                self.streamingStatuslabel.text = "Live Streaming.."
+                
                 
                 if let json = response as? [String: AnyObject]
                 {
@@ -142,20 +169,26 @@ class UploadStreamViewController: UIViewController {
                     let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
                     let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
                     
+                    let defaults = NSUserDefaults .standardUserDefaults()
+                    defaults.setValue(streamToken, forKey: streamingToken)
 
-
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+                    if (init_streams(fromServerName, baseStreamName) == 0)
                     {
-                        if (init_streams(fromServerName, baseStreamName) == 0)
+                        self.streamingStatuslabel.text = "Live Streaming.."
+                        defaults.setBool(true, forKey: startedStreaming)
+                        print("live streaming")
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
                         {
-                            start_stream(baseStreamName)
+                                
+                                start_stream(baseStreamName)
                         }
-                        else
-                        {
-                            ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
-                        }
-                        
                     }
+                    else
+                    {
+                        defaults.setValue(false, forKey: startedStreaming)
+                        ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
+                    }
+                    
                 }
                 else
                 {
@@ -204,7 +237,10 @@ class UploadStreamViewController: UIViewController {
                 {
                     self.setStartStreamingButtonEnability(true)
                     self.setStopStreamingButtonEnability(false)
-                    
+                    let defaults = NSUserDefaults .standardUserDefaults()
+                    defaults.setValue(false, forKey: startedStreaming)
+
+//                    self.streamStarted =  false;
                     stop_stream()
                     
                     print("success = \(json["streamToken"])")
