@@ -37,6 +37,19 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        
+        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
+            
+            if viewControllers.contains(self) == false{
+                
+                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
+                
+                vc.initialiseDecoder()
+            }
+        }
+    }
+    
     func showNavigationBar()
     {
         self.navigationController?.navigationBarHidden = false

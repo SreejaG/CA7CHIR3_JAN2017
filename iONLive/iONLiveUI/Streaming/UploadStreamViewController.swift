@@ -18,8 +18,7 @@ class UploadStreamViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
-    var currentStreamingTocken:String?
-    
+    var currentStreamingTocken:String?    
     
     override func viewDidLoad()
     {
@@ -32,15 +31,43 @@ class UploadStreamViewController: UIViewController {
         self.navigationController?.navigationBarHidden = false
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        
+        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
+            
+            if viewControllers.contains(self) == false{
+                
+                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
+                
+                vc.initialiseDecoder()
+            }
+        }
+        
+    }
+    
     func initialize()
     {
         self.title = "LIVE STREAM"
-        streamingStatuslabel.hidden = true
-        activityIndicator.hidden = true
-        currentStreamingTocken = nil
-        
-        setStartStreamingButtonEnability(true)
-        setStopStreamingButtonEnability(false)
+
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let streaming = defaults.boolForKey(startedStreaming)
+        if streaming
+        {
+            streamingStatuslabel.text = "Live Streaming.."
+            activityIndicator.hidden = false
+            currentStreamingTocken = defaults.valueForKey(streamingToken) as? String
+            setStartStreamingButtonEnability(false)
+            setStopStreamingButtonEnability(true)
+        }
+        else
+        {
+            streamingStatuslabel.hidden = true
+            activityIndicator.hidden = true
+            currentStreamingTocken = nil
+            
+            setStartStreamingButtonEnability(true)
+            setStopStreamingButtonEnability(false)
+        }
     }
     
     //PRAGMA MARK:- button actions
@@ -124,38 +151,46 @@ class UploadStreamViewController: UIViewController {
             streamingStatuslabel.text = "Starting Live Streaming.."
             livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
                 
-                self.streamingStatuslabel.text = "Live Streaming.."
+                
                 
                 if let json = response as? [String: AnyObject]
                 {
                     print("success = \(json["streamToken"])")
                     let streamToken:String = json["streamToken"] as! String
-                    var baseStream = "rtmp://104.197.159.157:1935/live/"
-//                    var baseStream = "rtmp://192.168.16.34:1935/live/"
-                    baseStream.appendContentsOf(streamToken)
-                    print("baseStream\(baseStream)")
+//                    var baseStream = "rtmp://104.197.159.157:1935/live/"
+////                    var baseStream = "rtmp://192.168.16.34:1935/live/"
+//                    baseStream.appendContentsOf(streamToken)
+//                    print("baseStream\(baseStream)")
                     
-                    let fromServer = "rtsp://192.168.42.1:554/live"
-                    let fromServerPtr = strdup(fromServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
-                    let fromServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(fromServerPtr)
+//                    let fromServer = "rtsp://192.168.42.1:554/live"
+//                    let fromServerPtr = strdup(fromServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
+//                    let fromServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(fromServerPtr)
                     
-                    let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
-                    let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+//                    let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
+//                    let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+                    let baseStreamName = self.getBaseStream(streamToken)
+                    let cameraServerName = self.getCameraServer()
                     
+                    let defaults = NSUserDefaults .standardUserDefaults()
+                    defaults.setValue(streamToken, forKey: streamingToken)
 
-
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+                    if (init_streams(cameraServerName, baseStreamName) == 0)
                     {
-                        if (init_streams(fromServerName, baseStreamName) == 0)
+                        self.streamingStatuslabel.text = "Live Streaming.."
+                        defaults.setBool(true, forKey: startedStreaming)
+                        print("live streaming")
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
                         {
-                            start_stream(baseStreamName)
+                                
+                                start_stream(baseStreamName)
                         }
-                        else
-                        {
-                            ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
-                        }
-                        
                     }
+                    else
+                    {
+                        defaults.setValue(false, forKey: startedStreaming)
+                        ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
+                    }
+                    
                 }
                 else
                 {
@@ -188,6 +223,24 @@ class UploadStreamViewController: UIViewController {
         }
     }
     
+    func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
+    {
+        var baseStream = "rtmp://104.197.159.157:1935/live/"
+//      var baseStream = "rtmp://192.168.16.34:1935/live/"
+        baseStream.appendContentsOf(streamToken)
+        let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
+        let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+        return baseStreamName
+    }
+    
+    func getCameraServer() -> UnsafeMutablePointer<CChar>
+    {
+        let cameraServer = "rtsp://192.168.42.1:554/live"
+        let cameraServerPtr = strdup(cameraServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
+        let cameraServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(cameraServerPtr)
+        return cameraServerName
+    }
+    
     func stopLiveStreaming(streamTocken:String?)
     {
         let userDefault = NSUserDefaults.standardUserDefaults()
@@ -202,11 +255,14 @@ class UploadStreamViewController: UIViewController {
                 self.activityIndicator.hidden = true
                 if let json = response as? [String: AnyObject]
                 {
-                    self.setStartStreamingButtonEnability(true)
-                    self.setStopStreamingButtonEnability(false)
-                    
-                    stop_stream()
-                    
+//                    self.setStartStreamingButtonEnability(true)
+//                    self.setStopStreamingButtonEnability(false)
+//                    
+//                    let defaults = NSUserDefaults .standardUserDefaults()
+//                    defaults.setValue(false, forKey: startedStreaming)
+//                    stop_stream()
+//                    
+                    self.stopStreamingandUpdateButton()
                     print("success = \(json["streamToken"])")
                 }
                 else
@@ -241,6 +297,16 @@ class UploadStreamViewController: UIViewController {
             self.setStopStreamingButtonEnability(true)
             ErrorManager.sharedInstance.authenticationIssue()
         }
+    }
+    
+    func stopStreamingandUpdateButton()
+    {
+        self.setStartStreamingButtonEnability(true)
+        self.setStopStreamingButtonEnability(false)
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        defaults.setValue(false, forKey: startedStreaming)
+        stop_stream()
     }
     
 // PRAGMA MARK :- Helper functions

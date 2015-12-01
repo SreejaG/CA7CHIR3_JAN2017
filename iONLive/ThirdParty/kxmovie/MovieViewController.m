@@ -108,7 +108,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
     BOOL                _savedIdleTimer;
-    
+    NSString *          rtspFilePath;
     NSDictionary        *_parameters;
     
     //Should be removed
@@ -146,7 +146,8 @@ static NSMutableDictionary * gHistory;
 {
     id<KxAudioManager> audioManager = [KxAudioManager audioManager];
     [audioManager activateAudioSession];
-        return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
+    
+    return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
 }
 
 - (id) initWithContentPath: (NSString *) path
@@ -158,9 +159,10 @@ static NSMutableDictionary * gHistory;
 
     if (self) {
         _liveVideo = live;
-
+        rtspFilePath = path;
         _parameters = nil;
-        
+        NSLog(@"rtsp File Path = %@",path);
+
         __weak MovieViewController *weakSelf = self;
         
         KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
@@ -174,7 +176,7 @@ static NSMutableDictionary * gHistory;
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
             NSError *error = nil;
-            [decoder openFile:path error:&error];
+            [decoder openFile:rtspFilePath error:&error];
             
             __strong MovieViewController *strongSelf = weakSelf;
             if (strongSelf) {
@@ -187,6 +189,58 @@ static NSMutableDictionary * gHistory;
         });
     }
     return self;
+}
+
+-(void)initialiseDecoder
+{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    
+    noDataFound.hidden = true;
+    if (streamStarted == false) {
+        
+        NSLog(@"rtsp File Path = %@",rtspFilePath);
+        _interrupted = false;
+        self.playing = NO;
+        
+        id<KxAudioManager> audioManager = [KxAudioManager audioManager];
+        [audioManager activateAudioSession];
+        
+        [_activityIndicatorView startAnimating];
+        _activityIndicatorView.hidden = false;
+
+        __weak MovieViewController *weakSelf = self;
+
+        KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
+        
+        decoder.interruptCallback = ^BOOL(){
+            
+            __strong MovieViewController *strongSelf = weakSelf;
+            return strongSelf ? [strongSelf interruptDecoder] : YES;
+        };
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            
+            NSError *error = nil;
+            [decoder openFile:rtspFilePath error:&error];
+            
+            __strong MovieViewController *strongSelf = weakSelf;
+            if (strongSelf) {
+                
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    
+                    [strongSelf setMovieDecoder:decoder withError:error];
+                });
+            }
+        });
+    }
+    else
+    {
+        [self.view setBackgroundColor:[UIColor whiteColor]];
+        noDataFound.text = @"Live Streaming in Progress! , Stop Streaming to resume Live";
+        noDataFound.textColor = [UIColor redColor];
+        noDataFound.hidden = false;
+    }
 }
 
 - (void) dealloc
@@ -215,12 +269,25 @@ static NSMutableDictionary * gHistory;
 
         [self setupPresentView];
     }
+    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
+    
+    
+    //TODO make _interrupted No ,click on back button
+    _interrupted = NO;
+    if (_decoder) {
+        
+        [self restorePlay];
+        
+    } else {
+        
+        [_activityIndicatorView startAnimating];
+    }
 }
 
 -(void)setUpInitialGLView
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-    [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]]; //colorWithAlphaComponent:0.6]];
+    [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
     if (_liveVideo == true)
     {
         bottomView.hidden = false;
@@ -330,19 +397,19 @@ static NSMutableDictionary * gHistory;
 {
     [super viewDidAppear:animated];
     
-    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
-    
-
-//TODO make _interrupted No ,click on back button
-    _interrupted = NO;
-    if (_decoder) {
-        
-        [self restorePlay];
-        
-    } else {
-        
-        [_activityIndicatorView startAnimating];
-    }
+//    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
+//    
+//
+////TODO make _interrupted No ,click on back button
+//    _interrupted = NO;
+//    if (_decoder) {
+//        
+//        [self restorePlay];
+//        
+//    } else {
+//        
+//        [_activityIndicatorView startAnimating];
+//    }
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -361,7 +428,9 @@ static NSMutableDictionary * gHistory;
     
     if (_decoder) {
         
-        [self pause];
+        dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+            [_decoder closeFile];
+        });
         
         if (_moviePosition == 0 || _decoder.isEOF)
             [gHistory removeObjectForKey:_decoder.path];
@@ -412,6 +481,7 @@ static NSMutableDictionary * gHistory;
     _tickCounter = 0;
 
 
+    NSLog(@"asyncDecodeFrames");
     [self asyncDecodeFrames];
 
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC);
@@ -436,6 +506,14 @@ static NSMutableDictionary * gHistory;
     LoggerStream(1, @"pause movie");
 }
 
+-(void)close
+{
+    _interrupted = true;
+//    self.playing = NO;
+//    [self freeBufferedFrames];
+    [_decoder closeFile];
+//    [_decoder openFile:nil error:nil];
+}
 
 #pragma mark - private
 
@@ -495,6 +573,7 @@ static NSMutableDictionary * gHistory;
             if (_activityIndicatorView.isAnimating) {
 
                 [_activityIndicatorView stopAnimating];
+                NSLog(@"setMovieDecoder: (KxMovieDecoder *) decoder");
                 [self restorePlay];
             }
         }
@@ -512,6 +591,7 @@ static NSMutableDictionary * gHistory;
 
 - (void) restorePlay
 {
+    NSLog(@"restorePlay");
     [self play];
 }
 
@@ -745,6 +825,7 @@ static NSMutableDictionary * gHistory;
     dispatch_async(_dispatchQueue, ^{
 
         {
+            NSLog(@"_dispatchQueue");
             __strong MovieViewController *strongSelf = weakSelf;
             if (!strongSelf.playing)
                 return;
@@ -761,6 +842,7 @@ static NSMutableDictionary * gHistory;
 
                 if (decoder && (decoder.validVideo || decoder.validAudio)) {
 
+//                    NSLog(@"[decoder decodeFrames:duration];");
                     NSArray *frames = [decoder decodeFrames:duration];
                     if (frames.count) {
 
@@ -802,7 +884,7 @@ static NSMutableDictionary * gHistory;
 
             if (_decoder.isEOF) {
 
-                [self pause];
+                [self close];
                 return;
             }
 
@@ -918,9 +1000,9 @@ static NSMutableDictionary * gHistory;
 
 -(void)loadUploadStreamingView
 {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"UploadStreamViewController"];
-    [self.navigationController pushViewController:vc animated:true];
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
+    UIViewController *streamViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"UploadStreamViewController"];
+    [self.navigationController pushViewController:streamViewController animated:true];
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
@@ -930,9 +1012,9 @@ static NSMutableDictionary * gHistory;
 
 -(void) loadStreamsListView
 {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"StreamsListViewController"];
-    [self.navigationController pushViewController:vc animated:true];
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
+    UIViewController *streamsListViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsListViewController"];
+    [self.navigationController pushViewController:streamsListViewController animated:true];
 }
 
 - (void) freeBufferedFrames

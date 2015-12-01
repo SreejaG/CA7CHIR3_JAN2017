@@ -165,6 +165,8 @@ class LoginViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let defaults = NSUserDefaults .standardUserDefaults()
+            clearStreamingUserDefaults(defaults)
+            
             print("success = \(json["status"]),\(json["token"]),\(json["user"])")
             if let tocken = json["token"]
             {
@@ -180,6 +182,12 @@ class LoginViewController: UIViewController {
             ErrorManager.sharedInstance.loginError()
         }
 
+    }
+    
+    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    {
+        defaults.removeObjectForKey(streamingToken)
+        defaults.removeObjectForKey(startedStreaming)
     }
     
     func authenticationFailureHandler(error: NSError?, message: String)
