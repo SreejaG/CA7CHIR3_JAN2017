@@ -23,6 +23,11 @@ class UrlManager {
         return userLoginAPI
     }
     
+    func usersSignUpAPIUrl() -> (String) {
+        let userLoginAPI = baseUrl+"/newUser"
+        return userLoginAPI
+    }
+    
    func liveStreamingAPIUrl() -> String{
        let liveStreamingAPI = baseUrl+"/api/v1/livestream"
        return liveStreamingAPI

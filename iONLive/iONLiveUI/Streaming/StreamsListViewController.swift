@@ -40,7 +40,8 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     func showNavigationBar()
     {
         self.navigationController?.navigationBarHidden = false
-        //self.navigationController?.navigationBar.backItem?.title = ""
+        self.navigationController?.navigationBar.translucent = false
+        
     }
     //PRAGMA MARK-: TableView dataSource and Delegates
     

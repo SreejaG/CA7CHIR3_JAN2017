@@ -46,6 +46,10 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Login Error", message: "We're sorry but there was an error retrieving your account. Please try again.")
     }
     
+    func signUpError() {
+        alert("SignUp Error", message: "We're sorry but there was an error creating your account. Please try again.")
+    }
+    
     func loginNoEmailEnteredError()
     {
         alert("Login Error", message: "Please enter your username")
