@@ -78,10 +78,11 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIView *mainView;
     IBOutlet UIView *bottomView;
     IBOutlet UIButton *cameraSelectionButton;
-    IBOutlet UIButton *backButton;
+//    IBOutlet UIButton *backButton;
     IBOutlet UIButton *uploadStreamButton;
     IBOutlet UIButton *cameraButton;
 
+    IBOutlet UIButton *closeButton;
     IBOutlet UILabel *noDataFound;
     BOOL                _interrupted;
     
@@ -299,28 +300,21 @@ static NSMutableDictionary * gHistory;
     [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
     if (_liveVideo == true)
     {
+        closeButton.hidden = true;
         bottomView.hidden = false;
         noDataFound.text = @"Camera not connected!";
         noDataFound.hidden = false;
     }
     else
     {
+        closeButton.hidden = false;
         bottomView.hidden = true;
         noDataFound.hidden = true;
     }
     
-//    uploadStreamButton.hidden = true;
+    uploadStreamButton.hidden = true;
     cameraSelectionButton.hidden = true;
 }
-
-//-(void)setUpInitialView
-//{
-////    self.view.backgroundColor = [UIColor blackColor];
-////    self.view.tintColor = [UIColor blackColor];
-////    [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-//    topView.hidden = true;
-//    bottomView.hidden = true;
-//}
 
 -(void)setUpViewForLiveAndStreaming
 {
@@ -337,25 +331,25 @@ static NSMutableDictionary * gHistory;
 
 -(void)customizeUploadStreamButton
 {
-//    uploadStreamButton.clipsToBounds = YES;
-//    uploadStreamButton.layer.cornerRadius = 15;
+    uploadStreamButton.clipsToBounds = YES;
+    uploadStreamButton.layer.cornerRadius = 15;
 }
 
 -(void)customiseViewForLive
 {
     bottomView.hidden = false;
     topView.hidden = false;
-//    uploadStreamButton.hidden = false;
+    uploadStreamButton.hidden = false;
     cameraSelectionButton.hidden = false;
-    backButton.hidden = true;
+    closeButton.hidden = true;
 }
 
 -(void)customiseViewForStreaming
 {
-//    uploadStreamButton.hidden = true;
+    uploadStreamButton.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
-    backButton.hidden = false;
+    closeButton.hidden = false;
     cameraSelectionButton.hidden = true;
 }
 
@@ -1004,6 +998,14 @@ static NSMutableDictionary * gHistory;
 
     return frame.duration;
 }
+- (IBAction)didTapCloseButton:(id)sender {
+    
+    [self dismissViewControllerAnimated:true
+    completion:^{
+
+    }];
+}
+
 - (IBAction)didTapUploadStream:(id)sender {
     
     //[self loadUploadStreamingView];

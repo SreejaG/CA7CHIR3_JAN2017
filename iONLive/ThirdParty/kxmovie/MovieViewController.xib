@@ -8,10 +8,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MovieViewController">
             <connections>
                 <outlet property="_activityIndicatorView" destination="fVQ-mp-3vZ" id="AQw-2s-BP2"/>
-                <outlet property="backButton" destination="ogj-ER-apE" id="GUw-Fi-ZDX"/>
                 <outlet property="bottomView" destination="8cA-HV-eex" id="PPk-2D-Ayo"/>
                 <outlet property="cameraButton" destination="Fzv-Kt-ME1" id="xLN-vZ-og4"/>
                 <outlet property="cameraSelectionButton" destination="lME-9O-IZZ" id="6cY-ph-zgr"/>
+                <outlet property="closeButton" destination="2sq-TW-cXt" id="Rbm-RH-rk7"/>
                 <outlet property="glView" destination="R2J-HD-A0s" id="pO5-Cs-rFc"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
@@ -66,18 +66,6 @@
                                                 <action selector="camSelectionButtonClick:" destination="-1" eventType="touchUpInside" id="ptU-Eh-YRg"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ogj-ER-apE" userLabel="backButton">
-                                            <rect key="frame" x="10" y="22" width="12" height="21"/>
-                                            <animations/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="21" id="5FO-7k-sTO"/>
-                                                <constraint firstAttribute="width" constant="12" id="g3n-AE-LjI"/>
-                                            </constraints>
-                                            <state key="normal" image="white_back"/>
-                                            <connections>
-                                                <action selector="touchBackButton:" destination="-1" eventType="touchUpInside" id="1Bq-9p-tX7"/>
-                                            </connections>
-                                        </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n6M-KO-3j3" userLabel="Live Stream">
                                             <rect key="frame" x="477" y="17" width="103" height="30"/>
                                             <animations/>
@@ -93,17 +81,29 @@
                                                 <action selector="didTapUploadStream:" destination="-1" eventType="touchUpInside" id="qX4-0y-8Rk"/>
                                             </connections>
                                         </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2sq-TW-cXt" userLabel="CloseButton">
+                                            <rect key="frame" x="560" y="19" width="25" height="25"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="25" id="XHg-3r-mpc"/>
+                                                <constraint firstAttribute="height" constant="25" id="rUC-WG-BAc"/>
+                                            </constraints>
+                                            <state key="normal" image="close"/>
+                                            <connections>
+                                                <action selector="didTapCloseButton:" destination="-1" eventType="touchUpInside" id="hJr-hB-ktr"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <animations/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="n6M-KO-3j3" secondAttribute="trailing" constant="20" id="2vZ-H9-x5x"/>
-                                        <constraint firstItem="ogj-ER-apE" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="10" id="9PI-Yk-8uw"/>
                                         <constraint firstItem="n6M-KO-3j3" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="Cth-gf-sPf"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="18" id="EN0-9m-7cf"/>
                                         <constraint firstAttribute="height" constant="64" id="Ej2-3X-7lc"/>
+                                        <constraint firstAttribute="trailing" secondItem="2sq-TW-cXt" secondAttribute="trailing" constant="15" id="KE4-do-HiM"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="top" secondItem="BB9-od-AqJ" secondAttribute="top" constant="25" id="QcA-zg-qca"/>
-                                        <constraint firstItem="ogj-ER-apE" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="VN1-Pm-av6"/>
+                                        <constraint firstItem="2sq-TW-cXt" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="TS5-v6-FgA"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8cA-HV-eex" userLabel="BottomView">
@@ -205,6 +205,6 @@
         <image name="Camera_Thumb" width="51" height="50"/>
         <image name="Live_now_t" width="27" height="27"/>
         <image name="Stream_Thumb" width="56" height="56"/>
-        <image name="white_back" width="12" height="21"/>
+        <image name="close" width="25" height="25"/>
     </resources>
 </document>

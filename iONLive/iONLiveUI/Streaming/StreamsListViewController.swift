@@ -123,8 +123,11 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtmp://104.197.159.157:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        
+        self.presentViewController(vc, animated: true) { () -> Void in
+            
+        }
 //        print("rtmp://192.168.16.64:1935/live/\(streamTocken)")
-        self.navigationController?.pushViewController(vc, animated: false)
     }
     
     //PRAGMA MARK:- API Handlers
