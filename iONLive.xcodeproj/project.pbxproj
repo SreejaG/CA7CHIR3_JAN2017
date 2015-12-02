@@ -36,6 +36,7 @@
 		167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0691BFDC32E003CDF30 /* Streaming.storyboard */; };
 		167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */; };
 		167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */; };
+		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
@@ -130,6 +131,7 @@
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
 		167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStreamViewController.swift; sourceTree = "<group>"; };
 		167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
+		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
 		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
@@ -465,6 +467,7 @@
 		167AF05F1BFDC2C1003CDF30 /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
+				1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */,
 				167AF0691BFDC32E003CDF30 /* Streaming.storyboard */,
 				167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */,
 				167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */,
@@ -945,6 +948,7 @@
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
+				1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */,
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
