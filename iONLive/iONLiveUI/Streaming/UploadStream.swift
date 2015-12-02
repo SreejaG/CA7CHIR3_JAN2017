@@ -13,6 +13,8 @@ class UploadStream : NSObject
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
     var currentStreamingTocken:String?
+    
+    var steamingStatus:StreamingProtocol?
 
     override init(){
     }
@@ -76,7 +78,7 @@ class UploadStream : NSObject
         let userDefault = NSUserDefaults.standardUserDefaults()
         let loginId = userDefault.objectForKey(userLoginIdKey)
         let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        
+        self.steamingStatus?.StreamingStatus("Starting Live Streaming ...");
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
@@ -93,14 +95,15 @@ class UploadStream : NSObject
                     let defaults = NSUserDefaults .standardUserDefaults()
                     defaults.setValue(streamToken, forKey: streamingToken)
                     
+                    self.steamingStatus?.StreamingStatus("Initializing Live Streaming...");
                     if (init_streams(cameraServerName, baseStreamName) == 0)
                     {
                         defaults.setBool(true, forKey: startedStreaming)
                         print("live streaming")
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
-                            {
-                                
-                                start_stream(baseStreamName)
+                        {
+                            self.steamingStatus?.StreamingStatus("live streaming...");
+                            start_stream(baseStreamName)
                         }
                     }
                     else
@@ -206,6 +209,7 @@ class UploadStream : NSObject
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(false, forKey: startedStreaming)
+        self.steamingStatus?.StreamingStatus("");
         stop_stream()
     }
 }

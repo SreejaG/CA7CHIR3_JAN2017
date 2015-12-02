@@ -17,7 +17,6 @@
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
-                <outlet property="uploadStreamButton" destination="n6M-KO-3j3" id="fg1-UA-tHN"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -61,24 +60,9 @@
                                                 <constraint firstAttribute="height" constant="25" id="Gjp-AU-IYL"/>
                                                 <constraint firstAttribute="width" constant="26" id="zOk-MF-xeS"/>
                                             </constraints>
-                                            <state key="normal" image="Live_now_off_t"/>
+                                            <state key="normal" image="Live_camera"/>
                                             <connections>
                                                 <action selector="camSelectionButtonClick:" destination="-1" eventType="touchUpInside" id="ptU-Eh-YRg"/>
-                                            </connections>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n6M-KO-3j3" userLabel="Live Stream">
-                                            <rect key="frame" x="477" y="17" width="103" height="30"/>
-                                            <animations/>
-                                            <color key="backgroundColor" red="0.85882352939999995" green="0.30980392159999998" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="30" id="0kc-6c-C9D"/>
-                                                <constraint firstAttribute="width" constant="103" id="zl0-tC-C4l"/>
-                                            </constraints>
-                                            <state key="normal" title="Live Stream">
-                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="didTapUploadStream:" destination="-1" eventType="touchUpInside" id="qX4-0y-8Rk"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2sq-TW-cXt" userLabel="CloseButton">
@@ -97,8 +81,6 @@
                                     <animations/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="n6M-KO-3j3" secondAttribute="trailing" constant="20" id="2vZ-H9-x5x"/>
-                                        <constraint firstItem="n6M-KO-3j3" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="Cth-gf-sPf"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="18" id="EN0-9m-7cf"/>
                                         <constraint firstAttribute="height" constant="64" id="Ej2-3X-7lc"/>
                                         <constraint firstAttribute="trailing" secondItem="2sq-TW-cXt" secondAttribute="trailing" constant="15" id="KE4-do-HiM"/>
@@ -203,7 +185,7 @@
     <resources>
         <image name="Camera_Button_OFF" width="86" height="86"/>
         <image name="Camera_Thumb" width="51" height="50"/>
-        <image name="Live_now_off_t" width="27" height="27"/>
+        <image name="Live_camera" width="26" height="25"/>
         <image name="Stream_Thumb" width="56" height="56"/>
         <image name="close" width="25" height="25"/>
     </resources>

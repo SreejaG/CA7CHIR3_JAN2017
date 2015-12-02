@@ -69,7 +69,7 @@ static NSMutableDictionary * gHistory;
 #define NETWORK_MIN_BUFFERED_DURATION 2.0
 #define NETWORK_MAX_BUFFERED_DURATION 4.0
 
-@interface MovieViewController ()
+@interface MovieViewController () <StreamingProtocol>
 {
     
     IBOutlet UIImageView *imageView;
@@ -78,8 +78,8 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIView *mainView;
     IBOutlet UIView *bottomView;
     IBOutlet UIButton *cameraSelectionButton;
+//    IBOutlet UIButton *liveStreamStatus;
 //    IBOutlet UIButton *backButton;
-    IBOutlet UIButton *uploadStreamButton;
     IBOutlet UIButton *cameraButton;
 
     IBOutlet UIButton *closeButton;
@@ -273,7 +273,7 @@ static NSMutableDictionary * gHistory;
     [super viewDidLoad];
 
     [self setUpInitialGLView];
-    [self customizeUploadStreamButton];
+//    [self customizeUploadStreamButton];
 
     if (_decoder) {
 
@@ -312,7 +312,7 @@ static NSMutableDictionary * gHistory;
         noDataFound.hidden = true;
     }
     
-    uploadStreamButton.hidden = true;
+//    liveStreamStatus.hidden = true;
     cameraSelectionButton.hidden = true;
 }
 
@@ -329,24 +329,24 @@ static NSMutableDictionary * gHistory;
     }
 }
 
--(void)customizeUploadStreamButton
-{
-    uploadStreamButton.clipsToBounds = YES;
-    uploadStreamButton.layer.cornerRadius = 15;
-}
+//-(void)customizeUploadStreamButton
+//{
+//    liveStreamStatus.clipsToBounds = YES;
+//    liveStreamStatus.layer.cornerRadius = 15;
+//}
 
 -(void)customiseViewForLive
 {
     bottomView.hidden = false;
     topView.hidden = false;
-    uploadStreamButton.hidden = false;
+//    liveStreamStatus.hidden = false;
     cameraSelectionButton.hidden = false;
     closeButton.hidden = true;
 }
 
 -(void)customiseViewForStreaming
 {
-    uploadStreamButton.hidden = true;
+//    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
     closeButton.hidden = false;
@@ -414,16 +414,16 @@ static NSMutableDictionary * gHistory;
 //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
 //    
 //
-////TODO make _interrupted No ,click on back button
-//    _interrupted = NO;
-//    if (_decoder) {
-//        
-//        [self restorePlay];
-//        
-//    } else {
-//        
-//        [_activityIndicatorView startAnimating];
-//    }
+//TODO make _interrupted No ,click on back button
+    _interrupted = NO;
+    if (_decoder) {
+        
+        [self restorePlay];
+        
+    } else {
+        
+        [_activityIndicatorView startAnimating];
+    }
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -445,7 +445,7 @@ static NSMutableDictionary * gHistory;
 //        dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
 //            [_decoder closeFile];
 //        });
-        [self close];
+ //       [self close];
         if (_moviePosition == 0 || _decoder.isEOF)
             [gHistory removeObjectForKey:_decoder.path];
         else if (!_decoder.isNetwork)
@@ -457,7 +457,7 @@ static NSMutableDictionary * gHistory;
     
     [_activityIndicatorView stopAnimating];
     _buffered = NO;
-    _interrupted = YES;
+//    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -520,16 +520,16 @@ static NSMutableDictionary * gHistory;
     LoggerStream(1, @"pause movie");
 }
 
--(void)close
-{
-    _interrupted = true;
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
-        [_decoder closeFile];
-    });//    self.playing = NO;
-//    [self freeBufferedFrames];
-//    [_decoder closeFile];
-//    [_decoder openFile:nil error:nil];
-}
+//-(void)close
+//{
+//    _interrupted = true;
+//    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+//        [_decoder closeFile];
+//    });//    self.playing = NO;
+////    [self freeBufferedFrames];
+////    [_decoder closeFile];
+////    [_decoder openFile:nil error:nil];
+//}
 
 #pragma mark - private
 
@@ -898,11 +898,11 @@ static NSMutableDictionary * gHistory;
 
         if (0 == leftFrames) {
 
-            if (_decoder.isEOF) {
-
-                [self close];
-                return;
-            }
+//            if (_decoder.isEOF) {
+//
+//                [self close];
+//                return;
+//            }
 
             if (_minBufferedDuration > 0 && !_buffered) {
 
@@ -1033,13 +1033,14 @@ static NSMutableDictionary * gHistory;
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
     UploadStream * stream = [[UploadStream alloc]init];
+    stream.steamingStatus = self;
 
     if (streamStarted == false) {
         
         [stream startStreamingClicked];
         [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
-        noDataFound.hidden = false;
-        noDataFound.text = @"Live Streaming";
+//        noDataFound.hidden = false;
+//        noDataFound.text = @"Live Streaming";
     }
     else
     {
@@ -1115,10 +1116,19 @@ static NSMutableDictionary * gHistory;
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     UIViewController *snapCamSelectVC = [storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
-    self.definesPresentationContext = YES; //self is presenting view controller
-    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+//    self.definesPresentationContext = YES; //self is presenting view controller
+//    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
+}
+
+#pragma mark - Streaming protocol
+
+-(void) StreamingStatus:(NSString*)status
+{
+//    [liveStreamStatus setTitle:status forState:UIControlStateNormal];
+//    self.liveStreamStatus.titleLabel.text = status;
+    NSLog(@"Streaming Status %@", status);
 }
 
 @end

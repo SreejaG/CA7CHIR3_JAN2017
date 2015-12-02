@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+
 @class KxMovieDecoder;
 
 extern NSString * const KxMovieParameterMinBufferedDuration;    // Float
