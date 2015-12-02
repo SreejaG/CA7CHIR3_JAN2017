@@ -1051,14 +1051,14 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    [self loadStreamsListView];
+    [self loadStreamsGalleryView];
 }
 
--(void) loadStreamsListView
+-(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *streamsListViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsListViewController"];
-    [self.navigationController pushViewController:streamsListViewController animated:true];
+    UIViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
+    [self.navigationController pushViewController:streamsGalleryViewController animated:true];
 }
 
 - (void) freeBufferedFrames
