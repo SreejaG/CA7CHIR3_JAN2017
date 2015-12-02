@@ -22,9 +22,9 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     
     override func viewWillDisappear(animated: Bool) {
         
-        let presentingViewController :UIViewController! = self.presentingViewController;
-        let vc:MovieViewController = presentingViewController as! MovieViewController
-        vc.initialiseDecoder()
+//        let presentingViewController :UIViewController! = self.presentingViewController;
+//        let vc:MovieViewController = presentingViewController as! MovieViewController
+//        vc.initialiseDecoder()
 
     }
     

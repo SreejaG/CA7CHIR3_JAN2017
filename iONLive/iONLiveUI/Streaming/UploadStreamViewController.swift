@@ -33,11 +33,11 @@ class UploadStreamViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         
-        if let viewController = self.parentViewController?.parentViewController
-        {
-            let vc:MovieViewController = viewController as! MovieViewController
-            vc.initialiseDecoder()
-        }
+//        if let viewController = self.parentViewController?.parentViewController
+//        {
+//            let vc:MovieViewController = viewController as! MovieViewController
+//            vc.initialiseDecoder()
+//        }
         
     }
     
