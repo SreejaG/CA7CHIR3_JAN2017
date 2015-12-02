@@ -357,6 +357,17 @@ static NSMutableDictionary * gHistory;
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:true];
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    
+    if (streamStarted == false) {
+        
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
+    }
+    else{
+        
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
+    }
 
 }
 - (void)didReceiveMemoryWarning
@@ -1026,11 +1037,13 @@ static NSMutableDictionary * gHistory;
     if (streamStarted == false) {
         
         [stream startStreamingClicked];
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
         noDataFound.hidden = false;
         noDataFound.text = @"Live Streaming";
     }
     else
     {
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
         [stream stopStreamingClicked];
     }
 }

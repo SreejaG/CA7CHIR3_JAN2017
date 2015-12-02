@@ -61,7 +61,7 @@
                                                 <constraint firstAttribute="height" constant="25" id="Gjp-AU-IYL"/>
                                                 <constraint firstAttribute="width" constant="26" id="zOk-MF-xeS"/>
                                             </constraints>
-                                            <state key="normal" image="Live_now_t"/>
+                                            <state key="normal" image="Live_now_off_t"/>
                                             <connections>
                                                 <action selector="camSelectionButtonClick:" destination="-1" eventType="touchUpInside" id="ptU-Eh-YRg"/>
                                             </connections>
@@ -203,7 +203,7 @@
     <resources>
         <image name="Camera_Button_OFF" width="86" height="86"/>
         <image name="Camera_Thumb" width="51" height="50"/>
-        <image name="Live_now_t" width="27" height="27"/>
+        <image name="Live_now_off_t" width="27" height="27"/>
         <image name="Stream_Thumb" width="56" height="56"/>
         <image name="close" width="25" height="25"/>
     </resources>
