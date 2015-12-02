@@ -103,6 +103,7 @@ static NSMutableDictionary * gHistory;
     BOOL                _infoMode;
     BOOL                _restoreIdleTimer;
     BOOL                _liveVideo;
+    BOOL                _cameraSelected;
 
     CGFloat             _bufferedDuration;
     CGFloat             _minBufferedDuration;
@@ -162,6 +163,7 @@ static NSMutableDictionary * gHistory;
 
     if (self) {
         _liveVideo = live;
+        _cameraSelected = true;
         rtspFilePath = path;
         _parameters = nil;
         NSLog(@"rtsp File Path = %@",path);
@@ -357,19 +359,27 @@ static NSMutableDictionary * gHistory;
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:true];
+    [self changeCameraSelectionImage];
+}
+
+-(void)changeLiveNowSelectionImage
+{
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
     
+    dispatch_async(dispatch_get_main_queue(), ^{
     if (streamStarted == false) {
         
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t"] forState:UIControlStateNormal];
     }
     else{
         
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
-    }
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t"] forState:UIControlStateNormal];
+        }
+    });
 
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -446,6 +456,7 @@ static NSMutableDictionary * gHistory;
 //            [_decoder closeFile];
 //        });
  //       [self close];
+        [self pause];
         if (_moviePosition == 0 || _decoder.isEOF)
             [gHistory removeObjectForKey:_decoder.path];
         else if (!_decoder.isNetwork)
@@ -457,7 +468,7 @@ static NSMutableDictionary * gHistory;
     
     [_activityIndicatorView stopAnimating];
     _buffered = NO;
-//    _interrupted = YES;
+    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -1030,23 +1041,28 @@ static NSMutableDictionary * gHistory;
 }
 - (IBAction)didTapLiveButton:(id)sender {
     
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
-    UploadStream * stream = [[UploadStream alloc]init];
-    stream.steamingStatus = self;
-
-    if (streamStarted == false) {
+    if (_cameraSelected == false) {
+        NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+        BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+        UploadStream * stream = [[UploadStream alloc]init];
+        stream.steamingStatus = self;
         
-        [stream startStreamingClicked];
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
-//        noDataFound.hidden = false;
-//        noDataFound.text = @"Live Streaming";
+        if (streamStarted == false) {
+            
+            [stream startStreamingClicked];
+            //        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
+            //        noDataFound.hidden = false;
+            //        noDataFound.text = @"Live Streaming";
+        }
+        else
+        {
+            //        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
+            [stream stopStreamingClicked];
+        }
     }
-    else
-    {
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
-        [stream stopStreamingClicked];
-    }
+        else
+        {
+        }
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
@@ -1112,23 +1128,50 @@ static NSMutableDictionary * gHistory;
     return _interrupted;
 }
 
-- (IBAction)camSelectionButtonClick:(id)sender
+- (IBAction)didTapcCamSelectionButton:(id)sender
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
-    UIViewController *snapCamSelectVC = [storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    snapCamSelectVC.streamingDelegate = self;
+    snapCamSelectVC.cameraMode = [self getCameraSelectionMode];
 //    self.definesPresentationContext = YES; //self is presenting view controller
 //    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
 
+-(BOOL)getCameraSelectionMode
+{
+    return _cameraSelected;
+}
+
 #pragma mark - Streaming protocol
 
 -(void) StreamingStatus:(NSString*)status
 {
+    [self changeCameraSelectionImage];
+//    if (status == @"Failure") {
+//        <#statements#>
+//    }
 //    [liveStreamStatus setTitle:status forState:UIControlStateNormal];
 //    self.liveStreamStatus.titleLabel.text = status;
     NSLog(@"Streaming Status %@", status);
+}
+
+-(void)cameraSelectionMode:(BOOL)selected
+{
+    _cameraSelected = selected;
+    
+}
+
+-(void)changeCameraSelectionImage
+{
+    if (_cameraSelected) {
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
+    }
+    else{
+        [self changeLiveNowSelectionImage];
+    }
 }
 
 @end

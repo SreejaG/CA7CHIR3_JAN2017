@@ -184,14 +184,15 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qQa-SN-vIU" userLabel="SettingsButtonView">
                                         <rect key="frame" x="560" y="0.0" width="30" height="50"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g0-Xb-ogi" userLabel="settingsButton">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g0-Xb-ogi" userLabel="settingsButton">
                                                 <rect key="frame" x="0.0" y="10" width="30" height="30"/>
                                                 <animations/>
-                                                <color key="backgroundColor" red="1" green="0.098454855727655999" blue="0.16445615385093715" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="OBw-Ph-al8"/>
                                                     <constraint firstAttribute="width" constant="30" id="yWl-VA-lPJ"/>
                                                 </constraints>
+                                                <state key="normal" image="settings"/>
                                                 <connections>
                                                     <action selector="settingsbuttonClicked:" destination="ly1-be-vXc" eventType="touchUpInside" id="BTF-fq-RTh"/>
                                                 </connections>
@@ -298,4 +299,7 @@
             <point key="canvasLocation" x="374" y="223"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="settings" width="27" height="26"/>
+    </resources>
 </document>

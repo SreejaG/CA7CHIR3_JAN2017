@@ -78,12 +78,14 @@ class UploadStream : NSObject
         let userDefault = NSUserDefaults.standardUserDefaults()
         let loginId = userDefault.objectForKey(userLoginIdKey)
         let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        self.steamingStatus?.StreamingStatus("Starting Live Streaming ...");
+        
+        userDefault.removeObjectForKey(streamingToken)
+        userDefault.removeObjectForKey(startedStreaming)
+
+//        self.steamingStatus?.StreamingStatus("Starting Live Streaming ...");
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
-                
-                
                 
                 if let json = response as? [String: AnyObject]
                 {
@@ -92,36 +94,41 @@ class UploadStream : NSObject
                     let baseStreamName = self.getBaseStream(streamToken)
                     let cameraServerName = self.getCameraServer()
                     
-                    let defaults = NSUserDefaults .standardUserDefaults()
-                    defaults.setValue(streamToken, forKey: streamingToken)
+//                    let defaults = NSUserDefaults .standardUserDefaults()
+                    userDefault.setValue(streamToken, forKey: streamingToken)
                     
-                    self.steamingStatus?.StreamingStatus("Initializing Live Streaming...");
+//                    self.steamingStatus?.StreamingStatus("Initializing Live Streaming...");
                     if (init_streams(cameraServerName, baseStreamName) == 0)
                     {
-                        defaults.setBool(true, forKey: startedStreaming)
+                        userDefault.setBool(true, forKey: startedStreaming)
                         print("live streaming")
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
                         {
-                            self.steamingStatus?.StreamingStatus("live streaming...");
+                            self.steamingStatus?.StreamingStatus("Success");
+//                            self.steamingStatus?.StreamingStatus("live streaming...");
                             start_stream(baseStreamName)
                         }
                     }
                     else
                     {
-                        defaults.setValue(false, forKey: startedStreaming)
+                        self.steamingStatus?.StreamingStatus("Failure");
+                        userDefault.setValue(false, forKey: startedStreaming)
                         ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
                     }
                     
                 }
                 else
                 {
+//                    userDefault.removeObjectForKey(streamingToken)
+                    self.steamingStatus?.StreamingStatus("Failure");
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
                 }, failure: { (error, message) -> () in
                     
                     print("message = \(message)")
-                    
+//                    userDefault.removeObjectForKey(streamingToken)
+                    self.steamingStatus?.StreamingStatus("Failure");
                     if !self.requestManager.validConnection() {
                         ErrorManager.sharedInstance.noNetworkConnection()
                     }
@@ -137,6 +144,8 @@ class UploadStream : NSObject
         }
         else
         {
+//            userDefault.removeObjectForKey(streamingToken)
+            self.steamingStatus?.StreamingStatus("Failure");
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -144,7 +153,7 @@ class UploadStream : NSObject
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
         var baseStream = "rtmp://104.197.159.157:1935/live/"
-        //      var baseStream = "rtmp://192.168.16.34:1935/live/"
+//        var baseStream = "rtmp://192.168.16.34:1935/live/"
         baseStream.appendContentsOf(streamToken)
         let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
         let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)

@@ -14,3 +14,14 @@ let apiErrorMessageKey = "errorMessage"
 
 let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"
+
+enum SnapCamSelectionMode {
+    
+    case cameraMode
+    case liveStreamMode
+    case defaultMode
+    
+    init() {
+        self = .cameraMode
+    }
+}
