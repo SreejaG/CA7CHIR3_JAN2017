@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
     </dependencies>
     <scenes>
-        <!--Snap Cam Select View Controller-->
+        <!--View Controller-->
         <scene sceneID="Cab-de-eu7">
             <objects>
-                <viewController storyboardIdentifier="SnapCamSelectViewController" id="FLA-8t-Aaj" customClass="SnapCamSelectViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="FLA-8t-Aaj" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Fkd-nu-9nb"/>
                         <viewControllerLayoutGuide type="bottom" id="Kzj-Oc-NDJ"/>
@@ -60,9 +60,6 @@
                                                             <rect key="frame" x="6" y="7" width="30" height="30"/>
                                                             <animations/>
                                                             <color key="backgroundColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <connections>
-                                                                <action selector="snapcamButtonClicked:" destination="vtg-gA-Mh6" eventType="touchUpInside" id="Yqf-7G-uIa"/>
-                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <animations/>
@@ -121,15 +118,8 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <connections>
-                                            <outlet property="optionlabel" destination="zIr-s4-g1F" id="Qra-ya-z91"/>
-                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="FLA-8t-Aaj" id="SFZ-FR-mDI"/>
-                                    <outlet property="delegate" destination="FLA-8t-Aaj" id="sM7-if-kMM"/>
-                                </connections>
                             </tableView>
                         </subviews>
                         <animations/>
@@ -142,11 +132,168 @@
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
-                    <connections>
-                        <outlet property="snapCamSettingsTableView" destination="uci-ze-ZQz" id="aSo-4u-GgB"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zgo-n5-hRi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="374" y="223"/>
+        </scene>
+        <!--Snap Cam Select View Controller-->
+        <scene sceneID="QQB-pi-6pJ">
+            <objects>
+                <viewController storyboardIdentifier="SnapCamSelectViewController" id="ly1-be-vXc" customClass="SnapCamSelectViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="OHC-ZU-Vbs"/>
+                        <viewControllerLayoutGuide type="bottom" id="ppB-sH-Q2H"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="9R8-ZS-fKg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rXz-OP-hd2">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyZ-Rb-9UE" userLabel="TitleView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j5z-yz-ybF" userLabel="snapCamButtonView">
+                                        <rect key="frame" x="10" y="0.0" width="30" height="60"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cb8-gw-XJs" userLabel="snapCamButton">
+                                                <rect key="frame" x="0.0" y="15" width="30" height="30"/>
+                                                <animations/>
+                                                <color key="backgroundColor" red="1" green="0.098454855729999999" blue="0.16445615390000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="30" id="bTT-CE-5h4"/>
+                                                    <constraint firstAttribute="height" constant="30" id="enb-eQ-IaV"/>
+                                                </constraints>
+                                                <connections>
+                                                    <action selector="snapcamButtonClicked:" destination="ly1-be-vXc" eventType="touchUpInside" id="vlC-3m-zaN"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="cb8-gw-XJs" secondAttribute="width" id="HTt-we-Z1A"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="centerX" secondItem="j5z-yz-ybF" secondAttribute="centerX" id="X1e-Zs-cKd"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="centerY" secondItem="j5z-yz-ybF" secondAttribute="centerY" id="zPl-BF-FZZ"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qQa-SN-vIU" userLabel="SettingsButtonView">
+                                        <rect key="frame" x="560" y="0.0" width="30" height="50"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g0-Xb-ogi" userLabel="settingsButton">
+                                                <rect key="frame" x="0.0" y="10" width="30" height="30"/>
+                                                <animations/>
+                                                <color key="backgroundColor" red="1" green="0.098454855727655999" blue="0.16445615385093715" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="OBw-Ph-al8"/>
+                                                    <constraint firstAttribute="width" constant="30" id="yWl-VA-lPJ"/>
+                                                </constraints>
+                                                <connections>
+                                                    <action selector="settingsbuttonClicked:" destination="ly1-be-vXc" eventType="touchUpInside" id="BTF-fq-RTh"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="0g0-Xb-ogi" secondAttribute="width" id="MRx-Sr-wKo"/>
+                                            <constraint firstItem="0g0-Xb-ogi" firstAttribute="centerY" secondItem="qQa-SN-vIU" secondAttribute="centerY" id="b8T-fW-edv"/>
+                                            <constraint firstItem="0g0-Xb-ogi" firstAttribute="centerX" secondItem="qQa-SN-vIU" secondAttribute="centerX" id="iGP-nV-to3"/>
+                                        </constraints>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
+                                        <rect key="frame" x="40" y="0.0" width="520" height="60"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="qQa-SN-vIU" secondAttribute="trailing" constant="10" id="1fP-G5-6ul"/>
+                                    <constraint firstItem="j5z-yz-ybF" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" id="3UE-rS-5KH"/>
+                                    <constraint firstAttribute="height" constant="60" id="4dx-Fo-UuH"/>
+                                    <constraint firstAttribute="bottom" secondItem="j5z-yz-ybF" secondAttribute="bottom" id="D1e-4o-VHR"/>
+                                    <constraint firstAttribute="bottom" secondItem="qQa-SN-vIU" secondAttribute="bottom" constant="10" id="MK5-m6-1ue"/>
+                                    <constraint firstItem="MoJ-aw-347" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" id="VCQ-rj-xm8"/>
+                                    <constraint firstItem="qQa-SN-vIU" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" id="hLU-KS-1Ek"/>
+                                    <constraint firstItem="j5z-yz-ybF" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" constant="10" id="lUR-WS-Pus"/>
+                                    <constraint firstItem="qQa-SN-vIU" firstAttribute="leading" secondItem="MoJ-aw-347" secondAttribute="trailing" id="pM5-19-Sal"/>
+                                    <constraint firstItem="MoJ-aw-347" firstAttribute="leading" secondItem="j5z-yz-ybF" secondAttribute="trailing" id="q9A-Ah-h6D"/>
+                                    <constraint firstAttribute="bottom" secondItem="MoJ-aw-347" secondAttribute="bottom" id="tHy-2l-Zv3"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HDq-qv-DDE">
+                                <rect key="frame" x="0.0" y="60" width="600" height="540"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnapCamTableViewCell" rowHeight="80" id="eE0-5e-MnK" customClass="SnapCamTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="80"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eE0-5e-MnK" id="rt5-5K-eCl">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Live Stream" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U1n-CE-IZR">
+                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="U1n-CE-IZR" firstAttribute="top" secondItem="rt5-5K-eCl" secondAttribute="top" id="ABY-dD-fk5"/>
+                                                <constraint firstAttribute="trailing" secondItem="U1n-CE-IZR" secondAttribute="trailing" id="GCy-31-xcw"/>
+                                                <constraint firstItem="U1n-CE-IZR" firstAttribute="leading" secondItem="rt5-5K-eCl" secondAttribute="leading" id="sBM-5f-ZQp"/>
+                                                <constraint firstAttribute="bottom" secondItem="U1n-CE-IZR" secondAttribute="bottom" id="zAT-4U-Jkp"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="optionlabel" destination="U1n-CE-IZR" id="3dX-br-M8b"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="ly1-be-vXc" id="fX3-Um-moY"/>
+                                    <outlet property="delegate" destination="ly1-be-vXc" id="Ze4-uO-zds"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="xyZ-Rb-9UE" firstAttribute="leading" secondItem="9R8-ZS-fKg" secondAttribute="leading" id="6GP-yF-WXD"/>
+                            <constraint firstItem="rXz-OP-hd2" firstAttribute="top" secondItem="OHC-ZU-Vbs" secondAttribute="bottom" id="Ab4-9v-Mz7"/>
+                            <constraint firstAttribute="trailing" secondItem="HDq-qv-DDE" secondAttribute="trailing" id="Dui-Xc-Sf4"/>
+                            <constraint firstItem="rXz-OP-hd2" firstAttribute="leading" secondItem="9R8-ZS-fKg" secondAttribute="leading" id="Jrw-7V-O7Q"/>
+                            <constraint firstItem="ppB-sH-Q2H" firstAttribute="top" secondItem="rXz-OP-hd2" secondAttribute="bottom" id="V3a-Xo-QWg"/>
+                            <constraint firstItem="xyZ-Rb-9UE" firstAttribute="top" secondItem="OHC-ZU-Vbs" secondAttribute="bottom" id="csM-6G-tCs"/>
+                            <constraint firstItem="ppB-sH-Q2H" firstAttribute="top" secondItem="HDq-qv-DDE" secondAttribute="bottom" id="ep7-1k-ehl"/>
+                            <constraint firstItem="HDq-qv-DDE" firstAttribute="leading" secondItem="9R8-ZS-fKg" secondAttribute="leading" id="euA-Qh-pSt"/>
+                            <constraint firstItem="HDq-qv-DDE" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="bottom" id="pGz-og-udT"/>
+                            <constraint firstAttribute="trailing" secondItem="rXz-OP-hd2" secondAttribute="trailing" id="rem-sW-scA"/>
+                            <constraint firstAttribute="trailing" secondItem="xyZ-Rb-9UE" secondAttribute="trailing" id="x6Q-IB-GNf"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="snapCamSettingsTableView" destination="HDq-qv-DDE" id="jOR-Sr-Dkc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9w2-KO-aGw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="374" y="223"/>
         </scene>

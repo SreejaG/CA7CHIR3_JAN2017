@@ -17,6 +17,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        snapCamSettingsTableView.separatorStyle = .None
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -27,16 +28,19 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
 
     }
     
-//    override func viewWillAppear(animated: Bool) {
-//            self.view.backgroundColor = UIColor.clearColor()
-//            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-//            let blurEffectView = UIVisualEffectView(effect: blurEffect)
-//            //always fill the view
-//            blurEffectView.frame = self.view.bounds
-//            blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-//            
-//            self.view.addSubview(blurEffectView) //if you have more UIViews, use an insertSubview API to place it where needed
-//        }
+    // Blur for ios 8
+    
+    //    override func viewWillAppear(animated: Bool) {
+    //            self.view.backgroundColor = UIColor.clearColor()
+    //            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+    //            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+    //            //always fill the view
+    //            blurEffectView.frame = self.view.bounds
+    //            blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+    //            self.view.addSubview(blurEffectView)
+    //            self.view.bringSubviewToFront(snapCamSettingsTableView)//if you have more UIViews, use an insertSubview API to place it where needed
+    //        }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -72,7 +76,8 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
+       let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
        switch(indexPath.row)
        {
        case 0 :
@@ -97,18 +102,26 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     }
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
-        return snapCamSettingsTableView.bounds.height / CGFloat(dataSource.count)
+        return 60
+        //return snapCamSettingsTableView.bounds.height / CGFloat(dataSource.count)
 
     }
     
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 60
+    
+    //PRAGMA MARK:- IBActions
+    @IBAction func settingsbuttonClicked(sender: AnyObject)
+    {
+        
+    }
+    @IBAction func snapcamButtonClicked(sender: AnyObject)
+    {
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion: { () -> Void in
+            
+        })
     }
     
-    
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier("SnapCamCustomHeaderCell") as! SnapCamCustomHeaderCell
-        return headerCell
+    override func prefersStatusBarHidden() -> Bool {
+        return true
     }
 }
 
