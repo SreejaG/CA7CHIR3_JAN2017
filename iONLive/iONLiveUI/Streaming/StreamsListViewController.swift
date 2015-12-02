@@ -8,57 +8,49 @@
 
 import UIKit
 
-class StreamsListViewController: UIViewController,UITableViewDataSource,UITableViewDelegate{
+class StreamsListViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate{
     
     static let identifier = "StreamsListViewController"
-    
     var loadingOverlay: UIView?
     
-    @IBOutlet weak var liveStreamListTableView: UITableView!
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
-    
     var dataSource:[[String:String]]?
+    
+    @IBOutlet weak var streamListCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "STREAMS"
         getAllLiveStreams()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-        showNavigationBar()
+        self.navigationController?.navigationBarHidden = true
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        
-//        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
-//            
-//            if viewControllers.contains(self) == false{
-//                
-//                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
-//                
-//                vc.initialiseDecoder()
-//            }
-//        }
-    }
+    //    override func viewWillDisappear(animated: Bool) {
+    //
+    //        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
+    //
+    //            if viewControllers.contains(self) == false{
+    //
+    //                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
+    //
+    //                vc.initialiseDecoder()
+    //            }
+    //        }
+    //    }
     
-    func showNavigationBar()
-    {
-        self.navigationController?.navigationBarHidden = false
-        self.navigationController?.navigationBar.translucent = false
-        
-    }
-    //PRAGMA MARK-: TableView dataSource and Delegates
+    //PRAGMA MARK-: CollectionView dataSource and Delegates
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if let dataSource = dataSource
         {
@@ -70,32 +62,15 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        var cell : UITableViewCell?
-        cell = tableView.dequeueReusableCellWithIdentifier("CELL")
-        
-        if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "CELL")
-        }
-        cell?.accessoryType = .DisclosureIndicator
-        if let dataSource = dataSource
-        {
-            if dataSource.count > indexPath.row
-            {
-                var streamDict = dataSource[indexPath.row]
-                if let streamDesc = streamDict["streamDescription"]
-                {
-                    cell!.textLabel!.text = streamDesc
-                }
-                
-            }
-        }
-        return cell!
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
+        cell.streamThumbnaleImageView.backgroundColor = UIColor.yellowColor()
+        return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    {
         var tocken:String?
         if let dataSource = dataSource
         {
@@ -117,8 +92,9 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         {
             ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
         }
-        
     }
+    
+    
     
     func loadLiveStreamView(streamTocken:String)
     {
@@ -127,7 +103,6 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
         self.presentViewController(vc, animated: true) { () -> Void in
             
         }
-//        print("rtmp://192.168.16.64:1935/live/\(streamTocken)")
     }
     
     //PRAGMA MARK:- API Handlers
@@ -165,7 +140,7 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
             {
                 ErrorManager.sharedInstance.alert("No Streams", message: "Sorry! you don't have any live streams")
             }
-            self.liveStreamListTableView.reloadData()
+            self.streamListCollectionView.reloadData()
         }
         else
         {
@@ -207,5 +182,8 @@ class StreamsListViewController: UIViewController,UITableViewDataSource,UITableV
     
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
+    }
+    
+    @IBAction func customBackButtonClicked(sender: AnyObject) {
     }
 }
