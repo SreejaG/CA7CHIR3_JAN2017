@@ -17,7 +17,7 @@
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
-                <outlet property="uploadStream" destination="n6M-KO-3j3" id="Cwa-pv-Rbu"/>
+                <outlet property="uploadStreamButton" destination="n6M-KO-3j3" id="fg1-UA-tHN"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -126,6 +126,9 @@
                                                 <constraint firstAttribute="height" constant="86" id="TIQ-Mk-dGy"/>
                                             </constraints>
                                             <state key="normal" title="Button" image="Camera_Button_OFF"/>
+                                            <connections>
+                                                <action selector="didTapLiveButton:" destination="-1" eventType="touchUpInside" id="oFM-c9-GLn"/>
+                                            </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SDA-bD-Pa6" userLabel="StreamThumb">
                                             <rect key="frame" x="504" y="32" width="56" height="56"/>

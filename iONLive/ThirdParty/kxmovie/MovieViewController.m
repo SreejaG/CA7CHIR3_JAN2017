@@ -13,6 +13,8 @@
 #import "KxAudioManager.h"
 #import "KxMovieGLView.h"
 #import "KxLogger.h"
+#import "iONLive-Swift.h"
+
 
 NSString * const KxMovieParameterMinBufferedDuration = @"KxMovieParameterMinBufferedDuration";
 NSString * const KxMovieParameterMaxBufferedDuration = @"KxMovieParameterMaxBufferedDuration";
@@ -77,7 +79,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIView *bottomView;
     IBOutlet UIButton *cameraSelectionButton;
     IBOutlet UIButton *backButton;
-    IBOutlet UIButton *uploadStream;
+    IBOutlet UIButton *uploadStreamButton;
     IBOutlet UIButton *cameraButton;
 
     IBOutlet UILabel *noDataFound;
@@ -307,7 +309,7 @@ static NSMutableDictionary * gHistory;
         noDataFound.hidden = true;
     }
     
-    uploadStream.hidden = true;
+//    uploadStreamButton.hidden = true;
     cameraSelectionButton.hidden = true;
 }
 
@@ -335,22 +337,22 @@ static NSMutableDictionary * gHistory;
 
 -(void)customizeUploadStreamButton
 {
-    uploadStream.clipsToBounds = YES;
-    uploadStream.layer.cornerRadius = 15;
+//    uploadStreamButton.clipsToBounds = YES;
+//    uploadStreamButton.layer.cornerRadius = 15;
 }
 
 -(void)customiseViewForLive
 {
     bottomView.hidden = false;
     topView.hidden = false;
-    uploadStream.hidden = false;
+//    uploadStreamButton.hidden = false;
     cameraSelectionButton.hidden = false;
     backButton.hidden = true;
 }
 
 -(void)customiseViewForStreaming
 {
-    uploadStream.hidden = true;
+//    uploadStreamButton.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
     backButton.hidden = false;
@@ -435,10 +437,10 @@ static NSMutableDictionary * gHistory;
     
     if (_decoder) {
         
-        dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
-            [_decoder closeFile];
-        });
-        
+//        dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+//            [_decoder closeFile];
+//        });
+        [self close];
         if (_moviePosition == 0 || _decoder.isEOF)
             [gHistory removeObjectForKey:_decoder.path];
         else if (!_decoder.isNetwork)
@@ -516,9 +518,11 @@ static NSMutableDictionary * gHistory;
 -(void)close
 {
     _interrupted = true;
-//    self.playing = NO;
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+        [_decoder closeFile];
+    });//    self.playing = NO;
 //    [self freeBufferedFrames];
-    [_decoder closeFile];
+//    [_decoder closeFile];
 //    [_decoder openFile:nil error:nil];
 }
 
@@ -1010,6 +1014,23 @@ static NSMutableDictionary * gHistory;
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
     UIViewController *streamViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"UploadStreamViewController"];
     [self.navigationController pushViewController:streamViewController animated:true];
+}
+- (IBAction)didTapLiveButton:(id)sender {
+    
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    UploadStream * stream = [[UploadStream alloc]init];
+
+    if (streamStarted == false) {
+        
+        [stream startStreamingClicked];
+        noDataFound.hidden = false;
+        noDataFound.text = @"Live Streaming";
+    }
+    else
+    {
+        [stream stopStreamingClicked];
+    }
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
