@@ -15,6 +15,11 @@ class StreamsGalleryViewController: UITabBarController {
 
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        self.selectedIndex = 1
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
