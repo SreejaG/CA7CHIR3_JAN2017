@@ -8,7 +8,7 @@
 
 import UIKit
 
-class StreamsListViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate{
+class StreamsListViewController: UIViewController{
     
     static let identifier = "StreamsListViewController"
     var loadingOverlay: UIView?
@@ -47,55 +47,6 @@ class StreamsListViewController: UIViewController,UICollectionViewDataSource,UIC
     //            }
     //        }
     //    }
-    
-    //PRAGMA MARK-: CollectionView dataSource and Delegates
-    
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
-        if let dataSource = dataSource
-        {
-            return dataSource.count
-        }
-        else
-        {
-            return 0
-        }
-    }
-    
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
-    {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
-        cell.streamThumbnaleImageView.backgroundColor = UIColor.yellowColor()
-        return cell
-    }
-    
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
-    {
-        var tocken:String?
-        if let dataSource = dataSource
-        {
-            if dataSource.count > indexPath.row
-            {
-                var streamDict = dataSource[indexPath.row]
-                if let streamTocken = streamDict["streamToken"]
-                {
-                    tocken = streamTocken
-                }
-            }
-        }
-        
-        if let streamtocken = tocken
-        {
-            self.loadLiveStreamView(streamtocken)
-        }
-        else
-        {
-            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
-        }
-    }
-    
-    
-    
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtmp://104.197.159.157:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
@@ -184,6 +135,78 @@ class StreamsListViewController: UIViewController,UICollectionViewDataSource,UIC
         self.loadingOverlay?.removeFromSuperview()
     }
     
-    @IBAction func customBackButtonClicked(sender: AnyObject) {
+    @IBAction func customBackButtonClicked(sender: AnyObject)
+    {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
     }
 }
+
+    
+extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
+{
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        if let dataSource = dataSource
+        {
+            return dataSource.count
+        }
+        else
+        {
+            return 0
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
+        cell.streamThumbnaleImageView.backgroundColor = UIColor.lightGrayColor()
+        return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    {
+        var tocken:String?
+        if let dataSource = dataSource
+        {
+            if dataSource.count > indexPath.row
+            {
+                var streamDict = dataSource[indexPath.row]
+                if let streamTocken = streamDict["streamToken"]
+                {
+                    tocken = streamTocken
+                }
+            }
+        }
+        
+        if let streamtocken = tocken
+        {
+            self.loadLiveStreamView(streamtocken)
+        }
+        else
+        {
+            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(1, 1, 0, 1)
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+    {
+         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
+    }
+}
+
