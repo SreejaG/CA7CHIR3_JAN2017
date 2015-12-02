@@ -209,10 +209,10 @@
             </objects>
             <point key="canvasLocation" x="2211" y="178"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Streams Gallery View Controller-->
         <scene sceneID="KDW-PI-Mot">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="ZIw-FJ-uMt" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="ZIw-FJ-uMt" customClass="StreamsGalleryViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="ix1-yP-A3J">
                         <autoresizingMask key="autoresizingMask"/>
