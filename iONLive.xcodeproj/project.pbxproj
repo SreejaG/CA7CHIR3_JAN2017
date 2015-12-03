@@ -19,6 +19,8 @@
 		164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */; };
 		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
 		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
+		1656E4F31C1058C700F62D12 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */; };
+		1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
@@ -110,6 +112,8 @@
 		164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamSelectViewController.swift; sourceTree = "<group>"; };
 		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
 		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
+		1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = PhotoViewer.storyboard; path = iONLive/iONLiveUI/PhotoViewer.storyboard; sourceTree = SOURCE_ROOT; };
+		1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
@@ -381,6 +385,15 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		1656E4F41C1058E600F62D12 /* PhotoViewer */ = {
+			isa = PBXGroup;
+			children = (
+				1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */,
+				1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */,
+			);
+			path = PhotoViewer;
+			sourceTree = "<group>";
+		};
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
@@ -449,6 +462,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				1656E4F41C1058E600F62D12 /* PhotoViewer */,
 				1683B8ED1C0EE28700CBB6FE /* Protocol */,
 				164989ED1C0D5C0F007C912C /* Settings */,
 				160F47AF1BFEEF5100599AA7 /* Common */,
@@ -905,6 +919,7 @@
 				599964D61C057EF000D20FB2 /* kxmovie.bundle in Resources */,
 				167AF0671BFDC30D003CDF30 /* Authentication.storyboard in Resources */,
 				167AF0391BFDC1F6003CDF30 /* LaunchScreen.storyboard in Resources */,
+				1656E4F31C1058C700F62D12 /* PhotoViewer.storyboard in Resources */,
 				167AF0361BFDC1F6003CDF30 /* Assets.xcassets in Resources */,
 				16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */,
 				167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */,
@@ -940,6 +955,7 @@
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
+				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
