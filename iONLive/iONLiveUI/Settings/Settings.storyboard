@@ -152,7 +152,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rXz-OP-hd2">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.41568627450980389" green="0.36862745098039218" blue="0.31764705882352939" alpha="1" colorSpace="calibratedRGB"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyZ-Rb-9UE" userLabel="TitleView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
@@ -163,7 +163,7 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cb8-gw-XJs" userLabel="snapCamButton">
                                                 <rect key="frame" x="0.0" y="15" width="30" height="30"/>
                                                 <animations/>
-                                                <color key="backgroundColor" red="1" green="0.098454855729999999" blue="0.16445615390000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="30" id="bTT-CE-5h4"/>
                                                     <constraint firstAttribute="height" constant="30" id="enb-eQ-IaV"/>
@@ -206,12 +206,12 @@
                                             <constraint firstItem="0g0-Xb-ogi" firstAttribute="centerX" secondItem="qQa-SN-vIU" secondAttribute="centerX" id="iGP-nV-to3"/>
                                         </constraints>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
                                         <rect key="frame" x="40" y="0.0" width="520" height="60"/>
                                         <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -291,6 +291,7 @@
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
+                        <outlet property="snapCamButton" destination="cb8-gw-XJs" id="nrQ-PG-5bq"/>
                         <outlet property="snapCamSettingsTableView" destination="HDq-qv-DDE" id="jOR-Sr-Dkc"/>
                     </connections>
                 </viewController>

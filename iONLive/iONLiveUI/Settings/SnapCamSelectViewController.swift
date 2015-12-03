@@ -17,9 +17,13 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
 
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone"]
    
+    @IBOutlet var snapCamButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         snapCamSettingsTableView.separatorStyle = .None
+        snapCamButton.clipsToBounds = true
+        snapCamButton.layer.cornerRadius = 5
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -79,7 +83,6 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         return cell
     }
     
-    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
        let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
@@ -87,64 +90,39 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
        switch(indexPath.row)
        {
        case 0 :
-        cameraMode = !cameraMode
-        customizeCellBasedOnSnapCamSelectionMode(selectedCell);
-//        if cameraMode
-//        {
-//            selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
-//            selectedCell.setSelected(true, animated: true)
-//            cameraMode = false
-//        }
-//        else
-//        {
-//            selectedCell.contentView.backgroundColor = UIColor.clearColor()
-//            selectedCell.setSelected(false, animated: true)
-//
-//            cameraMode = true
-//        }
-        
-        streamingDelegate?.cameraSelectionMode(cameraMode)
-//        
-//            let streamingStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
-//            let uploadStreamViewController = streamingStoryboard.instantiateViewControllerWithIdentifier(UploadStreamViewController.identifier)
-//            
-//            self.presentViewController(uploadStreamViewController, animated: true, completion: { () -> Void in
-//            })
-        
-            break
-        
-       case 1:
-            cameraMode =  true;
-//            self.dismissViewControllerAnimated(true, completion: { () -> Void in
-//        })
+            cameraMode = !cameraMode
+            customizeCellBasedOnSnapCamSelectionMode(selectedCell);
+            self.snapCamSettingsTableView.reloadData()
 
+            streamingDelegate?.cameraSelectionMode(cameraMode)
+            break
+       case 1:
+            cameraMode =  true
+            break
        default :
-            cameraMode = true;
+            cameraMode = true
             break
        }
-        
     }
+    
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
         return 60
         //return snapCamSettingsTableView.bounds.height / CGFloat(dataSource.count)
-
     }
-    
     
     func customizeCellBasedOnSnapCamSelectionMode(selectedCell:UITableViewCell)
     {
         if cameraMode == false
         {
             selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
-            selectedCell.setSelected(true, animated: true)
+//            selectedCell.setSelected(true, animated: true)
 //            cameraMode = false
         }
         else
         {
             selectedCell.contentView.backgroundColor = UIColor.clearColor()
-            selectedCell.setSelected(false, animated: true)
-            
+//            selectedCell.setSelected(false, animated: true)
 //            cameraMode = true
         }
     }
