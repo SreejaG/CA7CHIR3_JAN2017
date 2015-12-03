@@ -14,7 +14,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
     var streamingDelegate:StreamingProtocol?
     var snapCamMode : SnapCamSelectionMode = .DefaultMode
-//    var restoreSnapCamMode:SnapCamSelectionMode = .DefaultMode
+    var restoreSnapCamMode:SnapCamSelectionMode = .DefaultMode
 
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone"]
    
@@ -91,36 +91,68 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         if isStreamStarted()
         {
 //            restoreSnapCamMode.rawValue = indexPath.row
+            saveSelectedTypeTemporarily(indexPath.row)
             showAlertViewToStopStream()
         }
-     
         else
         {
-            print("selected index = \(indexPath.row)")
-            switch(indexPath.row)
-            {
-            case 0 :
-                changeSelectedSnapCamMode(.LiveStream)
-                break
-            case 1:
-                changeSelectedSnapCamMode(.Photos)
-                break
-            case 2:
-                changeSelectedSnapCamMode(.Video)
-                break
-            case 3:
-                changeSelectedSnapCamMode(.CatchGif)
-                break
-            case 4:
-                changeSelectedSnapCamMode(.Timelapse)
-                break
-            case 5:
-                changeSelectedSnapCamMode(.iPhone)
-                break
-            default :
-                break
-            }
+            updateSnapCamSelection(indexPath.row)
+//            print("selected index = \(indexPath.row)")
             changeSnapCamModeForCell(selectedCell)
+        }
+    }
+    
+    func saveSelectedTypeTemporarily(rowVal:Int)
+    {
+        switch(rowVal)
+        {
+        case 0 :
+            restoreSnapCamMode = .DefaultMode
+            break
+        case 1:
+            restoreSnapCamMode = .Photos
+            break
+        case 2:
+            restoreSnapCamMode = .Video
+            break
+        case 3:
+            restoreSnapCamMode = .CatchGif
+            break
+        case 4:
+            restoreSnapCamMode = .Timelapse
+            break
+        case 5:
+            restoreSnapCamMode = .iPhone
+            break
+        default :
+            break
+        }
+    }
+    
+    func updateSnapCamSelection(rowVal:Int)
+    {
+        switch(rowVal)
+        {
+        case 0 :
+            changeSelectedSnapCamMode(.LiveStream)
+            break
+        case 1:
+            changeSelectedSnapCamMode(.Photos)
+            break
+        case 2:
+            changeSelectedSnapCamMode(.Video)
+            break
+        case 3:
+            changeSelectedSnapCamMode(.CatchGif)
+            break
+        case 4:
+            changeSelectedSnapCamMode(.Timelapse)
+            break
+        case 5:
+            changeSelectedSnapCamMode(.iPhone)
+            break
+        default :
+            break
         }
     }
     
@@ -164,7 +196,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             
             let stream = UploadStream()
             stream.stopLiveStreaming()
-            snapCamMode = .DefaultMode
+            snapCamMode = restoreSnapCamMode
             self.snapCamSettingsTableView.reloadData()
             streamingDelegate?.cameraSelectionMode(snapCamMode)
 
