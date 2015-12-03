@@ -1057,13 +1057,14 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Select Live Stream mode"
-                                                        message:@"Please select Live Stream mode from Snapcam Settings"
-                                                       delegate:self
-                                              cancelButtonTitle:NSLocalizedString(@"Close", nil)
-                                              otherButtonTitles:nil];
-        alert.tag = 102;
-        [alert show];
+        NSLog(@"Live Stream mode not selected");
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Select Live Stream mode"
+//                                                        message:@"Please select Live Stream mode from Snapcam Settings"
+//                                                       delegate:self
+//                                              cancelButtonTitle:NSLocalizedString(@"Close", nil)
+//                                              otherButtonTitles:nil];
+//        alert.tag = 102;
+//        [alert show];
     }
 }
 
@@ -1122,8 +1123,8 @@ static NSMutableDictionary * gHistory;
             }
             break;
             
-        case 102:
-            [self showAlertMessageForSelectLiveStreamMode:buttonIndex];
+//        case 102:
+//            [self showAlertMessageForSelectLiveStreamMode:buttonIndex];
             
         default:
             break;
@@ -1143,17 +1144,17 @@ static NSMutableDictionary * gHistory;
     }
 }
 
--(void)showAlertMessageForSelectLiveStreamMode:(NSInteger)buttonIndex
-{
-    switch(buttonIndex) {
-        case 0:
-            NSLog(@"Stopped  ");
-            break;
-        case 1:
-            NSLog(@"YES Pressed");
-            break;
-    }
-}
+//-(void)showAlertMessageForSelectLiveStreamMode:(NSInteger)buttonIndex
+//{
+//    switch(buttonIndex) {
+//        case 0:
+//            NSLog(@"Stopped  ");
+//            break;
+//        case 1:
+//            NSLog(@"YES Pressed");
+//            break;
+//    }
+//}
 
 - (BOOL) interruptDecoder
 {
