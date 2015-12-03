@@ -198,8 +198,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)initialiseDecoder
 {
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    BOOL streamStarted = [self isStreamStarted];
     
     noDataFound.hidden = true;
     if (streamStarted == false) {
@@ -364,8 +363,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)changeLiveNowSelectionImage
 {
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+    BOOL streamStarted = [self isStreamStarted];
     
     dispatch_async(dispatch_get_main_queue(), ^{
     if (streamStarted == false) {
@@ -1042,27 +1040,36 @@ static NSMutableDictionary * gHistory;
 - (IBAction)didTapLiveButton:(id)sender {
     
     if (_cameraSelected == false) {
-        NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-        BOOL streamStarted = [defaults boolForKey:@"StartedStreaming"];
+        
+        BOOL streamStarted = [self isStreamStarted];
         UploadStream * stream = [[UploadStream alloc]init];
         stream.steamingStatus = self;
         
         if (streamStarted == false) {
             
             [stream startStreamingClicked];
-            //        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t.png"] forState:UIControlStateNormal];
-            //        noDataFound.hidden = false;
-            //        noDataFound.text = @"Live Streaming";
         }
         else
         {
-            //        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t.png"] forState:UIControlStateNormal];
             [stream stopStreamingClicked];
         }
     }
-        else
-        {
-        }
+    else
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"
+                                                        message:@"Please select Live Stream mode from Snapcam Settings"
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"Close", nil)
+                                              otherButtonTitles:nil];
+        alert.tag = 102;
+        [alert show];
+    }
+}
+
+-(BOOL)isStreamStarted
+{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return  [defaults boolForKey:@"StartedStreaming"];
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
@@ -1099,27 +1106,53 @@ static NSMutableDictionary * gHistory;
                                                        delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"Close", nil)
                                               otherButtonTitles:nil];
-
+    alertView.tag = 101;
     [alertView show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 0)
-    {
-        noDataFound.hidden = false;
-        _activityIndicatorView.hidden = true;
-        if(_liveVideo == true)
-        {
-           noDataFound.text = @"Could not connect to camera!";
-        }
-        else{
-            noDataFound.text = @"No stream found!";
-        }
-        
+    switch (alertView.tag) {
+            
+        case 101:
+            if (buttonIndex == 0)
+            {
+                [self showAlertMessageForNoStreamOrLiveDataFound];
+            }
+            break;
+            
+        case 102:
+            [self showAlertMessageForSelectLiveStreamMode:buttonIndex];
+            
+        default:
+            break;
     }
 }
 
+-(void)showAlertMessageForNoStreamOrLiveDataFound
+{
+    noDataFound.hidden = false;
+    _activityIndicatorView.hidden = true;
+    if(_liveVideo == true)
+    {
+        noDataFound.text = @"Could not connect to camera!";
+    }
+    else{
+        noDataFound.text = @"No stream found!";
+    }
+}
+
+-(void)showAlertMessageForSelectLiveStreamMode:(NSInteger)buttonIndex
+{
+    switch(buttonIndex) {
+        case 0:
+            NSLog(@"Stopped  ");
+            break;
+        case 1:
+            NSLog(@"YES Pressed");
+            break;
+    }
+}
 
 - (BOOL) interruptDecoder
 {
@@ -1132,8 +1165,10 @@ static NSMutableDictionary * gHistory;
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.cameraMode = [self getCameraSelectionMode];
+    
 //    self.definesPresentationContext = YES; //self is presenting view controller
 //    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];

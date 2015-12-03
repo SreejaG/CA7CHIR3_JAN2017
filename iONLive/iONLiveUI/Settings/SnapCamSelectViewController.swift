@@ -85,24 +85,69 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-       let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
-        
-       switch(indexPath.row)
-       {
-       case 0 :
-            cameraMode = !cameraMode
-            customizeCellBasedOnSnapCamSelectionMode(selectedCell);
-            self.snapCamSettingsTableView.reloadData()
+        let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        if isStreamStarted()
+        {
+            let alert: UIAlertView = UIAlertView()
+            alert.title = "Steaming In Progress"
+            alert.message = "Do you want to stop streaming?"
+            let yesBut = alert.addButtonWithTitle("Yes")
+            let noBut = alert.addButtonWithTitle("No")
+            alert.delegate = self  // set the delegate here
+            alert.show()
 
+        }
+     
+        else
+        {
+            switch(indexPath.row)
+            {
+            case 0 :
+                changeSnapCamMode(selectedCell)
+//                cameraMode = !cameraMode
+//                customizeCellBasedOnSnapCamSelectionMode(selectedCell);
+//                self.snapCamSettingsTableView.reloadData()
+//                
+//                streamingDelegate?.cameraSelectionMode(cameraMode)
+                break
+            case 1:
+                cameraMode =  true
+                break
+            default :
+                cameraMode = true
+                break
+            }
+        }
+    }
+    
+    func changeSnapCamMode(selectedCell:UITableViewCell)
+    {
+        cameraMode = !cameraMode
+        customizeCellBasedOnSnapCamSelectionMode(selectedCell);
+        self.snapCamSettingsTableView.reloadData()
+        
+        streamingDelegate?.cameraSelectionMode(cameraMode)
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        
+        let buttonTitle = alertView.buttonTitleAtIndex(buttonIndex)
+        
+        print("\(buttonTitle) pressed")
+        if buttonTitle == "Yes" {
+            
+            let stream = UploadStream()
+            stream.stopLiveStreaming()
+            cameraMode = !cameraMode
+            self.snapCamSettingsTableView.reloadData()
             streamingDelegate?.cameraSelectionMode(cameraMode)
-            break
-       case 1:
-            cameraMode =  true
-            break
-       default :
-            cameraMode = true
-            break
-       }
+
+        }
+        else
+        {
+            self.snapCamSettingsTableView.reloadData()
+            print("No Pressed")
+        }
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
@@ -127,6 +172,12 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         }
     }
     
+    func isStreamStarted()->Bool
+    {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        return  defaults.boolForKey("StartedStreaming")
+    }
+
     //PRAGMA MARK:- IBActions
     @IBAction func settingsbuttonClicked(sender: AnyObject)
     {
