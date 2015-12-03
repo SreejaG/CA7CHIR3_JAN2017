@@ -28,4 +28,9 @@ let streamingToken = "StreamingToken"
     init() {
         self = .DefaultMode
     }
+    
+//    init(rawValue : String)
+//    {
+//        self = SnapCamSelectionMode(rawValue: rawValue)
+//    }
 }

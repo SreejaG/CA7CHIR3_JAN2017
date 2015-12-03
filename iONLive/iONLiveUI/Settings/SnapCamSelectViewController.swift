@@ -14,6 +14,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
     var streamingDelegate:StreamingProtocol?
     var snapCamMode : SnapCamSelectionMode = .DefaultMode
+//    var restoreSnapCamMode:SnapCamSelectionMode = .DefaultMode
 
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone"]
    
@@ -89,6 +90,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         
         if isStreamStarted()
         {
+//            restoreSnapCamMode.rawValue = indexPath.row
             showAlertViewToStopStream()
         }
      

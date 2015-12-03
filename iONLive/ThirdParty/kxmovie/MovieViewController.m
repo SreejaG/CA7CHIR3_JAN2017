@@ -369,11 +369,11 @@ static NSMutableDictionary * gHistory;
     dispatch_async(dispatch_get_main_queue(), ^{
     if (streamStarted == false) {
         
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_t"] forState:UIControlStateNormal];
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
     }
     else{
         
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_t"] forState:UIControlStateNormal];
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
         }
     });
 
