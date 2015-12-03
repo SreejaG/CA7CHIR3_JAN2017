@@ -65,7 +65,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VhQ-Yn-JCa">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="360"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ION_Icon" translatesAutoresizingMaskIntoConstraints="NO" id="5xB-m5-HiI">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LoginIcon" translatesAutoresizingMaskIntoConstraints="NO" id="5xB-m5-HiI">
                                         <rect key="frame" x="265" y="145" width="70" height="70"/>
                                         <animations/>
                                         <constraints>
@@ -489,6 +489,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ION_Icon" width="57" height="57"/>
+        <image name="LoginIcon" width="75" height="75"/>
     </resources>
 </document>
