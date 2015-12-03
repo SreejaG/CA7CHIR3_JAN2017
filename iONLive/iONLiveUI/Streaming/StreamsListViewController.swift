@@ -24,13 +24,13 @@ class StreamsListViewController: UIViewController{
     var dataSource:[[String:String]]?
     
     //for temp image along with streams and stream thumbanes
-    var dummyImagesArray:[String] = ["","","","",""]
+    var dummyImagesArray:[String] = ["All media landing","All media landing","All media landing","All media landing","All media landing"]
     
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let dummyImageListingDataSource = [[imageKey:"",typeKey:imageType],[imageKey:"",typeKey:imageType],[imageKey:"",typeKey:imageType],[imageKey:"",typeKey:imageType],[imageKey:"",typeKey:imageType]]
+        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType]]
         
         self.dataSource = dummyImageListingDataSource
         getAllLiveStreams()
