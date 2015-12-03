@@ -220,5 +220,6 @@ class UploadStream : NSObject
         defaults.setValue(false, forKey: startedStreaming)
         self.steamingStatus?.StreamingStatus("");
         stop_stream()
+        print("Live streaming stopped.......")
     }
 }
