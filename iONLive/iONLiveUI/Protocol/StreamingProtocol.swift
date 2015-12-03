@@ -11,5 +11,5 @@ import Foundation
 @objc protocol StreamingProtocol {
     
     func StreamingStatus(status:String)
-    func cameraSelectionMode(selected:Bool)
+    func cameraSelectionMode(selection:SnapCamSelectionMode)
 }
