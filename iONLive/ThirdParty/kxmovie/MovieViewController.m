@@ -1057,7 +1057,7 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Select Live Stream mode"
                                                         message:@"Please select Live Stream mode from Snapcam Settings"
                                                        delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"Close", nil)
