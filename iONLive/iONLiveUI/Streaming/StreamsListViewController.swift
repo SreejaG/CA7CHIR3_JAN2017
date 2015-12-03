@@ -10,17 +10,29 @@ import UIKit
 
 class StreamsListViewController: UIViewController{
     
+    let streamTockenKey = "streamToken"
+    let imageKey = "image"
+    let typeKey = "type"
+    let imageType = "imageType"
     static let identifier = "StreamsListViewController"
+    
+    
     var loadingOverlay: UIView?
     
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
     var dataSource:[[String:String]]?
     
+    //for temp image along with streams and stream thumbanes
+    var dummyImagesArray:[String] = ["All media landing","All media landing","All media landing","All media landing","All media landing"]
+    
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType]]
+        
+        self.dataSource = dummyImageListingDataSource
         getAllLiveStreams()
         // Do any additional setup after loading the view.
     }
@@ -49,7 +61,7 @@ class StreamsListViewController: UIViewController{
     //    }
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtmp://104.197.159.157:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.159.157:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: true) { () -> Void in
             
@@ -86,11 +98,13 @@ class StreamsListViewController: UIViewController{
         if let json = response as? [String: AnyObject]
         {
             print("success = \(json["liveStreams"])")
-            self.dataSource = json["liveStreams"] as? [[String:String]]
-            if dataSource?.count == 0
+            let liveStreamDataSource = json["liveStreams"] as? [[String:String]]
+            if liveStreamDataSource?.count == 0
             {
                 ErrorManager.sharedInstance.alert("No Streams", message: "Sorry! you don't have any live streams")
             }
+            
+            self.createDataSource(liveStreamDataSource)
             self.streamListCollectionView.reloadData()
         }
         else
@@ -143,6 +157,19 @@ class StreamsListViewController: UIViewController{
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    
+    //PRAGMA MARK:- dummy image helper functions
+    
+    func createDataSource(liveStreamDataSource:[[String:String]]?)
+    {
+        if let liveStreams = liveStreamDataSource
+        {
+            for eachLiveStream in liveStreams
+            {
+                dataSource?.insert(eachLiveStream, atIndex:0)
+            }
+        }
+    }
 }
 
     
@@ -163,32 +190,68 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
-        cell.streamThumbnaleImageView.backgroundColor = UIColor.lightGrayColor()
+        
+        //cell for live streams
+        
+        if let dataSource = dataSource
+        {
+            if dataSource.count > indexPath.row
+            {
+                //image stream cell
+                var dict = dataSource[indexPath.row]
+                if let streamType = dict[typeKey]
+                {
+                    if streamType == imageType
+                    {
+                        cell.liveStatusLabel.hidden = true
+                        cell.liveNowIcon.hidden = true
+                        if let imageName = dict[imageKey]
+                        {
+                            cell.streamThumbnaleImageView.image = UIImage(named: imageName)
+                        }
+                    }
+                }
+                else   //live stream cell
+                {
+                    cell.liveStatusLabel.hidden = false
+                    cell.liveNowIcon.hidden = false
+                    
+                    var imageIndexPath = 0
+                    if dummyImagesArray.count > indexPath.row
+                    {
+                        imageIndexPath = indexPath.row
+                    }
+                    cell.streamThumbnaleImageView.image = UIImage(named: dummyImagesArray[imageIndexPath])
+                }
+            }
+        }
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        var tocken:String?
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.row
             {
-                var streamDict = dataSource[indexPath.row]
-                if let streamTocken = streamDict["streamToken"]
+                var dict = dataSource[indexPath.row]
+                if let _ = dict[typeKey]
                 {
-                    tocken = streamTocken
+                    //not clickable as of now
+                }
+                else
+                {
+                    //live stream click
+                    if let streamTocken = dict[streamTockenKey]
+                    {
+                        self.loadLiveStreamView(streamTocken)
+                    }
+                    else
+                    {
+                        ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+                    }
                 }
             }
-        }
-        
-        if let streamtocken = tocken
-        {
-            self.loadLiveStreamView(streamtocken)
-        }
-        else
-        {
-            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
         }
     }
     

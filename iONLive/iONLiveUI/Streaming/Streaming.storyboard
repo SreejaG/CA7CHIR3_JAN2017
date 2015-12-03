@@ -320,7 +320,7 @@
                             <constraint firstAttribute="trailing" secondItem="jUA-sK-Gz9" secondAttribute="trailing" id="n4I-NZ-GM7"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Stream" image="all_media" selectedImage="playback_prev.png" id="8WK-e4-zG1">
+                    <tabBarItem key="tabBarItem" title="Stream" image="all_media" selectedImage="all_media_blue" id="8WK-e4-zG1">
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="image" keyPath="selectedImage" value="all_media_blue"/>
                         </userDefinedRuntimeAttributes>
@@ -341,6 +341,5 @@
         <image name="all_media_blue" width="38" height="20"/>
         <image name="channels" width="22" height="22"/>
         <image name="channels_blue" width="22" height="22"/>
-        <image name="playback_prev.png" width="24" height="24"/>
     </resources>
 </document>
