@@ -87,11 +87,21 @@ class ForgotPasswordViewController: UIViewController {
     {
         if emailTextfield.text!.isEmpty
         {
-            ErrorManager.sharedInstance.loginNoEmailEnteredError()
+            ErrorManager.sharedInstance.noEmailEnteredError()
         }
         else
         {
-            ErrorManager.sharedInstance.alert("Reset Password", message:"Instructions to reset your password has been sent to your email Id")
+            //check for valid email
+            let isEmailValid = isEmail(emailTextfield.text!) as Bool!
+            if isEmailValid == false
+            {
+                ErrorManager.sharedInstance.loginInvalidEmail()
+                return
+            }
+            else
+            {
+                 ErrorManager.sharedInstance.alert("Reset Password", message:"Instructions to reset your password has been sent to your email Id")
+            }
         }
     }
     

@@ -55,6 +55,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Login Error", message: "Please enter your username")
     }
     
+    func noEmailEnteredError()
+    {
+        alert("Login Error", message: "Please enter your Email")
+    }
+    
     func loginNoPasswordEnteredError()
     {
         alert("Login Error", message: "Please enter your password")
