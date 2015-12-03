@@ -103,7 +103,7 @@ static NSMutableDictionary * gHistory;
     BOOL                _infoMode;
     BOOL                _restoreIdleTimer;
     BOOL                _liveVideo;
-    BOOL                _cameraSelected;
+    SnapCamSelectionMode _snapCamMode;
 
     CGFloat             _bufferedDuration;
     CGFloat             _minBufferedDuration;
@@ -163,7 +163,8 @@ static NSMutableDictionary * gHistory;
 
     if (self) {
         _liveVideo = live;
-        _cameraSelected = true;
+        _snapCamMode = SnapCamSelectionModeDefaultMode;
+//        _cameraSelected = true;
         rtspFilePath = path;
         _parameters = nil;
         NSLog(@"rtsp File Path = %@",path);
@@ -1039,7 +1040,7 @@ static NSMutableDictionary * gHistory;
 }
 - (IBAction)didTapLiveButton:(id)sender {
     
-    if (_cameraSelected == false) {
+    if (_snapCamMode == SnapCamSelectionModeLiveStream){
         
         BOOL streamStarted = [self isStreamStarted];
         UploadStream * stream = [[UploadStream alloc]init];
@@ -1167,7 +1168,7 @@ static NSMutableDictionary * gHistory;
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     
     snapCamSelectVC.streamingDelegate = self;
-    snapCamSelectVC.cameraMode = [self getCameraSelectionMode];
+    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
     
 //    self.definesPresentationContext = YES; //self is presenting view controller
 //    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
@@ -1177,7 +1178,7 @@ static NSMutableDictionary * gHistory;
 
 -(BOOL)getCameraSelectionMode
 {
-    return _cameraSelected;
+    return _snapCamMode;
 }
 
 #pragma mark - Streaming protocol
@@ -1193,15 +1194,14 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Streaming Status %@", status);
 }
 
--(void)cameraSelectionMode:(BOOL)selected
+-(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
 {
-    _cameraSelected = selected;
-    
+    _snapCamMode = selectionMode;
 }
 
 -(void)changeCameraSelectionImage
 {
-    if (_cameraSelected) {
+    if (_snapCamMode != SnapCamSelectionModeLiveStream) {
         [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
     }
     else{
