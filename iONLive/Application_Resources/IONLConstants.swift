@@ -11,6 +11,7 @@ let userLoginIdKey = "userLoginIdKey"
 let userAccessTockenKey = "userAccessTockenKey"
 
 let apiErrorMessageKey = "errorMessage"
+let apiErrorCodeKey = "errorCode"
 
 let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"

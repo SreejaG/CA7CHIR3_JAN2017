@@ -30,18 +30,18 @@ class StreamsListViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType]]
-        
-        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
-
-        self.dataSource = dummyImageListingDataSource
-        getAllLiveStreams()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = true
+        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType]]
+        
+        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+        
+        self.dataSource = dummyImageListingDataSource
+        getAllLiveStreams()
     }
     
     override func didReceiveMemoryWarning() {
@@ -124,7 +124,7 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if message.isEmpty == false {
-            ErrorManager.sharedInstance.alert("Live Streams Fetching Error", message:message)
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
         }
         else{
             ErrorManager.sharedInstance.liveStreamFetchingError()

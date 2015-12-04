@@ -152,7 +152,7 @@ class LoginViewController: UIViewController {
         authenticationManager.authenticate(email: email, password: password, success: { (response) -> () in
            self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, message: message)
+                self.authenticationFailureHandler(error, code: message)
                 return
         }
     }
@@ -190,16 +190,16 @@ class LoginViewController: UIViewController {
         defaults.removeObjectForKey(startedStreaming)
     }
     
-    func authenticationFailureHandler(error: NSError?, message: String)
+    func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(message) andError = \(error?.localizedDescription) ")
+        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
-        else if message.isEmpty == false {
-            ErrorManager.sharedInstance.alert("Login Error", message:message)
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
         }
         else{
             ErrorManager.sharedInstance.loginError()

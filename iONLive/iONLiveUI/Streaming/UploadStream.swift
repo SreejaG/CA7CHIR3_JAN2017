@@ -59,7 +59,7 @@ class UploadStream : NSObject
                         ErrorManager.sharedInstance.noNetworkConnection()
                     }
                     else if message.isEmpty == false {
-                        ErrorManager.sharedInstance.alert("Streaming Error", message:message)
+                        ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
                     }
                     else{
                         ErrorManager.sharedInstance.streamingError()
@@ -134,7 +134,7 @@ class UploadStream : NSObject
                         ErrorManager.sharedInstance.noNetworkConnection()
                     }
                     else if message.isEmpty == false {
-                        ErrorManager.sharedInstance.alert("Streaming Error", message:message)
+                       ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
                     }
                     else{
                         ErrorManager.sharedInstance.streamingError()
@@ -201,7 +201,7 @@ class UploadStream : NSObject
                         ErrorManager.sharedInstance.noNetworkConnection()
                     }
                     else if message.isEmpty == false {
-                        ErrorManager.sharedInstance.alert("Streaming Error", message:message)
+                        ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
                     }
                     else{
                         ErrorManager.sharedInstance.streamingError()

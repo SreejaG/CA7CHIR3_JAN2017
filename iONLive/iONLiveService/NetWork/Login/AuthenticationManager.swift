@@ -19,7 +19,7 @@ class AuthenticationManager: NSObject {
     }
     
     //Method to authenticate a user with email and password, success and failure block
-    func authenticate(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    func authenticate(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["loginId":email,"password": password], success: { (operation, response) -> Void in
@@ -33,23 +33,25 @@ class AuthenticationManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
             }
             
             }, failure: { (operation, error) -> Void in
                 
-                var failureErrorDesc:String = ""
-                //get the error message from API if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                var failureErrorCode:String = ""
+                //get the error code from API if any
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
                 {
-                    failureErrorDesc = errorMessage
+                    failureErrorCode = errorCode
                 }
                 //The credentials were wrong or the network call failed
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorCode)
         })
     }
 
-    func signUp(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    
+    
+    func signUp(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["loginId":email,"password": password,"firstName":"","lastName":"","displayName":"","location":""], success: { (operation, response) -> Void in
@@ -63,19 +65,19 @@ class AuthenticationManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
             }
             
             }, failure: { (operation, error) -> Void in
                 
-                var failureErrorDesc:String = ""
+                var failureErrorCode:String = ""
                 //get the error message from API if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
                 {
-                    failureErrorDesc = errorMessage
+                    failureErrorCode = errorCode
                 }
                 //The credentials were wrong or the network call failed
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorCode)
         })
     }
 }

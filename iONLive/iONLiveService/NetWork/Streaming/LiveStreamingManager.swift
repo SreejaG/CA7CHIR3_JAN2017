@@ -20,7 +20,7 @@ class LiveStreamingManager: NSObject {
     //PRAGMA MARK:- initialiseLiveStreaming
     
     //Method to initialize live streaming with userid, tocken, success and failure block
-    func initialiseLiveStreaming(loginId loginId: String, tocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    func initialiseLiveStreaming(loginId loginId: String, tocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["loginId":loginId,"access_token": tocken], success: { (operation, response) -> Void in
@@ -34,18 +34,18 @@ class LiveStreamingManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
             }
             
             }, failure: { (operation, error) -> Void in
                 var failureErrorDesc:String = ""
                 //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
                 {
                     failureErrorDesc = errorMessage
                 }
                 //The credentials were wrong or the network call failed
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorDesc)
         })
     }
     
@@ -53,7 +53,7 @@ class LiveStreamingManager: NSObject {
     //PRAGMA MARK:- startLiveStreaming
     
     //Method to start live streaming with user tocken and stream tocken, success and failure block
-    func startLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    func startLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["loginId":loginId,"access_token":accesstocken,"streamToken":streamTocken,"action":"startStream"],success: { (operation, response) -> Void in
@@ -67,17 +67,17 @@ class LiveStreamingManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
             }
             
             }, failure: { (operation, error) -> Void in
                 var failureErrorDesc:String = ""
                 //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
                 {
                     failureErrorDesc = errorMessage
                 }
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorDesc)
         })
     }
     
@@ -85,7 +85,7 @@ class LiveStreamingManager: NSObject {
     //PRAGMA MARK:- stopLiveStreaming
     
     //Method to start live streaming with user tocken and stream tocken, success and failure block
-    func stopLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    func stopLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["loginId":loginId,"access_token":accesstocken,"streamToken":streamTocken,"action":"stopStream"],success: { (operation, response) -> Void in
@@ -99,24 +99,24 @@ class LiveStreamingManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
             }
             
             }, failure: { (operation, error) -> Void in
                 var failureErrorDesc:String = ""
                 //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
                 {
                     failureErrorDesc = errorMessage
                 }
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorDesc)
         })
     }
     
     
     //PRAGMA MARK:- getAllLiveStreams
     
-    func getAllLiveStreams(loginId loginId: String, accesstocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, message: String)->())?)
+    func getAllLiveStreams(loginId loginId: String, accesstocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["loginId":loginId,"access_token":accesstocken],success: { (operation, response) -> Void in
@@ -130,17 +130,17 @@ class LiveStreamingManager: NSObject {
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), message: "The authentication response is malformed")
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
             }
             
             },failure: { (operation, error) -> Void in
                 var failureErrorDesc:String = ""
                 //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorMessageFromResponse(error)
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
                 {
                     failureErrorDesc = errorMessage
                 }
-                failure?(error: error, message:failureErrorDesc)
+                failure?(error: error, code:failureErrorDesc)
         })
     }
 }
