@@ -93,18 +93,18 @@ class SignUpViewController: UIViewController {
     
     @IBAction func signUpClicked(sender: AnyObject)
     {
-        if emailTextfield.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.loginNoEmailEnteredError()
-        }
-        else if passwdTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
-        }
-        else
-        {
-            self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
-        }
+//        if emailTextfield.text!.isEmpty
+//        {
+//            ErrorManager.sharedInstance.loginNoEmailEnteredError()
+//        }
+//        else if passwdTextField.text!.isEmpty
+//        {
+//            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
+//        }
+//        else
+//        {
+//            self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
+//        }
     }
     
     
