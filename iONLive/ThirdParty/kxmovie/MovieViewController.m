@@ -142,7 +142,7 @@ static NSMutableDictionary * gHistory;
     [self.navigationController popViewControllerAnimated:true];
 }
 
-- (BOOL)prefersStatusBarHidden { return YES; }
+- (BOOL)prefersStatusBarHidden { return NO; }
 
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters
