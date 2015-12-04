@@ -111,6 +111,7 @@ class UploadStream : NSObject
                     }
                     else
                     {
+                        self.stopLiveStreaming()
                         self.steamingStatus?.StreamingStatus("Failure");
                         userDefault.setValue(false, forKey: startedStreaming)
                         ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
