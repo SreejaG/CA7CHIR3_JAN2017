@@ -141,22 +141,22 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8cA-HV-eex" userLabel="BottomView">
                                     <rect key="frame" x="0.0" y="480" width="600" height="120"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="quo-UK-e37">
-                                            <rect key="frame" x="37" y="25" width="56" height="56"/>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Camera_Thumb" translatesAutoresizingMaskIntoConstraints="NO" id="quo-UK-e37">
+                                            <rect key="frame" x="37" y="32" width="56" height="56"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="56" id="ocl-oE-7HU"/>
-                                                <constraint firstAttribute="width" constant="56" id="zUL-Pj-wgF"/>
+                                                <constraint firstAttribute="width" constant="56" id="Y7j-yH-Eiv"/>
+                                                <constraint firstAttribute="height" constant="56" id="mmQ-Xw-bpV"/>
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-v0-MdF" userLabel="cameraThumb">
-                                            <rect key="frame" x="40" y="28" width="50" height="50"/>
+                                            <rect key="frame" x="40" y="35" width="50" height="50"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="PUn-uR-X0B"/>
-                                                <constraint firstAttribute="width" constant="50" id="Vzh-ds-mVD"/>
+                                                <constraint firstAttribute="height" constant="50" id="OXY-bR-kLU"/>
+                                                <constraint firstAttribute="width" constant="50" id="gmi-al-zyM"/>
                                             </constraints>
-                                            <state key="normal" title="Button" image="photo1" backgroundImage="Camera_Thumb"/>
+                                            <state key="normal" image="photo1"/>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fzv-Kt-ME1" userLabel="cameraButton">
                                             <rect key="frame" x="257" y="17" width="86" height="86"/>
@@ -174,27 +174,37 @@
                                             <rect key="frame" x="504" y="32" width="56" height="56"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="56" id="EaH-RX-5q7"/>
-                                                <constraint firstAttribute="width" constant="56" id="prL-on-RtV"/>
+                                                <constraint firstAttribute="width" constant="56" id="MlB-z1-4iM"/>
+                                                <constraint firstAttribute="height" constant="56" id="aJu-Ps-6GO"/>
                                             </constraints>
-                                            <state key="normal" title="Button" image="photo2" backgroundImage="Stream_Thumb"/>
+                                            <state key="normal" image="Stream_Thumb"/>
                                             <connections>
                                                 <action selector="didTapStreamThumb:" destination="-1" eventType="touchUpInside" id="gMJ-e8-xtZ"/>
                                             </connections>
                                         </button>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VLQ-Sw-yWd" userLabel="Stream">
+                                            <rect key="frame" x="507" y="35" width="50" height="50"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="50" id="9sm-cu-ETy"/>
+                                                <constraint firstAttribute="width" constant="50" id="fD9-Sw-AUL"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <animations/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <constraints>
+                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="40" id="4xB-tk-X4p"/>
+                                        <constraint firstAttribute="trailing" secondItem="SDA-bD-Pa6" secondAttribute="trailing" constant="40" id="77x-PF-zpv"/>
+                                        <constraint firstItem="VLQ-Sw-yWd" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="82w-lz-dKW"/>
                                         <constraint firstItem="Fzv-Kt-ME1" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="8iA-Ig-hAM"/>
-                                        <constraint firstAttribute="trailing" secondItem="SDA-bD-Pa6" secondAttribute="trailing" constant="40" id="DbR-ds-y7h"/>
                                         <constraint firstItem="Fzv-Kt-ME1" firstAttribute="centerX" secondItem="8cA-HV-eex" secondAttribute="centerX" id="M20-GJ-R0w"/>
-                                        <constraint firstAttribute="bottom" secondItem="quo-UK-e37" secondAttribute="bottom" constant="39" id="Vlm-uh-lJa"/>
-                                        <constraint firstItem="quo-UK-e37" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="37" id="e5C-LY-ccJ"/>
+                                        <constraint firstItem="quo-UK-e37" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="Qq3-aw-mgI"/>
+                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="T3B-kp-c32"/>
+                                        <constraint firstItem="SDA-bD-Pa6" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="Wvt-t8-xNs"/>
+                                        <constraint firstItem="quo-UK-e37" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="37" id="aZj-Mv-37T"/>
                                         <constraint firstAttribute="bottom" secondItem="Fzv-Kt-ME1" secondAttribute="bottom" constant="17" id="g03-gV-nmX"/>
-                                        <constraint firstItem="SDA-bD-Pa6" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="hZM-Hb-3Mi"/>
-                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="40" id="hih-KZ-GBN"/>
-                                        <constraint firstAttribute="bottom" secondItem="6wa-v0-MdF" secondAttribute="bottom" constant="42" id="ltz-Zl-AjZ"/>
+                                        <constraint firstAttribute="trailing" secondItem="VLQ-Sw-yWd" secondAttribute="trailing" constant="43" id="jC3-sn-dCp"/>
                                         <constraint firstAttribute="height" constant="120" id="xRn-c1-nXY"/>
                                     </constraints>
                                 </view>
@@ -253,6 +263,5 @@
         <image name="girlFace1" width="29" height="29"/>
         <image name="girlFace2" width="29" height="29"/>
         <image name="photo1" width="50" height="50"/>
-        <image name="photo2" width="50" height="50"/>
     </resources>
 </document>
