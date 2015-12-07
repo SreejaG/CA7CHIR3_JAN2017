@@ -304,7 +304,7 @@ static NSMutableDictionary * gHistory;
     {
         closeButton.hidden = true;
         bottomView.hidden = false;
-        noDataFound.text = @"Camera not connected!";
+        noDataFound.text = @"Trying to connect camera";
         noDataFound.hidden = false;
     }
     else
