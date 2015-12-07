@@ -459,7 +459,10 @@ static NSMutableDictionary * gHistory;
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
     //    NSLog(@"active");
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (0.5 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+
     [self initialiseDecoder];
+    });
 }
 
 -(void)applicationDidEnterBackground: (NSNotification *)notification
@@ -563,8 +566,9 @@ static NSMutableDictionary * gHistory;
     _interrupted = true;
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         [_decoder closeFile];
-    });//    self.playing = NO;
-//    [self freeBufferedFrames];
+    });
+    self.playing = NO;
+    [self freeBufferedFrames];
 //    [_decoder closeFile];
 //    [_decoder openFile:nil error:nil];
 }
@@ -627,6 +631,8 @@ static NSMutableDictionary * gHistory;
             if (_activityIndicatorView.isAnimating) {
 
                 [_activityIndicatorView stopAnimating];
+                _activityIndicatorView.hidden = true;
+
                 NSLog(@"setMovieDecoder: (KxMovieDecoder *) decoder");
                 [self restorePlay];
             }
@@ -637,6 +643,8 @@ static NSMutableDictionary * gHistory;
         if (self.isViewLoaded && self.view.window) {
 
             [_activityIndicatorView stopAnimating];
+            _activityIndicatorView.hidden = true;
+
             if (!_interrupted)
                 [self handleDecoderMovieError: error];
         }
@@ -655,7 +663,7 @@ static NSMutableDictionary * gHistory;
 
     if (_decoder.validVideo) {
 
-        _activityIndicatorView.hidden = true;
+//        _activityIndicatorView.hidden = true;
         [self setUpViewForLiveAndStreaming];
 //        topView.hidden = false;
 //        bottomView.hidden = false;
@@ -922,6 +930,7 @@ static NSMutableDictionary * gHistory;
         _tickCorrectionTime = 0;
         _buffered = NO;
 //        [_activityIndicatorView stopAnimating];
+//        _activityIndicatorView.hidden = true;
     }
 
     CGFloat interval = 0;
