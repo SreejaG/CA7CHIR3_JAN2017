@@ -66,8 +66,8 @@ static NSMutableDictionary * gHistory;
 
 #define LOCAL_MIN_BUFFERED_DURATION   0.2
 #define LOCAL_MAX_BUFFERED_DURATION   0.4
-#define NETWORK_MIN_BUFFERED_DURATION 0.0
-#define NETWORK_MAX_BUFFERED_DURATION 1.0
+#define NETWORK_MIN_BUFFERED_DURATION 0.4
+#define NETWORK_MAX_BUFFERED_DURATION 0.5
 
 @interface MovieViewController () <StreamingProtocol>
 {
@@ -82,10 +82,14 @@ static NSMutableDictionary * gHistory;
 //    IBOutlet UIButton *backButton;
     IBOutlet UIButton *cameraButton;
 
+    IBOutlet UIView *liveView;
     IBOutlet UIButton *closeButton;
     IBOutlet UILabel *noDataFound;
     BOOL                _interrupted;
     
+    IBOutlet UIButton *thirdCircleButton;
+    IBOutlet UIButton *secondCircleButton;
+    IBOutlet UIButton *firstCircleButton;
     KxMovieDecoder      *_decoder;
     dispatch_queue_t    _dispatchQueue;
     NSMutableArray      *_videoFrames;
@@ -111,7 +115,7 @@ static NSMutableDictionary * gHistory;
     BOOL                _buffered;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
-    BOOL                _savedIdleTimer;
+//    BOOL                _savedIdleTimer;
     NSString *          rtspFilePath;
     NSDictionary        *_parameters;
     
@@ -281,7 +285,7 @@ static NSMutableDictionary * gHistory;
 
         [self setupPresentView];
     }
-    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
+//    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     
     
     //TODO make _interrupted No ,click on back button
@@ -294,24 +298,39 @@ static NSMutableDictionary * gHistory;
         
         [_activityIndicatorView startAnimating];
     }
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(applicationWillResignActive:)
+//                                                 name:UIApplicationWillResignActiveNotification
+//                                               object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:[UIApplication sharedApplication]];
 }
 
 -(void)setUpInitialGLView
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
+    
     if (_liveVideo == true)
     {
         closeButton.hidden = true;
         bottomView.hidden = false;
         noDataFound.text = @"Trying to connect camera";
         noDataFound.hidden = false;
+        liveView.hidden = false;
     }
     else
     {
         closeButton.hidden = false;
         bottomView.hidden = true;
         noDataFound.hidden = true;
+        liveView.hidden = true;
     }
     
 //    liveStreamStatus.hidden = true;
@@ -341,6 +360,7 @@ static NSMutableDictionary * gHistory;
 {
     bottomView.hidden = false;
     topView.hidden = false;
+    liveView.hidden = false;
 //    liveStreamStatus.hidden = false;
     cameraSelectionButton.hidden = false;
     closeButton.hidden = true;
@@ -351,6 +371,7 @@ static NSMutableDictionary * gHistory;
 //    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
+    liveView.hidden = true;
     closeButton.hidden = false;
     cameraSelectionButton.hidden = true;
 }
@@ -433,17 +454,24 @@ static NSMutableDictionary * gHistory;
         
         [_activityIndicatorView startAnimating];
     }
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillResignActive:)
-                                                 name:UIApplicationWillResignActiveNotification
-                                               object:[UIApplication sharedApplication]];
 }
+
+-(void)applicationDidBecomeActive: (NSNotification *)notification
+{
+    //    NSLog(@"active");
+    [self initialiseDecoder];
+}
+
+-(void)applicationDidEnterBackground: (NSNotification *)notification
+{
+    //    _dispatchQueue = nil;
+    [self close];
+}
+
 
 - (void) viewWillDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [super viewWillDisappear:animated];
     
@@ -463,7 +491,7 @@ static NSMutableDictionary * gHistory;
                         forKey:_decoder.path];
     }
     
-    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
+//    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
     
     [_activityIndicatorView stopAnimating];
     _buffered = NO;
@@ -477,10 +505,10 @@ static NSMutableDictionary * gHistory;
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-- (void) applicationWillResignActive: (NSNotification *)notification
-{
-    LoggerStream(1, @"applicationWillResignActive");
-}
+//- (void) applicationWillResignActive: (NSNotification *)notification
+//{
+//    LoggerStream(1, @"applicationWillResignActive");
+//}
 
 #pragma mark - public
 
@@ -530,16 +558,16 @@ static NSMutableDictionary * gHistory;
     LoggerStream(1, @"pause movie");
 }
 
-//-(void)close
-//{
-//    _interrupted = true;
-//    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
-//        [_decoder closeFile];
-//    });//    self.playing = NO;
-////    [self freeBufferedFrames];
-////    [_decoder closeFile];
-////    [_decoder openFile:nil error:nil];
-//}
+-(void)close
+{
+    _interrupted = true;
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+        [_decoder closeFile];
+    });//    self.playing = NO;
+//    [self freeBufferedFrames];
+//    [_decoder closeFile];
+//    [_decoder openFile:nil error:nil];
+}
 
 #pragma mark - private
 
@@ -893,7 +921,7 @@ static NSMutableDictionary * gHistory;
 
         _tickCorrectionTime = 0;
         _buffered = NO;
-        [_activityIndicatorView stopAnimating];
+//        [_activityIndicatorView stopAnimating];
     }
 
     CGFloat interval = 0;

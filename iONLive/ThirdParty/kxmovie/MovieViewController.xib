@@ -12,10 +12,14 @@
                 <outlet property="cameraButton" destination="Fzv-Kt-ME1" id="xLN-vZ-og4"/>
                 <outlet property="cameraSelectionButton" destination="lME-9O-IZZ" id="6cY-ph-zgr"/>
                 <outlet property="closeButton" destination="2sq-TW-cXt" id="Rbm-RH-rk7"/>
+                <outlet property="firstCircleButton" destination="f3D-sN-Bhz" id="yQ0-SY-7PT"/>
                 <outlet property="glView" destination="R2J-HD-A0s" id="pO5-Cs-rFc"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
+                <outlet property="liveView" destination="Kpa-gM-M7F" id="pVE-eQ-n2h"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
+                <outlet property="secondCircleButton" destination="WbX-hr-Zxb" id="OLz-WO-P5h"/>
+                <outlet property="thirdCircleButton" destination="kF6-Vj-OCx" id="wgz-RR-ZT2"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -77,28 +81,82 @@
                                                 <action selector="didTapCloseButton:" destination="-1" eventType="touchUpInside" id="hJr-hB-ktr"/>
                                             </connections>
                                         </button>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kpa-gM-M7F">
+                                            <rect key="frame" x="495" y="7" width="90" height="50"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kF6-Vj-OCx" userLabel="ThirdButton">
+                                                    <rect key="frame" x="55" y="8" width="35" height="35"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="35" id="0O3-q7-v9J"/>
+                                                        <constraint firstAttribute="height" constant="35" id="0tZ-NP-nQz"/>
+                                                    </constraints>
+                                                    <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WbX-hr-Zxb" userLabel="SecondButton">
+                                                    <rect key="frame" x="28" y="8" width="35" height="35"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="35" id="lwb-6F-HvV"/>
+                                                        <constraint firstAttribute="width" constant="35" id="sjz-ua-h3U"/>
+                                                    </constraints>
+                                                    <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f3D-sN-Bhz" userLabel="FirstButton">
+                                                    <rect key="frame" x="0.0" y="8" width="35" height="35"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="35" id="NGc-Mf-p3x"/>
+                                                        <constraint firstAttribute="height" constant="35" id="vDs-8z-6tj"/>
+                                                    </constraints>
+                                                    <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
+                                                </button>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="f3D-sN-Bhz" firstAttribute="centerY" secondItem="Kpa-gM-M7F" secondAttribute="centerY" id="7Kv-xi-tdW"/>
+                                                <constraint firstItem="f3D-sN-Bhz" firstAttribute="leading" secondItem="Kpa-gM-M7F" secondAttribute="leading" id="Crf-yR-YQr"/>
+                                                <constraint firstItem="WbX-hr-Zxb" firstAttribute="centerX" secondItem="Kpa-gM-M7F" secondAttribute="centerX" id="FNE-CT-Pjg"/>
+                                                <constraint firstAttribute="height" constant="50" id="RBg-fu-9Tc"/>
+                                                <constraint firstItem="WbX-hr-Zxb" firstAttribute="centerY" secondItem="Kpa-gM-M7F" secondAttribute="centerY" id="V2c-MP-3Kg"/>
+                                                <constraint firstAttribute="width" constant="90" id="mE2-Ws-afc"/>
+                                                <constraint firstItem="kF6-Vj-OCx" firstAttribute="centerY" secondItem="Kpa-gM-M7F" secondAttribute="centerY" id="rNW-bZ-C8w"/>
+                                                <constraint firstAttribute="trailing" secondItem="kF6-Vj-OCx" secondAttribute="trailing" id="wAh-Jp-YTN"/>
+                                            </constraints>
+                                        </view>
                                     </subviews>
                                     <animations/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="18" id="EN0-9m-7cf"/>
                                         <constraint firstAttribute="height" constant="64" id="Ej2-3X-7lc"/>
+                                        <constraint firstItem="Kpa-gM-M7F" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="FUq-nV-qR7"/>
                                         <constraint firstAttribute="trailing" secondItem="2sq-TW-cXt" secondAttribute="trailing" constant="15" id="KE4-do-HiM"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="top" secondItem="BB9-od-AqJ" secondAttribute="top" constant="25" id="QcA-zg-qca"/>
                                         <constraint firstItem="2sq-TW-cXt" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="TS5-v6-FgA"/>
+                                        <constraint firstAttribute="trailing" secondItem="Kpa-gM-M7F" secondAttribute="trailing" constant="15" id="mK9-Vt-C8d"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8cA-HV-eex" userLabel="BottomView">
                                     <rect key="frame" x="0.0" y="480" width="600" height="120"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-v0-MdF" userLabel="cameraThumb">
-                                            <rect key="frame" x="40" y="34" width="50" height="50"/>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="quo-UK-e37">
+                                            <rect key="frame" x="37" y="25" width="56" height="56"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="50" id="bNy-l4-VYZ"/>
-                                                <constraint firstAttribute="height" constant="50" id="shN-ox-xj9"/>
+                                                <constraint firstAttribute="height" constant="56" id="ocl-oE-7HU"/>
+                                                <constraint firstAttribute="width" constant="56" id="zUL-Pj-wgF"/>
                                             </constraints>
-                                            <state key="normal" title="Button" image="Camera_Thumb"/>
+                                        </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-v0-MdF" userLabel="cameraThumb">
+                                            <rect key="frame" x="40" y="28" width="50" height="50"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="50" id="PUn-uR-X0B"/>
+                                                <constraint firstAttribute="width" constant="50" id="Vzh-ds-mVD"/>
+                                            </constraints>
+                                            <state key="normal" title="Button" image="photo1" backgroundImage="Camera_Thumb"/>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fzv-Kt-ME1" userLabel="cameraButton">
                                             <rect key="frame" x="257" y="17" width="86" height="86"/>
@@ -119,7 +177,7 @@
                                                 <constraint firstAttribute="height" constant="56" id="EaH-RX-5q7"/>
                                                 <constraint firstAttribute="width" constant="56" id="prL-on-RtV"/>
                                             </constraints>
-                                            <state key="normal" title="Button" image="Stream_Thumb"/>
+                                            <state key="normal" title="Button" image="photo2" backgroundImage="Stream_Thumb"/>
                                             <connections>
                                                 <action selector="didTapStreamThumb:" destination="-1" eventType="touchUpInside" id="gMJ-e8-xtZ"/>
                                             </connections>
@@ -128,13 +186,15 @@
                                     <animations/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <constraints>
-                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="40" id="01b-hZ-Owe"/>
                                         <constraint firstItem="Fzv-Kt-ME1" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="8iA-Ig-hAM"/>
                                         <constraint firstAttribute="trailing" secondItem="SDA-bD-Pa6" secondAttribute="trailing" constant="40" id="DbR-ds-y7h"/>
                                         <constraint firstItem="Fzv-Kt-ME1" firstAttribute="centerX" secondItem="8cA-HV-eex" secondAttribute="centerX" id="M20-GJ-R0w"/>
-                                        <constraint firstAttribute="bottom" secondItem="6wa-v0-MdF" secondAttribute="bottom" constant="36" id="YTm-B5-BJd"/>
+                                        <constraint firstAttribute="bottom" secondItem="quo-UK-e37" secondAttribute="bottom" constant="39" id="Vlm-uh-lJa"/>
+                                        <constraint firstItem="quo-UK-e37" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="37" id="e5C-LY-ccJ"/>
                                         <constraint firstAttribute="bottom" secondItem="Fzv-Kt-ME1" secondAttribute="bottom" constant="17" id="g03-gV-nmX"/>
                                         <constraint firstItem="SDA-bD-Pa6" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="hZM-Hb-3Mi"/>
+                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="40" id="hih-KZ-GBN"/>
+                                        <constraint firstAttribute="bottom" secondItem="6wa-v0-MdF" secondAttribute="bottom" constant="42" id="ltz-Zl-AjZ"/>
                                         <constraint firstAttribute="height" constant="120" id="xRn-c1-nXY"/>
                                     </constraints>
                                 </view>
@@ -187,6 +247,12 @@
         <image name="Camera_Thumb" width="51" height="50"/>
         <image name="Live_camera" width="26" height="25"/>
         <image name="Stream_Thumb" width="56" height="56"/>
+        <image name="avatarCircleStroke" width="35" height="35"/>
+        <image name="boyFace" width="28" height="28"/>
         <image name="close" width="25" height="25"/>
+        <image name="girlFace1" width="29" height="29"/>
+        <image name="girlFace2" width="29" height="29"/>
+        <image name="photo1" width="50" height="50"/>
+        <image name="photo2" width="50" height="50"/>
     </resources>
 </document>

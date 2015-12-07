@@ -24,7 +24,7 @@ class StreamsListViewController: UIViewController{
     var dataSource:[[String:String]]?
     
     //for temp image along with streams and stream thumbanes
-    var dummyImagesArray:[String] = ["All media landing","All media landing","All media landing","All media landing","All media landing"]
+    var dummyImagesArray:[String] = ["thumb1","thumb2","thumb3","thumb4","thumb5","thumb6" , "thumb7","thumb8","thumb9","thumb10","thumb11","thumb12"]
     
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     
@@ -36,7 +36,7 @@ class StreamsListViewController: UIViewController{
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = true
-        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType]]
+        let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType],[imageKey:dummyImagesArray[5],typeKey:imageType],[imageKey:dummyImagesArray[6],typeKey:imageType],[imageKey:dummyImagesArray[7],typeKey:imageType],[imageKey:dummyImagesArray[8],typeKey:imageType],[imageKey:dummyImagesArray[9],typeKey:imageType],[imageKey:dummyImagesArray[10],typeKey:imageType],[imageKey:dummyImagesArray[11],typeKey:imageType]]
         
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         
