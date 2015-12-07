@@ -103,11 +103,15 @@ class UploadStream : NSObject
                         userDefault.setBool(true, forKey: startedStreaming)
                         print("live streaming")
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
-                        {
-                            self.steamingStatus?.StreamingStatus("Success");
-//                            self.steamingStatus?.StreamingStatus("live streaming...");
-                            start_stream(baseStreamName)
+                                    {
+                        self.startStreaming(streamToken)
                         }
+//                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+//                        {
+//                            self.steamingStatus?.StreamingStatus("Success");
+////                            self.steamingStatus?.StreamingStatus("live streaming...");
+//                            start_stream(baseStreamName)
+//                        }
                     }
                     else
                     {
@@ -151,6 +155,37 @@ class UploadStream : NSObject
         }
     }
     
+    func startStreaming(streamtoken:String)
+    {
+        let taskId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+            
+            
+        }
+        let baseStream = self.getBaseStream(streamtoken)
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+//            {
+                self.steamingStatus?.StreamingStatus("Success");
+                //                            self.steamingStatus?.StreamingStatus("live streaming...");
+                start_stream(baseStream)
+//        }
+        if(taskId != UIBackgroundTaskInvalid)
+        {
+            UIApplication.sharedApplication().endBackgroundTask(taskId)
+            self.removeStreaming()
+        }
+
+    }
+    /*- (void)someMethodToKeepRunningInBackground {
+    UIBackgroundTaskIdentifier taskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^(void) {
+    // Uh-oh - we took too long. Stop task.
+    }];
+    
+    // Perform task here
+    
+    if (taskId != UIBackgroundTaskInvalid) {
+    [[UIApplication sharedApplication] endBackgroundTask:taskId];
+    }
+    }*/
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
         var baseStream = "rtmp://104.197.159.157:1935/live/"

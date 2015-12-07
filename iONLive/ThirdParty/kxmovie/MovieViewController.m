@@ -206,8 +206,8 @@ static NSMutableDictionary * gHistory;
     BOOL streamStarted = [self isStreamStarted];
     
     noDataFound.hidden = true;
-    if (streamStarted == false) {
-        
+//    if (streamStarted == false) {
+    
         NSLog(@"rtsp File Path = %@",rtspFilePath);
         _interrupted = false;
         self.playing = NO;
@@ -242,9 +242,9 @@ static NSMutableDictionary * gHistory;
                 });
             }
         });
-    }
-    else
-    {
+//    }
+//    else
+//    {
 //        [self setupPresentView];
 //        [self.view setBackgroundColor:[UIColor whiteColor]];
 //        [glView setBackgroundColor:[UIColor blueColor]];
@@ -256,7 +256,7 @@ static NSMutableDictionary * gHistory;
 //        noDataFound.text = @"Live Streaming in Progress! , Stop Streaming to resume Live";
 //        noDataFound.textColor = [UIColor redColor];
 //        noDataFound.hidden = false;
-    }
+//    }
 }
 
 - (void) dealloc
