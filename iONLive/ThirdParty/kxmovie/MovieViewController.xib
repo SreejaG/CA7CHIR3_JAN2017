@@ -140,19 +140,19 @@
                                     <rect key="frame" x="0.0" y="480" width="600" height="120"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Camera_Thumb" translatesAutoresizingMaskIntoConstraints="NO" id="quo-UK-e37">
-                                            <rect key="frame" x="37" y="32" width="56" height="56"/>
+                                            <rect key="frame" x="37" y="35" width="50" height="50"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="56" id="Y7j-yH-Eiv"/>
-                                                <constraint firstAttribute="height" constant="56" id="mmQ-Xw-bpV"/>
+                                                <constraint firstAttribute="width" constant="50" id="Y7j-yH-Eiv"/>
+                                                <constraint firstAttribute="height" constant="50" id="mmQ-Xw-bpV"/>
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-v0-MdF" userLabel="cameraThumb">
-                                            <rect key="frame" x="40" y="35" width="50" height="50"/>
+                                            <rect key="frame" x="40" y="37" width="45" height="46"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="OXY-bR-kLU"/>
-                                                <constraint firstAttribute="width" constant="50" id="gmi-al-zyM"/>
+                                                <constraint firstAttribute="height" constant="46" id="OXY-bR-kLU"/>
+                                                <constraint firstAttribute="width" constant="45" id="gmi-al-zyM"/>
                                             </constraints>
                                             <state key="normal" image="photo1"/>
                                         </button>

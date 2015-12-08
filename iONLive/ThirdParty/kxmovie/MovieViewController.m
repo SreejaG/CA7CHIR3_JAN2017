@@ -66,8 +66,8 @@ static NSMutableDictionary * gHistory;
 
 #define LOCAL_MIN_BUFFERED_DURATION   0.2
 #define LOCAL_MAX_BUFFERED_DURATION   0.4
-#define NETWORK_MIN_BUFFERED_DURATION 0.4
-#define NETWORK_MAX_BUFFERED_DURATION 0.5
+#define NETWORK_MIN_BUFFERED_DURATION 1.5
+#define NETWORK_MAX_BUFFERED_DURATION 2.0
 
 @interface MovieViewController () <StreamingProtocol>
 {
@@ -187,13 +187,18 @@ static NSMutableDictionary * gHistory;
             
             NSError *error = nil;
             [decoder openFile:rtspFilePath error:&error];
-            
+//            if (error) {
+//                [self showInputNetworkErrorMessage];
+//            }
             __strong MovieViewController *strongSelf = weakSelf;
-            if (strongSelf) {
+            if (strongSelf ) {
                 
                 dispatch_sync(dispatch_get_main_queue(), ^{
 
                     [strongSelf setMovieDecoder:decoder withError:error];
+//                    if (error) {
+//                        [self showInputNetworkErrorMessage];
+//                    }
                 });
             }
         });
@@ -203,7 +208,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)initialiseDecoder
 {
-    BOOL streamStarted = [self isStreamStarted];
+//    BOOL streamStarted = [self isStreamStarted];
     
     noDataFound.hidden = true;
 //    if (streamStarted == false) {
@@ -221,7 +226,7 @@ static NSMutableDictionary * gHistory;
         __weak MovieViewController *weakSelf = self;
 
         KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
-        
+    
         decoder.interruptCallback = ^BOOL(){
             
             __strong MovieViewController *strongSelf = weakSelf;
@@ -324,17 +329,20 @@ static NSMutableDictionary * gHistory;
         noDataFound.text = @"Trying to connect camera";
         noDataFound.hidden = false;
         liveView.hidden = false;
+        cameraSelectionButton.hidden = false;
     }
     else
     {
         closeButton.hidden = false;
         bottomView.hidden = true;
-        noDataFound.hidden = true;
+        noDataFound.text = @"Trying to retrieve stream";
+        noDataFound.hidden = false;
         liveView.hidden = true;
+        cameraSelectionButton.hidden = true;
     }
     
 //    liveStreamStatus.hidden = true;
-    cameraSelectionButton.hidden = true;
+//    cameraSelectionButton.hidden = true;
 }
 
 -(void)setUpViewForLiveAndStreaming
@@ -362,7 +370,7 @@ static NSMutableDictionary * gHistory;
     topView.hidden = false;
     liveView.hidden = false;
 //    liveStreamStatus.hidden = false;
-    cameraSelectionButton.hidden = false;
+//    cameraSelectionButton.hidden = false;
     closeButton.hidden = true;
 }
 
@@ -373,7 +381,7 @@ static NSMutableDictionary * gHistory;
     topView.hidden = false;
     liveView.hidden = true;
     closeButton.hidden = false;
-    cameraSelectionButton.hidden = true;
+//    cameraSelectionButton.hidden = true;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -451,7 +459,7 @@ static NSMutableDictionary * gHistory;
         [self restorePlay];
         
     } else {
-        
+        _activityIndicatorView.hidden = false;
         [_activityIndicatorView startAnimating];
     }
 }
@@ -599,7 +607,7 @@ static NSMutableDictionary * gHistory;
         }
 
         if (!_decoder.validVideo)
-            _minBufferedDuration *= 10.0; // increase for audio
+            _minBufferedDuration *= 1.0; // increase for audio
 
         // allow to tweak some parameters at runtime
         if (_parameters.count) {
@@ -644,13 +652,24 @@ static NSMutableDictionary * gHistory;
 
             [_activityIndicatorView stopAnimating];
             _activityIndicatorView.hidden = true;
-
-            if (!_interrupted)
-                [self handleDecoderMovieError: error];
+            [self showErrorMessage:error];
         }
     }
 }
 
+-(void)showErrorMessage:(NSError*) error
+{
+    if (!_interrupted )
+    {
+        if (_liveVideo) {
+            [self showInputNetworkErrorMessage];
+        }
+        else
+        {
+            [self handleDecoderMovieError: error];
+        }
+    }
+}
 - (void) restorePlay
 {
     NSLog(@"restorePlay");
@@ -890,13 +909,17 @@ static NSMutableDictionary * gHistory;
             NSLog(@"_dispatchQueue");
             __strong MovieViewController *strongSelf = weakSelf;
             if (!strongSelf.playing)
+            {
+                NSLog(@"strongSelf.playing:");
                 return;
+            }
         }
 
         BOOL good = YES;
         while (good) {
 
             good = NO;
+            NSLog(@"good");
 
             @autoreleasepool {
 
@@ -905,22 +928,33 @@ static NSMutableDictionary * gHistory;
                 if (decoder && (decoder.validVideo || decoder.validAudio)) {
 
 //                    NSLog(@"[decoder decodeFrames:duration];");
+                    NSLog(@"decoder.validVideo");
+
                     NSArray *frames = [decoder decodeFrames:duration];
+                    NSLog(@"frames.count %lu", (unsigned long)frames.count);
+
                     if (frames.count) {
 
                         __strong MovieViewController *strongSelf = weakSelf;
                         if (strongSelf)
+                        {
                             good = [strongSelf addFrames:frames];
+                            NSLog(@"No frames to add");
+                        }
+                    }
+                    else{
+                        NSLog(@"No frames found! %lu", (unsigned long)frames.count);
                     }
                 }
             }
         }
-
         {
+            NSLog(@"strongSelf.decoding = NO");
             __strong MovieViewController *strongSelf = weakSelf;
             if (strongSelf) strongSelf.decoding = NO;
         }
     });
+    NSLog(@"Exit async decode frames");
 }
 
 - (void) tick
@@ -945,17 +979,34 @@ static NSMutableDictionary * gHistory;
 
         if (0 == leftFrames) {
 
-//            if (_decoder.isEOF) {
-//
-//                [self close];
-//                return;
-//            }
+            if (_decoder.isEOF) {
 
+//                [self pause];
+//                NSLog(@"returning!!");
+//                [self showErrorMessage:nil];
+//                return;
+
+//                [self pause];
+//                NSLog(@"_decoder.isEOF");
+//                return;
+            }
+            NSLog(@"0 == leftFrames0");
             if (_minBufferedDuration > 0 && !_buffered) {
 
                 _buffered = YES;
                 [_activityIndicatorView startAnimating];
+                NSLog(@"_minBufferedDuration > 0 && !_buffered");
+
             }
+//            else
+//            {
+//                [self pause];
+//                NSLog(@"returning!!");
+//                [self showErrorMessage:nil];
+//                return;
+//                
+//                //            return;
+//            }
         }
 
         if (!leftFrames ||
@@ -975,6 +1026,17 @@ static NSMutableDictionary * gHistory;
     if ((_tickCounter++ % 3) == 0) {
         //        [self updateHUD];
     }
+}
+
+-(void)showInputNetworkErrorMessage
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
+                                                        message:@"Please check your wifi connection"
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"Close", nil)
+                                              otherButtonTitles:@"Settings", nil];
+    alertView.tag = 102;
+    [alertView show];
 }
 
 - (CGFloat) tickCorrection
@@ -1140,13 +1202,27 @@ static NSMutableDictionary * gHistory;
 
 - (void) handleDecoderMovieError: (NSError *) error
 {
+    NSString * errorVal = [self getErrorMessage:error];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failure", nil)
-                                                        message:[error localizedDescription]
+                                                        message:errorVal
                                                        delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"Close", nil)
                                               otherButtonTitles:nil];
     alertView.tag = 101;
     [alertView show];
+}
+
+-(NSString*)getErrorMessage:(NSError *) error
+{
+    if (error) {
+        return [error localizedDescription];
+    }
+    else
+    {
+        return  @"Unable to fetch stream";
+    }
+
+    return @"Networkerror";
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -1160,9 +1236,18 @@ static NSMutableDictionary * gHistory;
             }
             break;
             
-//        case 102:
-//            [self showAlertMessageForSelectLiveStreamMode:buttonIndex];
-            
+        case 102:
+            if (buttonIndex == 1)
+            {
+                if(&UIApplicationOpenSettingsURLString != nil)
+                {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                }
+            }
+            else if (buttonIndex == 0)
+            {
+                [self showAlertMessageForNoStreamOrLiveDataFound];
+            }            
         default:
             break;
     }
@@ -1177,7 +1262,7 @@ static NSMutableDictionary * gHistory;
         noDataFound.text = @"Could not connect to camera!";
     }
     else{
-        noDataFound.text = @"No stream found!";
+        noDataFound.text = @"Unable to fetch stream!";
     }
 }
 

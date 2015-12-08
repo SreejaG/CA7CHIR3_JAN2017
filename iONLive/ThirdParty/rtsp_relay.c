@@ -10,7 +10,6 @@ bool m_init_done;
 int EXIT_FLAG=0;
 AVPacket pkt;
 AVDictionary *options = NULL;
-
 int clean_all(){
 	avformat_close_input(&m_informat);
 	avformat_free_context(m_outformat);
@@ -25,6 +24,7 @@ int init_streams(char *url_in ,char *url_out){
     int i,ret;
     av_register_all();
     avformat_network_init();
+	av_log_set_level(AV_LOG_TRACE);
     printf("%s\n",url_in);
     ret=avformat_open_input( &m_informat, url_in, NULL,NULL);
 	if(ret!=0){
@@ -48,7 +48,8 @@ int init_streams(char *url_in ,char *url_out){
         }
     // 4. Create ouputfile  and allocate output format.
     
-    avformat_alloc_output_context2(&m_outformat, NULL, "rtsp", url_out);
+    ret=avformat_alloc_output_context2(&m_outformat, NULL, "rtsp", url_out);
+	printf("AValloc :%d\n",ret);
     outfmt=m_outformat->oformat;
     if(outfmt==NULL){
     printf("Guess failed\n");
@@ -87,6 +88,7 @@ int init_streams(char *url_in ,char *url_out){
     return 0;
 }
 int start_stream(char* url_out){
+	int fun_ret=0;
     int ret;
     AVPacket pkt;
     AVDictionary *options = NULL;
@@ -101,7 +103,7 @@ int start_stream(char* url_out){
     }
     
     /* Write the stream header, if any. */
-    ret=avio_open(&m_outformat->pb, url_out, AVIO_FLAG_READ_WRITE);
+    ret=avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options);
     if (m_outformat->pb == NULL) {
         printf("Error in avio_open:%d\n",ret);
         return -1;
@@ -120,19 +122,31 @@ int start_stream(char* url_out){
 	int i;
     while(av_read_frame(m_informat, &pkt) >= 0){
         if(pkt.stream_index == m_in_vid_strm_idx){
-            //printf("Stream found\n");
+            printf("Stream found\n");
             ret=av_write_frame(m_outformat, &pkt);
-		}
+			if(ret<0){
+				i++;
+				if(i==250){
+					fun_ret=2;
+					break;
+				}
+			}
+			else
+				i=0;   
+        }
         if(EXIT_FLAG==1){
 			EXIT_FLAG=0;
-			printf("Endaro endo\n");
+			fun_ret=0;
+			printf("Exiting\n");
         	break;
         }
+		else
+			fun_ret=1;
     }
 	printf("Stream stopped from start\n");
 	//av_free_packet(&pkt);
 	clean_all();
-	return 0;
+	return fun_ret;
 }
 int stop_stream(){
     EXIT_FLAG=1;

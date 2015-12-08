@@ -6,7 +6,7 @@ int init_streams(char*,char*);
 /*1. url_in should be an rtsp url (example: "rtsp://[host]:[port]/application")
   2. url_out should be an rtmp url with proper authentication if authentication is enabeled((example: "rtmp://[host]:[port]/application"))
 */
-int start_stream(char*);
+int start_stream(char *url_out);
 /*This function will start relaying input stream to output */
 int stop_stream();
 /*This function will stop streaming will free all the packets */

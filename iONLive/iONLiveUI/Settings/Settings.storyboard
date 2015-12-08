@@ -149,7 +149,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rXz-OP-hd2">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="blurredBg" translatesAutoresizingMaskIntoConstraints="NO" id="rXz-OP-hd2">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.41568627450980389" green="0.36862745098039218" blue="0.31764705882352939" alpha="1" colorSpace="calibratedRGB"/>
@@ -302,6 +302,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="blurredBg" width="107" height="190"/>
         <image name="settings" width="27" height="26"/>
         <image name="snapCamMode" width="25" height="25"/>
     </resources>

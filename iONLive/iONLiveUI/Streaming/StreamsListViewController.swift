@@ -101,10 +101,10 @@ class StreamsListViewController: UIViewController{
         {
             print("success = \(json["liveStreams"])")
             let liveStreamDataSource = json["liveStreams"] as? [[String:String]]
-            if liveStreamDataSource?.count == 0
-            {
-                ErrorManager.sharedInstance.alert("No Live Streams", message: "Sorry! you don't have any live streams")
-            }
+//            if liveStreamDataSource?.count == 0
+//            {
+//                ErrorManager.sharedInstance.alert("No Live Streams", message: "Sorry! you don't have any live streams")
+//            }
             
             self.createDataSource(liveStreamDataSource)
             self.streamListCollectionView.reloadData()
