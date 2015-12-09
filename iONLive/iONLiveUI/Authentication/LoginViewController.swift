@@ -214,8 +214,6 @@ class LoginViewController: UIViewController {
     func loadLiveStreamView()
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
     }
 }

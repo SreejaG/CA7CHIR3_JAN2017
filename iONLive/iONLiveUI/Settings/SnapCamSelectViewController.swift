@@ -246,8 +246,8 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         })
     }
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent;
     }
 }
 

@@ -15,7 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        self.window!.backgroundColor = UIColor.whiteColor()
+         initialViewController()
+        self.window!.makeKeyAndVisible()
         return true
     }
 
@@ -41,8 +44,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-
-
+    
+    func initialViewController()
+    {
+        var controller : UIViewController = UIViewController()
+        //Auto login check
+        if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
+        {
+            let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
+            controller = authenticationStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController")
+            self.window!.rootViewController = controller
+        }
+        else
+        {
+            loadLiveStreamView()
+        }
+    }
+    
+    func loadLiveStreamView()
+    {
+        var navigationController:UINavigationController?
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+       
+        navigationController = UINavigationController(rootViewController: vc)
+        navigationController!.navigationBarHidden = true
+        
+        self.window!.rootViewController = navigationController
+    }
 
 }
 
