@@ -58,11 +58,11 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lME-9O-IZZ" userLabel="Camera Selection Button">
-                                            <rect key="frame" x="18" y="28" width="30" height="30"/>
+                                            <rect key="frame" x="13" y="23" width="40" height="40"/>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="30" id="Gjp-AU-IYL"/>
-                                                <constraint firstAttribute="width" constant="30" id="zOk-MF-xeS"/>
+                                                <constraint firstAttribute="height" constant="40" id="Gjp-AU-IYL"/>
+                                                <constraint firstAttribute="width" constant="40" id="zOk-MF-xeS"/>
                                             </constraints>
                                             <state key="normal" image="Live_camera"/>
                                             <connections>
@@ -128,10 +128,10 @@
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="Kpa-gM-M7F" secondAttribute="trailing" constant="20" id="AQR-gm-zuA"/>
-                                        <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="18" id="EN0-9m-7cf"/>
+                                        <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="13" id="EN0-9m-7cf"/>
                                         <constraint firstAttribute="height" constant="64" id="Ej2-3X-7lc"/>
                                         <constraint firstAttribute="trailing" secondItem="2sq-TW-cXt" secondAttribute="trailing" constant="15" id="KE4-do-HiM"/>
-                                        <constraint firstItem="lME-9O-IZZ" firstAttribute="top" secondItem="BB9-od-AqJ" secondAttribute="top" constant="28" id="QcA-zg-qca"/>
+                                        <constraint firstItem="lME-9O-IZZ" firstAttribute="top" secondItem="BB9-od-AqJ" secondAttribute="top" constant="23" id="QcA-zg-qca"/>
                                         <constraint firstItem="2sq-TW-cXt" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="TS5-v6-FgA"/>
                                         <constraint firstAttribute="bottom" secondItem="Kpa-gM-M7F" secondAttribute="bottom" constant="4" id="x5R-tN-xt6"/>
                                     </constraints>
