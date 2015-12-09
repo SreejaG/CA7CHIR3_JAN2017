@@ -16,6 +16,7 @@ int clean_all(){
 	m_informat=NULL;
 	m_in_vid_strm=NULL;
 	options = NULL;
+    EXIT_FLAG = 0;
 	printf("cleaning success\n");
 	return 0;
 	}
