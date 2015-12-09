@@ -77,7 +77,7 @@
                                             <constraint firstAttribute="width" constant="30" id="7Jn-hy-WMa"/>
                                             <constraint firstAttribute="height" constant="30" id="LjO-MR-8w2"/>
                                         </constraints>
-                                        <state key="normal" image="cyanFill"/>
+                                        <state key="normal" image="snapCamMode"/>
                                         <connections>
                                             <action selector="customBackButtonClicked:" destination="K3I-ov-Eit" eventType="touchUpInside" id="hTs-t3-kNF"/>
                                         </connections>
@@ -195,6 +195,6 @@
         <image name="all_media_blue" width="38" height="20"/>
         <image name="channels" width="22" height="22"/>
         <image name="channels_blue" width="22" height="22"/>
-        <image name="cyanFill" width="25" height="25"/>
+        <image name="snapCamMode" width="25" height="25"/>
     </resources>
 </document>
