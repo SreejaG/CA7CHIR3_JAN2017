@@ -207,7 +207,7 @@ class UploadStream : NSObject
         if(taskId != UIBackgroundTaskInvalid)
         {
             UIApplication.sharedApplication().endBackgroundTask(taskId)
-            self.removeStreaming()
+            self.clearStreamingDefaults()
         }
 
     }
@@ -276,11 +276,16 @@ class UploadStream : NSObject
         }
     }
     
-    func removeStreaming()
+    func clearStreamingDefaults()
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(false, forKey: startedStreaming)
         self.streamingStatus?.StreamingStatus("");
+    }
+    
+    func removeStreaming()
+    {
+        clearStreamingDefaults()
         stop_stream()
         print("Live streaming stopped.......")
     }

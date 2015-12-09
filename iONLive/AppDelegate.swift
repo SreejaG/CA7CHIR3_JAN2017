@@ -61,11 +61,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    {
+        defaults.removeObjectForKey(streamingToken)
+        defaults.removeObjectForKey(startedStreaming)
+    }
+
     func loadLiveStreamView()
     {
+        
         var navigationController:UINavigationController?
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
        
+        clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
         navigationController = UINavigationController(rootViewController: vc)
         navigationController!.navigationBarHidden = true
         
