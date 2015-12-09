@@ -464,8 +464,11 @@ static NSMutableDictionary * gHistory;
 
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
+    [_activityIndicatorView startAnimating];
+    _activityIndicatorView.hidden = false;
+
     //    NSLog(@"active");
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
 
     [self initialiseDecoder];
     });
@@ -476,7 +479,6 @@ static NSMutableDictionary * gHistory;
     //    _dispatchQueue = nil;
     [self close];
 }
-
 
 - (void) viewWillDisappear:(BOOL)animated
 {
