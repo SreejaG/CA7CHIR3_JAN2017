@@ -60,6 +60,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="rg4-rS-1oU">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="Ftb-W5-mGy"/>
+                                    <constraint firstAttribute="height" constant="20" id="uUZ-Q6-mHl"/>
+                                </constraints>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            </activityIndicatorView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jUA-sK-Gz9">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
                                 <subviews>
@@ -173,7 +182,9 @@
                             <constraint firstItem="crS-UD-ZdI" firstAttribute="top" secondItem="7lb-VM-ZVf" secondAttribute="bottom" id="GnU-uA-bpv"/>
                             <constraint firstAttribute="trailing" secondItem="7lb-VM-ZVf" secondAttribute="trailing" id="QYb-K0-2hi"/>
                             <constraint firstItem="jUA-sK-Gz9" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="b9t-34-acG"/>
+                            <constraint firstItem="rg4-rS-1oU" firstAttribute="centerX" secondItem="Yyd-ok-wXI" secondAttribute="centerX" id="cT8-KO-8BF"/>
                             <constraint firstItem="7lb-VM-ZVf" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="jpb-Rd-42C"/>
+                            <constraint firstItem="rg4-rS-1oU" firstAttribute="centerY" secondItem="Yyd-ok-wXI" secondAttribute="centerY" id="my1-3N-q8Y"/>
                             <constraint firstAttribute="trailing" secondItem="jUA-sK-Gz9" secondAttribute="trailing" id="n4I-NZ-GM7"/>
                         </constraints>
                     </view>
@@ -184,6 +195,7 @@
                     </tabBarItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="rg4-rS-1oU" id="Hu3-8z-xBR"/>
                         <outlet property="streamListCollectionView" destination="7lb-VM-ZVf" id="O30-Cz-dtJ"/>
                     </connections>
                 </viewController>

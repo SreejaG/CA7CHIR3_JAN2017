@@ -17,7 +17,8 @@ class StreamsListViewController: UIViewController{
     static let identifier = "StreamsListViewController"
     
     
-    var loadingOverlay: UIView?
+    //var loadingOverlay: UIView?
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
@@ -30,12 +31,14 @@ class StreamsListViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.bringSubviewToFront(activityIndicator)
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = true
+        activityIndicator.hidden = true
         let dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType],[imageKey:dummyImagesArray[5],typeKey:imageType],[imageKey:dummyImagesArray[6],typeKey:imageType],[imageKey:dummyImagesArray[7],typeKey:imageType],[imageKey:dummyImagesArray[8],typeKey:imageType],[imageKey:dummyImagesArray[9],typeKey:imageType],[imageKey:dummyImagesArray[10],typeKey:imageType],[imageKey:dummyImagesArray[11],typeKey:imageType]]
         
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
@@ -79,7 +82,8 @@ class StreamsListViewController: UIViewController{
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
-            showOverlay()
+            activityIndicator.hidden = false
+            //showOverlay()
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
@@ -96,7 +100,8 @@ class StreamsListViewController: UIViewController{
     
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
-        self.removeOverlay()
+        activityIndicator.hidden = true
+        //self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             print("success = \(json["liveStreams"])")
@@ -117,7 +122,8 @@ class StreamsListViewController: UIViewController{
     
     func getAllStreamFailureHandler(error: NSError?, message: String)
     {
-        self.removeOverlay()
+        activityIndicator.hidden = true
+        //self.removeOverlay()
         print("message = \(message)")
         
         if !self.requestManager.validConnection() {
@@ -133,23 +139,23 @@ class StreamsListViewController: UIViewController{
     
     
     //Loading Overlay Methods
-    func showOverlay()
-    {
-        if self.loadingOverlay != nil{
-            self.loadingOverlay?.removeFromSuperview()
-            self.loadingOverlay = nil
-        }
-        
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
-        loadingOverlayController.startLoading()
-        self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
-    }
-    
-    func removeOverlay(){
-        self.loadingOverlay?.removeFromSuperview()
-    }
+//    func showOverlay()
+//    {
+//        if self.loadingOverlay != nil{
+//            self.loadingOverlay?.removeFromSuperview()
+//            self.loadingOverlay = nil
+//        }
+//        
+//        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+//        loadingOverlayController.view.frame = self.view.bounds
+//        loadingOverlayController.startLoading()
+//        self.loadingOverlay = loadingOverlayController.view
+//        self.navigationController?.view.addSubview(self.loadingOverlay!)
+//    }
+//    
+//    func removeOverlay(){
+//        self.loadingOverlay?.removeFromSuperview()
+//    }
     
     @IBAction func customBackButtonClicked(sender: AnyObject)
     {
