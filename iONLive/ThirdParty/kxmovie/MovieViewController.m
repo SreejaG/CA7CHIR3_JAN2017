@@ -66,8 +66,8 @@ static NSMutableDictionary * gHistory;
 
 #define LOCAL_MIN_BUFFERED_DURATION   0.2
 #define LOCAL_MAX_BUFFERED_DURATION   0.4
-#define NETWORK_MIN_BUFFERED_DURATION 1.5
-#define NETWORK_MAX_BUFFERED_DURATION 2.0
+#define NETWORK_MIN_BUFFERED_DURATION 2.0
+#define NETWORK_MAX_BUFFERED_DURATION 3.0
 
 @interface MovieViewController () <StreamingProtocol>
 {
@@ -133,7 +133,6 @@ static NSMutableDictionary * gHistory;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
 
 @end
-
 
 @implementation MovieViewController
 
@@ -467,7 +466,7 @@ static NSMutableDictionary * gHistory;
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
     //    NSLog(@"active");
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (0.5 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
 
     [self initialiseDecoder];
     });
@@ -1143,7 +1142,7 @@ static NSMutableDictionary * gHistory;
         
         BOOL streamStarted = [self isStreamStarted];
         UploadStream * stream = [[UploadStream alloc]init];
-        stream.steamingStatus = self;
+        stream.streamingStatus = self;
         
         if (streamStarted == false) {
             

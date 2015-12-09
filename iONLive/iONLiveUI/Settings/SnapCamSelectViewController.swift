@@ -171,7 +171,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     func showAlertViewToStopStream()
     {
         let alert: UIAlertView = UIAlertView()
-        alert.title = "Steaming In Progress"
+        alert.title = "Streaming In Progress"
         alert.message = "Do you want to stop streaming?"
         alert.addButtonWithTitle("Yes")
         alert.addButtonWithTitle("No")

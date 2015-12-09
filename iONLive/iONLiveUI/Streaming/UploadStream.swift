@@ -14,7 +14,7 @@ class UploadStream : NSObject
     let requestManager = RequestManager()
     var currentStreamingTocken:String?
     
-    var steamingStatus:StreamingProtocol?
+    var streamingStatus:StreamingProtocol?
 
     override init(){
     }
@@ -97,15 +97,29 @@ class UploadStream : NSObject
 //                    let defaults = NSUserDefaults .standardUserDefaults()
                     userDefault.setValue(streamToken, forKey: streamingToken)
                     
-//                    self.steamingStatus?.StreamingStatus("Initializing Live Streaming...");
                     if (init_streams(cameraServerName, baseStreamName) == 0)
                     {
                         userDefault.setBool(true, forKey: startedStreaming)
                         print("live streaming")
-                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
-                                    {
-                        self.startStreaming(streamToken)
-                        }
+                        
+                        let queue:dispatch_queue_t = dispatch_queue_create("streaming", DISPATCH_QUEUE_SERIAL)
+                        
+                        dispatch_async(queue, { () -> Void in
+                            self.startStreaming(streamToken)
+                        })
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+//                        dispatch_queue_t(obj = dispatch_queue_create)
+////                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
+//                                    {
+//                        self.startStreaming(streamToken)
+//                        }
 //                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
 //                        {
 //                            self.steamingStatus?.StreamingStatus("Success");
@@ -116,7 +130,7 @@ class UploadStream : NSObject
                     else
                     {
                         self.stopLiveStreaming()
-                        self.steamingStatus?.StreamingStatus("Failure");
+                        self.streamingStatus?.StreamingStatus("Failure");
                         userDefault.setValue(false, forKey: startedStreaming)
                         ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
                     }
@@ -125,7 +139,7 @@ class UploadStream : NSObject
                 else
                 {
 //                    userDefault.removeObjectForKey(streamingToken)
-                    self.steamingStatus?.StreamingStatus("Failure");
+                    self.streamingStatus?.StreamingStatus("Failure");
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
@@ -133,7 +147,7 @@ class UploadStream : NSObject
                     
                     print("message = \(message)")
 //                    userDefault.removeObjectForKey(streamingToken)
-                    self.steamingStatus?.StreamingStatus("Failure");
+                    self.streamingStatus?.StreamingStatus("Failure");
                     if !self.requestManager.validConnection() {
                         ErrorManager.sharedInstance.noNetworkConnection()
                     }
@@ -150,7 +164,7 @@ class UploadStream : NSObject
         else
         {
 //            userDefault.removeObjectForKey(streamingToken)
-            self.steamingStatus?.StreamingStatus("Failure");
+            self.streamingStatus?.StreamingStatus("Failure");
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -159,12 +173,11 @@ class UploadStream : NSObject
     {
         let taskId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
             
-            
         }
         let baseStream = self.getBaseStream(streamtoken)
         //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
         //            {
-        self.steamingStatus?.StreamingStatus("Success");
+        self.streamingStatus?.StreamingStatus("Success");
         //                            self.steamingStatus?.StreamingStatus("live streaming...");
         let errCode = start_stream(baseStream)
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -267,7 +280,7 @@ class UploadStream : NSObject
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(false, forKey: startedStreaming)
-        self.steamingStatus?.StreamingStatus("");
+        self.streamingStatus?.StreamingStatus("");
         stop_stream()
         print("Live streaming stopped.......")
     }
