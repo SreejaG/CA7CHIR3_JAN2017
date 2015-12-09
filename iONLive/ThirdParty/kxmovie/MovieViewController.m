@@ -66,12 +66,11 @@ static NSMutableDictionary * gHistory;
 
 #define LOCAL_MIN_BUFFERED_DURATION   0.2
 #define LOCAL_MAX_BUFFERED_DURATION   0.4
-#define NETWORK_MIN_BUFFERED_DURATION 2.0
-#define NETWORK_MAX_BUFFERED_DURATION 3.0
+#define NETWORK_MIN_BUFFERED_DURATION 0.5
+#define NETWORK_MAX_BUFFERED_DURATION 2.0
 
 @interface MovieViewController () <StreamingProtocol>
 {
-    
     IBOutlet UIImageView *imageView;
     IBOutlet UIView *topView;
     IBOutlet KxMovieGLView *glView;
@@ -1151,6 +1150,10 @@ static NSMutableDictionary * gHistory;
         else
         {
             [stream stopStreamingClicked];
+            _minBufferedDuration = NETWORK_MIN_BUFFERED_DURATION;
+            _maxBufferedDuration = NETWORK_MAX_BUFFERED_DURATION;
+            
+
         }
     }
     else
