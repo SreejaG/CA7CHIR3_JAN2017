@@ -156,8 +156,8 @@ class StreamsListViewController: UIViewController{
         self.navigationController?.popViewControllerAnimated(true)
     }
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent;
     }
     
     //PRAGMA MARK:- dummy image helper functions
