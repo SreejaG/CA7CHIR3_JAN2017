@@ -44,6 +44,9 @@
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
+		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
+		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
+		16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */; };
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
@@ -146,6 +149,9 @@
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
+		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleTableViewCell.swift; sourceTree = "<group>"; };
+		16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
@@ -383,6 +389,9 @@
 				164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */,
 				164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */,
 				164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */,
+				16EAA6771C198596005F8242 /* SettingsViewController.swift */,
+				16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */,
+				16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -968,8 +977,10 @@
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
 				59BC3F5F1BFF848600710905 /* AFURLConnectionOperation.m in Sources */,
 				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
+				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */,
+				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
@@ -986,6 +997,7 @@
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
+				16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
 				1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */,
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
