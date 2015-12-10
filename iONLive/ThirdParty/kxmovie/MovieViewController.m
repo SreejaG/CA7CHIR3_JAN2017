@@ -150,8 +150,8 @@ static NSMutableDictionary * gHistory;
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL)live
 {
-    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
-    [audioManager activateAudioSession];
+//    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
+//    [audioManager activateAudioSession];
     
     return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
 }
@@ -204,7 +204,7 @@ static NSMutableDictionary * gHistory;
     return self;
 }
 
--(void)initialiseDecoder
+-(void)restartDecoder
 {
 //    BOOL streamStarted = [self isStreamStarted];
     
@@ -215,8 +215,8 @@ static NSMutableDictionary * gHistory;
     _interrupted = false;
     self.playing = NO;
     
-    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
-    [audioManager activateAudioSession];
+//    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
+//    [audioManager activateAudioSession];
     
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
@@ -451,26 +451,30 @@ static NSMutableDictionary * gHistory;
 //
 //
 //TODO make _interrupted No ,click on back button
-    _interrupted = NO;
-    if (_decoder) {
-        
-        [self restorePlay];
-        
-    } else {
-        _activityIndicatorView.hidden = false;
-        [_activityIndicatorView startAnimating];
-    }
+//    _interrupted = NO;
+//    if (_decoder) {
+//        
+//        [self restorePlay];
+//        
+//    } else {
+//        _activityIndicatorView.hidden = false;
+//        [_activityIndicatorView startAnimating];
+//    }
 }
 
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
+    [self reInitialiseDecoder];
+}
+
+-(void)reInitialiseDecoder
+{
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
     
-//    NSLog(@"active");
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         
-        [self initialiseDecoder];
+        [self restartDecoder];
     });
 }
 
@@ -494,19 +498,19 @@ static NSMutableDictionary * gHistory;
 //            [_decoder closeFile];
 //        });
 //       [self close];
-        [self pause];
-        if (_moviePosition == 0 || _decoder.isEOF)
-            [gHistory removeObjectForKey:_decoder.path];
-        else if (!_decoder.isNetwork)
-            [gHistory setValue:[NSNumber numberWithFloat:_moviePosition]
-                        forKey:_decoder.path];
+//        [self pause];
+//        if (_moviePosition == 0 || _decoder.isEOF)
+//            [gHistory removeObjectForKey:_decoder.path];
+//        else if (!_decoder.isNetwork)
+//            [gHistory setValue:[NSNumber numberWithFloat:_moviePosition]
+//                        forKey:_decoder.path];
     }
     
 //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
     
-    [_activityIndicatorView stopAnimating];
-    _buffered = NO;
-    _interrupted = YES;
+//    [_activityIndicatorView stopAnimating];
+//    _buffered = NO;
+//    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -1142,22 +1146,35 @@ static NSMutableDictionary * gHistory;
     
     if (_snapCamMode == SnapCamSelectionModeLiveStream){
         
-        BOOL streamStarted = [self isStreamStarted];
+//        BOOL streamStarted = [self isStreamStarted];
         UploadStream * stream = [[UploadStream alloc]init];
         stream.streamingStatus = self;
+        BOOL initializingStream = [[NSUserDefaults standardUserDefaults] boolForKey:@"InitializingStream"];
         
-        if (streamStarted == false) {
+        if (initializingStream) {
+            
+            [self showInitializingStreamAlert];
+            return;
+            
+        }
+        
+        if ([self isStreamStarted] == false) {
+            
+            /*Uncomment ,if we need to close viewfinder when streaming in Progress*/
+//            [self showStreamingInProgressMessage];
+//            [self close];
             
             [stream startStreamingClicked];
+            [self showInitializingStreamMessage];
         }
         else
         {
             [stream stopStreamingClicked];
-            _minBufferedDuration = NETWORK_MIN_BUFFERED_DURATION;
-            _maxBufferedDuration = NETWORK_MAX_BUFFERED_DURATION;
+            [self resetBufferedDuration];
             
-            
-        }
+            /*Uncomment ,if we need to close viewfinder when streaming in Progress*/
+//            [self reInitialiseDecoder];
+         }
     }
     else
     {
@@ -1170,6 +1187,29 @@ static NSMutableDictionary * gHistory;
 //        alert.tag = 102;
 //        [alert show];
     }
+}
+
+-(void)showInitializingStreamAlert
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Initializing Stream"
+                                                    message:@"Streaming is being initialized,please wait!"
+                                                   delegate:self
+                                          cancelButtonTitle:NSLocalizedString(@"Close", nil)
+                                          otherButtonTitles:nil];
+    alert.tag = 103;
+    [alert show];
+}
+
+-(void)resetBufferedDuration
+{
+    _minBufferedDuration = NETWORK_MIN_BUFFERED_DURATION;
+    _maxBufferedDuration = NETWORK_MAX_BUFFERED_DURATION;
+}
+
+-(void)showInitializingStreamMessage
+{
+    noDataFound.hidden = false;
+    noDataFound.text = @"Initializing Stream...";
 }
 
 -(BOOL)isStreamStarted
@@ -1237,7 +1277,7 @@ static NSMutableDictionary * gHistory;
         case 101:
             if (buttonIndex == 0)
             {
-                [self showAlertMessageForNoStreamOrLiveDataFound];
+                [self showMessageForNoStreamOrLiveDataFound];
             }
             break;
             
@@ -1251,14 +1291,14 @@ static NSMutableDictionary * gHistory;
             }
             else if (buttonIndex == 0)
             {
-                [self showAlertMessageForNoStreamOrLiveDataFound];
+                [self showMessageForNoStreamOrLiveDataFound];
             }            
         default:
             break;
     }
 }
 
--(void)showAlertMessageForNoStreamOrLiveDataFound
+-(void)showMessageForNoStreamOrLiveDataFound
 {
     noDataFound.hidden = false;
     _activityIndicatorView.hidden = true;
@@ -1313,6 +1353,7 @@ static NSMutableDictionary * gHistory;
 
 -(void) StreamingStatus:(NSString*)status
 {
+    [self hideStatusMessage];
     [self changeCameraSelectionImage];
 //    if (status == @"Failure") {
 //        <#statements#>
@@ -1322,6 +1363,12 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Streaming Status %@", status);
 }
 
+-(void)hideStatusMessage
+{
+    noDataFound.text = @"";
+    noDataFound.hidden = true;
+}
+
 -(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
 {
     _snapCamMode = selectionMode;
@@ -1329,11 +1376,11 @@ static NSMutableDictionary * gHistory;
 
 -(void)changeCameraSelectionImage
 {
-    if (_snapCamMode != SnapCamSelectionModeLiveStream) {
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
+    if (_snapCamMode == SnapCamSelectionModeLiveStream) {
+        [self changeLiveNowSelectionImage];
     }
     else{
-        [self changeLiveNowSelectionImage];
+        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
     }
 }
 

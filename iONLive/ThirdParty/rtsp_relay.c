@@ -86,16 +86,9 @@ int init_streams(char *url_in ,char *url_out){
          }
 
     }
-    return 0;
-}
-int start_stream(char* url_out){
-	int fun_ret=0;
-    int ret;
-    AVPacket pkt;
-    AVDictionary *options = NULL;
-    av_dict_set(&options, "rtsp_transport", "tcp", 0);
+	av_dict_set(&options, "rtsp_transport", "tcp", 0);
 	printf("url_out is %s\n",url_out);
-    if (!(outfmt->flags & AVFMT_NOFILE)){
+	if (!(outfmt->flags & AVFMT_NOFILE)){
         if (avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options) < 0){
             printf("Could Not Open File out(Error in avio_open2)\n");
             ret = -1;
@@ -109,6 +102,13 @@ int start_stream(char* url_out){
         printf("Error in avio_open:%d\n",ret);
         return -1;
     }
+	return 0;
+}
+
+
+int start_stream(char* url_out){
+    
+    int fun_ret,ret;
     ret=avformat_write_header(m_outformat, &options);
     if (ret < 0){
         printf("ret:%d\n",ret);
