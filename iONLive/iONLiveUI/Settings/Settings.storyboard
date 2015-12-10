@@ -160,26 +160,26 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyZ-Rb-9UE" userLabel="TitleView">
                                         <rect key="frame" x="0.0" y="2" width="600" height="70"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cb8-gw-XJs" userLabel="snapCamButton">
-                                                <rect key="frame" x="15" y="23" width="25" height="25"/>
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cb8-gw-XJs" userLabel="snapCamButton">
+                                                <rect key="frame" x="13" y="23" width="40" height="40"/>
                                                 <animations/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="25" id="48j-Ge-Skp"/>
-                                                    <constraint firstAttribute="width" constant="25" id="T9W-ma-uRe"/>
+                                                    <constraint firstAttribute="height" constant="40" id="48j-Ge-Skp"/>
+                                                    <constraint firstAttribute="width" constant="40" id="T9W-ma-uRe"/>
                                                 </constraints>
                                                 <state key="normal" image="snapCamMode"/>
                                                 <connections>
                                                     <action selector="snapcamButtonClicked:" destination="ly1-be-vXc" eventType="touchUpInside" id="vlC-3m-zaN"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g0-Xb-ogi" userLabel="settingsButton">
-                                                <rect key="frame" x="560" y="23" width="25" height="25"/>
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0g0-Xb-ogi" userLabel="settingsButton">
+                                                <rect key="frame" x="547" y="23" width="40" height="40"/>
                                                 <animations/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="25" id="T9f-IB-l44"/>
-                                                    <constraint firstAttribute="width" constant="25" id="uyr-Bq-POf"/>
+                                                    <constraint firstAttribute="height" constant="40" id="T9f-IB-l44"/>
+                                                    <constraint firstAttribute="width" constant="40" id="uyr-Bq-POf"/>
                                                 </constraints>
                                                 <state key="normal" image="settings"/>
                                                 <connections>
@@ -187,9 +187,12 @@
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                                <rect key="frame" x="0.0" y="30" width="600" height="30"/>
                                                 <animations/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="Fcc-hj-ZUU"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -198,15 +201,14 @@
                                         <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstItem="MoJ-aw-347" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" id="DzV-Q5-d0z"/>
                                             <constraint firstAttribute="height" constant="70" id="KR0-so-UFI"/>
-                                            <constraint firstAttribute="trailing" secondItem="0g0-Xb-ogi" secondAttribute="trailing" constant="15" id="Nif-e9-6VG"/>
-                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" constant="15" id="Pjq-XW-wKf"/>
+                                            <constraint firstAttribute="trailing" secondItem="0g0-Xb-ogi" secondAttribute="trailing" constant="13" id="Nif-e9-6VG"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" constant="13" id="Pjq-XW-wKf"/>
                                             <constraint firstItem="MoJ-aw-347" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" id="SjC-Au-iDp"/>
-                                            <constraint firstItem="0g0-Xb-ogi" firstAttribute="centerY" secondItem="xyZ-Rb-9UE" secondAttribute="centerY" id="TuI-dU-vZU"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" constant="23" id="Yos-P6-iMs"/>
                                             <constraint firstAttribute="trailing" secondItem="MoJ-aw-347" secondAttribute="trailing" id="b8h-BC-lRJ"/>
-                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="centerY" secondItem="xyZ-Rb-9UE" secondAttribute="centerY" id="bME-6a-fV2"/>
                                             <constraint firstAttribute="bottom" secondItem="MoJ-aw-347" secondAttribute="bottom" constant="10" id="gDm-vT-WFd"/>
+                                            <constraint firstItem="0g0-Xb-ogi" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" constant="23" id="zvc-Jg-wPX"/>
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HDq-qv-DDE">
