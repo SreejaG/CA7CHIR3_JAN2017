@@ -10,17 +10,21 @@ import UIKit
 
 class PhotoViewerViewController: UIViewController {
 
+    let thumbImageKey = "thumbImage"
+    let fullImageKey = "fullImageKey"
+     static let identifier = "PhotoViewerViewController"
+    
     @IBOutlet weak var photoThumpCollectionView: UICollectionView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
-    var dataSource:[String]?
+    var dataSource:[[String:String]]?
+   
     
-    var thumbImagesDataSource = ["thumb1","thumb2","thumb3","thumb4","thumb5","thumb6" , "thumb7","thumb8","thumb9","thumb10","thumb11","thumb12"]
-    
-    static let identifier = "PhotoViewerViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataSource = thumbImagesDataSource
-        self.fullScrenImageView.image = UIImage(named: thumbImagesDataSource[0])
+        var dummyImagesDataSource = [[thumbImageKey:"photo1thmb",fullImageKey:"photo1"],[thumbImageKey:"photo2thmb",fullImageKey:"photo2"],[thumbImageKey:"photo3thmb",fullImageKey:"photo3"],[thumbImageKey:"photo4thmb",fullImageKey:"photo4"],[thumbImageKey:"photo5thmb",fullImageKey:"photo5"],[thumbImageKey:"photo6thmb",fullImageKey:"photo6"],[thumbImageKey:"photo7thmb",fullImageKey:"photo7"],[thumbImageKey:"photo8thmb",fullImageKey:"photo8"],[thumbImageKey:"photo9thmb",fullImageKey:"photo9"],[thumbImageKey:"photo10thmb",fullImageKey:"photo10"]]
+        
+        dataSource = dummyImagesDataSource
+        self.fullScrenImageView.image = UIImage(named: dummyImagesDataSource[0][fullImageKey]!)
     }
 
     override func didReceiveMemoryWarning() {
@@ -60,7 +64,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         {
             if dataSource.count > indexPath.row
             {
-                cell.thumbImageView.image = UIImage(named: dataSource[indexPath.row])
+                var dict = dataSource[indexPath.row]
+                if let thumpImage = dict[thumbImageKey]
+                {
+                    cell.thumbImageView.image = UIImage(named: thumpImage)
+                }
             }
         }
         return cell
@@ -72,10 +80,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         {
             if dataSource.count > indexPath.row
             {
-                self.fullScrenImageView.image = UIImage(named:dataSource[indexPath.row])
+                var dict = dataSource[indexPath.row]
+                if let fullImage = dict[fullImageKey]
+                {
+                     self.fullScrenImageView.image = UIImage(named:fullImage)
+                }
             }
         }
     }
+    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(0, 1, 0, 1)

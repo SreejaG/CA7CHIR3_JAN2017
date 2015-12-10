@@ -40,9 +40,9 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TODAY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tuh-W8-1lF">
-                                        <rect key="frame" x="0.0" y="28" width="600" height="21"/>
+                                        <rect key="frame" x="0.0" y="30" width="600" height="21"/>
                                         <animations/>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -56,7 +56,7 @@
                                     <constraint firstItem="E08-1q-r1T" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="LaR-oM-9MA"/>
                                     <constraint firstAttribute="height" constant="64" id="Otu-Th-m9Y"/>
                                     <constraint firstItem="Csb-BG-yaO" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="UdC-we-xEa"/>
-                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="klg-J8-Dzt"/>
+                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="30" id="Zxk-KC-Whk"/>
                                     <constraint firstAttribute="trailing" secondItem="E08-1q-r1T" secondAttribute="trailing" constant="18" id="xzC-b5-hmA"/>
                                 </constraints>
                             </view>
@@ -68,15 +68,17 @@
                                 <rect key="frame" x="0.0" y="550" width="600" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-0e-fze">
-                                        <rect key="frame" x="20" y="10" width="45" height="30"/>
+                                        <rect key="frame" x="20" y="10" width="47" height="30"/>
                                         <animations/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Delete">
                                             <color key="titleColor" red="0.36078431372549019" green="0.41960784313725491" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fa-dd-16L">
-                                        <rect key="frame" x="534" y="10" width="46" height="30"/>
+                                        <rect key="frame" x="532" y="10" width="48" height="30"/>
                                         <animations/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Add to"/>
                                     </button>
                                 </subviews>
