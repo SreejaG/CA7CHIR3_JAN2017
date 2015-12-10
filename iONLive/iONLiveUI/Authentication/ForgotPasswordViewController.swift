@@ -34,9 +34,6 @@ class ForgotPasswordViewController: UIViewController {
         self.title = "RESET PASSWORD"
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
-        
-        self.emailTextfield.becomeFirstResponder()
-        
         emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         emailTextfield.autocorrectionType = UITextAutocorrectionType.No
