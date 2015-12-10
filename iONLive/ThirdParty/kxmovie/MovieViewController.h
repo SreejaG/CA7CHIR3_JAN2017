@@ -19,11 +19,11 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL) live;
--(void)initialiseDecoder;
+//-(void)restartDecoder;
 
 @property (readonly) BOOL playing;
 
-- (void) play;
-- (void) pause;
+//- (void) play;
+//- (void) pause;
 
 @end

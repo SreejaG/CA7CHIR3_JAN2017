@@ -15,6 +15,7 @@ let apiErrorCodeKey = "errorCode"
 
 let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"
+let initializingStream = "InitializingStream"
 
 @objc enum SnapCamSelectionMode : Int {
     
@@ -29,7 +30,7 @@ let streamingToken = "StreamingToken"
     init() {
         self = .DefaultMode
     }
-    
+
 //    init(rawValue : String)
 //    {
 //        self = SnapCamSelectionMode(rawValue: rawValue)

@@ -65,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         defaults.removeObjectForKey(streamingToken)
         defaults.removeObjectForKey(startedStreaming)
+        defaults.removeObjectForKey(initializingStream)
     }
 
     func loadLiveStreamView()

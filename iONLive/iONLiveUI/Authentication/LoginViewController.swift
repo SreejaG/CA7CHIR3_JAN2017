@@ -194,6 +194,7 @@ class LoginViewController: UIViewController {
     {
         defaults.removeObjectForKey(streamingToken)
         defaults.removeObjectForKey(startedStreaming)
+        defaults.removeObjectForKey(initializingStream)
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
