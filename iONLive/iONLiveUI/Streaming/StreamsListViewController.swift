@@ -172,9 +172,15 @@ class StreamsListViewController: UIViewController{
     {
         if let liveStreams = liveStreamDataSource
         {
+            var count = 0
             for eachLiveStream in liveStreams
             {
-                dataSource?.insert(eachLiveStream, atIndex:0)
+                if dataSource?.count > count
+                {
+                    dataSource?[count] = eachLiveStream
+                    count = count + 1
+                }
+                //dataSource?.insert(eachLiveStream, atIndex:0)
             }
         }
     }

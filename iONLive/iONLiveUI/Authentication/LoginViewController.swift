@@ -79,6 +79,7 @@ class LoginViewController: UIViewController {
         {
             UIView.animateWithDuration(1.0) { () -> Void in
                 self.logInBottomConstraint.constant = 0
+                self.view.layoutIfNeeded()
             }
         }
     }
