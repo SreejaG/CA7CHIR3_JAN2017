@@ -10,6 +10,7 @@
 		160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */; };
 		160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE411C032C0E00020D31 /* IONLConstants.swift */; };
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
+		16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */; };
 		1644B3C81C05687B004E3832 /* Connectivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3C71C05687B004E3832 /* Connectivity.m */; };
 		1644B3D01C056934004E3832 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3CF1C056934004E3832 /* RequestManager.swift */; };
 		1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3D21C05698F004E3832 /* ErrorManager.swift */; };
@@ -102,6 +103,7 @@
 		160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingManager.swift; sourceTree = "<group>"; };
 		160EAE411C032C0E00020D31 /* IONLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLConstants.swift; sourceTree = "<group>"; };
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
+		16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbCollectionViewCell.swift; sourceTree = "<group>"; };
 		1644B3C61C05687B004E3832 /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
 		1644B3C71C05687B004E3832 /* Connectivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connectivity.m; sourceTree = "<group>"; };
 		1644B3CF1C056934004E3832 /* RequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 			children = (
 				1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */,
 				1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */,
+				16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */,
 			);
 			path = PhotoViewer;
 			sourceTree = "<group>";
@@ -994,6 +997,7 @@
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
+				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
