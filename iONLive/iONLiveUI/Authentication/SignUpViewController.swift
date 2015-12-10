@@ -27,6 +27,7 @@ class SignUpViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
+        self.emailTextfield.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,7 +52,7 @@ class SignUpViewController: UIViewController {
   
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardDidShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
     }
     
@@ -61,21 +62,28 @@ class SignUpViewController: UIViewController {
     {
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if signUpBottomConstraint.constant == 0
         {
-            signUpBottomConstraint.constant += keyboardFrame.size.height
+            UIView.animateWithDuration(1.0) { () -> Void in
+                self.signUpBottomConstraint.constant += keyboardFrame.size.height
+                self.view.layoutIfNeeded()
+            }
         }
     }
     
     func KeyboardDidHide(notification: NSNotification)
     {
-        let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if signUpBottomConstraint.constant != 0
         {
-            signUpBottomConstraint.constant -= keyboardFrame.size.height
+            UIView.animateWithDuration(1.0) { () -> Void in
+                self.signUpBottomConstraint.constant = 0
+                self.view.layoutIfNeeded()
+            }
         }
     }
+
     
     // PRAGMA MARK:- textField delegates
     

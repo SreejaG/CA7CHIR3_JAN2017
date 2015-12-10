@@ -27,6 +27,7 @@ class LoginViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
+        self.userNameTextfield.becomeFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,7 +52,7 @@ class LoginViewController: UIViewController {
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardDidShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
     }
     
@@ -61,19 +62,24 @@ class LoginViewController: UIViewController {
     {
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if logInBottomConstraint.constant == 0
         {
-            logInBottomConstraint.constant += keyboardFrame.size.height
+            UIView.animateWithDuration(1.0) { () -> Void in
+                self.logInBottomConstraint.constant += keyboardFrame.size.height
+                self.view.layoutIfNeeded()
+            }
         }
     }
     
     func KeyboardDidHide(notification: NSNotification)
     {
-        let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if logInBottomConstraint.constant != 0
         {
-            logInBottomConstraint.constant -= keyboardFrame.size.height
+            UIView.animateWithDuration(1.0) { () -> Void in
+                self.logInBottomConstraint.constant = 0
+            }
         }
     }
     
@@ -181,7 +187,6 @@ class LoginViewController: UIViewController {
         {
             ErrorManager.sharedInstance.loginError()
         }
-
     }
     
     func clearStreamingUserDefaults(defaults:NSUserDefaults)

@@ -35,6 +35,8 @@ class ForgotPasswordViewController: UIViewController {
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
+        self.emailTextfield.becomeFirstResponder()
+        
         emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         emailTextfield.autocorrectionType = UITextAutocorrectionType.No
@@ -43,7 +45,7 @@ class ForgotPasswordViewController: UIViewController {
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardDidShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
     }
     
@@ -53,19 +55,24 @@ class ForgotPasswordViewController: UIViewController {
     {
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if resetPasswdBottomConstraint.constant == 0
         {
-            resetPasswdBottomConstraint.constant += keyboardFrame.size.height
+            UIView.animateWithDuration(1.0, animations: { () -> Void in
+               self.resetPasswdBottomConstraint.constant += keyboardFrame.size.height
+                 self.view.layoutIfNeeded()
+            })
         }
     }
     
     func KeyboardDidHide(notification: NSNotification)
     {
-        let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        self.view.layoutIfNeeded()
         if resetPasswdBottomConstraint.constant != 0
         {
-            resetPasswdBottomConstraint.constant -= keyboardFrame.size.height
+            UIView.animateWithDuration(1.0, animations: { () -> Void in
+               self.resetPasswdBottomConstraint.constant = 0
+            })
         }
     }
     
