@@ -222,7 +222,7 @@ class UploadStream : NSObject
         if errCode > 0
         {
             defaults.setValue(false, forKey: startedStreaming)
-            self.removeStreaming()
+            self.stopLiveStreaming()
         }
         switch errCode
         {
