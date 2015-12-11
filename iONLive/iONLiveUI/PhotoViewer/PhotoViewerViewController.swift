@@ -21,7 +21,7 @@ class PhotoViewerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var dummyImagesDataSource = [[thumbImageKey:"photo1thmb",fullImageKey:"photo1"],[thumbImageKey:"photo2thmb",fullImageKey:"photo2"],[thumbImageKey:"photo3thmb",fullImageKey:"photo3"],[thumbImageKey:"photo4thmb",fullImageKey:"photo4"],[thumbImageKey:"photo5thmb",fullImageKey:"photo5"],[thumbImageKey:"photo6thmb",fullImageKey:"photo6"],[thumbImageKey:"photo7thmb",fullImageKey:"photo7"],[thumbImageKey:"photo8thmb",fullImageKey:"photo8"],[thumbImageKey:"photo9thmb",fullImageKey:"photo9"],[thumbImageKey:"photo10thmb",fullImageKey:"photo10"]]
+        var dummyImagesDataSource = [[thumbImageKey:"photo1thmb",fullImageKey:"photoV1"],[thumbImageKey:"photo2thmb",fullImageKey:"photoV2"],[thumbImageKey:"photo3thmb",fullImageKey:"photo3"],[thumbImageKey:"photo4thmb",fullImageKey:"photo4"],[thumbImageKey:"photo5thmb",fullImageKey:"photo5"],[thumbImageKey:"photo6thmb",fullImageKey:"photo6"],[thumbImageKey:"photo7thmb",fullImageKey:"photo7"],[thumbImageKey:"photo8thmb",fullImageKey:"photo8"],[thumbImageKey:"photo9thmb",fullImageKey:"photo9"],[thumbImageKey:"photo10thmb",fullImageKey:"photo10"]]
         
         dataSource = dummyImagesDataSource
         self.fullScrenImageView.image = UIImage(named: dummyImagesDataSource[0][fullImageKey]!)

@@ -23,6 +23,7 @@ class StreamsListViewController: UIViewController{
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
     var dataSource:[[String:String]]?
+    var refreshControl:UIRefreshControl!
     
     //for temp image along with streams and stream thumbanes
     var dummyImagesArray:[String] = ["thumb1","thumb2","thumb3","thumb4","thumb5","thumb6" , "thumb7","thumb8","thumb9","thumb10","thumb11","thumb12"]
@@ -31,8 +32,13 @@ class StreamsListViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl.addTarget(self, action: "getAllLiveStreams", forControlEvents: UIControlEvents.ValueChanged)
+        self.streamListCollectionView.addSubview(refreshControl)
+        self.streamListCollectionView.alwaysBounceVertical = true
         self.view.bringSubviewToFront(activityIndicator)
-        // Do any additional setup after loading the view.
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -83,7 +89,6 @@ class StreamsListViewController: UIViewController{
         if let loginId = loginId, let accessTocken = accessTocken
         {
             activityIndicator.hidden = false
-            //showOverlay()
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
@@ -101,16 +106,11 @@ class StreamsListViewController: UIViewController{
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
         activityIndicator.hidden = true
-        //self.removeOverlay()
+        self.refreshControl.endRefreshing()
         if let json = response as? [String: AnyObject]
         {
             print("success = \(json["liveStreams"])")
             let liveStreamDataSource = json["liveStreams"] as? [[String:String]]
-//            if liveStreamDataSource?.count == 0
-//            {
-//                ErrorManager.sharedInstance.alert("No Live Streams", message: "Sorry! you don't have any live streams")
-//            }
-            
             self.createDataSource(liveStreamDataSource)
             self.streamListCollectionView.reloadData()
         }
@@ -123,7 +123,7 @@ class StreamsListViewController: UIViewController{
     func getAllStreamFailureHandler(error: NSError?, message: String)
     {
         activityIndicator.hidden = true
-        //self.removeOverlay()
+        self.refreshControl.endRefreshing()
         print("message = \(message)")
         
         if !self.requestManager.validConnection() {
@@ -136,26 +136,6 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.liveStreamFetchingError()
         }
     }
-    
-    
-    //Loading Overlay Methods
-//    func showOverlay()
-//    {
-//        if self.loadingOverlay != nil{
-//            self.loadingOverlay?.removeFromSuperview()
-//            self.loadingOverlay = nil
-//        }
-//        
-//        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-//        loadingOverlayController.view.frame = self.view.bounds
-//        loadingOverlayController.startLoading()
-//        self.loadingOverlay = loadingOverlayController.view
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
-//    }
-//    
-//    func removeOverlay(){
-//        self.loadingOverlay?.removeFromSuperview()
-//    }
     
     @IBAction func customBackButtonClicked(sender: AnyObject)
     {

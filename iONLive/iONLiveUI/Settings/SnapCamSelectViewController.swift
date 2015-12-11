@@ -237,7 +237,10 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     //PRAGMA MARK:- IBActions
     @IBAction func settingsbuttonClicked(sender: AnyObject)
     {
-        
+//        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+//        let settingsVC = storyBoard.instantiateViewControllerWithIdentifier("SettingsViewController") as! SettingsViewController
+//        self.presentViewController(settingsVC, animated: true) { () -> Void in
+//        }
     }
     @IBAction func snapcamButtonClicked(sender: AnyObject)
     {

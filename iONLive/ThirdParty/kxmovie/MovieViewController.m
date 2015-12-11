@@ -1334,6 +1334,7 @@ static NSMutableDictionary * gHistory;
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
@@ -1342,6 +1343,18 @@ static NSMutableDictionary * gHistory;
 //    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
+}
+- (IBAction)photoViewerClicked:(id)sender {
+    [self loadPhotoViewer];
+}
+
+-(void) loadPhotoViewer
+{
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
+    UIViewController *photoViewerViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    photoViewerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.navigationController presentViewController:photoViewerViewController animated:true completion:^{
+    }];
 }
 
 -(BOOL)getCameraSelectionMode
