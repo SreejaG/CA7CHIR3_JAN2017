@@ -44,6 +44,7 @@
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
+		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
 		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
 		16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */; };
@@ -149,6 +150,7 @@
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
+		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleTableViewCell.swift; sourceTree = "<group>"; };
 		16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -392,6 +394,7 @@
 				16EAA6771C198596005F8242 /* SettingsViewController.swift */,
 				16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */,
 				16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */,
+				16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -967,6 +970,7 @@
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
+				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,
 				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
@@ -1157,6 +1161,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Hariprasad V Nair (9DS4486WDX)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hariprasad V Nair (9DS4486WDX)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
@@ -1183,6 +1188,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Hariprasad V Nair (9DS4486WDX)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hariprasad V Nair (9DS4486WDX)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",

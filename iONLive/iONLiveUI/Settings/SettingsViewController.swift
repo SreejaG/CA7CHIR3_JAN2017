@@ -54,37 +54,33 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
 {
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
-        if section == 0
-        {
-            return 50.0
-        }
-        else
-        {
-             return 40.0
-        }
+        return 45.0
+//        if section == 0
+//        {
+//            return 50.0
+//        }
+//        else
+//        {
+//             return 40.0
+//        }
     }
     
-//    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        
-//        if(section == 0) {
-//            var view = UIView() // The width will be the same as the cell, and the height should be set in tableView:heightForRowAtIndexPath:
-//            var label = UILabel()
-//            label.text = "CAMERA"
-//            label.textColor = UIColor.lightGrayColor()
-//           
-//            view.addSubview(label)
-//           
-//           view.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-//            return view
-//        }
-//        return nil
-//    }
-////    
-////  func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int)
-////  {
-////     //view.tintColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-////    view.tintColor = UIColor.redColor()
-////    }
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    {
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier("SettingsHeaderTableViewCell") as! SettingsHeaderTableViewCell
+        
+        switch (section) {
+        case 0:
+            headerCell.headerTitle.text = "CAMERA";
+        case 1:
+            headerCell.headerTitle.text = "ACCOUNT";
+        case 2:
+            headerCell.headerTitle.text = "SUPPORT";
+        default:
+            headerCell.headerTitle.text = "";
+        }
+        return headerCell
+    }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -119,6 +115,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                    cellDataSource = dataSource[indexPath.section][indexPath.row]
                }
             }
+        
         }
         
         if let cellDataSource = cellDataSource
@@ -153,26 +150,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         else
         {
             return 0
-        }
-    }
-    
-    
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String?
-    {
-        switch section
-        {
-        case 0:
-            return "CAMERA"
-            
-        case 1:
-            return "ACCOUNT"
-            
-        case 2:
-            return "SUPPORT"
-            
-        default:
-            return ""
-            
         }
     }
 }
