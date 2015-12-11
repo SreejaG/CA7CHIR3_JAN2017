@@ -1,17 +1,16 @@
 //
-//  SettingsTableViewCell.swift
+//  SettingsHeaderTableViewCell.swift
 //  iONLive
 //
-//  Created by Gadgeon on 12/10/15.
+//  Created by Gadgeon on 12/11/15.
 //  Copyright © 2015 Gadgeon. All rights reserved.
 //
 
 import UIKit
 
-class SettingsTableViewCell: UITableViewCell {
+class SettingsHeaderTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var accessryLabel: UILabel!
-    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var headerTitle: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
