@@ -117,6 +117,7 @@ static NSMutableDictionary * gHistory;
 //    BOOL                _savedIdleTimer;
     NSString *          rtspFilePath;
     NSDictionary        *_parameters;
+    UIAlertView *alertViewTemp;
     
 ////Should be removed
 //    
@@ -991,6 +992,7 @@ static NSMutableDictionary * gHistory;
                 [self showErrorMessage:nil];
                 return;
                 
+                
                 //                [self pause];
                 //                NSLog(@"_decoder.isEOF");
                 //                return;
@@ -1035,13 +1037,16 @@ static NSMutableDictionary * gHistory;
 
 -(void)showInputNetworkErrorMessage
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
-                                                        message:@"Please check your wifi connection"
-                                                       delegate:self
-                                              cancelButtonTitle:NSLocalizedString(@"Close", nil)
-                                              otherButtonTitles:@"Settings", nil];
-    alertView.tag = 102;
-    [alertView show];
+    if (alertViewTemp.isVisible == false) {
+        
+        alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
+                                                   message:@"Please check your wifi connection"
+                                                  delegate:self
+                                         cancelButtonTitle:NSLocalizedString(@"Close", nil)
+                                         otherButtonTitles:@"Settings", nil];
+        alertViewTemp.tag = 102;
+        [alertViewTemp show];
+    }
 }
 
 - (CGFloat) tickCorrection
@@ -1292,7 +1297,8 @@ static NSMutableDictionary * gHistory;
             else if (buttonIndex == 0)
             {
                 [self showMessageForNoStreamOrLiveDataFound];
-            }            
+            }
+            break;
         default:
             break;
     }
