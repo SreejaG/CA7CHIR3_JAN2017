@@ -13,12 +13,47 @@
                         <viewControllerLayoutGuide type="top" id="vOL-X2-Afq"/>
                         <viewControllerLayoutGuide type="bottom" id="5ZT-Yw-tEZ"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Oys-WG-wzS">
+                    <view key="view" contentMode="scaleToFill" id="CjY-Qi-Sea">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dbA-00-Jla" userLabel="MainView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2NI-LR-vp5" userLabel="topView">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WHR-Aq-vLH">
+                                                <rect key="frame" x="279" y="22" width="42" height="21"/>
+                                                <animations/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6iJ-c1-0fH">
+                                                <rect key="frame" x="524" y="19" width="46" height="30"/>
+                                                <animations/>
+                                                <state key="normal" title="Save"/>
+                                            </button>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dbA-00-Jla" firstAttribute="top" secondItem="CjY-Qi-Sea" secondAttribute="top" id="Cfa-8B-MGC"/>
+                            <constraint firstItem="dbA-00-Jla" firstAttribute="leading" secondItem="CjY-Qi-Sea" secondAttribute="leading" id="Nma-Ja-hcu"/>
+                            <constraint firstAttribute="trailing" secondItem="dbA-00-Jla" secondAttribute="trailing" id="Xuf-dY-XL9"/>
+                            <constraint firstItem="5ZT-Yw-tEZ" firstAttribute="top" secondItem="dbA-00-Jla" secondAttribute="bottom" id="rSu-kb-VWs"/>
+                        </constraints>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fXM-0v-0iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
