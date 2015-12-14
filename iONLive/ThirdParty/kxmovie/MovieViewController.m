@@ -1461,6 +1461,10 @@ static NSMutableDictionary * gHistory;
             if (buttonIndex == 0)
             {
                 [self showMessageForNoStreamOrLiveDataFound];
+                [self dismissViewControllerAnimated:true
+                                         completion:^{
+
+                                         }];
             }
             break;
             
