@@ -9,8 +9,8 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://104.197.159.157:3000"
-    
+//    let baseUrl = "http://104.197.159.157:3000"
+    let baseUrl = "http://bpe.ioncameras.com:3000"
     class var sharedInstance: UrlManager {
         struct Singleton {
             static let instance = UrlManager()
