@@ -72,7 +72,7 @@ class StreamsListViewController: UIViewController{
     //    }
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.159.157:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://stream.ioncameras.com:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: true) { () -> Void in
             
@@ -125,6 +125,7 @@ class StreamsListViewController: UIViewController{
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         print("message = \(message)")
+        self.streamListCollectionView.reloadData()
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()

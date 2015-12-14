@@ -41,6 +41,11 @@ class SettingsViewController: UIViewController {
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
     }
 
+    @IBAction func doneClicked(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true) { () -> Void in
+            
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }

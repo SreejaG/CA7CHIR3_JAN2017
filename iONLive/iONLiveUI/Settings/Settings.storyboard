@@ -193,6 +193,9 @@
                                                 <state key="normal" title="Done">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="doneClicked:" destination="6V6-yG-NJE" eventType="touchUpInside" id="X4y-Gb-PwC"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <animations/>
