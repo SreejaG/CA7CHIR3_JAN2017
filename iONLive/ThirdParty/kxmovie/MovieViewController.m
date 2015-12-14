@@ -13,6 +13,7 @@
 #import "KxAudioManager.h"
 #import "KxMovieGLView.h"
 #import "KxLogger.h"
+#import "Connectivity.h"
 #import "iONLive-Swift.h"
 #import <CFNetwork/CFNetwork.h>
 
@@ -139,6 +140,7 @@ static NSMutableDictionary * gHistory;
 @property (readwrite) BOOL playing;
 @property (readwrite) BOOL decoding;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
+@property (nonatomic) Connectivity *wifiReachability;
 
 @end
 
@@ -439,6 +441,8 @@ static NSMutableDictionary * gHistory;
 -(void)addApplicationObservers
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self checkWifiReachability];
+//    [self updateInterfaceWithReachability:self.wifiReachability];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification
@@ -448,6 +452,30 @@ static NSMutableDictionary * gHistory;
                                                  name:UIApplicationDidEnterBackgroundNotification
                                                object:[UIApplication sharedApplication]];
 }
+
+-(void)checkWifiReachability
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+    self.wifiReachability = [Connectivity reachabilityForLocalWiFi];
+    [self.wifiReachability startNotifier];
+
+}
+-(void)reachabilityChanged:(NSNotification *)note
+{
+    Connectivity * curReach = [note object];
+    NSLog(@"Reahcbility changes");
+    if (curReach == self.wifiReachability && curReach.currentReachabilityStatus == ReachableViaWiFi)
+    {
+        if (_liveVideo) {
+            [self checkWifiConnectionAndStartDecoder];
+        }
+        NSLog(@"Wifi changed");
+    }
+}
+
 
 -(void)setUpInitialGLView
 {
