@@ -92,8 +92,10 @@ static NSMutableDictionary * gHistory;
     
     //heart View
     __weak IBOutlet UIView *heartView;
-    __weak IBOutlet UIImageView *hidingHeartImageView;
-    __weak IBOutlet NSLayoutConstraint *heartBottomConstraint;
+
+    __weak IBOutlet UIView *heartBottomDescView;
+    __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
+    __weak IBOutlet UIButton *hidingHeartButton;
     
     KxMovieDecoder      *_decoder;
     dispatch_queue_t    _dispatchQueue;
@@ -457,6 +459,7 @@ static NSMutableDictionary * gHistory;
 -(void)customiseViewForStreaming
 {
     heartView.hidden = true;
+    heartBottomDescView.hidden = true;
 //    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
@@ -1487,6 +1490,21 @@ static NSMutableDictionary * gHistory;
 }
 
 //PRAGMA MARK:- HeartView helper functions
+- (IBAction)heartClicked:(id)sender
+{
+    if (heartButtomBottomConstraint.constant == 97.0)
+    {
+        // show heartDescView
+        heartBottomDescView.hidden = false;
+        hidingHeartButton.hidden = true;
+        heartButtomBottomConstraint.constant = 50.0;
+    }
+    else{
+        heartBottomDescView.hidden = true;
+        hidingHeartButton.hidden = false;
+        heartButtomBottomConstraint.constant = 97.0;
+    }
+}
 
 
 
