@@ -108,8 +108,7 @@ static NSMutableDictionary * gHistory;
     NSTimeInterval      _tickCorrectionTime;
     NSTimeInterval      _tickCorrectionPosition;
     NSUInteger          _tickCounter;
-//    BOOL                _fullscreen;
-//    BOOL                _hiddenHUD;
+    BOOL                _backGround;
     BOOL                _fitMode;
     BOOL                _infoMode;
     BOOL                _restoreIdleTimer;
@@ -174,6 +173,7 @@ static NSMutableDictionary * gHistory;
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     
     if (self) {
+        _backGround =  false;
         _liveVideo = live;
         _snapCamMode = SnapCamSelectionModeDefaultMode;
         rtspFilePath = path;
@@ -181,7 +181,7 @@ static NSMutableDictionary * gHistory;
         _parameters = nil;
         NSLog(@"rtsp File Path = %@",path);
         
-        [self isWifiConnected];
+//        [self isWifiConnected];
         __weak MovieViewController *weakSelf = self;
         
         KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
@@ -302,7 +302,7 @@ static NSMutableDictionary * gHistory;
     
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
-    [self isWifiConnected];
+//    [self isWifiConnected];
     __weak MovieViewController *weakSelf = self;
     
     KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
@@ -550,7 +550,10 @@ static NSMutableDictionary * gHistory;
 
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
-    [self reInitialiseDecoder];
+    if (_backGround) {
+        _backGround = false;
+        [self reInitialiseDecoder];
+    }
 }
 
 -(void)reInitialiseDecoder
@@ -566,6 +569,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)applicationDidEnterBackground: (NSNotification *)notification
 {
+    _backGround =  true;
 //    _dispatchQueue = nil;
     [self close];
 }
