@@ -456,7 +456,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForStreaming
 {
-    heartView.hidden = false;
+    heartView.hidden = true;
 //    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
