@@ -523,7 +523,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForStreaming
 {
-    heartView.hidden = true;
+    heartView.hidden = false;
     heartBottomDescView.hidden = true;
 //    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
@@ -1584,17 +1584,17 @@ static NSMutableDictionary * gHistory;
 //PRAGMA MARK:- HeartView helper functions
 - (IBAction)heartClicked:(id)sender
 {
-    if (heartButtomBottomConstraint.constant == 97.0)
+    if (heartButtomBottomConstraint.constant == 111.0)
     {
         // show heartDescView
         heartBottomDescView.hidden = false;
         hidingHeartButton.hidden = true;
-        heartButtomBottomConstraint.constant = 50.0;
+        heartButtomBottomConstraint.constant = 65.0;
     }
     else{
         heartBottomDescView.hidden = true;
         hidingHeartButton.hidden = false;
-        heartButtomBottomConstraint.constant = 97.0;
+        heartButtomBottomConstraint.constant = 111.0;
     }
 }
 
