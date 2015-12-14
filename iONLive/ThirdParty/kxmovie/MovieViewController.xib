@@ -144,19 +144,19 @@
                                     <rect key="frame" x="0.0" y="400" width="600" height="200"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wR-gB-ROq" userLabel="hidingHeart">
-                                            <rect key="frame" x="548" y="114" width="22" height="21"/>
+                                            <rect key="frame" x="543" y="115" width="22" height="20"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="Lkn-Jp-8Zf"/>
-                                                <constraint firstAttribute="height" constant="21" id="vfE-ob-Oz4"/>
+                                                <constraint firstAttribute="height" constant="20" id="vfE-ob-Oz4"/>
                                             </constraints>
-                                            <state key="normal" image="hearth_outline"/>
+                                            <state key="normal" image="hearth_border"/>
                                             <connections>
                                                 <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="nC3-ca-4Gm"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1B-Ua-a0O" userLabel="heart2">
-                                            <rect key="frame" x="558" y="74" width="22" height="21"/>
+                                            <rect key="frame" x="553" y="68" width="22" height="21"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="HMn-5R-RlB"/>
@@ -168,26 +168,26 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Pg-fba" userLabel="herat3">
-                                            <rect key="frame" x="566" y="43" width="22" height="21"/>
+                                            <rect key="frame" x="561" y="37" width="22" height="21"/>
                                             <animations/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="9o1-c4-TSl"/>
                                                 <constraint firstAttribute="height" constant="21" id="Oee-xH-Gqk"/>
                                             </constraints>
-                                            <state key="normal" image="hearth"/>
+                                            <state key="normal" image="hearth_transp"/>
                                             <connections>
                                                 <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="26Y-Rd-FTm"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TH9-8s-Wr3" userLabel="heart4">
-                                            <rect key="frame" x="533" y="10" width="22" height="21"/>
+                                            <rect key="frame" x="528" y="4" width="22" height="21"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="CzF-rZ-2Me"/>
                                                 <constraint firstAttribute="height" constant="21" id="L4J-gI-Lcy"/>
                                             </constraints>
-                                            <state key="normal" image="hearth"/>
+                                            <state key="normal" image="hearth_transp"/>
                                             <connections>
                                                 <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="kqJ-iB-FhS"/>
                                             </connections>
@@ -225,11 +225,11 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hearth_outline" translatesAutoresizingMaskIntoConstraints="NO" id="RIc-pl-wnG">
-                                                    <rect key="frame" x="559" y="19" width="21" height="22"/>
+                                                    <rect key="frame" x="543" y="20" width="22" height="21"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="22" id="ucl-lz-PHv"/>
-                                                        <constraint firstAttribute="width" constant="21" id="vFM-N0-T9k"/>
+                                                        <constraint firstAttribute="height" constant="21" id="ucl-lz-PHv"/>
+                                                        <constraint firstAttribute="width" constant="22" id="vFM-N0-T9k"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -237,7 +237,7 @@
                                             <color key="backgroundColor" white="1" alpha="0.73116918103448281" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstItem="8mh-6L-jot" firstAttribute="top" secondItem="7DN-bo-KMh" secondAttribute="bottom" constant="3" id="57b-66-6lV"/>
-                                                <constraint firstAttribute="trailing" secondItem="RIc-pl-wnG" secondAttribute="trailing" constant="20" id="IGe-XJ-zDB"/>
+                                                <constraint firstAttribute="trailing" secondItem="RIc-pl-wnG" secondAttribute="trailing" constant="35" id="IGe-XJ-zDB"/>
                                                 <constraint firstItem="6bR-V1-5Kc" firstAttribute="leading" secondItem="8mh-6L-jot" secondAttribute="trailing" constant="5" id="XDk-jJ-JtS"/>
                                                 <constraint firstItem="BMp-J9-C8j" firstAttribute="leading" secondItem="HwH-TP-m4n" secondAttribute="leading" constant="10" id="Ykt-aG-1NV"/>
                                                 <constraint firstItem="BMp-J9-C8j" firstAttribute="centerY" secondItem="HwH-TP-m4n" secondAttribute="centerY" id="mkm-Gy-lM4"/>
@@ -254,16 +254,16 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="HwH-TP-m4n" secondAttribute="trailing" id="FUB-53-cI8"/>
-                                        <constraint firstAttribute="trailing" secondItem="6wR-gB-ROq" secondAttribute="trailing" constant="30" id="GMQ-Xu-AIl"/>
+                                        <constraint firstAttribute="trailing" secondItem="6wR-gB-ROq" secondAttribute="trailing" constant="35" id="GMQ-Xu-AIl"/>
                                         <constraint firstItem="P1B-Ua-a0O" firstAttribute="top" secondItem="i3G-Pg-fba" secondAttribute="bottom" constant="10" id="QU4-fr-sSE"/>
                                         <constraint firstItem="HwH-TP-m4n" firstAttribute="leading" secondItem="5C7-am-vGG" secondAttribute="leading" id="W2T-of-BuI"/>
                                         <constraint firstAttribute="bottom" secondItem="HwH-TP-m4n" secondAttribute="bottom" id="YLC-Nl-dQd"/>
-                                        <constraint firstAttribute="bottom" secondItem="P1B-Ua-a0O" secondAttribute="bottom" constant="105" id="arV-26-hUZ"/>
-                                        <constraint firstAttribute="trailing" secondItem="i3G-Pg-fba" secondAttribute="trailing" constant="12" id="bM9-tK-vCs"/>
+                                        <constraint firstAttribute="bottom" secondItem="P1B-Ua-a0O" secondAttribute="bottom" constant="111" id="arV-26-hUZ"/>
+                                        <constraint firstAttribute="trailing" secondItem="i3G-Pg-fba" secondAttribute="trailing" constant="17" id="bM9-tK-vCs"/>
                                         <constraint firstItem="i3G-Pg-fba" firstAttribute="top" secondItem="TH9-8s-Wr3" secondAttribute="bottom" constant="12" id="cTP-gX-3WY"/>
                                         <constraint firstAttribute="bottom" secondItem="6wR-gB-ROq" secondAttribute="bottom" constant="65" id="e8x-6U-KaK"/>
-                                        <constraint firstAttribute="trailing" secondItem="P1B-Ua-a0O" secondAttribute="trailing" constant="20" id="gy4-Xn-gl4"/>
-                                        <constraint firstAttribute="trailing" secondItem="TH9-8s-Wr3" secondAttribute="trailing" constant="45" id="nOG-WS-F8X"/>
+                                        <constraint firstAttribute="trailing" secondItem="P1B-Ua-a0O" secondAttribute="trailing" constant="25" id="gy4-Xn-gl4"/>
+                                        <constraint firstAttribute="trailing" secondItem="TH9-8s-Wr3" secondAttribute="trailing" constant="50" id="nOG-WS-F8X"/>
                                         <constraint firstAttribute="height" constant="200" id="uTW-cd-p5h"/>
                                     </constraints>
                                 </view>
@@ -279,11 +279,11 @@
                                             </constraints>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wa-v0-MdF" userLabel="cameraThumb">
-                                            <rect key="frame" x="40" y="37" width="45" height="46"/>
+                                            <rect key="frame" x="39" y="37" width="46" height="46"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="46" id="OXY-bR-kLU"/>
-                                                <constraint firstAttribute="width" constant="45" id="gmi-al-zyM"/>
+                                                <constraint firstAttribute="width" constant="46" id="gmi-al-zyM"/>
                                             </constraints>
                                             <state key="normal" image="photo1"/>
                                             <connections>
@@ -326,7 +326,7 @@
                                     <animations/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <constraints>
-                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="40" id="4xB-tk-X4p"/>
+                                        <constraint firstItem="6wa-v0-MdF" firstAttribute="leading" secondItem="8cA-HV-eex" secondAttribute="leading" constant="39" id="4xB-tk-X4p"/>
                                         <constraint firstAttribute="trailing" secondItem="SDA-bD-Pa6" secondAttribute="trailing" constant="40" id="77x-PF-zpv"/>
                                         <constraint firstItem="VLQ-Sw-yWd" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" constant="2" id="82w-lz-dKW"/>
                                         <constraint firstItem="Fzv-Kt-ME1" firstAttribute="centerY" secondItem="8cA-HV-eex" secondAttribute="centerY" id="8iA-Ig-hAM"/>
@@ -398,7 +398,9 @@
         <image name="girlFace1" width="29" height="29"/>
         <image name="girlFace2" width="29" height="29"/>
         <image name="hearth" width="22" height="21"/>
+        <image name="hearth_border" width="22" height="20"/>
         <image name="hearth_outline" width="22" height="21"/>
+        <image name="hearth_transp" width="22" height="20"/>
         <image name="photo1" width="50" height="50"/>
         <image name="photo2" width="50" height="50"/>
     </resources>

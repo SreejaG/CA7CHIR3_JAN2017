@@ -125,6 +125,7 @@ class StreamsListViewController: UIViewController{
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         print("message = \(message)")
+        self.streamListCollectionView.reloadData()
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
