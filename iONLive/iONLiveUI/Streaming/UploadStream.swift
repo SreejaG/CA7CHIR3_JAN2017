@@ -251,7 +251,7 @@ class UploadStream : NSObject
 
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
-        var baseStream = "rtmp://104.197.159.157:1935/live/"
+        var baseStream = "rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live/"
 //        var baseStream = "rtmp://192.168.16.34:1935/live/"
         baseStream.appendContentsOf(streamToken)
         let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)

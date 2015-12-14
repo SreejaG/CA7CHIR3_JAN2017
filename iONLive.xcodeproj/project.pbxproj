@@ -428,7 +428,6 @@
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
-				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
 				167AF02D1BFDC1F6003CDF30 /* iONLive */,
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
@@ -534,6 +533,7 @@
 		167AF06F1BFDC3AD003CDF30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
 				599964DF1C05801B00D20FB2 /* libbz2.tbd */,
 				599964DD1C05801100D20FB2 /* libz.tbd */,
 				599964DB1C057FFF00D20FB2 /* libiconv.tbd */,

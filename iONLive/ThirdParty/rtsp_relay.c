@@ -13,12 +13,13 @@ AVDictionary *options = NULL;
 int clean_all(){
 	avformat_close_input(&m_informat);
 	avformat_free_context(m_outformat);
+	avio_close(m_outformat->pb);
 	m_informat=NULL;
 	m_in_vid_strm=NULL;
 	options = NULL;
-    EXIT_FLAG = 0;
 	printf("cleaning success\n");
 	return 0;
+	
 	}
 
 int init_streams(char *url_in ,char *url_out){
@@ -91,7 +92,7 @@ int init_streams(char *url_in ,char *url_out){
 	if (!(outfmt->flags & AVFMT_NOFILE)){
         if (avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options) < 0){
             printf("Could Not Open File out(Error in avio_open2)\n");
-            ret = -1;
+            ret = 0;
             return ret;
         }
     }
@@ -100,7 +101,7 @@ int init_streams(char *url_in ,char *url_out){
     ret=avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options);
     if (m_outformat->pb == NULL) {
         printf("Error in avio_open:%d\n",ret);
-        return -1;
+        return 0;
     }
 	return 0;
 }
