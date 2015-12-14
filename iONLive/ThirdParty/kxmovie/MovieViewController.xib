@@ -144,7 +144,7 @@
                                     <rect key="frame" x="0.0" y="400" width="600" height="200"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wR-gB-ROq" userLabel="hidingHeart">
-                                            <rect key="frame" x="548" y="119" width="22" height="21"/>
+                                            <rect key="frame" x="548" y="114" width="22" height="21"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="Lkn-Jp-8Zf"/>
@@ -156,7 +156,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1B-Ua-a0O" userLabel="heart2">
-                                            <rect key="frame" x="562" y="82" width="22" height="21"/>
+                                            <rect key="frame" x="558" y="74" width="22" height="21"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="HMn-5R-RlB"/>
@@ -168,8 +168,9 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Pg-fba" userLabel="herat3">
-                                            <rect key="frame" x="571" y="51" width="22" height="21"/>
+                                            <rect key="frame" x="566" y="43" width="22" height="21"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="9o1-c4-TSl"/>
                                                 <constraint firstAttribute="height" constant="21" id="Oee-xH-Gqk"/>
@@ -180,7 +181,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TH9-8s-Wr3" userLabel="heart4">
-                                            <rect key="frame" x="537" y="18" width="22" height="21"/>
+                                            <rect key="frame" x="533" y="10" width="22" height="21"/>
                                             <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="CzF-rZ-2Me"/>
@@ -257,12 +258,12 @@
                                         <constraint firstItem="P1B-Ua-a0O" firstAttribute="top" secondItem="i3G-Pg-fba" secondAttribute="bottom" constant="10" id="QU4-fr-sSE"/>
                                         <constraint firstItem="HwH-TP-m4n" firstAttribute="leading" secondItem="5C7-am-vGG" secondAttribute="leading" id="W2T-of-BuI"/>
                                         <constraint firstAttribute="bottom" secondItem="HwH-TP-m4n" secondAttribute="bottom" id="YLC-Nl-dQd"/>
-                                        <constraint firstAttribute="bottom" secondItem="P1B-Ua-a0O" secondAttribute="bottom" constant="97" id="arV-26-hUZ"/>
-                                        <constraint firstAttribute="trailing" secondItem="i3G-Pg-fba" secondAttribute="trailing" constant="7" id="bM9-tK-vCs"/>
+                                        <constraint firstAttribute="bottom" secondItem="P1B-Ua-a0O" secondAttribute="bottom" constant="105" id="arV-26-hUZ"/>
+                                        <constraint firstAttribute="trailing" secondItem="i3G-Pg-fba" secondAttribute="trailing" constant="12" id="bM9-tK-vCs"/>
                                         <constraint firstItem="i3G-Pg-fba" firstAttribute="top" secondItem="TH9-8s-Wr3" secondAttribute="bottom" constant="12" id="cTP-gX-3WY"/>
-                                        <constraint firstAttribute="bottom" secondItem="6wR-gB-ROq" secondAttribute="bottom" constant="60" id="e8x-6U-KaK"/>
-                                        <constraint firstAttribute="trailing" secondItem="P1B-Ua-a0O" secondAttribute="trailing" constant="16" id="gy4-Xn-gl4"/>
-                                        <constraint firstAttribute="trailing" secondItem="TH9-8s-Wr3" secondAttribute="trailing" constant="41" id="nOG-WS-F8X"/>
+                                        <constraint firstAttribute="bottom" secondItem="6wR-gB-ROq" secondAttribute="bottom" constant="65" id="e8x-6U-KaK"/>
+                                        <constraint firstAttribute="trailing" secondItem="P1B-Ua-a0O" secondAttribute="trailing" constant="20" id="gy4-Xn-gl4"/>
+                                        <constraint firstAttribute="trailing" secondItem="TH9-8s-Wr3" secondAttribute="trailing" constant="45" id="nOG-WS-F8X"/>
                                         <constraint firstAttribute="height" constant="200" id="uTW-cd-p5h"/>
                                     </constraints>
                                 </view>
