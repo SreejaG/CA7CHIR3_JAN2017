@@ -14,7 +14,7 @@
 #import "KxMovieGLView.h"
 #import "KxLogger.h"
 #import "iONLive-Swift.h"
-
+#import <CFNetwork/CFNetwork.h>
 
 NSString * const KxMovieParameterMinBufferedDuration = @"KxMovieParameterMinBufferedDuration";
 NSString * const KxMovieParameterMaxBufferedDuration = @"KxMovieParameterMaxBufferedDuration";
@@ -124,7 +124,8 @@ static NSMutableDictionary * gHistory;
     NSString *          rtspFilePath;
     NSDictionary        *_parameters;
     UIAlertView *alertViewTemp;
-    
+    NSInputStream *inputStream;
+
 ////Should be removed
 //    
 //    UITapGestureRecognizer *_tapGestureRecognizer;
@@ -173,11 +174,12 @@ static NSMutableDictionary * gHistory;
     if (self) {
         _liveVideo = live;
         _snapCamMode = SnapCamSelectionModeDefaultMode;
-        //        _cameraSelected = true;
         rtspFilePath = path;
+        [self.view.window setBackgroundColor:[UIColor grayColor]];
         _parameters = nil;
         NSLog(@"rtsp File Path = %@",path);
         
+        [self isWifiConnected];
         __weak MovieViewController *weakSelf = self;
         
         KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
@@ -211,6 +213,77 @@ static NSMutableDictionary * gHistory;
     return self;
 }
 
+#pragma mark : Methods to check ping server to check Wifi Connected
+
+-(void)timerToCheckWifiConnected
+{
+    NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
+    
+    if ([inputStream streamStatus] != 2) {
+        [self showInputNetworkErrorMessage];
+    }
+    [self closeInputStream];
+
+}
+
+- (void)closeInputStream {
+    NSLog(@"Closing streams.");
+    
+    [inputStream close];
+    
+    [inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    
+    inputStream = nil;
+}
+
+-(void)isWifiConnected
+{
+
+    NSURL *website = [self checkEmptyUrl];
+    
+    if (!website) {
+        [self showInputNetworkErrorMessage];
+    }
+    
+    [self openInputStream:website port:554];
+    [self startTimer];
+}
+
+-(void)openInputStream:(NSURL *)website port :(int)port
+{
+    CFReadStreamRef readStream;
+    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)[website host], 554, &readStream, nil);
+    
+    inputStream = (__bridge_transfer NSInputStream *)readStream;
+    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [inputStream open];
+
+}
+
+-(void)startTimer
+{
+    [NSTimer scheduledTimerWithTimeInterval:1.0
+                                     target:self
+                                   selector:@selector(timerToCheckWifiConnected)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+-(NSURL*)checkEmptyUrl
+{
+    NSString *urlStr = @"rtsp://192.168.42.1";
+    if (![urlStr isEqualToString:@""]) {
+        NSURL *website = [NSURL URLWithString:urlStr];
+        if (!website) {
+            [self showInputNetworkErrorMessage];
+        }
+        return website;
+    }
+    return nil;
+}
+
+#pragma mark : Restart viewfinder
+
 -(void)restartDecoder
 {
 //    BOOL streamStarted = [self isStreamStarted];
@@ -227,7 +300,7 @@ static NSMutableDictionary * gHistory;
     
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
-    
+    [self isWifiConnected];
     __weak MovieViewController *weakSelf = self;
     
     KxMovieDecoder *decoder = [[KxMovieDecoder alloc] init];
@@ -666,7 +739,7 @@ static NSMutableDictionary * gHistory;
             
             [_activityIndicatorView stopAnimating];
             _activityIndicatorView.hidden = true;
-            [self showErrorMessage:error];
+//            [self showErrorMessage:error];
         }
     }
 }
@@ -684,6 +757,7 @@ static NSMutableDictionary * gHistory;
         }
     }
 }
+
 - (void) restorePlay
 {
     NSLog(@"restorePlay");
@@ -1046,7 +1120,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)showInputNetworkErrorMessage
 {
-    if (alertViewTemp.isVisible == false) {
+    if (alertViewTemp.isVisible == false && _liveVideo) {
         
         alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
                                                    message:@"Please check your wifi connection"

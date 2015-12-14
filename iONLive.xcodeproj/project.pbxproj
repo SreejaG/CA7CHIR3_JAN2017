@@ -45,6 +45,7 @@
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
+		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
 		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
 		16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */; };
@@ -151,6 +152,7 @@
 		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
+		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleTableViewCell.swift; sourceTree = "<group>"; };
 		16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */,
 				599964E01C05801B00D20FB2 /* libbz2.tbd in Frameworks */,
 				599964DE1C05801100D20FB2 /* libz.tbd in Frameworks */,
 				599964DC1C057FFF00D20FB2 /* libiconv.tbd in Frameworks */,
@@ -412,6 +415,7 @@
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
+				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
 				167AF02D1BFDC1F6003CDF30 /* iONLive */,
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
