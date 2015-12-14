@@ -89,6 +89,14 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIButton *thirdCircleButton;
     IBOutlet UIButton *secondCircleButton;
     IBOutlet UIButton *firstCircleButton;
+    
+    //heart View
+    __weak IBOutlet UIView *heartView;
+
+    __weak IBOutlet UIView *heartBottomDescView;
+    __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
+    __weak IBOutlet UIButton *hidingHeartButton;
+    
     KxMovieDecoder      *_decoder;
     dispatch_queue_t    _dispatchQueue;
     NSMutableArray      *_videoFrames;
@@ -393,6 +401,7 @@ static NSMutableDictionary * gHistory;
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
+     heartView.hidden = true;
     
     if (_liveVideo == true)
     {
@@ -438,6 +447,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForLive
 {
+    heartView.hidden = true;
     bottomView.hidden = false;
     topView.hidden = false;
     liveView.hidden = false;
@@ -448,6 +458,8 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForStreaming
 {
+    heartView.hidden = true;
+    heartBottomDescView.hidden = true;
 //    liveStreamStatus.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
@@ -1476,5 +1488,24 @@ static NSMutableDictionary * gHistory;
         [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
     }
 }
+
+//PRAGMA MARK:- HeartView helper functions
+- (IBAction)heartClicked:(id)sender
+{
+    if (heartButtomBottomConstraint.constant == 97.0)
+    {
+        // show heartDescView
+        heartBottomDescView.hidden = false;
+        hidingHeartButton.hidden = true;
+        heartButtomBottomConstraint.constant = 50.0;
+    }
+    else{
+        heartBottomDescView.hidden = true;
+        hidingHeartButton.hidden = false;
+        heartButtomBottomConstraint.constant = 97.0;
+    }
+}
+
+
 
 @end
