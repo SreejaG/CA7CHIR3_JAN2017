@@ -1229,6 +1229,10 @@ static NSMutableDictionary * gHistory;
 {
     if (alertViewTemp.isVisible == false && _liveVideo) {
         
+        [_activityIndicatorView stopAnimating];
+        _activityIndicatorView.hidden = true;
+
+        
         alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
                                                    message:@"Please check your wifi connection"
                                                   delegate:self
@@ -1340,12 +1344,15 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
-    if (_snapCamMode == SnapCamSelectionModeLiveStream){
+    if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
         
 //        BOOL streamStarted = [self isStreamStarted];
-        
         [self showMessageIfInitializingStream];
         [self updateStreaming];
+    }
+    else if (self.playing == false)
+    {
+        [self showInputNetworkErrorMessage];
     }
     else
     {
@@ -1440,6 +1447,10 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
+    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+        return;
+    }
+
     [self loadStreamsGalleryView];
 }
 
@@ -1557,6 +1568,10 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
+    if (_activityIndicatorView.isAnimating) {
+        return;
+    }
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1570,6 +1585,10 @@ static NSMutableDictionary * gHistory;
     
 }
 - (IBAction)photoViewerClicked:(id)sender {
+    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+        return;
+    }
+
     [self loadPhotoViewer];
 }
 
@@ -1638,7 +1657,5 @@ static NSMutableDictionary * gHistory;
         heartButtomBottomConstraint.constant = 111.0;
     }
 }
-
-
 
 @end
