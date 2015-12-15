@@ -24,6 +24,7 @@ class StreamsListViewController: UIViewController{
     let requestManager = RequestManager()
     var dataSource:[[String:String]]?
     var refreshControl:UIRefreshControl!
+    var pullToRefreshActive = false
     
     //for temp image along with streams and stream thumbanes
     var dummyImagesArray:[String] = ["thumb1","thumb2","thumb3","thumb4","thumb5","thumb6" , "thumb7","thumb8","thumb9","thumb10","thumb11","thumb12"]
@@ -34,7 +35,7 @@ class StreamsListViewController: UIViewController{
         super.viewDidLoad()
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: "getAllLiveStreams", forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
         self.streamListCollectionView.addSubview(refreshControl)
         self.streamListCollectionView.alwaysBounceVertical = true
         self.view.bringSubviewToFront(activityIndicator)
@@ -79,6 +80,12 @@ class StreamsListViewController: UIViewController{
         }
     }
     
+    func pullToRefresh()
+    {
+        pullToRefreshActive = true
+        getAllLiveStreams()
+    }
+    
     //PRAGMA MARK:- API Handlers
     func getAllLiveStreams()
     {
@@ -88,7 +95,15 @@ class StreamsListViewController: UIViewController{
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
-            activityIndicator.hidden = false
+            if pullToRefreshActive == false
+            {
+                activityIndicator.hidden = false
+            }
+            else
+            {
+                activityIndicator.hidden = true
+            }
+            
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
@@ -107,6 +122,7 @@ class StreamsListViewController: UIViewController{
     {
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
+        pullToRefreshActive = false
         if let json = response as? [String: AnyObject]
         {
             print("success = \(json["liveStreams"])")
@@ -124,6 +140,7 @@ class StreamsListViewController: UIViewController{
     {
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
+        pullToRefreshActive = false
         print("message = \(message)")
         self.streamListCollectionView.reloadData()
         
