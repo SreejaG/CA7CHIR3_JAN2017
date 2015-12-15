@@ -11,9 +11,9 @@ int EXIT_FLAG=0;
 AVPacket pkt;
 AVDictionary *options = NULL;
 int clean_all(){
+	av_write_trailer(m_outformat);
 	avformat_close_input(&m_informat);
 	avformat_free_context(m_outformat);
-	avio_close(m_outformat->pb);
 	m_informat=NULL;
 	m_in_vid_strm=NULL;
 	options = NULL;
@@ -21,12 +21,11 @@ int clean_all(){
 	return 0;
 	
 	}
-
 int init_streams(char *url_in ,char *url_out){
     int i,ret;
     av_register_all();
     avformat_network_init();
-	av_log_set_level(AV_LOG_TRACE);
+	//av_log_set_level(AV_LOG_TRACE);
     printf("%s\n",url_in);
     ret=avformat_open_input( &m_informat, url_in, NULL,NULL);
 	if(ret!=0){
@@ -88,12 +87,9 @@ int init_streams(char *url_in ,char *url_out){
 
     }
 	av_dict_set(&options, "rtsp_transport", "tcp", 0);
-	printf("url_out is %s\n",url_out);
 	if (!(outfmt->flags & AVFMT_NOFILE)){
         if (avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options) < 0){
             printf("Could Not Open File out(Error in avio_open2)\n");
-            ret = 0;
-            return ret;
         }
     }
     
@@ -101,16 +97,8 @@ int init_streams(char *url_in ,char *url_out){
     ret=avio_open2(&m_outformat->pb, url_out, AVIO_FLAG_WRITE,NULL, &options);
     if (m_outformat->pb == NULL) {
         printf("Error in avio_open:%d\n",ret);
-        return 0;
     }
-	return 0;
-}
-
-
-int start_stream(char* url_out){
-    
-    int fun_ret,ret;
-    ret=avformat_write_header(m_outformat, &options);
+	ret=avformat_write_header(m_outformat, &options);
     if (ret < 0){
         printf("ret:%d\n",ret);
         printf("Error Occurred While Writing Header ");
@@ -121,6 +109,15 @@ int start_stream(char* url_out){
         printf("Written Output header\n");
                 m_init_done = true;
     }
+	//return 0;
+	return 0;
+}
+
+
+int start_stream(){
+    
+    int fun_ret,ret;
+    
 	int i;
     while(av_read_frame(m_informat, &pkt) >= 0){
         if(pkt.stream_index == m_in_vid_strm_idx){
@@ -128,6 +125,7 @@ int start_stream(char* url_out){
             ret=av_write_frame(m_outformat, &pkt);
 			if(ret<0){
 				i++;
+				printf("i=%d",i);
 				if(i==250){
 					fun_ret=2;
 					break;
@@ -137,6 +135,7 @@ int start_stream(char* url_out){
 				i=0;   
         }
         if(EXIT_FLAG==1){
+			
 			EXIT_FLAG=0;
 			fun_ret=0;
 			printf("Exiting\n");
@@ -145,6 +144,7 @@ int start_stream(char* url_out){
 		else
 			fun_ret=1;
     }
+	
 	printf("Stream stopped from start\n");
 	//av_free_packet(&pkt);
 	clean_all();
@@ -153,6 +153,7 @@ int start_stream(char* url_out){
 int stop_stream(){
     EXIT_FLAG=1;
     printf("Stream stopped\n");
+	//
     return -1;
     }
 

@@ -188,7 +188,7 @@ class UploadStream : NSObject
         //            {
         self.streamingStatus?.StreamingStatus("Success");
         //                            self.steamingStatus?.StreamingStatus("live streaming...");
-        let errCode = start_stream(baseStream)
+        let errCode = start_stream()
         let defaults = NSUserDefaults .standardUserDefaults()
         
         if errCode > 0

@@ -235,7 +235,7 @@ static NSMutableDictionary * gHistory;
 {
     UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
     NSLog(@"glView.bounds%f",self.view.bounds.size.height);
-    [[UIImage imageNamed:@"blurredBg.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
+    [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -472,7 +472,14 @@ static NSMutableDictionary * gHistory;
         if (_liveVideo) {
             [self checkWifiConnectionAndStartDecoder];
         }
-        NSLog(@"Wifi changed");
+        NSLog(@"Wifi Connected");
+    }
+    else
+    {
+        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
+            [self showInputNetworkErrorMessage];
+        }
+        NSLog(@"Wifi DisConnected");
     }
 }
 
@@ -634,7 +641,8 @@ static NSMutableDictionary * gHistory;
 //    if (_decoder) {
 //        
 //        [self restorePlay];
-//        
+//
+    
 //    } else {
 //        _activityIndicatorView.hidden = false;
 //        [_activityIndicatorView startAnimating];

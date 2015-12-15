@@ -178,7 +178,7 @@ class UploadStreamViewController: UIViewController {
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
                         {
                                 
-                                start_stream(baseStreamName)
+                                start_stream()
                         }
                     }
                     else
