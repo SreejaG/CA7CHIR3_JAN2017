@@ -141,6 +141,7 @@ static NSMutableDictionary * gHistory;
 @property (readwrite) BOOL decoding;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
 @property (nonatomic) Connectivity *wifiReachability;
+@property (nonatomic) Connectivity *internetReachability;
 
 @end
 
@@ -461,6 +462,8 @@ static NSMutableDictionary * gHistory;
                                                object:nil];
     self.wifiReachability = [Connectivity reachabilityForLocalWiFi];
     [self.wifiReachability startNotifier];
+    self.internetReachability = [Connectivity reachabilityForInternetConnection];
+    [self.internetReachability startNotifier];
 
 }
 -(void)reachabilityChanged:(NSNotification *)note
