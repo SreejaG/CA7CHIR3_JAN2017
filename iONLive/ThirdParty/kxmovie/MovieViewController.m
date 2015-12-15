@@ -402,7 +402,7 @@ static NSMutableDictionary * gHistory;
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     
     [self setUpPresentViewAndRestorePlay];
-    [self addApplicationObservers];
+//    [self addApplicationObservers];
 //    _interrupted = NO;
 //    if (_decoder) {
 //        
@@ -440,7 +440,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)addApplicationObservers
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self checkWifiReachability];
 //    [self updateInterfaceWithReachability:self.wifiReachability];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -571,6 +571,7 @@ static NSMutableDictionary * gHistory;
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
     [self changeCameraSelectionImage];
 }
@@ -678,7 +679,7 @@ static NSMutableDictionary * gHistory;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_activityIndicatorView stopAnimating];
     
 //    if (_decoder) {
@@ -1228,6 +1229,10 @@ static NSMutableDictionary * gHistory;
 {
     if (alertViewTemp.isVisible == false && _liveVideo) {
         
+        [_activityIndicatorView stopAnimating];
+        _activityIndicatorView.hidden = true;
+
+        
         alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
                                                    message:@"Please check your wifi connection"
                                                   delegate:self
@@ -1339,12 +1344,15 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
-    if (_snapCamMode == SnapCamSelectionModeLiveStream){
+    if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
         
 //        BOOL streamStarted = [self isStreamStarted];
-        
         [self showMessageIfInitializingStream];
         [self updateStreaming];
+    }
+    else if (self.playing == false)
+    {
+        [self showInputNetworkErrorMessage];
     }
     else
     {
@@ -1439,6 +1447,10 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
+    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+        return;
+    }
+
     [self loadStreamsGalleryView];
 }
 
@@ -1556,6 +1568,10 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
+    if (_activityIndicatorView.isAnimating) {
+        return;
+    }
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1569,6 +1585,10 @@ static NSMutableDictionary * gHistory;
     
 }
 - (IBAction)photoViewerClicked:(id)sender {
+    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+        return;
+    }
+
     [self loadPhotoViewer];
 }
 
@@ -1637,7 +1657,5 @@ static NSMutableDictionary * gHistory;
         heartButtomBottomConstraint.constant = 111.0;
     }
 }
-
-
 
 @end

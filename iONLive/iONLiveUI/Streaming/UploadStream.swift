@@ -183,7 +183,6 @@ class UploadStream : NSObject
 
     func startStreamAndHandleInterruption(streamtoken:String)
     {
-        let baseStream = self.getBaseStream(streamtoken)
         //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
         //            {
         self.streamingStatus?.StreamingStatus("Success");

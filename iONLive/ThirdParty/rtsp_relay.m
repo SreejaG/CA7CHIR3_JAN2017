@@ -1,7 +1,9 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <stdbool.h>
+#include <Foundation/Foundation.h>
 #include "rtsp_relay.h"
+
 AVFormatContext *m_informat=NULL,*m_outformat=NULL;
 AVStream *m_in_vid_strm,*m_out_vid_strm;
 int m_in_vid_strm_idx;
@@ -10,6 +12,8 @@ bool m_init_done;
 int EXIT_FLAG=0;
 AVPacket pkt;
 AVDictionary *options = NULL;
+NSTimer              *_timer;
+
 int clean_all(){
 	av_write_trailer(m_outformat);
 	avformat_close_input(&m_informat);
@@ -21,6 +25,7 @@ int clean_all(){
 	return 0;
 	
 	}
+
 int init_streams(char *url_in ,char *url_out){
     int i,ret;
     av_register_all();

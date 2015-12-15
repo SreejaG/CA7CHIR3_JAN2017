@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 160C01131C1FDD5F00203082 /* rtsp_relay.m */; };
 		160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */; };
 		160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE411C032C0E00020D31 /* IONLConstants.swift */; };
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
@@ -45,7 +46,6 @@
 		167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */; };
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
-		1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1689398B1C06C74600A47BDB /* rtsp_relay.c */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
 		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
@@ -107,6 +107,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		160C01131C1FDD5F00203082 /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
 		160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingManager.swift; sourceTree = "<group>"; };
 		160EAE411C032C0E00020D31 /* IONLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLConstants.swift; sourceTree = "<group>"; };
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
@@ -153,7 +154,6 @@
 		167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
-		1689398B1C06C74600A47BDB /* rtsp_relay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtsp_relay.c; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -566,7 +566,7 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				1689398B1C06C74600A47BDB /* rtsp_relay.c */,
+				160C01131C1FDD5F00203082 /* rtsp_relay.m */,
 				1689398C1C06C74600A47BDB /* rtsp_relay.h */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
 				599964C11C057EF000D20FB2 /* kxmovie */,
@@ -1013,7 +1013,6 @@
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
-				1689398D1C06C74600A47BDB /* rtsp_relay.c in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
@@ -1027,6 +1026,7 @@
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
+				160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				1644B3C81C05687B004E3832 /* Connectivity.m in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
