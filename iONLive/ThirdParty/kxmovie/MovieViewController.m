@@ -402,7 +402,7 @@ static NSMutableDictionary * gHistory;
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     
     [self setUpPresentViewAndRestorePlay];
-    [self addApplicationObservers];
+//    [self addApplicationObservers];
 //    _interrupted = NO;
 //    if (_decoder) {
 //        
@@ -440,7 +440,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)addApplicationObservers
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self checkWifiReachability];
 //    [self updateInterfaceWithReachability:self.wifiReachability];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -571,6 +571,7 @@ static NSMutableDictionary * gHistory;
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
     [self changeCameraSelectionImage];
 }
@@ -678,7 +679,7 @@ static NSMutableDictionary * gHistory;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_activityIndicatorView stopAnimating];
     
 //    if (_decoder) {
