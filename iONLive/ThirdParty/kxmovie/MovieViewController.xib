@@ -398,7 +398,7 @@
         <image name="girlFace1" width="29" height="29"/>
         <image name="girlFace2" width="29" height="29"/>
         <image name="hearth" width="22" height="21"/>
-        <image name="hearth_border" width="22" height="20"/>
+        <image name="hearth_border" width="24" height="23"/>
         <image name="hearth_outline" width="22" height="21"/>
         <image name="hearth_transp" width="22" height="20"/>
         <image name="photo1" width="50" height="50"/>
