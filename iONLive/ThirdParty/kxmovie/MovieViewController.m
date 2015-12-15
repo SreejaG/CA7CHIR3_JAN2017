@@ -250,10 +250,14 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
     if ([inputStream streamStatus] == 2) {
+//        if (alertViewTemp.isVisible) {
+//            [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
+//        }
         [self startDecoder];
     }
     else
     {
+        [self showMessageForNoStreamOrLiveDataFound];
         [self showInputNetworkErrorMessage];
     }
     [self closeInputStream];
@@ -276,6 +280,7 @@ static NSMutableDictionary * gHistory;
     NSURL *website = [self checkEmptyUrl];
     
     if (!website) {
+        [self showMessageForNoStreamOrLiveDataFound];
         [self showInputNetworkErrorMessage];
     }
     
@@ -480,6 +485,7 @@ static NSMutableDictionary * gHistory;
     else
     {
         if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
+            [self showMessageForNoStreamOrLiveDataFound];
             [self showInputNetworkErrorMessage];
         }
         NSLog(@"Wifi DisConnected");
@@ -858,6 +864,7 @@ static NSMutableDictionary * gHistory;
 {
     if (!_interrupted )
     {
+        [self showMessageForNoStreamOrLiveDataFound];
         if (_liveVideo) {
             [self showInputNetworkErrorMessage];
         }
@@ -1529,7 +1536,7 @@ static NSMutableDictionary * gHistory;
             }
             else if (buttonIndex == 0)
             {
-                [self showMessageForNoStreamOrLiveDataFound];
+                //[self showMessageForNoStreamOrLiveDataFound];
             }
             break;
         default:
