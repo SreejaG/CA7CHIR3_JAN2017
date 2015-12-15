@@ -178,6 +178,9 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         case"ResponseInvalid":
             inValidResponseError()
             break
+        case "WOWZA001":  //"Wowza stream empty."
+            //Currently avoiding alert when live steam is empty.
+            break
         default:
             serverError()
             break
