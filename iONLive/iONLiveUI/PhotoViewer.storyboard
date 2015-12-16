@@ -95,7 +95,7 @@
                                     <constraint firstAttribute="bottom" secondItem="6Fa-dd-16L" secondAttribute="bottom" constant="10" id="r2f-Lo-trY"/>
                                 </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="QIE-GV-Vdt">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="QIE-GV-Vdt">
                                 <rect key="frame" x="0.0" y="507" width="600" height="43"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
