@@ -120,6 +120,7 @@ static NSMutableDictionary * gHistory;
     CGFloat             _minBufferedDuration;
     CGFloat             _maxBufferedDuration;
     BOOL                _buffered;
+    IBOutlet UIImageView *activityImageView;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
 //    BOOL                _savedIdleTimer;
@@ -250,15 +251,16 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
     if ([inputStream streamStatus] == 2) {
-//        if (alertViewTemp.isVisible) {
-//            [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
-//        }
-        [self startDecoder];
+        [self hideStatusMessage];
+        if (alertViewTemp.isVisible) {
+            [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
+        }
+        [self restartDecoder];
     }
     else
     {
         [self showMessageForNoStreamOrLiveDataFound];
-        [self showInputNetworkErrorMessage];
+        [self showInputNetworkErrorMessage:nil];
     }
     [self closeInputStream];
 
@@ -281,7 +283,8 @@ static NSMutableDictionary * gHistory;
     
     if (!website) {
         [self showMessageForNoStreamOrLiveDataFound];
-        [self showInputNetworkErrorMessage];
+        [self showInputNetworkErrorMessage:nil];
+        return;
     }
     
     [self openInputStream:website port:554];
@@ -314,7 +317,7 @@ static NSMutableDictionary * gHistory;
     if (![urlStr isEqualToString:@""]) {
         NSURL *website = [NSURL URLWithString:urlStr];
         if (!website) {
-            [self showInputNetworkErrorMessage];
+            [self showInputNetworkErrorMessage:nil];
         }
         return website;
     }
@@ -330,20 +333,36 @@ static NSMutableDictionary * gHistory;
     NSLog(@"rtsp File Path = %@",rtspFilePath);
     _interrupted = false;
     self.playing = NO;
-    
+    [self showProgressBar];
 //    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
 //    [audioManager activateAudioSession];
-    
+//    activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+//    activityImageView.hidden = false;
+//    [_activityIndicatorView startAnimating];
+//    _activityIndicatorView.hidden = false;
+//    if (_liveVideo) {
+//        [self checkWifiConnectionAndStartDecoder];
+//    }
+//    else
+//    {
+        [self startDecoder];
+//    }
+//    [self startDecoder];
+}
+
+-(void)showProgressBar
+{
+    activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+    activityImageView.hidden = false;
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
-    if (_liveVideo) {
-        [self checkWifiConnectionAndStartDecoder];
-    }
-    else
-    {
-        [self startDecoder];
-    }
-//    [self startDecoder];
+}
+
+-(void)hideProgressBar
+{
+    activityImageView.hidden = true;
+    [_activityIndicatorView stopAnimating];
+    _activityIndicatorView.hidden = true;
 }
 
 -(void)startDecoder
@@ -439,8 +458,9 @@ static NSMutableDictionary * gHistory;
         [self restorePlay];
         
     } else {
-        
-        [_activityIndicatorView startAnimating];
+        [self showProgressBar];
+//        activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+//        [_activityIndicatorView startAnimating];
     }
 }
 
@@ -469,8 +489,8 @@ static NSMutableDictionary * gHistory;
     [self.wifiReachability startNotifier];
     self.internetReachability = [Connectivity reachabilityForInternetConnection];
     [self.internetReachability startNotifier];
-
 }
+
 -(void)reachabilityChanged:(NSNotification *)note
 {
     Connectivity * curReach = [note object];
@@ -486,7 +506,7 @@ static NSMutableDictionary * gHistory;
     {
         if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
             [self showMessageForNoStreamOrLiveDataFound];
-            [self showInputNetworkErrorMessage];
+            [self showInputNetworkErrorMessage:nil];
         }
         NSLog(@"Wifi DisConnected");
     }
@@ -579,6 +599,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
     [super viewWillAppear:animated];
     [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
@@ -647,16 +668,16 @@ static NSMutableDictionary * gHistory;
 //
 //
 //TODO make _interrupted No ,click on back button
-//    _interrupted = NO;
-//    if (_decoder) {
-//        
-//        [self restorePlay];
-//
+    _interrupted = NO;
+    if (_decoder) {
+        
+        [self restorePlay];
     
-//    } else {
+    } else {
+        [self reInitialiseDecoder];
 //        _activityIndicatorView.hidden = false;
 //        [_activityIndicatorView startAnimating];
-//    }
+    }
 }
 
 -(void)applicationDidBecomeActive: (NSNotification *)notification
@@ -669,12 +690,20 @@ static NSMutableDictionary * gHistory;
 
 -(void)reInitialiseDecoder
 {
-    [_activityIndicatorView startAnimating];
-    _activityIndicatorView.hidden = false;
+    [self showProgressBar];
+//    activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+//    [_activityIndicatorView startAnimating];
+//    _activityIndicatorView.hidden = false;
     
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (3 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         
-        [self restartDecoder];
+        if (_liveVideo) {
+            [self checkWifiConnectionAndStartDecoder];
+        }
+        else
+        {
+            [self restartDecoder];
+        }
     });
 }
 
@@ -682,34 +711,38 @@ static NSMutableDictionary * gHistory;
 {
     _backGround =  true;
 //    _dispatchQueue = nil;
+//    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
     [self close];
+//    });
 }
 
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
      [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_activityIndicatorView stopAnimating];
+    [self hideProgressBar];
+//    [activityImageView setHidden:true];
+//    [_activityIndicatorView stopAnimating];
     
-//    if (_decoder) {
+    if (_decoder) {
     
 //        dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
 //            [_decoder closeFile];
 //        });
 //       [self close];
-//        [self pause];
+        [self pause];
 //        if (_moviePosition == 0 || _decoder.isEOF)
 //            [gHistory removeObjectForKey:_decoder.path];
 //        else if (!_decoder.isNetwork)
 //            [gHistory setValue:[NSNumber numberWithFloat:_moviePosition]
 //                        forKey:_decoder.path];
-//    }
+    }
     
 //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
     
 //    [_activityIndicatorView stopAnimating];
-//    _buffered = NO;
-//    _interrupted = YES;
+    _buffered = NO;
+    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -775,11 +808,13 @@ static NSMutableDictionary * gHistory;
 -(void)close
 {
     _interrupted = true;
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
-        [_decoder closeFile];
-    });
     self.playing = NO;
     [self freeBufferedFrames];
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+        [_decoder closeFile];
+    });
+//    self.playing = NO;
+//    [self freeBufferedFrames];
 //    [_decoder closeFile];
 //    [_decoder openFile:nil error:nil];
 }
@@ -840,10 +875,11 @@ static NSMutableDictionary * gHistory;
             [self setupPresentView];
             
             if (_activityIndicatorView.isAnimating) {
-                
-                [_activityIndicatorView stopAnimating];
-                _activityIndicatorView.hidden = true;
-                
+                [self hideProgressBar];
+//                [activityImageView setHidden:true];
+//                [_activityIndicatorView stopAnimating];
+//                _activityIndicatorView.hidden = true;
+//                
                 NSLog(@"setMovieDecoder: (KxMovieDecoder *) decoder");
                 [self restorePlay];
             }
@@ -852,9 +888,12 @@ static NSMutableDictionary * gHistory;
     } else {
         
         if (self.isViewLoaded && self.view.window) {
-            
-            [_activityIndicatorView stopAnimating];
-            _activityIndicatorView.hidden = true;
+            [self hideProgressBar];
+            [self showErrorMessage:error];
+//            [activityImageView setHidden:true];
+//            
+//            [_activityIndicatorView stopAnimating];
+//            _activityIndicatorView.hidden = true;
 //            [self showErrorMessage:error];
         }
     }
@@ -866,7 +905,7 @@ static NSMutableDictionary * gHistory;
     {
         [self showMessageForNoStreamOrLiveDataFound];
         if (_liveVideo) {
-            [self showInputNetworkErrorMessage];
+            [self showInputNetworkErrorMessage:error];
         }
         else
         {
@@ -899,7 +938,7 @@ static NSMutableDictionary * gHistory;
     }
     
     if (isGlView == false) {
-        
+    
         LoggerVideo(0, @"fallback to use RGB video frame and UIKit");
         [_decoder setupVideoFrameFormat:KxVideoFrameFormatRGB];
     }
@@ -1189,7 +1228,8 @@ static NSMutableDictionary * gHistory;
                 
                 //                [self pause];
                 NSLog(@"returning!!");
-                [self showErrorMessage:nil];
+                NSError * error = [NSError errorWithDomain:@"No frames found!,Please try again" code:-57 userInfo:nil];
+                [self showErrorMessage:error];
                 return;
                 
                 
@@ -1201,6 +1241,7 @@ static NSMutableDictionary * gHistory;
             if (_minBufferedDuration > 0 && !_buffered) {
                 
                 _buffered = YES;
+//                activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
                 [_activityIndicatorView startAnimating];
                 NSLog(@"_minBufferedDuration > 0 && !_buffered");
                 
@@ -1224,6 +1265,7 @@ static NSMutableDictionary * gHistory;
         
         const NSTimeInterval correction = [self tickCorrection];
         const NSTimeInterval time = MAX(interval + correction, 0.01);
+        NSLog(@"time%f",time);
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, time * NSEC_PER_SEC);
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
             [self tick];
@@ -1235,21 +1277,49 @@ static NSMutableDictionary * gHistory;
     }
 }
 
--(void)showInputNetworkErrorMessage
+-(void)showInputNetworkErrorMessage:(NSError *)error
 {
     if (alertViewTemp.isVisible == false && _liveVideo) {
         
-        [_activityIndicatorView stopAnimating];
-        _activityIndicatorView.hidden = true;
+        [self hideProgressBar];
+        NSString * message = [self getInterruptionErrorMessage:error];
+        NSString * title = [self getErrorTitle:error];
+        [self showViewFinderErrorWithTitle:title AndMessage:message];
+    }
+}
 
+-(void)showViewFinderErrorWithTitle:(NSString*) title AndMessage:(NSString*)message
+{
+    alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(title, nil)
+                                               message:message
+                                              delegate:self
+                                     cancelButtonTitle:NSLocalizedString(@"Close", nil)
+                                     otherButtonTitles:@"Settings", nil];
+    alertViewTemp.tag = 102;
+    [alertViewTemp show];
+  
+}
+
+-(NSString*)getInterruptionErrorMessage:(NSError *)error
+{
+    if (error == nil) {
         
-        alertViewTemp = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Couldn't Connect camera", nil)
-                                                   message:@"Please check your wifi connection"
-                                                  delegate:self
-                                         cancelButtonTitle:NSLocalizedString(@"Close", nil)
-                                         otherButtonTitles:@"Settings", nil];
-        alertViewTemp.tag = 102;
-        [alertViewTemp show];
+        return @"Please check your wifi connection";
+    }
+    else
+    {
+        return @"Unable to get frames from camera! Please try again...";
+    }
+}
+
+-(NSString *)getErrorTitle:(NSError*)error
+{
+    if (error == nil) {
+        return @"Couldn't Connect camera";
+    }
+    else
+    {
+        return @"No Frames Found!";
     }
 }
 
@@ -1362,7 +1432,7 @@ static NSMutableDictionary * gHistory;
     }
     else if (self.playing == false)
     {
-        [self showInputNetworkErrorMessage];
+        [self showInputNetworkErrorMessage:nil];
     }
     else
     {
@@ -1457,7 +1527,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+    if (_activityIndicatorView.isAnimating && self.playing == false) {
         return;
     }
 
@@ -1536,6 +1606,7 @@ static NSMutableDictionary * gHistory;
             }
             else if (buttonIndex == 0)
             {
+                return;
                 //[self showMessageForNoStreamOrLiveDataFound];
             }
             break;
@@ -1578,7 +1649,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
-    if (_activityIndicatorView.isAnimating) {
+    if (_activityIndicatorView.isAnimating && self.playing == false) {
         return;
     }
     
@@ -1595,7 +1666,7 @@ static NSMutableDictionary * gHistory;
     
 }
 - (IBAction)photoViewerClicked:(id)sender {
-    if (_activityIndicatorView && _activityIndicatorView.isAnimating) {
+    if (_activityIndicatorView.isAnimating && self.playing == false) {
         return;
     }
 

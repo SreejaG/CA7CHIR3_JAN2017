@@ -54,7 +54,8 @@ class UploadStream : NSObject
                 }
                 
                 }, failure: { (error, message) -> () in
-                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+                    self.streamingFailed()
+//                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
                     print("message = \(message), error = \(error?.localizedDescription)")
                     self.handleFailure(message)
                     return
