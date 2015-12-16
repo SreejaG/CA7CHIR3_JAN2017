@@ -889,7 +889,7 @@ static NSMutableDictionary * gHistory;
         
         if (self.isViewLoaded && self.view.window) {
             [self hideProgressBar];
-            [self showErrorMessage:error];
+//            [self showErrorMessage:error];
 //            [activityImageView setHidden:true];
 //            
 //            [_activityIndicatorView stopAnimating];
@@ -1231,7 +1231,6 @@ static NSMutableDictionary * gHistory;
                 NSError * error = [NSError errorWithDomain:@"No frames found!,Please try again" code:-57 userInfo:nil];
                 [self showErrorMessage:error];
                 return;
-                
                 
                 //                [self pause];
                 //                NSLog(@"_decoder.isEOF");
