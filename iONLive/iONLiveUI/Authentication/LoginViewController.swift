@@ -47,6 +47,8 @@ class LoginViewController: UIViewController {
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         passwordTextField.autocorrectionType = UITextAutocorrectionType.No
         passwordTextField.secureTextEntry = true
+        userNameTextfield.delegate = self
+        passwordTextField.delegate = self
         addObserver()
     }
     
@@ -82,14 +84,6 @@ class LoginViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }
         }
-    }
-    
-    // PRAGMA MARK:- textField delegates
-    
-    func textFieldShouldReturn(textField: UITextField) -> Bool
-    {
-        textField.resignFirstResponder()
-        return true
     }
     
     //PRAGMA MARK:- IBActions
@@ -222,6 +216,20 @@ class LoginViewController: UIViewController {
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
         self.navigationController?.pushViewController(vc, animated: false)
+    }
+}
+
+extension LoginViewController:UITextFieldDelegate{
+    
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true
     }
 }
 
