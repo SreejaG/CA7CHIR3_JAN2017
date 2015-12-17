@@ -6,10 +6,10 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Edit Profile View Controller-->
         <scene sceneID="Fzc-0a-0AS">
             <objects>
-                <viewController id="NLI-gS-dTY" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EditProfileViewController" id="NLI-gS-dTY" customClass="EditProfileViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="vOL-X2-Afq"/>
                         <viewControllerLayoutGuide type="bottom" id="5ZT-Yw-tEZ"/>
@@ -163,6 +163,9 @@
                         </constraints>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="editProfileTableView" destination="8yW-hu-EA2" id="PDH-14-PWz"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fXM-0v-0iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
