@@ -1642,7 +1642,9 @@ static NSMutableDictionary * gHistory;
         [self changeLiveNowSelectionImage];
     }
     else{
-        [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
+        });
     }
 }
 
