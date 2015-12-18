@@ -778,8 +778,12 @@ static NSMutableDictionary * gHistory;
             }
         }
         
-    } else {
-        
+    } else if ((error && self.isViewLoaded && self.view.window) && _liveVideo == false){
+        [self hideProgressBar];
+        [self handleDecoderMovieError:error];
+    }
+    else
+    {
         if (self.isViewLoaded && self.view.window) {
             
             [self hideProgressBar];
