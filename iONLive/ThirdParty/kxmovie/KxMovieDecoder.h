@@ -120,6 +120,7 @@ typedef BOOL(^KxMovieDecoderInterruptCallback)();
 - (BOOL) setupVideoFrameFormat: (KxVideoFrameFormat) format;
 
 - (NSArray *) decodeFrames: (CGFloat) minDuration;
+-(BOOL)isValidConnection;
 
 @end
 

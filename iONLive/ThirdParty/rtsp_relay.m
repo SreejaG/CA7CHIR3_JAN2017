@@ -126,13 +126,15 @@ int start_stream(){
 	int i;
     while(av_read_frame(m_informat, &pkt) >= 0){
         if(pkt.stream_index == m_in_vid_strm_idx){
-            printf("Stream found\n");
+            NSLog(@"Stream found\n");
             ret=av_write_frame(m_outformat, &pkt);
+             NSLog(@"Writing Stream\n");
 			if(ret<0){
 				i++;
 				printf("i=%d",i);
 				if(i==250){
 					fun_ret=2;
+                     NSLog(@"un_ret=2\n");
 					break;
 				}
 			}
@@ -143,21 +145,25 @@ int start_stream(){
 			
 			EXIT_FLAG=0;
 			fun_ret=0;
-			printf("Exiting\n");
+			NSLog(@"Exiting\n");
         	break;
         }
 		else
+        {
+            NSLog(@"fun_ret=1;");
 			fun_ret=1;
+        }
     }
 	
-	printf("Stream stopped from start\n");
+	NSLog(@"Stream stopped from start\n");
 	//av_free_packet(&pkt);
 	clean_all();
 	return fun_ret;
 }
+
 int stop_stream(){
     EXIT_FLAG=1;
-    printf("Stream stopped\n");
+    NSLog(@"Stream stopped\n");
 	//
     return -1;
     }

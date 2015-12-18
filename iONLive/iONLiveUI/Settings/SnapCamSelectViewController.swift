@@ -195,7 +195,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         if buttonTitle == "Yes" {
             
             let stream = UploadStream()
-            stream.stopLiveStreaming()
+            stream.stopStreamingClicked()
             snapCamMode = restoreSnapCamMode
             self.snapCamSettingsTableView.reloadData()
             streamingDelegate?.cameraSelectionMode(snapCamMode)

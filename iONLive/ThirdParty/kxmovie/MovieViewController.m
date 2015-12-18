@@ -235,17 +235,14 @@ static NSMutableDictionary * gHistory;
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+    NSLog(@"applicationDidBecomeActive");
+
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     //
     //
     //TODO make _interrupted No ,click on back button
     _interrupted = NO;
     if (_decoder) {
-        
-        [self restorePlay];
-        
-    } else {
         [self reInitialiseDecoder];
     }
 }
@@ -258,7 +255,7 @@ static NSMutableDictionary * gHistory;
     
     if (_decoder) {
         
-        [self pause];
+        [self close];
     }
     
     //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
@@ -399,21 +396,6 @@ static NSMutableDictionary * gHistory;
 
 #pragma mark : Customize View
 
-- (void) dealloc
-{
-    [self pause];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    if (_dispatchQueue) {
-// Not needed as of ARC.
-//        dispatch_release(_dispatchQueue);
-        _dispatchQueue = NULL;
-    }
-    
-    LoggerStream(1, @"%@ dealloc", self);
-}
-
 
 -(void)setUpView
 {
@@ -537,7 +519,7 @@ static NSMutableDictionary * gHistory;
 {
     closeButton.hidden = false;
     bottomView.hidden = true;
-    noDataFound.text = @"Trying to retrieve stream";
+    noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
     liveView.hidden = true;
     cameraSelectionButton.hidden = true;
@@ -613,6 +595,20 @@ static NSMutableDictionary * gHistory;
     });
     
 }
+#pragma mark : Deallocation
+
+- (void) dealloc
+{
+    [self pause];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    if (_dispatchQueue) {
+        _dispatchQueue = NULL;
+    }
+    
+    LoggerStream(1, @"%@ dealloc", self);
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -657,6 +653,7 @@ static NSMutableDictionary * gHistory;
 {
     if (_backGround) {
         _backGround = false;
+        NSLog(@"applicationDidBecomeActive");
         [self reInitialiseDecoder];
     }
 }
@@ -672,7 +669,8 @@ static NSMutableDictionary * gHistory;
     _interrupted = true;
     self.playing = NO;
     [self freeBufferedFrames];
-    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (2 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+    dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (0.1 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
+        [NSThread sleepForTimeInterval:1.0];
         [_decoder closeFile];
     });
 }

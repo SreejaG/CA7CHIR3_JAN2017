@@ -798,6 +798,20 @@ static int interrupt_callback(void *ctx);
     return kxMovieErrorNone;
 }
 
+-(BOOL)isValidConnection
+{
+    if (_formatCtx ==NULL) {
+        return false;
+    }
+    else{
+        if (avformat_find_stream_info(_formatCtx, NULL) < 0) {
+            avformat_close_input(&_formatCtx);
+            return false;
+        }
+        return true;
+    }
+}
+
 - (kxMovieError) openVideoStream
 {
     kxMovieError errCode = kxMovieErrorStreamNotFound;
