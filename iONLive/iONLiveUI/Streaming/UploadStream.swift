@@ -13,7 +13,7 @@ class UploadStream : NSObject
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
     var currentStreamingTocken:String?
-    
+    var showAlert : Bool = true;
     var streamingStatus:StreamingProtocol?
 
     override init(){
@@ -26,6 +26,7 @@ class UploadStream : NSObject
     
     func stopStreamingClicked()
     {
+        showAlert = true;
         stopLiveStreaming()
     }
     
@@ -147,6 +148,7 @@ class UploadStream : NSObject
         }
         else
         {
+            showAlert = false
             self.stopLiveStreaming()
             self.streamingFailed()
             
@@ -194,6 +196,7 @@ class UploadStream : NSObject
         if errCode > 0
         {
             defaults.setValue(false, forKey: startedStreaming)
+            showAlert = false
             self.stopLiveStreaming()
         }
         switch errCode
@@ -257,8 +260,10 @@ class UploadStream : NSObject
                 }, failure: { (error, message) -> () in
                     
                     print("message = \(message)")
-                    
-                    self.handleFailure(message)
+                    if self.showAlert
+                    {
+                        self.handleFailure(message)
+                    }
                     return
             })
         }
