@@ -241,10 +241,10 @@ static NSMutableDictionary * gHistory;
     //
     //
     //TODO make _interrupted No ,click on back button
-    _interrupted = NO;
-    if (_decoder) {
-        [self reInitialiseDecoder];
-    }
+//    _interrupted = NO;
+//    if (_decoder) {
+//        [self reInitialiseDecoder];
+//    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -253,15 +253,15 @@ static NSMutableDictionary * gHistory;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self hideProgressBar];
     
-    if (_decoder) {
-        
-        [self close];
-    }
-    
-    //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
-    
-    _buffered = NO;
-    _interrupted = YES;
+//    if (_decoder) {
+//        
+//        [self close];
+//    }
+//    
+//    //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
+//    
+//    _buffered = NO;
+//    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -484,14 +484,14 @@ static NSMutableDictionary * gHistory;
         }
         NSLog(@"Wifi Connected");
     }
-    else
-    {
-        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
-            [self showMessageForNoStreamOrLiveDataFound];
-            [self showInputNetworkErrorMessage:nil];
-        }
-        NSLog(@"Wifi DisConnected");
-    }
+//    else
+//    {
+//        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
+//            [self showMessageForNoStreamOrLiveDataFound];
+//            [self showInputNetworkErrorMessage:nil];
+//        }
+//        NSLog(@"Wifi DisConnected");
+//    }
 }
 
 

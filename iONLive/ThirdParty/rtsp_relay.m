@@ -21,6 +21,7 @@ int clean_all(){
 	m_informat=NULL;
 	m_in_vid_strm=NULL;
 	options = NULL;
+    EXIT_FLAG=0;
 	printf("cleaning success\n");
 	return 0;
 	
@@ -122,7 +123,7 @@ int init_streams(char *url_in ,char *url_out){
 int start_stream(){
     
     int fun_ret,ret;
-    
+    EXIT_FLAG=0;
 	int i;
     while(av_read_frame(m_informat, &pkt) >= 0){
         if(pkt.stream_index == m_in_vid_strm_idx){
