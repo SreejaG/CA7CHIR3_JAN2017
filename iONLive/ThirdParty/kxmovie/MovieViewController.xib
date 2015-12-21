@@ -21,6 +21,7 @@
                 <outlet property="hidingHeartButton" destination="6wR-gB-ROq" id="DAL-VS-V2a"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
                 <outlet property="liveView" destination="Kpa-gM-M7F" id="pVE-eQ-n2h"/>
+                <outlet property="liveViewNumber" destination="L40-1V-WGS" id="Dbc-YD-4mU"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="secondCircleButton" destination="WbX-hr-Zxb" id="OLz-WO-P5h"/>
@@ -131,6 +132,17 @@
                                                 <constraint firstItem="f3D-sN-Bhz" firstAttribute="leading" secondItem="Kpa-gM-M7F" secondAttribute="leading" id="q5z-xR-Qn6"/>
                                             </constraints>
                                         </view>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L40-1V-WGS">
+                                            <rect key="frame" x="469" y="38" width="21" height="21"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="21" id="Fo1-tf-rkO"/>
+                                                <constraint firstAttribute="height" constant="21" id="Hcg-0l-cSP"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <animations/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -138,9 +150,11 @@
                                         <constraint firstAttribute="trailing" secondItem="Kpa-gM-M7F" secondAttribute="trailing" constant="20" id="AQR-gm-zuA"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="leading" secondItem="BB9-od-AqJ" secondAttribute="leading" constant="13" id="EN0-9m-7cf"/>
                                         <constraint firstAttribute="height" constant="64" id="Ej2-3X-7lc"/>
+                                        <constraint firstAttribute="bottom" secondItem="L40-1V-WGS" secondAttribute="bottom" constant="5" id="GPJ-Hc-k89"/>
                                         <constraint firstAttribute="trailing" secondItem="2sq-TW-cXt" secondAttribute="trailing" constant="15" id="KE4-do-HiM"/>
                                         <constraint firstItem="lME-9O-IZZ" firstAttribute="top" secondItem="BB9-od-AqJ" secondAttribute="top" constant="23" id="QcA-zg-qca"/>
                                         <constraint firstItem="2sq-TW-cXt" firstAttribute="centerY" secondItem="BB9-od-AqJ" secondAttribute="centerY" id="TS5-v6-FgA"/>
+                                        <constraint firstItem="Kpa-gM-M7F" firstAttribute="leading" secondItem="L40-1V-WGS" secondAttribute="trailing" id="gPS-qL-7se"/>
                                         <constraint firstAttribute="bottom" secondItem="Kpa-gM-M7F" secondAttribute="bottom" constant="4" id="x5R-tN-xt6"/>
                                     </constraints>
                                 </view>
@@ -291,7 +305,7 @@
                                             </constraints>
                                             <state key="normal" image="photo1"/>
                                             <connections>
-                                                <action selector="photoViewerClicked:" destination="-1" eventType="touchUpInside" id="4UD-Ze-Cw6"/>
+                                                <action selector="didTapPhotoViewwer:" destination="-1" eventType="touchUpInside" id="9QI-BJ-ntJ"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SDA-bD-Pa6" userLabel="StreamThumb">

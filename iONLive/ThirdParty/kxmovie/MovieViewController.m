@@ -120,6 +120,7 @@ static NSMutableDictionary * gHistory;
     CGFloat             _minBufferedDuration;
     CGFloat             _maxBufferedDuration;
     BOOL                _buffered;
+    IBOutlet UILabel *liveViewNumber;
     IBOutlet UIImageView *activityImageView;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
@@ -498,12 +499,9 @@ static NSMutableDictionary * gHistory;
 -(void)setUpInitialGLView
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-//    [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
      heartView.hidden = true;
     [self updateGlViewDefaultValues];
     
-//    liveStreamStatus.hidden = true;
-//    cameraSelectionButton.hidden = true;
 }
 -(void)setUpGlViewForLive
 {
@@ -512,6 +510,7 @@ static NSMutableDictionary * gHistory;
     noDataFound.text = @"Trying to connect camera";
     noDataFound.hidden = false;
     liveView.hidden = false;
+    liveViewNumber.hidden = false;
     cameraSelectionButton.hidden = false;
 }
 
@@ -522,6 +521,7 @@ static NSMutableDictionary * gHistory;
     noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
     liveView.hidden = true;
+    liveViewNumber.hidden = true;
     cameraSelectionButton.hidden = true;
 }
 
@@ -550,20 +550,13 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-//-(void)customizeUploadStreamButton
-//{
-//    liveStreamStatus.clipsToBounds = YES;
-//    liveStreamStatus.layer.cornerRadius = 15;
-//}
-
 -(void)customiseViewForLive
 {
     heartView.hidden = true;
     bottomView.hidden = false;
     topView.hidden = false;
     liveView.hidden = false;
-//    liveStreamStatus.hidden = false;
-//    cameraSelectionButton.hidden = false;
+    liveViewNumber.hidden = false;
     closeButton.hidden = true;
 }
 
@@ -571,12 +564,11 @@ static NSMutableDictionary * gHistory;
 {
     heartView.hidden = false;
     heartBottomDescView.hidden = true;
-//    liveStreamStatus.hidden = true;
+    liveViewNumber.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
     liveView.hidden = true;
     closeButton.hidden = false;
-//    cameraSelectionButton.hidden = true;
 }
 
 -(void)changeLiveNowSelectionImage
@@ -1478,8 +1470,8 @@ static NSMutableDictionary * gHistory;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
+- (IBAction)didTapPhotoViewwer:(id)sender {
 
-- (IBAction)photoViewerClicked:(id)sender {
     if ([self viewFinderLoading]) {
         return;
     }
