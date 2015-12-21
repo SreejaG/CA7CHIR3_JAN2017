@@ -1432,6 +1432,10 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
+    if ([self viewFinderLoading]) {
+        return;
+    }
+    
     if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
         
         [self showMessageIfInitializingStream];
@@ -1449,7 +1453,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
@@ -1458,7 +1462,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
@@ -1476,13 +1480,20 @@ static NSMutableDictionary * gHistory;
 }
 
 - (IBAction)photoViewerClicked:(id)sender {
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
     [self loadPhotoViewer];
 }
 
+-(BOOL)viewFinderLoading
+{
+    if (_activityIndicatorView.isAnimating && self.playing == false) {
+        return true;
+    }
+    return false;
+}
 
 #pragma mark : Live streaming
 -(void)showMessageIfInitializingStream
