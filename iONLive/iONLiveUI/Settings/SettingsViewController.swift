@@ -76,13 +76,13 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         
         switch (section) {
         case 0:
-            headerCell.headerTitle.text = "CAMERA";
+            headerCell.headerTitle.text = "CAMERA"
         case 1:
-            headerCell.headerTitle.text = "ACCOUNT";
+            headerCell.headerTitle.text = "ACCOUNT"
         case 2:
-            headerCell.headerTitle.text = "SUPPORT";
+            headerCell.headerTitle.text = "SUPPORT"
         default:
-            headerCell.headerTitle.text = "";
+            headerCell.headerTitle.text = ""
         }
         return headerCell
     }
@@ -157,4 +157,20 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             return 0
         }
     }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    { // switch case for sections and inside that for rows TODO
+        if indexPath.section == 1 && indexPath.row == 0
+        {
+            // edit profile
+            let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
+            let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
+           //self.navigationController?.pushViewController(editProfileVC, animated: true)
+            self.presentViewController(editProfileVC, animated: true, completion: { () -> Void in
+                
+            })
+        }
+    }
+    
+    
 }
