@@ -21,6 +21,10 @@
 		164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */; };
 		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
 		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
+		165314041C27CCEA00BCF5DF /* EditProfPersonalInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165314031C27CCEA00BCF5DF /* EditProfPersonalInfoCell.swift */; };
+		165314061C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165314051C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift */; };
+		165314081C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165314071C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift */; };
+		1653140A1C27E48900BCF5DF /* EditProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165314091C27E48800BCF5DF /* EditProfileHeaderCell.swift */; };
 		1656E4F31C1058C700F62D12 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */; };
 		1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
@@ -122,6 +126,10 @@
 		164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamSelectViewController.swift; sourceTree = "<group>"; };
 		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
 		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
+		165314031C27CCEA00BCF5DF /* EditProfPersonalInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfPersonalInfoCell.swift; sourceTree = "<group>"; };
+		165314051C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfAccountInfoCell.swift; sourceTree = "<group>"; };
+		165314071C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfPrivateInfoCell.swift; sourceTree = "<group>"; };
+		165314091C27E48800BCF5DF /* EditProfileHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileHeaderCell.swift; sourceTree = "<group>"; };
 		1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = PhotoViewer.storyboard; path = iONLive/iONLiveUI/PhotoViewer.storyboard; sourceTree = SOURCE_ROOT; };
 		1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
@@ -421,6 +429,10 @@
 			children = (
 				16609D281C1EA40700D0077F /* EditProfileViewController.swift */,
 				16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */,
+				165314031C27CCEA00BCF5DF /* EditProfPersonalInfoCell.swift */,
+				165314051C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift */,
+				165314071C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift */,
+				165314091C27E48800BCF5DF /* EditProfileHeaderCell.swift */,
 			);
 			name = EditProfile;
 			sourceTree = "<group>";
@@ -1011,11 +1023,13 @@
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
+				165314061C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
+				1653140A1C27E48900BCF5DF /* EditProfileHeaderCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
@@ -1028,6 +1042,7 @@
 				16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
 				1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */,
+				165314041C27CCEA00BCF5DF /* EditProfPersonalInfoCell.swift in Sources */,
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
@@ -1035,6 +1050,7 @@
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				1644B3C81C05687B004E3832 /* Connectivity.m in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
+				165314081C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift in Sources */,
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
