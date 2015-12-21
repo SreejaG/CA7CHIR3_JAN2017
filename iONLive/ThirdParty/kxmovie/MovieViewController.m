@@ -484,14 +484,14 @@ static NSMutableDictionary * gHistory;
         }
         NSLog(@"Wifi Connected");
     }
-    else
-    {
-        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
-            [self showMessageForNoStreamOrLiveDataFound];
-            [self showInputNetworkErrorMessage:nil];
-        }
-        NSLog(@"Wifi DisConnected");
-    }
+//    else
+//    {
+//        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
+//            [self showMessageForNoStreamOrLiveDataFound];
+//            [self showInputNetworkErrorMessage:nil];
+//        }
+//        NSLog(@"Wifi DisConnected");
+//    }
 }
 
 
