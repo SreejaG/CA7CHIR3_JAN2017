@@ -21,9 +21,9 @@
                 <outlet property="hidingHeartButton" destination="6wR-gB-ROq" id="DAL-VS-V2a"/>
                 <outlet property="imageView" destination="vDW-bF-IXH" id="eKG-3r-G4E"/>
                 <outlet property="liveView" destination="Kpa-gM-M7F" id="pVE-eQ-n2h"/>
-                <outlet property="liveViewNumber" destination="L40-1V-WGS" id="Dbc-YD-4mU"/>
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
+                <outlet property="numberOfSharedChannels" destination="L40-1V-WGS" id="OTK-rh-hOY"/>
                 <outlet property="secondCircleButton" destination="WbX-hr-Zxb" id="OLz-WO-P5h"/>
                 <outlet property="thirdCircleButton" destination="kF6-Vj-OCx" id="wgz-RR-ZT2"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
