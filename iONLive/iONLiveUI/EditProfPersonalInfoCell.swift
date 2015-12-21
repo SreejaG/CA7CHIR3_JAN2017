@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditProfPersonalInfoCell: UITableViewCell {
+class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate {
     
    static let identifier = "EditProfPersonalInfoCell"
 
@@ -17,7 +17,8 @@ class EditProfPersonalInfoCell: UITableViewCell {
     @IBOutlet weak var displayNameTextField: UITextField!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        userNameTextField.delegate = self
+        displayNameTextField.delegate = self
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
@@ -25,5 +26,20 @@ class EditProfPersonalInfoCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
+    func textFieldDidBeginEditing(textField: UITextField)
+    {
+       textField.layoutIfNeeded()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true
+    }
 }

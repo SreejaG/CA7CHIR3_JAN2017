@@ -8,19 +8,34 @@
 
 import UIKit
 
-class EditProfPrivateInfoCell: UITableViewCell {
+class EditProfPrivateInfoCell: UITableViewCell,UITextFieldDelegate {
     
    static let identifier = "EditProfPrivateInfoCell"
 
     @IBOutlet weak var privateInfoTitleLabel: UITextField!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        privateInfoTitleLabel.delegate = self
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+
+    func textFieldDidBeginEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true
     }
 }

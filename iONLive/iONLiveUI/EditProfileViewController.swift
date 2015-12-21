@@ -13,6 +13,7 @@ class EditProfileViewController: UIViewController {
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
     
+    @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     let userNameKey = "userNameKey"
     let displayNameKey = "displayNameKey"
     let titleKey = "titleKey"
@@ -27,7 +28,7 @@ class EditProfileViewController: UIViewController {
     
     var dataSource:[[[String:String]]]?
     
-    @IBOutlet weak var settingsTableView: UITableView!
+    @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,21 +38,58 @@ class EditProfileViewController: UIViewController {
         
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
         
-        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        self.editProfTableView.backgroundView = nil
+        self.editProfTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
+        addKeyboardObservers()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        addKeyboardObservers()
     }
 
     @IBAction func saveClicked(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true) { () -> Void in
-        }
     }
 
+    @IBAction func backClicked(sender: AnyObject) {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
+         [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableViewBottomConstaint.constant == 0
+        {
+           self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableViewBottomConstaint.constant != 0
+        {
+            self.tableViewBottomConstaint.constant = 0
+        }
+    }
 }
 
-extension EditProfileViewController:UITableViewDataSource,UITableViewDelegate
+
+extension EditProfileViewController: UITableViewDelegate
 {
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
@@ -65,7 +103,7 @@ extension EditProfileViewController:UITableViewDataSource,UITableViewDelegate
         }
         else
         {
-           return 45.0
+            return 45.0
         }
     }
     
@@ -81,18 +119,41 @@ extension EditProfileViewController:UITableViewDataSource,UITableViewDelegate
         case 2:
             headerCell.headerTitleLabel.text = "PRIVATE INFO"
         case 3:
-            let privacyPolicyDesc = NSMutableAttributedString(string: "All your Media is Private unless Channels are shred to specific people. Archive is always private to you.")
+            let privacyPolicyDesc = NSMutableAttributedString(string: "All your Media is Private unless Channels are shared to specific people. Archive is always private to you.")
             let privacyPolicyString = NSMutableAttributedString(string:"\nPrivacy Policy")
             privacyPolicyString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0), range: NSMakeRange(0, privacyPolicyString.length))
             privacyPolicyDesc.appendAttributedString(privacyPolicyString)
-
+            
             headerCell.headerTitleLabel.attributedText = privacyPolicyDesc
             
         default:
-             headerCell.headerTitleLabel.text = ""
+            headerCell.headerTitleLabel.text = ""
         }
         return headerCell
     }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
+        if indexPath.section == 0
+        {
+            return 90.0
+        }
+        else
+        {
+            return 44.0
+        }
+        
+    }
+    
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    {
+        return 0.01   // to avoid extra blank lines
+    }
+}
+
+
+extension EditProfileViewController:UITableViewDataSource
+{
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -129,16 +190,19 @@ extension EditProfileViewController:UITableViewDataSource,UITableViewDelegate
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
                     cell.displayNameTextField.text = cellDataSource[displayNameKey]
                     cell.userNameTextField.text = cellDataSource[userNameKey]
+                    cell.selectionStyle = .None
                     return cell
                    
                 case 1:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
+                    cell.selectionStyle = .Default
                     return cell
                    
                 case 2:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPrivateInfoCell.identifier, forIndexPath:indexPath) as! EditProfPrivateInfoCell
                     cell.privateInfoTitleLabel.text = cellDataSource[titleKey]
+                    cell.selectionStyle = .None
                     return cell
                 default:
                      return UITableViewCell()
@@ -162,21 +226,9 @@ extension EditProfileViewController:UITableViewDataSource,UITableViewDelegate
     }
     
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        if indexPath.section == 0
-        {
-            return 80.0
-        }
-        else
-        {
-            return 44.0
-        }
         
     }
-    
-   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-   {
-      
-    }
 }
+

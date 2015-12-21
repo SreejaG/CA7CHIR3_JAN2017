@@ -239,7 +239,10 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let settingsVC = storyBoard.instantiateViewControllerWithIdentifier("SettingsViewController") as! SettingsViewController
-        self.presentViewController(settingsVC, animated: true) { () -> Void in
+        
+        let navController = UINavigationController(rootViewController: settingsVC)
+        navController.navigationBarHidden = true
+        self.presentViewController(navController, animated: true) { () -> Void in
         }
     }
     @IBAction func snapcamButtonClicked(sender: AnyObject)

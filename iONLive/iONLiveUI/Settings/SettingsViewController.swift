@@ -35,10 +35,15 @@ class SettingsViewController: UIViewController {
         dataSource = [cameraOptions,accountOptions,supportOptions]
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(true)
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
         self.settingsTableView.backgroundView = nil
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
+       
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
     }
 
     @IBAction func doneClicked(sender: AnyObject) {
@@ -60,14 +65,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 45.0
-//        if section == 0
-//        {
-//            return 50.0
-//        }
-//        else
-//        {
-//             return 40.0
-//        }
     }
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
@@ -159,18 +156,17 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    { // switch case for sections and inside that for rows TODO
+    {
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        // switch case for sections and inside that for rows TODO
         if indexPath.section == 1 && indexPath.row == 0
         {
             // edit profile
             let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
             let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
-           //self.navigationController?.pushViewController(editProfileVC, animated: true)
-            self.presentViewController(editProfileVC, animated: true, completion: { () -> Void in
-                
-            })
+            
+           self.navigationController?.pushViewController(editProfileVC, animated: true)
         }
     }
-    
-    
+   
 }
