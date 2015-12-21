@@ -120,6 +120,7 @@ static NSMutableDictionary * gHistory;
     CGFloat             _minBufferedDuration;
     CGFloat             _maxBufferedDuration;
     BOOL                _buffered;
+    IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIImageView *activityImageView;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
@@ -498,12 +499,9 @@ static NSMutableDictionary * gHistory;
 -(void)setUpInitialGLView
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-//    [glView setBackgroundColor:[UIColor colorWithRed:236 green:236 blue:236 alpha:0.8]];
      heartView.hidden = true;
     [self updateGlViewDefaultValues];
     
-//    liveStreamStatus.hidden = true;
-//    cameraSelectionButton.hidden = true;
 }
 -(void)setUpGlViewForLive
 {
@@ -512,6 +510,7 @@ static NSMutableDictionary * gHistory;
     noDataFound.text = @"Trying to connect camera";
     noDataFound.hidden = false;
     liveView.hidden = false;
+    numberOfSharedChannels.hidden = false;
     cameraSelectionButton.hidden = false;
 }
 
@@ -522,6 +521,7 @@ static NSMutableDictionary * gHistory;
     noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
     liveView.hidden = true;
+    numberOfSharedChannels.hidden = true;
     cameraSelectionButton.hidden = true;
 }
 
@@ -550,20 +550,13 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-//-(void)customizeUploadStreamButton
-//{
-//    liveStreamStatus.clipsToBounds = YES;
-//    liveStreamStatus.layer.cornerRadius = 15;
-//}
-
 -(void)customiseViewForLive
 {
     heartView.hidden = true;
     bottomView.hidden = false;
     topView.hidden = false;
     liveView.hidden = false;
-//    liveStreamStatus.hidden = false;
-//    cameraSelectionButton.hidden = false;
+    numberOfSharedChannels.hidden = false;
     closeButton.hidden = true;
 }
 
@@ -571,12 +564,11 @@ static NSMutableDictionary * gHistory;
 {
     heartView.hidden = false;
     heartBottomDescView.hidden = true;
-//    liveStreamStatus.hidden = true;
+    numberOfSharedChannels.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
     liveView.hidden = true;
     closeButton.hidden = false;
-//    cameraSelectionButton.hidden = true;
 }
 
 -(void)changeLiveNowSelectionImage
@@ -1210,11 +1202,11 @@ static NSMutableDictionary * gHistory;
     dispatch_async(_dispatchQueue, ^{
         
         {
-            NSLog(@"_dispatchQueue");
+//            NSLog(@"_dispatchQueue");
             __strong MovieViewController *strongSelf = weakSelf;
             if (!strongSelf.playing)
             {
-                NSLog(@"strongSelf.playing:");
+//                NSLog(@"strongSelf.playing:");
                 return;
             }
         }
@@ -1223,7 +1215,7 @@ static NSMutableDictionary * gHistory;
         while (good) {
             
             good = NO;
-            NSLog(@"good");
+//            NSLog(@"good");
             
             @autoreleasepool {
                 
@@ -1232,10 +1224,10 @@ static NSMutableDictionary * gHistory;
                 if (decoder && (decoder.validVideo || decoder.validAudio)) {
                     
 //            NSLog(@"[decoder decodeFrames:duration];");
-                    NSLog(@"decoder.validVideo");
+//                    NSLog(@"decoder.validVideo");
                     
                     NSArray *frames = [decoder decodeFrames:duration];
-                    NSLog(@"frames.count %lu", (unsigned long)frames.count);
+//                    NSLog(@"frames.count %lu", (unsigned long)frames.count);
                     
                     if (frames.count) {
                         
@@ -1248,18 +1240,18 @@ static NSMutableDictionary * gHistory;
                     }
                     else{
                         //show disconnected pop up here.
-                        NSLog(@"No frames found! %lu", (unsigned long)frames.count);
+//                        NSLog(@"No frames found! %lu", (unsigned long)frames.count);
                     }
                 }
             }
         }
         {
-            NSLog(@"strongSelf.decoding = NO");
+//            NSLog(@"strongSelf.decoding = NO");
             __strong MovieViewController *strongSelf = weakSelf;
             if (strongSelf) strongSelf.decoding = NO;
         }
     });
-    NSLog(@"Exit async decode frames");
+//    NSLog(@"Exit async decode frames");
 }
 
 - (void) tick
@@ -1292,24 +1284,15 @@ static NSMutableDictionary * gHistory;
                 return;
                 
             }
-            NSLog(@"0 == leftFrames0");
+//            NSLog(@"0 == leftFrames0");
             if (_minBufferedDuration > 0 && !_buffered) {
                 
                 _buffered = YES;
 //                activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
                 [_activityIndicatorView startAnimating];
-                NSLog(@"_minBufferedDuration > 0 && !_buffered");
+//                NSLog(@"_minBufferedDuration > 0 && !_buffered");
                 
             }
-//            else
-//            {
-//                [self pause];
-//                NSLog(@"returning!!");
-//                [self showErrorMessage:nil];
-//                return;
-//                
-//                //            return;
-//            }
         }
         
         if (!leftFrames ||
@@ -1320,7 +1303,7 @@ static NSMutableDictionary * gHistory;
         
         const NSTimeInterval correction = [self tickCorrection];
         const NSTimeInterval time = MAX(interval + correction, 0.01);
-        NSLog(@"time%f",time);
+//        NSLog(@"time%f",time);
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, time * NSEC_PER_SEC);
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
             [self tick];
@@ -1432,10 +1415,12 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
+    if ([self viewFinderLoading]) {
+        return;
+    }
+    
     if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
-        
-        [self showMessageIfInitializingStream];
-        [self updateStreaming];
+        [self initializingStream];
     }
     else if (self.playing == false)
     {
@@ -1449,7 +1434,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
@@ -1458,7 +1443,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
@@ -1474,26 +1459,35 @@ static NSMutableDictionary * gHistory;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
+- (IBAction)didTapPhotoViewwer:(id)sender {
 
-- (IBAction)photoViewerClicked:(id)sender {
-    if (_activityIndicatorView.isAnimating && self.playing == false) {
+    if ([self viewFinderLoading]) {
         return;
     }
     
     [self loadPhotoViewer];
 }
 
+-(BOOL)viewFinderLoading
+{
+    if (_activityIndicatorView.isAnimating && self.playing == false) {
+        return true;
+    }
+    return false;
+}
 
 #pragma mark : Live streaming
--(void)showMessageIfInitializingStream
+-(void)initializingStream
 {
     BOOL initializingStream = [[NSUserDefaults standardUserDefaults] boolForKey:@"InitializingStream"];
     
     if (initializingStream) {
         
         [self showInitializingStreamAlert];
-        return;
-        
+    }
+    else
+    {
+        [self updateStreaming];
     }
 }
 
