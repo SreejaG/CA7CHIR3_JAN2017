@@ -101,16 +101,25 @@
                                                         <constraint firstAttribute="height" constant="35" id="Sbp-d3-8V1"/>
                                                     </constraints>
                                                     <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
+                                                    <connections>
+                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="aP7-EZ-cPf"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WbX-hr-Zxb" userLabel="SecondButton">
                                                     <rect key="frame" x="28" y="0.0" width="35" height="35"/>
                                                     <animations/>
                                                     <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
+                                                    <connections>
+                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="IIG-Vg-yWn"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f3D-sN-Bhz" userLabel="FirstButton">
                                                     <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
                                                     <animations/>
                                                     <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
+                                                    <connections>
+                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="gCB-Wi-ChB"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <animations/>

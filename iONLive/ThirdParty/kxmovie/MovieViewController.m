@@ -1660,5 +1660,13 @@ static NSMutableDictionary * gHistory;
         heartButtomBottomConstraint.constant = 111.0;
     }
 }
+- (IBAction)sharingListIconClicked:(id)sender
+{
+    UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
+    UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
+    mysharedChannelVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.navigationController presentViewController:mysharedChannelVC animated:true completion:^{
+    }];
+}
 
 @end

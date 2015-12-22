@@ -54,11 +54,18 @@
                                             <constraint firstAttribute="trailing" secondItem="kcr-Kl-Wyw" secondAttribute="trailing" id="fZ1-Uk-0wy"/>
                                         </constraints>
                                     </view>
-                                    <searchBar contentMode="redraw" placeholder="Search" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Quk-sk-5ha">
+                                    <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Quk-sk-5ha">
                                         <rect key="frame" x="0.0" y="64" width="600" height="44"/>
                                         <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="barTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="searchField.textColor">
+                                                <color key="value" red="0.22545920383582896" green="0.28787563835692032" blue="0.84853766025641031" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </searchBar>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-SM-yys">
                                         <rect key="frame" x="0.0" y="108" width="600" height="492"/>
@@ -81,14 +88,14 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Day" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mYH-i9-8Qe">
-                                                            <rect key="frame" x="94" y="19" width="59" height="21"/>
+                                                            <rect key="frame" x="94" y="19" width="60" height="22"/>
                                                             <animations/>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="18"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="K9f-FI-4TK">
-                                                            <rect key="frame" x="173" y="24" width="11" height="12"/>
+                                                            <rect key="frame" x="164" y="24" width="11" height="12"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="11" id="Wfc-JU-wIQ"/>
@@ -96,7 +103,7 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cnk-1e-ZVu">
-                                                            <rect key="frame" x="189" y="24" width="11" height="12"/>
+                                                            <rect key="frame" x="178" y="24" width="11" height="12"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="11" id="Tz7-fM-Xoa"/>
@@ -121,7 +128,7 @@
                                                     </subviews>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstItem="K9f-FI-4TK" firstAttribute="leading" secondItem="mYH-i9-8Qe" secondAttribute="trailing" constant="20" id="5Hn-uG-EEC"/>
+                                                        <constraint firstItem="K9f-FI-4TK" firstAttribute="leading" secondItem="mYH-i9-8Qe" secondAttribute="trailing" constant="10" id="5Hn-uG-EEC"/>
                                                         <constraint firstItem="K9f-FI-4TK" firstAttribute="centerY" secondItem="UU8-th-hmK" secondAttribute="centerY" id="6pT-WJ-cNT"/>
                                                         <constraint firstItem="mYH-i9-8Qe" firstAttribute="leading" secondItem="Atj-6M-99x" secondAttribute="trailing" constant="20" id="A41-Y1-4sV"/>
                                                         <constraint firstItem="Cnk-1e-ZVu" firstAttribute="centerY" secondItem="UU8-th-hmK" secondAttribute="centerY" id="Cr8-wk-vVI"/>
@@ -129,7 +136,7 @@
                                                         <constraint firstItem="cbN-lg-RZy" firstAttribute="centerY" secondItem="UU8-th-hmK" secondAttribute="centerY" id="X5t-Wj-5oF"/>
                                                         <constraint firstItem="mYH-i9-8Qe" firstAttribute="centerY" secondItem="UU8-th-hmK" secondAttribute="centerY" id="jFr-8W-onz"/>
                                                         <constraint firstAttribute="trailing" secondItem="cbN-lg-RZy" secondAttribute="trailing" constant="30" id="jxy-Uf-hT0"/>
-                                                        <constraint firstItem="Cnk-1e-ZVu" firstAttribute="leading" secondItem="K9f-FI-4TK" secondAttribute="trailing" constant="5" id="oZ1-54-2XC"/>
+                                                        <constraint firstItem="Cnk-1e-ZVu" firstAttribute="leading" secondItem="K9f-FI-4TK" secondAttribute="trailing" constant="3" id="oZ1-54-2XC"/>
                                                         <constraint firstItem="Atj-6M-99x" firstAttribute="centerY" secondItem="UU8-th-hmK" secondAttribute="centerY" id="w77-TO-EjE"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
@@ -137,6 +144,7 @@
                                                 <connections>
                                                     <outlet property="avatarIconImageView" destination="K9f-FI-4TK" id="xft-Q6-rQQ"/>
                                                     <outlet property="channelNameLabel" destination="mYH-i9-8Qe" id="VE9-NY-JBZ"/>
+                                                    <outlet property="channelSelectionButton" destination="cbN-lg-RZy" id="tUN-GY-TgT"/>
                                                     <outlet property="sharedCountLabel" destination="Cnk-1e-ZVu" id="0DQ-hs-iMS"/>
                                                     <outlet property="userImage" destination="Atj-6M-99x" id="CRD-9A-EXS"/>
                                                 </connections>
@@ -164,6 +172,9 @@
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <animations/>
+                                                <connections>
+                                                    <outlet property="headerTitleLabel" destination="dpk-zV-1lX" id="Gjn-hg-5WP"/>
+                                                </connections>
                                             </tableViewCell>
                                         </prototypes>
                                         <connections>
@@ -202,6 +213,7 @@
                         <outlet property="searchDisplayController" destination="3wx-v3-HyW" id="g2H-3F-BHL"/>
                         <outlet property="sharedChannelsSearchBar" destination="Quk-sk-5ha" id="AYx-Sk-Zsu"/>
                         <outlet property="sharedChannelsTableView" destination="xfL-SM-yys" id="NSX-t4-MKi"/>
+                        <outlet property="tableViewBottomConstaint" destination="hqz-Ki-qwI" id="N65-5u-QFI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yuz-vO-Uf6" userLabel="First Responder" sceneMemberID="firstResponder"/>

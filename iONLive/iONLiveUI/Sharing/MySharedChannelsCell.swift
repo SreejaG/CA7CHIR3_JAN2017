@@ -9,23 +9,46 @@
 import UIKit
 
 class MySharedChannelsCell: UITableViewCell {
+    
+    let channelNameKey = "channelName"
+    let channelShareCountKey = "channelShareCount"
+    let channelSelectionKey = "channelSelection"
 
     static let identifier = "MySharedChannelsCell"
     @IBOutlet weak var avatarIconImageView: UIImageView!
     @IBOutlet weak var channelNameLabel: UILabel!
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var sharedCountLabel: UILabel!
+    @IBOutlet weak var channelSelectionButton: UIButton!
+    var cellDataSource:[String:String]?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
-    @IBAction func channelSelectionClicked(sender: AnyObject) {
+    @IBAction func channelSelectionClicked(sender: AnyObject)
+    {
+        if cellDataSource != nil{
+            if Int(cellDataSource![channelSelectionKey]!) == 0
+            {
+                //selected
+                cellDataSource![channelSelectionKey] = "1"
+                channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+                sharedCountLabel.hidden = false
+                avatarIconImageView.hidden = false
+            }
+            else
+            {
+                //deselected
+                cellDataSource![channelSelectionKey] = "0"
+                channelSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+                sharedCountLabel.hidden = true
+                avatarIconImageView.hidden = true
+            }
+        }
     }
 }

@@ -49,7 +49,7 @@ class EditProfileViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        addKeyboardObservers()
+          NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     @IBAction func saveClicked(sender: AnyObject) {

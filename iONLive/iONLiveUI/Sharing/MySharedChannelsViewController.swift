@@ -13,147 +13,133 @@ class MySharedChannelsViewController: UIViewController {
     static let identifier = "MySharedChannelsViewController"
     @IBOutlet weak var sharedChannelsTableView: UITableView!
     @IBOutlet weak var sharedChannelsSearchBar: UISearchBar!
+    @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
+    
+    let channelNameKey = "channelName"
+    let channelShareCountKey = "channelShareCount"
+    let channelSelectionKey = "channelSelection"
+    
+    var dataSource:[[String:String]]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        createDummyDataSource()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        addKeyboardObservers()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    @IBAction func backButtonClicked(sender: AnyObject) {
+    @IBAction func backButtonClicked(sender: AnyObject)
+    {
+        self.dismissViewControllerAnimated(true) { () -> Void in
+        }
+    }
+    
+    func createDummyDataSource()
+    {
+        dataSource = [[channelNameKey:"My Day",channelShareCountKey:"9",channelSelectionKey:"0"],[channelNameKey:"Work stuff",channelShareCountKey:"5",channelSelectionKey:"0"],[channelNameKey:"Ideas & screenshots",channelShareCountKey:"8",channelSelectionKey:"0"]]
+    }
+    
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableViewBottomConstaint.constant == 0
+        {
+            self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableViewBottomConstaint.constant != 0
+        {
+            self.tableViewBottomConstaint.constant = 0
+        }
     }
 }
 
 
-//extension MySharedChannelsViewController: UITableViewDelegate
-//{
-//    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-//    {
-//        return 45.0
-//    }
-//    
-////    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
-////    {
-////        let  headerCell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsHeaderCell.identifier) as! MySharedChannelsHeaderCell
-////        
-////        switch (section) {
-////        case 0:
-////            headerCell.headerTitleLabel.text = ""
-////        case 1:
-////            headerCell.headerTitleLabel.text = "ACCOUNT INFO"
-////        case 2:
-////            headerCell.headerTitleLabel.text = "PRIVATE INFO"
-////        case 3:
-////            let privacyPolicyDesc = NSMutableAttributedString(string: "All your Media is Private unless Channels are shared to specific people. Archive is always private to you.")
-////            let privacyPolicyString = NSMutableAttributedString(string:"\nPrivacy Policy")
-////            privacyPolicyString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0), range: NSMakeRange(0, privacyPolicyString.length))
-////            privacyPolicyDesc.appendAttributedString(privacyPolicyString)
-////            
-////            headerCell.headerTitleLabel.attributedText = privacyPolicyDesc
-////            
-////        default:
-////            headerCell.headerTitleLabel.text = ""
-////        }
-////        return headerCell
-////    }
-//    
-//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-//    {
-//        if indexPath.section == 0
-//        {
-//            return 90.0
-//        }
-//        else
-//        {
-//            return 44.0
-//        }
-//        
-//    }
-//    
-//    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
-//    {
-//        return 0.01   // to avoid extra blank lines
-//    }
-//}
+extension MySharedChannelsViewController: UITableViewDelegate
+{
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    {
+        return 45.0
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    {
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsHeaderCell.identifier) as! MySharedChannelsHeaderCell
+        headerCell.headerTitleLabel.text = "MY SHARED CHANNELS"
+        return headerCell
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
+        return 60
+    }
+    
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    {
+        return 0.01   // to avoid extra blank lines
+    }
+}
 
 
-//extension MySharedChannelsViewController:UITableViewDataSource
-//{
-//    
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-//    {
-//        switch section
-//        {
-//        case 0:
-//            return dataSource != nil ? (dataSource?[0].count)! :0
-//            
-//        case 1:
-//            return dataSource != nil ? (dataSource?[1].count)! :0
-//            
-//        case 2:
-//            return dataSource != nil ? (dataSource?[2].count)! :0
-//            
-//        case 3:
-//            return 1  // for terms and conditn sectn
-//            
-//        default:
-//            return 0
-//        }
-//    }
-//    
-//    
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-//    {
-//        if let dataSource = dataSource
-//        {
-//            if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
-//            {
-//                var cellDataSource = dataSource[indexPath.section][indexPath.row]
-//                switch indexPath.section
-//                {
-//                case 0:
-//                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
-//                    cell.displayNameTextField.text = cellDataSource[displayNameKey]
-//                    cell.userNameTextField.text = cellDataSource[userNameKey]
-//                    cell.selectionStyle = .None
-//                    return cell
-//                    
-//                case 1:
-//                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
-//                    cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
-//                    cell.selectionStyle = .Default
-//                    return cell
-//                    
-//                case 2:
-//                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPrivateInfoCell.identifier, forIndexPath:indexPath) as! EditProfPrivateInfoCell
-//                    cell.privateInfoTitleLabel.text = cellDataSource[titleKey]
-//                    cell.selectionStyle = .None
-//                    return cell
-//                default:
-//                    return UITableViewCell()
-//                }
-//            }
-//        }
-//        return UITableViewCell()
-//    }
-//    
-//    
-//    func numberOfSectionsInTableView(tableView: UITableView) -> Int
-//    {
-//        if let dataSource = dataSource
-//        {
-//            return dataSource.count + 1 //1 for last termsAndConditn section
-//        }
-//        else
-//        {
-//            return 0
-//        }
-//    }
-//    
-//    
-//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-//    {
-//        
-//    }
-//}
+extension MySharedChannelsViewController:UITableViewDataSource
+{
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+       return dataSource != nil ? (dataSource?.count)! :0
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        if let dataSource = dataSource
+        {
+            if dataSource.count > indexPath.row
+            {
+                let cell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsCell.identifier, forIndexPath:indexPath) as! MySharedChannelsCell
+                cell.channelNameLabel.text = dataSource[indexPath.row][channelNameKey]
+                cell.sharedCountLabel.text = dataSource[indexPath.row][channelShareCountKey]
+                if Int(dataSource[indexPath.row][channelSelectionKey]!) == 0
+                {
+                    cell.channelSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
+                    cell.sharedCountLabel.hidden = true
+                    cell.avatarIconImageView.hidden = true
+                }
+                else if Int(dataSource[indexPath.row][channelSelectionKey]!) == 1
+                {
+                    cell.channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+                    cell.sharedCountLabel.hidden = false
+                    cell.avatarIconImageView.hidden = false
+                }
+                cell.cellDataSource = dataSource[indexPath.row]
+                cell.selectionStyle = .None
+                return cell
+            }
+        }
+        return UITableViewCell()
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    {
+        
+    }
+}
