@@ -143,7 +143,6 @@ class StreamsListViewController: UIViewController{
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
         print("message = \(message)")
-        self.streamListCollectionView.reloadData()
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -166,7 +165,7 @@ class StreamsListViewController: UIViewController{
     
     func emptyStreamHandler()
     {
-        self.dataSource = dummyImageListingDataSource
+         self.dataSource = dummyImageListingDataSource
          self.streamListCollectionView.reloadData()
     }
     
@@ -183,6 +182,7 @@ class StreamsListViewController: UIViewController{
     
     func createDataSource(liveStreamDataSource:[[String:String]]?)
     {
+        self.dataSource = dummyImageListingDataSource
         if let liveStreams = liveStreamDataSource
         {
             var count = 0
@@ -193,7 +193,6 @@ class StreamsListViewController: UIViewController{
                     dataSource?[count] = eachLiveStream
                     count = count + 1
                 }
-                //dataSource?.insert(eachLiveStream, atIndex:0)
             }
         }
     }
