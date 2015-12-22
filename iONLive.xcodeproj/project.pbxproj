@@ -34,6 +34,10 @@
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
+		1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1674A9101C29073B00D547D7 /* sharing.storyboard */; };
+		1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */; };
+		1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */; };
+		1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */; };
 		167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */; };
 		167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0301BFDC1F6003CDF30 /* ViewController.swift */; };
 		167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0321BFDC1F6003CDF30 /* Main.storyboard */; };
@@ -139,6 +143,10 @@
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
+		1674A9101C29073B00D547D7 /* sharing.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = sharing.storyboard; sourceTree = "<group>"; };
+		1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsViewController.swift; sourceTree = "<group>"; };
+		1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsCell.swift; sourceTree = "<group>"; };
+		1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsHeaderCell.swift; sourceTree = "<group>"; };
 		167AF02B1BFDC1F6003CDF30 /* iONLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iONLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		167AF0301BFDC1F6003CDF30 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -437,6 +445,17 @@
 			name = EditProfile;
 			sourceTree = "<group>";
 		};
+		1674A90F1C2906FE00D547D7 /* Sharing */ = {
+			isa = PBXGroup;
+			children = (
+				1674A9101C29073B00D547D7 /* sharing.storyboard */,
+				1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */,
+				1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */,
+				1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */,
+			);
+			path = Sharing;
+			sourceTree = "<group>";
+		};
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
@@ -505,6 +524,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				1674A90F1C2906FE00D547D7 /* Sharing */,
 				16609D271C1EA3CC00D0077F /* EditProfile */,
 				1656E4F41C1058E600F62D12 /* PhotoViewer */,
 				1683B8ED1C0EE28700CBB6FE /* Protocol */,
@@ -975,6 +995,7 @@
 				16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */,
 				167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */,
 				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
+				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
 			);
@@ -1003,6 +1024,7 @@
 			files = (
 				59BC3F5A1BFF848600710905 /* AFHTTPRequestOperation.m in Sources */,
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
+				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
@@ -1010,7 +1032,9 @@
 				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
+				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
+				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,

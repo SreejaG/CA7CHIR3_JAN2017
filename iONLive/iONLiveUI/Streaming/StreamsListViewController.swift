@@ -41,18 +41,19 @@ class StreamsListViewController: UIViewController{
         self.streamListCollectionView.alwaysBounceVertical = true
         self.view.bringSubviewToFront(activityIndicator)
         
+        dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType],[imageKey:dummyImagesArray[5],typeKey:imageType],[imageKey:dummyImagesArray[6],typeKey:imageType],[imageKey:dummyImagesArray[7],typeKey:imageType],[imageKey:dummyImagesArray[8],typeKey:imageType],[imageKey:dummyImagesArray[9],typeKey:imageType],[imageKey:dummyImagesArray[10],typeKey:imageType],[imageKey:dummyImagesArray[11],typeKey:imageType]]
+        self.dataSource = dummyImageListingDataSource
+        getAllLiveStreams()
+        
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = true
         activityIndicator.hidden = true
-        dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType],[imageKey:dummyImagesArray[5],typeKey:imageType],[imageKey:dummyImagesArray[6],typeKey:imageType],[imageKey:dummyImagesArray[7],typeKey:imageType],[imageKey:dummyImagesArray[8],typeKey:imageType],[imageKey:dummyImagesArray[9],typeKey:imageType],[imageKey:dummyImagesArray[10],typeKey:imageType],[imageKey:dummyImagesArray[11],typeKey:imageType]]
+        self.view.bringSubviewToFront(activityIndicator)
         
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
-        
-        self.dataSource = dummyImageListingDataSource
-        getAllLiveStreams()
     }
     
     override func didReceiveMemoryWarning() {
@@ -142,16 +143,19 @@ class StreamsListViewController: UIViewController{
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
+       // self.streamListCollectionView.reloadData()
         print("message = \(message)")
         
         if !self.requestManager.validConnection() {
+            //clearing all live streams
+            loadStaticImagesOnly()
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if message.isEmpty == false
         {
             if message == "WOWZA001"  // live stream list empty
             {
-                emptyStreamHandler()
+                loadStaticImagesOnly()
             }
             else
             {
@@ -163,7 +167,7 @@ class StreamsListViewController: UIViewController{
         }
     }
     
-    func emptyStreamHandler()
+    func loadStaticImagesOnly()
     {
          self.dataSource = dummyImageListingDataSource
          self.streamListCollectionView.reloadData()
