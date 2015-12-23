@@ -852,7 +852,7 @@ static NSMutableDictionary * gHistory;
 -(NSString *)getErrorTitle:(NSError*)error
 {
     if (error == nil) {
-        return @"Couldn't Connect camera";
+        return @"Couldn't Connect Camera";
     }
     else
     {
