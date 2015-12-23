@@ -96,21 +96,21 @@
                                                     </constraints>
                                                     <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
                                                     <connections>
-                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="aP7-EZ-cPf"/>
+                                                        <action selector="didTapSharingListIcon:" destination="-1" eventType="touchUpInside" id="ALr-5h-gvj"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WbX-hr-Zxb" userLabel="SecondButton">
                                                     <rect key="frame" x="28" y="0.0" width="35" height="35"/>
                                                     <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
                                                     <connections>
-                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="IIG-Vg-yWn"/>
+                                                        <action selector="didTapSharingListIcon:" destination="-1" eventType="touchUpInside" id="3H1-sD-OGE"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f3D-sN-Bhz" userLabel="FirstButton">
                                                     <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
                                                     <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
                                                     <connections>
-                                                        <action selector="sharingListIconClicked:" destination="-1" eventType="touchUpInside" id="gCB-Wi-ChB"/>
+                                                        <action selector="didTapSharingListIcon:" destination="-1" eventType="touchUpInside" id="iv1-sy-NrO"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -167,7 +167,7 @@
                                             </constraints>
                                             <state key="normal" image="hearth_border"/>
                                             <connections>
-                                                <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="nC3-ca-4Gm"/>
+                                                <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="d18-tU-IG1"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1B-Ua-a0O" userLabel="heart2">
@@ -178,7 +178,7 @@
                                             </constraints>
                                             <state key="normal" image="hearth"/>
                                             <connections>
-                                                <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="3uF-2d-Z7R"/>
+                                                <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="QnY-bu-cLD"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Pg-fba" userLabel="herat3">
@@ -190,7 +190,7 @@
                                             </constraints>
                                             <state key="normal" image="hearth_transp"/>
                                             <connections>
-                                                <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="26Y-Rd-FTm"/>
+                                                <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="dzV-Da-U2T"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TH9-8s-Wr3" userLabel="heart4">
@@ -201,7 +201,7 @@
                                             </constraints>
                                             <state key="normal" image="hearth_transp"/>
                                             <connections>
-                                                <action selector="heartClicked:" destination="-1" eventType="touchUpInside" id="kqJ-iB-FhS"/>
+                                                <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="5YA-Jp-kVy"/>
                                             </connections>
                                         </button>
                                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HwH-TP-m4n" userLabel="heartBottomView">

@@ -1415,7 +1415,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1434,7 +1434,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1443,7 +1443,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1461,14 +1461,14 @@ static NSMutableDictionary * gHistory;
 }
 - (IBAction)didTapPhotoViewwer:(id)sender {
 
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
     [self loadPhotoViewer];
 }
 
-- (IBAction)heartClicked:(id)sender
+- (IBAction)didTapHeartImage:(id)sender
 {
     if (heartButtomBottomConstraint.constant == 111.0)
     {
@@ -1484,8 +1484,12 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-- (IBAction)sharingListIconClicked:(id)sender
+- (IBAction)didTapSharingListIcon:(id)sender
 {
+    if ([self isViewFinderLoading]) {
+        return;
+    }
+    
     UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
     UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
     
@@ -1497,7 +1501,7 @@ static NSMutableDictionary * gHistory;
     }];
 }
 
--(BOOL)viewFinderLoading
+-(BOOL)isViewFinderLoading
 {
     if (_activityIndicatorView.isAnimating && self.playing == false) {
         return true;
