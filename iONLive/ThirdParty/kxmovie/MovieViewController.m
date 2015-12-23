@@ -1468,6 +1468,35 @@ static NSMutableDictionary * gHistory;
     [self loadPhotoViewer];
 }
 
+- (IBAction)heartClicked:(id)sender
+{
+    if (heartButtomBottomConstraint.constant == 111.0)
+    {
+        // show heartDescView
+        heartBottomDescView.hidden = false;
+        hidingHeartButton.hidden = true;
+        heartButtomBottomConstraint.constant = 65.0;
+    }
+    else{
+        heartBottomDescView.hidden = true;
+        hidingHeartButton.hidden = false;
+        heartButtomBottomConstraint.constant = 111.0;
+    }
+}
+
+- (IBAction)sharingListIconClicked:(id)sender
+{
+    UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
+    UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
+    
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:mysharedChannelVC];
+    navController.navigationBarHidden = true;
+    
+    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.navigationController presentViewController:navController animated:true completion:^{
+    }];
+}
+
 -(BOOL)viewFinderLoading
 {
     if (_activityIndicatorView.isAnimating && self.playing == false) {
@@ -1642,31 +1671,6 @@ static NSMutableDictionary * gHistory;
             [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
         });
     }
-}
-
-//PRAGMA MARK:- HeartView helper functions
-- (IBAction)heartClicked:(id)sender
-{
-    if (heartButtomBottomConstraint.constant == 111.0)
-    {
-        // show heartDescView
-        heartBottomDescView.hidden = false;
-        hidingHeartButton.hidden = true;
-        heartButtomBottomConstraint.constant = 65.0;
-    }
-    else{
-        heartBottomDescView.hidden = true;
-        hidingHeartButton.hidden = false;
-        heartButtomBottomConstraint.constant = 111.0;
-    }
-}
-- (IBAction)sharingListIconClicked:(id)sender
-{
-    UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
-    UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
-    mysharedChannelVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self.navigationController presentViewController:mysharedChannelVC animated:true completion:^{
-    }];
 }
 
 @end

@@ -31,6 +31,10 @@
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
 		16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16609D281C1EA40700D0077F /* EditProfileViewController.swift */; };
 		16609D2B1C1EA42F00D0077F /* EditProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */; };
+		166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */; };
+		166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift */; };
+		166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */; };
+		166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
@@ -140,6 +144,10 @@
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		16609D281C1EA40700D0077F /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = EditProfile.storyboard; sourceTree = "<group>"; };
+		166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelDetailViewController.swift; sourceTree = "<group>"; };
+		166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemDetailsViewController.swift; sourceTree = "<group>"; };
+		166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelSharingDetailsViewController.swift; sourceTree = "<group>"; };
+		166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemCell.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
@@ -452,6 +460,10 @@
 				1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */,
 				1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */,
 				1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */,
+				166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */,
+				166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift */,
+				166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */,
+				166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */,
 			);
 			path = Sharing;
 			sourceTree = "<group>";
@@ -1041,8 +1053,11 @@
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
 				59BC3F5F1BFF848600710905 /* AFURLConnectionOperation.m in Sources */,
 				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
+				166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */,
 				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
+				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
+				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
@@ -1055,6 +1070,7 @@
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
 				1653140A1C27E48900BCF5DF /* EditProfileHeaderCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
+				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
