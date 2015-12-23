@@ -1459,7 +1459,7 @@ static NSMutableDictionary * gHistory;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
-- (IBAction)didTapPhotoViewwer:(id)sender {
+- (IBAction)didTapPhotoViewer:(id)sender {
 
     if ([self isViewFinderLoading]) {
         return;
