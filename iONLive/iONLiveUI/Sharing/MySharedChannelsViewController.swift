@@ -140,6 +140,8 @@ extension MySharedChannelsViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
+        let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
+        let channelDetailVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier)
+        self.navigationController?.pushViewController(channelDetailVC, animated: true)
     }
 }

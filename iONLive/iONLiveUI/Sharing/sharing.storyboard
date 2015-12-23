@@ -226,13 +226,185 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="316" y="161"/>
+            <point key="canvasLocation" x="-436" y="194"/>
+        </scene>
+        <!--Sharing with-->
+        <scene sceneID="Jpb-s7-ASE">
+            <objects>
+                <viewController storyboardIdentifier="MyChannelSharingDetailsViewController" id="dw1-rz-646" customClass="MyChannelSharingDetailsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="xRB-nI-r2F"/>
+                        <viewControllerLayoutGuide type="bottom" id="ilI-Z1-owo"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ezh-J6-pgj">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" enabled="NO" title="Sharing with" image="friend_avatar" selectedImage="friend_avatar_blue" id="aSX-xL-iNd"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WrD-J8-U64" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--All-->
+        <scene sceneID="EtW-s8-2ql">
+            <objects>
+                <viewController storyboardIdentifier="MyChannelItemDetailsViewController" id="nhN-Vw-th3" customClass="MyChannelItemDetailsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="sSW-ue-nc3"/>
+                        <viewControllerLayoutGuide type="bottom" id="33o-xU-AeI"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ZSw-wG-u87">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qCG-x5-AKz" userLabel="MainView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nZj-ax-9zx" userLabel="TopView">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MY DAY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TOg-Ia-DRz">
+                                                <rect key="frame" x="0.0" y="28" width="600" height="36"/>
+                                                <animations/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZv-Ur-f9i">
+                                                <rect key="frame" x="564" y="28" width="18" height="24"/>
+                                                <animations/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="24" id="6R7-Je-I0U"/>
+                                                    <constraint firstAttribute="width" constant="18" id="iuv-tL-87j"/>
+                                                </constraints>
+                                                <state key="normal" image="friend_avatar"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H8c-CO-DlC">
+                                                <rect key="frame" x="18" y="30" width="12" height="22"/>
+                                                <animations/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="12" id="FAi-an-24Z"/>
+                                                    <constraint firstAttribute="height" constant="22" id="qvk-40-HOM"/>
+                                                </constraints>
+                                                <state key="normal" image="white_back"/>
+                                                <connections>
+                                                    <action selector="backClicked:" destination="nhN-Vw-th3" eventType="touchUpInside" id="Dr4-Be-BuV"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="TOg-Ia-DRz" secondAttribute="trailing" id="2h7-qM-FhF"/>
+                                            <constraint firstAttribute="bottom" secondItem="TOg-Ia-DRz" secondAttribute="bottom" id="5Nu-N4-7FF"/>
+                                            <constraint firstItem="TOg-Ia-DRz" firstAttribute="leading" secondItem="nZj-ax-9zx" secondAttribute="leading" id="Cpm-yK-xo0"/>
+                                            <constraint firstItem="H8c-CO-DlC" firstAttribute="top" secondItem="nZj-ax-9zx" secondAttribute="top" constant="30" id="G0O-gs-Aoe"/>
+                                            <constraint firstItem="H8c-CO-DlC" firstAttribute="leading" secondItem="nZj-ax-9zx" secondAttribute="leading" constant="18" id="OOV-Rf-DHz"/>
+                                            <constraint firstItem="MZv-Ur-f9i" firstAttribute="top" secondItem="nZj-ax-9zx" secondAttribute="top" constant="28" id="PN8-2X-3ss"/>
+                                            <constraint firstAttribute="height" constant="64" id="RJP-Oq-eqJ"/>
+                                            <constraint firstAttribute="trailing" secondItem="MZv-Ur-f9i" secondAttribute="trailing" constant="18" id="WMJ-G3-D1S"/>
+                                            <constraint firstItem="TOg-Ia-DRz" firstAttribute="top" secondItem="nZj-ax-9zx" secondAttribute="top" constant="28" id="y0a-on-12Y"/>
+                                        </constraints>
+                                    </view>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rBM-zr-xIP">
+                                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="DK4-mn-G6o">
+                                            <size key="itemSize" width="50" height="50"/>
+                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        </collectionViewFlowLayout>
+                                        <cells>
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MyChannelItemCell" id="Jjb-zp-lLO" customClass="MyChannelItemCell" customModule="iONLive" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NgX-lm-mU5">
+                                                            <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                                                            <animations/>
+                                                        </imageView>
+                                                    </subviews>
+                                                    <animations/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </view>
+                                                <animations/>
+                                                <connections>
+                                                    <outlet property="itemImageView" destination="NgX-lm-mU5" id="ql8-E5-IEQ"/>
+                                                </connections>
+                                            </collectionViewCell>
+                                        </cells>
+                                        <connections>
+                                            <outlet property="dataSource" destination="nhN-Vw-th3" id="CUS-0x-gdf"/>
+                                            <outlet property="delegate" destination="nhN-Vw-th3" id="Xyv-Mf-wuZ"/>
+                                        </connections>
+                                    </collectionView>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="nZj-ax-9zx" firstAttribute="top" secondItem="qCG-x5-AKz" secondAttribute="top" id="5Tk-al-Vpk"/>
+                                    <constraint firstItem="rBM-zr-xIP" firstAttribute="leading" secondItem="qCG-x5-AKz" secondAttribute="leading" id="8rI-oc-yvJ"/>
+                                    <constraint firstItem="nZj-ax-9zx" firstAttribute="leading" secondItem="qCG-x5-AKz" secondAttribute="leading" id="FKu-Wr-ak1"/>
+                                    <constraint firstItem="rBM-zr-xIP" firstAttribute="top" secondItem="nZj-ax-9zx" secondAttribute="bottom" id="Hak-BK-QLn"/>
+                                    <constraint firstAttribute="bottom" secondItem="rBM-zr-xIP" secondAttribute="bottom" id="anm-V9-Ygn"/>
+                                    <constraint firstAttribute="trailing" secondItem="nZj-ax-9zx" secondAttribute="trailing" id="ixZ-ao-fNb"/>
+                                    <constraint firstAttribute="trailing" secondItem="rBM-zr-xIP" secondAttribute="trailing" id="x2R-9Q-hU1"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="qCG-x5-AKz" firstAttribute="top" secondItem="ZSw-wG-u87" secondAttribute="top" id="nhD-F7-8uh"/>
+                            <constraint firstAttribute="trailing" secondItem="qCG-x5-AKz" secondAttribute="trailing" id="rgF-5q-fbj"/>
+                            <constraint firstAttribute="bottom" secondItem="qCG-x5-AKz" secondAttribute="bottom" id="shV-dh-a4w"/>
+                            <constraint firstItem="qCG-x5-AKz" firstAttribute="leading" secondItem="ZSw-wG-u87" secondAttribute="leading" id="u1d-Vm-FJ9"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="All" image="all_media" selectedImage="all_media_blue" id="goN-am-GRd"/>
+                    <connections>
+                        <outlet property="channelItemsCollectionView" destination="rBM-zr-xIP" id="2VB-ZD-eoa"/>
+                        <outlet property="channelTitleLabel" destination="TOg-Ia-DRz" id="HME-gA-v1N"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x2f-sH-72p" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--My Channel Detail View Controller-->
+        <scene sceneID="3un-VQ-zYD">
+            <objects>
+                <tabBarController storyboardIdentifier="MyChannelDetailViewController" id="9su-un-a9T" customClass="MyChannelDetailViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="PAP-bV-czt">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="nhN-Vw-th3" kind="relationship" relationship="viewControllers" id="X8R-jH-Njc"/>
+                        <segue destination="dw1-rz-646" kind="relationship" relationship="viewControllers" id="4Zb-xJ-LF8"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eIP-6l-TFu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
     <resources>
+        <image name="all_media" width="38" height="20"/>
+        <image name="all_media_blue" width="38" height="20"/>
         <image name="avatar" width="11" height="12"/>
+        <image name="friend_avatar" width="18" height="24"/>
+        <image name="friend_avatar_blue" width="18" height="24"/>
         <image name="red-circle" width="20" height="20"/>
         <image name="snapCamMode" width="25" height="25"/>
         <image name="user_profile_icon" width="54" height="54"/>
+        <image name="white_back" width="12" height="21"/>
     </resources>
 </document>
