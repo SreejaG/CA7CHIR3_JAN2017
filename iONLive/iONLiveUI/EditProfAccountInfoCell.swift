@@ -12,10 +12,11 @@ class EditProfAccountInfoCell: UITableViewCell {
     
    static let identifier = "EditProfAccountInfoCell"
 
+    @IBOutlet weak var borderLine: UILabel!
     @IBOutlet weak var accountInfoTitleLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        self.bringSubviewToFront(borderLine)
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

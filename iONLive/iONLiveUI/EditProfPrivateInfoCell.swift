@@ -12,6 +12,7 @@ class EditProfPrivateInfoCell: UITableViewCell,UITextFieldDelegate {
     
    static let identifier = "EditProfPrivateInfoCell"
 
+    @IBOutlet weak var borderLine: UILabel!
     @IBOutlet weak var privateInfoTitleLabel: UITextField!
     override func awakeFromNib() {
         super.awakeFromNib()
