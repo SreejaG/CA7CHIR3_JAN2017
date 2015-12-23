@@ -159,14 +159,45 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
         // switch case for sections and inside that for rows TODO
-        if indexPath.section == 1 && indexPath.row == 0
+        switch indexPath.section
         {
-            // edit profile
-            let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
-            let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
-            
-           self.navigationController?.pushViewController(editProfileVC, animated: true)
+        case 0:
+            switch indexPath.row
+            {
+            case 2:
+                // time lapse
+                loadTimeLapseOptionsView()
+                break
+            default:
+                break
+            }
+        case 1:
+            switch indexPath.row
+            {
+            case 0:
+                loadEditProfileView()
+                break
+            default:
+                break
+            }
+        default:
+            break
         }
+    }
+    
+    func loadEditProfileView()
+    {
+        // edit profile
+        let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
+        let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
+        self.navigationController?.pushViewController(editProfileVC, animated: true)
+    }
+    
+    func loadTimeLapseOptionsView()
+    {
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let timeLapseVC = storyBoard.instantiateViewControllerWithIdentifier(TimeLapseSettingsViewController.identifier) as! TimeLapseSettingsViewController
+        self.navigationController?.pushViewController(timeLapseVC, animated: true)
     }
    
 }

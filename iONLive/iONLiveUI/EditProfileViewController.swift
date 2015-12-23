@@ -33,7 +33,7 @@ class EditProfileViewController: UIViewController {
         super.viewDidLoad()
         
         profileInfoOptions = [[displayNameKey:"Rom Eizenberg",userNameKey:"romeizenberg"]] // replace uername etc here from API response of editP screen
-        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Stats"]]
+        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"]]
         privateInfoOptions = [[titleKey:"reizenberg@gmail.com"],[titleKey:"555-555-5555"]]
         
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]

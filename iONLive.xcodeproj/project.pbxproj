@@ -35,6 +35,9 @@
 		166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift */; };
 		166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */; };
 		166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */; };
+		166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */; };
+		166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456021C2A8F8700D09FAE /* TimeTapseCell.swift */; };
+		166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
@@ -148,6 +151,9 @@
 		166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemDetailsViewController.swift; sourceTree = "<group>"; };
 		166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelSharingDetailsViewController.swift; sourceTree = "<group>"; };
 		166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemCell.swift; sourceTree = "<group>"; };
+		166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseSettingsViewController.swift; sourceTree = "<group>"; };
+		166456021C2A8F8700D09FAE /* TimeTapseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeTapseCell.swift; sourceTree = "<group>"; };
+		166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseHeaderCell.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
@@ -418,6 +424,7 @@
 		164989ED1C0D5C0F007C912C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				166455FF1C2A870B00D09FAE /* TimelapseSettings */,
 				164989EE1C0D5C1D007C912C /* Settings.storyboard */,
 				164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */,
 				164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */,
@@ -451,6 +458,16 @@
 				165314091C27E48800BCF5DF /* EditProfileHeaderCell.swift */,
 			);
 			name = EditProfile;
+			sourceTree = "<group>";
+		};
+		166455FF1C2A870B00D09FAE /* TimelapseSettings */ = {
+			isa = PBXGroup;
+			children = (
+				166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */,
+				166456021C2A8F8700D09FAE /* TimeTapseCell.swift */,
+				166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */,
+			);
+			path = TimelapseSettings;
 			sourceTree = "<group>";
 		};
 		1674A90F1C2906FE00D547D7 /* Sharing */ = {
@@ -1047,6 +1064,7 @@
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
+				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
@@ -1064,6 +1082,7 @@
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
 				165314061C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
+				166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */,
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
@@ -1098,6 +1117,7 @@
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
+				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
