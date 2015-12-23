@@ -274,6 +274,7 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
     if ([inputStream streamStatus] == 2) {
+        [self closeInputStream];
         [self hideStatusMessage];
         if (alertViewTemp.isVisible) {
             [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
@@ -282,11 +283,10 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
+        [self closeInputStream];
         [self showMessageForNoStreamOrLiveDataFound];
         [self showInputNetworkErrorMessage:nil];
     }
-    [self closeInputStream];
-
 }
 
 - (void)closeInputStream {
