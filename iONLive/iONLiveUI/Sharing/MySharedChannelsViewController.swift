@@ -141,7 +141,19 @@ extension MySharedChannelsViewController:UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let channelDetailVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier)
+        let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier) as! UITabBarController
+        if let dataSource = dataSource
+        {
+            if dataSource.count > indexPath.row
+            {
+                if channelDetailVC.viewControllers?.count > 0
+                {
+                    let channelItemDetailVC = channelDetailVC.viewControllers![0] as! MyChannelItemDetailsViewController
+                    channelItemDetailVC.channelName = dataSource[indexPath.row][channelNameKey]
+                }
+            }
+        }
+ 
         self.navigationController?.pushViewController(channelDetailVC, animated: true)
     }
 }

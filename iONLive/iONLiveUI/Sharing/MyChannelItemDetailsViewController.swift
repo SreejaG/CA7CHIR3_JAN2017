@@ -10,6 +10,7 @@ import UIKit
 
 class MyChannelItemDetailsViewController: UIViewController {
 
+    var channelName:String?
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
     
@@ -25,12 +26,15 @@ class MyChannelItemDetailsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
          self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+        if let channelName = channelName
+        {
+            channelTitleLabel.text = channelName
+        }
     }
 
     @IBAction func backClicked(sender: AnyObject)
     {
-        self.dismissViewControllerAnimated(true) { () -> Void in
-        }
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     override func didReceiveMemoryWarning() {
