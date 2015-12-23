@@ -274,6 +274,7 @@ static NSMutableDictionary * gHistory;
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
     if ([inputStream streamStatus] == 2) {
+        [self closeInputStream];
         [self hideStatusMessage];
         if (alertViewTemp.isVisible) {
             [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
@@ -282,11 +283,10 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
+        [self closeInputStream];
         [self showMessageForNoStreamOrLiveDataFound];
         [self showInputNetworkErrorMessage:nil];
     }
-    [self closeInputStream];
-
 }
 
 - (void)closeInputStream {
@@ -852,7 +852,7 @@ static NSMutableDictionary * gHistory;
 -(NSString *)getErrorTitle:(NSError*)error
 {
     if (error == nil) {
-        return @"Couldn't Connect camera";
+        return @"Couldn't Connect Camera";
     }
     else
     {
@@ -1415,7 +1415,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapLiveButton:(id)sender {
     
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1434,7 +1434,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1443,7 +1443,7 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapcCamSelectionButton:(id)sender
 {
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
@@ -1459,16 +1459,16 @@ static NSMutableDictionary * gHistory;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
-- (IBAction)didTapPhotoViewwer:(id)sender {
+- (IBAction)didTapPhotoViewer:(id)sender {
 
-    if ([self viewFinderLoading]) {
+    if ([self isViewFinderLoading]) {
         return;
     }
     
     [self loadPhotoViewer];
 }
 
-- (IBAction)heartClicked:(id)sender
+- (IBAction)didTapHeartImage:(id)sender
 {
     if (heartButtomBottomConstraint.constant == 111.0)
     {
@@ -1484,8 +1484,12 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-- (IBAction)sharingListIconClicked:(id)sender
+- (IBAction)didTapSharingListIcon:(id)sender
 {
+    if ([self isViewFinderLoading]) {
+        return;
+    }
+    
     UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
     UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
     
@@ -1497,7 +1501,7 @@ static NSMutableDictionary * gHistory;
     }];
 }
 
--(BOOL)viewFinderLoading
+-(BOOL)isViewFinderLoading
 {
     if (_activityIndicatorView.isAnimating && self.playing == false) {
         return true;
