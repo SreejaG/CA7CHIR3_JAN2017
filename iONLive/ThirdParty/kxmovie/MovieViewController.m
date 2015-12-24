@@ -770,9 +770,9 @@ static NSMutableDictionary * gHistory;
             }
         }
         
-    } else if ((error && self.isViewLoaded && self.view.window) && _liveVideo == false){
-        [self hideProgressBar];
-        [self handleDecoderMovieError:error];
+    } else if (error && self.isViewLoaded && self.view.window) {
+        
+        [self handleDecoderError:error];
     }
     else
     {
@@ -781,6 +781,16 @@ static NSMutableDictionary * gHistory;
             [self hideProgressBar];
 //            [self showErrorMessage:error];
         }
+    }
+}
+
+-(void)handleDecoderError:(NSError *)error
+{
+    [self hideProgressBar];
+    [self showMessageForNoStreamOrLiveDataFound];
+    
+    if ( _liveVideo == false) {
+        [self handlePlayBackDecoderError:error];
     }
 }
 
@@ -796,7 +806,7 @@ static NSMutableDictionary * gHistory;
         }
         else
         {
-            [self handleDecoderMovieError: error];
+            [self handlePlayBackDecoderError: error];
         }
     }
 }
@@ -860,7 +870,7 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-- (void) handleDecoderMovieError: (NSError *) error
+- (void) handlePlayBackDecoderError: (NSError *) error
 {
     NSString * errorVal = [self getErrorMessage:error];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failure", nil)
