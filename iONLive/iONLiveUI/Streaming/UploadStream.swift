@@ -166,7 +166,7 @@ class UploadStream : NSObject
     func streamingFailed()
     {
         NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
-        self.streamingStatus?.StreamingStatus("Failure");
+        self.streamingStatus?.updateStreamingStatus();
     }
     
     func startStreamingWithToken(streamtoken:String)
@@ -188,7 +188,7 @@ class UploadStream : NSObject
     {
         //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
         //            {
-        self.streamingStatus?.StreamingStatus("Success");
+        self.streamingStatus?.updateStreamingStatus();
         //                            self.steamingStatus?.StreamingStatus("live streaming...");
         let errCode = start_stream()
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -277,7 +277,7 @@ class UploadStream : NSObject
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(false, forKey: startedStreaming)
-        self.streamingStatus?.StreamingStatus("");
+        self.streamingStatus?.updateStreamingStatus();
     }
     
     func removeStreaming()

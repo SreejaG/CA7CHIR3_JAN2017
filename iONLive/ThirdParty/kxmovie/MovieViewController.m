@@ -228,7 +228,7 @@ static NSMutableDictionary * gHistory;
 {
     activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
     [super viewWillAppear:animated];
-    [self addApplicationObservers];
+//    [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
     [self changeCameraSelectionImage];
 }
@@ -251,7 +251,7 @@ static NSMutableDictionary * gHistory;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self hideProgressBar];
     
 //    if (_decoder) {
@@ -408,7 +408,8 @@ static NSMutableDictionary * gHistory;
 //        [self setupPresentView];
 //    }
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
-    
+    [self addApplicationObservers];
+
     [self setUpPresentViewAndRestorePlay];
 //    [self addApplicationObservers];
 //    _interrupted = NO;
@@ -422,14 +423,6 @@ static NSMutableDictionary * gHistory;
 //        [_activityIndicatorView startAnimating];
 //    }
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(applicationDidBecomeActive:)
-//                                                 name:UIApplicationDidBecomeActiveNotification
-//                                               object:[UIApplication sharedApplication]];
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(applicationDidEnterBackground:)
-//                                                 name:UIApplicationDidEnterBackgroundNotification
-//                                               object:[UIApplication sharedApplication]];
 }
 
 -(void)setUpPresentViewAndRestorePlay
@@ -449,7 +442,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)addApplicationObservers
 {
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self checkWifiReachability];
 //    [self updateInterfaceWithReachability:self.wifiReachability];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -1625,7 +1618,7 @@ static NSMutableDictionary * gHistory;
 -(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
+    StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
     [self.navigationController pushViewController:streamsGalleryViewController animated:true];
 }
 
@@ -1685,16 +1678,10 @@ static NSMutableDictionary * gHistory;
 
 #pragma mark - Streaming protocol
 
--(void) StreamingStatus:(NSString*)status
+-(void) updateStreamingStatus
 {
     [self hideStatusMessage];
     [self changeCameraSelectionImage];
-//    if (status == @"Failure") {
-//        <#statements#>
-//    }
-//    [liveStreamStatus setTitle:status forState:UIControlStateNormal];
-//    self.liveStreamStatus.titleLabel.text = status;
-    NSLog(@"Streaming Status %@", status);
 }
 
 -(void)hideStatusMessage

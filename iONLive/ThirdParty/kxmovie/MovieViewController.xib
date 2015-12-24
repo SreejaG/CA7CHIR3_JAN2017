@@ -290,7 +290,7 @@
                                             </constraints>
                                             <state key="normal" image="photo1"/>
                                             <connections>
-                                                <action selector="didTapPhotoViewwer:" destination="-1" eventType="touchUpInside" id="9QI-BJ-ntJ"/>
+                                                <action selector="didTapPhotoViewer:" destination="-1" eventType="touchUpInside" id="zmX-o4-dYw"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SDA-bD-Pa6" userLabel="StreamThumb">
