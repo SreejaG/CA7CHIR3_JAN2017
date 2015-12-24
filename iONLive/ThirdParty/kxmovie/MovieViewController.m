@@ -1418,13 +1418,14 @@ static NSMutableDictionary * gHistory;
     if ([self isViewFinderLoading]) {
         return;
     }
-    
-    if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
-        [self initializingStream];
-    }
-    else if (self.playing == false)
+    [self doLiveButtonActions];
+}
+
+-(void)doLiveButtonActions
+{
+    if (_snapCamMode == SnapCamSelectionModeLiveStream )
     {
-        [self showInputNetworkErrorMessage:nil];
+        [self doActionsForLiveStreamingMode];
     }
     else
     {
@@ -1510,6 +1511,18 @@ static NSMutableDictionary * gHistory;
 }
 
 #pragma mark : Live streaming
+
+-(void)doActionsForLiveStreamingMode
+{
+    if(self.playing){
+        
+        [self initializingStream];
+    }
+    else {
+        [self updateStreamingIfViewFinderStopped];
+    }
+}
+
 -(void)initializingStream
 {
     BOOL initializingStream = [[NSUserDefaults standardUserDefaults] boolForKey:@"InitializingStream"];
@@ -1553,8 +1566,28 @@ static NSMutableDictionary * gHistory;
 {
     [stream stopStreamingClicked];
     [self resetBufferedDuration];
-
 }
+
+-(void)updateStreamingIfViewFinderStopped
+{
+    if( [self isStreamStarted] == false)
+    {
+        [self showInputNetworkErrorMessage:nil];
+    }
+    else
+    {
+        [self stopStreamingIfViewFinderIsUnableToConnect];
+    }
+}
+
+-(void)stopStreamingIfViewFinderIsUnableToConnect
+{
+    UploadStream * stream = [[UploadStream alloc]init];
+    stream.streamingStatus = self;
+    [self stopStreaming:stream];
+}
+
+#pragma mark : - Handle Interruptions
 
 -(void)showInitializingStreamAlert
 {
