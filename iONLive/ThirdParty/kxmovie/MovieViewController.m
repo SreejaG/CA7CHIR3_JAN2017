@@ -129,6 +129,9 @@ static NSMutableDictionary * gHistory;
     NSDictionary        *_parameters;
     UIAlertView *alertViewTemp;
     NSInputStream *inputStream;
+    UITapGestureRecognizer *_tapGestureRecognizer;
+    UITapGestureRecognizer *_doubleTapGestureRecognizer;
+
 
 ////Should be removed
 //    
@@ -154,9 +157,6 @@ static NSMutableDictionary * gHistory;
     if (!gHistory)
         gHistory = [NSMutableDictionary dictionary];
 }
-- (IBAction)touchBackButton:(id)sender {
-    [self.navigationController popViewControllerAnimated:true];
-}
 
 - (BOOL)prefersStatusBarHidden { return NO; }
 
@@ -173,7 +173,6 @@ static NSMutableDictionary * gHistory;
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
                  liveVideo:(BOOL)live
-
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     
@@ -422,7 +421,7 @@ static NSMutableDictionary * gHistory;
 //        
 //        [_activityIndicatorView startAnimating];
 //    }
-    
+    [self addTapGestures];
 }
 
 -(void)setUpPresentViewAndRestorePlay
@@ -670,6 +669,32 @@ static NSMutableDictionary * gHistory;
 //    LoggerStream(1, @"applicationWillResignActive");
 //}
 
+#pragma mark - gesture recognizer
+
+-(void) addTapGestures
+{
+    if (_liveVideo) {
+        _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapToPlayViewfinder:)];
+        _tapGestureRecognizer.numberOfTapsRequired = 1;
+        
+        [self.view addGestureRecognizer:_tapGestureRecognizer];
+        
+    }
+}
+
+- (void) handleSingleTapToPlayViewfinder: (UITapGestureRecognizer *) sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        if (sender == _tapGestureRecognizer && ([_activityIndicatorView isAnimating] == false)) {
+            
+            if (self.playing == false && _liveVideo) {
+                NSLog(@"reInitialising didTap");
+                [self reInitialiseDecoder];
+            }
+        }
+    }
+}
 
 #pragma mark - private
 #pragma mark : startDecoder
@@ -779,8 +804,9 @@ static NSMutableDictionary * gHistory;
 
 -(void)handleDecoderError:(NSError *)error
 {
+    NSLog(@"Handle Decoder failed");
     [self hideProgressBar];
-    [self showMessageForNoStreamOrLiveDataFound];
+    [self updateViewFinderMessageForNoConnectionFound];
     
     if ( _liveVideo == false) {
         [self handlePlayBackDecoderError:error];
@@ -804,10 +830,27 @@ static NSMutableDictionary * gHistory;
     }
 }
 
--(void)showMessageForNoStreamOrLiveDataFound
+-(void)updateViewFinderMessageForNoConnectionFound
+{
+    [self showNoDataFoundText];
+    if(_liveVideo == true)
+    {
+        noDataFound.text = @"Could not connect, Tap To refresh connecton...";
+    }
+    else{
+        noDataFound.text = @"Unable to fetch stream!";
+    }
+}
+
+-(void)showNoDataFoundText
 {
     noDataFound.hidden = false;
     _activityIndicatorView.hidden = true;
+}
+
+-(void)showMessageForNoStreamOrLiveDataFound
+{
+    [self showNoDataFoundText];
     if(_liveVideo == true)
     {
         noDataFound.text = @"Could not connect to camera!";
