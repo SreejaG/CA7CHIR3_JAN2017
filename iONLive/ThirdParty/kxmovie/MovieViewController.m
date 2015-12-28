@@ -72,73 +72,67 @@ static NSMutableDictionary * gHistory;
 
 @interface MovieViewController () <StreamingProtocol>
 {
-    IBOutlet UIImageView *imageView;
-    IBOutlet UIView *topView;
-    IBOutlet KxMovieGLView *glView;
-    IBOutlet UIView *mainView;
-    IBOutlet UIView *bottomView;
     IBOutlet UIButton *cameraSelectionButton;
-//    IBOutlet UIButton *liveStreamStatus;
-//    IBOutlet UIButton *backButton;
     IBOutlet UIButton *cameraButton;
-    
-    IBOutlet UIView *liveView;
     IBOutlet UIButton *closeButton;
-    IBOutlet UILabel *noDataFound;
-    BOOL                _interrupted;
-    
     IBOutlet UIButton *thirdCircleButton;
     IBOutlet UIButton *secondCircleButton;
     IBOutlet UIButton *firstCircleButton;
+    __weak IBOutlet UIButton *hidingHeartButton;
+    
+    IBOutlet UIImageView *activityImageView;
+    IBOutlet UIImageView *imageView;
+    IBOutlet KxMovieGLView *glView;
+    
+    IBOutlet UIView *topView;
+    IBOutlet UIView *mainView;
+    IBOutlet UIView *bottomView;
+    IBOutlet UIView *liveView;
+    __weak IBOutlet UIView *heartView;
+    __weak IBOutlet UIView *heartBottomDescView;
+
+    IBOutlet UILabel *noDataFound;
+    IBOutlet UILabel *numberOfSharedChannels;
+    IBOutlet UIActivityIndicatorView *_activityIndicatorView;
+    
+    __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
+
+    BOOL                _interrupted;
     
     //heart View
-    __weak IBOutlet UIView *heartView;
-
-    __weak IBOutlet UIView *heartBottomDescView;
-    __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
-    __weak IBOutlet UIButton *hidingHeartButton;
     
     KxMovieDecoder      *_decoder;
     dispatch_queue_t    _dispatchQueue;
     NSMutableArray      *_videoFrames;
     NSMutableArray      *_audioFrames;
     NSData              *_currentAudioFrame;
+    
     NSUInteger          _currentAudioFramePos;
-    CGFloat             _moviePosition;
-    BOOL                _disableUpdateHUD;
     NSTimeInterval      _tickCorrectionTime;
     NSTimeInterval      _tickCorrectionPosition;
     NSUInteger          _tickCounter;
+    
     BOOL                _backGround;
     BOOL                _fitMode;
     BOOL                _infoMode;
     BOOL                _restoreIdleTimer;
     BOOL                _liveVideo;
+    BOOL                _disableUpdateHUD;
+    BOOL                _buffered;
+
     SnapCamSelectionMode _snapCamMode;
     
     CGFloat             _bufferedDuration;
     CGFloat             _minBufferedDuration;
     CGFloat             _maxBufferedDuration;
-    BOOL                _buffered;
-    IBOutlet UILabel *numberOfSharedChannels;
-    IBOutlet UIImageView *activityImageView;
-    IBOutlet UIActivityIndicatorView *_activityIndicatorView;
-    
+    CGFloat             _moviePosition;
+
 //    BOOL                _savedIdleTimer;
     NSString *          rtspFilePath;
     NSDictionary        *_parameters;
     UIAlertView *alertViewTemp;
     NSInputStream *inputStream;
     UITapGestureRecognizer *_tapGestureRecognizer;
-    UITapGestureRecognizer *_doubleTapGestureRecognizer;
-
-
-////Should be removed
-//    
-//    UITapGestureRecognizer *_tapGestureRecognizer;
-//    UITapGestureRecognizer *_doubleTapGestureRecognizer;
-//    UIPanGestureRecognizer *_panGestureRecognizer;
-    
     
 }
 
@@ -443,7 +437,7 @@ static NSMutableDictionary * gHistory;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self checkWifiReachability];
-//    [self updateInterfaceWithReachability:self.wifiReachability];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification
@@ -477,14 +471,6 @@ static NSMutableDictionary * gHistory;
         }
         NSLog(@"Wifi Connected");
     }
-//    else
-//    {
-//        if ( curReach == self.wifiReachability && curReach.currentReachabilityStatus != ReachableViaWiFi && _liveVideo) {
-//            [self showMessageForNoStreamOrLiveDataFound];
-//            [self showInputNetworkErrorMessage:nil];
-//        }
-//        NSLog(@"Wifi DisConnected");
-//    }
 }
 
 
@@ -664,11 +650,6 @@ static NSMutableDictionary * gHistory;
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-//- (void) applicationWillResignActive: (NSNotification *)notification
-//{
-//    LoggerStream(1, @"applicationWillResignActive");
-//}
-
 #pragma mark - gesture recognizer
 
 -(void) addTapGestures
@@ -678,7 +659,6 @@ static NSMutableDictionary * gHistory;
         _tapGestureRecognizer.numberOfTapsRequired = 1;
         
         [self.view addGestureRecognizer:_tapGestureRecognizer];
-        
     }
 }
 
@@ -957,7 +937,6 @@ static NSMutableDictionary * gHistory;
             else if (buttonIndex == 0)
             {
                 return;
-                //[self showMessageForNoStreamOrLiveDataFound];
             }
             break;
         default:
@@ -1024,11 +1003,7 @@ static NSMutableDictionary * gHistory;
     
     if (_decoder.validVideo) {
         
-//        _activityIndicatorView.hidden = true;
         [self setUpViewForLiveAndStreaming];
-//        topView.hidden = false;
-//        bottomView.hidden = false;
-//        cameraButton.hidden = false;
         isGlView = [glView initWithDecoder:_decoder];
         
         if (isGlView == false)
@@ -1685,18 +1660,6 @@ static NSMutableDictionary * gHistory;
     
     _bufferedDuration = 0;
 }
-
-//-(void)showAlertMessageForSelectLiveStreamMode:(NSInteger)buttonIndex
-//{
-//    switch(buttonIndex) {
-//        case 0:
-//            NSLog(@"Stopped  ");
-//            break;
-//        case 1:
-//            NSLog(@"YES Pressed");
-//            break;
-//    }
-//}
 
 - (BOOL) interruptDecoder
 {
