@@ -40,7 +40,13 @@
 		166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
+		166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */; };
+		166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */; };
+		166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
+		1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */; };
+		1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */; };
+		1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A47A1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift */; };
 		1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1674A9101C29073B00D547D7 /* sharing.storyboard */; };
 		1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */; };
 		1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */; };
@@ -156,7 +162,13 @@
 		166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseHeaderCell.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
+		166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountViewController.swift; sourceTree = "<group>"; };
+		166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsCell.swift; sourceTree = "<group>"; };
+		166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsHeaderCell.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
+		1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteMediaSettingsViewController.swift; sourceTree = "<group>"; };
+		1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteMediaOptionCell.swift; sourceTree = "<group>"; };
+		1671A47A1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteMediaSettingsHeaderCell.swift; sourceTree = "<group>"; };
 		1674A9101C29073B00D547D7 /* sharing.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = sharing.storyboard; sourceTree = "<group>"; };
 		1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsViewController.swift; sourceTree = "<group>"; };
 		1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsCell.swift; sourceTree = "<group>"; };
@@ -424,6 +436,8 @@
 		164989ED1C0D5C0F007C912C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				166796A91C30FF6200543D7A /* ConnectAccount */,
+				1671A4751C2BAC9B00C2E0B0 /* DeleteMediaSettings */,
 				166455FF1C2A870B00D09FAE /* TimelapseSettings */,
 				164989EE1C0D5C1D007C912C /* Settings.storyboard */,
 				164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */,
@@ -468,6 +482,27 @@
 				166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */,
 			);
 			path = TimelapseSettings;
+			sourceTree = "<group>";
+		};
+		166796A91C30FF6200543D7A /* ConnectAccount */ = {
+			isa = PBXGroup;
+			children = (
+				166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */,
+				166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */,
+				166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */,
+			);
+			path = ConnectAccount;
+			sourceTree = "<group>";
+		};
+		1671A4751C2BAC9B00C2E0B0 /* DeleteMediaSettings */ = {
+			isa = PBXGroup;
+			children = (
+				1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */,
+				1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */,
+				1671A47A1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift */,
+			);
+			name = DeleteMediaSettings;
+			path = DeleteArchivedMedia;
 			sourceTree = "<group>";
 		};
 		1674A90F1C2906FE00D547D7 /* Sharing */ = {
@@ -1055,7 +1090,9 @@
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
+				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
+				166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
 				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,
 				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
@@ -1066,6 +1103,7 @@
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
+				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
@@ -1079,6 +1117,7 @@
 				167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
+				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
 				165314061C27CE5D00BCF5DF /* EditProfAccountInfoCell.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
@@ -1088,6 +1127,7 @@
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
 				1653140A1C27E48900BCF5DF /* EditProfileHeaderCell.swift in Sources */,
+				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
@@ -1112,6 +1152,7 @@
 				165314081C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift in Sources */,
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
+				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
