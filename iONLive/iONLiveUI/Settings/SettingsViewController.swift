@@ -177,6 +177,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             case 0:
                 loadEditProfileView()
                 break
+            case 1:
+                loadDeleteMediaOptionsView()
+                break
             default:
                 break
             }
@@ -198,6 +201,13 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let timeLapseVC = storyBoard.instantiateViewControllerWithIdentifier(TimeLapseSettingsViewController.identifier) as! TimeLapseSettingsViewController
         self.navigationController?.pushViewController(timeLapseVC, animated: true)
+    }
+    
+    func loadDeleteMediaOptionsView()
+    {
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let deleteMediaOptionsVC = storyBoard.instantiateViewControllerWithIdentifier(DeleteMediaSettingsViewController.identifier) as! DeleteMediaSettingsViewController
+        self.navigationController?.pushViewController(deleteMediaOptionsVC, animated: true)
     }
    
 }
