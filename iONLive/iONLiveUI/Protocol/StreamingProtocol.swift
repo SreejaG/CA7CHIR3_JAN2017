@@ -10,6 +10,6 @@ import Foundation
 
 @objc protocol StreamingProtocol {
     
-    func StreamingStatus(status:String)
+    func updateStreamingStatus()
     func cameraSelectionMode(selection:SnapCamSelectionMode)
 }

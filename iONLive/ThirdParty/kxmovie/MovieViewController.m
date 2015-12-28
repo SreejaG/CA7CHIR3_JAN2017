@@ -129,6 +129,9 @@ static NSMutableDictionary * gHistory;
     NSDictionary        *_parameters;
     UIAlertView *alertViewTemp;
     NSInputStream *inputStream;
+    UITapGestureRecognizer *_tapGestureRecognizer;
+    UITapGestureRecognizer *_doubleTapGestureRecognizer;
+
 
 ////Should be removed
 //    
@@ -154,9 +157,6 @@ static NSMutableDictionary * gHistory;
     if (!gHistory)
         gHistory = [NSMutableDictionary dictionary];
 }
-- (IBAction)touchBackButton:(id)sender {
-    [self.navigationController popViewControllerAnimated:true];
-}
 
 - (BOOL)prefersStatusBarHidden { return NO; }
 
@@ -173,7 +173,6 @@ static NSMutableDictionary * gHistory;
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
                  liveVideo:(BOOL)live
-
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     
@@ -228,7 +227,7 @@ static NSMutableDictionary * gHistory;
 {
     activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
     [super viewWillAppear:animated];
-    [self addApplicationObservers];
+//    [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
     [self changeCameraSelectionImage];
 }
@@ -251,7 +250,7 @@ static NSMutableDictionary * gHistory;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self hideProgressBar];
     
 //    if (_decoder) {
@@ -408,7 +407,8 @@ static NSMutableDictionary * gHistory;
 //        [self setupPresentView];
 //    }
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
-    
+    [self addApplicationObservers];
+
     [self setUpPresentViewAndRestorePlay];
 //    [self addApplicationObservers];
 //    _interrupted = NO;
@@ -421,15 +421,7 @@ static NSMutableDictionary * gHistory;
 //        
 //        [_activityIndicatorView startAnimating];
 //    }
-    
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(applicationDidBecomeActive:)
-//                                                 name:UIApplicationDidBecomeActiveNotification
-//                                               object:[UIApplication sharedApplication]];
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(applicationDidEnterBackground:)
-//                                                 name:UIApplicationDidEnterBackgroundNotification
-//                                               object:[UIApplication sharedApplication]];
+    [self addTapGestures];
 }
 
 -(void)setUpPresentViewAndRestorePlay
@@ -449,7 +441,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)addApplicationObservers
 {
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self checkWifiReachability];
 //    [self updateInterfaceWithReachability:self.wifiReachability];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -677,6 +669,32 @@ static NSMutableDictionary * gHistory;
 //    LoggerStream(1, @"applicationWillResignActive");
 //}
 
+#pragma mark - gesture recognizer
+
+-(void) addTapGestures
+{
+    if (_liveVideo) {
+        _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapToPlayViewfinder:)];
+        _tapGestureRecognizer.numberOfTapsRequired = 1;
+        
+        [self.view addGestureRecognizer:_tapGestureRecognizer];
+        
+    }
+}
+
+- (void) handleSingleTapToPlayViewfinder: (UITapGestureRecognizer *) sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        if (sender == _tapGestureRecognizer && ([_activityIndicatorView isAnimating] == false)) {
+            
+            if (self.playing == false && _liveVideo) {
+                NSLog(@"reInitialising didTap");
+                [self reInitialiseDecoder];
+            }
+        }
+    }
+}
 
 #pragma mark - private
 #pragma mark : startDecoder
@@ -770,9 +788,9 @@ static NSMutableDictionary * gHistory;
             }
         }
         
-    } else if ((error && self.isViewLoaded && self.view.window) && _liveVideo == false){
-        [self hideProgressBar];
-        [self handleDecoderMovieError:error];
+    } else if (error && self.isViewLoaded && self.view.window) {
+        
+        [self handleDecoderError:error];
     }
     else
     {
@@ -781,6 +799,17 @@ static NSMutableDictionary * gHistory;
             [self hideProgressBar];
 //            [self showErrorMessage:error];
         }
+    }
+}
+
+-(void)handleDecoderError:(NSError *)error
+{
+    NSLog(@"Handle Decoder failed");
+    [self hideProgressBar];
+    [self updateViewFinderMessageForNoConnectionFound];
+    
+    if ( _liveVideo == false) {
+        [self handlePlayBackDecoderError:error];
     }
 }
 
@@ -796,15 +825,32 @@ static NSMutableDictionary * gHistory;
         }
         else
         {
-            [self handleDecoderMovieError: error];
+            [self handlePlayBackDecoderError: error];
         }
     }
 }
 
--(void)showMessageForNoStreamOrLiveDataFound
+-(void)updateViewFinderMessageForNoConnectionFound
+{
+    [self showNoDataFoundText];
+    if(_liveVideo == true)
+    {
+        noDataFound.text = @"Could not connect, Tap To refresh connecton...";
+    }
+    else{
+        noDataFound.text = @"Unable to fetch stream!";
+    }
+}
+
+-(void)showNoDataFoundText
 {
     noDataFound.hidden = false;
     _activityIndicatorView.hidden = true;
+}
+
+-(void)showMessageForNoStreamOrLiveDataFound
+{
+    [self showNoDataFoundText];
     if(_liveVideo == true)
     {
         noDataFound.text = @"Could not connect to camera!";
@@ -860,7 +906,7 @@ static NSMutableDictionary * gHistory;
     }
 }
 
-- (void) handleDecoderMovieError: (NSError *) error
+- (void) handlePlayBackDecoderError: (NSError *) error
 {
     NSString * errorVal = [self getErrorMessage:error];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failure", nil)
@@ -1418,13 +1464,14 @@ static NSMutableDictionary * gHistory;
     if ([self isViewFinderLoading]) {
         return;
     }
-    
-    if (_snapCamMode == SnapCamSelectionModeLiveStream && self.playing){
-        [self initializingStream];
-    }
-    else if (self.playing == false)
+    [self doLiveButtonActions];
+}
+
+-(void)doLiveButtonActions
+{
+    if (_snapCamMode == SnapCamSelectionModeLiveStream )
     {
-        [self showInputNetworkErrorMessage:nil];
+        [self doActionsForLiveStreamingMode];
     }
     else
     {
@@ -1510,6 +1557,18 @@ static NSMutableDictionary * gHistory;
 }
 
 #pragma mark : Live streaming
+
+-(void)doActionsForLiveStreamingMode
+{
+    if(self.playing){
+        
+        [self initializingStream];
+    }
+    else {
+        [self updateStreamingIfViewFinderStopped];
+    }
+}
+
 -(void)initializingStream
 {
     BOOL initializingStream = [[NSUserDefaults standardUserDefaults] boolForKey:@"InitializingStream"];
@@ -1553,8 +1612,28 @@ static NSMutableDictionary * gHistory;
 {
     [stream stopStreamingClicked];
     [self resetBufferedDuration];
-
 }
+
+-(void)updateStreamingIfViewFinderStopped
+{
+    if( [self isStreamStarted] == false)
+    {
+        [self showInputNetworkErrorMessage:nil];
+    }
+    else
+    {
+        [self stopStreamingIfViewFinderIsUnableToConnect];
+    }
+}
+
+-(void)stopStreamingIfViewFinderIsUnableToConnect
+{
+    UploadStream * stream = [[UploadStream alloc]init];
+    stream.streamingStatus = self;
+    [self stopStreaming:stream];
+}
+
+#pragma mark : - Handle Interruptions
 
 -(void)showInitializingStreamAlert
 {
@@ -1582,7 +1661,7 @@ static NSMutableDictionary * gHistory;
 -(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
+    StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
     [self.navigationController pushViewController:streamsGalleryViewController animated:true];
 }
 
@@ -1642,16 +1721,10 @@ static NSMutableDictionary * gHistory;
 
 #pragma mark - Streaming protocol
 
--(void) StreamingStatus:(NSString*)status
+-(void) updateStreamingStatus
 {
     [self hideStatusMessage];
     [self changeCameraSelectionImage];
-//    if (status == @"Failure") {
-//        <#statements#>
-//    }
-//    [liveStreamStatus setTitle:status forState:UIControlStateNormal];
-//    self.liveStreamStatus.titleLabel.text = status;
-    NSLog(@"Streaming Status %@", status);
 }
 
 -(void)hideStatusMessage
