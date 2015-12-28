@@ -56,7 +56,6 @@ class UploadStream : NSObject
                 
                 }, failure: { (error, message) -> () in
                     self.streamingFailed()
-//                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
                     print("message = \(message), error = \(error?.localizedDescription)")
                     self.handleFailure(message)
                     return
@@ -186,10 +185,8 @@ class UploadStream : NSObject
 
     func startStreamAndHandleInterruption(streamtoken:String)
     {
-        //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0))
-        //            {
         self.streamingStatus?.updateStreamingStatus();
-        //                            self.steamingStatus?.StreamingStatus("live streaming...");
+
         let errCode = start_stream()
         let defaults = NSUserDefaults .standardUserDefaults()
         
@@ -217,12 +214,45 @@ class UploadStream : NSObject
     
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
-        var baseStream = "rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live/"
-//        var baseStream = "rtmp://192.168.16.34:1935/live/"
+//        var baseStream = "rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live/"
+        var baseStream = getProtocol() + "://" + getUserName() + ":" + getPassword() + "@" + getMainStream() + "." + getSubStream() + ".com" + ":" + getRTSPPort() + "/live/"
+        
+        print("baseStream/", baseStream)
+        
         baseStream.appendContentsOf(streamToken)
         let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
         let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
         return baseStreamName
+    }
+    
+    func getProtocol()->String
+    {
+        return "rtsp"
+    }
+    
+    func getUserName()->String
+    {
+        return "ionlive"
+    }
+    
+    func getPassword()->String
+    {
+        return "ion#Ca7hDec11%Live"
+    }
+    
+    func getRTSPPort()->String
+    {
+        return "1935"
+    }
+    
+    func getMainStream()->String
+    {
+        return "stream"
+    }
+    
+    func getSubStream()->String
+    {
+        return "ioncameras"
     }
     
     func getCameraServer() -> UnsafeMutablePointer<CChar>
