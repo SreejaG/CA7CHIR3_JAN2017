@@ -1,5 +1,5 @@
 //
-//  ConnectAccountOptionsCell.swift
+//  ProgramCameraButtonCell.swift
 //  iONLive
 //
 //  Created by Gadgeon on 12/28/15.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-class ConnectAccountOptionsCell: UITableViewCell {
+class ProgramCameraButtonCell: UITableViewCell {
 
-    static let identifier = "ConnectAccountOptionsCell"
-
-    @IBOutlet weak var accountOptionsLabel: UILabel!
+    static let identifier = "ProgramCameraButtonCell"
+    @IBOutlet weak var cameraOptionslabel: UILabel!
+    @IBOutlet weak var selectionImage: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
     }

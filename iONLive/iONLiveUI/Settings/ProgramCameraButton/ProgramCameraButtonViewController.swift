@@ -1,5 +1,5 @@
 //
-//  ConnectAccountViewController.swift
+//  ProgramCameraButtonViewController.swift
 //  iONLive
 //
 //  Created by Gadgeon on 12/28/15.
@@ -8,29 +8,30 @@
 
 import UIKit
 
-class ConnectAccountViewController: UIViewController {
+class ProgramCameraButtonViewController: UIViewController {
     
-    static let identifier = "ConnectAccountViewController"
-    @IBOutlet weak var accountOptionsTableView: UITableView!
+    static let identifier = "ProgramCameraButtonViewController"
+
+    @IBOutlet weak var programCameraButonTableView: UITableView!
+    var dataSource = ["One click picture | Double click video","One click picture | Double click GIF","One click video | Double click live-stream"]
     
-    var dataSource = ["Facebook","Twitter","Instagram"]
+    var selectedOption:String = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
     
     @IBAction func didTapBackButton(sender: AnyObject)
     {
         self.navigationController?.popViewControllerAnimated(true)
     }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
 }
 
-extension ConnectAccountViewController: UITableViewDelegate
+extension ProgramCameraButtonViewController: UITableViewDelegate
 {
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
@@ -39,7 +40,7 @@ extension ConnectAccountViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ConnectAccountOptionsHeaderCell.identifier) as! ConnectAccountOptionsHeaderCell
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ProgramCameraButtonHeaderCell.identifier) as! ProgramCameraButtonHeaderCell
         headerCell.topBorder.hidden = false
         headerCell.bottomBorder.hidden = false
         
@@ -47,11 +48,11 @@ extension ConnectAccountViewController: UITableViewDelegate
         {
         case 0:
             headerCell.topBorder.hidden = true
-            headerCell.headerTitle.text = ""
+            headerCell.headerTitleLabel.text = ""
             break
         case 1:
             headerCell.bottomBorder.hidden = true
-            headerCell.headerTitle.text = ""
+            headerCell.headerTitleLabel.text = ""
             break
         default:
             break
@@ -71,7 +72,7 @@ extension ConnectAccountViewController: UITableViewDelegate
 }
 
 
-extension ConnectAccountViewController:UITableViewDataSource
+extension ProgramCameraButtonViewController:UITableViewDataSource
 {
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
@@ -94,9 +95,18 @@ extension ConnectAccountViewController:UITableViewDataSource
     {
         if dataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(ConnectAccountOptionsCell.identifier, forIndexPath:indexPath) as! ConnectAccountOptionsCell
-            cell.accountOptionsLabel.text = dataSource[indexPath.row]
+            let cell = tableView.dequeueReusableCellWithIdentifier(ProgramCameraButtonCell.identifier, forIndexPath:indexPath) as! ProgramCameraButtonCell
+            cell.cameraOptionslabel.text = dataSource[indexPath.row]
             cell.selectionStyle = .None
+            
+            if selectedOption == dataSource[indexPath.row]
+            {
+                cell.selectionImage.hidden = false
+            }
+            else
+            {
+                cell.selectionImage.hidden = true
+            }
             return cell
         }
         return UITableViewCell()
@@ -104,6 +114,10 @@ extension ConnectAccountViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+        if dataSource.count > indexPath.row
+        {
+            selectedOption = dataSource[indexPath.row]
+            programCameraButonTableView.reloadData()
+        }
     }
 }
-

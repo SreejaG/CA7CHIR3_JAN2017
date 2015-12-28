@@ -26,7 +26,8 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var settingsTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-         cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Live Streaming Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Save to Camera Roll", optionType : toggleCell, accessryText: ""],[optionTitle:"Get Snapcam! ", optionType : normalCell, accessryText: ""]]
+         cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Media Capture Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Camera LED", optionType : toggleCell, accessryText: ""],[optionTitle:"Program Camera Button", optionType : normalCell, accessryText: ""],
+             [optionTitle:"Software Updates", optionType : normalCell, accessryText: ""],[optionTitle:"Save to Camera Roll", optionType : toggleCell, accessryText: ""],[optionTitle:"Get Snapcam! ", optionType : normalCell, accessryText: ""]]
         
          accountOptions = [[optionTitle:"Edit profile", optionType : normalCell, accessryText:""],[optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"],[optionTitle:"Connect Accounts", optionType : normalCell, accessryText:""]]
         
@@ -168,6 +169,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 // time lapse
                 loadTimeLapseOptionsView()
                 break
+            case 5:
+                loadProgramCameraButtonView()
+                break
             default:
                 break
             }
@@ -179,6 +183,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 break
             case 1:
                 loadDeleteMediaOptionsView()
+                break
+            case 2:
+                loadConnectAccountView()
                 break
             default:
                 break
@@ -208,6 +215,22 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let deleteMediaOptionsVC = storyBoard.instantiateViewControllerWithIdentifier(DeleteMediaSettingsViewController.identifier) as! DeleteMediaSettingsViewController
         self.navigationController?.pushViewController(deleteMediaOptionsVC, animated: true)
+    }
+    
+    func loadConnectAccountView()
+    {
+        // edit profile
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ConnectAccountViewController.identifier) as! ConnectAccountViewController
+        self.navigationController?.pushViewController(connectAccountVC, animated: true)
+    }
+    
+    func loadProgramCameraButtonView()
+    {
+        // edit profile
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ProgramCameraButtonViewController.identifier) as! ProgramCameraButtonViewController
+        self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
    
 }
