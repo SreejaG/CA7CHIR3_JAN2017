@@ -43,6 +43,9 @@
 		166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */; };
 		166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */; };
 		166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */; };
+		166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B31C31074000543D7A /* ProgramCameraButtonViewController.swift */; };
+		166796B61C31076500543D7A /* ProgramCameraButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B51C31076500543D7A /* ProgramCameraButtonCell.swift */; };
+		166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B71C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
 		1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */; };
 		1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */; };
@@ -165,6 +168,9 @@
 		166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountViewController.swift; sourceTree = "<group>"; };
 		166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsCell.swift; sourceTree = "<group>"; };
 		166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsHeaderCell.swift; sourceTree = "<group>"; };
+		166796B31C31074000543D7A /* ProgramCameraButtonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramCameraButtonViewController.swift; sourceTree = "<group>"; };
+		166796B51C31076500543D7A /* ProgramCameraButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramCameraButtonCell.swift; sourceTree = "<group>"; };
+		166796B71C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramCameraButtonHeaderCell.swift; sourceTree = "<group>"; };
 		166FC7441C044246003EEC68 /* UrlManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlManager.swift; sourceTree = "<group>"; };
 		1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteMediaSettingsViewController.swift; sourceTree = "<group>"; };
 		1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteMediaOptionCell.swift; sourceTree = "<group>"; };
@@ -436,6 +442,7 @@
 		164989ED1C0D5C0F007C912C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				166796B21C31070000543D7A /* ProgramCameraButton */,
 				166796A91C30FF6200543D7A /* ConnectAccount */,
 				1671A4751C2BAC9B00C2E0B0 /* DeleteMediaSettings */,
 				166455FF1C2A870B00D09FAE /* TimelapseSettings */,
@@ -492,6 +499,16 @@
 				166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */,
 			);
 			path = ConnectAccount;
+			sourceTree = "<group>";
+		};
+		166796B21C31070000543D7A /* ProgramCameraButton */ = {
+			isa = PBXGroup;
+			children = (
+				166796B31C31074000543D7A /* ProgramCameraButtonViewController.swift */,
+				166796B51C31076500543D7A /* ProgramCameraButtonCell.swift */,
+				166796B71C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift */,
+			);
+			path = ProgramCameraButton;
 			sourceTree = "<group>";
 		};
 		1671A4751C2BAC9B00C2E0B0 /* DeleteMediaSettings */ = {
@@ -1125,7 +1142,9 @@
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
+				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
+				166796B61C31076500543D7A /* ProgramCameraButtonCell.swift in Sources */,
 				1653140A1C27E48900BCF5DF /* EditProfileHeaderCell.swift in Sources */,
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
@@ -1153,6 +1172,7 @@
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
+				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
