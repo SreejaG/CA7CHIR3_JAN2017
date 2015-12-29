@@ -21,6 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 NSString * kxmovieErrorDomain = @"ru.kolyvan.kxmovie";
 static void FFLog(void* context, int level, const char* format, va_list args);
+//static     BOOL                openInputInterrupted;
+static NSDate * currentTime;
 
 static NSError * kxmovieError (NSInteger code, id info)
 {
@@ -422,6 +424,7 @@ static int interrupt_callback(void *ctx);
     KxVideoFrameFormat  _videoFrameFormat;
     NSUInteger          _artworkStream;
     NSInteger           _subtitleASSEvents;
+
 }
 @end
 
@@ -779,7 +782,11 @@ static int interrupt_callback(void *ctx);
         formatCtx->interrupt_callback = cb;
     }
     
+   currentTime = [NSDate date];
+    
     if (avformat_open_input(&formatCtx, [path cStringUsingEncoding: NSUTF8StringEncoding], NULL, NULL) < 0) {
+        
+        currentTime = nil;
         
         if (formatCtx)
             avformat_free_context(formatCtx);
@@ -1373,16 +1380,17 @@ static int interrupt_callback(void *ctx);
         return nil;
 
     NSMutableArray *result = [NSMutableArray array];
-    
     AVPacket packet;
-    
     CGFloat decodedDuration = 0;
-    
     BOOL finished = NO;
     
     while (!finished) {
         
+        currentTime = [NSDate date];
+        
         if (av_read_frame(_formatCtx, &packet) < 0) {
+            
+            currentTime = nil;
             _isEOF = YES;
             break;
         }
@@ -1535,6 +1543,16 @@ static int interrupt_callback(void *ctx)
         return 0;
     __unsafe_unretained KxMovieDecoder *p = (__bridge KxMovieDecoder *)ctx;
     const BOOL r = [p interruptDecoder];
+    
+    NSDate * timer = [NSDate date];
+    NSTimeInterval difference = [timer timeIntervalSinceDate: currentTime];
+    NSLog(@"viewFinder difference %f" , difference);
+    
+    if (currentTime  && difference > 3.0) {
+        currentTime = nil;
+        return 1;
+    }
+
     if (r) LoggerStream(1, @"DEBUG: INTERRUPT_CALLBACK!");
     return r;
 }

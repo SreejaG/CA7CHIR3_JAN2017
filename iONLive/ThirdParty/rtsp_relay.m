@@ -12,7 +12,7 @@ bool m_init_done;
 int EXIT_FLAG=0;
 AVPacket pkt;
 AVDictionary *options = NULL;
-NSTimer              *_timer;
+NSDate              *streamInterruptTime;
 
 int clean_all(){
 	av_write_trailer(m_outformat);
@@ -27,17 +27,42 @@ int clean_all(){
 	
 	}
 
+static int interrupt_cb (void *p)
+{
+    NSDate * timer = [NSDate date];
+    NSTimeInterval difference = [timer timeIntervalSinceDate: streamInterruptTime];
+    NSLog(@"stream open difference %f" , difference);
+    if (streamInterruptTime  && difference > 2.0) {
+        NSLog(@"Existing");
+        streamInterruptTime = nil;
+//        EXIT_FLAG=1;
+        return 1;
+    }
+    return 0;
+}
+
 int init_streams(char *url_in ,char *url_out){
     int i,ret;
+    
+    
     av_register_all();
     avformat_network_init();
+    
+    m_informat = avformat_alloc_context();
+    static  AVIOInterruptCB int_cb = {interrupt_cb , nil};
+    m_informat->interrupt_callback = int_cb;
+
 	//av_log_set_level(AV_LOG_TRACE);
     printf("%s\n",url_in);
+    streamInterruptTime = [NSDate date];
     ret=avformat_open_input( &m_informat, url_in, NULL,NULL);
-	if(ret!=0){
+    streamInterruptTime = nil;
+    
+    if(ret!=0){
 	printf("Error in connection\n");
 	return -1;
 	}
+    
     if ((ret = avformat_find_stream_info(m_informat, 0))< 0){
         printf("Stream info not found");
         ret = -1;
@@ -125,7 +150,14 @@ int start_stream(){
     int fun_ret,ret;
     EXIT_FLAG=0;
 	int i;
+    
+    static  AVIOInterruptCB int_cb = {interrupt_cb , nil};
+    m_informat->interrupt_callback = int_cb;
+    
     while(av_read_frame(m_informat, &pkt) >= 0){
+        
+        streamInterruptTime = [NSDate date];
+
         if(pkt.stream_index == m_in_vid_strm_idx){
             NSLog(@"Stream found\n");
             ret=av_write_frame(m_outformat, &pkt);

@@ -179,13 +179,13 @@ static NSMutableDictionary * gHistory;
         [self setUpDefaultValues];
         NSLog(@"rtsp File Path = %@",path);
 //        [self setUpBlurView];
-        if (_liveVideo) {
-            [self checkWifiConnectionAndStartDecoder];
-        }
-        else
-        {
+//        if (_liveVideo) {
+//            [self checkWifiConnectionAndStartDecoder];
+//        }
+//        else
+//        {
             [self startDecoder];
-        }
+//        }
     }
     return self;
 }
@@ -266,66 +266,66 @@ static NSMutableDictionary * gHistory;
 {
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
-    if ([inputStream streamStatus] == 2) {
-        [self closeInputStream];
+//    if ([inputStream streamStatus] == 2) {
+//        [self closeInputStream];
         [self hideStatusMessage];
         if (alertViewTemp.isVisible) {
             [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
         }
         [self restartDecoder];
-    }
-    else
-    {
-        [self closeInputStream];
-        [self showMessageForNoStreamOrLiveDataFound];
-        [self showInputNetworkErrorMessage:nil];
-    }
+//    }
+//    else
+//    {
+//        [self closeInputStream];
+//        [self showMessageForNoStreamOrLiveDataFound];
+//        [self showInputNetworkErrorMessage:nil];
+//    }
 }
 
-- (void)closeInputStream {
-    NSLog(@"Closing streams.");
-    
-    [inputStream close];
-    
-    [inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    
-    inputStream = nil;
-}
-
--(void)checkWifiConnectionAndStartDecoder
-{
-
-    NSURL *website = [self checkEmptyUrl];
-    
-    if (!website) {
-        [self showMessageForNoStreamOrLiveDataFound];
-        [self showInputNetworkErrorMessage:nil];
-        return;
-    }
-    
-    [self openInputStream:website port:554];
-    [self startTimer];
-}
-
--(void)openInputStream:(NSURL *)website port :(int)port
-{
-    CFReadStreamRef readStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)[website host], 554, &readStream, nil);
-    
-    inputStream = (__bridge_transfer NSInputStream *)readStream;
-    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [inputStream open];
-
-}
-
--(void)startTimer
-{
-    [NSTimer scheduledTimerWithTimeInterval:1.0
-                                     target:self
-                                   selector:@selector(timerToCheckWifiConnected)
-                                   userInfo:nil
-                                    repeats:NO];
-}
+//- (void)closeInputStream {
+//    NSLog(@"Closing streams.");
+//    
+//    [inputStream close];
+//    
+//    [inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//    
+//    inputStream = nil;
+//}
+//
+//-(void)checkWifiConnectionAndStartDecoder
+//{
+//
+//    NSURL *website = [self checkEmptyUrl];
+//    
+//    if (!website) {
+//        [self showMessageForNoStreamOrLiveDataFound];
+//        [self showInputNetworkErrorMessage:nil];
+//        return;
+//    }
+//    
+////    [self openInputStream:website port:554];
+//    [self startTimer];
+//}
+//
+//-(void)openInputStream:(NSURL *)website port :(int)port
+//{
+//    CFReadStreamRef readStream;
+//    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)[website host], 554, &readStream, nil);
+//    
+//    inputStream = (__bridge_transfer NSInputStream *)readStream;
+//    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//    [inputStream open];
+//
+//}
+//
+//-(void)startTimer
+//{
+//    [NSTimer scheduledTimerWithTimeInterval:1.0
+//                                     target:self
+//                                   selector:@selector(timerToCheckWifiConnected)
+//                                   userInfo:nil
+//                                    repeats:NO];
+//}
 
 -(NSURL*)checkEmptyUrl
 {
@@ -345,7 +345,9 @@ static NSMutableDictionary * gHistory;
 -(void)restartDecoder
 {
     noDataFound.hidden = true;
-    
+    if (alertViewTemp.isVisible) {
+        [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
+    }
     NSLog(@"rtsp File Path = %@",rtspFilePath);
     _interrupted = false;
     self.playing = NO;
@@ -361,13 +363,13 @@ static NSMutableDictionary * gHistory;
     
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (3 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         
-        if (_liveVideo) {
-            [self checkWifiConnectionAndStartDecoder];
-        }
-        else
-        {
+//        if (_liveVideo) {
+//            [self checkWifiConnectionAndStartDecoder];
+//        }
+//        else
+//        {
             [self restartDecoder];
-        }
+//        }
     });
 }
 
@@ -467,7 +469,7 @@ static NSMutableDictionary * gHistory;
     if (curReach == self.wifiReachability && curReach.currentReachabilityStatus == ReachableViaWiFi)
     {
         if (_liveVideo) {
-            [self checkWifiConnectionAndStartDecoder];
+            [self restartDecoder];
         }
         NSLog(@"Wifi Connected");
     }
@@ -669,6 +671,7 @@ static NSMutableDictionary * gHistory;
         if (sender == _tapGestureRecognizer && ([_activityIndicatorView isAnimating] == false)) {
             
             if (self.playing == false && _liveVideo) {
+                noDataFound.hidden = true;
                 NSLog(@"reInitialising didTap");
                 [self reInitialiseDecoder];
             }
@@ -695,6 +698,9 @@ static NSMutableDictionary * gHistory;
         
         NSError *error = nil;
         [decoder openFile:rtspFilePath error:&error];
+        if (error) {
+            NSLog(@"error can't open file");
+        }
         
         __strong MovieViewController *strongSelf = weakSelf;
         if (strongSelf) {
