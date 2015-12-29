@@ -226,11 +226,11 @@
                                                     <constraint firstAttribute="height" constant="24" id="ndK-hf-OPT"/>
                                                 </constraints>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYL-SF-j2p">
-                                                <rect key="frame" x="18" y="30" width="12" height="22"/>
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYL-SF-j2p">
+                                                <rect key="frame" x="3" y="30" width="30" height="30"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="12" id="9v6-Uu-d8p"/>
-                                                    <constraint firstAttribute="height" constant="22" id="sbR-1H-pwO"/>
+                                                    <constraint firstAttribute="width" constant="30" id="9v6-Uu-d8p"/>
+                                                    <constraint firstAttribute="height" constant="30" id="sbR-1H-pwO"/>
                                                 </constraints>
                                                 <state key="normal" image="white_back"/>
                                                 <connections>
@@ -242,7 +242,7 @@
                                         <constraints>
                                             <constraint firstItem="6O7-g2-Xos" firstAttribute="leading" secondItem="LK7-LT-n6z" secondAttribute="leading" id="8jY-EH-Pjh"/>
                                             <constraint firstAttribute="bottom" secondItem="6O7-g2-Xos" secondAttribute="bottom" id="Bli-ig-akt"/>
-                                            <constraint firstItem="OYL-SF-j2p" firstAttribute="leading" secondItem="LK7-LT-n6z" secondAttribute="leading" constant="18" id="C1R-Mo-QyG"/>
+                                            <constraint firstItem="OYL-SF-j2p" firstAttribute="leading" secondItem="LK7-LT-n6z" secondAttribute="leading" constant="3" id="C1R-Mo-QyG"/>
                                             <constraint firstItem="OYL-SF-j2p" firstAttribute="top" secondItem="LK7-LT-n6z" secondAttribute="top" constant="30" id="LfS-mA-3du"/>
                                             <constraint firstItem="SBt-Cp-o6t" firstAttribute="top" secondItem="LK7-LT-n6z" secondAttribute="top" constant="28" id="V94-TB-ibu"/>
                                             <constraint firstAttribute="height" constant="64" id="baH-BV-TEO"/>

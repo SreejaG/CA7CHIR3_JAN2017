@@ -29,7 +29,7 @@ class ChannelItemListViewController: UIViewController {
         super.viewWillAppear(true)
         if let channelName = channelName
         {
-            channelTitleLabel.text = channelName
+            channelTitleLabel.text = channelName.uppercaseString
         }
     }
     

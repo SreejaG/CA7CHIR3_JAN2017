@@ -28,7 +28,7 @@ class MyChannelItemDetailsViewController: UIViewController {
          self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         if let channelName = channelName
         {
-            channelTitleLabel.text = channelName
+            channelTitleLabel.text = channelName.uppercaseString
         }
     }
 

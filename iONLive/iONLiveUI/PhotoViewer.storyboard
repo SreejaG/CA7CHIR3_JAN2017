@@ -21,9 +21,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Csb-BG-yaO">
-                                        <rect key="frame" x="18" y="28" width="68" height="32"/>
+                                        <rect key="frame" x="15" y="28" width="94" height="32"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                        <state key="normal" title="Channels">
+                                        <state key="normal" title="My Channels">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
@@ -50,7 +50,7 @@
                                 <color key="backgroundColor" red="0.17254901960784313" green="0.83921568627450982" blue="0.89803921568627454" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="tuh-W8-1lF" secondAttribute="trailing" id="CP7-DW-u3c"/>
-                                    <constraint firstItem="Csb-BG-yaO" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" constant="18" id="GTr-Yb-EUV"/>
+                                    <constraint firstItem="Csb-BG-yaO" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" constant="15" id="GTr-Yb-EUV"/>
                                     <constraint firstItem="tuh-W8-1lF" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" id="Gxn-1Q-Vni"/>
                                     <constraint firstItem="E08-1q-r1T" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="LaR-oM-9MA"/>
                                     <constraint firstAttribute="height" constant="64" id="Otu-Th-m9Y"/>
