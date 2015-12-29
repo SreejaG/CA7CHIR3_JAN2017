@@ -877,7 +877,7 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
-        return @"Unable to get frames from camera! Please try again...";
+        return @"Unable to communicate with camera! Please try again...";
     }
 }
 
@@ -888,7 +888,7 @@ static NSMutableDictionary * gHistory;
     }
     else
     {
-        return @"No Frames Found!";
+        return @"Communication Error!";
     }
 }
 
