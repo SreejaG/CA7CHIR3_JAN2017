@@ -47,6 +47,8 @@ class SignUpViewController: UIViewController {
         emailTextfield.autocorrectionType = UITextAutocorrectionType.No
         passwdTextField.autocorrectionType = UITextAutocorrectionType.No
         passwdTextField.secureTextEntry = true
+        emailTextfield.delegate = self
+        passwdTextField.delegate = self
         addObserver()
     }
   
@@ -82,15 +84,6 @@ class SignUpViewController: UIViewController {
                 self.view.layoutIfNeeded()
             }
         }
-    }
-
-    
-    // PRAGMA MARK:- textField delegates
-    
-    func textFieldShouldReturn(textField: UITextField) -> Bool
-    {
-        textField.resignFirstResponder()
-        return true
     }
     
     //PRAGMA MARK:- IBActions
@@ -211,5 +204,19 @@ class SignUpViewController: UIViewController {
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
     }
-
 }
+
+extension SignUpViewController:UITextFieldDelegate{
+    
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
