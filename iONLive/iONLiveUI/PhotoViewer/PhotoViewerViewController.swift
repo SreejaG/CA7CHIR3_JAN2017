@@ -32,6 +32,14 @@ class PhotoViewerViewController: UIViewController {
     }
     
     //PRAGMA MARK:- IBActions
+
+    @IBAction func channelButtonClicked(sender: AnyObject)
+    {
+        let myChannelStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
+        let myChannelVC = myChannelStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier)
+        myChannelVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(myChannelVC, animated: true)
+    }
     @IBAction func donebuttonClicked(sender: AnyObject)
     {
         self.dismissViewControllerAnimated(true) { () -> Void in

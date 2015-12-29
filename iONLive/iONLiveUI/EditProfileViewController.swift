@@ -174,7 +174,7 @@ extension EditProfileViewController:UITableViewDataSource
             return dataSource != nil ? (dataSource?[2].count)! :0
             
         case 3:
-            return 1  // for terms and conditn sectn
+            return 0  // for terms and conditn sectn
             
         default:
             return 0
