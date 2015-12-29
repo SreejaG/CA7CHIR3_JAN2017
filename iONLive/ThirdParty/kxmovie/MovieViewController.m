@@ -839,7 +839,7 @@ static NSMutableDictionary * gHistory;
     [self showNoDataFoundText];
     if(_liveVideo == true)
     {
-        noDataFound.text = @"Could not connect to camera!";
+        noDataFound.text = @"Could not connect to camera,Tap To refresh connecton...";
     }
     else{
         noDataFound.text = @"Unable to fetch stream!";
@@ -851,6 +851,7 @@ static NSMutableDictionary * gHistory;
     if (alertViewTemp.isVisible == false && _liveVideo) {
         
         [self hideProgressBar];
+        self.playing = false;
         NSString * message = [self getInterruptionErrorMessage:error];
         NSString * title = [self getErrorTitle:error];
         [self showViewFinderErrorWithTitle:title AndMessage:message];
