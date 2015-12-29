@@ -1678,8 +1678,10 @@ static NSMutableDictionary * gHistory;
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
     UIViewController *photoViewerViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
-    photoViewerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self.navigationController presentViewController:photoViewerViewController animated:true completion:^{
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
+    navController.navigationBarHidden = true;
+    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:navController animated:true completion:^{
     }];
 }
 
