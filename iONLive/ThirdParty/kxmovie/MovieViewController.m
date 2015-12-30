@@ -797,6 +797,10 @@ static NSMutableDictionary * gHistory;
     if ( _liveVideo == false) {
         [self handlePlayBackDecoderError:error];
     }
+    else
+    {
+        [self showInputNetworkErrorMessage:error];
+    }
 }
 
 #pragma mark : Error Handling
