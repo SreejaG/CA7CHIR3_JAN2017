@@ -47,7 +47,7 @@ class MySharedChannelsViewController: UIViewController {
     
     func createDummyDataSource()
     {
-        dataSource = [[channelNameKey:"My Day",channelShareCountKey:"9",channelSelectionKey:"0"],[channelNameKey:"Work stuff",channelShareCountKey:"5",channelSelectionKey:"0"],[channelNameKey:"Ideas & screenshots",channelShareCountKey:"8",channelSelectionKey:"0"]]
+        dataSource = [[channelNameKey:"My Day",channelShareCountKey:"9",channelSelectionKey:"0"],[channelNameKey:"Work stuff",channelShareCountKey:"5",channelSelectionKey:"0"],[channelNameKey:"Ideas",channelShareCountKey:"8",channelSelectionKey:"0"]]
     }
     
     func addKeyboardObservers()

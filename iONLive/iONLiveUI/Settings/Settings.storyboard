@@ -455,16 +455,16 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gQw-99-ZXC">
-                                                            <rect key="frame" x="10" y="0.0" width="505" height="43"/>
+                                                            <rect key="frame" x="10" y="0.0" width="514" height="43"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CheckOn" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-LD-ts7">
-                                                            <rect key="frame" x="555" y="9" width="25" height="25"/>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-LD-ts7">
+                                                            <rect key="frame" x="564" y="15" width="16" height="13"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="25" id="2gm-MO-x73"/>
-                                                                <constraint firstAttribute="width" constant="25" id="ywJ-EK-5VH"/>
+                                                                <constraint firstAttribute="height" constant="13" id="2gm-MO-x73"/>
+                                                                <constraint firstAttribute="width" constant="16" id="ywJ-EK-5VH"/>
                                                             </constraints>
                                                         </imageView>
                                                     </subviews>
@@ -632,16 +632,16 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dhj-DL-G95">
-                                                            <rect key="frame" x="10" y="0.0" width="505" height="43"/>
+                                                            <rect key="frame" x="10" y="0.0" width="514" height="43"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CheckOn" translatesAutoresizingMaskIntoConstraints="NO" id="FbO-CQ-KO9">
-                                                            <rect key="frame" x="555" y="9" width="25" height="25"/>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="FbO-CQ-KO9">
+                                                            <rect key="frame" x="564" y="15" width="16" height="13"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="25" id="h0O-Za-5r5"/>
-                                                                <constraint firstAttribute="width" constant="25" id="xan-cj-WU8"/>
+                                                                <constraint firstAttribute="height" constant="13" id="h0O-Za-5r5"/>
+                                                                <constraint firstAttribute="width" constant="16" id="xan-cj-WU8"/>
                                                             </constraints>
                                                         </imageView>
                                                     </subviews>
@@ -974,16 +974,16 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tu0-wD-Xpb">
-                                                            <rect key="frame" x="10" y="0.0" width="545" height="43"/>
+                                                            <rect key="frame" x="10" y="0.0" width="554" height="43"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CheckOn" translatesAutoresizingMaskIntoConstraints="NO" id="wXg-9t-xiS">
-                                                            <rect key="frame" x="565" y="9" width="25" height="25"/>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="wXg-9t-xiS">
+                                                            <rect key="frame" x="574" y="15" width="16" height="13"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="25" id="7bT-m2-4XZ"/>
-                                                                <constraint firstAttribute="width" constant="25" id="bo5-AQ-tH1"/>
+                                                                <constraint firstAttribute="height" constant="13" id="7bT-m2-4XZ"/>
+                                                                <constraint firstAttribute="width" constant="16" id="bo5-AQ-tH1"/>
                                                             </constraints>
                                                         </imageView>
                                                     </subviews>
@@ -1038,7 +1038,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="CheckOn" width="25" height="25"/>
+        <image name="Checkmark" width="16" height="13"/>
         <image name="clapping_blur" width="107" height="190"/>
         <image name="settings" width="27" height="26"/>
         <image name="snapCamMode" width="25" height="25"/>

@@ -46,13 +46,15 @@
                                                     <constraint firstAttribute="height" constant="25" id="9TK-6t-s9S"/>
                                                     <constraint firstAttribute="width" constant="25" id="BTw-33-o02"/>
                                                 </constraints>
+                                                <state key="normal" image="Add"/>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fp1-85-0Vm" userLabel="ContactsButton">
-                                                <rect key="frame" x="502" y="28" width="25" height="25"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fp1-85-0Vm" userLabel="ContactsButton">
+                                                <rect key="frame" x="523" y="28" width="29" height="25"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="25" id="Ch1-Ce-eur"/>
+                                                    <constraint firstAttribute="width" constant="29" id="Ch1-Ce-eur"/>
                                                     <constraint firstAttribute="height" constant="25" id="POw-hj-7fv"/>
                                                 </constraints>
+                                                <state key="normal" image="my stuff notification"/>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
@@ -62,7 +64,7 @@
                                             <constraint firstAttribute="trailing" secondItem="Fqm-1a-Wea" secondAttribute="trailing" id="Hvx-0b-HBy"/>
                                             <constraint firstAttribute="height" constant="64" id="JcU-1O-fDy"/>
                                             <constraint firstItem="4Vq-AC-s1A" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="23" id="Q5o-ik-UFu"/>
-                                            <constraint firstItem="Sye-VS-ziC" firstAttribute="leading" secondItem="fp1-85-0Vm" secondAttribute="trailing" constant="30" id="Uas-oe-aVN"/>
+                                            <constraint firstItem="Sye-VS-ziC" firstAttribute="leading" secondItem="fp1-85-0Vm" secondAttribute="trailing" constant="5" id="Uas-oe-aVN"/>
                                             <constraint firstAttribute="trailing" secondItem="Sye-VS-ziC" secondAttribute="trailing" constant="18" id="cZb-NV-igS"/>
                                             <constraint firstItem="fp1-85-0Vm" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="28" id="fbM-WJ-0IV"/>
                                             <constraint firstItem="Fqm-1a-Wea" firstAttribute="leading" secondItem="eNB-PM-gfn" secondAttribute="leading" id="gVs-rw-3RL"/>
@@ -220,11 +222,12 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SBt-Cp-o6t">
-                                                <rect key="frame" x="564" y="28" width="18" height="24"/>
+                                                <rect key="frame" x="548" y="28" width="34" height="31"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="18" id="YIy-Ed-wP5"/>
-                                                    <constraint firstAttribute="height" constant="24" id="ndK-hf-OPT"/>
+                                                    <constraint firstAttribute="width" constant="34" id="YIy-Ed-wP5"/>
+                                                    <constraint firstAttribute="height" constant="31" id="ndK-hf-OPT"/>
                                                 </constraints>
+                                                <state key="normal" image="Select thumbnails"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYL-SF-j2p">
                                                 <rect key="frame" x="3" y="30" width="30" height="30"/>
@@ -315,6 +318,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Add" width="21" height="21"/>
+        <image name="Select thumbnails" width="34" height="31"/>
+        <image name="my stuff notification" width="29" height="25"/>
         <image name="snapCamMode" width="25" height="25"/>
         <image name="thumb11" width="124" height="125"/>
         <image name="white_back" width="12" height="21"/>
