@@ -92,6 +92,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("No Email", message: "Please enter your Email")
     }
     
+    func signUpNoEmailEnteredError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your username")
+    }
+    
+    func signUpNoPasswordEnteredError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your password")
+    }
+    
     //PRAGMA MARK:- Connectivity errors
     
     func noNetworkConnection() {

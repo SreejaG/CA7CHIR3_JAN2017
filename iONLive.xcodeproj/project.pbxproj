@@ -73,6 +73,8 @@
 		167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0691BFDC32E003CDF30 /* Streaming.storyboard */; };
 		167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */; };
 		167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */; };
+		167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */; };
+		167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */; };
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
@@ -210,6 +212,8 @@
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
 		167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStreamViewController.swift; sourceTree = "<group>"; };
 		167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
+		167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpUserNameViewController.swift; sourceTree = "<group>"; };
+		167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerifyPhoneViewController.swift; sourceTree = "<group>"; };
 		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
@@ -649,6 +653,8 @@
 				167AF0641BFDC30D003CDF30 /* LoginViewController.swift */,
 				165A9C831C0C2E90005379A9 /* SignUpViewController.swift */,
 				165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */,
+				167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */,
+				167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1131,6 +1137,7 @@
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
+				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
 				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
 				166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */,
@@ -1193,6 +1200,7 @@
 				160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				1644B3C81C05687B004E3832 /* Connectivity.m in Sources */,
+				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				165314081C27CE7500BCF5DF /* EditProfPrivateInfoCell.swift in Sources */,
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,

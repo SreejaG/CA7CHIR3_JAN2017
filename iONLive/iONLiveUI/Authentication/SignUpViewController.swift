@@ -94,19 +94,47 @@ class SignUpViewController: UIViewController {
     
     @IBAction func signUpClicked(sender: AnyObject)
     {
-//        if emailTextfield.text!.isEmpty
-//        {
-//            ErrorManager.sharedInstance.loginNoEmailEnteredError()
-//        }
-//        else if passwdTextField.text!.isEmpty
-//        {
-//            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
-//        }
-//        else
-//        {
-//            self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
-//        }
+        if emailTextfield.text!.isEmpty
+        {
+            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
+        }
+        else if passwdTextField.text!.isEmpty
+        {
+            ErrorManager.sharedInstance.signUpNoPasswordEnteredError()
+        }
+        else
+        {
+            loadUserNameView()
+        }
     }
+   
+    func loadUserNameView()
+    {
+        let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
+        let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier)
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        userNameVC.navigationItem.backBarButtonItem = backItem
+        self.navigationController?.pushViewController(userNameVC, animated: false)
+    }
+    
+    
+//    @IBAction func signUpClicked(sender: AnyObject)
+//    {
+//                if emailTextfield.text!.isEmpty
+//                {
+//                    ErrorManager.sharedInstance.loginNoEmailEnteredError()
+//                }
+//                else if passwdTextField.text!.isEmpty
+//                {
+//                    ErrorManager.sharedInstance.loginNoPasswordEnteredError()
+//                }
+//                else
+//                {
+//                    self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
+//                }
+//    }
+    
+
     
     
     //PRAGMA MARK:- Helper functions
