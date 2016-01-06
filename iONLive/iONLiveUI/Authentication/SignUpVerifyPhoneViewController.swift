@@ -7,24 +7,40 @@
 //
 
 import UIKit
+//import Foundation
+//import CoreLocation
+
 
 class SignUpVerifyPhoneViewController: UIViewController {
     
-     static let identifier = "SignUpVerifyPhoneViewController"
+    static let identifier = "SignUpVerifyPhoneViewController"
+    var verificationCode = ""
+   // let locationManager:CLLocationManager = CLLocationManager()
 
     @IBOutlet weak var countryTextField: UITextField!
     @IBOutlet weak var mobileNumberTextField: UITextField!
     @IBOutlet weak var continueBottomConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var topConstaintDescriptionLabel: NSLayoutConstraint!
+    @IBOutlet weak var verificationCodeTextField: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
+        //setUpLocationManager()
     }
+    
+//    func setUpLocationManager()
+//    {
+//        locationManager.delegate = self
+//        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+//        locationManager.startUpdatingLocation()
+//    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
         self.countryTextField.becomeFirstResponder()
+        checkVerificationCodeVisiblty()
     }
     
     override func didReceiveMemoryWarning() {
@@ -44,6 +60,22 @@ class SignUpVerifyPhoneViewController: UIViewController {
         countryTextField.delegate = self
         mobileNumberTextField.delegate = self
         addObserver()
+    }
+    
+    func checkVerificationCodeVisiblty()
+    {
+        if verificationCode != ""
+        {
+            verificationCodeTextField.hidden = false
+            verificationCodeTextField.text = verificationCode
+            topConstaintDescriptionLabel.constant = 67
+        }
+        else
+        {
+            verificationCodeTextField.hidden = true
+            topConstaintDescriptionLabel.constant = 1
+        }
+        
     }
     
     func addObserver()
@@ -98,7 +130,9 @@ class SignUpVerifyPhoneViewController: UIViewController {
         }
         else
         {
-            //load next page
+            // appearing verification code here for testing only 
+            verificationCode = "1555HFH2"
+            checkVerificationCodeVisiblty()
         }
     }
     
@@ -125,5 +159,33 @@ extension SignUpVerifyPhoneViewController:UITextFieldDelegate{
         return true
     }
 }
+
+//extension SignUpVerifyPhoneViewController:CLLocationManagerDelegate
+//{
+//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        
+//        let location = locations.last! as CLLocation
+//        
+//        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
+//        
+//        let geocoder = CLGeocoder()
+//        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
+//            if let _ = e {
+//                print("Error:  \(e!.localizedDescription)")
+//            } else {
+//                let placemark = placemarks!.last! as CLPlacemark
+//                
+//                let userInfo = [
+//                    "city":     placemark.locality,
+//                    "state":    placemark.administrativeArea,
+//                    "country":  placemark.country
+//                ]
+//                
+//                print("Location:  \(userInfo)")
+//                
+//            }
+//        })
+//    }
+//}
 
 

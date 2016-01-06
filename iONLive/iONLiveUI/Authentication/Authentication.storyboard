@@ -20,7 +20,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vtQ-9H-eIO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-100" y="208"/>
+            <point key="canvasLocation" x="-476" y="216"/>
         </scene>
         <!--Authenticate View Controller-->
         <scene sceneID="PIa-0v-rFP">
@@ -595,7 +595,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="490"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HY9-hv-Qfr">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="173"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="231"/>
                                                 <subviews>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Country" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Riw-sr-yt4">
                                                         <rect key="frame" x="18" y="0.0" width="564" height="65"/>
@@ -613,8 +613,16 @@
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                                                     </textField>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wam-Ll-vFp">
+                                                        <rect key="frame" x="18" y="132" width="564" height="65"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="65" id="Mb3-qv-Bff"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <textInputTraits key="textInputTraits"/>
+                                                    </textField>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We will not display your number to others" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EfB-zE-tDO">
-                                                        <rect key="frame" x="0.0" y="140" width="600" height="16"/>
+                                                        <rect key="frame" x="0.0" y="198" width="600" height="16"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="16" id="AFq-Cv-ujg"/>
                                                         </constraints>
@@ -623,7 +631,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Privacy policy" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97L-nK-RIK">
-                                                        <rect key="frame" x="0.0" y="157" width="600" height="16"/>
+                                                        <rect key="frame" x="0.0" y="215" width="600" height="16"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="16" id="M6p-MX-X5R"/>
                                                         </constraints>
@@ -638,6 +646,8 @@
                                                     <constraint firstItem="hKq-3T-p1i" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="18" id="JLO-GM-EPx"/>
                                                     <constraint firstAttribute="bottom" secondItem="97L-nK-RIK" secondAttribute="bottom" id="Lsa-IO-69U"/>
                                                     <constraint firstItem="Riw-sr-yt4" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="18" id="QYC-qw-0bL"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Wam-Ll-vFp" secondAttribute="trailing" constant="18" id="S7x-QT-lmz"/>
+                                                    <constraint firstItem="Wam-Ll-vFp" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="18" id="UBd-wG-lbP"/>
                                                     <constraint firstAttribute="trailing" secondItem="hKq-3T-p1i" secondAttribute="trailing" constant="18" id="Udv-m8-FrP"/>
                                                     <constraint firstItem="97L-nK-RIK" firstAttribute="top" secondItem="EfB-zE-tDO" secondAttribute="bottom" constant="1" id="XI7-wv-M5R"/>
                                                     <constraint firstAttribute="trailing" secondItem="97L-nK-RIK" secondAttribute="trailing" id="Y4B-YC-9My"/>
@@ -645,7 +655,8 @@
                                                     <constraint firstItem="EfB-zE-tDO" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" id="Zj4-Cc-dz1"/>
                                                     <constraint firstItem="hKq-3T-p1i" firstAttribute="top" secondItem="Riw-sr-yt4" secondAttribute="bottom" constant="1" id="c8f-26-9d2"/>
                                                     <constraint firstItem="97L-nK-RIK" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" id="cen-N8-gza"/>
-                                                    <constraint firstItem="EfB-zE-tDO" firstAttribute="top" secondItem="hKq-3T-p1i" secondAttribute="bottom" constant="9" id="fgK-jE-eKc"/>
+                                                    <constraint firstItem="EfB-zE-tDO" firstAttribute="top" secondItem="hKq-3T-p1i" secondAttribute="bottom" constant="67" id="fgK-jE-eKc"/>
+                                                    <constraint firstItem="Wam-Ll-vFp" firstAttribute="top" secondItem="hKq-3T-p1i" secondAttribute="bottom" constant="1" id="ouO-kl-Z3q"/>
                                                     <constraint firstItem="Riw-sr-yt4" firstAttribute="top" secondItem="HY9-hv-Qfr" secondAttribute="top" id="rqh-ji-ABz"/>
                                                 </constraints>
                                             </view>
@@ -687,6 +698,8 @@
                         <outlet property="continueBottomConstraint" destination="3VS-34-WO4" id="9lZ-yj-89L"/>
                         <outlet property="countryTextField" destination="Riw-sr-yt4" id="CWG-Vy-EhI"/>
                         <outlet property="mobileNumberTextField" destination="hKq-3T-p1i" id="DyO-dM-hP3"/>
+                        <outlet property="topConstaintDescriptionLabel" destination="fgK-jE-eKc" id="8cA-vz-Bgm"/>
+                        <outlet property="verificationCodeTextField" destination="Wam-Ll-vFp" id="PPm-2l-zs4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zxC-MH-h4d" userLabel="First Responder" sceneMemberID="firstResponder"/>
