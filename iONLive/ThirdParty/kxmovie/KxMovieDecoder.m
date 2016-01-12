@@ -1548,7 +1548,7 @@ static int interrupt_callback(void *ctx)
     NSTimeInterval difference = [timer timeIntervalSinceDate: currentTime];
     NSLog(@"viewFinder difference %f" , difference);
     
-    if (currentTime  && difference > 4.0) {
+    if (currentTime  && difference > 6.0) {
         currentTime = nil;
         return 1;
     }
