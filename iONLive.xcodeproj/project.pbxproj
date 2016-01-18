@@ -59,6 +59,7 @@
 		167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C11C315271007F5326 /* MyChannelViewController.swift */; };
 		167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C31C3152BE007F5326 /* ChannelItemListViewController.swift */; };
 		167512C61C3152CE007F5326 /* MyChannel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167512C51C3152CE007F5326 /* MyChannel.storyboard */; };
+		1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1677FEB81C48BFF900261F59 /* CoreLocation.framework */; };
 		167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */; };
 		167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0301BFDC1F6003CDF30 /* ViewController.swift */; };
 		167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0321BFDC1F6003CDF30 /* Main.storyboard */; };
@@ -191,6 +192,7 @@
 		167512C11C315271007F5326 /* MyChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelViewController.swift; sourceTree = "<group>"; };
 		167512C31C3152BE007F5326 /* ChannelItemListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListViewController.swift; sourceTree = "<group>"; };
 		167512C51C3152CE007F5326 /* MyChannel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MyChannel.storyboard; sourceTree = "<group>"; };
+		1677FEB81C48BFF900261F59 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		167AF02B1BFDC1F6003CDF30 /* iONLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iONLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		167AF0301BFDC1F6003CDF30 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -386,6 +388,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */,
 				16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */,
 				599964E01C05801B00D20FB2 /* libbz2.tbd in Frameworks */,
 				599964DE1C05801100D20FB2 /* libz.tbd in Frameworks */,
@@ -566,6 +569,7 @@
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
+				1677FEB81C48BFF900261F59 /* CoreLocation.framework */,
 				167AF02D1BFDC1F6003CDF30 /* iONLive */,
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
@@ -1367,7 +1371,7 @@
 				);
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**";
 				INFOPLIST_FILE = iONLive/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1395,7 +1399,7 @@
 				);
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**";
 				INFOPLIST_FILE = iONLive/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

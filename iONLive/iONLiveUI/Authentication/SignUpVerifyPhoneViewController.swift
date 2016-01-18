@@ -7,15 +7,15 @@
 //
 
 import UIKit
-//import Foundation
-//import CoreLocation
+import Foundation
+import CoreLocation
 
 
 class SignUpVerifyPhoneViewController: UIViewController {
     
     static let identifier = "SignUpVerifyPhoneViewController"
     var verificationCode = ""
-   // let locationManager:CLLocationManager = CLLocationManager()
+    let locationManager:CLLocationManager = CLLocationManager()
 
     @IBOutlet weak var countryTextField: UITextField!
     @IBOutlet weak var mobileNumberTextField: UITextField!
@@ -26,15 +26,49 @@ class SignUpVerifyPhoneViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-        //setUpLocationManager()
+        setUpLocationManager()
     }
     
-//    func setUpLocationManager()
-//    {
-//        locationManager.delegate = self
-//        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-//        locationManager.startUpdatingLocation()
-//    }
+    func setUpLocationManager()
+    {
+        
+        if #available(iOS 8.0, *) {
+            self.locationManager.requestWhenInUseAuthorization()
+        } else {
+            // Fallback on earlier versions
+        }
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.startUpdatingLocation()
+    }
+    
+    
+    // authorization status
+    func locationManager(manager: CLLocationManager,
+        didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+            var shouldIAllow = false
+            var locationStatus = ""
+            switch status {
+            case CLAuthorizationStatus.Restricted:
+                locationStatus = "Restricted Access to location"
+            case CLAuthorizationStatus.Denied:
+                locationStatus = "User denied access to location"
+            case CLAuthorizationStatus.NotDetermined:
+                locationStatus = "Status not determined"
+            default:
+                locationStatus = "Allowed to location Access"
+                shouldIAllow = true
+            }
+            NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
+            if (shouldIAllow == true) {
+                NSLog("Location to Allowed")
+                // Start location services
+                locationManager.startUpdatingLocation()
+            } else {
+                NSLog("Denied access: \(locationStatus)")
+            }
+    }
+
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
@@ -160,32 +194,44 @@ extension SignUpVerifyPhoneViewController:UITextFieldDelegate{
     }
 }
 
-//extension SignUpVerifyPhoneViewController:CLLocationManagerDelegate
-//{
-//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        
-//        let location = locations.last! as CLLocation
-//        
-//        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
-//        
-//        let geocoder = CLGeocoder()
-//        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
-//            if let _ = e {
-//                print("Error:  \(e!.localizedDescription)")
-//            } else {
-//                let placemark = placemarks!.last! as CLPlacemark
-//                
-//                let userInfo = [
-//                    "city":     placemark.locality,
-//                    "state":    placemark.administrativeArea,
-//                    "country":  placemark.country
-//                ]
-//                
-//                print("Location:  \(userInfo)")
-//                
+extension SignUpVerifyPhoneViewController:CLLocationManagerDelegate
+{
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        let location = locations.last! as CLLocation
+        
+        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
+        
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
+            if let _ = e {
+                print("Error:  \(e!.localizedDescription)")
+            } else {
+                let placemark = placemarks!.last! as CLPlacemark
+                
+                let userInfo = [
+                    "city":     placemark.locality,
+                    "state":    placemark.administrativeArea,
+                    "country":  placemark.country,
+                    "code":placemark.ISOcountryCode
+                ]
+                
+                print("Location:  \(userInfo)")
+                
+            }
+        })
+    }
+    
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        locationManager.stopUpdatingLocation()
+        print(error)
+//        if ((error) != nil) {
+//            if (errorOccured == false) {
+//                errorOccured = true
+//                print(error)
 //            }
-//        })
-//    }
-//}
+//        }
+    }
+}
 
 
