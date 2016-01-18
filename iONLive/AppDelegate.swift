@@ -74,6 +74,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var navigationController:UINavigationController?
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
        
+//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//        let vc = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController")
+        
         clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
         navigationController = UINavigationController(rootViewController: vc)
         navigationController!.navigationBarHidden = true
