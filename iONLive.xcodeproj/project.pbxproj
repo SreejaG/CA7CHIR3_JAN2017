@@ -31,6 +31,7 @@
 		1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
+		165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */; };
 		16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16609D281C1EA40700D0077F /* EditProfileViewController.swift */; };
 		16609D2B1C1EA42F00D0077F /* EditProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */; };
 		166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */; };
@@ -164,6 +165,7 @@
 		1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
+		165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOnLiveCameraPictureCapture.swift; sourceTree = "<group>"; };
 		16609D281C1EA40700D0077F /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = EditProfile.storyboard; sourceTree = "<group>"; };
 		166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelDetailViewController.swift; sourceTree = "<group>"; };
@@ -483,6 +485,14 @@
 				16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */,
 			);
 			path = PhotoViewer;
+			sourceTree = "<group>";
+		};
+		165B77D91C4CAAE800BDB02F /* iONLiveCameraAPI */ = {
+			isa = PBXGroup;
+			children = (
+				165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */,
+			);
+			path = iONLiveCameraAPI;
 			sourceTree = "<group>";
 		};
 		16609D271C1EA3CC00D0077F /* EditProfile */ = {
@@ -974,6 +984,7 @@
 		59BC3FAA1BFF895700710905 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				165B77D91C4CAAE800BDB02F /* iONLiveCameraAPI */,
 				1644B3D11C05698F004E3832 /* Errors */,
 				1644B3D31C05698F004E3832 /* Login */,
 				160EAE3C1C032A1900020D31 /* Streaming */,
@@ -1142,6 +1153,7 @@
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
+				165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */,
 				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
 				166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */,

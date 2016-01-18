@@ -10,6 +10,7 @@ import Foundation
 class UrlManager {
     
     let baseUrl = "http://bpe.ioncameras.com:3000"
+    let iONLiveCamUrl = "http://192.168.42.1:8888"
     
     class var sharedInstance: UrlManager {
         struct Singleton {
@@ -33,5 +34,26 @@ class UrlManager {
        return liveStreamingAPI
    }
     
+    func iONLiveCamGetPictureUrl(scale: String?, burstCount: String?,burstInterval:String?,quality:String?) -> String
+    {
+        var getPictureUrl = iONLiveCamUrl+"/picture"
+        if let scale = scale
+        {
+            getPictureUrl = getPictureUrl + "?scale=\(scale)"
+        }
+        if let burstCount = burstCount
+        {
+            getPictureUrl = getPictureUrl + "?burstCount=\(burstCount)"
+        }
+        if let burstInterval = burstInterval
+        {
+            getPictureUrl = getPictureUrl + "?burstInterval=\(burstInterval)"
+        }
+        if let quality = quality
+        {
+            getPictureUrl = getPictureUrl + "?quality=\(quality)"
+        }
+        return getPictureUrl
+    }
 }
     

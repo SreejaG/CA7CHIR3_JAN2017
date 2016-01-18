@@ -31,12 +31,7 @@ class SignUpVerifyPhoneViewController: UIViewController {
     
     func setUpLocationManager()
     {
-        
-        if #available(iOS 8.0, *) {
-            self.locationManager.requestWhenInUseAuthorization()
-        } else {
-            // Fallback on earlier versions
-        }
+        self.locationManager.requestWhenInUseAuthorization()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.startUpdatingLocation()
