@@ -17,6 +17,8 @@ let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"
 let initializingStream = "InitializingStream"
 
+let apiDeveloperFailureMessage = "developerMsg"
+
 @objc enum SnapCamSelectionMode : Int {
     
     case LiveStream
