@@ -67,23 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         defaults.removeObjectForKey(startedStreaming)
         defaults.removeObjectForKey(initializingStream)
     }
-
-    func getCameraViewController()->(UIViewController)
-    {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        return cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController")
-    }
-    
-    func loadCameraViewController()
-    {
-        var navigationController:UINavigationController?
-        let vc = getCameraViewController()
-        
-        navigationController = UINavigationController(rootViewController: vc)
-        navigationController!.navigationBarHidden = true
-        
-        self.window!.rootViewController = navigationController
-    }
     
     func loadLiveStreamView()
     {

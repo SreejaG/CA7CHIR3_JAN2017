@@ -87,17 +87,51 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
+        updateSnapCamModeSelection(indexPath.row, ForCell: selectedCell)
         
+        switch indexPath.row
+        {
+        case 5:
+            loadCameraViewController()
+            break
+        default :
+            break;
+        }
+//        if isStreamStarted()
+//        {
+////            restoreSnapCamMode.rawValue = indexPath.row
+//            saveSelectedTypeTemporarily(indexPath.row)
+//            showAlertViewToStopStream()
+//        }
+//        else
+//        {
+//            updateSnapCamSelection(indexPath.row)
+////            print("selected index = \(indexPath.row)")
+//            changeSnapCamModeForCell(selectedCell)
+//        }
+    }
+    
+    func loadCameraViewController()
+    {
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.presentViewController(iPhoneCameraViewController, animated: false) { () -> Void in
+            
+        }
+    }
+
+    func updateSnapCamModeSelection(row:Int , ForCell selectedCell:UITableViewCell)
+    {
         if isStreamStarted()
         {
-//            restoreSnapCamMode.rawValue = indexPath.row
-            saveSelectedTypeTemporarily(indexPath.row)
+            //            restoreSnapCamMode.rawValue = indexPath.row
+            saveSelectedTypeTemporarily(row)
             showAlertViewToStopStream()
         }
         else
         {
-            updateSnapCamSelection(indexPath.row)
-//            print("selected index = \(indexPath.row)")
+            updateSnapCamSelection(row)
+            //            print("selected index = \(indexPath.row)")
             changeSnapCamModeForCell(selectedCell)
         }
     }
