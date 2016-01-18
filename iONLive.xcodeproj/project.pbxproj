@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */; };
+		160B1F5F1C4CDF9E0022B711 /* IPhoneCameraView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */; };
+		160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */; };
 		160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 160C01131C1FDD5F00203082 /* rtsp_relay.m */; };
 		160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */; };
 		160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE411C032C0E00020D31 /* IONLConstants.swift */; };
@@ -140,6 +143,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		160B1F4F1C4CCEB40022B711 /* AAPLPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPreviewView.h; sourceTree = "<group>"; };
+		160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLPreviewView.m; sourceTree = "<group>"; };
+		160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = IPhoneCameraView.storyboard; sourceTree = "<group>"; };
+		160B1F5D1C4CDF9E0022B711 /* IPhoneCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPhoneCameraViewController.h; sourceTree = "<group>"; };
+		160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPhoneCameraViewController.m; sourceTree = "<group>"; };
 		160C01131C1FDD5F00203082 /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
 		160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingManager.swift; sourceTree = "<group>"; };
 		160EAE411C032C0E00020D31 /* IONLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLConstants.swift; sourceTree = "<group>"; };
@@ -424,6 +432,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		160B1F4E1C4CCEB40022B711 /* iPhoneCamera */ = {
+			isa = PBXGroup;
+			children = (
+				160B1F4F1C4CCEB40022B711 /* AAPLPreviewView.h */,
+				160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */,
+				160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */,
+				160B1F5D1C4CDF9E0022B711 /* IPhoneCameraViewController.h */,
+				160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */,
+			);
+			path = iPhoneCamera;
+			sourceTree = "<group>";
+		};
 		160EAE3C1C032A1900020D31 /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
@@ -645,6 +665,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				160B1F4E1C4CCEB40022B711 /* iPhoneCamera */,
 				167512C01C315224007F5326 /* MyChannel */,
 				1674A90F1C2906FE00D547D7 /* Sharing */,
 				16609D271C1EA3CC00D0077F /* EditProfile */,
@@ -1122,6 +1143,7 @@
 				167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */,
 				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
+				160B1F5F1C4CDF9E0022B711 /* IPhoneCameraView.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
 			);
@@ -1180,6 +1202,7 @@
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
+				160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
@@ -1223,6 +1246,7 @@
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
+				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,

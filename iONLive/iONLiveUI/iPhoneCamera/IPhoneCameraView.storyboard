@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <scenes>
+        <!--iPhone Camera View Controller-->
+        <scene sceneID="nWK-5Y-jY9">
+            <objects>
+                <viewController storyboardIdentifier="IPhoneCameraViewController" id="2uu-F2-Ybp" customClass="IPhoneCameraViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Z9f-wr-dol"/>
+                        <viewControllerLayoutGuide type="bottom" id="elk-Yj-JGw"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="SWS-Ne-i52">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hPk-zc-tpz" userLabel="Preview View" customClass="AAPLPreviewView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ucJ-gA-nDs" userLabel="TopView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hxn-Bj-Hfb">
+                                        <rect key="frame" x="490" y="25" width="90" height="35"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxw-lQ-yPH" userLabel="ThirdButton">
+                                                <rect key="frame" x="55" y="0.0" width="35" height="35"/>
+                                                <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wDr-Kg-Y2A" userLabel="SecondButton">
+                                                <rect key="frame" x="28" y="0.0" width="35" height="35"/>
+                                                <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZ6-5L-198" userLabel="FirstButton">
+                                                <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
+                                                <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="13" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-1r-I7s">
+                                        <rect key="frame" x="469" y="38" width="21" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lwm-xS-hJh" userLabel="SwapCameraButton">
+                                        <rect key="frame" x="62" y="24" width="30" height="23"/>
+                                        <state key="normal" image="swap_camera"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMd-g2-gjt" userLabel="FlashButton">
+                                        <rect key="frame" x="130" y="23" width="21" height="26"/>
+                                        <state key="normal" image="flash_off"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryW-Iz-I7M" userLabel="Camera Selection Button">
+                                        <rect key="frame" x="13" y="23" width="17" height="26"/>
+                                        <state key="normal" image="iphone"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JqH-kr-rKo" userLabel="BottomView">
+                                <rect key="frame" x="0.0" y="480" width="600" height="120"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Camera_Thumb" translatesAutoresizingMaskIntoConstraints="NO" id="joa-mg-5MH">
+                                        <rect key="frame" x="37" y="35" width="50" height="50"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YEH-gb-xIX" userLabel="cameraThumb">
+                                        <rect key="frame" x="39" y="37" width="46" height="46"/>
+                                        <state key="normal" image="photo1"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzX-a8-zLm" userLabel="StreamThumb">
+                                        <rect key="frame" x="504" y="32" width="56" height="56"/>
+                                        <state key="normal" image="Stream_Thumb"/>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="photo2" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="Stream">
+                                        <rect key="frame" x="507" y="40" width="45" height="45"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpM-Fq-WiG" userLabel="cameraButton">
+                                        <rect key="frame" x="257" y="17" width="86" height="86"/>
+                                        <state key="normal" title="Button" image="Camera_Button_OFF"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eNM-F5-Mjs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="248" y="332"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Camera_Button_OFF" width="86" height="86"/>
+        <image name="Camera_Thumb" width="51" height="50"/>
+        <image name="Stream_Thumb" width="56" height="56"/>
+        <image name="avatarCircleStroke" width="35" height="35"/>
+        <image name="boyFace" width="28" height="28"/>
+        <image name="flash_off" width="21" height="26"/>
+        <image name="girlFace1" width="29" height="29"/>
+        <image name="girlFace2" width="29" height="29"/>
+        <image name="iphone" width="17" height="26"/>
+        <image name="photo1" width="50" height="50"/>
+        <image name="photo2" width="50" height="50"/>
+        <image name="swap_camera" width="30" height="23"/>
+    </resources>
+</document>
