@@ -55,5 +55,20 @@ class UrlManager {
         }
         return getPictureUrl
     }
+    
+    func iONLiveCamDeletePictureUrl(cancelSnap: Bool, burstId: String?) -> String
+    {
+        var getPictureUrl = iONLiveCamUrl+"/picture"
+        if cancelSnap == true
+        {
+            getPictureUrl = getPictureUrl + "?cancelSnaps"
+        }
+        else if let burstId = burstId
+        {
+            getPictureUrl = getPictureUrl + "?burstID=\(burstId)"
+        }
+        
+        return getPictureUrl
+    }
 }
     

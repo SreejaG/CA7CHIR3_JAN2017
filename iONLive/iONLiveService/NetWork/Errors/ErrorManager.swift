@@ -192,7 +192,8 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             //Currently avoiding alert when live steam is empty.
             break
         default:
-            serverError()
+            alert("Error", message: "\(errorCode)")
+            //serverError()
             break
         }
     }

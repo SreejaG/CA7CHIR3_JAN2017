@@ -97,4 +97,26 @@ class RequestManager {
         }
         return errorCode
     }
+    
+    func getFailureDeveloperMessageFromResponse(error: NSError?) -> String?
+    {
+        var errorCode:String?
+        if let error = error
+        {
+            let responseErrorData:NSData? = error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] as? NSData
+            if let errorData = responseErrorData
+            {
+                do {
+                    let jsonData = try NSJSONSerialization.JSONObjectWithData(errorData, options:NSJSONReadingOptions.MutableContainers ) as! NSDictionary
+                    if let errorC = jsonData[apiDeveloperFailureMessage]
+                    {
+                        errorCode = errorC as? String
+                    }
+                } catch {
+                    errorCode = nil
+                }
+            }
+        }
+        return errorCode
+    }
 }
