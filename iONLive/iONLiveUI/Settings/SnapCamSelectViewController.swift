@@ -115,9 +115,12 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.presentViewController(iPhoneCameraViewController, animated: false) { () -> Void in
-            
+        
+        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+        navController.navigationBarHidden = true
+        self.presentViewController(navController, animated: true) { () -> Void in
         }
+        
     }
 
     func updateSnapCamModeSelection(row:Int , ForCell selectedCell:UITableViewCell)
