@@ -10,7 +10,6 @@
 		160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */; };
 		160B1F5F1C4CDF9E0022B711 /* IPhoneCameraView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */; };
 		160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */; };
-		160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 160C01131C1FDD5F00203082 /* rtsp_relay.m */; };
 		160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */; };
 		160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE411C032C0E00020D31 /* IONLConstants.swift */; };
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
@@ -85,6 +84,7 @@
 		167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */; };
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
+		16CBE7421C4E06DE0049112C /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CBE7411C4E06DE0049112C /* rtsp_relay.m */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
 		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
@@ -151,7 +151,6 @@
 		160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = IPhoneCameraView.storyboard; sourceTree = "<group>"; };
 		160B1F5D1C4CDF9E0022B711 /* IPhoneCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPhoneCameraViewController.h; sourceTree = "<group>"; };
 		160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPhoneCameraViewController.m; sourceTree = "<group>"; };
-		160C01131C1FDD5F00203082 /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
 		160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingManager.swift; sourceTree = "<group>"; };
 		160EAE411C032C0E00020D31 /* IONLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLConstants.swift; sourceTree = "<group>"; };
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
@@ -229,12 +228,13 @@
 		167AF0691BFDC32E003CDF30 /* Streaming.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Streaming.storyboard; sourceTree = "<group>"; };
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
 		167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStreamViewController.swift; sourceTree = "<group>"; };
-		167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpUserNameViewController.swift; sourceTree = "<group>"; };
 		167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerifyPhoneViewController.swift; sourceTree = "<group>"; };
 		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
-		1689398C1C06C74600A47BDB /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
+		16CBE7401C4E06DE0049112C /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
+		16CBE7411C4E06DE0049112C /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
+		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -623,12 +623,10 @@
 		167AF0221BFDC1F6003CDF30 = {
 			isa = PBXGroup;
 			children = (
-				1677FEB81C48BFF900261F59 /* CoreLocation.framework */,
 				167AF02D1BFDC1F6003CDF30 /* iONLive */,
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
 				167AF02C1BFDC1F6003CDF30 /* Products */,
-				167AF0841BFDE9C6003CDF30 /* iONLive-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -650,6 +648,7 @@
 				167AF06F1BFDC3AD003CDF30 /* Frameworks */,
 				167AF05C1BFDC28B003CDF30 /* iONLiveService */,
 				167AF05D1BFDC28B003CDF30 /* iONLiveUI */,
+				16CBE7431C4E076E0049112C /* ObjectiveCBridging */,
 				167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */,
 				167AF0301BFDC1F6003CDF30 /* ViewController.swift */,
 				167AF0321BFDC1F6003CDF30 /* Main.storyboard */,
@@ -735,14 +734,15 @@
 		167AF06F1BFDC3AD003CDF30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
 				599964DF1C05801B00D20FB2 /* libbz2.tbd */,
 				599964DD1C05801100D20FB2 /* libz.tbd */,
 				599964DB1C057FFF00D20FB2 /* libiconv.tbd */,
 				16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */,
+				16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */,
+				1677FEB81C48BFF900261F59 /* CoreLocation.framework */,
+				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
 				59BC3F331BFF848600710905 /* AFNetworking */,
 				59BC3F471BFF848600710905 /* UIKit+AFNetworking */,
-				16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -753,6 +753,23 @@
 				1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		16CBE73F1C4E06DE0049112C /* LiveStreaming */ = {
+			isa = PBXGroup;
+			children = (
+				16CBE7401C4E06DE0049112C /* rtsp_relay.h */,
+				16CBE7411C4E06DE0049112C /* rtsp_relay.m */,
+			);
+			path = LiveStreaming;
+			sourceTree = "<group>";
+		};
+		16CBE7431C4E076E0049112C /* ObjectiveCBridging */ = {
+			isa = PBXGroup;
+			children = (
+				16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */,
+			);
+			path = ObjectiveCBridging;
 			sourceTree = "<group>";
 		};
 		16F6A44D1BFF07120074EA57 /* Application_Resources */ = {
@@ -768,10 +785,9 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				160C01131C1FDD5F00203082 /* rtsp_relay.m */,
-				1689398C1C06C74600A47BDB /* rtsp_relay.h */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
 				599964C11C057EF000D20FB2 /* kxmovie */,
+				16CBE73F1C4E06DE0049112C /* LiveStreaming */,
 			);
 			path = ThirdParty;
 			sourceTree = "<group>";
@@ -1248,6 +1264,7 @@
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
+				16CBE7421C4E06DE0049112C /* rtsp_relay.m in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
@@ -1263,7 +1280,6 @@
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
-				160C01141C1FDD5F00203082 /* rtsp_relay.m in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				1644B3C81C05687B004E3832 /* Connectivity.m in Sources */,
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
@@ -1378,6 +1394,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1416,6 +1433,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1444,7 +1462,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
-				SWIFT_OBJC_BRIDGING_HEADER = "iONLive-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1472,7 +1490,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
-				SWIFT_OBJC_BRIDGING_HEADER = "iONLive-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;
 		};
