@@ -16,7 +16,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     var snapCamMode : SnapCamSelectionMode = .DefaultMode
     var restoreSnapCamMode:SnapCamSelectionMode = .DefaultMode
 
-    var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone"]
+    var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
    
     @IBOutlet var snapCamButton: UIButton!
     
@@ -99,6 +99,14 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             updateSnapCamSelection(indexPath.row)
 //            print("selected index = \(indexPath.row)")
             changeSnapCamModeForCell(selectedCell)
+        }
+        
+        if indexPath.row == dataSource.count - 1
+        {
+            // TestAPI
+            let storyBoard = UIStoryboard(name:"iONCamPictureAPITest" , bundle: nil)
+            let testAPIListVC = storyBoard.instantiateViewControllerWithIdentifier(iONLiveCamAPIListViewController.identifier)
+            self.navigationController?.pushViewController(testAPIListVC, animated: true)
         }
     }
     

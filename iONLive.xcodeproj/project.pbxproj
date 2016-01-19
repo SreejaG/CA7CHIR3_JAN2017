@@ -35,6 +35,9 @@
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
 		165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */; };
+		165B77DF1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 165B77DE1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard */; };
+		165B77E11C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */; };
+		165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77E21C4D099700BDB02F /* iONCamPictureAPIViewController.swift */; };
 		16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16609D281C1EA40700D0077F /* EditProfileViewController.swift */; };
 		16609D2B1C1EA42F00D0077F /* EditProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */; };
 		166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */; };
@@ -174,6 +177,9 @@
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOnLiveCameraPictureCapture.swift; sourceTree = "<group>"; };
+		165B77DE1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iONCamPictureAPITest.storyboard; sourceTree = "<group>"; };
+		165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCamAPIListViewController.swift; sourceTree = "<group>"; };
+		165B77E21C4D099700BDB02F /* iONCamPictureAPIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIViewController.swift; sourceTree = "<group>"; };
 		16609D281C1EA40700D0077F /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		16609D2A1C1EA42F00D0077F /* EditProfile.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = EditProfile.storyboard; sourceTree = "<group>"; };
 		166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelDetailViewController.swift; sourceTree = "<group>"; };
@@ -515,6 +521,24 @@
 			path = iONLiveCameraAPI;
 			sourceTree = "<group>";
 		};
+		165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */ = {
+			isa = PBXGroup;
+			children = (
+				165B77DD1C4CE71400BDB02F /* iONCamPicture */,
+				165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */,
+			);
+			path = iONCamAPITestingUI;
+			sourceTree = "<group>";
+		};
+		165B77DD1C4CE71400BDB02F /* iONCamPicture */ = {
+			isa = PBXGroup;
+			children = (
+				165B77DE1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard */,
+				165B77E21C4D099700BDB02F /* iONCamPictureAPIViewController.swift */,
+			);
+			path = iONCamPicture;
+			sourceTree = "<group>";
+		};
 		16609D271C1EA3CC00D0077F /* EditProfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -665,6 +689,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */,
 				160B1F4E1C4CCEB40022B711 /* iPhoneCamera */,
 				167512C01C315224007F5326 /* MyChannel */,
 				1674A90F1C2906FE00D547D7 /* Sharing */,
@@ -1140,6 +1165,7 @@
 				1656E4F31C1058C700F62D12 /* PhotoViewer.storyboard in Resources */,
 				167AF0361BFDC1F6003CDF30 /* Assets.xcassets in Resources */,
 				16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */,
+				165B77DF1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard in Resources */,
 				167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */,
 				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
@@ -1189,6 +1215,7 @@
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
+				165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */,
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
@@ -1250,6 +1277,7 @@
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
+				165B77E11C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */,

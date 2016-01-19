@@ -1483,13 +1483,13 @@ static NSMutableDictionary * gHistory;
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
     
-    //    self.definesPresentationContext = YES; //self is presenting view controller
-    //    snapCamSelectVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    [self presentViewController:snapCamSelectVC animated:YES completion:nil];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:snapCamSelectVC];
+    nav.navigationBarHidden = true;
+    [self presentViewController:nav animated:YES completion:nil];
+    //[self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
 - (IBAction)didTapPhotoViewer:(id)sender {

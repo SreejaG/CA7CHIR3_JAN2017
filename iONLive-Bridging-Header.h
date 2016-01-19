@@ -11,6 +11,8 @@
 #import "AFHTTPSessionManager.h"
 #import "Connectivity.h"
 
+#import "UIImageView+AFNetworking.h"
+
 
 
 #import "avformat.h"
