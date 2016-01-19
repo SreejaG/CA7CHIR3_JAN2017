@@ -24,7 +24,11 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSessionConfigurationFailed
 };
 
-@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate>
+@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol>
+
+{
+    SnapCamSelectionMode _snapCamMode;
+}
 
 // For use in the storyboards.
 @property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
@@ -59,9 +63,12 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 @implementation IPhoneCameraViewController
 
+
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+
+    _snapCamMode = SnapCamSelectionModeiPhone;
 
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
@@ -613,15 +620,16 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     } );
 }
 
-- (IBAction)didTapcCamSelectionButton:(id)sender
+- (IBAction)didTapCamSelectionButton:(id)sender
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
-//    snapCamSelectVC.streamingDelegate = self;
-//    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
-    
+    snapCamSelectVC.streamingDelegate = self;
+    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
+    snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeiPhone;
+    //[self getCameraSelectionMode];
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
@@ -686,7 +694,19 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     
 }
 
-#pragma Mark :- Private Methods
+#pragma mark :- StreamingProtocol delegates
+
+-(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
+{
+    _snapCamMode = selectionMode;
+}
+
+-(SnapCamSelectionMode)getCameraSelectionMode
+{
+    return _snapCamMode;
+}
+
+#pragma mark :- Private Methods
 
 - (void)subjectAreaDidChange:(NSNotification *)notification
 {

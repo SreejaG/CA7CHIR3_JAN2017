@@ -110,7 +110,7 @@
                                         </constraints>
                                         <state key="normal" image="iphone"/>
                                         <connections>
-                                            <action selector="didTapcCamSelectionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="oiB-tV-P65"/>
+                                            <action selector="didTapCamSelectionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="Alw-Xa-R1x"/>
                                         </connections>
                                     </button>
                                 </subviews>

@@ -27,10 +27,11 @@ let apiDeveloperFailureMessage = "developerMsg"
     case CatchGif
     case Timelapse
     case iPhone
-    case DefaultMode
+    case TestAPI
+    case SnapCam
     
     init() {
-        self = .DefaultMode
+        self = .Photos
     }
 
 //    init(rawValue : String)

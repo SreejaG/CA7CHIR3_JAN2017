@@ -192,7 +192,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)setUpDefaultValues
 {
-    _snapCamMode = SnapCamSelectionModeDefaultMode;
+    _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
 }
@@ -1485,7 +1485,8 @@ static NSMutableDictionary * gHistory;
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
-    
+    snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeSnapCam;
+
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:snapCamSelectVC];
     nav.navigationBarHidden = true;
     [self presentViewController:nav animated:YES completion:nil];
@@ -1690,7 +1691,7 @@ static NSMutableDictionary * gHistory;
     }];
 }
 
--(BOOL)getCameraSelectionMode
+-(SnapCamSelectionMode)getCameraSelectionMode
 {
     return _snapCamMode;
 }

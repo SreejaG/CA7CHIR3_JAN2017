@@ -13,8 +13,8 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     static let identifier = "SnapCamSelectViewController"
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
     var streamingDelegate:StreamingProtocol?
-    var snapCamMode : SnapCamSelectionMode = .DefaultMode
-    var restoreSnapCamMode:SnapCamSelectionMode = .DefaultMode
+    var snapCamMode : SnapCamSelectionMode = .Photos
+    var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
 
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
    
@@ -25,6 +25,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         snapCamSettingsTableView.separatorStyle = .None
         snapCamButton.clipsToBounds = true
         snapCamButton.layer.cornerRadius = 5
+        updateDatabaseForSnapCamOrIPhone()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -35,6 +36,17 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
 
     }
     
+    func updateDatabaseForSnapCamOrIPhone()
+    {
+        if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
+        {
+            dataSource[5] = "Switch to iPhone"
+        }
+        else
+        {
+            dataSource[5] = "Switch to SnapCam"
+        }
+    }
     // Blur for ios 8
     
     //    override func viewWillAppear(animated: Bool) {
@@ -52,8 +64,6 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-    
     
     //PRAGMA MARK:- TableView datasource, delegates
     
@@ -92,33 +102,66 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         switch indexPath.row
         {
         case 5:
-            loadCameraViewController()
+            toggleSnapCamIPhoneSelection()
             break
             
         case 6:
             // TestAPI
-            let storyBoard = UIStoryboard(name:"iONCamPictureAPITest" , bundle: nil)
-            let testAPIListVC = storyBoard.instantiateViewControllerWithIdentifier(iONLiveCamAPIListViewController.identifier)
-            self.navigationController?.pushViewController(testAPIListVC, animated: true)
+            loadAPITestView()
             break
             
         default :
             break;
         }
-//        if isStreamStarted()
+    }
+    
+    func toggleSnapCamIPhoneSelection()
+    {
+        if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
+        {
+            dataSource[5] = "Switch to iPhone"
+            toggleSnapCamIPhoneMode = SnapCamSelectionMode.iPhone
+            loadCameraViewController()
+        }
+        else
+        {
+            dataSource[5] = "Switch to SnapCam"
+            toggleSnapCamIPhoneMode = SnapCamSelectionMode.SnapCam
+            loadLiveStreamView()
+        }
+    }
+    
+//    func loadSnapCamOrIPhoneView()
+//    {
+//        if toggleSnapCamIPhoneMode == SnapCamSelectionMode.iPhone
 //        {
-////            restoreSnapCamMode.rawValue = indexPath.row
-//            saveSelectedTypeTemporarily(indexPath.row)
-//            showAlertViewToStopStream()
+//            loadCameraViewController()
 //        }
 //        else
 //        {
-//            updateSnapCamSelection(indexPath.row)
-////            print("selected index = \(indexPath.row)")
-//            changeSnapCamModeForCell(selectedCell)
+//            loadLiveStreamView()
 //        }
-    }
+//
+//    }
     
+    func loadLiveStreamView()
+    {
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+        
+        clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
+        let navigationController:UINavigationController = UINavigationController(rootViewController: vc)
+        navigationController.navigationBarHidden = true
+        self.presentViewController(navigationController, animated: true) { () -> Void in
+        }
+    }
+
+    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    {
+        defaults.removeObjectForKey(streamingToken)
+        defaults.removeObjectForKey(startedStreaming)
+        defaults.removeObjectForKey(initializingStream)
+    }
+
     func loadCameraViewController()
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -130,50 +173,55 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         }
         
     }
+    
+    func loadAPITestView()
+    {
+        let storyBoard = UIStoryboard(name:"iONCamPictureAPITest" , bundle: nil)
+        let testAPIListVC = storyBoard.instantiateViewControllerWithIdentifier(iONLiveCamAPIListViewController.identifier)
+        self.navigationController?.pushViewController(testAPIListVC, animated: true)
+    }
 
     func updateSnapCamModeSelection(row:Int , ForCell selectedCell:UITableViewCell)
     {
         if isStreamStarted()
         {
-            //            restoreSnapCamMode.rawValue = indexPath.row
-            saveSelectedTypeTemporarily(row)
+//            saveSelectedTypeTemporarily(row)
             showAlertViewToStopStream()
         }
         else
         {
             updateSnapCamSelection(row)
-            //            print("selected index = \(indexPath.row)")
             changeSnapCamModeForCell(selectedCell)
         }
     }
     
-    func saveSelectedTypeTemporarily(rowVal:Int)
-    {
-        switch(rowVal)
-        {
-        case 0 :
-            restoreSnapCamMode = .DefaultMode
-            break
-        case 1:
-            restoreSnapCamMode = .Photos
-            break
-        case 2:
-            restoreSnapCamMode = .Video
-            break
-        case 3:
-            restoreSnapCamMode = .CatchGif
-            break
-        case 4:
-            restoreSnapCamMode = .Timelapse
-            break
-        case 5:
-            restoreSnapCamMode = .iPhone
-            break
-        default :
-            break
-        }
-    }
-    
+//    func saveSelectedTypeTemporarily(rowVal:Int)
+//    {
+//        switch(rowVal)
+//        {
+//        case 0 :
+//            restoreSnapCamMode = .LiveStream
+//            break
+//        case 1:
+//            restoreSnapCamMode = .Photos
+//            break
+//        case 2:
+//            restoreSnapCamMode = .Video
+//            break
+//        case 3:
+//            restoreSnapCamMode = .CatchGif
+//            break
+//        case 4:
+//            restoreSnapCamMode = .Timelapse
+//            break
+//        case 5:
+//            restoreSnapCamMode = .iPhone
+//            break
+//        default :
+//            break
+//        }
+//    }
+//    
     func updateSnapCamSelection(rowVal:Int)
     {
         switch(rowVal)
@@ -196,7 +244,10 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         case 5:
             changeSelectedSnapCamMode(.iPhone)
             break
-        default :
+        case 6:
+            changeSelectedSnapCamMode(.TestAPI)
+            break
+       default :
             break
         }
     }
@@ -205,7 +256,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     {
         if snapCamMode == selectedMode
         {
-            snapCamMode = .DefaultMode
+//            snapCamMode = .DefaultMode
         }
         else
         {
@@ -241,7 +292,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             
             let stream = UploadStream()
             stream.stopStreamingClicked()
-            snapCamMode = restoreSnapCamMode
+//            snapCamMode = restoreSnapCamMode
             self.snapCamSettingsTableView.reloadData()
             streamingDelegate?.cameraSelectionMode(snapCamMode)
 
@@ -261,7 +312,15 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     
     func customizeCellBasedOnSnapCamSelectionMode(selectedCell:UITableViewCell , row:Int)
     {
-        if snapCamMode.rawValue == row
+        if (snapCamMode == SnapCamSelectionMode.SnapCam || snapCamMode ==  SnapCamSelectionMode.iPhone) && row == 5
+        {
+            customizeSnapCamIPhoneCell(selectedCell)
+        }
+        else if snapCamMode == SnapCamSelectionMode.TestAPI && row == 6 // this is only for testing ,we can remove this once we can done.
+        {
+            selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
+        }
+        else if snapCamMode.rawValue == row
         {
             selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
 //            selectedCell.setSelected(true, animated: true)
@@ -271,6 +330,11 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             selectedCell.contentView.backgroundColor = UIColor.clearColor()
 //            selectedCell.setSelected(false, animated: true)
         }
+    }
+    
+    func customizeSnapCamIPhoneCell(selectedCell : UITableViewCell)
+    {
+        selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
     }
     
     func isStreamStarted()->Bool
