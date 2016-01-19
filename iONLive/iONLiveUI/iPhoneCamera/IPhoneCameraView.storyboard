@@ -34,6 +34,9 @@
                                                     <constraint firstAttribute="width" constant="35" id="gdH-Vy-EFU"/>
                                                 </constraints>
                                                 <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
+                                                <connections>
+                                                    <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="0SX-U4-mjQ"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wDr-Kg-Y2A" userLabel="SecondButton">
                                                 <rect key="frame" x="28" y="0.0" width="35" height="35"/>
@@ -42,6 +45,9 @@
                                                     <constraint firstAttribute="width" constant="35" id="80k-nH-VZm"/>
                                                 </constraints>
                                                 <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
+                                                <connections>
+                                                    <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="DvO-Pm-Tuq"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZ6-5L-198" userLabel="FirstButton">
                                                 <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
@@ -50,6 +56,9 @@
                                                     <constraint firstAttribute="width" constant="35" id="tGg-BG-f9Z"/>
                                                 </constraints>
                                                 <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
+                                                <connections>
+                                                    <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="86K-Kb-Y6u"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -75,7 +84,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lwm-xS-hJh" userLabel="SwapCameraButton">
-                                        <rect key="frame" x="55" y="24" width="30" height="23"/>
+                                        <rect key="frame" x="68" y="35" width="30" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="0ol-k4-dku"/>
                                             <constraint firstAttribute="height" constant="23" id="3eK-zI-7l5"/>
@@ -86,35 +95,38 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMd-g2-gjt" userLabel="FlashButton">
-                                        <rect key="frame" x="105" y="27" width="21" height="26"/>
+                                        <rect key="frame" x="123" y="34" width="21" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="21" id="8te-WS-FV8"/>
                                             <constraint firstAttribute="height" constant="26" id="eZy-XG-XLX"/>
                                         </constraints>
                                         <state key="normal" image="flash_off"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryW-Iz-I7M" userLabel="Camera Selection Button">
-                                        <rect key="frame" x="18" y="23" width="17" height="26"/>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryW-Iz-I7M" userLabel="Camera Selection Button">
+                                        <rect key="frame" x="18" y="34" width="30" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="26" id="2UP-Eb-TX8"/>
-                                            <constraint firstAttribute="width" constant="17" id="AMm-I0-qZa"/>
+                                            <constraint firstAttribute="width" constant="30" id="AMm-I0-qZa"/>
                                         </constraints>
                                         <state key="normal" image="iphone"/>
+                                        <connections>
+                                            <action selector="didTapcCamSelectionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="oiB-tV-P65"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="QMd-g2-gjt" firstAttribute="leading" secondItem="lwm-xS-hJh" secondAttribute="trailing" constant="20" id="3Fp-Qe-jWp"/>
+                                    <constraint firstAttribute="bottom" secondItem="lwm-xS-hJh" secondAttribute="bottom" constant="6" id="1vg-tO-rz6"/>
+                                    <constraint firstItem="QMd-g2-gjt" firstAttribute="leading" secondItem="lwm-xS-hJh" secondAttribute="trailing" constant="25" id="3Fp-Qe-jWp"/>
                                     <constraint firstItem="hxn-Bj-Hfb" firstAttribute="top" secondItem="ucJ-gA-nDs" secondAttribute="top" constant="25" id="Ae3-jc-qwS"/>
                                     <constraint firstItem="hxn-Bj-Hfb" firstAttribute="leading" secondItem="kQM-1r-I7s" secondAttribute="trailing" id="JS5-YT-foE"/>
+                                    <constraint firstAttribute="bottom" secondItem="ryW-Iz-I7M" secondAttribute="bottom" constant="4" id="SsI-Z0-Z6n"/>
                                     <constraint firstAttribute="bottom" secondItem="kQM-1r-I7s" secondAttribute="bottom" constant="5" id="W2F-j8-zUX"/>
                                     <constraint firstAttribute="height" constant="64" id="ZBy-LM-VVK"/>
-                                    <constraint firstItem="QMd-g2-gjt" firstAttribute="top" secondItem="ucJ-gA-nDs" secondAttribute="top" constant="27" id="b2H-NT-cFD"/>
                                     <constraint firstItem="lwm-xS-hJh" firstAttribute="leading" secondItem="ryW-Iz-I7M" secondAttribute="trailing" constant="20" id="iDo-Kg-LUe"/>
+                                    <constraint firstAttribute="bottom" secondItem="QMd-g2-gjt" secondAttribute="bottom" constant="4" id="iDy-Cx-vHa"/>
                                     <constraint firstAttribute="trailing" secondItem="hxn-Bj-Hfb" secondAttribute="trailing" constant="20" id="moR-6V-tgi"/>
-                                    <constraint firstItem="ryW-Iz-I7M" firstAttribute="top" secondItem="ucJ-gA-nDs" secondAttribute="top" constant="23" id="nXe-zR-sG5"/>
                                     <constraint firstItem="ryW-Iz-I7M" firstAttribute="leading" secondItem="ucJ-gA-nDs" secondAttribute="leading" constant="18" id="s9Q-m5-P81"/>
-                                    <constraint firstItem="lwm-xS-hJh" firstAttribute="top" secondItem="ucJ-gA-nDs" secondAttribute="top" constant="24" id="zbl-XQ-LXl"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JqH-kr-rKo" userLabel="BottomView">
@@ -134,6 +146,9 @@
                                             <constraint firstAttribute="height" constant="50" id="gF6-pV-qmX"/>
                                         </constraints>
                                         <state key="normal" image="Camera_Thumb"/>
+                                        <connections>
+                                            <action selector="didTapPhotoViewer:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="uKL-Qf-rss"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzX-a8-zLm" userLabel="StreamThumbButton">
                                         <rect key="frame" x="504" y="32" width="56" height="56"/>
@@ -142,6 +157,9 @@
                                             <constraint firstAttribute="width" constant="56" id="s9o-Ai-0VI"/>
                                         </constraints>
                                         <state key="normal" image="Stream_Thumb"/>
+                                        <connections>
+                                            <action selector="didTapStreamThumb:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="vVn-N9-Ogm"/>
+                                        </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo2" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="StreamThumbImage">
                                         <rect key="frame" x="507" y="40" width="45" height="45"/>
@@ -192,17 +210,19 @@
                             <constraint firstItem="ucJ-gA-nDs" firstAttribute="leading" secondItem="SWS-Ne-i52" secondAttribute="leading" id="ufH-M3-3R3"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="qdg-YY-5oX"/>
                     <connections>
                         <outlet property="cameraButton" destination="lwm-xS-hJh" id="VOn-tB-XGY"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>
                         <outlet property="takePictureButton" destination="ZpM-Fq-WiG" id="HYK-Rc-zOx"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>
+                        <outlet property="topView" destination="ucJ-gA-nDs" id="wVm-dG-t3h"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eNM-F5-Mjs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="248" y="332"/>
+            <point key="canvasLocation" x="-2763" y="291"/>
         </scene>
     </scenes>
     <resources>

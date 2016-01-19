@@ -10,6 +10,7 @@
 
 #import "IPhoneCameraViewController.h"
 #import "AAPLPreviewView.h"
+#import "iONLive-Swift.h"
 
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
@@ -45,6 +46,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @property (nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 @property (nonatomic) AVCaptureStillImageOutput *stillImageOutput;
 
+@property (strong, nonatomic) IBOutlet UIView *topView;
 // Utilities.
 @property (nonatomic) AVCamSetupResult setupResult;
 @property (nonatomic, getter=isSessionRunning) BOOL sessionRunning;
@@ -58,7 +60,11 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @implementation IPhoneCameraViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
+
+    self.navigationController.navigationBarHidden = true;
+    [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     // Create the AVCaptureSession.
     self.session = [[AVCaptureSession alloc] init];
     
@@ -605,6 +611,63 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
             
         } );
     } );
+}
+
+- (IBAction)didTapcCamSelectionButton:(id)sender
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
+    SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
+    snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+//    snapCamSelectVC.streamingDelegate = self;
+//    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
+    
+    [self presentViewController:snapCamSelectVC animated:YES completion:nil];
+    
+}
+
+- (IBAction)didTapSharingListIcon:(id)sender
+{
+    UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
+    UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
+    
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:mysharedChannelVC];
+    navController.navigationBarHidden = true;
+    
+    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self.navigationController presentViewController:navController animated:true completion:^{
+    }];
+//    [self presentViewController:mysharedChannelVC animated:true completion:^{
+//        
+//    }];
+}
+
+- (IBAction)didTapPhotoViewer:(id)sender {
+        
+    [self loadPhotoViewer];
+}
+
+- (IBAction)didTapStreamThumb:(id)sender {
+
+    [self loadStreamsGalleryView];
+}
+
+-(void) loadPhotoViewer
+{
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
+    UIViewController *photoViewerViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
+    navController.navigationBarHidden = true;
+    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:navController animated:true completion:^{
+    }];
+}
+
+-(void) loadStreamsGalleryView
+{
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
+    StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
+    [self.navigationController pushViewController:streamsGalleryViewController animated:false];
 }
 
 -(void)showFlashImage:(BOOL)show
