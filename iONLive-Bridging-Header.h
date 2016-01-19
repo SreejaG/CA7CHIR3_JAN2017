@@ -20,3 +20,4 @@
 #import "MovieViewController.h"
 
 #import "rtsp_relay.h"
+#import "IPhoneCameraViewController.h"
