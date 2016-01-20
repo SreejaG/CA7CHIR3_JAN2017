@@ -162,6 +162,10 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7Bc-OC-IMC">
                                 <rect key="frame" x="0.0" y="275" width="600" height="325"/>
                             </imageView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="20M-XK-dGU">
+                                <rect key="frame" x="282" y="419" width="37" height="37"/>
+                                <color key="color" red="0.098039215690000001" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -169,6 +173,8 @@
                             <constraint firstItem="7Bc-OC-IMC" firstAttribute="top" secondItem="2tb-Jh-pqA" secondAttribute="bottom" constant="55" id="3c0-fP-g8o"/>
                             <constraint firstAttribute="trailing" secondItem="7Bc-OC-IMC" secondAttribute="trailing" id="4iQ-wT-CeU"/>
                             <constraint firstItem="nZ6-T0-IaH" firstAttribute="centerX" secondItem="NIT-Bl-1EN" secondAttribute="centerX" id="ClC-kp-k6G"/>
+                            <constraint firstItem="20M-XK-dGU" firstAttribute="centerX" secondItem="7Bc-OC-IMC" secondAttribute="centerX" id="Upl-8B-s5o"/>
+                            <constraint firstItem="20M-XK-dGU" firstAttribute="centerY" secondItem="7Bc-OC-IMC" secondAttribute="centerY" id="ZB8-Ik-CPL"/>
                             <constraint firstItem="2tb-Jh-pqA" firstAttribute="centerX" secondItem="NIT-Bl-1EN" secondAttribute="centerX" id="aql-rE-YQ8"/>
                             <constraint firstItem="7Bc-OC-IMC" firstAttribute="leading" secondItem="NIT-Bl-1EN" secondAttribute="leading" id="f79-2Y-9CQ"/>
                             <constraint firstItem="nZ6-T0-IaH" firstAttribute="top" secondItem="VzA-XJ-wFR" secondAttribute="bottom" constant="100" id="gH1-ac-JTW"/>
@@ -177,6 +183,7 @@
                     </view>
                     <connections>
                         <outlet property="cameraCapturedImageView" destination="7Bc-OC-IMC" id="rx6-lo-eOV"/>
+                        <outlet property="imageLoadingIndicator" destination="20M-XK-dGU" id="AzF-uR-Pmm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ePl-Fm-XlH" userLabel="First Responder" sceneMemberID="firstResponder"/>
