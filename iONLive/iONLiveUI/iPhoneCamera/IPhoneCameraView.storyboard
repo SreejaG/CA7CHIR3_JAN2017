@@ -94,13 +94,16 @@
                                             <action selector="didTapChangeCamera:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="aMo-Zh-UNW"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMd-g2-gjt" userLabel="FlashButton">
-                                        <rect key="frame" x="123" y="34" width="21" height="26"/>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMd-g2-gjt" userLabel="FlashButton">
+                                        <rect key="frame" x="123" y="34" width="35" height="26"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="21" id="8te-WS-FV8"/>
+                                            <constraint firstAttribute="width" constant="35" id="8te-WS-FV8"/>
                                             <constraint firstAttribute="height" constant="26" id="eZy-XG-XLX"/>
                                         </constraints>
                                         <state key="normal" image="flash_off"/>
+                                        <connections>
+                                            <action selector="didTapFlashImage:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="exv-q6-OHg"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryW-Iz-I7M" userLabel="Camera Selection Button">
                                         <rect key="frame" x="18" y="34" width="30" height="26"/>

@@ -58,21 +58,11 @@
                                                     <constraint firstItem="ceK-df-dVQ" firstAttribute="centerX" secondItem="TVT-rz-qhg" secondAttribute="centerX" id="ttV-ds-bkP"/>
                                                 </constraints>
                                             </view>
-                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Switched modes" translatesAutoresizingMaskIntoConstraints="NO" id="vdf-bb-ppw">
-                                                <rect key="frame" x="146" y="146" width="308" height="309"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="309" id="H6y-jm-32K"/>
-                                                    <constraint firstAttribute="width" constant="308" id="nnX-oO-Nt9"/>
-                                                </constraints>
-                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstItem="vdf-bb-ppw" firstAttribute="centerY" secondItem="qy6-TO-GVM" secondAttribute="centerY" id="7uW-b6-pbl"/>
                                             <constraint firstItem="TVT-rz-qhg" firstAttribute="centerX" secondItem="qy6-TO-GVM" secondAttribute="centerX" id="H4u-jC-x8M"/>
                                             <constraint firstItem="TVT-rz-qhg" firstAttribute="centerY" secondItem="qy6-TO-GVM" secondAttribute="centerY" id="J5G-RM-wGA"/>
-                                            <constraint firstItem="vdf-bb-ppw" firstAttribute="centerX" secondItem="qy6-TO-GVM" secondAttribute="centerX" id="jYh-HQ-i7e"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyZ-Rb-9UE" userLabel="TitleView">
@@ -1098,7 +1088,6 @@
     </scenes>
     <resources>
         <image name="Checkmark" width="16" height="13"/>
-        <image name="Switched modes" width="306" height="306"/>
         <image name="clapping_blur" width="107" height="190"/>
         <image name="settings" width="27" height="26"/>
         <image name="snapCamMode" width="25" height="25"/>

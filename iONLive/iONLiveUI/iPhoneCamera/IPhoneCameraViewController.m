@@ -63,7 +63,8 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     [super viewDidLoad];
 
     _snapCamMode = SnapCamSelectionModeiPhone;
-
+    _currentFlashMode = AVCaptureFlashModeOff;
+    
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     // Create the AVCaptureSession.
@@ -652,6 +653,21 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 - (IBAction)didTapStreamThumb:(id)sender {
 
     [self loadStreamsGalleryView];
+}
+
+- (IBAction)didTapFlashImage:(id)sender {
+    
+    if (_currentFlashMode == AVCaptureFlashModeOn) {
+        
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
+        _currentFlashMode = AVCaptureFlashModeOff;
+    }
+    else{
+        
+        [self.flashButton setImage:[UIImage imageNamed:@"temp_flash_ON"] forState:UIControlStateNormal]; //Need to update the icon once available.
+        _currentFlashMode = AVCaptureFlashModeOn;
+    }
+    
 }
 
 -(void) loadPhotoViewer
