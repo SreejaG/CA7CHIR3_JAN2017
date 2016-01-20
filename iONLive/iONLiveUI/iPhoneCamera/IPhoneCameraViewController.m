@@ -24,20 +24,18 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSessionConfigurationFailed
 };
 
-@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate>
+@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol>
+
+{
+    SnapCamSelectionMode _snapCamMode;
+}
 
 // For use in the storyboards.
 @property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
-//@property (nonatomic, weak) IBOutlet UILabel *cameraUnavailableLabel;
-//@property (nonatomic, weak) IBOutlet UIButton *resumeButton;
-//@property (nonatomic, weak) IBOutlet UIButton *recordButton;
 @property (nonatomic, weak) IBOutlet UIButton *cameraButton;
 @property (nonatomic, weak) IBOutlet UIButton *takePictureButton;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
-//@property (weak, nonatomic) IBOutlet UIButton *autoFlashButton;
-//@property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
-//@property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
 
 // Session management.
 @property (nonatomic) dispatch_queue_t sessionQueue;
@@ -59,10 +57,14 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 @implementation IPhoneCameraViewController
 
+
 - (void)viewDidLoad {
     
     [super viewDidLoad];
 
+    _snapCamMode = SnapCamSelectionModeiPhone;
+    _currentFlashMode = AVCaptureFlashModeOff;
+    
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     // Create the AVCaptureSession.
@@ -613,15 +615,16 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     } );
 }
 
-- (IBAction)didTapcCamSelectionButton:(id)sender
+- (IBAction)didTapCamSelectionButton:(id)sender
 {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
-//    snapCamSelectVC.streamingDelegate = self;
-//    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
-    
+    snapCamSelectVC.streamingDelegate = self;
+    snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
+    snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeiPhone;
+    //[self getCameraSelectionMode];
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
     
 }
@@ -650,6 +653,21 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 - (IBAction)didTapStreamThumb:(id)sender {
 
     [self loadStreamsGalleryView];
+}
+
+- (IBAction)didTapFlashImage:(id)sender {
+    
+    if (_currentFlashMode == AVCaptureFlashModeOn) {
+        
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
+        _currentFlashMode = AVCaptureFlashModeOff;
+    }
+    else{
+        
+        [self.flashButton setImage:[UIImage imageNamed:@"temp_flash_ON"] forState:UIControlStateNormal]; //Need to update the icon once available.
+        _currentFlashMode = AVCaptureFlashModeOn;
+    }
+    
 }
 
 -(void) loadPhotoViewer
@@ -686,7 +704,19 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     
 }
 
-#pragma Mark :- Private Methods
+#pragma mark :- StreamingProtocol delegates
+
+-(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
+{
+    _snapCamMode = selectionMode;
+}
+
+-(SnapCamSelectionMode)getCameraSelectionMode
+{
+    return _snapCamMode;
+}
+
+#pragma mark :- Private Methods
 
 - (void)subjectAreaDidChange:(NSNotification *)notification
 {
