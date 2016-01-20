@@ -24,6 +24,57 @@
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                         <color key="backgroundColor" red="0.41568627450980389" green="0.36862745098039218" blue="0.31764705882352939" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qy6-TO-GVM" userLabel="BlurView">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                        <subviews>
+                                            <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="TVT-rz-qhg" customClass="UIImageView">
+                                                <rect key="frame" x="146" y="146" width="308" height="309"/>
+                                                <subviews>
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9sY-Ol-DWM">
+                                                        <rect key="frame" x="130" y="125" width="49" height="20"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="20" id="9wK-zg-kCy"/>
+                                                            <constraint firstAttribute="width" constant="49" id="Ey1-ig-DOC"/>
+                                                        </constraints>
+                                                    </imageView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Searching ..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ceK-df-dVQ">
+                                                        <rect key="frame" x="54" y="164" width="200" height="21"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="21" id="KKf-Fi-Hvp"/>
+                                                            <constraint firstAttribute="width" constant="200" id="YoD-Hb-fgu"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstItem="9sY-Ol-DWM" firstAttribute="centerX" secondItem="TVT-rz-qhg" secondAttribute="centerX" id="IGZ-h3-aGM"/>
+                                                    <constraint firstItem="ceK-df-dVQ" firstAttribute="centerY" secondItem="TVT-rz-qhg" secondAttribute="centerY" constant="20" id="KFi-pb-8v1"/>
+                                                    <constraint firstAttribute="width" constant="308" id="RQI-oL-gtt"/>
+                                                    <constraint firstItem="9sY-Ol-DWM" firstAttribute="centerY" secondItem="TVT-rz-qhg" secondAttribute="centerY" constant="-20" id="ZZ2-Xk-bCJ"/>
+                                                    <constraint firstAttribute="height" constant="309" id="oWe-eq-mTG"/>
+                                                    <constraint firstItem="ceK-df-dVQ" firstAttribute="centerX" secondItem="TVT-rz-qhg" secondAttribute="centerX" id="ttV-ds-bkP"/>
+                                                </constraints>
+                                            </view>
+                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Switched modes" translatesAutoresizingMaskIntoConstraints="NO" id="vdf-bb-ppw">
+                                                <rect key="frame" x="146" y="146" width="308" height="309"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="309" id="H6y-jm-32K"/>
+                                                    <constraint firstAttribute="width" constant="308" id="nnX-oO-Nt9"/>
+                                                </constraints>
+                                            </imageView>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="vdf-bb-ppw" firstAttribute="centerY" secondItem="qy6-TO-GVM" secondAttribute="centerY" id="7uW-b6-pbl"/>
+                                            <constraint firstItem="TVT-rz-qhg" firstAttribute="centerX" secondItem="qy6-TO-GVM" secondAttribute="centerX" id="H4u-jC-x8M"/>
+                                            <constraint firstItem="TVT-rz-qhg" firstAttribute="centerY" secondItem="qy6-TO-GVM" secondAttribute="centerY" id="J5G-RM-wGA"/>
+                                            <constraint firstItem="vdf-bb-ppw" firstAttribute="centerX" secondItem="qy6-TO-GVM" secondAttribute="centerX" id="jYh-HQ-i7e"/>
+                                        </constraints>
+                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyZ-Rb-9UE" userLabel="TitleView">
                                         <rect key="frame" x="0.0" y="2" width="600" height="70"/>
                                         <subviews>
@@ -114,17 +165,21 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="qy6-TO-GVM" secondAttribute="bottom" id="0Kv-bf-dHS"/>
+                                    <constraint firstAttribute="trailing" secondItem="qy6-TO-GVM" secondAttribute="trailing" id="5vD-w9-HuK"/>
                                     <constraint firstItem="xyZ-Rb-9UE" firstAttribute="top" secondItem="mcs-Cw-jIK" secondAttribute="top" constant="2" id="7eI-EK-Fz1"/>
                                     <constraint firstAttribute="trailing" secondItem="HDq-qv-DDE" secondAttribute="trailing" id="7tR-yA-2NG"/>
                                     <constraint firstItem="xyZ-Rb-9UE" firstAttribute="leading" secondItem="mcs-Cw-jIK" secondAttribute="leading" id="FMk-DA-JUE"/>
                                     <constraint firstItem="rXz-OP-hd2" firstAttribute="top" secondItem="mcs-Cw-jIK" secondAttribute="top" id="HEV-xF-ajf"/>
                                     <constraint firstItem="HDq-qv-DDE" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="bottom" id="LUo-xo-Z4K"/>
                                     <constraint firstAttribute="bottom" secondItem="rXz-OP-hd2" secondAttribute="bottom" id="RWH-XC-1IN"/>
+                                    <constraint firstItem="qy6-TO-GVM" firstAttribute="leading" secondItem="mcs-Cw-jIK" secondAttribute="leading" id="c2c-hh-UHz"/>
                                     <constraint firstAttribute="bottom" secondItem="HDq-qv-DDE" secondAttribute="bottom" id="c92-sD-rkq"/>
                                     <constraint firstItem="HDq-qv-DDE" firstAttribute="leading" secondItem="mcs-Cw-jIK" secondAttribute="leading" id="cpb-2d-TzA"/>
                                     <constraint firstAttribute="trailing" secondItem="rXz-OP-hd2" secondAttribute="trailing" id="eNo-xC-mCg"/>
                                     <constraint firstItem="rXz-OP-hd2" firstAttribute="top" secondItem="mcs-Cw-jIK" secondAttribute="top" id="fGp-51-9ys"/>
                                     <constraint firstItem="rXz-OP-hd2" firstAttribute="leading" secondItem="mcs-Cw-jIK" secondAttribute="leading" id="hOA-yv-U0b"/>
+                                    <constraint firstItem="qy6-TO-GVM" firstAttribute="top" secondItem="mcs-Cw-jIK" secondAttribute="top" id="i0R-sY-ytP"/>
                                     <constraint firstAttribute="trailing" secondItem="xyZ-Rb-9UE" secondAttribute="trailing" id="nnJ-xJ-hOu"/>
                                     <constraint firstAttribute="bottom" secondItem="rXz-OP-hd2" secondAttribute="bottom" id="t9e-ab-vzC"/>
                                     <constraint firstItem="rXz-OP-hd2" firstAttribute="leading" secondItem="mcs-Cw-jIK" secondAttribute="leading" id="wQ2-tk-PFX"/>
@@ -142,6 +197,10 @@
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="activityImageView" destination="9sY-Ol-DWM" id="LLO-K3-86Y"/>
+                        <outlet property="activityLabel" destination="ceK-df-dVQ" id="ODM-ds-7sy"/>
+                        <outlet property="blurView" destination="qy6-TO-GVM" id="REL-L0-m0D"/>
+                        <outlet property="iPhoneSnapCamImageView" destination="TVT-rz-qhg" id="24I-eZ-9hL"/>
                         <outlet property="snapCamButton" destination="cb8-gw-XJs" id="nrQ-PG-5bq"/>
                         <outlet property="snapCamSettingsTableView" destination="HDq-qv-DDE" id="jOR-Sr-Dkc"/>
                     </connections>
@@ -1039,6 +1098,7 @@
     </scenes>
     <resources>
         <image name="Checkmark" width="16" height="13"/>
+        <image name="Switched modes" width="306" height="306"/>
         <image name="clapping_blur" width="107" height="190"/>
         <image name="settings" width="27" height="26"/>
         <image name="snapCamMode" width="25" height="25"/>

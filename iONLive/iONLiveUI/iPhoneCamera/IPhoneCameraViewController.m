@@ -32,16 +32,10 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 // For use in the storyboards.
 @property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
-//@property (nonatomic, weak) IBOutlet UILabel *cameraUnavailableLabel;
-//@property (nonatomic, weak) IBOutlet UIButton *resumeButton;
-//@property (nonatomic, weak) IBOutlet UIButton *recordButton;
 @property (nonatomic, weak) IBOutlet UIButton *cameraButton;
 @property (nonatomic, weak) IBOutlet UIButton *takePictureButton;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
-//@property (weak, nonatomic) IBOutlet UIButton *autoFlashButton;
-//@property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
-//@property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
 
 // Session management.
 @property (nonatomic) dispatch_queue_t sessionQueue;
