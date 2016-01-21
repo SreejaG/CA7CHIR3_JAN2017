@@ -17,11 +17,13 @@ class iONCamPictureAPIViewController: UIViewController {
     @IBOutlet weak var cameraCapturedImageView: UIImageView!
      var loadingOverlay: UIView?
     
+    @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     let requestManager = RequestManager.sharedInstance
     let iOnLiveCameraPictureCaptureManager = iOnLiveCameraPictureCapture.sharedInstance
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.imageLoadingIndicator.hidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,14 +55,25 @@ class iONCamPictureAPIViewController: UIViewController {
     
     func iONLiveCamGetPictureSuccessHandler(response:AnyObject?)
     {
+        print("entered download pic")
         self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             if let burstId = json["burstID"]
             {
                 let id:String = burstId as! String
-                cameraCapturedImageView.setImageWithURL( NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!)
-                
+                cameraCapturedImageView.image = nil
+                //cameraCapturedImageView.setImageWithURL( NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!)
+                imageLoadingIndicator.hidden = false
+                cameraCapturedImageView.setImageWithURLRequest(NSURLRequest(URL: NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!), placeholderImage: nil, success: { (request, response, image) -> Void in
+                    self.cameraCapturedImageView.image = image
+                    print("success")
+                    self.imageLoadingIndicator.hidden = true
+                    }, failure: { (request, resonse, error) -> Void in
+                        print(error)
+                        ErrorManager.sharedInstance.alert("Image Download Error", message:"\(error.localizedDescription)")
+                        self.imageLoadingIndicator.hidden = true
+                })
             }
 
             print("success = \(json["burstID"]))")

@@ -73,7 +73,7 @@ class UrlManager {
     
     func getiONLiveCamImageDownloadUrl(burstId:String) ->String
     {
-        let getPictureUrl = iONLiveCamUrl+"/\(burstId).jpg"
+        let getPictureUrl = iONLiveCamUrl+"/picture/\(burstId).jpg"
         return getPictureUrl
     }
 }
