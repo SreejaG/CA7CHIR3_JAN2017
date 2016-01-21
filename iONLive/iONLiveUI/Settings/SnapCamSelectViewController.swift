@@ -222,8 +222,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     //PRAGMA MARK:- LoadViews for each table Actions
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
-        
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! MovieViewController
         clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
         let navigationController:UINavigationController = UINavigationController(rootViewController: vc)
         navigationController.navigationBarHidden = true
@@ -235,7 +234,6 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        
         let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
         navController.navigationBarHidden = true
         self.presentViewController(navController, animated: false) { () -> Void in
@@ -259,6 +257,10 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         else
         {
             snapCamMode = selectedMode
+            if snapCamMode != SnapCamSelectionMode.SnapCam && snapCamMode != SnapCamSelectionMode.iPhone
+            {
+                NSUserDefaults.standardUserDefaults().setObject(selectedMode.rawValue, forKey: "shutterActionMode");
+            }
         }
     }
     
@@ -290,7 +292,7 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             
             let stream = UploadStream()
             stream.stopStreamingClicked()
-//            snapCamMode = restoreSnapCamMode
+
             self.snapCamSettingsTableView.reloadData()
             streamingDelegate?.cameraSelectionMode(snapCamMode)
         }
