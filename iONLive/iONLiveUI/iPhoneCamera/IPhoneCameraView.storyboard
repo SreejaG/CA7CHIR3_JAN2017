@@ -179,7 +179,7 @@
                                         </constraints>
                                         <state key="normal" image="Camera_Button_OFF"/>
                                         <connections>
-                                            <action selector="didTapsStillButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="uwP-Zh-Izy"/>
+                                            <action selector="didTapsCameraActionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="nIC-tq-Ujx"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -218,7 +218,7 @@
                         <outlet property="cameraButton" destination="lwm-xS-hJh" id="VOn-tB-XGY"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>
-                        <outlet property="takePictureButton" destination="ZpM-Fq-WiG" id="HYK-Rc-zOx"/>
+                        <outlet property="startCameraActionButton" destination="ZpM-Fq-WiG" id="Xi5-OU-SEm"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>
                         <outlet property="topView" destination="ucJ-gA-nDs" id="wVm-dG-t3h"/>
                     </connections>

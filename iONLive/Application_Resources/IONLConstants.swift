@@ -21,7 +21,7 @@ let apiDeveloperFailureMessage = "developerMsg"
 
 @objc enum SnapCamSelectionMode : Int {
     
-    case LiveStream
+    case LiveStream = 0
     case Photos
     case Video
     case CatchGif
@@ -39,3 +39,5 @@ let apiDeveloperFailureMessage = "developerMsg"
 //        self = SnapCamSelectionMode(rawValue: rawValue)
 //    }
 }
+
+

@@ -48,6 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initialViewController()
     {
         var controller : UIViewController = UIViewController()
+        NSUserDefaults.standardUserDefaults().setObject(1, forKey: "shutterActionMode");
         //Auto login check
         if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
         {
