@@ -15,6 +15,10 @@
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
 		162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFF81C3258D000625C89 /* MyChannelCell.swift */; };
 		162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */; };
+		1633D1E51C5F1CBD00937FAD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1633D1E41C5F1CBD00937FAD /* CoreData.framework */; };
+		1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */; };
+		1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */; };
+		1633D2391C5F21FD00937FAD /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2371C5F21FD00937FAD /* Entity.swift */; };
 		16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */; };
 		1644B3C81C05687B004E3832 /* Connectivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3C71C05687B004E3832 /* Connectivity.m */; };
 		1644B3D01C056934004E3832 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3CF1C056934004E3832 /* RequestManager.swift */; };
@@ -156,6 +160,10 @@
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
 		162ABFF81C3258D000625C89 /* MyChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelCell.swift; sourceTree = "<group>"; };
 		162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListCollectionViewCell.swift; sourceTree = "<group>"; };
+		1633D1E41C5F1CBD00937FAD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		1633D1EE1C5F1DD200937FAD /* GalleryModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GalleryModel.xcdatamodel; sourceTree = "<group>"; };
+		1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		1633D2371C5F21FD00937FAD /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbCollectionViewCell.swift; sourceTree = "<group>"; };
 		1644B3C61C05687B004E3832 /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
 		1644B3C71C05687B004E3832 /* Connectivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connectivity.m; sourceTree = "<group>"; };
@@ -404,6 +412,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1633D1E51C5F1CBD00937FAD /* CoreData.framework in Frameworks */,
 				1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */,
 				16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */,
 				599964E01C05801B00D20FB2 /* libbz2.tbd in Frameworks */,
@@ -465,6 +474,23 @@
 				16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		1633D1E91C5F1DAA00937FAD /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */,
+			);
+			path = DataModel;
+			sourceTree = "<group>";
+		};
+		1633D1F01C5F1E3400937FAD /* DataBase */ = {
+			isa = PBXGroup;
+			children = (
+				1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */,
+				1633D2371C5F21FD00937FAD /* Entity.swift */,
+			);
+			path = DataBase;
 			sourceTree = "<group>";
 		};
 		1644B3D11C05698F004E3832 /* Errors */ = {
@@ -644,6 +670,8 @@
 		167AF02D1BFDC1F6003CDF30 /* iONLive */ = {
 			isa = PBXGroup;
 			children = (
+				1633D1F01C5F1E3400937FAD /* DataBase */,
+				1633D1E91C5F1DAA00937FAD /* DataModel */,
 				599964501C057EBB00D20FB2 /* ThirdParty */,
 				16F6A44D1BFF07120074EA57 /* Application_Resources */,
 				167AF06F1BFDC3AD003CDF30 /* Frameworks */,
@@ -738,6 +766,7 @@
 				599964DD1C05801100D20FB2 /* libz.tbd */,
 				599964DB1C057FFF00D20FB2 /* libiconv.tbd */,
 				16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */,
+				1633D1E41C5F1CBD00937FAD /* CoreData.framework */,
 				16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */,
 				1677FEB81C48BFF900261F59 /* CoreLocation.framework */,
 				16DD05371C1AA85A00769EDA /* CFNetwork.framework */,
@@ -1235,12 +1264,15 @@
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
+				1633D2391C5F21FD00937FAD /* Entity.swift in Sources */,
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
+				1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */,
 				59BC3F5F1BFF848600710905 /* AFURLConnectionOperation.m in Sources */,
 				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
 				166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */,
 				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
+				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
@@ -1582,6 +1614,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1633D1EE1C5F1DD200937FAD /* GalleryModel.xcdatamodel */,
+			);
+			currentVersion = 1633D1EE1C5F1DD200937FAD /* GalleryModel.xcdatamodel */;
+			path = GalleryModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 167AF0231BFDC1F6003CDF30 /* Project object */;
 }
