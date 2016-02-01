@@ -79,7 +79,6 @@
 		167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0641BFDC30D003CDF30 /* LoginViewController.swift */; };
 		167AF06C1BFDC32E003CDF30 /* Streaming.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0691BFDC32E003CDF30 /* Streaming.storyboard */; };
 		167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */; };
-		167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */; };
 		167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */; };
 		167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */; };
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
@@ -227,7 +226,6 @@
 		167AF0641BFDC30D003CDF30 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		167AF0691BFDC32E003CDF30 /* Streaming.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Streaming.storyboard; sourceTree = "<group>"; };
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
-		167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStreamViewController.swift; sourceTree = "<group>"; };
 		167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpUserNameViewController.swift; sourceTree = "<group>"; };
 		167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerifyPhoneViewController.swift; sourceTree = "<group>"; };
 		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
@@ -724,7 +722,6 @@
 				1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */,
 				167AF0691BFDC32E003CDF30 /* Streaming.storyboard */,
 				167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */,
-				167AF06B1BFDC32E003CDF30 /* UploadStreamViewController.swift */,
 				1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */,
 				1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */,
 			);
@@ -1243,7 +1240,6 @@
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
-				167AF06E1BFDC32E003CDF30 /* UploadStreamViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,

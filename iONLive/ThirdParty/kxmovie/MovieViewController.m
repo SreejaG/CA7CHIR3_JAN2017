@@ -1438,13 +1438,6 @@ static NSMutableDictionary * gHistory;
                              }];
 }
 
--(void)loadUploadStreamingView
-{
-    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
-    UIViewController *streamViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"UploadStreamViewController"];
-    [self.navigationController pushViewController:streamViewController animated:true];
-}
-
 - (IBAction)didTapLiveButton:(id)sender {
     
     if ([self isViewFinderLoading]) {
