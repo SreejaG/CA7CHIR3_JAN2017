@@ -43,7 +43,7 @@ class iONCamPictureAPIViewController: UIViewController {
     {
         showOverlay()
         iOnLiveCameraPictureCaptureManager.getiONLiveCameraPictureId(scale, burstCount: burstCount, burstInterval: burstInterval, quality: quality, success: { (response) -> () in
-            
+            ErrorManager.sharedInstance.alert("Success BurstId found", message:"\(response as? [String: AnyObject])")
             self.iONLiveCamGetPictureSuccessHandler(response)
             
             }) { (error, message) -> () in
@@ -62,21 +62,31 @@ class iONCamPictureAPIViewController: UIViewController {
             if let burstId = json["burstID"]
             {
                 let id:String = burstId as! String
-                cameraCapturedImageView.image = nil
-                //cameraCapturedImageView.setImageWithURL( NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!)
-                imageLoadingIndicator.hidden = false
-                cameraCapturedImageView.setImageWithURLRequest(NSURLRequest(URL: NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!), placeholderImage: nil, success: { (request, response, image) -> Void in
-                    self.cameraCapturedImageView.image = image
-                    print("success")
-                    self.imageLoadingIndicator.hidden = true
-                    }, failure: { (request, resonse, error) -> Void in
-                        print(error)
-                        ErrorManager.sharedInstance.alert("Image Download Error", message:"\(error.localizedDescription)")
-                        self.imageLoadingIndicator.hidden = true
-                })
+                // push result VC and load image
+                let apiStoryBoard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+                let resultVC = apiStoryBoard.instantiateViewControllerWithIdentifier(iONCamPictureAPIResultViewController.identifier) as! iONCamPictureAPIResultViewController
+                resultVC.imageBurstId = id
+                self.navigationController?.pushViewController(resultVC, animated: true)
+                
             }
-
-            print("success = \(json["burstID"]))")
+            
+                
+                
+//                cameraCapturedImageView.image = nil
+//                //cameraCapturedImageView.setImageWithURL( NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!)
+//                imageLoadingIndicator.hidden = false
+//                cameraCapturedImageView.setImageWithURLRequest(NSURLRequest(URL: NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!), placeholderImage: nil, success: { (request, response, image) -> Void in
+//                    self.cameraCapturedImageView.image = image
+//                    print("success")
+//                    self.imageLoadingIndicator.hidden = true
+//                    }, failure: { (request, resonse, error) -> Void in
+//                        print(error)
+//                        ErrorManager.sharedInstance.alert("Image Download Error", message:"\(error.localizedDescription)")
+//                        self.imageLoadingIndicator.hidden = true
+//                })
+//            }
+//
+//            print("success = \(json["burstID"]))")
         }
         else
         {

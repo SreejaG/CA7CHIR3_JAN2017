@@ -162,7 +162,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7Bc-OC-IMC">
                                 <rect key="frame" x="0.0" y="275" width="600" height="325"/>
                             </imageView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="20M-XK-dGU">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="20M-XK-dGU">
                                 <rect key="frame" x="282" y="419" width="37" height="37"/>
                                 <color key="color" red="0.098039215690000001" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </activityIndicatorView>
@@ -187,6 +187,37 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ePl-Fm-XlH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--Cam PictureAPI Result View Controller-->
+        <scene sceneID="PQ2-AJ-59l">
+            <objects>
+                <viewController storyboardIdentifier="iONCamPictureAPIResultViewController" id="dsu-DB-qy8" customClass="iONCamPictureAPIResultViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="AdP-uz-jrD"/>
+                        <viewControllerLayoutGuide type="bottom" id="UIM-aP-oP0"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5GB-gh-VAQ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XlO-ZT-k0f">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="XlO-ZT-k0f" secondAttribute="trailing" id="0EF-RD-yGf"/>
+                            <constraint firstItem="XlO-ZT-k0f" firstAttribute="top" secondItem="AdP-uz-jrD" secondAttribute="bottom" id="KoJ-H5-lF6"/>
+                            <constraint firstItem="XlO-ZT-k0f" firstAttribute="leading" secondItem="5GB-gh-VAQ" secondAttribute="leading" id="UeB-jS-9H3"/>
+                            <constraint firstItem="UIM-aP-oP0" firstAttribute="top" secondItem="XlO-ZT-k0f" secondAttribute="bottom" id="adl-h7-kG2"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="resultImageView" destination="XlO-ZT-k0f" id="2Vf-Pr-hST"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ff0-lZ-iYI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
     </scenes>
