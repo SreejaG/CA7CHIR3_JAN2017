@@ -79,7 +79,8 @@ class UrlManager {
     
     func getiONLiveVideoUrl()->String
     {
-        return iONLiveCamUrl+"/video"
+        let getVideoUrl = iONLiveCamUrl+"/video"
+        return getVideoUrl
     }
 }
     

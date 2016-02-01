@@ -13,6 +13,9 @@ class iONLiveCamAPIListViewController: UIViewController {
     @IBOutlet weak var testingAPIListTableView: UITableView!
     static let identifier = "iONLiveCamAPIListViewController"
     
+    let requestManager = RequestManager.sharedInstance
+    let iONLiveCameraVideoCaptureManager = iONLiveCameraVideoCapture.sharedInstance
+
     var wifiButtonSelected = true
     var dataSource:[String]?
     var wifiAPIList = ["Image capture","Video capture","Camera configuration","Live streaming configuration","Cloud connectivity configuration","Camera status","System information and modification","Download Image file","Download HLS playlist","Download video file","Download HLS segment"]
@@ -86,16 +89,87 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
-        let pictureApiVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONCamPictureAPIViewController.identifier) as! iONCamPictureAPIViewController
         switch indexPath.row
         {
             case 0:
-                self.navigationController?.pushViewController(pictureApiVC, animated: true)
+                loadPictureAPIViewController()
                 break;
+            
+            case 1:
+                captureIONLiveCamVideoID()
+//                loadVideoAPIViewController()
+                break;
+            
             default:
                 break;
         }
         ///channelItemListVC.navigationController?.navigationBarHidden = true
     }
 }
+
+//PRAGMA MARK:- load test API views
+extension iONLiveCamAPIListViewController{
+    
+    func loadPictureAPIViewController()
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let pictureApiVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONCamPictureAPIViewController.identifier) as! iONCamPictureAPIViewController
+        self.navigationController?.pushViewController(pictureApiVC, animated: true)
+    }
+    
+    func getVideoAPIViewController() -> iONLiveCamVideoViewController
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let videoApiVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCamVideoViewController.identifier) as! iONLiveCamVideoViewController
+        return videoApiVC
+//        self.navigationController?.pushViewController(videoApiVC, animated: true)
+    }
+    
+    func loadVideoViewController(vc:iONLiveCamVideoViewController)
+    {
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    //PRAGMA MARK:- Test API call
+
+    func captureIONLiveCamVideoID()
+    {
+        iONLiveCameraVideoCaptureManager.getiONLiveCameraVideoID({ (response) -> () in
+            
+            self.iONLiveCamGetVideoSuccessHandler(response)
+            print("success")
+            }) { (error, code) -> () in
+                
+                print("failure")
+        }
+    }
+    
+    func iONLiveCamGetVideoSuccessHandler(response:AnyObject?)
+    {
+        let iONLiveCamVideoVC = self.getVideoAPIViewController()
+        
+        print("entered download pic")
+        if let json = response as? [String: AnyObject]
+        {
+            print("success")
+            if let videoId = json["hlsID"]
+            {
+//                let id:String = videoId as! String
+                iONLiveCamVideoVC.videoAPIResult["videoID"] = videoId as? String
+            }
+            if let numSegments = json["numSegments"]
+            {
+                let id:String = numSegments as! String
+                iONLiveCamVideoVC.videoAPIResult["numSegments"] = id
+            }
+            if let type = json["Type"]
+            {
+                let id:String = type as! String
+                iONLiveCamVideoVC.videoAPIResult["type"] = id
+            }
+        }
+        self.loadVideoViewController(iONLiveCamVideoVC)
+    }
+}
+
+

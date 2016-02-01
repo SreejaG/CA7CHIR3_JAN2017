@@ -19,6 +19,8 @@
 		1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */; };
 		1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */; };
 		1633D2391C5F21FD00937FAD /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2371C5F21FD00937FAD /* Entity.swift */; };
+		1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D23B1C5F417D00937FAD /* iONLiveCamVideoViewController.swift */; };
+		1633D2401C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */; };
 		16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */; };
 		1644B3C81C05687B004E3832 /* Connectivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3C71C05687B004E3832 /* Connectivity.m */; };
 		1644B3D01C056934004E3832 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3CF1C056934004E3832 /* RequestManager.swift */; };
@@ -164,6 +166,8 @@
 		1633D1EE1C5F1DD200937FAD /* GalleryModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GalleryModel.xcdatamodel; sourceTree = "<group>"; };
 		1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		1633D2371C5F21FD00937FAD /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		1633D23B1C5F417D00937FAD /* iONLiveCamVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCamVideoViewController.swift; sourceTree = "<group>"; };
+		1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraVideoCapture.swift; sourceTree = "<group>"; };
 		16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbCollectionViewCell.swift; sourceTree = "<group>"; };
 		1644B3C61C05687B004E3832 /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
 		1644B3C71C05687B004E3832 /* Connectivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connectivity.m; sourceTree = "<group>"; };
@@ -493,6 +497,14 @@
 			path = DataBase;
 			sourceTree = "<group>";
 		};
+		1633D23A1C5F415500937FAD /* iONCamVideo */ = {
+			isa = PBXGroup;
+			children = (
+				1633D23B1C5F417D00937FAD /* iONLiveCamVideoViewController.swift */,
+			);
+			path = iONCamVideo;
+			sourceTree = "<group>";
+		};
 		1644B3D11C05698F004E3832 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,6 +555,7 @@
 			isa = PBXGroup;
 			children = (
 				165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */,
+				1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */,
 			);
 			path = iONLiveCameraAPI;
 			sourceTree = "<group>";
@@ -550,6 +563,7 @@
 		165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */ = {
 			isa = PBXGroup;
 			children = (
+				1633D23A1C5F415500937FAD /* iONCamVideo */,
 				165B77DD1C4CE71400BDB02F /* iONCamPicture */,
 				165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */,
 			);
@@ -1253,6 +1267,7 @@
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
 				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,
 				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
+				1633D2401C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
@@ -1320,6 +1335,7 @@
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
+				1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */,
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
