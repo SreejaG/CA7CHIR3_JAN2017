@@ -38,6 +38,10 @@ class iONCamPictureAPIViewController: UIViewController {
         self.captureiONLiveCamImage(nil, burstCount:nil, burstInterval:nil, quality:nil)
     }
     
+    @IBAction func didTapBackButton(sender: AnyObject) {
+        
+        self.navigationController?.popViewControllerAnimated(true)
+    }
     /////////For testing iOnLiveCamPictureCapture API
     func captureiONLiveCamImage(scale: String?, burstCount: String?,burstInterval:String?,quality:String?)
     {
@@ -70,7 +74,7 @@ class iONCamPictureAPIViewController: UIViewController {
                 
             }
             
-                
+            
                 
 //                cameraCapturedImageView.image = nil
 //                //cameraCapturedImageView.setImageWithURL( NSURL(string: UrlManager.sharedInstance.getiONLiveCamImageDownloadUrl(id))!)

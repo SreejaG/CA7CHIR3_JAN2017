@@ -88,9 +88,13 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
     {
         let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
         let pictureApiVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONCamPictureAPIViewController.identifier) as! iONCamPictureAPIViewController
-        if indexPath.row == 0
+        switch indexPath.row
         {
-            self.navigationController?.pushViewController(pictureApiVC, animated: true)
+            case 0:
+                self.navigationController?.pushViewController(pictureApiVC, animated: true)
+                break;
+            default:
+                break;
         }
         ///channelItemListVC.navigationController?.navigationBarHidden = true
     }

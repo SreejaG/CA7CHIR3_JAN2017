@@ -24,6 +24,11 @@ class iONCamPictureAPIResultViewController: UIViewController {
         }
     }
 
+    @IBAction func didTapBackButton(sender: AnyObject) {
+        
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
