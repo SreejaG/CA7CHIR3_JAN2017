@@ -73,6 +73,19 @@ class iONLiveCamVideoViewController: UIViewController {
         }
     }
 
+    func downLoadm3u8Video()
+    {
+        iONLiveCameraVideoCaptureManager.downloadm3u8Video(hlsID: videoAPIResult["videoID"]!, success: { (response) -> () in
+
+            ErrorManager.sharedInstance.alert("downloaded m3u8 Video", message: "Successfully downloaded Video ")
+
+            }) { (error, code) -> () in
+
+                ErrorManager.sharedInstance.alert("Download Video", message: "Failure to download Video ")
+
+        }
+    }
+
     @IBAction func didTapDeleteVideo(sender: AnyObject) {
         
         deleteVideo()
@@ -124,7 +137,7 @@ class iONLiveCamVideoViewController: UIViewController {
     }
     
     @IBAction func didTapDownloadVideo(sender: AnyObject) {
-
+        downLoadm3u8Video()
     }
     
     @IBAction func didTapBackButton(sender: AnyObject) {
