@@ -80,7 +80,7 @@ class iONLiveCameraVideoCapture: NSObject {
     }
 
     
-    func updateVideoSegements(numSegments numSegments: NSInteger, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func updateVideoSegements(numSegments numSegments: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getiONLiveVideoUrl(), parameters: ["numSegments" : numSegments],success: { (operation, response) -> Void in

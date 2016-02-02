@@ -82,5 +82,11 @@ class UrlManager {
         let getVideoUrl = iONLiveCamUrl+"/video"
         return getVideoUrl
     }
+    
+    func getiONLiveVideom3u8Url(hlsId:String)->String
+    {
+        let getVideoUrl = iONLiveCamUrl+"/video/\(hlsId).m3u8"
+        return getVideoUrl
+    }
 }
     

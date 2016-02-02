@@ -17,7 +17,7 @@ class iONLiveCamVideoViewController: UIViewController {
 
     @IBOutlet var numberOfSegementsLabel: UILabel!
     @IBOutlet var videoID: UILabel!
-    
+    var tField: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,9 +39,9 @@ class iONLiveCamVideoViewController: UIViewController {
         }
     }
     
-    func updateSegements()
+    func updateSegements(numSegements:Int)
     {
-        iONLiveCameraVideoCaptureManager.updateVideoSegements(numSegments: 2, success: { (response) -> () in
+        iONLiveCameraVideoCaptureManager.updateVideoSegements(numSegments:numSegements, success: { (response) -> () in
             
             ErrorManager.sharedInstance.alert("Updated Video Segements", message: "Successfully Updated Video Segements to 2")
             print("Success")
@@ -84,9 +84,43 @@ class iONLiveCamVideoViewController: UIViewController {
 
     }
     
+    
+    func configurationTextField(textField: UITextField!)
+    {
+        print("generating the TextField")
+        textField.placeholder = "Enter number of Segements"
+        textField.keyboardType = UIKeyboardType.NumberPad
+        tField = textField
+    }
+    
+    
+    func handleCancel(alertView: UIAlertAction!)
+    {
+    print("Cancelled !!")
+    }
+    
+    func showAlert()
+    {
+        let alert = UIAlertController(title: "Enter number of Segements", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler:{ (UIAlertAction)in
+            if let numSeg = Int(self.tField.text!)
+            {
+                self.updateSegements(numSeg)
+            }
+            print("Done !!")
+            print("Item : \(self.tField.text)")
+        }))
+        self.presentViewController(alert, animated: true, completion: {
+            print("completion block")
+        })
+        
+    }
+    
     @IBAction func didTapUpdateVideoAPI(sender: AnyObject) {
         
-        updateSegements()
+        showAlert()
     }
     
     @IBAction func didTapDownloadVideo(sender: AnyObject) {
