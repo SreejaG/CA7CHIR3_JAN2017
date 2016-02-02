@@ -148,13 +148,12 @@ extension iONLiveCamAPIListViewController{
     {
         let iONLiveCamVideoVC = self.getVideoAPIViewController()
         
-        print("entered download pic")
+        print("entered capture video")
         if let json = response as? [String: AnyObject]
         {
             print("success")
             if let videoId = json["hlsID"]
             {
-//                let id:String = videoId as! String
                 iONLiveCamVideoVC.videoAPIResult["videoID"] = videoId as? String
             }
             if let numSegments = json["numSegments"]

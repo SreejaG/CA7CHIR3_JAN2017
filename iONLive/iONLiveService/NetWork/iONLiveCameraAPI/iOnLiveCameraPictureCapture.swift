@@ -53,7 +53,7 @@ class iOnLiveCameraPictureCapture: NSObject {
     func deleteiONLiveCameraPicture(cancelSnaps: Bool, burstID: String?, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.iONLiveCamDeletePictureUrl(cancelSnaps, burstId: burstID), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().DELETE(UrlManager.sharedInstance.iONLiveCamDeletePictureUrl(cancelSnaps, burstId: burstID), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
