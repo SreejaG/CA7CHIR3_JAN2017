@@ -92,6 +92,9 @@
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
 		16CBE7421C4E06DE0049112C /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CBE7411C4E06DE0049112C /* rtsp_relay.m */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
+		16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BA1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift */; };
+		16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */; };
+		16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */; };
 		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
 		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
@@ -248,6 +251,9 @@
 		16CBE7411C4E06DE0049112C /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
+		16D933BA1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraConfigurationViewController.swift; sourceTree = "<group>"; };
+		16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatusViewController.swift; sourceTree = "<group>"; };
+		16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatus.swift; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleTableViewCell.swift; sourceTree = "<group>"; };
@@ -556,6 +562,7 @@
 			children = (
 				165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */,
 				1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */,
+				16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */,
 			);
 			path = iONLiveCameraAPI;
 			sourceTree = "<group>";
@@ -563,6 +570,8 @@
 		165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */ = {
 			isa = PBXGroup;
 			children = (
+				16D933B41C61B5B000FDA359 /* iONCamConfig */,
+				16D933B51C61B5B000FDA359 /* iONCamStatus */,
 				1633D23A1C5F415500937FAD /* iONCamVideo */,
 				165B77DD1C4CE71400BDB02F /* iONCamPicture */,
 				165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */,
@@ -813,6 +822,22 @@
 				16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */,
 			);
 			path = ObjectiveCBridging;
+			sourceTree = "<group>";
+		};
+		16D933B41C61B5B000FDA359 /* iONCamConfig */ = {
+			isa = PBXGroup;
+			children = (
+				16D933BA1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift */,
+			);
+			path = iONCamConfig;
+			sourceTree = "<group>";
+		};
+		16D933B51C61B5B000FDA359 /* iONCamStatus */ = {
+			isa = PBXGroup;
+			children = (
+				16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */,
+			);
+			path = iONCamStatus;
 			sourceTree = "<group>";
 		};
 		16F6A44D1BFF07120074EA57 /* Application_Resources */ = {
@@ -1310,10 +1335,12 @@
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
+				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,
 				16CBE7421C4E06DE0049112C /* rtsp_relay.m in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
+				16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
@@ -1348,6 +1375,7 @@
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
 				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
+				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

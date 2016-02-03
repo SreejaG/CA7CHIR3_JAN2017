@@ -91,19 +91,18 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
     {
         switch indexPath.row
         {
-            case 0:
-                loadPictureAPIViewController()
-                break;
+        case 0:
+            loadPictureAPIViewController()
+            break;
             
-            case 1:
-                captureIONLiveCamVideoID()
-//                loadVideoAPIViewController()
-                break;
-            
-            default:
-                break;
+        case 1:
+            captureIONLiveCamVideoID()
+            break;
+        case 5:
+            loadCameraStatus()
+        default:
+            break;
         }
-        ///channelItemListVC.navigationController?.navigationBarHidden = true
     }
 }
 
@@ -168,6 +167,13 @@ extension iONLiveCamAPIListViewController{
             }
         }
         self.loadVideoViewController(iONLiveCamVideoVC)
+    }
+    
+    func loadCameraStatus()
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCameraStatusViewController.identifier) as! iONLiveCameraStatusViewController
+        self.navigationController?.pushViewController(statusVC, animated: true)
     }
 }
 
