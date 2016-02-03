@@ -116,6 +116,8 @@ extension iONLiveCameraStatusViewController{
             let cell = UITableViewCell(style:.Default, reuseIdentifier:"Cell")
             cell.textLabel?.text = dataSource[row]
             cell.selectionStyle = .None
+            cell.textLabel?.numberOfLines = 0;
+            cell.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
             return cell
         }
         return UITableViewCell()
@@ -125,7 +127,6 @@ extension iONLiveCameraStatusViewController{
     {
         if tableView.isEqual(catalogTableView)
         {
-            
             return loadCatalogTableView(tableView, ForRow: row)
         }
         else if tableView.isEqual(videoTableView)
