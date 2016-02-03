@@ -95,7 +95,7 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
             loadPictureAPIViewController()
             break;
         case 1:
-            captureIONLiveCamVideoID()
+            loadIONLiveCamVideo()
             break;
         case 2:
             loadCameraConfiguration()
@@ -124,11 +124,11 @@ extension iONLiveCamAPIListViewController{
         return videoApiVC
     }
     
-    func loadVideoViewController(vc:iONLiveCamVideoViewController)
-    {
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
+//    func loadVideoViewController(vc:iONLiveCamVideoViewController)
+//    {
+//        self.navigationController?.pushViewController(vc, animated: true)
+//    }
+
     func loadCameraStatus()
     {
         let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
@@ -144,44 +144,47 @@ extension iONLiveCamAPIListViewController{
     }
     //PRAGMA MARK:- Test API call
 
-    func captureIONLiveCamVideoID()
+    func loadIONLiveCamVideo()
     {
-        iONLiveCameraVideoCaptureManager.getiONLiveCameraVideoID({ (response) -> () in
-            
-            self.iONLiveCamGetVideoSuccessHandler(response)
-            print("success")
-            }) { (error, code) -> () in
-                
-                print("failure")
-        }
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCamVideoViewController.identifier) as! iONLiveCamVideoViewController
+        self.navigationController?.pushViewController(statusVC, animated: true)
+//        iONLiveCameraVideoCaptureManager.getiONLiveCameraVideoID({ (response) -> () in
+//            
+//            self.iONLiveCamGetVideoSuccessHandler(response)
+//            print("success")
+//            }) { (error, code) -> () in
+//                
+//                print("failure")
+//        }
     }
     
-    func iONLiveCamGetVideoSuccessHandler(response:AnyObject?)
-    {
-        let iONLiveCamVideoVC = self.getVideoAPIViewController()
-        
-        print("entered capture video")
-        if let json = response as? [String: AnyObject]
-        {
-            print("success")
-            if let videoId = json["hlsID"]
-            {
-                iONLiveCamVideoVC.videoAPIResult["videoID"] = videoId as? String
-            }
-            if let numSegments = json["numSegments"]
-            {
-                let id:String = numSegments as! String
-                iONLiveCamVideoVC.videoAPIResult["numSegments"] = id
-            }
-            if let type = json["Type"]
-            {
-                let id:String = type as! String
-                iONLiveCamVideoVC.videoAPIResult["type"] = id
-            }
-        }
-        self.loadVideoViewController(iONLiveCamVideoVC)
-    }
-    
+//    func iONLiveCamGetVideoSuccessHandler(response:AnyObject?)
+//    {
+//        let iONLiveCamVideoVC = self.getVideoAPIViewController()
+//        
+//        print("entered capture video")
+//        if let json = response as? [String: AnyObject]
+//        {
+//            print("success")
+//            if let videoId = json["hlsID"]
+//            {
+//                iONLiveCamVideoVC.videoAPIResult["videoID"] = videoId as? String
+//            }
+//            if let numSegments = json["numSegments"]
+//            {
+//                let id:String = numSegments as! String
+//                iONLiveCamVideoVC.videoAPIResult["numSegments"] = id
+//            }
+//            if let type = json["Type"]
+//            {
+//                let id:String = type as! String
+//                iONLiveCamVideoVC.videoAPIResult["type"] = id
+//            }
+//        }
+//        self.loadVideoViewController(iONLiveCamVideoVC)
+//    }
+
 }
 
 
