@@ -43,7 +43,10 @@ class UrlManager {
         }
         if let burstCount = burstCount
         {
-            getPictureUrl = getPictureUrl + "?burstCount=\(burstCount)"
+            if burstCount.isEmpty == false
+            {
+                getPictureUrl = getPictureUrl + "?burstCount=\(burstCount)"
+            }
         }
         if let burstInterval = burstInterval
         {
