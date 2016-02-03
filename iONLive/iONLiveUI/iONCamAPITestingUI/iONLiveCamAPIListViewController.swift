@@ -94,10 +94,11 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
         case 0:
             loadPictureAPIViewController()
             break;
-            
         case 1:
             captureIONLiveCamVideoID()
             break;
+        case 2:
+            loadCameraConfiguration()
         case 5:
             loadCameraStatus()
         default:
@@ -121,7 +122,6 @@ extension iONLiveCamAPIListViewController{
         let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
         let videoApiVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCamVideoViewController.identifier) as! iONLiveCamVideoViewController
         return videoApiVC
-//        self.navigationController?.pushViewController(videoApiVC, animated: true)
     }
     
     func loadVideoViewController(vc:iONLiveCamVideoViewController)
@@ -129,6 +129,19 @@ extension iONLiveCamAPIListViewController{
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func loadCameraStatus()
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCameraStatusViewController.identifier) as! iONLiveCameraStatusViewController
+        self.navigationController?.pushViewController(statusVC, animated: true)
+    }
+
+    func loadCameraConfiguration()
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCameraConfigurationViewController.identifier) as! iONLiveCameraConfigurationViewController
+        self.navigationController?.pushViewController(statusVC, animated: true)
+    }
     //PRAGMA MARK:- Test API call
 
     func captureIONLiveCamVideoID()
@@ -169,12 +182,6 @@ extension iONLiveCamAPIListViewController{
         self.loadVideoViewController(iONLiveCamVideoVC)
     }
     
-    func loadCameraStatus()
-    {
-        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
-        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCameraStatusViewController.identifier) as! iONLiveCameraStatusViewController
-        self.navigationController?.pushViewController(statusVC, animated: true)
-    }
 }
 
 

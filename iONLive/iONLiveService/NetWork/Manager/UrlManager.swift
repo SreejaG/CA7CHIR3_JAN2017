@@ -61,6 +61,28 @@ class UrlManager {
         return iONLiveCamUrl+"/status"
     }
     
+    func getIONLiveCameraConfigUrl(scale: String!, quality: String!,singleClick:String?,doubleClick:String?) -> String
+    {
+        var getConfigUrl = iONLiveCamUrl+"/config"
+        if scale.isEmpty == false
+        {
+            getConfigUrl = getConfigUrl + "?scale=\(scale)"
+        }
+        if quality?.isEmpty == false
+        {
+            getConfigUrl = getConfigUrl + "?quality=\(quality)"
+        }
+        if singleClick?.isEmpty == false
+        {
+            getConfigUrl = getConfigUrl + "?singleClick=\(singleClick)"
+        }
+        if doubleClick?.isEmpty == false
+        {
+            getConfigUrl = getConfigUrl + "?doubleClick=\(doubleClick)"
+        }
+        return getConfigUrl
+    }
+    
     func iONLiveCamDeletePictureUrl(cancelSnap: Bool, burstId: String?) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"
