@@ -34,10 +34,10 @@ class UrlManager {
        return liveStreamingAPI
    }
     
-    func iONLiveCamGetPictureUrl(scale: String?, burstCount: String?,burstInterval:String?,quality:String?) -> String
+    func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"
-        if let scale = scale
+        if  scale?.isEmpty == false
         {
             getPictureUrl = getPictureUrl + "?scale=\(scale)"
         }
@@ -48,11 +48,11 @@ class UrlManager {
                 getPictureUrl = getPictureUrl + "?burstCount=\(burstCount)"
             }
         }
-        if let burstInterval = burstInterval
+        if burstInterval?.isEmpty == false
         {
             getPictureUrl = getPictureUrl + "?burstInterval=\(burstInterval)"
         }
-        if let quality = quality
+        if quality?.isEmpty == false
         {
             getPictureUrl = getPictureUrl + "?quality=\(quality)"
         }

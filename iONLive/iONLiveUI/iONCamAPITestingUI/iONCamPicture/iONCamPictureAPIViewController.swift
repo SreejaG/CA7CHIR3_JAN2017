@@ -31,13 +31,14 @@ class iONCamPictureAPIViewController: UIViewController {
     let scalePickerData = ["1", "2", "4", "8"]
     
     //PRAGMA MARK :- selected values
-    var selectedScale = "1"
-    var selectedQuality = "1"
-    var selectedBurstInterval = "333ms"
+    var selectedScale = ""
+    var selectedQuality = ""
+    var selectedBurstInterval = ""
     var selectedBurstCount = ""
     
     //PRAGMA MARK: Load view
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         initialise()
     }
@@ -75,6 +76,8 @@ class iONCamPictureAPIViewController: UIViewController {
     func captureiONLiveCamImage()
     {
         showOverlay()
+        validateBurstCount()
+        
         iOnLiveCameraPictureCaptureManager.getiONLiveCameraPictureId(selectedScale, burstCount: selectedBurstCount, burstInterval: selectedBurstInterval, quality: selectedQuality, success: { (response) -> () in
             ErrorManager.sharedInstance.alert("Success BurstId found", message:"\(response as? [String: AnyObject])")
             self.iONLiveCamGetPictureSuccessHandler(response)
@@ -239,6 +242,64 @@ extension iONCamPictureAPIViewController
             }
         }
     }
+    //PRAGMA MARK:- validate Burst Count
+    
+    func validateBurstCount()
+    {
+        if selectedBurstCount.isEmpty == false
+        {
+            if !isValidBurstCount(selectedBurstCount)
+            {
+                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+            }
+        }
+    }
+    
+    func isValidBurstCount(burstCount:String) -> Bool
+    {
+        switch selectedBurstInterval
+        {
+        case "333ms":
+            
+            if burstCount == "3"
+            {
+                return true;
+            }
+            break
+        case "100ms":
+            
+            if burstCount == "10"
+            {
+                return true;
+            }
+            break
+        case "200ms":
+            
+            if (burstCount == "5") || (burstCount == "10")
+            {
+                return true;
+            }
+            break
+        case "":
+            
+            return isValidBurstCountRange(burstCount)
+        default:
+            
+            return isValidBurstCount(burstCount)
+        }
+        return false
+    }
+    
+    func isValidBurstCountRange(burstCount:String) -> Bool{
+        
+        let intVal = Int(burstCount)
+        
+        if (intVal >= 1) && (intVal <= 16777215)
+        {
+            return true
+        }
+        return false
+    }
 }
 
 //PRAGMA MARK:- Pickerview delegate datasource
@@ -268,11 +329,22 @@ extension iONCamPictureAPIViewController:UIPickerViewDelegate , UIPickerViewData
     }
 }
 
+//PRAGMA MARK:- TextField Delegate
 extension iONCamPictureAPIViewController:UITextFieldDelegate
 {
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
+        if let burstCount = textField.text
+        {
+            if isValidBurstCount(burstCount) || (burstCount.isEmpty)
+            {
+                selectedBurstCount = burstCount
+            }
+            else{
+                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+            }
+        }
         return false
     }
 }
