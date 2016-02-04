@@ -463,7 +463,7 @@
                                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1ZZ-NL-b3i" userLabel="InputView">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="204"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="280"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tsL-QN-mJx">
                                                         <rect key="frame" x="0.0" y="20" width="120" height="30"/>
@@ -483,18 +483,18 @@
                                                             <action selector="didTapStopVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="IW0-26-gqN"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PlK-ii-xaZ">
-                                                        <rect key="frame" x="130" y="20" width="88" height="30"/>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PlK-ii-xaZ">
+                                                        <rect key="frame" x="130" y="20" width="117" height="30"/>
                                                         <state key="normal" title="Delete All Videos"/>
                                                         <connections>
                                                             <action selector="didTapDeleteAllVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="FEw-ZF-tvT"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AfT-0C-Rse">
-                                                        <rect key="frame" x="130" y="65" width="136" height="30"/>
-                                                        <state key="normal" title="Download VideoFile"/>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="AfT-0C-Rse">
+                                                        <rect key="frame" x="130" y="65" width="191" height="30"/>
+                                                        <state key="normal" title="Start Video with Segements"/>
                                                         <connections>
-                                                            <action selector="didTapDownloadVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="ccn-ns-gVh"/>
+                                                            <action selector="didTapStartVideoWithSegements:" destination="kHi-vT-9c0" eventType="touchUpInside" id="aCT-Cu-Uh6"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="41f-yd-Oj7">
@@ -502,9 +502,9 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" priority="750" constant="30" id="qMg-ev-EaT"/>
                                                         </constraints>
-                                                        <state key="normal" title="Start Video with Segements"/>
+                                                        <state key="normal" title="Delete Video With ID"/>
                                                         <connections>
-                                                            <action selector="didTapUpdateVideoAPI:" destination="kHi-vT-9c0" eventType="touchUpInside" id="kiv-U1-em9"/>
+                                                            <action selector="didTapDeleteVideoWithID:" destination="kHi-vT-9c0" eventType="touchUpInside" id="gkq-gy-jue"/>
                                                         </connections>
                                                     </button>
                                                     <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8r-21-FY6">
@@ -513,7 +513,22 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="80" id="cNJ-3w-2MY"/>
                                                         </constraints>
+                                                        <connections>
+                                                            <outlet property="dataSource" destination="kHi-vT-9c0" id="NZA-H9-rtu"/>
+                                                            <outlet property="delegate" destination="kHi-vT-9c0" id="VK5-T7-dQ0"/>
+                                                        </connections>
                                                     </pickerView>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qjy-aP-TyO">
+                                                        <rect key="frame" x="0.0" y="205" width="150" height="30"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="30" id="hSY-QA-wwb"/>
+                                                            <constraint firstAttribute="width" constant="150" id="vGC-tG-XEx"/>
+                                                        </constraints>
+                                                        <state key="normal" title="Download Video"/>
+                                                        <connections>
+                                                            <action selector="didTapDownloadVideo:" destination="kHi-vT-9c0" eventType="touchDragInside" id="zIj-c4-r9u"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <constraints>
@@ -522,7 +537,8 @@
                                                     <constraint firstItem="tsL-QN-mJx" firstAttribute="width" secondItem="41f-yd-Oj7" secondAttribute="width" id="E8G-Ia-BVN"/>
                                                     <constraint firstItem="PlK-ii-xaZ" firstAttribute="leading" secondItem="R8r-21-FY6" secondAttribute="leading" id="Mm5-lJ-LZZ"/>
                                                     <constraint firstItem="PlK-ii-xaZ" firstAttribute="leading" secondItem="tsL-QN-mJx" secondAttribute="trailing" constant="10" id="S2b-wo-yhA"/>
-                                                    <constraint firstAttribute="height" constant="204" id="TDS-E6-Loy"/>
+                                                    <constraint firstAttribute="height" constant="280" id="TDS-E6-Loy"/>
+                                                    <constraint firstItem="qjy-aP-TyO" firstAttribute="leading" secondItem="1ZZ-NL-b3i" secondAttribute="leading" id="Tch-0D-QRI"/>
                                                     <constraint firstItem="tsL-QN-mJx" firstAttribute="height" secondItem="iJt-ZO-v0o" secondAttribute="height" id="VOI-j0-Hhf"/>
                                                     <constraint firstItem="tsL-QN-mJx" firstAttribute="width" secondItem="iJt-ZO-v0o" secondAttribute="width" id="Zwo-cG-taJ"/>
                                                     <constraint firstItem="PlK-ii-xaZ" firstAttribute="leading" secondItem="AfT-0C-Rse" secondAttribute="leading" id="auB-Le-Ey5"/>
@@ -533,10 +549,11 @@
                                                     <constraint firstItem="41f-yd-Oj7" firstAttribute="centerY" secondItem="R8r-21-FY6" secondAttribute="centerY" id="pah-0D-8Xx"/>
                                                     <constraint firstItem="tsL-QN-mJx" firstAttribute="leading" secondItem="41f-yd-Oj7" secondAttribute="leading" id="qBy-px-yS7"/>
                                                     <constraint firstItem="iJt-ZO-v0o" firstAttribute="top" secondItem="tsL-QN-mJx" secondAttribute="bottom" constant="15" id="uY9-MT-ng4"/>
+                                                    <constraint firstItem="qjy-aP-TyO" firstAttribute="top" secondItem="41f-yd-Oj7" secondAttribute="bottom" constant="40" id="xk6-Cm-c6z"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Mb-Lb-Rru" userLabel="ResultsView">
-                                                <rect key="frame" x="0.0" y="229" width="600" height="257"/>
+                                                <rect key="frame" x="0.0" y="305" width="600" height="181"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Video ID" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GOt-Zh-IXN">
                                                         <rect key="frame" x="0.0" y="20" width="600" height="21"/>
@@ -605,6 +622,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="hlsIDPickerView" destination="R8r-21-FY6" id="cUD-ku-WiX"/>
                         <outlet property="numberOfSegementsLabel" destination="ndW-4Z-McS" id="AMz-Ti-Mb4"/>
                         <outlet property="resultsView" destination="1Mb-Lb-Rru" id="cGf-aj-S3i"/>
                         <outlet property="videoID" destination="GOt-Zh-IXN" id="Cfk-Pd-F6R"/>

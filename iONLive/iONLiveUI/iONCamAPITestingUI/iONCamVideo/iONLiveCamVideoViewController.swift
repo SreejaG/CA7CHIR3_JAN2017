@@ -16,11 +16,15 @@ class iONLiveCamVideoViewController: UIViewController {
     let iONLiveCameraVideoCaptureManager = iONLiveCameraVideoCapture.sharedInstance
 
     ////PRAGMA MARK:-OutLets
+    @IBOutlet var hlsIDPickerView: UIPickerView!
     @IBOutlet var resultsView: UIView!
     @IBOutlet var numberOfSegementsLabel: UILabel!
     @IBOutlet var videoID: UILabel!
     var tField: UITextField!
 
+    var hlsIdDataSource : [String]?
+    var selectedHlsId = ""
+    
     //PRAGMA MARK:- load View
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,9 +36,30 @@ class iONLiveCamVideoViewController: UIViewController {
     func initialiseView()
     {
         resultsView.hidden = true
+
+        updatePickerDataSource()
+        
     }
     
-    //PRAGMA MARK :- API calls
+    //PRAGMA MARK: helper methods
+    func updatePickerDataSource()
+    {
+        let status = IONLiveCameraStatusUtility()
+        status.getiONLiveCameraStatus({ (response) -> () in
+            
+            self.hlsIdDataSource = status.getVideoStatus()
+            self.hlsIDPickerView.reloadAllComponents()
+            if (self.hlsIdDataSource?.count > 0 )
+            {
+                self.selectedHlsId = self.hlsIdDataSource![0]
+            }
+            
+            }) { (error, code) -> () in
+                ErrorManager.sharedInstance.alert("error", message: "error")
+                
+        }
+    }
+    //PRAGMA MARK:- API calls
     func stopIONLiveCamVideo()
     {
         iONLiveCameraVideoCaptureManager.stopIONLiveCameraVideo({ (response) -> () in
@@ -67,11 +92,26 @@ class iONLiveCamVideoViewController: UIViewController {
     {
         iONLiveCameraVideoCaptureManager.deleteAllVideo({ (response) -> () in
             ErrorManager.sharedInstance.alert("Delete Video", message: "Successfully Deleted Video ")
-            
+            self.updatePickerDataSource()
             }) { (error, code) -> () in
-                
+            self.updatePickerDataSource() //need to remove to test,delete api always fail because it is not valid json
             ErrorManager.sharedInstance.alert("Delete Video", message: error?.localizedDescription)
         }
+    }
+
+    func deleteVideoWithHlsId(hlsId:String)
+    {
+        iONLiveCameraVideoCaptureManager.deleteVideoWithHlsId(hlsID: hlsId, success: { (response) -> () in
+            
+            ErrorManager.sharedInstance.alert("Delete Video", message: "Successfully Deleted Video ")
+            self.updatePickerDataSource()
+            
+            }, failure: { (error, code) -> () in
+                self.updatePickerDataSource() //need to remove to test,delete api always fail because it is not valid json
+
+                ErrorManager.sharedInstance.alert("Delete Video", message: error?.localizedDescription)
+        })
+        
     }
 
     func startVideo()
@@ -166,8 +206,8 @@ class iONLiveCamVideoViewController: UIViewController {
         })
 
     }
-
-    //PRAGMA MARK :- Actions
+    
+    //PRAGMA MARK:- button Actions
     @IBAction func didTapStartVideo(sender: AnyObject) {
 
         startVideo()
@@ -183,7 +223,12 @@ class iONLiveCamVideoViewController: UIViewController {
         stopIONLiveCamVideo()
     }
 
-    @IBAction func didTapUpdateVideoAPI(sender: AnyObject) {
+    @IBAction func didTapDeleteVideoWithID(sender: AnyObject) {
+
+       deleteVideoWithHlsId(selectedHlsId)
+    }
+    
+    @IBAction func didTapStartVideoWithSegements(sender: AnyObject) {
 
         showAlert()
     }
@@ -195,6 +240,43 @@ class iONLiveCamVideoViewController: UIViewController {
     @IBAction func didTapBackButton(sender: AnyObject) {
         
         self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+}
+//PRAGMA MARK:- Pickerview delegate datasource
+
+extension iONLiveCamVideoViewController:UIPickerViewDelegate , UIPickerViewDataSource
+{
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    // The number of rows of data
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        if let dataSource = hlsIdDataSource
+        {
+            return dataSource.count
+        }
+        return 0
+    }
+    
+    // The data to return for the row and component (column) that's being passed in
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        if let dataSource = hlsIdDataSource
+        {
+            return dataSource[row]
+        }
+
+        return ""
+    }
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    {
+        if let dataSource = hlsIdDataSource
+        {
+            selectedHlsId = dataSource[row]
+        }
     }
 }
 

@@ -120,6 +120,21 @@ class UrlManager {
         return getVideoUrl
     }
 
+    func getiONLiveVideoUrlWithHlsId(hlsId:String)->String
+    {
+        var getVideoUrl = iONLiveCamUrl+"/video"
+        
+        if hlsId.isEmpty == false
+        {
+            let stringArray = hlsId.componentsSeparatedByString(".")
+            
+            let vldIdUrl = stringArray[0]
+            
+            getVideoUrl = getVideoUrl + "?hlsID=\(vldIdUrl)"
+        }
+        return getVideoUrl
+    }
+    
     func getAlliONLiveVideoUrl()->String
     {
         let getVideoUrl = iONLiveCamUrl+"/video?hlsID=*"

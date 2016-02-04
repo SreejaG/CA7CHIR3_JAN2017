@@ -21,28 +21,43 @@ class IONLiveCameraStatusUtility: NSObject {
     
     func getCatalogStatus() -> [String]?
     {
-        getCameraStatus()
         return catalogDataSourceStatus
     }
     
     func getVideoStatus() -> [String]?
     {
-        getCameraStatus()
-        return catalogDataSourceStatus
+        return videoDataSourceStatus
     }
     
-    func getCameraStatus()
+    func getiONLiveCameraStatus( success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
-        
         iONLiveCameraStatusManager.getiONLiveCameraStatus({ (response) -> () in
             
             self.iONLiveCamGetStatusSuccessHandler(response)
+            if let responseObject = response as? [String:AnyObject]
+            {
+                //call the success block that was passed with response data
+                success?(response: responseObject)
+            }
             
             }) { (error, code) -> () in
                 
                 ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get status ")
         }
     }
+    
+//    func getCameraStatus()
+//    {
+//        
+//        iONLiveCameraStatusManager.getiONLiveCameraStatus({ (response) -> () in
+//            
+//            self.iONLiveCamGetStatusSuccessHandler(response)
+//            
+//            }) { (error, code) -> () in
+//                
+//                ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get status ")
+//        }
+//    }
     
     //PRAGMA MARK:- API Handlers
     
