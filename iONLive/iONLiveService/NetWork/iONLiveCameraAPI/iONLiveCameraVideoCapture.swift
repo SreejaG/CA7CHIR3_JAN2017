@@ -80,7 +80,7 @@ class iONLiveCameraVideoCapture: NSObject {
     }
 
     
-    func updateVideoSegements(numSegments numSegments: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func startVideoWithSegments(numSegments numSegments: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getiONLiveVideoUrl(), parameters: ["numSegments" : numSegments],success: { (operation, response) -> Void in
@@ -108,10 +108,10 @@ class iONLiveCameraVideoCapture: NSObject {
         })
     }
     
-    func deleteVideo(hlsID hlsID: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func deleteAllVideo( success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().DELETE(UrlManager.sharedInstance.getiONLiveVideoUrl(), parameters: ["hlsID" : hlsID],success: { (operation, response) -> Void in
+        requestManager.httpManager().DELETE(UrlManager.sharedInstance.getAlliONLiveVideoUrl(), parameters: nil,success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

@@ -44,13 +44,14 @@ class iONLiveCamVideoViewController: UIViewController {
 
             }) { (error, code) -> () in
 
+                ErrorManager.sharedInstance.alert("stop Video", message: error?.localizedDescription)
                 print("failure")
         }
     }
 
-    func updateSegements(numSegements:Int)
+    func startVideoWithSegments(numSegements:Int)
     {
-        iONLiveCameraVideoCaptureManager.updateVideoSegements(numSegments:numSegements, success: { (response) -> () in
+        iONLiveCameraVideoCaptureManager.startVideoWithSegments(numSegments:numSegements, success: { (response) -> () in
 
             ErrorManager.sharedInstance.alert("Updated Video Segements", message: "Successfully Updated Video Segements")
             print("Success")
@@ -62,15 +63,14 @@ class iONLiveCamVideoViewController: UIViewController {
         }
     }
     
-    func deleteVideo()
+    func deleteAllVideo()
     {
-        iONLiveCameraVideoCaptureManager.deleteVideo(hlsID: videoAPIResult["videoID"]!, success: { (response) -> () in
-
+        iONLiveCameraVideoCaptureManager.deleteAllVideo({ (response) -> () in
             ErrorManager.sharedInstance.alert("Delete Video", message: "Successfully Deleted Video ")
+            
             }) { (error, code) -> () in
-
-                ErrorManager.sharedInstance.alert("Delete Video", message: "failure to Delete Video")
-
+                
+            ErrorManager.sharedInstance.alert("Delete Video", message: error?.localizedDescription)
         }
     }
 
@@ -83,7 +83,7 @@ class iONLiveCamVideoViewController: UIViewController {
             print("success")
             }) { (error, code) -> () in
 
-                print("failure")
+               ErrorManager.sharedInstance.alert("start Video", message: error?.localizedDescription)
         }
     }
 
@@ -156,7 +156,7 @@ class iONLiveCamVideoViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler:{ (UIAlertAction)in
             if let numSeg = Int(self.tField.text!)
             {
-                self.updateSegements(numSeg)
+                self.startVideoWithSegments(numSeg)
             }
             print("Done !!")
             print("Item : \(self.tField.text)")
@@ -173,9 +173,9 @@ class iONLiveCamVideoViewController: UIViewController {
         startVideo()
     }
 
-    @IBAction func didTapDeleteVideo(sender: AnyObject) {
+    @IBAction func didTapDeleteAllVideo(sender: AnyObject) {
 
-        deleteVideo()
+        deleteAllVideo()
     }
 
     @IBAction func didTapStopVideo(sender: AnyObject) {

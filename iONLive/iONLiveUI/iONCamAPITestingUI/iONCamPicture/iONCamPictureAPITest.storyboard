@@ -483,11 +483,11 @@
                                                             <action selector="didTapStopVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="IW0-26-gqN"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PlK-ii-xaZ">
+                                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PlK-ii-xaZ">
                                                         <rect key="frame" x="130" y="20" width="88" height="30"/>
-                                                        <state key="normal" title="Delete Video"/>
+                                                        <state key="normal" title="Delete All Videos"/>
                                                         <connections>
-                                                            <action selector="didTapDeleteVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="17w-gL-j7Q"/>
+                                                            <action selector="didTapDeleteAllVideo:" destination="kHi-vT-9c0" eventType="touchUpInside" id="FEw-ZF-tvT"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AfT-0C-Rse">
