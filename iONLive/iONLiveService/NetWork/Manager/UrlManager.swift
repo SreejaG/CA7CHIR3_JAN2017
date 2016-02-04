@@ -88,10 +88,18 @@ class UrlManager {
     
     func iONLiveCamDeletePictureUrl(burstId: String!) -> String
     {
-//        var getPictureUrl = iONLiveCamUrl+"/picture"
-        let getPictureUrl = iONLiveCamUrl+"/picture" + "?burstID=\(burstId)"
+        var getPictureUrl = iONLiveCamUrl+"/picture"
         
+        if burstId.isEmpty == false
+        {
+            let stringArray = burstId.componentsSeparatedByString(".")
+            
+            let burstIdUrl = stringArray[0]
+            
+            getPictureUrl = getPictureUrl + "?burstID=\(burstIdUrl)"
+        }
         return getPictureUrl
+        
     }
     
     func iONLiveCamDeleteAllPictureUrl() -> String

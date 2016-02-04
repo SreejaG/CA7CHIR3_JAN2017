@@ -36,9 +36,7 @@ class iONLiveCamVideoViewController: UIViewController {
     func initialiseView()
     {
         resultsView.hidden = true
-
         updatePickerDataSource()
-        
     }
     
     //PRAGMA MARK: helper methods

@@ -82,7 +82,6 @@ class iONLiveCameraConfigurationViewController: UIViewController {
             }) { (error, code) -> () in
             ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
         }
-        
     }
 
     @IBAction func didTapGetCameraConfiguration(sender: AnyObject) {

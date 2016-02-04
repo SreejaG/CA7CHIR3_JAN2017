@@ -18,7 +18,6 @@ class IONLiveCameraStatusUtility: NSObject {
     var catalogDataSourceStatus : [String]?
     var videoDataSourceStatus : [String]?
     
-    
     func getCatalogStatus() -> [String]?
     {
         return catalogDataSourceStatus
@@ -45,20 +44,7 @@ class IONLiveCameraStatusUtility: NSObject {
                 ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get status ")
         }
     }
-    
-//    func getCameraStatus()
-//    {
-//        
-//        iONLiveCameraStatusManager.getiONLiveCameraStatus({ (response) -> () in
-//            
-//            self.iONLiveCamGetStatusSuccessHandler(response)
-//            
-//            }) { (error, code) -> () in
-//                
-//                ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get status ")
-//        }
-//    }
-    
+        
     //PRAGMA MARK:- API Handlers
     
     func iONLiveCamGetStatusSuccessHandler(response:AnyObject?)
