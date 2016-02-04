@@ -101,6 +101,13 @@ class UrlManager {
         return getPictureUrl
     }
     
+    func iONLiveCamDeleteAllPictureUrl() -> String
+    {
+        let getPictureUrl = iONLiveCamUrl+"/picture?burstID=*"
+        
+        return getPictureUrl
+    }
+
     func getiONLiveCamImageDownloadUrl(burstId:String) ->String
     {
         let getPictureUrl = iONLiveCamUrl+"/picture/\(burstId).jpg"

@@ -21,6 +21,7 @@ class iONCamPictureAPIViewController: UIViewController {
     @IBOutlet var scalePickerView: UIPickerView!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     @IBOutlet var burstCountTextField: UITextField!
+    @IBOutlet var inputBurstIdTextField: UITextField!
     
     let requestManager = RequestManager.sharedInstance
     let iOnLiveCameraPictureCaptureManager = iOnLiveCameraPictureCapture.sharedInstance
@@ -47,7 +48,7 @@ class iONCamPictureAPIViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    //PRAGAMA MARK :- Initializers
+    //PRAGMA MARK:- Initializers
     func initialise()
     {
         burstCountTextField.delegate = self
@@ -55,12 +56,14 @@ class iONCamPictureAPIViewController: UIViewController {
         self.imageLoadingIndicator.hidden = true
     }
     
-    @IBAction func deleteButtonClicked(sender: AnyObject)
+    //PRAGMA MARK:- Button Actions
+    
+    @IBAction func didTapDeleteAll(sender: AnyObject)
     {
-        self.deleteiONLiveCamImage(true, burstId: nil)
+        self.deleteAllPictures()
     }
     
-    @IBAction func getButtonClicked(sender: AnyObject)
+    @IBAction func didTapGetPicture(sender: AnyObject)
     {
         selectedBurstCount = burstCountTextField.text!
         self.captureiONLiveCamImage()
@@ -71,6 +74,13 @@ class iONCamPictureAPIViewController: UIViewController {
         self.navigationController?.popViewControllerAnimated(true)
     }
     
+    @IBAction func didTapCancelSnaps(sender: AnyObject) {
+        
+    }
+    
+    @IBAction func didTapDeletePictureWithBurstId(sender: AnyObject) {
+        
+    }
     //PRAGMA MARK:- API call
     /////////For testing iOnLiveCamPictureCapture API
     func captureiONLiveCamImage()
@@ -140,12 +150,25 @@ class iONCamPictureAPIViewController: UIViewController {
         }
     }
     
+    func deleteAllPictures()
+    {
+        showOverlay()
+
+        iOnLiveCameraPictureCaptureManager.deleteAllIONLiveCameraPicture({ (response) -> () in
+            
+            self.iONLiveCamDeletePictureSuccessHandler(response)
+            }) { (error, code) -> () in
+                self.iONLiveCamDeletePictureFailureHandler(error, code: code)
+                return
+        }
+    }
     
     func iONLiveCamDeletePictureSuccessHandler(response:AnyObject?)
     {
         self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
+            ErrorManager.sharedInstance.alert("Success", message: "Successfully deleted picture")
             print("success = \(json["burstID"]))")
         }
         else
@@ -158,15 +181,16 @@ class iONCamPictureAPIViewController: UIViewController {
     {
         self.removeOverlay()
         print("message = \(code) andError = \(error?.localizedDescription) ")
-        if !self.requestManager.validConnection() {
-            ErrorManager.sharedInstance.noNetworkConnection()
-        }
-        else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-        }
-        else{
-            ErrorManager.sharedInstance.loginError()
-        }
+        ErrorManager.sharedInstance.alert("Error", message: error?.localizedDescription)
+//        if !self.requestManager.validConnection() {
+//            ErrorManager.sharedInstance.noNetworkConnection()
+//        }
+//        else if code.isEmpty == false {
+//            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+//        }
+//        else{
+//            ErrorManager.sharedInstance.loginError()
+//        }
     }
     ////////////////////////////////////////////////
     
@@ -255,6 +279,20 @@ extension iONCamPictureAPIViewController
         }
     }
     
+    func validateBurstCountTextField(textField:UITextField)
+    {
+        if let burstCount = textField.text
+        {
+            if isValidBurstCount(burstCount) || (burstCount.isEmpty)
+            {
+                selectedBurstCount = burstCount
+            }
+            else{
+                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+            }
+        }
+    }
+    
     func isValidBurstCount(burstCount:String) -> Bool
     {
         switch selectedBurstInterval
@@ -335,17 +373,31 @@ extension iONCamPictureAPIViewController:UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
-        if let burstCount = textField.text
+        validateTextField(textField)
+        return false
+    }
+    
+    func validateTextField(textField: UITextField)
+    {
+        if textField.isEqual(burstCountTextField)
         {
-            if isValidBurstCount(burstCount) || (burstCount.isEmpty)
+            validateBurstCountTextField(textField)
+        }
+        else if textField.isEqual(inputBurstIdTextField)
+        {
+            validateBurstIdTextField(textField)
+        }
+    }
+    
+    func validateBurstIdTextField(textField:UITextField)
+    {
+        if let burstId = textField.text
+        {
+            if burstId.isEmpty
             {
-                selectedBurstCount = burstCount
-            }
-            else{
-                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+                ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
             }
         }
-        return false
     }
 }
 
