@@ -15,17 +15,25 @@ class iONLiveCamVideoViewController: UIViewController {
     var videoAPIResult =  [String : String]()
     let iONLiveCameraVideoCaptureManager = iONLiveCameraVideoCapture.sharedInstance
 
+    ////PRAGMA MARK:-OutLets
+    @IBOutlet var resultsView: UIView!
     @IBOutlet var numberOfSegementsLabel: UILabel!
     @IBOutlet var videoID: UILabel!
     var tField: UITextField!
 
+    //PRAGMA MARK:- load View
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        videoID.text =  "videoID = " + videoAPIResult["videoID"]!
-//        numberOfSegementsLabel.text = "No: of Segements = " + videoAPIResult["numSegments"]!
+        initialiseView()
     }
 
+    //PRAGMA MARK:- Initializers
+    func initialiseView()
+    {
+        resultsView.hidden = true
+    }
+    
     //PRAGMA MARK :- API calls
     func stopIONLiveCamVideo()
     {
@@ -44,7 +52,7 @@ class iONLiveCamVideoViewController: UIViewController {
     {
         iONLiveCameraVideoCaptureManager.updateVideoSegements(numSegments:numSegements, success: { (response) -> () in
 
-            ErrorManager.sharedInstance.alert("Updated Video Segements", message: "Successfully Updated Video Segements to 2")
+            ErrorManager.sharedInstance.alert("Updated Video Segements", message: "Successfully Updated Video Segements")
             print("Success")
 
             }) { (error, code) -> () in
@@ -53,6 +61,7 @@ class iONLiveCamVideoViewController: UIViewController {
                 print("failure")
         }
     }
+    
     func deleteVideo()
     {
         iONLiveCameraVideoCaptureManager.deleteVideo(hlsID: videoAPIResult["videoID"]!, success: { (response) -> () in
@@ -90,6 +99,7 @@ class iONLiveCamVideoViewController: UIViewController {
 
     func iONLiveCamGetVideoSuccessHandler(response:AnyObject?)
     {
+        resultsView.hidden = false
         print("entered capture video")
         if let json = response as? [String: AnyObject]
         {

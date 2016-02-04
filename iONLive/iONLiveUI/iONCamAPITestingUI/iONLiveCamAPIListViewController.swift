@@ -20,6 +20,7 @@ class iONLiveCamAPIListViewController: UIViewController {
     var dataSource:[String]?
     var wifiAPIList = ["Image capture","Video capture","Camera configuration","Live streaming configuration","Cloud connectivity configuration","Camera status","System information and modification","Download Image file","Download HLS playlist","Download video file","Download HLS segment"]
     var bleAPIList = [""]
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
