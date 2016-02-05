@@ -1566,7 +1566,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
-				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../ion-live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1594,7 +1594,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
-				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "../ion-live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;
 		};

@@ -21,10 +21,14 @@ class iONCamPictureAPIViewController: UIViewController {
     @IBOutlet var scalePickerView: UIPickerView!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     @IBOutlet var burstCountTextField: UITextField!
-    @IBOutlet var inputBurstIdTextField: UITextField!
+//    @IBOutlet var inputBurstIdTextField: UITextField!
+    @IBOutlet var inputBurstIdPickerView: UIPickerView!
     
     let requestManager = RequestManager.sharedInstance
     let iOnLiveCameraPictureCaptureManager = iOnLiveCameraPictureCapture.sharedInstance
+//    var inputBurstIdPickerData : [String] = []
+    var burstIdDataSource : [String] = []
+    var selectedBurstId = ""
     
     //PRAGMA MARK :- dataSource
     //    let scalePickerData = ["1=4000x3000 (12Mpixel)", "2=3840X2160(8Mpixel)", "4=2560X1920(5Mpixel)", "8=1920x1080(2Mpixel)"]
@@ -44,16 +48,31 @@ class iONCamPictureAPIViewController: UIViewController {
         initialise()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
     //PRAGMA MARK:- Initializers
     func initialise()
     {
         burstCountTextField.delegate = self
-        //        burstCountTextField.keyboardType = UIKeyboardType.NumberPad
         self.imageLoadingIndicator.hidden = true
+        updatePickerDataSource()
+    }
+    
+    //PRAGMA MARK: helper methods
+    func updatePickerDataSource()
+    {
+        let status = IONLiveCameraStatusUtility()
+        status.getiONLiveCameraStatus({ (response) -> () in
+            
+            self.burstIdDataSource = status.getCatalogStatus()!
+            self.inputBurstIdPickerView.reloadAllComponents()
+            if (self.burstIdDataSource.count > 0 )
+            {
+                self.selectedBurstId = self.burstIdDataSource[0]
+            }
+            
+            }) { (error, code) -> () in
+                ErrorManager.sharedInstance.alert("error", message: "error")
+                
+        }
     }
     
     //PRAGMA MARK:- Button Actions
@@ -80,16 +99,14 @@ class iONCamPictureAPIViewController: UIViewController {
     }
     
     @IBAction func didTapDeletePictureWithBurstId(sender: AnyObject) {
-        if let burstId = inputBurstIdTextField.text
+        
+        if self.selectedBurstId.isEmpty
         {
-            if burstId.isEmpty
-            {
-                ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
-            }
-            else
-            {
-                self.deleteiONLiveCamImage(burstId)
-            }
+            ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
+        }
+        else
+        {
+            self.deleteiONLiveCamImage(self.selectedBurstId)
         }
     }
     
@@ -101,6 +118,8 @@ class iONCamPictureAPIViewController: UIViewController {
         validateBurstCount()
         
         iOnLiveCameraPictureCaptureManager.getiONLiveCameraPictureId(selectedScale, burstCount: selectedBurstCount, burstInterval: selectedBurstInterval, quality: selectedQuality, success: { (response) -> () in
+            
+            self.updatePickerDataSource()
             ErrorManager.sharedInstance.alert("Success BurstId found", message:"\(response as? [String: AnyObject])")
             self.iONLiveCamGetPictureSuccessHandler(response)
             
@@ -117,8 +136,12 @@ class iONCamPictureAPIViewController: UIViewController {
     {
         showOverlay()
         iOnLiveCameraPictureCaptureManager.deleteiONLiveCameraPicture(burstId, success: { (response) -> () in
+            
+            self.updatePickerDataSource()
             self.iONLiveCamDeletePictureSuccessHandler(response)
             }) { (error, message) -> () in
+                
+                self.updatePickerDataSource()
                 self.iONLiveCamDeletePictureFailureHandler(error, code: message)
                 return
         }
@@ -129,9 +152,10 @@ class iONCamPictureAPIViewController: UIViewController {
         showOverlay()
         
         iOnLiveCameraPictureCaptureManager.deleteAllIONLiveCameraPicture({ (response) -> () in
-            
+            self.updatePickerDataSource()
             self.iONLiveCamDeletePictureSuccessHandler(response)
             }) { (error, code) -> () in
+                self.updatePickerDataSource()
                 self.iONLiveCamDeletePictureFailureHandler(error, code: code)
                 return
         }
@@ -266,6 +290,10 @@ extension iONCamPictureAPIViewController
         {
             return 100
         }
+        else if pickerView.isEqual(inputBurstIdPickerView)
+        {
+            return (burstIdDataSource.count)
+        }
         return 0
     }
     
@@ -285,6 +313,10 @@ extension iONCamPictureAPIViewController
             {
                 return String(row + 1)
             }
+        }
+        else if pickerView.isEqual(inputBurstIdPickerView)
+        {
+            return burstIdDataSource[row]
         }
         return ""
     }
@@ -424,21 +456,21 @@ extension iONCamPictureAPIViewController:UITextFieldDelegate
         {
             validateBurstCountTextField(textField)
         }
-        else if textField.isEqual(inputBurstIdTextField)
-        {
-            validateBurstIdTextField(textField)
-        }
+//        else if textField.isEqual(inputBurstIdTextField)
+//        {
+//            validateBurstIdTextField(textField)
+//        }
     }
     
-    func validateBurstIdTextField(textField:UITextField)
-    {
-        if let burstId = textField.text
-        {
-            if burstId.isEmpty
-            {
-                ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
-            }
-        }
-    }
+//    func validateBurstIdTextField(textField:UITextField)
+//    {
+//        if let burstId = textField.text
+//        {
+//            if burstId.isEmpty
+//            {
+//                ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
+//            }
+//        }
+//    }
 }
 

@@ -263,7 +263,7 @@
                                 <rect key="frame" x="0.0" y="480" width="600" height="120"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nZ6-T0-IaH">
-                                        <rect key="frame" x="0.0" y="10" width="90" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="azC-l2-O5S"/>
                                         </constraints>
@@ -273,57 +273,54 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2tb-Jh-pqA">
-                                        <rect key="frame" x="255" y="10" width="90" height="30"/>
+                                        <rect key="frame" x="255" y="0.0" width="90" height="30"/>
                                         <state key="normal" title="DeleteAll"/>
                                         <connections>
                                             <action selector="didTapDeleteAll:" destination="FGV-pr-1UY" eventType="touchUpInside" id="LgW-jF-48K"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wzi-SL-FGI">
-                                        <rect key="frame" x="510" y="10" width="90" height="30"/>
+                                        <rect key="frame" x="510" y="0.0" width="90" height="30"/>
                                         <state key="normal" title="CancelSnaps"/>
                                         <connections>
                                             <action selector="didTapCancelSnaps:" destination="FGV-pr-1UY" eventType="touchUpInside" id="aj5-OZ-2WP"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8xR-9a-cZt">
-                                        <rect key="frame" x="0.0" y="50" width="200" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="8xR-9a-cZt">
+                                        <rect key="frame" x="0.0" y="61" width="100" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="Edq-ns-xRr"/>
-                                            <constraint firstAttribute="width" constant="200" id="ihh-na-mgE"/>
+                                            <constraint firstAttribute="width" constant="100" id="ihh-na-mgE"/>
                                         </constraints>
                                         <state key="normal" title="Delete Picture With BurstID"/>
                                         <connections>
                                             <action selector="didTapDeletePictureWithBurstId:" destination="FGV-pr-1UY" eventType="touchUpInside" id="FbP-9p-6jj"/>
                                         </connections>
                                     </button>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iOb-aZ-yyi" userLabel="InputBurstId">
-                                        <rect key="frame" x="208" y="50" width="392" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" priority="750" constant="30" id="EP3-wL-DZr"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                    <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Tz-6r-2Cg">
+                                        <rect key="frame" x="105" y="32" width="495" height="88"/>
                                         <connections>
-                                            <outlet property="delegate" destination="FGV-pr-1UY" id="vFa-4z-BHA"/>
+                                            <outlet property="dataSource" destination="FGV-pr-1UY" id="X7d-gM-VkQ"/>
+                                            <outlet property="delegate" destination="FGV-pr-1UY" id="fhH-CG-SMT"/>
                                         </connections>
-                                    </textField>
+                                    </pickerView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="5Tz-6r-2Cg" secondAttribute="bottom" id="2VI-tl-nJh"/>
                                     <constraint firstItem="nZ6-T0-IaH" firstAttribute="centerY" secondItem="2tb-Jh-pqA" secondAttribute="centerY" id="8ud-yh-HUI"/>
                                     <constraint firstItem="nZ6-T0-IaH" firstAttribute="leading" secondItem="zKB-E4-udL" secondAttribute="leading" id="ClR-9B-yc3"/>
-                                    <constraint firstAttribute="trailing" secondItem="iOb-aZ-yyi" secondAttribute="trailing" id="EHF-3O-TuK"/>
                                     <constraint firstItem="8xR-9a-cZt" firstAttribute="leading" secondItem="zKB-E4-udL" secondAttribute="leading" id="GgM-s4-cX1"/>
                                     <constraint firstItem="2tb-Jh-pqA" firstAttribute="width" secondItem="wzi-SL-FGI" secondAttribute="width" id="N4u-7W-4l3"/>
                                     <constraint firstAttribute="height" constant="120" id="NZO-d5-WIh"/>
+                                    <constraint firstAttribute="trailing" secondItem="5Tz-6r-2Cg" secondAttribute="trailing" id="VPF-4O-TWG"/>
                                     <constraint firstAttribute="trailing" secondItem="wzi-SL-FGI" secondAttribute="trailing" id="cTB-cV-AWk"/>
-                                    <constraint firstItem="iOb-aZ-yyi" firstAttribute="leading" secondItem="8xR-9a-cZt" secondAttribute="trailing" constant="8" id="dc9-H4-cm8"/>
-                                    <constraint firstItem="nZ6-T0-IaH" firstAttribute="top" secondItem="zKB-E4-udL" secondAttribute="top" constant="10" id="g40-Pc-kDV"/>
-                                    <constraint firstItem="8xR-9a-cZt" firstAttribute="top" secondItem="nZ6-T0-IaH" secondAttribute="bottom" constant="10" id="hAh-Xq-Eb4"/>
-                                    <constraint firstItem="8xR-9a-cZt" firstAttribute="centerY" secondItem="iOb-aZ-yyi" secondAttribute="centerY" id="hMS-RM-byh"/>
+                                    <constraint firstItem="nZ6-T0-IaH" firstAttribute="top" secondItem="zKB-E4-udL" secondAttribute="top" id="g40-Pc-kDV"/>
                                     <constraint firstItem="2tb-Jh-pqA" firstAttribute="centerY" secondItem="wzi-SL-FGI" secondAttribute="centerY" id="mgP-9c-czu"/>
                                     <constraint firstItem="2tb-Jh-pqA" firstAttribute="centerX" secondItem="zKB-E4-udL" secondAttribute="centerX" id="okC-X7-nfp"/>
+                                    <constraint firstItem="5Tz-6r-2Cg" firstAttribute="top" secondItem="2tb-Jh-pqA" secondAttribute="bottom" constant="2" id="rGA-FP-kTu"/>
+                                    <constraint firstItem="5Tz-6r-2Cg" firstAttribute="leading" secondItem="8xR-9a-cZt" secondAttribute="trailing" constant="5" id="rS2-Ln-zGM"/>
+                                    <constraint firstItem="8xR-9a-cZt" firstAttribute="centerY" secondItem="5Tz-6r-2Cg" secondAttribute="centerY" id="t0f-3f-xQw"/>
                                     <constraint firstItem="nZ6-T0-IaH" firstAttribute="width" secondItem="2tb-Jh-pqA" secondAttribute="width" id="tmL-03-5mU"/>
                                 </constraints>
                             </view>
@@ -348,7 +345,7 @@
                         <outlet property="burstCountTextField" destination="AbY-6L-BPv" id="oXj-Eo-Lwu"/>
                         <outlet property="burstIntervalPickerView" destination="eJ5-mC-L8A" id="eGF-i2-aAs"/>
                         <outlet property="imageLoadingIndicator" destination="20M-XK-dGU" id="AzF-uR-Pmm"/>
-                        <outlet property="inputBurstIdTextField" destination="iOb-aZ-yyi" id="Ksh-0Q-t8D"/>
+                        <outlet property="inputBurstIdPickerView" destination="5Tz-6r-2Cg" id="aOe-Na-reE"/>
                         <outlet property="qualityPickerView" destination="Mgk-9U-r4b" id="lFW-mc-0wz"/>
                         <outlet property="scalePickerView" destination="DZN-lF-hZ8" id="On3-i5-WtC"/>
                     </connections>

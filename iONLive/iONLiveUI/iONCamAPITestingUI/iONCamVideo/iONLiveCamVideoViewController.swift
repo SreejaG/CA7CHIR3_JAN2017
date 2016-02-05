@@ -36,9 +36,7 @@ class iONLiveCamVideoViewController: UIViewController {
     func initialiseView()
     {
         resultsView.hidden = true
-
         updatePickerDataSource()
-        
     }
     
     //PRAGMA MARK: helper methods
@@ -64,11 +62,13 @@ class iONLiveCamVideoViewController: UIViewController {
     {
         iONLiveCameraVideoCaptureManager.stopIONLiveCameraVideo({ (response) -> () in
 
+            self.updatePickerDataSource()
             self.iONLiveCamGetVideoSuccessHandler(response)
             print("success")
 
             }) { (error, code) -> () in
 
+                self.updatePickerDataSource()
                 ErrorManager.sharedInstance.alert("stop Video", message: error?.localizedDescription)
                 print("failure")
         }
@@ -78,6 +78,7 @@ class iONLiveCamVideoViewController: UIViewController {
     {
         iONLiveCameraVideoCaptureManager.startVideoWithSegments(numSegments:numSegements, success: { (response) -> () in
 
+            self.updatePickerDataSource()
             ErrorManager.sharedInstance.alert("Updated Video Segements", message: "Successfully Updated Video Segements")
             print("Success")
 
@@ -118,6 +119,7 @@ class iONLiveCamVideoViewController: UIViewController {
     {
         iONLiveCameraVideoCaptureManager.getiONLiveCameraVideoID({ (response) -> () in
 
+            self.updatePickerDataSource()
             self.iONLiveCamGetVideoSuccessHandler(response)
 
             print("success")
