@@ -140,9 +140,10 @@ extension iONLiveCamAPIListViewController{
     func loadCameraConfiguration()
     {
         let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
-        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(iONLiveCameraConfigurationViewController.identifier) as! iONLiveCameraConfigurationViewController
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(IONLiveCamConfigViewController.identifier) as! IONLiveCamConfigViewController
         self.navigationController?.pushViewController(statusVC, animated: true)
     }
+    
     //PRAGMA MARK:- Test API call
 
     func loadIONLiveCamVideo()
