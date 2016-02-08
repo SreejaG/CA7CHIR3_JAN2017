@@ -763,7 +763,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     [outputFormatter setDateFormat:@"HH:mm:ss"];
     NSString *streamName = [outputFormatter stringFromDate:now];
     //rtsp://192.168.16.33:1935/live/stream_name
-    [_uploadSession startRtmpSessionWithURL:@"rtsp://192.168.16.33:1935/live" andStreamKey:@"streamName"];
+    [_uploadSession startRtmpSessionWithURL:@"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live" andStreamKey:streamName];
 }
 
 -(void)stopLiveStreaming
