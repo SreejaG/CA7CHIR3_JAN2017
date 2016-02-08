@@ -215,6 +215,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="qdg-YY-5oX"/>
                     <connections>
+                        <outlet property="bottomView" destination="JqH-kr-rKo" id="r6C-QY-lGG"/>
                         <outlet property="cameraButton" destination="lwm-xS-hJh" id="VOn-tB-XGY"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>

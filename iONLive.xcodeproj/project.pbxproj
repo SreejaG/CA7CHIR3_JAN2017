@@ -137,6 +137,7 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
+		AE8589843A7E86699662C81F /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56CCA5751DD3E38DEB850F47 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +158,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0CC816436167DE7B08669471 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		160B1F4F1C4CCEB40022B711 /* AAPLPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPreviewView.h; sourceTree = "<group>"; };
 		160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLPreviewView.m; sourceTree = "<group>"; };
 		160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = IPhoneCameraView.storyboard; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
+		56CCA5751DD3E38DEB850F47 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		599964541C057EF000D20FB2 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		599964551C057EF000D20FB2 /* avfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avfft.h; sourceTree = "<group>"; };
 		599964561C057EF000D20FB2 /* d3d11va.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = d3d11va.h; sourceTree = "<group>"; };
@@ -419,6 +422,7 @@
 		59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIRefreshControl+AFNetworking.m"; sourceTree = "<group>"; };
 		59BC3F581BFF848600710905 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
+		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -441,6 +445,7 @@
 				599964D41C057EF000D20FB2 /* libswscale.a in Frameworks */,
 				599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */,
 				599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */,
+				AE8589843A7E86699662C81F /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,6 +688,8 @@
 				167AF0421BFDC1F6003CDF30 /* iONLiveTests */,
 				167AF04D1BFDC1F6003CDF30 /* iONLiveUITests */,
 				167AF02C1BFDC1F6003CDF30 /* Products */,
+				3D8EDE4724F7AB0E7BA29C9B /* Pods */,
+				657062C36B2B324EA47A48A5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -862,6 +869,15 @@
 				160EAE411C032C0E00020D31 /* IONLConstants.swift */,
 			);
 			path = Application_Resources;
+			sourceTree = "<group>";
+		};
+		3D8EDE4724F7AB0E7BA29C9B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */,
+				0CC816436167DE7B08669471 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
@@ -1146,6 +1162,14 @@
 			path = Manager;
 			sourceTree = "<group>";
 		};
+		657062C36B2B324EA47A48A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				56CCA5751DD3E38DEB850F47 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1153,9 +1177,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 167AF0531BFDC1F6003CDF30 /* Build configuration list for PBXNativeTarget "iONLive" */;
 			buildPhases = (
+				4FC45EA4537E5CAE98085736 /* Check Pods Manifest.lock */,
 				167AF0271BFDC1F6003CDF30 /* Sources */,
 				167AF0281BFDC1F6003CDF30 /* Frameworks */,
 				167AF0291BFDC1F6003CDF30 /* Resources */,
+				37B9F4EA4D32D74218E6DE44 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1288,6 +1314,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		37B9F4EA4D32D74218E6DE44 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4FC45EA4537E5CAE98085736 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		167AF0271BFDC1F6003CDF30 /* Sources */ = {
@@ -1533,6 +1592,7 @@
 		};
 		167AF0541BFDC1F6003CDF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1561,6 +1621,7 @@
 		};
 		167AF0551BFDC1F6003CDF30 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0CC816436167DE7B08669471 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

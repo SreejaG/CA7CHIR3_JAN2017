@@ -11,6 +11,7 @@
 #import "IPhoneCameraViewController.h"
 #import "AAPLPreviewView.h"
 #import "iONLive-Swift.h"
+#import "VCSimpleSession.h"
 
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
@@ -24,11 +25,13 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSessionConfigurationFailed
 };
 
-@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol>
+@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol,  VCSessionDelegate>
 
 {
     SnapCamSelectionMode _snapCamMode;
 }
+
+@property (nonatomic, retain) VCSimpleSession* uploadSession;
 
 // For use in the storyboards.
 @property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
@@ -49,6 +52,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @property (nonatomic) AVCamSetupResult setupResult;
 @property (nonatomic, getter=isSessionRunning) BOOL sessionRunning;
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundRecordingID;
+@property (strong, nonatomic) IBOutlet UIView *bottomView;
 
 //Flash settings
 @property (nonatomic) AVCaptureFlashMode currentFlashMode;
@@ -67,146 +71,68 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
+    
     // Create the AVCaptureSession.
-    self.session = [[AVCaptureSession alloc] init];
+//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+//    if (shutterActionMode == SnapCamSelectionModeLiveStream)
+//    {
+//        self.previewView.session = nil;
+//        _uploadSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+//        //    _session.orientationLocked = YES;
+//        _uploadSession.delegate = self;
+//        [self.previewView addSubview:_uploadSession.previewView];
+//        _uploadSession.previewView.frame = self.previewView.bounds;
+//        _uploadSession.delegate = self;
+//    }
+//    else{
+//        self.session = [[AVCaptureSession alloc] init];
+//        //
+//        //    // Setup the preview view.
+//        self.previewView.session = self.session;
+//    }
     
-    // Setup the preview view.
-    self.previewView.session = self.session;
-    
-    // Communicate with the session and other session objects on this queue.
-    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
-    
-    self.setupResult = AVCamSetupResultSuccess;
-    
-    // Check video authorization status. Video access is required and audio access is optional.
-    // If audio access is denied, audio is not recorded during movie recording.
-    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
-    {
-        case AVAuthorizationStatusAuthorized:
-        {
-            // The user has previously granted access to the camera.
-            break;
-        }
-        case AVAuthorizationStatusNotDetermined:
-        {
-            // The user has not yet been presented with the option to grant video access.
-            // We suspend the session queue to delay session setup until the access request has completed to avoid
-            // asking the user for audio access if video access is denied.
-            // Note that audio access will be implicitly requested when we create an AVCaptureDeviceInput for audio during session setup.
-            dispatch_suspend( self.sessionQueue );
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
-                if ( ! granted ) {
-                    self.setupResult = AVCamSetupResultCameraNotAuthorized;
-                }
-                dispatch_resume( self.sessionQueue );
-            }];
-            break;
-        }
-        default:
-        {
-            // The user has previously denied access.
-            self.setupResult = AVCamSetupResultCameraNotAuthorized;
-            break;
-        }
-    }
-    
-    // Setup the capture session.
-    // In general it is not safe to mutate an AVCaptureSession or any of its inputs, outputs, or connections from multiple threads at the same time.
-    // Why not do all of this on the main queue?
-    // Because -[AVCaptureSession startRunning] is a blocking call which can take a long time. We dispatch session setup to the sessionQueue
-    // so that the main queue isn't blocked, which keeps the UI responsive.
-    dispatch_async( self.sessionQueue, ^{
-        if ( self.setupResult != AVCamSetupResultSuccess ) {
-            return;
-        }
-        
-        self.backgroundRecordingID = UIBackgroundTaskInvalid;
-        NSError *error = nil;
-        
-        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionBack];
-        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-        
-        if ( ! videoDeviceInput ) {
-            NSLog( @"Could not create video device input: %@", error );
-        }
-        
-        [self.session beginConfiguration];
-        
-        if ( [self.session canAddInput:videoDeviceInput] ) {
-            [self.session addInput:videoDeviceInput];
-            self.videoDeviceInput = videoDeviceInput;
-            
-            dispatch_async( dispatch_get_main_queue(), ^{
-                // Why are we dispatching this to the main queue?
-                // Because AVCaptureVideoPreviewLayer is the backing layer for AAPLPreviewView and UIView
-                // can only be manipulated on the main thread.
-                // Note: As an exception to the above rule, it is not necessary to serialize video orientation changes
-                // on the AVCaptureVideoPreviewLayer’s connection with other session manipulation.
-                
-                // Use the status bar orientation as the initial video orientation. Subsequent orientation changes are handled by
-                // -[viewWillTransitionToSize:withTransitionCoordinator:].
-                UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-                AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
-                if ( statusBarOrientation != UIInterfaceOrientationUnknown ) {
-                    initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
-                }
-                
-                AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-                previewLayer.connection.videoOrientation = initialVideoOrientation;
-            } );
-        }
-        else {
-            NSLog( @"Could not add video device input to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-        AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-        
-        if ( ! audioDeviceInput ) {
-            NSLog( @"Could not create audio device input: %@", error );
-        }
-        
-        if ( [self.session canAddInput:audioDeviceInput] ) {
-            [self.session addInput:audioDeviceInput];
-        }
-        else {
-            NSLog( @"Could not add audio device input to the session" );
-        }
-        
-        AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-        if ( [self.session canAddOutput:movieFileOutput] ) {
-            [self.session addOutput:movieFileOutput];
-            AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            if ( connection.isVideoStabilizationSupported ) {
-                connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-            }
-            self.movieFileOutput = movieFileOutput;
-        }
-        else {
-            NSLog( @"Could not add movie file output to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
-        if ( [self.session canAddOutput:stillImageOutput] ) {
-            stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
-            [self.session addOutput:stillImageOutput];
-            self.stillImageOutput = stillImageOutput;
-        }
-        else {
-            NSLog( @"Could not add still image output to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        [self.session commitConfiguration];
-    } );
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+
+    if (shutterActionMode == SnapCamSelectionModeLiveStream)
+    {
+//        [self configureCameraSettings];
+
+        self.previewView.session = nil;
+        self.previewView.hidden = true;
+        _uploadSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+        //    _session.orientationLocked = YES;
+        AVCaptureVideoPreviewLayer  *ptr;
+        [_uploadSession getCameraPreviewLayer:(&ptr)];
+        _uploadSession.delegate = self;
+        [self.view addSubview:_uploadSession.previewView];
+        _uploadSession.previewView.frame = self.view.bounds;
+        _uploadSession.delegate = self;
+        [self.view bringSubviewToFront:self.bottomView];
+        [self.view bringSubviewToFront:self.topView];
+    }
+    else{
+        [_uploadSession.previewView removeFromSuperview];
+        [self removeObservers];
+
+        self.session = [[AVCaptureSession alloc] init];
+        //
+        self.previewView.hidden = false;
+        [self configureCameraSettings];
+
+        //    // Setup the preview view.
+        self.previewView.session = self.session;
+    //}
+
     dispatch_async( self.sessionQueue, ^{
         switch ( self.setupResult )
         {
@@ -247,6 +173,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
             }
         }
     } );
+    }
 }
 
 #pragma mark KVO and Notifications
@@ -610,13 +537,46 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 - (IBAction)didTapsCameraActionButton:(id)sender
 {
-    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];//valueForKey:shutterActionMode// "shutterActionMode");
+    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     if (shutterActionMode == SnapCamSelectionModePhotos) {
         [self takePicture];
     }
     else if (shutterActionMode == SnapCamSelectionModeVideo)
     {
         [self startMovieRecording];
+    }
+    else if (shutterActionMode == SnapCamSelectionModeLiveStream)
+    {
+        switch(_uploadSession.rtmpSessionState) {
+            case VCSessionStateNone:
+            case VCSessionStatePreviewStarted:
+            case VCSessionStateEnded:
+            case VCSessionStateError:
+            {
+                [self startLiveStreaming];
+                break;
+            }
+            default:
+                [UIApplication sharedApplication].idleTimerDisabled = NO;
+                [_uploadSession endRtmpSession];
+                break;
+        }
+
+    }
+}
+
+- (void) connectionStatusChanged:(VCSessionState) state
+{
+    switch(state) {
+        case VCSessionStateStarting:
+            NSLog(@"Connecting");
+            break;
+        case VCSessionStateStarted:
+            NSLog(@"Disconnect");
+            break;
+        default:
+            NSLog(@"Connect");
+            break;
     }
 }
 
@@ -692,6 +652,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
+    [self stopLiveStreaming];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -793,6 +754,168 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 }
 
 #pragma mark :- Private Methods
+
+-(void)startLiveStreaming
+{
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    NSDate * now = [NSDate date];
+    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+    [outputFormatter setDateFormat:@"HH:mm:ss"];
+    NSString *streamName = [outputFormatter stringFromDate:now];
+    //rtsp://192.168.16.33:1935/live/stream_name
+    [_uploadSession startRtmpSessionWithURL:@"rtsp://192.168.16.33:1935/live" andStreamKey:@"streamName"];
+}
+
+-(void)stopLiveStreaming
+{
+    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+    if (shutterActionMode == SnapCamSelectionModeLiveStream)
+    {
+        switch(_uploadSession.rtmpSessionState) {
+            case VCSessionStateNone:
+            case VCSessionStatePreviewStarted:
+            case VCSessionStateEnded:
+            case VCSessionStateError:
+                break;
+            default:
+                [UIApplication sharedApplication].idleTimerDisabled = NO;
+                [_uploadSession endRtmpSession];
+                break;
+        }
+    }
+    
+}
+
+-(void)configureCameraSettings
+{
+    // Communicate with the session and other session objects on this queue.
+    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
+    
+    self.setupResult = AVCamSetupResultSuccess;
+    // Check video authorization status. Video access is required and audio access is optional.
+    // If audio access is denied, audio is not recorded during movie recording.
+    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
+    {
+        case AVAuthorizationStatusAuthorized:
+        {
+            // The user has previously granted access to the camera.
+            break;
+        }
+        case AVAuthorizationStatusNotDetermined:
+        {
+            // The user has not yet been presented with the option to grant video access.
+            // We suspend the session queue to delay session setup until the access request has completed to avoid
+            // asking the user for audio access if video access is denied.
+            // Note that audio access will be implicitly requested when we create an AVCaptureDeviceInput for audio during session setup.
+            dispatch_suspend( self.sessionQueue );
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
+                if ( ! granted ) {
+                    self.setupResult = AVCamSetupResultCameraNotAuthorized;
+                }
+                dispatch_resume( self.sessionQueue );
+            }];
+            break;
+        }
+        default:
+        {
+            // The user has previously denied access.
+            self.setupResult = AVCamSetupResultCameraNotAuthorized;
+            break;
+        }
+    }
+    
+    // Setup the capture session.
+    // In general it is not safe to mutate an AVCaptureSession or any of its inputs, outputs, or connections from multiple threads at the same time.
+    // Why not do all of this on the main queue?
+    // Because -[AVCaptureSession startRunning] is a blocking call which can take a long time. We dispatch session setup to the sessionQueue
+    // so that the main queue isn't blocked, which keeps the UI responsive.
+    dispatch_async( self.sessionQueue, ^{
+        if ( self.setupResult != AVCamSetupResultSuccess ) {
+            return;
+        }
+        
+        self.backgroundRecordingID = UIBackgroundTaskInvalid;
+        NSError *error = nil;
+        
+        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionBack];
+        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+        
+        if ( ! videoDeviceInput ) {
+            NSLog( @"Could not create video device input: %@", error );
+        }
+        
+        [self.session beginConfiguration];
+        
+        if ( [self.session canAddInput:videoDeviceInput] ) {
+            [self.session addInput:videoDeviceInput];
+            self.videoDeviceInput = videoDeviceInput;
+            
+            dispatch_async( dispatch_get_main_queue(), ^{
+                // Why are we dispatching this to the main queue?
+                // Because AVCaptureVideoPreviewLayer is the backing layer for AAPLPreviewView and UIView
+                // can only be manipulated on the main thread.
+                // Note: As an exception to the above rule, it is not necessary to serialize video orientation changes
+                // on the AVCaptureVideoPreviewLayer’s connection with other session manipulation.
+                
+                // Use the status bar orientation as the initial video orientation. Subsequent orientation changes are handled by
+                // -[viewWillTransitionToSize:withTransitionCoordinator:].
+                UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+                AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
+                if ( statusBarOrientation != UIInterfaceOrientationUnknown ) {
+                    initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
+                }
+                
+                AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+                previewLayer.connection.videoOrientation = initialVideoOrientation;
+            } );
+        }
+        else {
+            NSLog( @"Could not add video device input to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+        AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+        
+        if ( ! audioDeviceInput ) {
+            NSLog( @"Could not create audio device input: %@", error );
+        }
+        
+        if ( [self.session canAddInput:audioDeviceInput] ) {
+            [self.session addInput:audioDeviceInput];
+        }
+        else {
+            NSLog( @"Could not add audio device input to the session" );
+        }
+        
+        AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+        if ( [self.session canAddOutput:movieFileOutput] ) {
+            [self.session addOutput:movieFileOutput];
+            AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+            if ( connection.isVideoStabilizationSupported ) {
+                connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+            }
+            self.movieFileOutput = movieFileOutput;
+        }
+        else {
+            NSLog( @"Could not add movie file output to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+        if ( [self.session canAddOutput:stillImageOutput] ) {
+            stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
+            [self.session addOutput:stillImageOutput];
+            self.stillImageOutput = stillImageOutput;
+        }
+        else {
+            NSLog( @"Could not add still image output to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        [self.session commitConfiguration];
+    } );
+}
 
 - (void)subjectAreaDidChange:(NSNotification *)notification
 {
