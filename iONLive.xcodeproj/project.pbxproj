@@ -255,7 +255,7 @@
 		167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsListViewController.swift; sourceTree = "<group>"; };
 		167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpUserNameViewController.swift; sourceTree = "<group>"; };
 		167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerifyPhoneViewController.swift; sourceTree = "<group>"; };
-		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadStream.swift; sourceTree = "<group>"; };
+		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UploadStream.swift; path = ../iONLiveUI/Streaming/UploadStream.swift; sourceTree = "<group>"; };
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIResultViewController.swift; sourceTree = "<group>"; };
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
@@ -499,6 +499,7 @@
 		160903FC1C6C7F31004E381D /* iONLiveStreaming */ = {
 			isa = PBXGroup;
 			children = (
+				1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */,
 				160903FD1C6C7F31004E381D /* IPhoneLiveStreaming.swift */,
 				160903FE1C6C7F31004E381D /* rtsp_relay.h */,
 				160903FF1C6C7F31004E381D /* rtsp_relay.m */,
@@ -814,7 +815,6 @@
 		167AF05F1BFDC2C1003CDF30 /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
-				1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */,
 				167AF0691BFDC32E003CDF30 /* Streaming.storyboard */,
 				167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */,
 				1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */,
