@@ -39,26 +39,31 @@ class PhotoViewerViewController: UIViewController {
             let screenRect : CGRect = UIScreen.mainScreen().bounds
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
+            let checkValidation = NSFileManager.defaultManager()
             for var index = 0; index < snapShotsKeys.count; index++
             {
                 if let thumbNailImagePath = snapShots.valueForKey(snapShotsKeys[index] as! String)
                 {
-                    let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
-                    let sizeThumb = CGSizeMake(50,50)
-                    let sizeFull = CGSizeMake(screenWidth*2,screenHeight)
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                    let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
-                    dummyImagesDataSource.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
-                    
+                    if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
+                    {
+                        let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
+                        let sizeThumb = CGSizeMake(50,50)
+                        let sizeFull = CGSizeMake(screenWidth*2,screenHeight)
+                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                        let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                        dummyImagesDataSource.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
+                    }
                 }
             }
             
             dataSource = dummyImagesDataSource
-            
-            if let imagePath = dummyImagesDataSource[0][fullImageKey]
+            if dummyImagesDataSource.count > 0
             {
+                if let imagePath = dummyImagesDataSource[0][fullImageKey]
+                {
                 
-                self.fullScrenImageView.image = imagePath
+                    self.fullScrenImageView.image = imagePath
+                }
             }
         }
     }

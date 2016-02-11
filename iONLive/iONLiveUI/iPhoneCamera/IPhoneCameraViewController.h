@@ -12,5 +12,6 @@
 
 -(NSMutableDictionary *) displayIphoneCameraSnapShots ;
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
+-(void) deleteIphoneCameraSnapShots;
 
 @end
