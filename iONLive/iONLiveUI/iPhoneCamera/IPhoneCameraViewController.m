@@ -382,7 +382,11 @@ NSMutableDictionary * snapShotsDict;
             if ( status == PHAuthorizationStatusAuthorized ) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.thumbnailImageView.image = [self thumbnailFromVideoAtURL:outputFileURL];
+                    NSData *imageData = [[NSData alloc]init];
+                    imageData = [self thumbnailFromVideoAtURL:outputFileURL];
+                    self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                     [self saveImage:imageData];
+                    
 //                    cleanup();
                 });
                 
@@ -1066,7 +1070,7 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     return newImage;
 }
 
-- (UIImage *)thumbnailFromVideoAtURL:(NSURL *)contentURL {
+- (NSData *)thumbnailFromVideoAtURL:(NSURL *)contentURL {
     UIImage *theImage = nil;
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:contentURL options:nil];
     AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
@@ -1076,9 +1080,10 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     CGImageRef imgRef = [generator copyCGImageAtTime:time actualTime:NULL error:&err];
     theImage = [[UIImage alloc] initWithCGImage:imgRef];
     CGImageRelease(imgRef);
-    
+    NSData *imageData = [[NSData alloc] init];
+    imageData = UIImageJPEGRepresentation(theImage, 1.0);
     // get image cropped from to and bottom
-    return [self thumbnaleImage:theImage scaledToFillSize:CGSizeMake(50, 50)];
+    return imageData;
 }
 
 @end

@@ -32,17 +32,22 @@ class PhotoViewerViewController: UIViewController {
     func readImageFromDataBase()
     {
         let cameraController = IPhoneCameraViewController()
+        
         if snapShots.count > 0
         {
             let snapShotsKeys = snapShots.allKeys as NSArray
+            
+            let descriptor: NSSortDescriptor = NSSortDescriptor(key: nil, ascending: false)
+            let sortedSnapShotsKeys: NSArray = snapShotsKeys.sortedArrayUsingDescriptors([descriptor])
+            
             var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
             let screenRect : CGRect = UIScreen.mainScreen().bounds
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
             let checkValidation = NSFileManager.defaultManager()
-            for var index = 0; index < snapShotsKeys.count; index++
+            for var index = 0; index < sortedSnapShotsKeys.count; index++
             {
-                if let thumbNailImagePath = snapShots.valueForKey(snapShotsKeys[index] as! String)
+                if let thumbNailImagePath = snapShots.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
                     {
