@@ -915,6 +915,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="inputLabel" destination="5eQ-7e-jKO" id="ytC-yk-qUN"/>
                                             <outlet property="inputTextField" destination="Km9-uh-NF3" id="gMu-Jp-PfU"/>
                                         </connections>
                                     </tableViewCell>

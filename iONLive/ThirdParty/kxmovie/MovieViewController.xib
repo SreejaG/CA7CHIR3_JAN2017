@@ -10,6 +10,7 @@
                 <outlet property="_activityIndicatorView" destination="fVQ-mp-3vZ" id="AQw-2s-BP2"/>
                 <outlet property="activityImageView" destination="dwM-g7-MKl" id="Z7n-Ww-82z"/>
                 <outlet property="bottomView" destination="8cA-HV-eex" id="PPk-2D-Ayo"/>
+                <outlet property="cameaThumbNailImage" destination="6wa-v0-MdF" id="als-uX-RQM"/>
                 <outlet property="cameraButton" destination="Fzv-Kt-ME1" id="xLN-vZ-og4"/>
                 <outlet property="cameraSelectionButton" destination="lME-9O-IZZ" id="6cY-ph-zgr"/>
                 <outlet property="closeButton" destination="2sq-TW-cXt" id="Rbm-RH-rk7"/>

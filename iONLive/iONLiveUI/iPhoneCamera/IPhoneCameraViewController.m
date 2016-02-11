@@ -30,8 +30,8 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 {
     SnapCamSelectionMode _snapCamMode;
 }
-
-@property (nonatomic, retain) VCSimpleSession* uploadSession;
+//Video Core Session
+@property (nonatomic, retain) VCSimpleSession* liveSteamSession;
 
 // For use in the storyboards.
 @property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
@@ -61,35 +61,14 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 @implementation IPhoneCameraViewController
 
+NSMutableDictionary * snapShotsDict;
+
 
 - (void)viewDidLoad {
     
     [super viewDidLoad];
 
-    _snapCamMode = SnapCamSelectionModeiPhone;
-    _currentFlashMode = AVCaptureFlashModeOff;
-    
-    self.navigationController.navigationBarHidden = true;
-    [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-    
-    // Create the AVCaptureSession.
-//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-//    if (shutterActionMode == SnapCamSelectionModeLiveStream)
-//    {
-//        self.previewView.session = nil;
-//        _uploadSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
-//        //    _session.orientationLocked = YES;
-//        _uploadSession.delegate = self;
-//        [self.previewView addSubview:_uploadSession.previewView];
-//        _uploadSession.previewView.frame = self.previewView.bounds;
-//        _uploadSession.delegate = self;
-//    }
-//    else{
-//        self.session = [[AVCaptureSession alloc] init];
-//        //
-//        //    // Setup the preview view.
-//        self.previewView.session = self.session;
-//    }
+    [self initialiseView];
     
 }
 
@@ -109,19 +88,19 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
         self.previewView.session = nil;
         self.previewView.hidden = true;
-        _uploadSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+        _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
         //    _session.orientationLocked = YES;
         AVCaptureVideoPreviewLayer  *ptr;
-        [_uploadSession getCameraPreviewLayer:(&ptr)];
-        _uploadSession.delegate = self;
-        [self.view addSubview:_uploadSession.previewView];
-        _uploadSession.previewView.frame = self.view.bounds;
-        _uploadSession.delegate = self;
+        [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+        _liveSteamSession.delegate = self;
+        [self.view addSubview:_liveSteamSession.previewView];
+        _liveSteamSession.previewView.frame = self.view.bounds;
+        _liveSteamSession.delegate = self;
         [self.view bringSubviewToFront:self.bottomView];
         [self.view bringSubviewToFront:self.topView];
     }
     else{
-        [_uploadSession.previewView removeFromSuperview];
+        [_liveSteamSession.previewView removeFromSuperview];
         [self removeObservers];
 
         self.session = [[AVCaptureSession alloc] init];
@@ -174,6 +153,43 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
         }
     } );
     }
+}
+
+#pragma mark initialise View
+
+-(void)initialiseView
+{
+    _snapCamMode = SnapCamSelectionModeiPhone;
+    _currentFlashMode = AVCaptureFlashModeOff;
+    
+    self.navigationController.navigationBarHidden = true;
+    [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
+
+    self.thumbnailImageView.image = [self readImageFromDataBase];
+}
+
+-(UIImage*)readImageFromDataBase
+{
+    snapShotsDict = [[NSMutableDictionary alloc]init];
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    UIImage * thumbNailImage = [[UIImage alloc]init];
+    if([snapShotsDict count] > 0){
+        NSLog(@"SnapshotDict=%@",snapShotsDict);
+        NSMutableArray *dateArray=[[NSMutableArray alloc]init];
+        NSArray *snapShotKeys=[[NSArray alloc]init];
+        snapShotKeys = [snapShotsDict allKeys];
+        for(int i=0; i<[snapShotKeys count]; i++){
+            [dateFormat setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+            NSDate *date = [dateFormat dateFromString:snapShotKeys[i]];
+            dateArray[i]=date;
+        }
+        NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+        NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
+        
+        thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+    }
+    return thumbNailImage;
 }
 
 #pragma mark KVO and Notifications
@@ -485,6 +501,9 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
                         //create and show thumbnail
                         dispatch_async( dispatch_get_main_queue(), ^{
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                            
+                            [self saveImage:imageData];
+                            
                         } );
                     }
                 }];
@@ -533,6 +552,75 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     } );
 }
 
+#pragma mark save Image to DataBase
+
+-(void)saveImage:(NSData *)imageData
+{
+    NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
+    NSString *filePath=@"";
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    
+    filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
+    BOOL s = [imageData writeToFile:filePath atomically:YES];
+    
+    NSLog(@"BOOl%uud",s);
+    [self saveIphoneCameraSnapShots:dateString path:filePath];
+}
+
+-(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
+    
+    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = appDel.managedObjectContext;
+    NSManagedObject *newSnapShots =[NSEntityDescription insertNewObjectForEntityForName:@"SnapShots" inManagedObjectContext:context];
+    
+    [newSnapShots setValue:imageName forKey:@"imageName"];
+    [newSnapShots setValue:path forKey:@"path"];
+    [context save:nil];
+}
+
+-(NSMutableDictionary *) displayIphoneCameraSnapShots {
+    
+    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = appDel.managedObjectContext;
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
+    request.returnsObjectsAsFaults=false;
+    
+    NSMutableDictionary *snapShotsDict = [[NSMutableDictionary alloc]init];
+    NSArray *snapShotsArray = [[NSArray alloc]init];
+    snapShotsArray = [context executeFetchRequest:request error:nil];
+    
+    NSLog(@"Array%@",snapShotsArray);
+    [context save:nil];
+    
+    for(NSString *snapShotValue in snapShotsArray)
+    {
+        NSString *snapImageName =[snapShotValue valueForKey:@"imageName"];
+        NSString *snapImagePath = [snapShotValue valueForKey:@"path"];
+        [snapShotsDict setValue:snapImagePath forKey:snapImageName];
+    }
+    
+    NSLog(@"Dictionary%@",snapShotsDict);
+    return snapShotsDict;
+}
+
+-(void) deleteIphoneCameraSnapShots{
+    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = appDel.managedObjectContext;
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
+    request.returnsObjectsAsFaults=false;
+    NSArray *snapShotsArray = [[NSArray alloc]init];
+    snapShotsArray = [context executeFetchRequest:request error:nil];
+    for(NSManagedObject *obj in snapShotsArray){
+        [context deleteObject:obj];
+    }
+    [context save:nil];
+}
+
 #pragma mark Button Actions
 
 - (IBAction)didTapsCameraActionButton:(id)sender
@@ -547,18 +635,22 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-        switch(_uploadSession.rtmpSessionState) {
+        IPhoneLiveStreaming * liveStreaming = [[IPhoneLiveStreaming alloc]init];
+        switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
             case VCSessionStateEnded:
             case VCSessionStateError:
             {
-                [self startLiveStreaming];
+                [liveStreaming startLiveStreaming:_liveSteamSession];
+                
+//                [self startLiveStreaming];
                 break;
             }
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
-                [_uploadSession endRtmpSession];
+                [liveStreaming stopStreamingClicked];
+//                [_liveSteamSession endRtmpSession];
                 break;
         }
 
@@ -568,6 +660,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 - (void) connectionStatusChanged:(VCSessionState) state
 {
     switch(state) {
+            
         case VCSessionStateStarting:
             NSLog(@"Connecting");
             break;
@@ -709,12 +802,19 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 -(void) loadPhotoViewer
 {
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
-    UIViewController *photoViewerViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    
+    PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    
+    photoViewerViewController.snapShots = snapShotsDict;
+    
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentViewController:navController animated:true completion:^{
+        
     }];
 }
 
@@ -758,12 +858,25 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 -(void)startLiveStreaming
 {
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    NSDate * now = [NSDate date];
-    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
-    [outputFormatter setDateFormat:@"HH:mm:ss"];
-    NSString *streamName = [outputFormatter stringFromDate:now];
-    //rtsp://192.168.16.33:1935/live/stream_name
-    [_uploadSession startRtmpSessionWithURL:@"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live" andStreamKey:streamName];
+    /*
+     rtmp://stream.ioncameras.com:1935/live/stream?ionlive&ion#Ca7hDec11%Live;
+     rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live/stream
+     rtmp://stream.ioncameras.com:1935/live/stream?username=ionlive&password=ion#Ca7hDec11%Live
+     rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live/stream
+     */
+    
+NSString * url  = @"rtsp://192.168.16.33:1935/live";
+//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live";
+//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live";
+//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live";
+//    NSDate * now = [NSDate date];
+//    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+//    [outputFormatter setDateFormat:@"HH:mm:ss"];
+//    NSString *streamName = [outputFormatter stringFromDate:now];
+//    NSString * url = @"rtsp://192.168.16.33:1935/live";+
+//    NSString * url = @"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live";
+//    NSString * url = @"rtsp://priyesh:priyesh@192.168.16.33:1935/live";
+    [_liveSteamSession startRtmpSessionWithURL:url andStreamKey:@"iPhoneliveStreaming"];
 }
 
 -(void)stopLiveStreaming
@@ -771,7 +884,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-        switch(_uploadSession.rtmpSessionState) {
+        switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
             case VCSessionStateEnded:
@@ -779,7 +892,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
                 break;
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
-                [_uploadSession endRtmpSession];
+                [_liveSteamSession endRtmpSession];
                 break;
         }
     }

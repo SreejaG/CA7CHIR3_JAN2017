@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
+class SnapCamSelectViewController: UIViewController {
     
     static let identifier = "SnapCamSelectViewController"
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
@@ -72,9 +72,12 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+}
+
 //PRAGMA MARK:- TableView datasource, delegates
-    
+
+extension SnapCamSelectViewController:UITableViewDataSource
+{
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         let count = dataSource.count
@@ -101,7 +104,10 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
 
         return cell
     }
-    
+}
+
+extension SnapCamSelectViewController:UITableViewDelegate
+{
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
@@ -129,12 +135,16 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
             break;
         }
     }
-    
+
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
         return 60
     }
-    
+}
+
+//PRAGMA MARK:- Helper Methods
+extension SnapCamSelectViewController
+{
     func updateSnapCamModeSelection(row:Int , ForCell selectedCell:UITableViewCell)
     {
         if isStreamStarted()
@@ -290,17 +300,42 @@ class SnapCamSelectViewController: UIViewController,UITableViewDataSource,UITabl
         print("\(buttonTitle) pressed")
         if buttonTitle == "Yes" {
             
-            let stream = UploadStream()
-            stream.stopStreamingClicked()
-
+            stopLiveStreaming()
+            
             self.snapCamSettingsTableView.reloadData()
-            streamingDelegate?.cameraSelectionMode(snapCamMode)
         }
         else
         {
             self.snapCamSettingsTableView.reloadData()
             print("No Pressed")
         }
+    }
+    
+    func stopLiveStreaming()
+    {
+        if snapCamMode == SnapCamSelectionMode.SnapCam
+        {
+            stopSnapCamCameraLiveStreaming()
+        }
+        else if snapCamMode == SnapCamSelectionMode.iPhone
+        {
+            stopIPhoneCameraLiveStreaming()
+        }
+    }
+    
+    func stopSnapCamCameraLiveStreaming()
+    {
+        let stream = UploadStream()
+        stream.stopStreamingClicked()
+        
+        streamingDelegate?.cameraSelectionMode(snapCamMode)
+
+    }
+    
+    func stopIPhoneCameraLiveStreaming()
+    {
+        let liveStreaming = IPhoneLiveStreaming()
+        liveStreaming.stopStreamingClicked()
     }
     
     //PRAGMA MARK:- customize table cell

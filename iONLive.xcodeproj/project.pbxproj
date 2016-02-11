@@ -107,6 +107,7 @@
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
+		16F790251C6AFFDD0016EF7F /* IPhoneLiveStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F790241C6AFFDD0016EF7F /* IPhoneLiveStreaming.swift */; };
 		599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BA1C057EF000D20FB2 /* libavcodec.a */; };
 		599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BB1C057EF000D20FB2 /* libavdevice.a */; };
 		599964D01C057EF000D20FB2 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BC1C057EF000D20FB2 /* libavfilter.a */; };
@@ -273,6 +274,7 @@
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
+		16F790241C6AFFDD0016EF7F /* IPhoneLiveStreaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPhoneLiveStreaming.swift; sourceTree = "<group>"; };
 		56CCA5751DD3E38DEB850F47 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		599964541C057EF000D20FB2 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		599964551C057EF000D20FB2 /* avfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avfft.h; sourceTree = "<group>"; };
@@ -475,6 +477,7 @@
 		160B1F4E1C4CCEB40022B711 /* iPhoneCamera */ = {
 			isa = PBXGroup;
 			children = (
+				16F790231C6AFFB50016EF7F /* LiveStreaming */,
 				160B1F4F1C4CCEB40022B711 /* AAPLPreviewView.h */,
 				160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */,
 				160B1F5C1C4CDF9E0022B711 /* IPhoneCameraView.storyboard */,
@@ -878,6 +881,14 @@
 				160EAE411C032C0E00020D31 /* IONLConstants.swift */,
 			);
 			path = Application_Resources;
+			sourceTree = "<group>";
+		};
+		16F790231C6AFFB50016EF7F /* LiveStreaming */ = {
+			isa = PBXGroup;
+			children = (
+				16F790241C6AFFDD0016EF7F /* IPhoneLiveStreaming.swift */,
+			);
+			path = LiveStreaming;
 			sourceTree = "<group>";
 		};
 		3D8EDE4724F7AB0E7BA29C9B /* Pods */ = {
@@ -1409,6 +1420,7 @@
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
+				16F790251C6AFFDD0016EF7F /* IPhoneLiveStreaming.swift in Sources */,
 				16609D291C1EA40700D0077F /* EditProfileViewController.swift in Sources */,
 				166796B61C31076500543D7A /* ProgramCameraButtonCell.swift in Sources */,
 				167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */,
@@ -1615,7 +1627,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**",
+					"\"$(SRCROOT)/Pods/VideoCore\"/**",
+				);
 				INFOPLIST_FILE = iONLive/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1625,7 +1640,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
+				PROVISIONING_PROFILE = "5b82320e-5dff-4327-833b-0882600f2e19";
 				SWIFT_OBJC_BRIDGING_HEADER = "../ion-live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1644,7 +1659,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**",
+					"\"$(SRCROOT)/Pods/VideoCore\"/**",
+				);
 				INFOPLIST_FILE = iONLive/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1654,7 +1672,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLiveApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "37da0093-f106-4d2f-9259-0a7c9a328037";
+				PROVISIONING_PROFILE = "5b82320e-5dff-4327-833b-0882600f2e19";
 				SWIFT_OBJC_BRIDGING_HEADER = "../ion-live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;

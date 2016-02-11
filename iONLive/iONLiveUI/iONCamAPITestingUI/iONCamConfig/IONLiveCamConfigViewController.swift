@@ -12,15 +12,13 @@ class IONLiveCamConfigViewController: UIViewController {
 
     static let identifier = "IONLiveCamConfigViewController"
     
-//    @IBOutlet var inputTextField: UITextField!
-//    @IBOutlet var outputField: UITextField!
-    
     @IBOutlet var cameraConfigTableView: UITableView!
     
     
     //PRAGMA MARK: - DataSource
     var videoResolutionDataSource = []
-    var tableViewDataSource = ["Video Resolution": ["3840x2160","1920x1080","1280x720","848x480"],"ButtonSingleClick":["Picture"]]
+    var tableViewDataSource = ["Video Resolution": ["3840x2160","1920x1080","1280x720","848x480"],"ButtonSingleClick":["Picture"],"videoFps":["240","200","120","100","60","50","30","25"],"buttonDoubleClick":["video"],"led":["on"],"quality":["1","2","3"],"scale":["1","2","4","8"]]
+    
     //PRAGMA MARK:- class variables
     let requestManager = RequestManager.sharedInstance
     let iONLiveCameraConfigManager = iONLiveCameraConfiguration.sharedInstance
@@ -29,13 +27,11 @@ class IONLiveCamConfigViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
     }
     //PRAGMA MARK:- API Handler
     
     func iONLiveCamGetConfigSuccessHandler(response:AnyObject?)
     {
-//        outPutView.hidden = false
         print("entered config")
         
         if let json = response as? [String: AnyObject]
@@ -115,7 +111,7 @@ extension IONLiveCamConfigViewController:UITableViewDelegate,UITableViewDataSour
     {
         if tableViewDataSource.count > indexPath.row
         {
-            var keys: [String] = Array(tableViewDataSource.keys)
+            var keys = Array(tableViewDataSource.keys)
             let values:Array = tableViewDataSource[keys[indexPath.row]]!
             
             if values.count > 1
@@ -123,13 +119,16 @@ extension IONLiveCamConfigViewController:UITableViewDelegate,UITableViewDataSour
                 let cell = tableView.dequeueReusableCellWithIdentifier(PickerViewTableViewCell.identifier, forIndexPath: indexPath) as! PickerViewTableViewCell
                 
                 cell.inputLabel.text = keys[indexPath.row]
-                
+                cell.pickerViewData = values
                 cell.selectionStyle = .None
                 return cell
             }
             else
             {
                 let cell = tableView.dequeueReusableCellWithIdentifier(SimpleTextFieldTableViewCell.identifier, forIndexPath: indexPath) as! SimpleTextFieldTableViewCell
+                
+//                let keyValue = keys[indexPath.row];
+//                print(keyValue)
                 cell.inputLabel.text = keys[indexPath.row]
                 cell.inputTextField.text = values[0]
                 cell.selectionStyle = .None
@@ -139,23 +138,14 @@ extension IONLiveCamConfigViewController:UITableViewDelegate,UITableViewDataSour
         }
         return UITableViewCell()
     }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+}
+
+//TextField Delegate
+extension IONLiveCamConfigViewController:UITextFieldDelegate
+{
+    func textFieldShouldReturn(textField: UITextField) -> Bool
     {
-        //        switch indexPath.row
-        //        {
-        //        case 0:
-        //            loadPictureAPIViewController()
-        //            break;
-        //        case 1:
-        //            loadIONLiveCamVideo()
-        //            break;
-        //        case 2:
-        //            loadCameraConfiguration()
-        //        case 5:
-        //            loadCameraStatus()
-        //        default:
-        //            break;
-        //        }
+        textField.resignFirstResponder()
+        return false
     }
 }

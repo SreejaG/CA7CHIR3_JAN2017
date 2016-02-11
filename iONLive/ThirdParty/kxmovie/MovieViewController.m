@@ -16,6 +16,7 @@
 #import "Connectivity.h"
 #import "iONLive-Swift.h"
 #import <CFNetwork/CFNetwork.h>
+#import "IPhoneCameraViewController.h"
 
 NSString * const KxMovieParameterMinBufferedDuration = @"KxMovieParameterMinBufferedDuration";
 NSString * const KxMovieParameterMaxBufferedDuration = @"KxMovieParameterMaxBufferedDuration";
@@ -91,6 +92,7 @@ static NSMutableDictionary * gHistory;
     __weak IBOutlet UIView *heartView;
     __weak IBOutlet UIView *heartBottomDescView;
 
+    IBOutlet UIButton *cameaThumbNailImage;
     IBOutlet UILabel *noDataFound;
     IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
@@ -133,6 +135,7 @@ static NSMutableDictionary * gHistory;
     UIAlertView *alertViewTemp;
     NSInputStream *inputStream;
     UITapGestureRecognizer *_tapGestureRecognizer;
+    NSMutableDictionary *snapShotsDict;
     
 }
 
@@ -214,7 +217,7 @@ static NSMutableDictionary * gHistory;
 {
     [super viewDidLoad];
     [self setUpView];
-    
+    [self setUpThumbailImage];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -392,6 +395,29 @@ static NSMutableDictionary * gHistory;
 
 #pragma mark : Customize View
 
+-(void)setUpThumbailImage
+{
+    IPhoneCameraViewController *iphoneCameraViewController = [[IPhoneCameraViewController alloc]init];
+    snapShotsDict = iphoneCameraViewController.displayIphoneCameraSnapShots;
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    if([snapShotsDict count] > 0){
+        NSLog(@"SnapshotDict=%@",snapShotsDict);
+        NSMutableArray *dateArray=[[NSMutableArray alloc]init];
+        NSArray *snapShotKeys=[[NSArray alloc]init];
+        snapShotKeys = [snapShotsDict allKeys];
+        for(int i=0; i<[snapShotKeys count]; i++){
+            [dateFormat setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+            NSDate *date = [dateFormat dateFromString:snapShotKeys[i]];
+            dateArray[i]=date;
+        }
+        NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+        NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
+        UIImage * thumbaNailImage = [iphoneCameraViewController thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]]] scaledToFillSize:CGSizeMake(46, 46)];
+        
+        
+        [cameaThumbNailImage setImage:thumbaNailImage forState:UIControlStateNormal];
+    }
+}
 
 -(void)setUpView
 {
@@ -1676,7 +1702,8 @@ static NSMutableDictionary * gHistory;
 -(void) loadPhotoViewer
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
-    UIViewController *photoViewerViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    photoViewerViewController.snapShots = snapShotsDict;
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

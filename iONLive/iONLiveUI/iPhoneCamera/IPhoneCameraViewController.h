@@ -10,4 +10,7 @@
 
 @interface IPhoneCameraViewController : UIViewController
 
+-(NSMutableDictionary *) displayIphoneCameraSnapShots ;
+-(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
+
 @end

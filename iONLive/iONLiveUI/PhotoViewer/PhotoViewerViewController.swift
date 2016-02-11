@@ -16,21 +16,52 @@ class PhotoViewerViewController: UIViewController {
     
     @IBOutlet weak var photoThumpCollectionView: UICollectionView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
-    var dataSource:[[String:String]]?
+    var dataSource:[[String:UIImage]] = [[String:UIImage]]()
    
+    var snapShots : NSMutableDictionary = NSMutableDictionary()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var dummyImagesDataSource = [[thumbImageKey:"photo1thmb",fullImageKey:"photoV1"],[thumbImageKey:"photo2thmb",fullImageKey:"photoV2"],[thumbImageKey:"photo3thmb",fullImageKey:"photo3"],[thumbImageKey:"photo4thmb",fullImageKey:"photo4"],[thumbImageKey:"photo5thmb",fullImageKey:"photo5"],[thumbImageKey:"photo6thmb",fullImageKey:"photo6"],[thumbImageKey:"photo7thmb",fullImageKey:"photo7"],[thumbImageKey:"photo8thmb",fullImageKey:"photo8"],[thumbImageKey:"photo9thmb",fullImageKey:"photo9"],[thumbImageKey:"photo10thmb",fullImageKey:"photo10"]]
-        
-        dataSource = dummyImagesDataSource
-        self.fullScrenImageView.image = UIImage(named: dummyImagesDataSource[0][fullImageKey]!)
+        readImageFromDataBase()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    func readImageFromDataBase()
+    {
+        let cameraController = IPhoneCameraViewController()
+        if snapShots.count > 0
+        {
+            let snapShotsKeys = snapShots.allKeys as NSArray
+            var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
+            let screenRect : CGRect = UIScreen.mainScreen().bounds
+            let screenWidth = screenRect.size.width
+            let screenHeight = screenRect.size.height
+            for var index = 0; index < snapShotsKeys.count; index++
+            {
+                if let thumbNailImagePath = snapShots.valueForKey(snapShotsKeys[index] as! String)
+                {
+                    let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
+                    let sizeThumb = CGSizeMake(50,50)
+                    let sizeFull = CGSizeMake(screenWidth*2,screenHeight)
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                    let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                    dummyImagesDataSource.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
+                    
+                }
+            }
+            
+            dataSource = dummyImagesDataSource
+            
+            if let imagePath = dummyImagesDataSource[0][fullImageKey]
+            {
+                
+                self.fullScrenImageView.image = imagePath
+            }
+        }
+    }
     //PRAGMA MARK:- IBActions
 
     @IBAction func channelButtonClicked(sender: AnyObject)
@@ -52,14 +83,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if let dataSource = dataSource
-        {
-            return dataSource.count
-        }
-        else
-        {
-            return 0
-        }
+        return dataSource.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
@@ -68,15 +92,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         //cell for live streams
         
-        if let dataSource = dataSource
+        if dataSource.count > indexPath.row
         {
-            if dataSource.count > indexPath.row
+            var dict = dataSource[indexPath.row]
+            if let thumpImage = dict[thumbImageKey]
             {
-                var dict = dataSource[indexPath.row]
-                if let thumpImage = dict[thumbImageKey]
-                {
-                    cell.thumbImageView.image = UIImage(named: thumpImage)
-                }
+                cell.thumbImageView.image = thumpImage
             }
         }
         return cell
@@ -84,19 +105,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        if let dataSource = dataSource
+        if dataSource.count > indexPath.row
         {
-            if dataSource.count > indexPath.row
+            var dict = dataSource[indexPath.row]
+            if let fullImage = dict[fullImageKey]
             {
-                var dict = dataSource[indexPath.row]
-                if let fullImage = dict[fullImageKey]
-                {
-                     self.fullScrenImageView.image = UIImage(named:fullImage)
-                }
+                self.fullScrenImageView.image = fullImage
             }
         }
     }
-    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(0, 1, 0, 1)
