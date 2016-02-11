@@ -18,14 +18,12 @@ class IPhoneLiveStreaming: NSObject {
     func startLiveStreaming(session:VCSimpleSession)
     {
         liveStreamingHelpers.iPhoneLiveStreamingSession = session
-//        liveStreamingHelpers.startiPhoneCameraLiveStreamingWithUrl("", andStreamToken: "")
         liveStreamingHelpers.startStreamingClicked()
     }
     
     func stopStreamingClicked()
     {
         showAlert = true;
-//        liveStreamingHelpers.removeStreaming()
         liveStreamingHelpers.stopLiveStreaming()
     }
     
@@ -54,7 +52,7 @@ class IPhoneLiveStreaming: NSObject {
             return "rtsp"
         }
         
-        func updateStreamName(streamToken:String , WithUserName userName:String) ->String
+        func getStreamName(streamToken:String , WithUserName userName:String) ->String
         {
             //sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
             return streamToken + "?userName=" + userName
@@ -135,7 +133,7 @@ class IPhoneLiveStreaming: NSObject {
                     {
                         print("success = \(json["streamToken"])")
                         let streamToken:String = json["streamToken"] as! String
-                        self.updateDefaultsAndStartStreamWithToken(streamToken)
+                        self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
                     }
                     else
                     {
@@ -205,26 +203,27 @@ class IPhoneLiveStreaming: NSObject {
         }
         
         //PRAGMA MARK:- Start iPhone Camera Streaming
-        func updateDefaultsAndStartStreamWithToken(streamToken:String)
+        func updateDefaultsAndStartStreamWithToken(streamToken:String , AndUserName userName:String)
         {
             let baseStreamName = self.getBaseStream()
             
+            let streamName = getStreamName(streamToken, WithUserName: userName)
             //rtsp://localhost:1935/live/sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
             
             NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: streamingToken)
             
             self.setStreamingDefaults()
-            self.startStreamingWithUrl(baseStreamName, andStreamToken: streamToken)
+            self.startStreamingWithUrl(baseStreamName, andStreamName: streamName)
         }
         
-        func startStreamingWithUrl(url:String ,andStreamToken streamToken:String)
+        func startStreamingWithUrl(url:String ,andStreamName streamName:String)
         {
             if let session = iPhoneLiveStreamingSession
             {
                 switch session.rtmpSessionState {
                     
                 case .None, .PreviewStarted, .Ended, .Error:
-                    startiPhoneCameraLiveStreamingWithUrl(url, andStreamToken: streamToken)
+                    startiPhoneCameraLiveStreamingWithUrl(url, andStreamName: streamName)
                     break
                     
                 default:
@@ -234,16 +233,14 @@ class IPhoneLiveStreaming: NSObject {
             }
         }
         
-        func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamToken streamToken:String)
+        func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamName streamName:String)
         {
             UIApplication.sharedApplication().idleTimerDisabled = true
             
 //            let testUrl  = "rtsp://192.168.16.33:1935/live";
-            let test = "rtsp://192.168.16.12:1935/live?userName=test3@ionlive.com_fdsfsfsdfsdfsdfsdf"
+//            let test = "rtsp://192.168.16.12:1935/live?userName=test3@ionlive.com_fdsfsfsdfsdfsdfsdf"
             
-//            let updatedStreamName = streamToken + "?" + getUserName()
-//            print("Updated Stream Name = \(updatedStreamName)")
-            iPhoneLiveStreamingSession!.startRtmpSessionWithURL(test, andStreamKey: "fdsfsfsdfsdfsdfsdf-")
+            iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamName)
         }
 
         //PRAGMA MARK: Handle Interruption
