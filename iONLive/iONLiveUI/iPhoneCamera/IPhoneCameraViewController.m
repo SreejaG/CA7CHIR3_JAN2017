@@ -164,7 +164,8 @@ NSMutableDictionary * snapShotsDict;
     
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-
+    
+    [self deleteIphoneCameraSnapShots];
     self.thumbnailImageView.image = [self readImageFromDataBase];
 }
 
@@ -188,6 +189,9 @@ NSMutableDictionary * snapShotsDict;
         NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
         
         thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+    }
+    else{
+        thumbNailImage = [UIImage imageNamed:@"photo1"];
     }
     return thumbNailImage;
 }
@@ -595,13 +599,15 @@ NSMutableDictionary * snapShotsDict;
     snapShotsArray = [context executeFetchRequest:request error:nil];
     
     NSLog(@"Array%@",snapShotsArray);
-    [context save:nil];
     
-    for(NSString *snapShotValue in snapShotsArray)
-    {
-        NSString *snapImageName =[snapShotValue valueForKey:@"imageName"];
-        NSString *snapImagePath = [snapShotValue valueForKey:@"path"];
-        [snapShotsDict setValue:snapImagePath forKey:snapImageName];
+    if([snapShotsArray count] > 0){
+    
+        for(NSString *snapShotValue in snapShotsArray)
+        {
+            NSString *snapImageName =[snapShotValue valueForKey:@"imageName"];
+            NSString *snapImagePath = [snapShotValue valueForKey:@"path"];
+            [snapShotsDict setValue:snapImagePath forKey:snapImageName];
+        }
     }
     
     NSLog(@"Dictionary%@",snapShotsDict);
@@ -615,8 +621,12 @@ NSMutableDictionary * snapShotsDict;
     request.returnsObjectsAsFaults=false;
     NSArray *snapShotsArray = [[NSArray alloc]init];
     snapShotsArray = [context executeFetchRequest:request error:nil];
-    for(NSManagedObject *obj in snapShotsArray){
-        [context deleteObject:obj];
+    NSFileManager *defaultManager = [[NSFileManager alloc]init];
+    for(int i=0;i<[snapShotsArray count];i++){
+        if(![defaultManager fileExistsAtPath:[snapShotsArray[i] valueForKey:@"path"]]){
+            NSManagedObject * obj = snapShotsArray[i];
+            [context deleteObject:obj];
+        }
     }
     [context save:nil];
 }

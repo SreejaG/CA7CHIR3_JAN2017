@@ -398,6 +398,7 @@ static NSMutableDictionary * gHistory;
 -(void)setUpThumbailImage
 {
     IPhoneCameraViewController *iphoneCameraViewController = [[IPhoneCameraViewController alloc]init];
+    [iphoneCameraViewController deleteIphoneCameraSnapShots];
     snapShotsDict = iphoneCameraViewController.displayIphoneCameraSnapShots;
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     if([snapShotsDict count] > 0){
@@ -412,10 +413,12 @@ static NSMutableDictionary * gHistory;
         }
         NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
         NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
-        UIImage * thumbaNailImage = [iphoneCameraViewController thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]]] scaledToFillSize:CGSizeMake(46, 46)];
-        
+        UIImage * thumbaNailImage = [iphoneCameraViewController thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]]] scaledToFillSize:CGSizeMake(45, 45)];
         
         [cameaThumbNailImage setImage:thumbaNailImage forState:UIControlStateNormal];
+    }
+    else{
+        [cameaThumbNailImage setImage:[UIImage imageNamed:@"photo1"] forState:UIControlStateNormal];
     }
 }
 
