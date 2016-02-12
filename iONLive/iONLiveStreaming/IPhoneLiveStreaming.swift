@@ -36,11 +36,10 @@ class IPhoneLiveStreaming: NSObject {
         var iPhoneLiveStreamingSession:VCSimpleSession?
 
         //PRAGMA MARK:- Create Base Stream
-        func getBaseStream() -> String
+        func getBaseStreamWithToken(streamToken:String , AndUserName userName:String) -> String
         {
-            //        var baseStream = rtmp://ipaddress/applname/streamname?username
-            //rtsp://localhost:1935/live/sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
-            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName()
+            //rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf
+            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getUserNameAndToken(streamToken, WithUserName: userName)
             
             print("baseStream/", baseStream)
             return baseStream
@@ -52,16 +51,16 @@ class IPhoneLiveStreaming: NSObject {
             return "rtsp"
         }
         
-        func getStreamName(streamToken:String , WithUserName userName:String) ->String
+        func getUserNameAndToken(streamToken:String , WithUserName userName:String) ->String
         {
             //sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
-            return streamToken + "?userName=" + userName
+            return "?userName=" + userName + "&token=" + streamToken
         }
         
         func getHost() ->String
         {
             //return 192.168.16.12
-            return "192.168.16.33"
+            return "104.196.113.133"
         }
         
         func getPort() ->String
@@ -78,7 +77,6 @@ class IPhoneLiveStreaming: NSObject {
         {
             initialiseLiveStreamingToken()
         }
-        
         
         func initialiseLiveStreamingToken()
         {
@@ -205,25 +203,22 @@ class IPhoneLiveStreaming: NSObject {
         //PRAGMA MARK:- Start iPhone Camera Streaming
         func updateDefaultsAndStartStreamWithToken(streamToken:String , AndUserName userName:String)
         {
-            let baseStreamName = self.getBaseStream()
-            
-            let streamName = getStreamName(streamToken, WithUserName: userName)
-            //rtsp://localhost:1935/live/sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
+            let baseStreamName = self.getBaseStreamWithToken(streamToken, AndUserName: userName)
             
             NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: streamingToken)
             
             self.setStreamingDefaults()
-            self.startStreamingWithUrl(baseStreamName, andStreamName: streamName)
+            self.startStreamingWithUrl(baseStreamName, andStreamToken: streamToken)
         }
         
-        func startStreamingWithUrl(url:String ,andStreamName streamName:String)
+        func startStreamingWithUrl(url:String ,andStreamToken streamToken:String)
         {
             if let session = iPhoneLiveStreamingSession
             {
                 switch session.rtmpSessionState {
                     
                 case .None, .PreviewStarted, .Ended, .Error:
-                    startiPhoneCameraLiveStreamingWithUrl(url, andStreamName: streamName)
+                    startiPhoneCameraLiveStreamingWithUrl(url, andStreamToken: streamToken)
                     break
                     
                 default:
@@ -233,14 +228,12 @@ class IPhoneLiveStreaming: NSObject {
             }
         }
         
-        func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamName streamName:String)
+        func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamToken streamToken:String)
         {
             UIApplication.sharedApplication().idleTimerDisabled = true
             
-//            let testUrl  = "rtsp://192.168.16.33:1935/live";
-//            let test = "rtsp://192.168.16.12:1935/live?userName=test3@ionlive.com_fdsfsfsdfsdfsdfsdf"
-            
-            iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamName)
+//            let test = "rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf"
+            iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamToken)
         }
 
         //PRAGMA MARK: Handle Interruption

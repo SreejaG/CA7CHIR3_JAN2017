@@ -667,26 +667,8 @@ NSMutableDictionary * snapShotsDict;
 //                [_liveSteamSession endRtmpSession];
                 break;
         }
-
     }
 }
-
-- (void) connectionStatusChanged:(VCSessionState) state
-{
-    switch(state) {
-            
-        case VCSessionStateStarting:
-            NSLog(@"Connecting");
-            break;
-        case VCSessionStateStarted:
-            NSLog(@"Disconnect");
-            break;
-        default:
-            NSLog(@"Connect");
-            break;
-    }
-}
-
 
 - (IBAction)didTapChangeCamera:(id)sender
 {
@@ -854,6 +836,31 @@ NSMutableDictionary * snapShotsDict;
     }
     
 }
+
+#pragma mark : VCSessionState Delegate
+- (void) connectionStatusChanged:(VCSessionState) state
+{
+    switch(state) {
+            
+        case VCSessionStateStarting:
+            NSLog(@"Connecting");
+            break;
+        case VCSessionStateStarted:
+            NSLog(@"Disconnect");
+            break;
+        case VCSessionStateEnded:
+        case VCSessionStateError:
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+            //            [[ErrorManager sharedInstance] alert:@"VCSessionStateError" message:@"VCSessionStateError"];
+            NSLog(@"VCSessionStateError");
+            break;
+        default:
+            NSLog(@"Connect");
+            break;
+    }
+}
+
+
 
 #pragma mark :- StreamingProtocol delegates
 
