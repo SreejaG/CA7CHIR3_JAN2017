@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -894,7 +895,7 @@
                                                         <constraint firstAttribute="width" constant="100" id="rRL-Zd-DUF"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Km9-uh-NF3">
@@ -933,7 +934,7 @@
                                                         <constraint firstAttribute="height" priority="750" constant="21" id="kJn-cG-YE2"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="reN-Y0-dAh">
@@ -992,6 +993,133 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7rC-0P-7yo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="945" y="909"/>
+        </scene>
+        <!--Cam Live Stream Status View Controller-->
+        <scene sceneID="roB-PY-SYr">
+            <objects>
+                <viewController storyboardIdentifier="IONCamLiveStreamStatusViewController" id="V3a-EL-FQf" customClass="IONCamLiveStreamStatusViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="eY8-dg-o2u"/>
+                        <viewControllerLayoutGuide type="bottom" id="OIc-ZJ-oOg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="66q-Nb-Ht8">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LLS-r0-gag" userLabel="TopView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zRv-rt-flQ">
+                                        <rect key="frame" x="13" y="23" width="40" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="INi-CH-ddw"/>
+                                            <constraint firstAttribute="height" constant="22" id="RiB-5T-Jk8"/>
+                                        </constraints>
+                                        <state key="normal" image="white_back"/>
+                                        <connections>
+                                            <action selector="didTapBackButton:" destination="35A-za-Lra" eventType="touchUpInside" id="5yQ-cd-2rX"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="zRv-rt-flQ" firstAttribute="leading" secondItem="LLS-r0-gag" secondAttribute="leading" constant="13" id="M4t-2i-foH"/>
+                                    <constraint firstItem="zRv-rt-flQ" firstAttribute="top" secondItem="LLS-r0-gag" secondAttribute="top" constant="23" id="jk5-9Y-SPt"/>
+                                    <constraint firstAttribute="height" constant="64" id="uun-PV-mZu"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="61" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FWG-ez-HbZ">
+                                <rect key="frame" x="0.0" y="64" width="600" height="436"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="61" id="p4S-wP-kKv" customClass="StreamPickerTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="61"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p4S-wP-kKv" id="NdN-eb-Oay">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Framerate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qvn-sI-tS8">
+                                                    <rect key="frame" x="45" y="19" width="79" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="58M-rM-52S"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z4s-yY-RCc">
+                                                    <rect key="frame" x="155" y="8" width="346" height="50"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="50" id="6Vs-8v-u4K"/>
+                                                    </constraints>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="p4S-wP-kKv" id="KUq-cD-mzJ"/>
+                                                        <outlet property="delegate" destination="p4S-wP-kKv" id="3Sy-wC-g82"/>
+                                                    </connections>
+                                                </pickerView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="qvn-sI-tS8" firstAttribute="top" secondItem="NdN-eb-Oay" secondAttribute="top" constant="19" id="Qgb-7N-EQv"/>
+                                                <constraint firstItem="z4s-yY-RCc" firstAttribute="top" secondItem="NdN-eb-Oay" secondAttribute="topMargin" id="gfT-3e-qnu"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="z4s-yY-RCc" secondAttribute="trailing" constant="91" id="lWM-rC-5n6"/>
+                                                <constraint firstItem="z4s-yY-RCc" firstAttribute="leading" secondItem="qvn-sI-tS8" secondAttribute="trailing" constant="31" id="pVI-j7-pQR"/>
+                                                <constraint firstItem="qvn-sI-tS8" firstAttribute="leading" secondItem="NdN-eb-Oay" secondAttribute="leading" constant="45" id="rX8-sC-Jeu"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="frameratePickerView" destination="z4s-yY-RCc" id="VcU-kA-FiE"/>
+                                            <outlet property="inputlabel" destination="qvn-sI-tS8" id="Pfp-1W-SRF"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eHb-vA-hBu">
+                                <rect key="frame" x="0.0" y="500" width="600" height="100"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gC5-KU-hfO">
+                                        <rect key="frame" x="0.0" y="35" width="158" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="0Zi-Uz-nV7"/>
+                                            <constraint firstAttribute="width" constant="158" id="Gjq-0d-7lH"/>
+                                        </constraints>
+                                        <state key="normal" title="Start Live Stream"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1gj-lO-SnF">
+                                        <rect key="frame" x="450" y="34" width="150" height="32"/>
+                                        <state key="normal" title="Get Live Stream Status"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="Aif-zj-wrI"/>
+                                    <constraint firstItem="gC5-KU-hfO" firstAttribute="centerY" secondItem="eHb-vA-hBu" secondAttribute="centerY" id="Pbi-Ro-RdF"/>
+                                    <constraint firstItem="gC5-KU-hfO" firstAttribute="leading" secondItem="eHb-vA-hBu" secondAttribute="leading" id="mWO-ub-6yI"/>
+                                    <constraint firstAttribute="trailing" secondItem="1gj-lO-SnF" secondAttribute="trailing" id="yHY-a6-rgy"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LLS-r0-gag" firstAttribute="leading" secondItem="66q-Nb-Ht8" secondAttribute="leading" id="3ce-Ww-wu5"/>
+                            <constraint firstItem="LLS-r0-gag" firstAttribute="top" secondItem="66q-Nb-Ht8" secondAttribute="top" id="5xY-HL-OOJ"/>
+                            <constraint firstAttribute="trailing" secondItem="FWG-ez-HbZ" secondAttribute="trailing" id="7gU-IP-Dp2"/>
+                            <constraint firstItem="eHb-vA-hBu" firstAttribute="leading" secondItem="66q-Nb-Ht8" secondAttribute="leading" id="E3o-6h-z8O"/>
+                            <constraint firstItem="FWG-ez-HbZ" firstAttribute="top" secondItem="LLS-r0-gag" secondAttribute="bottom" id="Hy2-aF-ydp"/>
+                            <constraint firstItem="FWG-ez-HbZ" firstAttribute="leading" secondItem="66q-Nb-Ht8" secondAttribute="leading" id="PvX-wP-veD"/>
+                            <constraint firstItem="OIc-ZJ-oOg" firstAttribute="top" secondItem="eHb-vA-hBu" secondAttribute="bottom" id="SO2-do-ZAy"/>
+                            <constraint firstItem="eHb-vA-hBu" firstAttribute="top" secondItem="FWG-ez-HbZ" secondAttribute="bottom" id="SRH-B6-vhG"/>
+                            <constraint firstAttribute="trailing" secondItem="LLS-r0-gag" secondAttribute="trailing" id="T5D-7j-sZY"/>
+                            <constraint firstAttribute="trailing" secondItem="eHb-vA-hBu" secondAttribute="trailing" id="l3j-4j-s09"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="liveStreamTableView" destination="FWG-ez-HbZ" id="W6O-1j-bXJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0l1-TE-88b" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1572" y="1064"/>
         </scene>
     </scenes>
     <resources>

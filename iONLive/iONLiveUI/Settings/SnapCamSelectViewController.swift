@@ -168,7 +168,7 @@ extension SnapCamSelectViewController
         self.blurView.hidden = false;
         activityImageView.hidden = true;
         activityLabel.hidden = true;
-        iPhoneSnapCamImageView.image = UIImage(named: "SnapCam Switched modes"); //change this image once it is available.
+        iPhoneSnapCamImageView.image = UIImage(named: "Switched_mode_Camera"); 
         snapCamSettingsTableView.hidden = true;
         
         UIView .animateWithDuration(1.0, animations: { () -> Void in

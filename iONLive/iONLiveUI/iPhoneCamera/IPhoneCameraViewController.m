@@ -791,7 +791,7 @@ NSMutableDictionary * snapShotsDict;
     }
     else{
         
-        [self.flashButton setImage:[UIImage imageNamed:@"temp_flash_ON"] forState:UIControlStateNormal]; //Need to update the icon once available.
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal]; //Need to update the icon once available.
         _currentFlashMode = AVCaptureFlashModeOn;
     }
 }
