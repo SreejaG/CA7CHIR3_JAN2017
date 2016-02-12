@@ -69,11 +69,11 @@
                                         <rect key="frame" x="0.0" y="2" width="600" height="70"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cb8-gw-XJs" userLabel="snapCamButton">
-                                                <rect key="frame" x="13" y="23" width="40" height="40"/>
+                                                <rect key="frame" x="8" y="18" width="50" height="50"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="48j-Ge-Skp"/>
-                                                    <constraint firstAttribute="width" constant="40" id="T9W-ma-uRe"/>
+                                                    <constraint firstAttribute="height" constant="50" id="48j-Ge-Skp"/>
+                                                    <constraint firstAttribute="width" constant="50" id="T9W-ma-uRe"/>
                                                 </constraints>
                                                 <state key="normal" image="snapCamMode"/>
                                                 <connections>
@@ -107,9 +107,9 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="70" id="KR0-so-UFI"/>
                                             <constraint firstAttribute="trailing" secondItem="0g0-Xb-ogi" secondAttribute="trailing" constant="13" id="Nif-e9-6VG"/>
-                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" constant="13" id="Pjq-XW-wKf"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" constant="8" id="Pjq-XW-wKf"/>
                                             <constraint firstItem="MoJ-aw-347" firstAttribute="leading" secondItem="xyZ-Rb-9UE" secondAttribute="leading" id="SjC-Au-iDp"/>
-                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" constant="23" id="Yos-P6-iMs"/>
+                                            <constraint firstItem="cb8-gw-XJs" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" constant="18" id="Yos-P6-iMs"/>
                                             <constraint firstAttribute="trailing" secondItem="MoJ-aw-347" secondAttribute="trailing" id="b8h-BC-lRJ"/>
                                             <constraint firstAttribute="bottom" secondItem="MoJ-aw-347" secondAttribute="bottom" constant="10" id="gDm-vT-WFd"/>
                                             <constraint firstItem="0g0-Xb-ogi" firstAttribute="top" secondItem="xyZ-Rb-9UE" secondAttribute="top" constant="23" id="zvc-Jg-wPX"/>

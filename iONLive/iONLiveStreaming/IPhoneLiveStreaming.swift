@@ -236,36 +236,6 @@ class IPhoneLiveStreaming: NSObject {
             iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamToken)
         }
 
-        //PRAGMA MARK: Handle Interruption
-        func startStreamAndHandleInterruption(streamtoken:String)
-        {
-            self.streamingStatus?.updateStreamingStatus!();
-            let iPhoneLiveStreaming = IPhoneLiveStreaming()
-            let errCode = start_stream()
-            let defaults = NSUserDefaults .standardUserDefaults()
-            
-            if errCode > 0
-            {
-                defaults.setValue(false, forKey: startedStreaming)
-                iPhoneLiveStreaming.showAlert = false
-                self.stopLiveStreaming()
-            }
-            switch errCode
-            {
-            case 0:
-                defaults.setValue(false, forKey: startedStreaming)
-                break
-            case 1:
-                ErrorManager.sharedInstance.alert("Streaming Stopped", message: "Connection error occurs in input stream")
-                break
-            case 2:
-                ErrorManager.sharedInstance.alert("Streaming Stopped", message: "Connection error occurs in output stream")
-                break
-            default:
-                break
-            }
-        }
-        
         //PRAGMA MARK: Stop Live streaming API
         func stopLiveStreaming()
         {

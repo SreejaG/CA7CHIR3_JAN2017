@@ -82,6 +82,7 @@ NSMutableDictionary * snapShotsDict;
     [super viewWillAppear:animated];
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
 
+    if (! [self isStreamStarted]) {
     if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
 //        [self configureCameraSettings];
@@ -92,7 +93,7 @@ NSMutableDictionary * snapShotsDict;
         //    _session.orientationLocked = YES;
         AVCaptureVideoPreviewLayer  *ptr;
         [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-        _liveSteamSession.delegate = self;
+//        _liveSteamSession.delegate = self;
         [self.view addSubview:_liveSteamSession.previewView];
         _liveSteamSession.previewView.frame = self.view.bounds;
         _liveSteamSession.delegate = self;
@@ -152,6 +153,7 @@ NSMutableDictionary * snapShotsDict;
             }
         }
     } );
+    }
     }
 }
 
@@ -741,7 +743,7 @@ NSMutableDictionary * snapShotsDict;
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
-    [self stopLiveStreaming];
+//    [self stopLiveStreaming];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -835,6 +837,13 @@ NSMutableDictionary * snapShotsDict;
         });
     }
     
+}
+
+
+-(BOOL) isStreamStarted
+{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return  [defaults boolForKey:@"StartedStreaming"];//defaults.boolForKey("StartedStreaming")
 }
 
 #pragma mark : VCSessionState Delegate
