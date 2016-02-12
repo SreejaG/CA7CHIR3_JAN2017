@@ -30,4 +30,4 @@ SPEC CHECKSUMS:
   UriParser-cpp: cbbe00080ee432ec4833dca863a7fc83adc9b01a
   VideoCore: 9b783edd81b91a80c5599bae1f98e9c93ee029e7
 
-COCOAPODS: 0.37.0
+COCOAPODS: 0.37.2

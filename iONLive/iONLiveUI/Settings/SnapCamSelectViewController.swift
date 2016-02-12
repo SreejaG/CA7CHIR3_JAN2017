@@ -313,11 +313,11 @@ extension SnapCamSelectViewController
     
     func stopLiveStreaming()
     {
-        if snapCamMode == SnapCamSelectionMode.SnapCam
+        if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
         {
             stopSnapCamCameraLiveStreaming()
         }
-        else if snapCamMode == SnapCamSelectionMode.iPhone
+        else if toggleSnapCamIPhoneMode == SnapCamSelectionMode.iPhone
         {
             stopIPhoneCameraLiveStreaming()
         }

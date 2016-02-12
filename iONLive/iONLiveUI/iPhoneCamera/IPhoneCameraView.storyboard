@@ -84,7 +84,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lwm-xS-hJh" userLabel="SwapCameraButton">
-                                        <rect key="frame" x="68" y="35" width="30" height="23"/>
+                                        <rect key="frame" x="78" y="35" width="30" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="0ol-k4-dku"/>
                                             <constraint firstAttribute="height" constant="23" id="3eK-zI-7l5"/>
@@ -95,7 +95,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QMd-g2-gjt" userLabel="FlashButton">
-                                        <rect key="frame" x="123" y="34" width="35" height="26"/>
+                                        <rect key="frame" x="133" y="34" width="35" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="8te-WS-FV8"/>
                                             <constraint firstAttribute="height" constant="26" id="eZy-XG-XLX"/>
@@ -106,10 +106,10 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ryW-Iz-I7M" userLabel="Camera Selection Button">
-                                        <rect key="frame" x="18" y="34" width="30" height="26"/>
+                                        <rect key="frame" x="8" y="27" width="50" height="40"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="26" id="2UP-Eb-TX8"/>
-                                            <constraint firstAttribute="width" constant="30" id="AMm-I0-qZa"/>
+                                            <constraint firstAttribute="height" constant="40" id="2UP-Eb-TX8"/>
+                                            <constraint firstAttribute="width" constant="50" id="AMm-I0-qZa"/>
                                         </constraints>
                                         <state key="normal" image="iphone"/>
                                         <connections>
@@ -123,13 +123,13 @@
                                     <constraint firstItem="QMd-g2-gjt" firstAttribute="leading" secondItem="lwm-xS-hJh" secondAttribute="trailing" constant="25" id="3Fp-Qe-jWp"/>
                                     <constraint firstItem="hxn-Bj-Hfb" firstAttribute="top" secondItem="ucJ-gA-nDs" secondAttribute="top" constant="25" id="Ae3-jc-qwS"/>
                                     <constraint firstItem="hxn-Bj-Hfb" firstAttribute="leading" secondItem="kQM-1r-I7s" secondAttribute="trailing" id="JS5-YT-foE"/>
-                                    <constraint firstAttribute="bottom" secondItem="ryW-Iz-I7M" secondAttribute="bottom" constant="4" id="SsI-Z0-Z6n"/>
                                     <constraint firstAttribute="bottom" secondItem="kQM-1r-I7s" secondAttribute="bottom" constant="5" id="W2F-j8-zUX"/>
                                     <constraint firstAttribute="height" constant="64" id="ZBy-LM-VVK"/>
                                     <constraint firstItem="lwm-xS-hJh" firstAttribute="leading" secondItem="ryW-Iz-I7M" secondAttribute="trailing" constant="20" id="iDo-Kg-LUe"/>
                                     <constraint firstAttribute="bottom" secondItem="QMd-g2-gjt" secondAttribute="bottom" constant="4" id="iDy-Cx-vHa"/>
+                                    <constraint firstItem="ryW-Iz-I7M" firstAttribute="centerY" secondItem="lwm-xS-hJh" secondAttribute="centerY" id="lgW-ec-TjS"/>
                                     <constraint firstAttribute="trailing" secondItem="hxn-Bj-Hfb" secondAttribute="trailing" constant="20" id="moR-6V-tgi"/>
-                                    <constraint firstItem="ryW-Iz-I7M" firstAttribute="leading" secondItem="ucJ-gA-nDs" secondAttribute="leading" constant="18" id="s9Q-m5-P81"/>
+                                    <constraint firstItem="ryW-Iz-I7M" firstAttribute="leading" secondItem="ucJ-gA-nDs" secondAttribute="leading" constant="8" id="s9Q-m5-P81"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JqH-kr-rKo" userLabel="BottomView">

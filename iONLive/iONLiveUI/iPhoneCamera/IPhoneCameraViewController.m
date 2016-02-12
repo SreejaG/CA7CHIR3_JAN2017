@@ -82,6 +82,7 @@ NSMutableDictionary * snapShotsDict;
     [super viewWillAppear:animated];
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
 
+    if (! [self isStreamStarted]) {
     if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
 //        [self configureCameraSettings];
@@ -92,7 +93,7 @@ NSMutableDictionary * snapShotsDict;
         //    _session.orientationLocked = YES;
         AVCaptureVideoPreviewLayer  *ptr;
         [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-        _liveSteamSession.delegate = self;
+//        _liveSteamSession.delegate = self;
         [self.view addSubview:_liveSteamSession.previewView];
         _liveSteamSession.previewView.frame = self.view.bounds;
         _liveSteamSession.delegate = self;
@@ -152,6 +153,7 @@ NSMutableDictionary * snapShotsDict;
             }
         }
     } );
+    }
     }
 }
 
@@ -382,7 +384,11 @@ NSMutableDictionary * snapShotsDict;
             if ( status == PHAuthorizationStatusAuthorized ) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.thumbnailImageView.image = [self thumbnailFromVideoAtURL:outputFileURL];
+                    NSData *imageData = [[NSData alloc]init];
+                    imageData = [self thumbnailFromVideoAtURL:outputFileURL];
+                    self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                     [self saveImage:imageData];
+                    
 //                    cleanup();
                 });
                 
@@ -663,26 +669,8 @@ NSMutableDictionary * snapShotsDict;
 //                [_liveSteamSession endRtmpSession];
                 break;
         }
-
     }
 }
-
-- (void) connectionStatusChanged:(VCSessionState) state
-{
-    switch(state) {
-            
-        case VCSessionStateStarting:
-            NSLog(@"Connecting");
-            break;
-        case VCSessionStateStarted:
-            NSLog(@"Disconnect");
-            break;
-        default:
-            NSLog(@"Connect");
-            break;
-    }
-}
-
 
 - (IBAction)didTapChangeCamera:(id)sender
 {
@@ -755,7 +743,7 @@ NSMutableDictionary * snapShotsDict;
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
-    [self stopLiveStreaming];
+//    [self stopLiveStreaming];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -850,6 +838,38 @@ NSMutableDictionary * snapShotsDict;
     }
     
 }
+
+
+-(BOOL) isStreamStarted
+{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return  [defaults boolForKey:@"StartedStreaming"];//defaults.boolForKey("StartedStreaming")
+}
+
+#pragma mark : VCSessionState Delegate
+- (void) connectionStatusChanged:(VCSessionState) state
+{
+    switch(state) {
+            
+        case VCSessionStateStarting:
+            NSLog(@"Connecting");
+            break;
+        case VCSessionStateStarted:
+            NSLog(@"Disconnect");
+            break;
+        case VCSessionStateEnded:
+        case VCSessionStateError:
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+            //            [[ErrorManager sharedInstance] alert:@"VCSessionStateError" message:@"VCSessionStateError"];
+            NSLog(@"VCSessionStateError");
+            break;
+        default:
+            NSLog(@"Connect");
+            break;
+    }
+}
+
+
 
 #pragma mark :- StreamingProtocol delegates
 
@@ -1066,7 +1086,7 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     return newImage;
 }
 
-- (UIImage *)thumbnailFromVideoAtURL:(NSURL *)contentURL {
+- (NSData *)thumbnailFromVideoAtURL:(NSURL *)contentURL {
     UIImage *theImage = nil;
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:contentURL options:nil];
     AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
@@ -1076,9 +1096,10 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     CGImageRef imgRef = [generator copyCGImageAtTime:time actualTime:NULL error:&err];
     theImage = [[UIImage alloc] initWithCGImage:imgRef];
     CGImageRelease(imgRef);
-    
+    NSData *imageData = [[NSData alloc] init];
+    imageData = UIImageJPEGRepresentation(theImage, 1.0);
     // get image cropped from to and bottom
-    return [self thumbnaleImage:theImage scaledToFillSize:CGSizeMake(50, 50)];
+    return imageData;
 }
 
 @end
