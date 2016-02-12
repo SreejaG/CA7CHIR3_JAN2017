@@ -100,6 +100,8 @@ extension iONLiveCamAPIListViewController:UITableViewDelegate,UITableViewDataSou
             break;
         case 2:
             loadCameraConfiguration()
+        case 3:
+            loadLiveStreamStatus()
         case 5:
             loadCameraStatus()
         default:
@@ -143,7 +145,12 @@ extension iONLiveCamAPIListViewController{
         let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(IONLiveCamConfigViewController.identifier) as! IONLiveCamConfigViewController
         self.navigationController?.pushViewController(statusVC, animated: true)
     }
-    
+    func loadLiveStreamStatus()
+    {
+        let apiTestStoryboard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
+        let statusVC = apiTestStoryboard.instantiateViewControllerWithIdentifier(IONCamLiveStreamStatusViewController.identifier) as! IONCamLiveStreamStatusViewController
+        self.navigationController?.pushViewController(statusVC, animated: true)
+    }
     //PRAGMA MARK:- Test API call
 
     func loadIONLiveCamVideo()

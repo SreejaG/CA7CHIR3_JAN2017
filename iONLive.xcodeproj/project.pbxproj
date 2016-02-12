@@ -30,6 +30,8 @@
 		1633D2391C5F21FD00937FAD /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2371C5F21FD00937FAD /* Entity.swift */; };
 		1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D23B1C5F417D00937FAD /* iONLiveCamVideoViewController.swift */; };
 		1633D2401C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */; };
+		163844BB1C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163844B91C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift */; };
+		163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163844BD1C6CB09600EAF25D /* iONCamLiveStatusManager.swift */; };
 		16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */; };
 		1644B3D01C056934004E3832 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3CF1C056934004E3832 /* RequestManager.swift */; };
 		1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644B3D21C05698F004E3832 /* ErrorManager.swift */; };
@@ -73,6 +75,7 @@
 		167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C11C315271007F5326 /* MyChannelViewController.swift */; };
 		167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C31C3152BE007F5326 /* ChannelItemListViewController.swift */; };
 		167512C61C3152CE007F5326 /* MyChannel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167512C51C3152CE007F5326 /* MyChannel.storyboard */; };
+		1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */; };
 		1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1677FEB81C48BFF900261F59 /* CoreLocation.framework */; };
 		167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */; };
 		167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0301BFDC1F6003CDF30 /* ViewController.swift */; };
@@ -190,6 +193,8 @@
 		1633D2371C5F21FD00937FAD /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		1633D23B1C5F417D00937FAD /* iONLiveCamVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCamVideoViewController.swift; sourceTree = "<group>"; };
 		1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraVideoCapture.swift; sourceTree = "<group>"; };
+		163844B91C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONCamLiveStreamStatusViewController.swift; sourceTree = "<group>"; };
+		163844BD1C6CB09600EAF25D /* iONCamLiveStatusManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamLiveStatusManager.swift; sourceTree = "<group>"; };
 		16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbCollectionViewCell.swift; sourceTree = "<group>"; };
 		1644B3CF1C056934004E3832 /* RequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		1644B3D21C05698F004E3832 /* ErrorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorManager.swift; sourceTree = "<group>"; };
@@ -233,6 +238,7 @@
 		167512C11C315271007F5326 /* MyChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelViewController.swift; sourceTree = "<group>"; };
 		167512C31C3152BE007F5326 /* ChannelItemListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListViewController.swift; sourceTree = "<group>"; };
 		167512C51C3152CE007F5326 /* MyChannel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MyChannel.storyboard; sourceTree = "<group>"; };
+		1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamPickerTableViewCell.swift; sourceTree = "<group>"; };
 		1677FEB81C48BFF900261F59 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		167AF02B1BFDC1F6003CDF30 /* iONLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iONLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -561,6 +567,15 @@
 			path = iONCamVideo;
 			sourceTree = "<group>";
 		};
+		163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */ = {
+			isa = PBXGroup;
+			children = (
+				1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */,
+				163844B91C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift */,
+			);
+			path = iONCamLiveStreamStatus;
+			sourceTree = "<group>";
+		};
 		1644B3D11C05698F004E3832 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
@@ -610,6 +625,7 @@
 		165B77D91C4CAAE800BDB02F /* iONLiveCameraAPI */ = {
 			isa = PBXGroup;
 			children = (
+				163844BD1C6CB09600EAF25D /* iONCamLiveStatusManager.swift */,
 				165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */,
 				1633D23F1C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift */,
 				16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */,
@@ -621,6 +637,7 @@
 		165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */ = {
 			isa = PBXGroup;
 			children = (
+				163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */,
 				16E34EEB1C63440100A02DE1 /* IONLiveCameraStatusUtility */,
 				16D933B41C61B5B000FDA359 /* iONCamConfig */,
 				16D933B51C61B5B000FDA359 /* iONCamStatus */,
@@ -1393,6 +1410,7 @@
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
+				1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
 				165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */,
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
@@ -1413,6 +1431,7 @@
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
+				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
@@ -1437,6 +1456,7 @@
 				160904011C6C7F31004E381D /* rtsp_relay.m in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
 				16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */,
+				163844BB1C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
