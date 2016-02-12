@@ -16,6 +16,9 @@ class SnapCamSelectViewController: UIViewController {
     var snapCamMode : SnapCamSelectionMode = .Photos
     var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
 
+    var rowAfterAlertHit: Int!
+    var cellAfterAlertHit : UITableViewCell = UITableViewCell()
+    
     @IBOutlet var activityLabel: UILabel!
     @IBOutlet var activityImageView: UIImageView!
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
@@ -149,7 +152,7 @@ extension SnapCamSelectViewController
     {
         if isStreamStarted()
         {
-            showAlertViewToStopStream()
+            showAlertViewToStopStream(row, ForCell: selectedCell)
         }
         else
         {
@@ -274,7 +277,7 @@ extension SnapCamSelectViewController
         }
     }
     
-    func showAlertViewToStopStream()
+    func showAlertViewToStopStream(row:Int , ForCell selectedCell:UITableViewCell)
     {
         let alert: UIAlertView = UIAlertView()
         alert.title = "Streaming In Progress"
@@ -282,6 +285,8 @@ extension SnapCamSelectViewController
         alert.addButtonWithTitle("Yes")
         alert.addButtonWithTitle("No")
         alert.delegate = self
+        rowAfterAlertHit = row
+        cellAfterAlertHit = selectedCell
         alert.show()
     }
     
@@ -301,7 +306,8 @@ extension SnapCamSelectViewController
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
-            
+            updateSnapCamSelection(rowAfterAlertHit)
+            changeSnapCamModeForCell(cellAfterAlertHit)
             self.snapCamSettingsTableView.reloadData()
         }
         else
