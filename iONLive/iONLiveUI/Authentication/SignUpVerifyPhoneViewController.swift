@@ -10,13 +10,16 @@ import UIKit
 import Foundation
 import CoreLocation
 
-
-class SignUpVerifyPhoneViewController: UIViewController {
+class SignUpVerifyPhoneViewController: UIViewController
+{
+    var email: String!
     
     static let identifier = "SignUpVerifyPhoneViewController"
     var verificationCode = ""
     let locationManager:CLLocationManager = CLLocationManager()
 
+    @IBOutlet var countryPicker: UIPickerView!
+    
     @IBOutlet weak var countryTextField: UITextField!
     @IBOutlet weak var mobileNumberTextField: UITextField!
     @IBOutlet weak var continueBottomConstraint: NSLayoutConstraint!
@@ -78,6 +81,8 @@ class SignUpVerifyPhoneViewController: UIViewController {
     
     func initialise()
     {
+        
+//        countryPicker.hidden
         self.title = "VERIFY PHONE #"
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem

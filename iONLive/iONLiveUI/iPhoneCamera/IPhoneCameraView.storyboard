@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
@@ -198,9 +198,44 @@
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="rsZ-Hs-EBD"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sw1-iw-Cte" userLabel="activityView">
+                                <rect key="frame" x="200" y="250" width="200" height="100"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vGm-sF-zny">
+                                        <rect key="frame" x="76" y="41" width="49" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="49" id="35v-eE-JT0"/>
+                                            <constraint firstAttribute="height" constant="20" id="J2b-wc-5Cj"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BIV-8z-Rim">
+                                        <rect key="frame" x="15" y="69" width="170" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="wnY-OX-ycu"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="BIV-8z-Rim" firstAttribute="top" secondItem="vGm-sF-zny" secondAttribute="bottom" constant="8" id="2EJ-MI-IoB"/>
+                                    <constraint firstAttribute="height" constant="100" id="7Zn-9w-yos"/>
+                                    <constraint firstItem="BIV-8z-Rim" firstAttribute="leading" secondItem="Sw1-iw-Cte" secondAttribute="leading" constant="15" id="9Dw-nm-9n0"/>
+                                    <constraint firstItem="vGm-sF-zny" firstAttribute="centerX" secondItem="Sw1-iw-Cte" secondAttribute="centerX" id="IKR-F6-dVi"/>
+                                    <constraint firstItem="BIV-8z-Rim" firstAttribute="centerX" secondItem="Sw1-iw-Cte" secondAttribute="centerX" id="JKS-cq-2ny"/>
+                                    <constraint firstAttribute="trailing" secondItem="BIV-8z-Rim" secondAttribute="trailing" constant="15" id="XPa-wP-lCX"/>
+                                    <constraint firstAttribute="width" constant="200" id="d6U-Zb-Z4z"/>
+                                    <constraint firstItem="vGm-sF-zny" firstAttribute="centerX" secondItem="Sw1-iw-Cte" secondAttribute="centerX" id="rRX-kM-y9c"/>
+                                    <constraint firstItem="vGm-sF-zny" firstAttribute="centerY" secondItem="Sw1-iw-Cte" secondAttribute="centerY" constant="1" id="uPv-wJ-dhW"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Sw1-iw-Cte" firstAttribute="centerY" secondItem="SWS-Ne-i52" secondAttribute="centerY" id="3fg-RE-R0A"/>
+                            <constraint firstItem="Sw1-iw-Cte" firstAttribute="centerX" secondItem="SWS-Ne-i52" secondAttribute="centerX" id="CPj-Vj-Y6z"/>
                             <constraint firstItem="hPk-zc-tpz" firstAttribute="leading" secondItem="SWS-Ne-i52" secondAttribute="leading" id="Grt-tf-H6z"/>
                             <constraint firstItem="elk-Yj-JGw" firstAttribute="top" secondItem="hPk-zc-tpz" secondAttribute="bottom" id="MXm-G0-2vU"/>
                             <constraint firstItem="JqH-kr-rKo" firstAttribute="leading" secondItem="SWS-Ne-i52" secondAttribute="leading" id="RAL-wn-6AF"/>
@@ -215,9 +250,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="qdg-YY-5oX"/>
                     <connections>
+                        <outlet property="activitView" destination="Sw1-iw-Cte" id="IlM-js-7Kr"/>
+                        <outlet property="activityImageView" destination="vGm-sF-zny" id="mhK-4k-giM"/>
                         <outlet property="bottomView" destination="JqH-kr-rKo" id="r6C-QY-lGG"/>
                         <outlet property="cameraButton" destination="lwm-xS-hJh" id="VOn-tB-XGY"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
+                        <outlet property="iphoneCameraButton" destination="ryW-Iz-I7M" id="8as-6J-mT1"/>
+                        <outlet property="noDataFound" destination="BIV-8z-Rim" id="UAO-Fj-ncf"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>
                         <outlet property="startCameraActionButton" destination="ZpM-Fq-WiG" id="Xi5-OU-SEm"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>

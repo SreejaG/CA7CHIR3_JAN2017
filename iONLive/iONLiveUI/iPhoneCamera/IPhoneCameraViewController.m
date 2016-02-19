@@ -19,6 +19,8 @@ static void * SessionRunningContext = &SessionRunningContext;
 NSString* selectedFlashOption = @"selectedFlashOption";
 int thumbnailSize = 50;
 
+
+
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSuccess,
     AVCamSetupResultCameraNotAuthorized,
@@ -30,6 +32,8 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 {
     SnapCamSelectionMode _snapCamMode;
 }
+
+
 //Video Core Session
 @property (nonatomic, retain) VCSimpleSession* liveSteamSession;
 
@@ -57,12 +61,18 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 //Flash settings
 @property (nonatomic) AVCaptureFlashMode currentFlashMode;
 
+@property (strong, nonatomic) IBOutlet UIImageView *activityImageView;
+@property (strong, nonatomic) IBOutlet UILabel *noDataFound;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *_activityIndicatorView;
+@property (strong, nonatomic) IBOutlet UIView *activitView;
+@property (strong, nonatomic) IBOutlet UIButton *iphoneCameraButton;
+
 @end
 
 @implementation IPhoneCameraViewController
 
 NSMutableDictionary * snapShotsDict;
-
+IPhoneLiveStreaming * liveStreaming;
 
 - (void)viewDidLoad {
     
@@ -80,6 +90,7 @@ NSMutableDictionary * snapShotsDict;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.activitView.hidden = true;
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
 
     if (! [self isStreamStarted]) {
@@ -161,6 +172,15 @@ NSMutableDictionary * snapShotsDict;
 
 -(void)initialiseView
 {
+    _noDataFound.hidden = true;
+    _activityImageView.hidden = true;
+    __activityIndicatorView.hidden = true;
+  
+    
+    
+    
+    liveStreaming = [[IPhoneLiveStreaming alloc]init];
+    
     _snapCamMode = SnapCamSelectionModeiPhone;
     _currentFlashMode = AVCaptureFlashModeOff;
     
@@ -169,6 +189,33 @@ NSMutableDictionary * snapShotsDict;
     
     [self deleteIphoneCameraSnapShots];
     self.thumbnailImageView.image = [self readImageFromDataBase];
+}
+
+-(void)showProgressBar
+{
+    [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
+
+    _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+    _activityImageView.hidden = false;
+    [__activityIndicatorView startAnimating];
+    __activityIndicatorView.hidden = false;
+    _noDataFound.text = @"Initializing Stream";
+    _noDataFound.hidden = false;
+    _liveSteamSession.previewView.hidden = true;
+    [self setUpInitialBlurView];
+}
+
+-(void)hideProgressBar
+{
+    [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
+
+    _activityImageView.hidden = true;
+    [__activityIndicatorView stopAnimating];
+    __activityIndicatorView.hidden = true;
+     _noDataFound.hidden = true;
+    self.activitView.hidden = true;
+      _liveSteamSession.previewView.hidden = false;
+    [self.bottomView setUserInteractionEnabled:YES];
 }
 
 -(UIImage*)readImageFromDataBase
@@ -651,7 +698,7 @@ NSMutableDictionary * snapShotsDict;
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-        IPhoneLiveStreaming * liveStreaming = [[IPhoneLiveStreaming alloc]init];
+      
         switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
@@ -659,18 +706,34 @@ NSMutableDictionary * snapShotsDict;
             case VCSessionStateError:
             {
                 [liveStreaming startLiveStreaming:_liveSteamSession];
-                
-//                [self startLiveStreaming];
+                [self showProgressBar];
+//                [self showProgressBar];
+             //                [self startLiveStreaming];
                 break;
             }
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
+            //    [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
                 [liveStreaming stopStreamingClicked];
-//                [_liveSteamSession endRtmpSession];
+                [_liveSteamSession endRtmpSession];
                 break;
         }
     }
 }
+
+-(void)setUpInitialBlurView
+{
+    UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
+    NSLog(@"glView.bounds%f",self.view.bounds.size.height);
+    [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    self.activitView.hidden =false;
+    [self.bottomView setUserInteractionEnabled:NO];
+}
+
 
 - (IBAction)didTapChangeCamera:(id)sender
 {
@@ -855,12 +918,20 @@ NSMutableDictionary * snapShotsDict;
             NSLog(@"Connecting");
             break;
         case VCSessionStateStarted:
+            [self hideProgressBar];
             NSLog(@"Disconnect");
             break;
         case VCSessionStateEnded:
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            NSLog(@"End Stream");
+            break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            //            [[ErrorManager sharedInstance] alert:@"VCSessionStateError" message:@"VCSessionStateError"];
+            [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
+            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+
+            [liveStreaming stopStreamingClicked];
             NSLog(@"VCSessionStateError");
             break;
         default:

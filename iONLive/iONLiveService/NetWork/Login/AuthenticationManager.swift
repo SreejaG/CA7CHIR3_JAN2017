@@ -19,10 +19,10 @@ class AuthenticationManager: NSObject {
     }
     
     //Method to authenticate a user with email and password, success and failure block
-    func authenticate(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func authenticate(email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["loginId":email,"password": password], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["userName":email,"password": password], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -51,10 +51,10 @@ class AuthenticationManager: NSObject {
 
     
     
-    func signUp(email email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func signUp(email email: String, password: String, userName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["loginId":email,"password": password,"firstName":"","lastName":"","displayName":"","location":""], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["email":email,"password": password,"userName": userName], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

@@ -141,17 +141,17 @@ class LoginViewController: UIViewController {
     func loginUser(email: String, password: String, withLoginButton: Bool)
     {
         //check for valid email
-        let isEmailValid = isEmail(email) as Bool!
-        if isEmailValid == false
-        {
-            ErrorManager.sharedInstance.loginInvalidEmail()
-            return
-        }
+//        let isEmailValid = isEmail(email) as Bool!
+//        if isEmailValid == false
+//        {
+//            ErrorManager.sharedInstance.loginInvalidEmail()
+//            return
+//        }
         
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.authenticate(email: email, password: password, success: { (response) -> () in
-           self.authenticationSuccessHandler(response)
+        authenticationManager.authenticate(email, password: password, success: { (response) -> () in
+             self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
                 return

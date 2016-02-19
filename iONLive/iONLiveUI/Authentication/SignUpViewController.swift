@@ -104,39 +104,41 @@ class SignUpViewController: UIViewController {
         }
         else
         {
-            loadUserNameView()
+            validateEmail()
         }
     }
    
+    
+    //extra wrk sreeja
+    
+    func validateEmail(){
+        let isEmailValid = isEmail(self.emailTextfield.text!) as Bool!
+        if isEmailValid == false
+        {
+            ErrorManager.sharedInstance.loginInvalidEmail()
+            return
+        }
+        else
+        {
+             loadUserNameView()
+        }
+    }
+    
+    //end
+    
     func loadUserNameView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier)
+        let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier) as! SignUpUserNameViewController
+        
+        userNameVC.email = self.emailTextfield.text!
+        userNameVC.password = self.passwdTextField.text!
+        
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         userNameVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(userNameVC, animated: false)
     }
-    
-    
-//    @IBAction func signUpClicked(sender: AnyObject)
-//    {
-//                if emailTextfield.text!.isEmpty
-//                {
-//                    ErrorManager.sharedInstance.loginNoEmailEnteredError()
-//                }
-//                else if passwdTextField.text!.isEmpty
-//                {
-//                    ErrorManager.sharedInstance.loginNoPasswordEnteredError()
-//                }
-//                else
-//                {
-//                    self.signUpUser(self.emailTextfield.text!, password: self.passwdTextField.text!, withLoginButton: true)
-//                }
-//    }
-    
-
-    
-    
+   
     //PRAGMA MARK:- Helper functions
     
     func isEmail(email:String) -> Bool {
@@ -144,94 +146,18 @@ class SignUpViewController: UIViewController {
         return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
     }
     
-    //Loading Overlay Methods
-    func showOverlay(){
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
-        loadingOverlayController.startLoading()
-        self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
-    }
-    
-    func removeOverlay(){
-        self.loadingOverlay?.removeFromSuperview()
-    }
-    
-    
-    //PRAGMA MARK:- API handlers
-    func signUpUser(email: String, password: String, withLoginButton: Bool)
-    {
-        //check for valid email
-        let isEmailValid = isEmail(email) as Bool!
-        if isEmailValid == false
-        {
-            ErrorManager.sharedInstance.loginInvalidEmail()
-            return
-        }
-        
-        //authenticate through authenticationManager
-        showOverlay()
-        authenticationManager.signUp(email: email, password: password, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
-        }
-    }
-    
-    func authenticationSuccessHandler(response:AnyObject?)
-    {
-        self.passwdTextField.text = ""
-        self.removeOverlay()
-        loadLiveStreamView()
-        if let json = response as? [String: AnyObject]
-        {
-            let defaults = NSUserDefaults .standardUserDefaults()
-            print("success = \(json["status"]),\(json["token"]),\(json["user"])")
-            if let tocken = json["token"]
-            {
-                defaults.setValue(tocken, forKey: userAccessTockenKey)
-            }
-            if let userId = json["user"]
-            {
-                defaults.setValue(userId, forKey: userLoginIdKey)
-            }
-        }
-        else
-        {
-            ErrorManager.sharedInstance.loginError()
-        }
-        
-    }
-    
-    func authenticationFailureHandler(error: NSError?, code: String)
-    {
-        self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
-        if !self.requestManager.validConnection() {
-            ErrorManager.sharedInstance.noNetworkConnection()
-        }
-        else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-        }
-        else{
-            ErrorManager.sharedInstance.signUpError()
-        }
-    }
-    
     deinit
     {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func loadLiveStreamView()
-    {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        vc.navigationItem.backBarButtonItem = backItem
-        self.navigationController?.pushViewController(vc, animated: false)
-    }
+//    func loadLiveStreamView()
+//    {
+//        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+//        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+//        vc.navigationItem.backBarButtonItem = backItem
+//        self.navigationController?.pushViewController(vc, animated: false)
+//    }
 }
 
 extension SignUpViewController:UITextFieldDelegate{

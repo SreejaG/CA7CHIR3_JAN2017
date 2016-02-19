@@ -9,7 +9,7 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://bpe.ioncameras.com:3000"
+    let baseUrl = "http://104.196.51.182:3000";   //"http://bpe.ioncameras.com:3000"
     let iONLiveCamUrl = "http://192.168.42.1:8888"
     
     class var sharedInstance: UrlManager {
@@ -20,12 +20,12 @@ class UrlManager {
     }
     
     func usersLoginAPIUrl() -> (String) {
-        let userLoginAPI = baseUrl+"/login"
+        let userLoginAPI =  baseUrl+"/api/v1/session"    //baseUrl+"/login"
         return userLoginAPI
     }
     
     func usersSignUpAPIUrl() -> (String) {
-        let userLoginAPI = baseUrl+"/newUser"
+        let userLoginAPI =  baseUrl+"/api/v1/user"     // baseUrl+"/newUser"
         return userLoginAPI
     }
     

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
@@ -102,7 +102,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="do1-0Y-OYO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="807" y="208"/>
+            <point key="canvasLocation" x="1059" y="152"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="r17-Gn-ZcT">
@@ -229,7 +229,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="425" y="966"/>
+            <point key="canvasLocation" x="323" y="1014"/>
         </scene>
         <!--Sign Up View Controller-->
         <scene sceneID="xlq-Et-i9B">
@@ -364,7 +364,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="425" y="966"/>
+            <point key="canvasLocation" x="1805" y="598"/>
         </scene>
         <!--Forgot Password View Controller-->
         <scene sceneID="bTA-IZ-D74">
@@ -459,7 +459,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="425" y="966"/>
+            <point key="canvasLocation" x="1827" y="1310"/>
         </scene>
         <!--Sign Up User Name View Controller-->
         <scene sceneID="P8H-0K-u55">
@@ -660,11 +660,19 @@
                                                     <constraint firstItem="Riw-sr-yt4" firstAttribute="top" secondItem="HY9-hv-Qfr" secondAttribute="top" id="rqh-ji-ABz"/>
                                                 </constraints>
                                             </view>
+                                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kNe-dP-v8p">
+                                                <rect key="frame" x="140" y="266" width="320" height="216"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="nvi-gf-ENa" id="xkg-EW-B9F"/>
+                                                </connections>
+                                            </pickerView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
+                                            <constraint firstItem="kNe-dP-v8p" firstAttribute="centerX" secondItem="uq9-W6-I4r" secondAttribute="centerX" id="9Sw-A5-xc4"/>
                                             <constraint firstAttribute="trailing" secondItem="HY9-hv-Qfr" secondAttribute="trailing" id="MMN-pQ-Wg2"/>
                                             <constraint firstItem="HY9-hv-Qfr" firstAttribute="leading" secondItem="uq9-W6-I4r" secondAttribute="leading" id="i6s-HB-FPY"/>
+                                            <constraint firstItem="kNe-dP-v8p" firstAttribute="centerY" secondItem="uq9-W6-I4r" secondAttribute="centerY" constant="129" id="imv-zo-HXx"/>
                                             <constraint firstItem="HY9-hv-Qfr" firstAttribute="top" secondItem="uq9-W6-I4r" secondAttribute="top" id="kpo-qd-oiW"/>
                                             <constraint firstAttribute="bottom" secondItem="HY9-hv-Qfr" secondAttribute="bottom" id="nRF-SD-DTa"/>
                                         </constraints>
@@ -696,6 +704,7 @@
                     </view>
                     <connections>
                         <outlet property="continueBottomConstraint" destination="3VS-34-WO4" id="9lZ-yj-89L"/>
+                        <outlet property="countryPicker" destination="kNe-dP-v8p" id="wBY-PV-FdU"/>
                         <outlet property="countryTextField" destination="Riw-sr-yt4" id="CWG-Vy-EhI"/>
                         <outlet property="mobileNumberTextField" destination="hKq-3T-p1i" id="DyO-dM-hP3"/>
                         <outlet property="topConstaintDescriptionLabel" destination="fgK-jE-eKc" id="8cA-vz-Bgm"/>
@@ -709,6 +718,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
+            <point key="canvasLocation" x="315" y="-76"/>
         </scene>
     </scenes>
     <resources>
