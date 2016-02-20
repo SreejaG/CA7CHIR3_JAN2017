@@ -105,8 +105,6 @@
 		16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */; };
 		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */; };
-		16E61CED1C75B24F0063CB9A /* CountryPicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 16E61CEA1C75B24F0063CB9A /* CountryPicker.bundle */; };
-		16E61CEE1C75B24F0063CB9A /* CountryPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E61CEC1C75B24F0063CB9A /* CountryPicker.m */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
 		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
 		16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */; };
@@ -277,9 +275,6 @@
 		16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraConfiguration.swift; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCameraStatusUtility.swift; sourceTree = "<group>"; };
-		16E61CEA1C75B24F0063CB9A /* CountryPicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CountryPicker.bundle; sourceTree = "<group>"; };
-		16E61CEB1C75B24F0063CB9A /* CountryPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountryPicker.h; sourceTree = "<group>"; };
-		16E61CEC1C75B24F0063CB9A /* CountryPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CountryPicker.m; sourceTree = "<group>"; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsToggleTableViewCell.swift; sourceTree = "<group>"; };
 		16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
@@ -905,16 +900,6 @@
 			path = IONLiveCameraStatusUtility;
 			sourceTree = "<group>";
 		};
-		16E61CE41C75B1D50063CB9A /* CountryPicker */ = {
-			isa = PBXGroup;
-			children = (
-				16E61CEA1C75B24F0063CB9A /* CountryPicker.bundle */,
-				16E61CEB1C75B24F0063CB9A /* CountryPicker.h */,
-				16E61CEC1C75B24F0063CB9A /* CountryPicker.m */,
-			);
-			path = CountryPicker;
-			sourceTree = "<group>";
-		};
 		16F6A44D1BFF07120074EA57 /* Application_Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -935,7 +920,6 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				16E61CE41C75B1D50063CB9A /* CountryPicker */,
 				160903EB1C6C7E66004E381D /* Connectivity */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
 				599964C11C057EF000D20FB2 /* kxmovie */,
@@ -1349,7 +1333,6 @@
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
 				160B1F5F1C4CDF9E0022B711 /* IPhoneCameraView.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
-				16E61CED1C75B24F0063CB9A /* CountryPicker.bundle in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1476,7 +1459,6 @@
 				163844BB1C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
-				16E61CEE1C75B24F0063CB9A /* CountryPicker.m in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
@@ -1660,8 +1642,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
@@ -1679,7 +1661,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1692,8 +1674,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
@@ -1711,7 +1693,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;
