@@ -24,6 +24,7 @@
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
 		162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFF81C3258D000625C89 /* MyChannelCell.swift */; };
 		162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */; };
+		163282551C7EE57100D03F51 /* Flags.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 163282541C7EE57100D03F51 /* Flags.xcassets */; };
 		1633D1E51C5F1CBD00937FAD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1633D1E41C5F1CBD00937FAD /* CoreData.framework */; };
 		1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */; };
 		1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */; };
@@ -205,6 +206,7 @@
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
 		162ABFF81C3258D000625C89 /* MyChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelCell.swift; sourceTree = "<group>"; };
 		162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListCollectionViewCell.swift; sourceTree = "<group>"; };
+		163282541C7EE57100D03F51 /* Flags.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Flags.xcassets; sourceTree = "<group>"; };
 		1633D1E41C5F1CBD00937FAD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1633D1EE1C5F1DD200937FAD /* GalleryModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GalleryModel.xcdatamodel; sourceTree = "<group>"; };
 		1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -322,7 +324,6 @@
 		16DA06E51C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = NBPhoneNumberMetadata.plist; sourceTree = "<group>"; };
 		16DA06E61C7ED8A8004759D5 /* NBPhoneNumberUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberUtil.h; sourceTree = "<group>"; };
 		16DA06E71C7ED8A8004759D5 /* NBPhoneNumberUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberUtil.m; sourceTree = "<group>"; };
-		16DA06F51C7ED8CA004759D5 /* Flags.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Flags.xcassets; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCameraStatusUtility.swift; sourceTree = "<group>"; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -947,9 +948,9 @@
 		16DA06BD1C7ED7A7004759D5 /* CountryPickerIOS */ = {
 			isa = PBXGroup;
 			children = (
+				163282541C7EE57100D03F51 /* Flags.xcassets */,
 				16DA06CB1C7ED860004759D5 /* PhoneNumbers */,
 				16DA06C41C7ED813004759D5 /* CountryPicker */,
-				16DA06F51C7ED8CA004759D5 /* Flags.xcassets */,
 			);
 			path = CountryPickerIOS;
 			sourceTree = "<group>";
@@ -1427,6 +1428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */,
+				163282551C7EE57100D03F51 /* Flags.xcassets in Resources */,
 				599964D61C057EF000D20FB2 /* kxmovie.bundle in Resources */,
 				167AF0671BFDC30D003CDF30 /* Authentication.storyboard in Resources */,
 				167AF0391BFDC1F6003CDF30 /* LaunchScreen.storyboard in Resources */,
