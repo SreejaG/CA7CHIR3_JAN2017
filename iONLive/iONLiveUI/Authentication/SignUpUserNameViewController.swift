@@ -31,7 +31,11 @@ class SignUpUserNameViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
-        self.userNameTextfield.becomeFirstResponder()
+//        self.userNameTextfield.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        view.endEditing(true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -58,7 +62,7 @@ class SignUpUserNameViewController: UIViewController {
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
+     
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
@@ -108,6 +112,7 @@ class SignUpUserNameViewController: UIViewController {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
         let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
         verifyPhoneVC.email = email
+        verifyPhoneVC.userName = self.userNameTextfield.text
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         verifyPhoneVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
@@ -141,26 +146,8 @@ class SignUpUserNameViewController: UIViewController {
         }
         else
         {
-            ErrorManager.sharedInstance.loginError()
+            ErrorManager.sharedInstance.signUpError()
         }
-        
-        
-        
-//        if let json = response as? [String: AnyObject]
-//        {
-//            let defaults = NSUserDefaults .standardUserDefaults()
-//            print("success = \(json["status"]),\(json["token"]),\(json["user"])")
-//            if let tocken = json["token"]
-//            {
-//                defaults.setValue(tocken, forKey: userAccessTockenKey)
-//            }
-//            if let userId = json["user"]
-//            {
-//                defaults.setValue(userId, forKey: userLoginIdKey)
-//            }
-//        }
-       
-        
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
@@ -178,7 +165,6 @@ class SignUpUserNameViewController: UIViewController {
             ErrorManager.sharedInstance.signUpError()
         }
     }
-
     
     //Loading Overlay Methods
     func showOverlay(){

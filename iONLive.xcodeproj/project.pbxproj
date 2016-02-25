@@ -97,12 +97,30 @@
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
+		16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
 		16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BA1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift */; };
 		16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */; };
 		16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */; };
 		16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */; };
+		16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06C51C7ED830004759D5 /* CountryPicker.swift */; };
+		16DA06C91C7ED830004759D5 /* CountryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06C61C7ED830004759D5 /* CountryView.swift */; };
+		16DA06CA1C7ED830004759D5 /* CountryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16DA06C71C7ED830004759D5 /* CountryView.xib */; };
+		16DA06CE1C7ED88B004759D5 /* NBAsYouTypeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06CD1C7ED88B004759D5 /* NBAsYouTypeFormatter.m */; };
+		16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D01C7ED8A8004759D5 /* NBMetadataCore.m */; };
+		16DA06E91C7ED8A8004759D5 /* NBMetadataCoreMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D21C7ED8A8004759D5 /* NBMetadataCoreMapper.m */; };
+		16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D41C7ED8A8004759D5 /* NBMetadataCoreTest.m */; };
+		16DA06EB1C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D61C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m */; };
+		16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D81C7ED8A8004759D5 /* NBMetadataHelper.m */; };
+		16DA06ED1C7ED8A8004759D5 /* NBNumberFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06DA1C7ED8A8004759D5 /* NBNumberFormat.m */; };
+		16DA06EE1C7ED8A8004759D5 /* NBPhoneMetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06DC1C7ED8A8004759D5 /* NBPhoneMetaData.m */; };
+		16DA06EF1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06DE1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.m */; };
+		16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E01C7ED8A8004759D5 /* NBPhoneNumber.m */; };
+		16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E21C7ED8A8004759D5 /* NBPhoneNumberDefines.m */; };
+		16DA06F21C7ED8A8004759D5 /* NBPhoneNumberDesc.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E41C7ED8A8004759D5 /* NBPhoneNumberDesc.m */; };
+		16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16DA06E51C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist */; };
+		16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E71C7ED8A8004759D5 /* NBPhoneNumberUtil.m */; };
 		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
@@ -266,6 +284,7 @@
 		1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIResultViewController.swift; sourceTree = "<group>"; };
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewTableViewCell.swift; sourceTree = "<group>"; };
+		16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpFindFriendsViewController.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCamConfigViewController.swift; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
@@ -273,6 +292,37 @@
 		16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatusViewController.swift; sourceTree = "<group>"; };
 		16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatus.swift; sourceTree = "<group>"; };
 		16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraConfiguration.swift; sourceTree = "<group>"; };
+		16DA06C51C7ED830004759D5 /* CountryPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryPicker.swift; sourceTree = "<group>"; };
+		16DA06C61C7ED830004759D5 /* CountryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryView.swift; sourceTree = "<group>"; };
+		16DA06C71C7ED830004759D5 /* CountryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CountryView.xib; sourceTree = "<group>"; };
+		16DA06CC1C7ED873004759D5 /* NBAsYouTypeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBAsYouTypeFormatter.h; sourceTree = "<group>"; };
+		16DA06CD1C7ED88B004759D5 /* NBAsYouTypeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBAsYouTypeFormatter.m; sourceTree = "<group>"; };
+		16DA06CF1C7ED8A8004759D5 /* NBMetadataCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCore.h; sourceTree = "<group>"; };
+		16DA06D01C7ED8A8004759D5 /* NBMetadataCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCore.m; sourceTree = "<group>"; };
+		16DA06D11C7ED8A8004759D5 /* NBMetadataCoreMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreMapper.h; sourceTree = "<group>"; };
+		16DA06D21C7ED8A8004759D5 /* NBMetadataCoreMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreMapper.m; sourceTree = "<group>"; };
+		16DA06D31C7ED8A8004759D5 /* NBMetadataCoreTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreTest.h; sourceTree = "<group>"; };
+		16DA06D41C7ED8A8004759D5 /* NBMetadataCoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreTest.m; sourceTree = "<group>"; };
+		16DA06D51C7ED8A8004759D5 /* NBMetadataCoreTestMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataCoreTestMapper.h; sourceTree = "<group>"; };
+		16DA06D61C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataCoreTestMapper.m; sourceTree = "<group>"; };
+		16DA06D71C7ED8A8004759D5 /* NBMetadataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBMetadataHelper.h; sourceTree = "<group>"; };
+		16DA06D81C7ED8A8004759D5 /* NBMetadataHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBMetadataHelper.m; sourceTree = "<group>"; };
+		16DA06D91C7ED8A8004759D5 /* NBNumberFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBNumberFormat.h; sourceTree = "<group>"; };
+		16DA06DA1C7ED8A8004759D5 /* NBNumberFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBNumberFormat.m; sourceTree = "<group>"; };
+		16DA06DB1C7ED8A8004759D5 /* NBPhoneMetaData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneMetaData.h; sourceTree = "<group>"; };
+		16DA06DC1C7ED8A8004759D5 /* NBPhoneMetaData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneMetaData.m; sourceTree = "<group>"; };
+		16DA06DD1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneMetaDataGenerator.h; sourceTree = "<group>"; };
+		16DA06DE1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneMetaDataGenerator.m; sourceTree = "<group>"; };
+		16DA06DF1C7ED8A8004759D5 /* NBPhoneNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumber.h; sourceTree = "<group>"; };
+		16DA06E01C7ED8A8004759D5 /* NBPhoneNumber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumber.m; sourceTree = "<group>"; };
+		16DA06E11C7ED8A8004759D5 /* NBPhoneNumberDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberDefines.h; sourceTree = "<group>"; };
+		16DA06E21C7ED8A8004759D5 /* NBPhoneNumberDefines.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberDefines.m; sourceTree = "<group>"; };
+		16DA06E31C7ED8A8004759D5 /* NBPhoneNumberDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberDesc.h; sourceTree = "<group>"; };
+		16DA06E41C7ED8A8004759D5 /* NBPhoneNumberDesc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberDesc.m; sourceTree = "<group>"; };
+		16DA06E51C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = NBPhoneNumberMetadata.plist; sourceTree = "<group>"; };
+		16DA06E61C7ED8A8004759D5 /* NBPhoneNumberUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBPhoneNumberUtil.h; sourceTree = "<group>"; };
+		16DA06E71C7ED8A8004759D5 /* NBPhoneNumberUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBPhoneNumberUtil.m; sourceTree = "<group>"; };
+		16DA06F51C7ED8CA004759D5 /* Flags.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Flags.xcassets; sourceTree = "<group>"; };
 		16DD05371C1AA85A00769EDA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCameraStatusUtility.swift; sourceTree = "<group>"; };
 		16EAA6771C198596005F8242 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -573,7 +623,8 @@
 				1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */,
 				163844B91C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift */,
 			);
-			path = iONCamLiveStreamStatus;
+			name = iONCamLiveStreamStatus;
+			path = iONCamAPITestingUI/iONCamLiveStreamStatus;
 			sourceTree = "<group>";
 		};
 		1644B3D11C05698F004E3832 /* Errors */ = {
@@ -637,7 +688,6 @@
 		165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */ = {
 			isa = PBXGroup;
 			children = (
-				163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */,
 				16E34EEB1C63440100A02DE1 /* IONLiveCameraStatusUtility */,
 				16D933B41C61B5B000FDA359 /* iONCamConfig */,
 				16D933B51C61B5B000FDA359 /* iONCamStatus */,
@@ -799,6 +849,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */,
 				165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */,
 				160B1F4E1C4CCEB40022B711 /* iPhoneCamera */,
 				167512C01C315224007F5326 /* MyChannel */,
@@ -825,6 +876,7 @@
 				165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */,
 				167D8CB61C3A4A74007BD083 /* SignUpUserNameViewController.swift */,
 				167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */,
+				16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -892,6 +944,60 @@
 			path = iONCamStatus;
 			sourceTree = "<group>";
 		};
+		16DA06BD1C7ED7A7004759D5 /* CountryPickerIOS */ = {
+			isa = PBXGroup;
+			children = (
+				16DA06CB1C7ED860004759D5 /* PhoneNumbers */,
+				16DA06C41C7ED813004759D5 /* CountryPicker */,
+				16DA06F51C7ED8CA004759D5 /* Flags.xcassets */,
+			);
+			path = CountryPickerIOS;
+			sourceTree = "<group>";
+		};
+		16DA06C41C7ED813004759D5 /* CountryPicker */ = {
+			isa = PBXGroup;
+			children = (
+				16DA06C51C7ED830004759D5 /* CountryPicker.swift */,
+				16DA06C61C7ED830004759D5 /* CountryView.swift */,
+				16DA06C71C7ED830004759D5 /* CountryView.xib */,
+			);
+			path = CountryPicker;
+			sourceTree = "<group>";
+		};
+		16DA06CB1C7ED860004759D5 /* PhoneNumbers */ = {
+			isa = PBXGroup;
+			children = (
+				16DA06CF1C7ED8A8004759D5 /* NBMetadataCore.h */,
+				16DA06D01C7ED8A8004759D5 /* NBMetadataCore.m */,
+				16DA06D11C7ED8A8004759D5 /* NBMetadataCoreMapper.h */,
+				16DA06D21C7ED8A8004759D5 /* NBMetadataCoreMapper.m */,
+				16DA06D31C7ED8A8004759D5 /* NBMetadataCoreTest.h */,
+				16DA06D41C7ED8A8004759D5 /* NBMetadataCoreTest.m */,
+				16DA06D51C7ED8A8004759D5 /* NBMetadataCoreTestMapper.h */,
+				16DA06D61C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m */,
+				16DA06D71C7ED8A8004759D5 /* NBMetadataHelper.h */,
+				16DA06D81C7ED8A8004759D5 /* NBMetadataHelper.m */,
+				16DA06D91C7ED8A8004759D5 /* NBNumberFormat.h */,
+				16DA06DA1C7ED8A8004759D5 /* NBNumberFormat.m */,
+				16DA06DB1C7ED8A8004759D5 /* NBPhoneMetaData.h */,
+				16DA06DC1C7ED8A8004759D5 /* NBPhoneMetaData.m */,
+				16DA06DD1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.h */,
+				16DA06DE1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.m */,
+				16DA06DF1C7ED8A8004759D5 /* NBPhoneNumber.h */,
+				16DA06E01C7ED8A8004759D5 /* NBPhoneNumber.m */,
+				16DA06E11C7ED8A8004759D5 /* NBPhoneNumberDefines.h */,
+				16DA06E21C7ED8A8004759D5 /* NBPhoneNumberDefines.m */,
+				16DA06E31C7ED8A8004759D5 /* NBPhoneNumberDesc.h */,
+				16DA06E41C7ED8A8004759D5 /* NBPhoneNumberDesc.m */,
+				16DA06E51C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist */,
+				16DA06E61C7ED8A8004759D5 /* NBPhoneNumberUtil.h */,
+				16DA06E71C7ED8A8004759D5 /* NBPhoneNumberUtil.m */,
+				16DA06CD1C7ED88B004759D5 /* NBAsYouTypeFormatter.m */,
+				16DA06CC1C7ED873004759D5 /* NBAsYouTypeFormatter.h */,
+			);
+			path = PhoneNumbers;
+			sourceTree = "<group>";
+		};
 		16E34EEB1C63440100A02DE1 /* IONLiveCameraStatusUtility */ = {
 			isa = PBXGroup;
 			children = (
@@ -920,6 +1026,7 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				16DA06BD1C7ED7A7004759D5 /* CountryPickerIOS */,
 				160903EB1C6C7E66004E381D /* Connectivity */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
 				599964C11C057EF000D20FB2 /* kxmovie */,
@@ -1319,6 +1426,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */,
 				599964D61C057EF000D20FB2 /* kxmovie.bundle in Resources */,
 				167AF0671BFDC30D003CDF30 /* Authentication.storyboard in Resources */,
 				167AF0391BFDC1F6003CDF30 /* LaunchScreen.storyboard in Resources */,
@@ -1334,6 +1442,7 @@
 				160B1F5F1C4CDF9E0022B711 /* IPhoneCameraView.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
+				16DA06CA1C7ED830004759D5 /* CountryView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1394,6 +1503,7 @@
 				59BC3F5A1BFF848600710905 /* AFHTTPRequestOperation.m in Sources */,
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
+				16DA06CE1C7ED88B004759D5 /* NBAsYouTypeFormatter.m in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
 				165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */,
@@ -1408,15 +1518,18 @@
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
+				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
 				1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */,
 				167AF0651BFDC30D003CDF30 /* AuthenticateNavigationController.swift in Sources */,
 				165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */,
+				16DA06F21C7ED8A8004759D5 /* NBPhoneNumberDesc.m in Sources */,
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
 				160903FA1C6C7ED1004E381D /* EditProfPersonalInfoCell.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
+				16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */,
 				1633D2391C5F21FD00937FAD /* Entity.swift in Sources */,
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
 				1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */,
@@ -1424,16 +1537,20 @@
 				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
 				166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */,
 				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
+				16DA06EB1C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
+				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
+				16DA06ED1C7ED8A8004759D5 /* NBNumberFormat.m in Sources */,
 				160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
 				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
+				16DA06E91C7ED8A8004759D5 /* NBMetadataCoreMapper.m in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
 				166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */,
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
@@ -1455,15 +1572,18 @@
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
 				160904011C6C7F31004E381D /* rtsp_relay.m in Sources */,
 				59BC3F5E1BFF848600710905 /* AFSecurityPolicy.m in Sources */,
+				16DA06EF1C7ED8A8004759D5 /* NBPhoneMetaDataGenerator.m in Sources */,
 				16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */,
 				163844BB1C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
+				16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
 				16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
+				16DA06C91C7ED830004759D5 /* CountryView.swift in Sources */,
 				1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */,
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				160903F81C6C7ED1004E381D /* EditProfileHeaderCell.swift in Sources */,
@@ -1474,14 +1594,17 @@
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,
+				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
 				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
 				16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */,
 				59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */,
 				160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */,
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
+				16DA06EE1C7ED8A8004759D5 /* NBPhoneMetaData.m in Sources */,
 				1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */,
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
+				16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
@@ -1496,6 +1619,8 @@
 				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
+				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
+				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

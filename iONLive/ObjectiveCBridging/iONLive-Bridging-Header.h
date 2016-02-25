@@ -23,3 +23,4 @@
 #import "IPhoneCameraViewController.h"
 #import "VCSimpleSession.h"
 
+#import "NBPhoneNumberUtil.h"

@@ -30,6 +30,10 @@ class SignUpViewController: UIViewController {
         self.emailTextfield.becomeFirstResponder()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        view.endEditing(true)
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -150,14 +154,6 @@ class SignUpViewController: UIViewController {
     {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-    
-//    func loadLiveStreamView()
-//    {
-//        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
-//        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-//        vc.navigationItem.backBarButtonItem = backItem
-//        self.navigationController?.pushViewController(vc, animated: false)
-//    }
 }
 
 extension SignUpViewController:UITextFieldDelegate{

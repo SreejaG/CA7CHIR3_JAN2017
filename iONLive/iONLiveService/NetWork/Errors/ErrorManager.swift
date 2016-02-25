@@ -97,6 +97,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert(signUpErrorTitle, message: "Please enter your username")
     }
     
+    func signUpNoCodeEnteredError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your verification code")
+    }
+    
     func signUpNoPasswordEnteredError()
     {
         alert(signUpErrorTitle, message: "Please enter your password")
@@ -140,6 +145,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Error", message:"Invalid stream")
     }
     
+    func verificationCodeMismatchError()
+    {
+         alert("Code Mismatch", message: "Verification code mismatch error. Please try again")
+    }
+    
     func alert(var title: String?, var message: String?) {
         if title as String? == nil {
             title = "Error"
@@ -175,6 +185,9 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             break
         case "USER006": //missingToken
             tockenMissingError()
+            break
+        case "USER007": //missmatchVerificationCode
+            verificationCodeMismatchError()
             break
         case "STREAM001": //invalidStreamToken
             invalidStream()
