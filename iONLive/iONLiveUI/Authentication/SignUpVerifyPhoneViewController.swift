@@ -18,8 +18,12 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     var loadingOverlay: UIView?
     
+//    let locationManager:CLLocationManager = CLLocationManager()
+    
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
+    
+    let defaults = NSUserDefaults .standardUserDefaults()
     
     static let identifier = "SignUpVerifyPhoneViewController"
     var verificationCode = ""
@@ -36,6 +40,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     @IBOutlet var countrySelectionButton: UIButton!
     @IBAction func selectCountryCode(sender: AnyObject) {
         self.countryPicker.hidden = false
+        countryCodeTextField.resignFirstResponder()
         mobileNumberTextField.resignFirstResponder()
         verificationCodeTextField.resignFirstResponder()
     }
@@ -48,13 +53,13 @@ class SignUpVerifyPhoneViewController: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
+//        setUpLocationManager()
         
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
-        self.countryCodeTextField.becomeFirstResponder()
         checkVerificationCodeVisiblty()
     }
     
@@ -62,6 +67,42 @@ class SignUpVerifyPhoneViewController: UIViewController
         super.didReceiveMemoryWarning()
     }
     
+//    func setUpLocationManager()
+//    {
+//        self.locationManager.requestWhenInUseAuthorization()
+//        locationManager.delegate = self
+//        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+//        locationManager.startUpdatingLocation()
+//    }
+//    
+//    
+//    // authorization status
+//    func locationManager(manager: CLLocationManager,
+//        didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+//            var shouldIAllow = false
+//            var locationStatus = ""
+//            switch status {
+//            case CLAuthorizationStatus.Restricted:
+//                locationStatus = "Restricted Access to location"
+//            case CLAuthorizationStatus.Denied:
+//                locationStatus = "User denied access to location"
+//            case CLAuthorizationStatus.NotDetermined:
+//                locationStatus = "Status not determined"
+//            default:
+//                locationStatus = "Allowed to location Access"
+//                shouldIAllow = true
+//            }
+//            NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
+//            if (shouldIAllow == true) {
+//                NSLog("Location to Allowed")
+//                // Start location services
+//                locationManager.startUpdatingLocation()
+//            } else {
+//                NSLog("Denied access: \(locationStatus)")
+//            }
+//    }
+//    
+
     func initialise()
     {
         self.title = "VERIFY PHONE #"
@@ -79,8 +120,9 @@ class SignUpVerifyPhoneViewController: UIViewController
     
         countryPicker.countryPhoneCodeDelegate = self
         countryTextField.userInteractionEnabled = false
-        countryCodeTextField.userInteractionEnabled = false
+        countryCodeTextField.userInteractionEnabled = true
         mobileNumberTextField.delegate = self
+        countryCodeTextField.delegate = self
         self.countryPicker.hidden = true
         addObserver()
         
@@ -94,6 +136,7 @@ class SignUpVerifyPhoneViewController: UIViewController
             countryTextField.enabled = false
             mobileNumberTextField.enabled = false
             countrySelectionButton.enabled = false
+            countryCodeTextField.enablesReturnKeyAutomatically = false
             verificationCodeTextField.hidden = false
             mobileNumberTextField.resignFirstResponder()
             verificationCodeTextField.becomeFirstResponder()
@@ -167,7 +210,9 @@ class SignUpVerifyPhoneViewController: UIViewController
                 }
                 else
                 {
-                    validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text!, gcmRegistrationId: "eJL-i5TYbHE:APA91bEIOJzuL4eVeGOG8ZyTVda8PLc-taes1vaV8_U7nUEQPXSPjZyf8i90Eob5T56wgmSQH7et8QXLDcqhhPOme9r75zICqPji-xei-c7l3oIEZJt4NrCmNfxgWFsTML_US_4ZMxHs")
+                    let deviceToken = defaults.valueForKey("deviceToken") as! String
+                    let gcmRegId = deviceToken
+                    validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
                 }
             }
             else{
@@ -183,10 +228,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, email: self.email, action: "codeGeneration", verificationMethod: "sms")
+                self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "sms")
             }))
         alert.addAction(UIAlertAction(title: "Send to Email", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-              self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, email: self.email, action: "codeGeneration", verificationMethod: "email")
+              self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "email")
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
@@ -196,11 +241,11 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     
     //extra wrk
-    func generateVerificationCode(userName: String, location: String, mobileNumber: String, email: String, action: String, verificationMethod: String)
+    func generateVerificationCode(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String)
     {
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, email: email, action: action, verificationMethod: verificationMethod, success: { (response) -> () in
+        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, success: { (response) -> () in
                 self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
@@ -243,11 +288,11 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
     }
     
-    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegistrationId: String)
+    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String)
     {
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.validateVerificationCode(userName, action: action, verificationCode: verificationCode, gcmRegistrationId: gcmRegistrationId, success: { (response) -> () in
+        authenticationManager.validateVerificationCode(userName, action: action, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
             self.authenticationSuccessHandlerVerification(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
@@ -265,6 +310,14 @@ class SignUpVerifyPhoneViewController: UIViewController
             if(status >= 1)
             {
                 verificationCode = ""
+                if let tocken = json["token"]
+                {
+                    defaults.setValue(tocken, forKey: userAccessTockenKey)
+                }
+                if let bucketName = json["BucketName"]
+                {
+                    defaults.setValue(bucketName, forKey: userBucketName)
+                }
                 loadFindFriendsView()
             }
         }
@@ -337,3 +390,42 @@ extension SignUpVerifyPhoneViewController:CountryPhoneCodePickerDelegate{
 
 }
 
+//extension SignUpVerifyPhoneViewController:CLLocationManagerDelegate
+//{
+//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        
+//        let location = locations.last! as CLLocation
+//        
+//        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
+//        
+//        let geocoder = CLGeocoder()
+//        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
+//            if let _ = e {
+//                print("Error:  \(e!.localizedDescription)")
+//            } else {
+//                let placemark = placemarks!.last! as CLPlacemark
+//                
+//                let userInfo = [
+//                    "city":     placemark.locality,
+//                    "state":    placemark.administrativeArea,
+//                    "country":  placemark.country,
+//                    "code":placemark.ISOcountryCode
+//                ]
+//                
+////                let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
+////                let phoneCode: String? = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
+////              
+////                self.countryCodeTextField.text = phoneCode
+//                print("Location:  \(userInfo)")
+//                
+//            }
+//        })
+//    }
+//    
+//    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+//        locationManager.stopUpdatingLocation()
+//        print(error)
+//    }
+//}
+//
+//

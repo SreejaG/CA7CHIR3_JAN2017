@@ -175,7 +175,7 @@ IPhoneLiveStreaming * liveStreaming;
     _noDataFound.hidden = true;
     _activityImageView.hidden = true;
     __activityIndicatorView.hidden = true;
-  
+    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     
     
     
@@ -193,29 +193,36 @@ IPhoneLiveStreaming * liveStreaming;
 
 -(void)showProgressBar
 {
-    [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
-
-    _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
-    _activityImageView.hidden = false;
-    [__activityIndicatorView startAnimating];
-    __activityIndicatorView.hidden = false;
-    _noDataFound.text = @"Initializing Stream";
-    _noDataFound.hidden = false;
-    _liveSteamSession.previewView.hidden = true;
+    dispatch_async( dispatch_get_main_queue(), ^{
+        
+        [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
+        
+        _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+        _activityImageView.hidden = false;
+        [__activityIndicatorView startAnimating];
+        __activityIndicatorView.hidden = false;
+        _noDataFound.text = @"Initializing Stream";
+        _noDataFound.hidden = false;
+        _liveSteamSession.previewView.hidden = true;
+    } );
+   
+    
     [self setUpInitialBlurView];
 }
 
 -(void)hideProgressBar
 {
-    [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
-
-    _activityImageView.hidden = true;
-    [__activityIndicatorView stopAnimating];
-    __activityIndicatorView.hidden = true;
-     _noDataFound.hidden = true;
-    self.activitView.hidden = true;
-      _liveSteamSession.previewView.hidden = false;
-    [self.bottomView setUserInteractionEnabled:YES];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
+        
+        _activityImageView.hidden = true;
+        [__activityIndicatorView stopAnimating];
+        __activityIndicatorView.hidden = true;
+        _noDataFound.hidden = true;
+        self.activitView.hidden = true;
+        _liveSteamSession.previewView.hidden = false;
+        [self.bottomView setUserInteractionEnabled:YES];
+    } );
 }
 
 -(UIImage*)readImageFromDataBase
@@ -706,14 +713,12 @@ IPhoneLiveStreaming * liveStreaming;
             case VCSessionStateError:
             {
                 [liveStreaming startLiveStreaming:_liveSteamSession];
+                
                 [self showProgressBar];
-//                [self showProgressBar];
-             //                [self startLiveStreaming];
                 break;
             }
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
-            //    [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
                 [liveStreaming stopStreamingClicked];
                 [_liveSteamSession endRtmpSession];
                 break;

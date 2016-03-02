@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhotoViewerViewController: UIViewController {
+class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate {
 
     let thumbImageKey = "thumbImage"
     let fullImageKey = "fullImageKey"
@@ -18,16 +18,83 @@ class PhotoViewerViewController: UIViewController {
     @IBOutlet weak var fullScrenImageView: UIImageView!
     var dataSource:[[String:UIImage]] = [[String:UIImage]]()
    
+    @IBOutlet var fullScreenZoomView: UIImageView!
     var snapShots : NSMutableDictionary = NSMutableDictionary()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initialise()
         readImageFromDataBase()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    func initialise()
+    {
+        fullScreenZoomView.userInteractionEnabled = true
+        fullScreenZoomView.hidden = true
+        fullScrenImageView.userInteractionEnabled = true
+        
+        let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: "enlargeImageView:")
+        enlargeImageViewRecognizer.numberOfTapsRequired = 1
+        fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
+        
+        let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: "shrinkImageView:")
+        shrinkImageViewRecognizer.numberOfTapsRequired = 1
+        fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
+        
+        
+//        let lpgr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
+//        lpgr.minimumPressDuration = 0.5
+//        lpgr.delaysTouchesBegan = true
+//        lpgr.delegate = self
+//        self.photoThumpCollectionView.addGestureRecognizer(lpgr)
+        
+    }
+    
+    func enlargeImageView(Recognizer:UITapGestureRecognizer){
+        fullScreenZoomView.hidden = false
+    }
+    
+    func shrinkImageView(Recognizer:UITapGestureRecognizer){
+        fullScreenZoomView.hidden = true
+    }
+    
+//    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
+//        if gestureReconizer.state != UIGestureRecognizerState.Ended {
+//            return
+//        }
+//        
+//        let p = gestureReconizer.locationInView(self.photoThumpCollectionView)
+//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
+//        
+//        if let index = indexPath {
+//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
+//            cell?.layer.borderWidth = 1.0
+//            cell?.layer.borderColor = UIColor.blueColor().CGColor
+//            
+//            let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: "singleTap:")
+//            singleTapImageViewRecognizer.numberOfTapsRequired = 1
+//            cell!.addGestureRecognizer(singleTapImageViewRecognizer)
+//            
+//            print(index.row)
+//        } else {
+//            print("Could not find index path")
+//        }
+//    }
+//
+//    func singleTap(Recognizer:UITapGestureRecognizer){
+//        let p = Recognizer.locationInView(self.photoThumpCollectionView)
+//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
+//        
+//        if let index = indexPath {
+//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
+//            cell?.layer.borderColor = UIColor.clearColor().CGColor
+//            cell?.removeGestureRecognizer(Recognizer)
+//        }
+//    }
     
     func readImageFromDataBase()
     {
@@ -53,7 +120,7 @@ class PhotoViewerViewController: UIViewController {
                     {
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
                         let sizeThumb = CGSizeMake(50,50)
-                        let sizeFull = CGSizeMake(screenWidth*2,screenHeight)
+                        let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                         let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
                         dummyImagesDataSource.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
@@ -68,6 +135,7 @@ class PhotoViewerViewController: UIViewController {
                 {
                 
                     self.fullScrenImageView.image = imagePath
+                    self.fullScreenZoomView.image = imagePath
                 }
             }
         }
@@ -118,15 +186,17 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if dataSource.count > indexPath.row
         {
             var dict = dataSource[indexPath.row]
+            
             if let fullImage = dict[fullImageKey]
             {
                 self.fullScrenImageView.image = fullImage
+                self.fullScreenZoomView.image = fullImage
             }
         }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(0, 1, 0, 1)
+        return UIEdgeInsetsMake(1, 1, 1, 1)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {

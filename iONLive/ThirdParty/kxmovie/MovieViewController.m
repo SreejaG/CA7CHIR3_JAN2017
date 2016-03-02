@@ -198,6 +198,7 @@ static NSMutableDictionary * gHistory;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
+     [cameraButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
 }
 
 -(void)setUpInitialBlurView

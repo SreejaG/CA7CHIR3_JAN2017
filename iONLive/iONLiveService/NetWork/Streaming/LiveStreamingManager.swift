@@ -119,7 +119,7 @@ class LiveStreamingManager: NSObject {
     func getAllLiveStreams(loginId loginId: String, accesstocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token":accesstocken],success: { (operation, response) -> Void in
+        requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

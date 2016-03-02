@@ -9,11 +9,19 @@
 import UIKit
 
 class EditProfileViewController: UIViewController {
-
+    
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
     
+    let requestManager = RequestManager.sharedInstance
+    let profileManager = ProfileManager.sharedInstance
+    
+    var loadingOverlay: UIView?
+    
+    
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
+    
+    
     let userNameKey = "userNameKey"
     let displayNameKey = "displayNameKey"
     let titleKey = "titleKey"
@@ -21,6 +29,7 @@ class EditProfileViewController: UIViewController {
     let personalInfoCell = "personalInfoCell"
     let accountInfoCell = "accountInfoCell"
     let privateInfoCell = "privateInfoCell"
+    let countryPickerCell = "countryPickerCell"
     
     var profileInfoOptions = [[String:String]]()
     var privateInfoOptions = [[String:String]]()
@@ -28,16 +37,17 @@ class EditProfileViewController: UIViewController {
     
     var dataSource:[[[String:String]]]?
     
+    var userDetails: NSMutableDictionary = NSMutableDictionary()
+    
+    
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        profileInfoOptions = [[displayNameKey:"Rom Eizenberg",userNameKey:"romeizenberg"]] // replace uername etc here from API response of editP screen
-        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"]]
-        privateInfoOptions = [[titleKey:"reizenberg@gmail.com"],[titleKey:"555-555-5555"]]
-        
-        dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
-        
+        initialise()
+    }
+    
+    @IBAction func tapGestureRecognizer(sender: AnyObject) {
+        view.endEditing(true)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -45,16 +55,112 @@ class EditProfileViewController: UIViewController {
         self.editProfTableView.backgroundView = nil
         self.editProfTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
         addKeyboardObservers()
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-          NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-
+    
+    func initialise()
+    {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        getUserDetails(userId, token: accessToken)       
+    }
+    
+    func getUserDetails(userName: String, token: String)
+    {
+        showOverlay()
+        profileManager.getUserDetails(userName, accessToken:token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
+    
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
+    func authenticationSuccessHandler(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [[String: AnyObject]]
+        {
+            print(json)
+            for (key,value) in json[0]
+            {
+                let valueAfterNullCheck =  nullToNil(value)
+                userDetails.setValue(valueAfterNullCheck!, forKey: key as String)
+            }
+            setUserDetails()
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    //Loading Overlay Methods
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+    
+    func setUserDetails()
+    {
+        print(userDetails)
+        let fullName = userDetails["full_name"] as! String
+        let userName = userDetails["user_name"] as! String
+        let email = userDetails["email"] as! String
+//        let location = userDetails["location"] as! String
+        let mobileNo = userDetails["mobile_no"] as! String
+        
+        profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]] // replace uername etc here from API response of editP screen
+        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
+        privateInfoOptions = [[titleKey:email],/*[titleKey:location],*/[titleKey:mobileNo]]
+        
+        dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
+        editProfTableView.reloadData()
+    }
+    
+    //end
+    
     @IBAction func saveClicked(sender: AnyObject) {
+        
     }
-
+    
     @IBAction func backClicked(sender: AnyObject) {
         self.navigationController?.popViewControllerAnimated(true)
     }
@@ -66,7 +172,7 @@ class EditProfileViewController: UIViewController {
     func addKeyboardObservers()
     {
         [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-         [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
     }
     
     func keyboardDidShow(notification:NSNotification)
@@ -75,7 +181,7 @@ class EditProfileViewController: UIViewController {
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         if tableViewBottomConstaint.constant == 0
         {
-           self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
+            self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
         }
     }
     
@@ -193,11 +299,16 @@ extension EditProfileViewController:UITableViewDataSource
                 {
                 case 0:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
+                    if cellDataSource[displayNameKey] == ""
+                    {
+                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Full Name",
+                            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                    }
                     cell.displayNameTextField.text = cellDataSource[displayNameKey]
                     cell.userNameTextField.text = cellDataSource[userNameKey]
                     cell.selectionStyle = .None
                     return cell
-                   
+                    
                 case 1:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
@@ -212,9 +323,10 @@ extension EditProfileViewController:UITableViewDataSource
                     }
                     cell.selectionStyle = .Default
                     return cell
-                   
+                    
                 case 2:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPrivateInfoCell.identifier, forIndexPath:indexPath) as! EditProfPrivateInfoCell
+            
                     cell.privateInfoTitleLabel.text = cellDataSource[titleKey]
                     //no border line for last cell
                     if dataSource[indexPath.section].count-1 == indexPath.row
@@ -227,8 +339,9 @@ extension EditProfileViewController:UITableViewDataSource
                     }
                     cell.selectionStyle = .None
                     return cell
+                    
                 default:
-                     return UITableViewCell()
+                    return UITableViewCell()
                 }
             }
         }
@@ -251,7 +364,6 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
     }
 }
 

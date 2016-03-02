@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
@@ -279,6 +279,7 @@
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="8yW-hu-EA2" secondAttribute="bottom" id="4rU-lb-qaq"/>
                                     <constraint firstAttribute="trailing" secondItem="8yW-hu-EA2" secondAttribute="trailing" id="RRT-Ii-DSl"/>
@@ -288,6 +289,9 @@
                                     <constraint firstItem="8yW-hu-EA2" firstAttribute="top" secondItem="2NI-LR-vp5" secondAttribute="bottom" id="eZo-2B-2xx"/>
                                     <constraint firstItem="8yW-hu-EA2" firstAttribute="leading" secondItem="dbA-00-Jla" secondAttribute="leading" id="xtt-yR-Bsh"/>
                                 </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="nfm-ti-ueu" appends="YES" id="QVq-s2-vQ7"/>
+                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -305,6 +309,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fXM-0v-0iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="nfm-ti-ueu">
+                    <connections>
+                        <action selector="tapGestureRecognizer:" destination="NLI-gS-dTY" id="PbU-Q4-h5r"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="154" y="300"/>
         </scene>

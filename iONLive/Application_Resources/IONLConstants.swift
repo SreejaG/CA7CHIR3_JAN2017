@@ -9,6 +9,7 @@
 import Foundation
 let userLoginIdKey = "userLoginIdKey"
 let userAccessTockenKey = "userAccessTockenKey"
+let userBucketName = "userBucketName"
 
 let apiErrorMessageKey = "errorMessage"
 let apiErrorCodeKey = "errorCode"

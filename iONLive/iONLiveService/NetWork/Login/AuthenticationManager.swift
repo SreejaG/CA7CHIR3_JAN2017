@@ -19,10 +19,10 @@ class AuthenticationManager: NSObject {
     }
     
     //Method to authenticate a user with email and password, success and failure block
-    func authenticate(email: String, password: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func authenticate(email: String, password: String, gcmRegId:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["userName":email,"password": password], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["userName":email,"password": password, "gcmRegistrationId": gcmRegId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -84,10 +84,10 @@ class AuthenticationManager: NSObject {
     
     //verification code generation
     
-    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, email: String, action: String, verificationMethod: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.usersSignUpAPIUrl() + "/" + userName, parameters: ["location":location,"mobileNumber":mobileNumber,"email":email,"action":action,"verificationMethod":verificationMethod], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["location":location,"mobileNumber":mobileNumber,"action":action,"verificationMethod":verificationMethod], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -114,10 +114,10 @@ class AuthenticationManager: NSObject {
         })
     }
     
-    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegistrationId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.usersSignUpAPIUrl() + "/" + userName, parameters: ["action":action,"verificationCode":verificationCode,"gcmRegistrationId":gcmRegistrationId], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["action":action,"verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

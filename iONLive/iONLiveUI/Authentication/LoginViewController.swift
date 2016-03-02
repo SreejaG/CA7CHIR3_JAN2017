@@ -19,6 +19,8 @@ class LoginViewController: UIViewController {
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
@@ -49,6 +51,7 @@ class LoginViewController: UIViewController {
         passwordTextField.secureTextEntry = true
         userNameTextfield.delegate = self
         passwordTextField.delegate = self
+        
         addObserver()
     }
     
@@ -111,7 +114,9 @@ class LoginViewController: UIViewController {
         }
         else
         {
-            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, withLoginButton: true)
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            let gcmRegId = deviceToken
+            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
         }
     }
     
@@ -138,7 +143,7 @@ class LoginViewController: UIViewController {
     
     
     //PRAGMA MARK:- API handlers
-    func loginUser(email: String, password: String, withLoginButton: Bool)
+    func loginUser(email: String, password: String, gcmRegistrationId: String, withLoginButton: Bool)
     {
         //check for valid email
 //        let isEmailValid = isEmail(email) as Bool!
@@ -150,7 +155,7 @@ class LoginViewController: UIViewController {
         
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.authenticate(email, password: password, success: { (response) -> () in
+        authenticationManager.authenticate(email, password: password, gcmRegId: gcmRegistrationId, success: { (response) -> () in
              self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
@@ -165,7 +170,7 @@ class LoginViewController: UIViewController {
         loadLiveStreamView()
         if let json = response as? [String: AnyObject]
         {
-            let defaults = NSUserDefaults .standardUserDefaults()
+            
             clearStreamingUserDefaults(defaults)
             
             print("success = \(json["status"]),\(json["token"]),\(json["user"])")

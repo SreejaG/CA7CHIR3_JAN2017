@@ -34,6 +34,24 @@ class UrlManager {
        return liveStreamingAPI
    }
     
+    func getUserRelatedDataAPIUrl(userName: String) -> String
+    {
+        let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
+        return getUserRelatedDataAPI
+    }
+    
+    func getProfileDataAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getProfileDataAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
+        return getProfileDataAPI
+    }
+    
+    func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
+        return getProfileImageAPI
+    }
+    
     func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"
@@ -154,5 +172,6 @@ class UrlManager {
         let getVideoUrl = iONLiveCamUrl+"/video/\(hlsId).m3u8"
         return getVideoUrl
     }
+    
 }
     

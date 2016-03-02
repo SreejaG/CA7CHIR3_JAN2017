@@ -606,7 +606,7 @@
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Mobile Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hKq-3T-p1i">
-                                                        <rect key="frame" x="56" y="66" width="527" height="65"/>
+                                                        <rect key="frame" x="69" y="66" width="514" height="65"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="65" id="DGO-qk-6ft"/>
                                                         </constraints>
@@ -628,13 +628,13 @@
                                                         </connections>
                                                     </button>
                                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Code" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MwP-u0-nSR">
-                                                        <rect key="frame" x="18" y="66" width="36" height="65"/>
+                                                        <rect key="frame" x="18" y="66" width="49" height="65"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="65" id="5Fr-pa-ZaG"/>
-                                                            <constraint firstAttribute="width" constant="36" id="UI7-Nj-iiU"/>
+                                                            <constraint firstAttribute="width" constant="49" id="UI7-Nj-iiU"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                                                     </textField>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We will not display your number to others" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EfB-zE-tDO">
                                                         <rect key="frame" x="0.0" y="210" width="600" height="16"/>
@@ -660,7 +660,7 @@
                                                     <constraint firstAttribute="trailing" secondItem="AjQ-Vh-d1P" secondAttribute="trailing" constant="18" id="3Z6-2Q-euT"/>
                                                     <constraint firstAttribute="trailing" secondItem="EfB-zE-tDO" secondAttribute="trailing" id="HqW-L0-js1"/>
                                                     <constraint firstItem="MwP-u0-nSR" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="18" id="Ims-qx-LXx"/>
-                                                    <constraint firstItem="hKq-3T-p1i" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="56" id="JLO-GM-EPx"/>
+                                                    <constraint firstItem="hKq-3T-p1i" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="69" id="JLO-GM-EPx"/>
                                                     <constraint firstAttribute="bottom" secondItem="97L-nK-RIK" secondAttribute="bottom" constant="8" id="Lsa-IO-69U"/>
                                                     <constraint firstItem="MwP-u0-nSR" firstAttribute="top" secondItem="AjQ-Vh-d1P" secondAttribute="bottom" constant="1" id="Oq9-ji-5lC"/>
                                                     <constraint firstItem="Riw-sr-yt4" firstAttribute="leading" secondItem="HY9-hv-Qfr" secondAttribute="leading" constant="18" id="QYC-qw-0bL"/>
