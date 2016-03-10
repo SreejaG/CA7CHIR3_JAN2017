@@ -102,6 +102,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate {
 //        }
 //    }
     
+    @IBAction func didTapAddChannelButton(sender: AnyObject) {
+        let storyboard = UIStoryboard(name:"MyChannel" , bundle: nil)
+        let addChannelVC = storyboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        addChannelVC.navigationItem.backBarButtonItem = backItem
+        self.navigationController?.pushViewController(addChannelVC, animated: false)
+    }
     func readImageFromDataBase()
     {
         let cameraController = IPhoneCameraViewController()

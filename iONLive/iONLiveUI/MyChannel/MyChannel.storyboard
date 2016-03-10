@@ -178,6 +178,7 @@
                                             </imageView>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="New Channel" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="50o-xT-MdG">
                                                 <rect key="frame" x="101" y="18" width="405" height="60"/>
+                                                <color key="tintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <textInputTraits key="textInputTraits"/>
                                                 <connections>
@@ -409,9 +410,9 @@
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d3N-yF-U1i">
-                                                <rect key="frame" x="547" y="28" width="38" height="32"/>
+                                                <rect key="frame" x="539" y="28" width="46" height="32"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
-                                                <state key="normal" title="Save">
+                                                <state key="normal" title="Share">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                             </button>
@@ -448,7 +449,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GoL-4J-G1Y" userLabel="AddChannelView">
-                                        <rect key="frame" x="0.0" y="65" width="600" height="90"/>
+                                        <rect key="frame" x="0.0" y="65" width="600" height="85"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plusChannel" translatesAutoresizingMaskIntoConstraints="NO" id="kPt-X3-hzm">
                                                 <rect key="frame" x="20" y="18" width="60" height="60"/>
@@ -485,7 +486,7 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="iYk-u1-61I" firstAttribute="leading" secondItem="qoZ-jy-YVL" secondAttribute="trailing" constant="23" id="45P-8Z-IWI"/>
-                                            <constraint firstAttribute="height" constant="90" id="DMa-3W-N6x"/>
+                                            <constraint firstAttribute="height" constant="85" id="DMa-3W-N6x"/>
                                             <constraint firstItem="iYk-u1-61I" firstAttribute="top" secondItem="GoL-4J-G1Y" secondAttribute="top" constant="18" id="JZK-ve-PhW"/>
                                             <constraint firstAttribute="trailing" secondItem="iYk-u1-61I" secondAttribute="trailing" id="QV9-Qc-Tj6"/>
                                             <constraint firstItem="kPt-X3-hzm" firstAttribute="leading" secondItem="GoL-4J-G1Y" secondAttribute="leading" constant="20" id="Ukk-Pq-nIS"/>
@@ -495,7 +496,7 @@
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="71" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mOo-XQ-QsS">
-                                        <rect key="frame" x="0.0" y="183" width="600" height="417"/>
+                                        <rect key="frame" x="0.0" y="158" width="600" height="442"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddChannelCell" rowHeight="71" id="LdH-TV-XvR" userLabel="channelView" customClass="AddChannelCell" customModule="iONLive" customModuleProvider="target">
@@ -578,7 +579,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="mOo-XQ-QsS" firstAttribute="top" secondItem="GoL-4J-G1Y" secondAttribute="bottom" constant="28" id="0R0-MD-wpi"/>
+                                    <constraint firstItem="mOo-XQ-QsS" firstAttribute="top" secondItem="GoL-4J-G1Y" secondAttribute="bottom" constant="8" id="0R0-MD-wpi"/>
                                     <constraint firstItem="hBB-3n-l9M" firstAttribute="top" secondItem="q9r-n5-RaN" secondAttribute="top" id="1E6-aP-2M1"/>
                                     <constraint firstAttribute="bottom" secondItem="mOo-XQ-QsS" secondAttribute="bottom" id="E9I-Je-kT8"/>
                                     <constraint firstAttribute="trailing" secondItem="hBB-3n-l9M" secondAttribute="trailing" id="VFQ-X4-nNa"/>

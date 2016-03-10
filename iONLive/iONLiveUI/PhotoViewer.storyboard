@@ -77,6 +77,9 @@
                                         <rect key="frame" x="532" y="10" width="48" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Add to"/>
+                                        <connections>
+                                            <action selector="didTapAddChannelButton:" destination="Ayi-XJ-Ys0" eventType="touchUpInside" id="te1-QV-e2G"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

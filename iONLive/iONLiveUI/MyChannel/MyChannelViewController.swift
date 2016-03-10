@@ -63,6 +63,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        channelTextField.text = ""
+        
         channelTextField.resignFirstResponder()
         channelCreateButton.hidden = true
         hideView(30)
@@ -162,6 +164,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         
         
         showviewWithNewConstraints()
+        searchActive = false
+        myChannelTableView.reloadData()
     }
     func  showviewWithNewConstraints()
     {
@@ -170,6 +174,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelSearchBar.hidden = true
         
         myChannelTableViewTopConstraint.constant = 0
+        
     }
     func hideView(constraintConstant: CGFloat)
     {
@@ -401,11 +406,16 @@ extension MyChannelViewController:UITableViewDataSource
     
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        
         if(addChannelView.hidden)
         {
             myChannelSearchBar.hidden = false
             addChannelView.hidden = true
             myChannelTableViewTopConstraint.constant = -65
+        }
+        if(searchActive)
+        {
+            searchActive = false
         }
         
         
