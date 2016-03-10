@@ -33,6 +33,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate {
     
     func initialise()
     {
+        
+//        let kKeychainItemName: String = "ion-live-1120"
+//        let kMyClientID: String = "821885679497-88oi8625g6g9kmpojmi5edv8t6qibu59.apps.googleusercontent.com"
+//        let kMyClientSecret: String = "YjoqEGOdqEKuQHVuDxH0bYgW"
+//        let kScope: String = "signedurl@ion-live-1120.iam.gserviceaccount.com"
+        
         fullScreenZoomView.userInteractionEnabled = true
         fullScreenZoomView.hidden = true
         fullScrenImageView.userInteractionEnabled = true
@@ -53,7 +59,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate {
 //        self.photoThumpCollectionView.addGestureRecognizer(lpgr)
         
     }
-    
+
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         fullScreenZoomView.hidden = false
     }

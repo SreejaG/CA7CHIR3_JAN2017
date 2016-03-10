@@ -34,6 +34,11 @@ class UrlManager {
        return liveStreamingAPI
    }
     
+    func channelAPIUrl() -> String{
+        let channelAPI = baseUrl+"/api/v1/channel"
+        return channelAPI
+    }
+    
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
@@ -50,6 +55,12 @@ class UrlManager {
     {
         let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
         return getProfileImageAPI
+    }
+    
+    func getAllChannelsAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
+        return getAllChannelsAPI
     }
     
     func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String

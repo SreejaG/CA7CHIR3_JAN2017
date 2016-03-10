@@ -14,16 +14,22 @@ class MySharedChannelsViewController: UIViewController {
     @IBOutlet weak var sharedChannelsTableView: UITableView!
     @IBOutlet weak var sharedChannelsSearchBar: UISearchBar!
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
-    
+   
+    let channelManager = ChannelManager.sharedInstance
+    let requestManager = RequestManager.sharedInstance
+
     let channelNameKey = "channelName"
     let channelShareCountKey = "channelShareCount"
     let channelSelectionKey = "channelSelection"
-    
-    var dataSource:[[String:String]]?
-    
+    var channelDetails: NSMutableArray = NSMutableArray()
+
+    var dataSource:[[String:String]] = [[String:String]]()
+    var loadingOverlay: UIView?
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        createDummyDataSource()
+      //  createDummyDataSource()
+        createChannelDataSource()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -44,12 +50,28 @@ class MySharedChannelsViewController: UIViewController {
         self.dismissViewControllerAnimated(true) { () -> Void in
         }
     }
-    
+    func createChannelDataSource()
+    {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        getChannelDetails(userId, token: accessToken)
+    }
     func createDummyDataSource()
     {
         dataSource = [[channelNameKey:"My Day",channelShareCountKey:"9",channelSelectionKey:"0"],[channelNameKey:"Work stuff",channelShareCountKey:"5",channelSelectionKey:"0"],[channelNameKey:"Ideas",channelShareCountKey:"8",channelSelectionKey:"0"]]
     }
     
+    func getChannelDetails(userName: String, token: String)
+    {
+        showOverlay()
+        channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
     func addKeyboardObservers()
     {
         [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
@@ -106,13 +128,21 @@ extension MySharedChannelsViewController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-       return dataSource != nil ? (dataSource?.count)! :0
+//       return dataSource != nil ? (dataSource.count)! :0
+        if dataSource.count > 0
+        {
+            return dataSource.count
+        }
+        else
+        {
+            return 0
+        }
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if let dataSource = dataSource
-        {
+//        if  dataSource
+//        {
             if dataSource.count > indexPath.row
             {
                 let cell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsCell.identifier, forIndexPath:indexPath) as! MySharedChannelsCell
@@ -134,7 +164,7 @@ extension MySharedChannelsViewController:UITableViewDataSource
                 cell.selectionStyle = .None
                 return cell
             }
-        }
+      //  }
         return UITableViewCell()
     }
     
@@ -142,8 +172,8 @@ extension MySharedChannelsViewController:UITableViewDataSource
     {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier) as! UITabBarController
-        if let dataSource = dataSource
-        {
+//        if let dataSource = dataSource
+//        {
             if dataSource.count > indexPath.row
             {
                 if channelDetailVC.viewControllers?.count > 0
@@ -152,8 +182,67 @@ extension MySharedChannelsViewController:UITableViewDataSource
                     channelItemDetailVC.channelName = dataSource[indexPath.row][channelNameKey]
                 }
             }
-        }
+       // }
  
         self.navigationController?.pushViewController(channelDetailVC, animated: true)
     }
+    
+    //Loading Overlay Methods
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    }
+
+    func authenticationSuccessHandler(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            print(json)
+            channelDetails = json["channels"] as! NSMutableArray
+            print(channelDetails)
+            setChannelDetails()
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+    func setChannelDetails()
+    {
+        for var index = 0; index < channelDetails.count; index++
+        {
+            let channelName = channelDetails[index].valueForKey("channel_name") as! String
+            //            let totalMediaShared = channelDetails[index].valueForKey("total_no_media_shared") as! String
+            //            let channelImageName = channelDetails[index].valueForKey("thumbnail_name") as! String
+            
+//            dataSource.append([channelNameKey:channelName, channelShareCountKey:"8", channelSelectionKey:"thumb9"])
+            dataSource.append([channelNameKey:channelName, channelShareCountKey:"8", channelSelectionKey:"thumb9"])
+        }
+        sharedChannelsTableView.reloadData()
+        
+    }
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+
 }

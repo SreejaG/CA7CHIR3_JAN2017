@@ -162,6 +162,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         UIAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: "OK").show()
     }
     
+    func channelAlreayExist()
+    {
+         alert("Channel Exist", message: "Channel name already exists")
+    }
+    
+    func invalidChannel()
+    {
+        alert("Invalid Channel", message: "Channel name invalid")
+    }
+    
     //PRAGMA MARK:- Error code mapping
     
     func mapErorMessageToErrorCode(errorCode:String)
@@ -203,6 +213,12 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             break
         case "WOWZA001":  //"Wowza stream empty."
             //Currently avoiding alert when live steam is empty.
+            break
+        case"CHANNEL001":
+            channelAlreayExist()
+            break
+        case"CHANNEL002":
+            invalidChannel()
             break
         default:
             alert("Error", message: "\(errorCode)")

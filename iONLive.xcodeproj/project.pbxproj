@@ -100,6 +100,9 @@
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
 		16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */; };
+		16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B457C41C86C145009D36A9 /* ChannelManager.swift */; };
+		16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */; };
+		16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA62301C8962090086DA30 /* AddChannelCell.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
 		16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BA1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift */; };
@@ -164,7 +167,6 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
-		AE8589843A7E86699662C81F /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56CCA5751DD3E38DEB850F47 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -289,6 +291,9 @@
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewTableViewCell.swift; sourceTree = "<group>"; };
 		16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpFindFriendsViewController.swift; sourceTree = "<group>"; };
+		16B457C41C86C145009D36A9 /* ChannelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
+		16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelViewController.swift; sourceTree = "<group>"; };
+		16BA62301C8962090086DA30 /* AddChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelCell.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCamConfigViewController.swift; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
@@ -334,7 +339,6 @@
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
-		56CCA5751DD3E38DEB850F47 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		599964541C057EF000D20FB2 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		599964551C057EF000D20FB2 /* avfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avfft.h; sourceTree = "<group>"; };
 		599964561C057EF000D20FB2 /* d3d11va.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = d3d11va.h; sourceTree = "<group>"; };
@@ -512,7 +516,6 @@
 				599964D41C057EF000D20FB2 /* libswscale.a in Frameworks */,
 				599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */,
 				599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */,
-				AE8589843A7E86699662C81F /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -783,6 +786,8 @@
 				167512C51C3152CE007F5326 /* MyChannel.storyboard */,
 				162ABFF81C3258D000625C89 /* MyChannelCell.swift */,
 				162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */,
+				16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */,
+				16BA62301C8962090086DA30 /* AddChannelCell.swift */,
 			);
 			path = MyChannel;
 			sourceTree = "<group>";
@@ -926,6 +931,14 @@
 				1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		16B457C11C86C0BA009D36A9 /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				16B457C41C86C145009D36A9 /* ChannelManager.swift */,
+			);
+			path = Channel;
 			sourceTree = "<group>";
 		};
 		16CBE7431C4E076E0049112C /* ObjectiveCBridging */ = {
@@ -1299,6 +1312,7 @@
 		59BC3FAA1BFF895700710905 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				16B457C11C86C0BA009D36A9 /* Channel */,
 				163282561C7F007B00D03F51 /* ProfileUpdations */,
 				165B77D91C4CAAE800BDB02F /* iONLiveCameraAPI */,
 				1644B3D11C05698F004E3832 /* Errors */,
@@ -1321,7 +1335,6 @@
 		657062C36B2B324EA47A48A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				56CCA5751DD3E38DEB850F47 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1517,11 +1530,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				59BC3F5A1BFF848600710905 /* AFHTTPRequestOperation.m in Sources */,
+				16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */,
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				16DA06CE1C7ED88B004759D5 /* NBAsYouTypeFormatter.m in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
+				16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */,
 				165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */,
 				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
@@ -1611,6 +1626,7 @@
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,
+				16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */,
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
 				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
@@ -1784,11 +1800,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**",
@@ -1803,7 +1820,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1816,11 +1833,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/iONLive/ThirdParty/FFmpeg-iOS/include\"/**",
@@ -1835,7 +1853,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;
