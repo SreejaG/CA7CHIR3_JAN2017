@@ -134,6 +134,7 @@
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
+		28D7FD72F96ED34EC8227DE6 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DD833BCC68B7DCB2D38C82 /* libPods.a */; };
 		599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BA1C057EF000D20FB2 /* libavcodec.a */; };
 		599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BB1C057EF000D20FB2 /* libavdevice.a */; };
 		599964D01C057EF000D20FB2 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BC1C057EF000D20FB2 /* libavfilter.a */; };
@@ -187,6 +188,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06DD833BCC68B7DCB2D38C82 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CC816436167DE7B08669471 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		160903EC1C6C7E66004E381D /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
 		160903ED1C6C7E66004E381D /* Connectivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connectivity.m; sourceTree = "<group>"; };
@@ -516,6 +518,7 @@
 				599964D41C057EF000D20FB2 /* libswscale.a in Frameworks */,
 				599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */,
 				599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */,
+				28D7FD72F96ED34EC8227DE6 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1335,6 +1338,7 @@
 		657062C36B2B324EA47A48A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				06DD833BCC68B7DCB2D38C82 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

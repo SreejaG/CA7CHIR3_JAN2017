@@ -80,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         defaults.removeObjectForKey(startedStreaming)
         defaults.removeObjectForKey(initializingStream)
     }
+    
     func loadCameraViewController()
     {
         var navigationController:UINavigationController?

@@ -168,7 +168,8 @@ class LoginViewController: UIViewController {
     {
         self.passwordTextField.text = ""
         self.removeOverlay()
-        loadLiveStreamView()
+       // loadLiveStreamView()
+        loadCameraViewController()
         if let json = response as? [String: AnyObject]
         {
             
@@ -222,6 +223,12 @@ class LoginViewController: UIViewController {
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
         self.navigationController?.pushViewController(vc, animated: false)
+    }
+    func loadCameraViewController()
+    {
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
 }
 
