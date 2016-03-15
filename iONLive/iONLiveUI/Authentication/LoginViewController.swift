@@ -113,7 +113,7 @@ class LoginViewController: UIViewController {
             ErrorManager.sharedInstance.loginNoPasswordEnteredError()
         }
         else
-        {
+        {            
             let deviceToken = defaults.valueForKey("deviceToken") as! String
 //            let deviceToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE0NTczNDQ4MDAwNjgsInVzZXJOYW1lIjoiR2FkZ2VvbiBpT24gTGl2ZSBUZXN0IFVzZXIifQ.We_xqPPr-94paiTQepcaRrJnHFR1JYMJkM8QW23_7kvmKlg-LQV3UwistLx9bxfxu7l1u0chAUUNC8vX1LFY8Q"
             let gcmRegId = deviceToken

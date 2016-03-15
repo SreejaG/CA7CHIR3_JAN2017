@@ -212,6 +212,8 @@ class SignUpVerifyPhoneViewController: UIViewController
                 {
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
                     let gcmRegId = deviceToken
+                   
+                    
                     validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
                 }
             }
@@ -221,7 +223,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
     }
     
-    
+    func ltzAbbrev() -> String
+    {
+        return NSTimeZone.localTimeZone().abbreviation ?? ""
+    }
     
     func generateWaytoSendAlert()
     {
@@ -245,7 +250,11 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         //authenticate through authenticationManager
         showOverlay()
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, success: { (response) -> () in
+        
+        let timeZoneOffsetInGMT : String = ltzAbbrev()
+        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+        
+        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, success: { (response) -> () in
                 self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)

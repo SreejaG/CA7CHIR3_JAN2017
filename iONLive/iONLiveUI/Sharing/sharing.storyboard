@@ -105,10 +105,10 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cbN-lg-RZy">
-                                                            <rect key="frame" x="555" y="15" width="30" height="30"/>
+                                                            <rect key="frame" x="545" y="10" width="40" height="40"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="AkV-O4-B6g"/>
-                                                                <constraint firstAttribute="height" constant="30" id="j4e-gb-TDy"/>
+                                                                <constraint firstAttribute="width" constant="40" id="AkV-O4-B6g"/>
+                                                                <constraint firstAttribute="height" constant="40" id="j4e-gb-TDy"/>
                                                             </constraints>
                                                             <state key="normal" image="red-circle"/>
                                                             <connections>

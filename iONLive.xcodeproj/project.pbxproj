@@ -1824,7 +1824,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
+				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1857,7 +1857,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
+				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;

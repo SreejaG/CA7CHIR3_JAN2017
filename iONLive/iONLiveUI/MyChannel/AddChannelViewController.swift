@@ -93,10 +93,11 @@ class AddChannelViewController: UIViewController {
     }
     
     @IBAction func didTapCreateButton(sender: AnyObject) {
+        let channelname: String = channelTextField.text!
         channelTextField.text = ""
         channelCreateButton.hidden = true
         channelTextField.resignFirstResponder()
-        addChannelDetails(userId, token: accessToken, channelName: channelTextField.text!)
+        addChannelDetails(userId, token: accessToken, channelName: channelname)
     }
     
     func getChannelDetails(userName: String, token: String)

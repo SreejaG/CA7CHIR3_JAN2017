@@ -22,9 +22,10 @@ class ProfileManager: NSObject {
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getProfileDataAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
-           
             //Get and parse the response
-            if let responseObject = response as? [[String:AnyObject]]
+            print(response)
+            
+            if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
 //                self.getUserProfileImage(userName, accessToken: accessToken, success: success, failure: failure)

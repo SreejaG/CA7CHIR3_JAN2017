@@ -93,13 +93,18 @@ class EditProfileViewController: UIViewController {
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
-        if let json = response as? [[String: AnyObject]]
+        if let json = response as? [String: AnyObject]
         {
-            print(json)
-            for (key,value) in json[0]
+            let responseArr = json["user"] as! [AnyObject]
+            let userDict: NSMutableDictionary = NSMutableDictionary()
+            
+            for element in responseArr{
+                userDict.setDictionary(element as! [NSObject : AnyObject])
+            }
+            for (key,value) in userDict
             {
                 let valueAfterNullCheck =  nullToNil(value)
-                userDetails.setValue(valueAfterNullCheck!, forKey: key as String)
+                userDetails.setValue(valueAfterNullCheck!, forKey: key as! String)
             }
             setUserDetails()
         }

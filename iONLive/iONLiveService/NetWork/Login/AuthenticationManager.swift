@@ -84,10 +84,10 @@ class AuthenticationManager: NSObject {
     
     //verification code generation
     
-    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String, offset: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["location":location,"mobileNumber":mobileNumber,"action":action,"verificationMethod":verificationMethod], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["location":location,"mobileNumber":mobileNumber,"action":action,"verificationMethod":verificationMethod,"timeZone":offset], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

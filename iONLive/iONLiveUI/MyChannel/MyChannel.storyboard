@@ -41,10 +41,10 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sye-VS-ziC" userLabel="PlusButton">
-                                                <rect key="frame" x="545" y="21" width="40" height="40"/>
+                                                <rect key="frame" x="543" y="21" width="42" height="42"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="9TK-6t-s9S"/>
-                                                    <constraint firstAttribute="width" constant="40" id="BTw-33-o02"/>
+                                                    <constraint firstAttribute="height" constant="42" id="9TK-6t-s9S"/>
+                                                    <constraint firstAttribute="width" constant="42" id="BTw-33-o02"/>
                                                 </constraints>
                                                 <state key="normal" image="Add"/>
                                                 <connections>
@@ -52,7 +52,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fp1-85-0Vm" userLabel="ContactsButton">
-                                                <rect key="frame" x="508" y="28" width="29" height="25"/>
+                                                <rect key="frame" x="506" y="28" width="29" height="25"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="29" id="Ch1-Ce-eur"/>
                                                     <constraint firstAttribute="height" constant="25" id="POw-hj-7fv"/>
