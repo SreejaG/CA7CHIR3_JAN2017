@@ -59,6 +59,17 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         super.didReceiveMemoryWarning()
     }
     
+    @IBAction func didTapNotificationButton(sender: AnyObject) {
+        
+        let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+        let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
+        
+       
+        
+        channelItemListVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(channelItemListVC, animated: true)
+        
+    }
     @IBAction func didTapCreateButton(sender: AnyObject) {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String

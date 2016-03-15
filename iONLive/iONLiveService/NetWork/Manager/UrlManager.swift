@@ -38,7 +38,10 @@ class UrlManager {
         let channelAPI = baseUrl+"/api/v1/channel"
         return channelAPI
     }
-    
+    func MediaInteractionUrl() -> String{
+        let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"
+        return mediaInteractionAPI
+    }
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
@@ -62,7 +65,11 @@ class UrlManager {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
         return getAllChannelsAPI
     }
-    
+    func getMediaInteractionNotifications(userName: String, accessToken: String) -> String
+    {
+        let mediaInteractionNotification = MediaInteractionUrl() + "/" + userName + "/" + accessToken
+        return mediaInteractionNotification
+    }
     func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"

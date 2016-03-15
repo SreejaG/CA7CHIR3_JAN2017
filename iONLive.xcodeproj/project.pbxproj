@@ -58,6 +58,7 @@
 		166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */; };
 		166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456021C2A8F8700D09FAE /* TimeTapseCell.swift */; };
 		166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */; };
+		16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
 		166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */; };
@@ -96,6 +97,7 @@
 		167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */; };
 		1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */; };
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
+		168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */; };
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
@@ -245,6 +247,7 @@
 		166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseSettingsViewController.swift; sourceTree = "<group>"; };
 		166456021C2A8F8700D09FAE /* TimeTapseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeTapseCell.swift; sourceTree = "<group>"; };
 		166456041C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseHeaderCell.swift; sourceTree = "<group>"; };
+		16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationViewController.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
 		166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountViewController.swift; sourceTree = "<group>"; };
@@ -289,6 +292,7 @@
 		167D8CB81C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerifyPhoneViewController.swift; sourceTree = "<group>"; };
 		1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UploadStream.swift; path = ../iONLiveUI/Streaming/UploadStream.swift; sourceTree = "<group>"; };
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
+		168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationCell.swift; sourceTree = "<group>"; };
 		1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIResultViewController.swift; sourceTree = "<group>"; };
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewTableViewCell.swift; sourceTree = "<group>"; };
@@ -791,6 +795,8 @@
 				162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */,
 				16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */,
 				16BA62301C8962090086DA30 /* AddChannelCell.swift */,
+				16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */,
+				168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */,
 			);
 			path = MyChannel;
 			sourceTree = "<group>";
@@ -1590,6 +1596,7 @@
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
 				166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */,
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
+				16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
@@ -1631,6 +1638,7 @@
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,
 				16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */,
+				168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */,
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
 				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
@@ -1804,8 +1812,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
@@ -1824,7 +1832,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1837,8 +1845,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/iONLive/Frameworks",
@@ -1857,7 +1865,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b03c9f10-7c8f-4b2d-87c4-7f9d52588601";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;
