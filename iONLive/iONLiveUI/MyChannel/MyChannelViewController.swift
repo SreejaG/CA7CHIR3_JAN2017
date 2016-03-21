@@ -37,7 +37,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     var dataSource:[[String:String]] = [[String:String]]()
     var filtered:[String] = []
     var data:[String] = []
-
+    
     var channelDetails: NSMutableArray = NSMutableArray()
     
     override func viewDidLoad() {
@@ -63,13 +63,11 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
-        
-       
-        
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(channelItemListVC, animated: true)
         
     }
+    
     @IBAction func didTapCreateButton(sender: AnyObject) {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -78,8 +76,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         channelTextField.text = ""
         channelTextField.resignFirstResponder()
         channelCreateButton.hidden = true
-        hideView(30)
-
+        addChannelViewTopConstraint.constant = 0
+        myChannelTableViewTopConstraint.constant = 0
+        hideView(0)
+        myChannelSearchBar.delegate = self
         addChannelDetails(userId, token: accessToken, channelName: channelname)
         
     }
@@ -163,7 +163,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelSearchBar.text = ""
         view.endEditing(true)
     }
-
+    
     
     @IBAction func didtapBackButton(sender: AnyObject)
     {
@@ -172,7 +172,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
-        
         
         showviewWithNewConstraints()
         searchActive = false
@@ -183,7 +182,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         addChannelView.hidden = false
         addChannelViewTopConstraint.constant = -40
         myChannelSearchBar.hidden = true
-        
         myChannelTableViewTopConstraint.constant = 0
         
     }
@@ -197,12 +195,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         
         myChannelSearchBar.delegate = self
-
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         channelCreateButton.hidden = true
-        
         getChannelDetails(userId, token: accessToken)
     }
     func textFieldDidChange(textField: UITextField)
@@ -269,12 +265,17 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         data.removeAll()
         dataSource.removeAll()
+        print(channelDetails)
         for var index = 0; index < channelDetails.count; index++
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
-            
-            
-            dataSource.append([channelNameKey:channelName, channelItemCountKey:"8", channelHeadImageNameKey:"thumb9"])
+            let mediaSharedCount = channelDetails[index].valueForKey("total_no_media_shared")?.stringValue
+            let thumbUrl = channelDetails[index].valueForKey("thumbnail_Url") as! String
+//            let dataImag =  NSData(contentsOfURL: NSURL(string: "https://abdulmanafcjbucket.commondatastorage.googleapis.com/ionliveobject91458550452938?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458640339&Signature=WXDohwkjiN9EZ%2F2bQhK8lc36xqb3FR6nyrYRODTdXYPLalOaPbM1xLtuqeBVIw19WDuXtXagxJ8AOHpo0vbMYzsB2wrLACdzO1rcFohfhTTDJOcj9%2FVHvjTrfk0pUhDaNoads%2Fo2BvWryI1a%2Bablkah%2By%2Fj4OoJezKI2q50lnkCYqvAw%2Fim36xny%2FkAVbCPNGbZN%2FWTwBfiFt6mAS12u4aPW508GFmAC3F7AtXp7wu2vSodqwjo3yPPrrQGQo8CukGH1RX%2FWeSzYnXEon2v3Uf0AH8JgYi0W9EZS9PahGmjMfsnuwYFzOMiPFDqKF3vwK8OO6e2gSzpvBnDlzAPc5Q%3D%3D")!)
+//            
+//            print(dataImag)
+//            dataSource.append([channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelHeadImageNameKey:dataImag!])
+              dataSource.append([channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelHeadImageNameKey:thumbUrl])
             data.append(channelName)
         }
         myChannelTableView.reloadData()
@@ -306,6 +307,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             self.tableViewBottomConstraint.constant = 0
         }
     }
+    
+    
 }
 
 
@@ -330,8 +333,8 @@ extension MyChannelViewController:UITableViewDataSource
         if dataSource.count > 0
         {   if(searchActive) {
             return filtered.count
-            }
-            else
+        }
+        else
         {
             return dataSource.count
             }
@@ -356,9 +359,25 @@ extension MyChannelViewController:UITableViewDataSource
             {
                 cell.channelNameLabel.text = dataSource[indexPath.row][channelNameKey]
                 cell.channelItemCount.text = dataSource[indexPath.row][channelItemCountKey]
+//                let data = dataSource[indexPath.row][channelHeadImageNameKey] as? NSData
+//                cell.channelHeadImageView.image = UIImage(data: data!)
+                
                 if let imageName = dataSource[indexPath.row][channelHeadImageNameKey]
                 {
-                    cell.channelHeadImageView.image = UIImage(named:imageName)
+                    
+                    let url = NSURL(string: "https://abdulmanafcjbucket.commondatastorage.googleapis.com/ionliveobject91458550452938?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458640339&Signature=WXDohwkjiN9EZ%2F2bQhK8lc36xqb3FR6nyrYRODTdXYPLalOaPbM1xLtuqeBVIw19WDuXtXagxJ8AOHpo0vbMYzsB2wrLACdzO1rcFohfhTTDJOcj9%2FVHvjTrfk0pUhDaNoads%2Fo2BvWryI1a%2Bablkah%2By%2Fj4OoJezKI2q50lnkCYqvAw%2Fim36xny%2FkAVbCPNGbZN%2FWTwBfiFt6mAS12u4aPW508GFmAC3F7AtXp7wu2vSodqwjo3yPPrrQGQo8CukGH1RX%2FWeSzYnXEon2v3Uf0AH8JgYi0W9EZS9PahGmjMfsnuwYFzOMiPFDqKF3vwK8OO6e2gSzpvBnDlzAPc5Q%3D%3D")!
+                    
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                        if let data = responseData{
+                            
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                cell.channelHeadImageView.image = UIImage(data: data)
+                            })
+                        }
+                    }
+                    
+                    task.resume()
+                    
                 }
             }
             cell.selectionStyle = .None
@@ -404,7 +423,7 @@ extension MyChannelViewController:UITableViewDataSource
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                     
                 case .Cancel:3
-                    print("cancel")
+                print("cancel")
                     
                     
                 case .Destructive:
@@ -463,7 +482,7 @@ extension MyChannelViewController:UITableViewDataSource
         }
         self.myChannelTableView.reloadData()
     }
-
+    
 }
 
 

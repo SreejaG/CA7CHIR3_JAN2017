@@ -13,6 +13,7 @@ class ContactDetailsViewController: UIViewController {
     var contactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var appContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[[String:AnyObject]]]?
+    var indexTitles : NSArray = NSArray()
     
     var searchDataSource : [[[String:AnyObject]]]?
     
@@ -56,6 +57,7 @@ class ContactDetailsViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        self.navigationController?.navigationBarHidden = true
         self.contactTableView.backgroundView = nil
         self.contactTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
         
@@ -64,8 +66,9 @@ class ContactDetailsViewController: UIViewController {
     @IBAction func didTapDoneButton(sender: AnyObject) {
         print("hiiiii")
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+         iPhoneCameraVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
     
     func initialise()
@@ -79,6 +82,7 @@ class ContactDetailsViewController: UIViewController {
         else{
             setContactDetails()
         }
+//        indexTitles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
         contactTableView.tableFooterView = UIView()
     }
     
@@ -289,6 +293,14 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
         
     }
+    
+//    func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+//        return indexTitles as? [String]
+//    }
+//    
+//    func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
+//        return indexTitles.indexOfObject(title)
+//    }
 }
 
 

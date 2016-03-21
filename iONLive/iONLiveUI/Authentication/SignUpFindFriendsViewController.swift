@@ -258,7 +258,8 @@ class SignUpFindFriendsViewController: UIViewController {
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        iPhoneCameraViewController.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
     }
     
     func loadContactViewController()
