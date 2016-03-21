@@ -102,6 +102,7 @@
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */; };
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
+		169A00131C9FB20A00454F01 /* contactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169A00121C9FB20A00454F01 /* contactManager.swift */; };
 		16A266111C993E3D00650F24 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266101C993E3D00650F24 /* AddressBook.framework */; };
 		16A266131C993E4100650F24 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266121C993E4100650F24 /* AddressBookUI.framework */; };
 		16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A266141C994EC200650F24 /* ContactDetailsViewController.swift */; };
@@ -306,6 +307,7 @@
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationCell.swift; sourceTree = "<group>"; };
 		1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIResultViewController.swift; sourceTree = "<group>"; };
+		169A00121C9FB20A00454F01 /* contactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactManager.swift; sourceTree = "<group>"; };
 		16A266101C993E3D00650F24 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		16A266121C993E4100650F24 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		16A266141C994EC200650F24 /* ContactDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsViewController.swift; sourceTree = "<group>"; };
@@ -978,10 +980,10 @@
 			path = Protocol;
 			sourceTree = "<group>";
 		};
-		16A266161C99588100650F24 /* Contacts */ = {
+		169A00111C9FB20A00454F01 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
-				16A266171C9958B200650F24 /* contactManager.swift */,
+				169A00121C9FB20A00454F01 /* contactManager.swift */,
 			);
 			path = Contacts;
 			sourceTree = "<group>";
@@ -1365,6 +1367,7 @@
 		59BC3FAA1BFF895700710905 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				169A00111C9FB20A00454F01 /* Contacts */,
 				165E50AA1C993DBB003718A4 /* GoogleDrive */,
 				16B457C11C86C0BA009D36A9 /* Channel */,
 				163282561C7F007B00D03F51 /* ProfileUpdations */,
@@ -1699,6 +1702,7 @@
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
 				16DA06EE1C7ED8A8004759D5 /* NBPhoneMetaData.m in Sources */,
 				1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */,
+				169A00131C9FB20A00454F01 /* contactManager.swift in Sources */,
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
 				16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
