@@ -22,6 +22,7 @@
 		160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */; };
 		160EAE421C032C0E00020D31 /* IONLConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160EAE411C032C0E00020D31 /* IONLConstants.swift */; };
 		160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */; };
+		1614A2A01C9FC2FD008A5B07 /* contactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1614A29D1C9FBE94008A5B07 /* contactManager.swift */; };
 		162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFF81C3258D000625C89 /* MyChannelCell.swift */; };
 		162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */; };
 		163282551C7EE57100D03F51 /* Flags.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 163282541C7EE57100D03F51 /* Flags.xcassets */; };
@@ -102,11 +103,9 @@
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */; };
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
-		169A00131C9FB20A00454F01 /* contactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169A00121C9FB20A00454F01 /* contactManager.swift */; };
 		16A266111C993E3D00650F24 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266101C993E3D00650F24 /* AddressBook.framework */; };
 		16A266131C993E4100650F24 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266121C993E4100650F24 /* AddressBookUI.framework */; };
 		16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A266141C994EC200650F24 /* ContactDetailsViewController.swift */; };
-		16A266181C9958B200650F24 /* contactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A266171C9958B200650F24 /* contactManager.swift */; };
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
 		16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */; };
@@ -221,6 +220,7 @@
 		160EAE3F1C032A5B00020D31 /* LiveStreamingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingManager.swift; sourceTree = "<group>"; };
 		160EAE411C032C0E00020D31 /* IONLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLConstants.swift; sourceTree = "<group>"; };
 		160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLLoadingView.swift; sourceTree = "<group>"; };
+		1614A29D1C9FBE94008A5B07 /* contactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactManager.swift; sourceTree = "<group>"; };
 		162ABFF81C3258D000625C89 /* MyChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelCell.swift; sourceTree = "<group>"; };
 		162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListCollectionViewCell.swift; sourceTree = "<group>"; };
 		163282541C7EE57100D03F51 /* Flags.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Flags.xcassets; sourceTree = "<group>"; };
@@ -307,11 +307,9 @@
 		1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamingProtocol.swift; sourceTree = "<group>"; };
 		168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationCell.swift; sourceTree = "<group>"; };
 		1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIResultViewController.swift; sourceTree = "<group>"; };
-		169A00121C9FB20A00454F01 /* contactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactManager.swift; sourceTree = "<group>"; };
 		16A266101C993E3D00650F24 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		16A266121C993E4100650F24 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		16A266141C994EC200650F24 /* ContactDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsViewController.swift; sourceTree = "<group>"; };
-		16A266171C9958B200650F24 /* contactManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactManager.swift; sourceTree = "<group>"; };
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewTableViewCell.swift; sourceTree = "<group>"; };
 		16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpFindFriendsViewController.swift; sourceTree = "<group>"; };
@@ -983,7 +981,7 @@
 		169A00111C9FB20A00454F01 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
-				169A00121C9FB20A00454F01 /* contactManager.swift */,
+				1614A29D1C9FBE94008A5B07 /* contactManager.swift */,
 			);
 			path = Contacts;
 			sourceTree = "<group>";
@@ -1587,6 +1585,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1614A2A01C9FC2FD008A5B07 /* contactManager.swift in Sources */,
 				59BC3F5A1BFF848600710905 /* AFHTTPRequestOperation.m in Sources */,
 				16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */,
 				16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */,
@@ -1672,7 +1671,6 @@
 				163844BB1C6CB04700EAF25D /* IONCamLiveStreamStatusViewController.swift in Sources */,
 				59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */,
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
-				16A266181C9958B200650F24 /* contactManager.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
 				16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */,
@@ -1702,7 +1700,6 @@
 				1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */,
 				16DA06EE1C7ED8A8004759D5 /* NBPhoneMetaData.m in Sources */,
 				1633D23C1C5F417D00937FAD /* iONLiveCamVideoViewController.swift in Sources */,
-				169A00131C9FB20A00454F01 /* contactManager.swift in Sources */,
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
 				16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
