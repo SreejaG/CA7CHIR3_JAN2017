@@ -211,8 +211,8 @@ class SignUpVerifyPhoneViewController: UIViewController
                 else
                 {
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
-                    let gcmRegId = deviceToken
-                   
+            let gcmRegId = "ios".stringByAppendingString(deviceToken)
+                    print(gcmRegId)
                     
                     validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
                 }

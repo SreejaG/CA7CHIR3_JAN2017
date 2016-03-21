@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Photo Viewer View Controller-->
@@ -64,17 +65,17 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="443"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ncu-eZ-Tvl" userLabel="BottomView">
-                                <rect key="frame" x="0.0" y="550" width="600" height="50"/>
+                                <rect key="frame" x="0.0" y="558" width="600" height="42"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-0e-fze">
-                                        <rect key="frame" x="20" y="10" width="47" height="30"/>
+                                        <rect key="frame" x="20" y="2" width="47" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Delete">
                                             <color key="titleColor" red="0.36078431372549019" green="0.41960784313725491" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fa-dd-16L">
-                                        <rect key="frame" x="532" y="10" width="48" height="30"/>
+                                        <rect key="frame" x="532" y="2" width="48" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Add to"/>
                                         <connections>
@@ -85,10 +86,10 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" red="0.28235294117647058" green="0.33725490196078434" blue="0.9137254901960784" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="DAc-0e-fze" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="10" id="5cU-Tm-m0D"/>
-                                    <constraint firstAttribute="height" constant="50" id="9y1-Kr-nFZ"/>
+                                    <constraint firstItem="DAc-0e-fze" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="2" id="5cU-Tm-m0D"/>
+                                    <constraint firstAttribute="height" constant="42" id="9y1-Kr-nFZ"/>
                                     <constraint firstItem="DAc-0e-fze" firstAttribute="leading" secondItem="Ncu-eZ-Tvl" secondAttribute="leading" constant="20" id="CFm-qG-wwG"/>
-                                    <constraint firstItem="6Fa-dd-16L" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="10" id="FJU-br-Bpz"/>
+                                    <constraint firstItem="6Fa-dd-16L" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="2" id="FJU-br-Bpz"/>
                                     <constraint firstAttribute="bottom" secondItem="DAc-0e-fze" secondAttribute="bottom" constant="10" id="TR0-tg-IY6"/>
                                     <constraint firstAttribute="trailing" secondItem="6Fa-dd-16L" secondAttribute="trailing" constant="20" id="Yh4-NT-iIP"/>
                                     <constraint firstAttribute="bottom" secondItem="6Fa-dd-16L" secondAttribute="bottom" constant="10" id="r2f-Lo-trY"/>
@@ -117,16 +118,24 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="txC-iS-gZe">
                                                     <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                 </imageView>
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
+                                                    <rect key="frame" x="0.0" y="41" width="42" height="2"/>
+                                                </progressView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
+                                            <constraint firstAttribute="bottomMargin" secondItem="tfd-dS-C7Z" secondAttribute="bottom" constant="-8" id="2fc-zl-QYI"/>
                                             <constraint firstAttribute="bottom" secondItem="txC-iS-gZe" secondAttribute="bottom" id="8ss-U5-cge"/>
+                                            <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="txC-iS-gZe" secondAttribute="bottom" constant="-2" id="9SL-cT-7BJ"/>
                                             <constraint firstAttribute="trailing" secondItem="txC-iS-gZe" secondAttribute="trailing" id="B5m-C5-YKu"/>
+                                            <constraint firstItem="tfd-dS-C7Z" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-8" id="BQp-tg-J7q"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leading" id="D5g-s7-n6b"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="top" id="amQ-Ca-65u"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="progressView" destination="tfd-dS-C7Z" id="4LC-Sc-iud"/>
                                             <outlet property="thumbImageView" destination="txC-iS-gZe" id="cgs-G7-TDY"/>
                                         </connections>
                                     </collectionViewCell>
@@ -158,7 +167,7 @@
                             <constraint firstItem="e64-wp-j2s" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="XSy-xg-gCY"/>
                             <constraint firstAttribute="trailing" secondItem="Ncu-eZ-Tvl" secondAttribute="trailing" id="fiG-UJ-HXX"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="mJr-dY-xwO" secondAttribute="bottom" id="gDP-hU-RMA"/>
-                            <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" id="jxM-DN-VGY"/>
+                            <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" constant="8" id="jxM-DN-VGY"/>
                             <constraint firstItem="mJr-dY-xwO" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="pwu-ed-IjF"/>
                             <constraint firstAttribute="trailing" secondItem="e64-wp-j2s" secondAttribute="trailing" id="yAj-ac-Bre"/>
                             <constraint firstAttribute="trailing" secondItem="QIE-GV-Vdt" secondAttribute="trailing" id="zAB-Ah-fB3"/>

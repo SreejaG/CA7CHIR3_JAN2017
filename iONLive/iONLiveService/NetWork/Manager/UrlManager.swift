@@ -9,7 +9,7 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://104.196.51.182:3000";   //"http://bpe.ioncameras.com:3000"
+    let baseUrl = "http://192.168.16.12:3000";   //"http://bpe.ioncameras.com:3000"
     let iONLiveCamUrl = "http://192.168.42.1:8888"
     
     class var sharedInstance: UrlManager {
@@ -37,6 +37,28 @@ class UrlManager {
     func channelAPIUrl() -> String{
         let channelAPI = baseUrl+"/api/v1/channel"
         return channelAPI
+    }
+    func mediaUploadUrl() -> String{
+        
+        let mediaUrl="https://abdulmanafcjbucket.commondatastorage.googleapis.com/shamly.png?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458125385&Signature=d6bx5yAPd5c6TWNV4qQoniyIsoaCfSX8ppJamP8dlIz6NSLSYJf81lUjgDDZJPUp63MKhXVCC3A01eveVxGG6KwTWV0z9dFeHBZjLXYlVKT3%2F8FliNCBckvmCP7e8YC8ITKfY44r41xO6Qk2EBdT0PeEty0pgRDxnluTKnTCBkgxo6h4Q8qUTNLHFPw274QtYrDpXnrSBaj7%2FsdhvnrPhRaQ1gRYFBQhREGfQuVMhjSeXbDBWj5b8VtYohqe1ObhnOiIpP8ci4Kn2z6NmwPyYxVcTLHQ2H5YoiB3d3Do91s6K8UZKHj5vtPp23lhO8Gifo9a8jiekpbW1eKz30CHOQ%3D%3D";
+        return mediaUrl
+        
+    }
+    func getChannelMediaDetails(channelId : String, userName: String, accessToken: String , limit : String , offset : String) -> String
+    {
+        let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + "15" + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
+        return getchannelMediaDetailsAPI
+
+    }
+    func defaultCHannelMediaMapping(objectName: String) -> String
+    {
+        let defaultCHannelMediaMapping = baseUrl+"/api/v1/media" + "/" + objectName
+        return defaultCHannelMediaMapping
+    }
+    func gesMediaObjectCreationUrl() -> String
+    {
+        let gesMediaObjectCreationUrl = baseUrl+"/api/v1/media"
+        return gesMediaObjectCreationUrl
     }
     func MediaInteractionUrl() -> String{
         let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"

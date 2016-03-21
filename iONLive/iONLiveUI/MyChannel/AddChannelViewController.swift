@@ -127,7 +127,6 @@ class AddChannelViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }

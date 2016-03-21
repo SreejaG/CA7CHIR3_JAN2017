@@ -8,7 +8,17 @@
 
 import UIKit
 
-class PhotoThumbCollectionViewCell: UICollectionViewCell {
+class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     
     @IBOutlet weak var thumbImageView: UIImageView!
+  
+    @IBOutlet var progressView: UIProgressView!
+    func ProgresviewUpdate (value : Float)
+   {
+    //let userInfo:Dictionary<String,Float!> = notification.userInfo as! Dictionary<String,Float!>
+  //  let messageString = userInfo["percent"]
+    progressView.progress = value
+
+    }
+  
 }
