@@ -187,8 +187,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: "shrinkImageView:")
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
-        
-        
+    
 //        let lpgr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
 //        lpgr.minimumPressDuration = 0.5
 //        lpgr.delaysTouchesBegan = true
@@ -323,6 +322,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             
         }
     }
+    
 }
 
 extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout

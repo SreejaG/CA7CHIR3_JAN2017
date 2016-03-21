@@ -15,10 +15,11 @@ class SignUpVerifyPhoneViewController: UIViewController
     var email: String!
     var userName: String!
     var countryName: String!
+    var CountryPhoneCode: String!
     
     var loadingOverlay: UIView?
     
-//    let locationManager:CLLocationManager = CLLocationManager()
+//    let locationManager:CLLocationManager = CLLocationMvarger()
     
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
@@ -341,6 +342,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
         let findFriendsVC = storyboard.instantiateViewControllerWithIdentifier(SignUpFindFriendsViewController.identifier) as! SignUpFindFriendsViewController
+        findFriendsVC.phoneCode = CountryPhoneCode
         findFriendsVC.navigationItem.hidesBackButton = true
         self.navigationController?.pushViewController(findFriendsVC, animated: false)
     }
@@ -395,6 +397,7 @@ extension SignUpVerifyPhoneViewController:CountryPhoneCodePickerDelegate{
         countryName = name
         self.countryTextField.text = countryCode + " - " + name
         self.countryCodeTextField.text = phoneCode
+        CountryPhoneCode = phoneCode
     }
 
 }

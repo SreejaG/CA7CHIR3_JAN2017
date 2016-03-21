@@ -14,6 +14,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     let loginErrorTitle = "Login Error"
     let signUpErrorTitle = "SignUp Error"
     let StreamingErrortitle = "Streaming Error"
+    let ContactErrortitle = "Contact Error"
     
     class var sharedInstance: ErrorManager {
         struct Singleton {
@@ -80,6 +81,10 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     
     func signUpError() {
         alert(signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")
+    }
+    
+    func addContactError() {
+        alert(ContactErrortitle, message: "We're sorry but there was an error adding your contacts. Please try again.")
     }
     
     func userAlreadyRegError()
@@ -172,6 +177,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Invalid Channel", message: "Channel name invalid")
     }
     
+    func unregisteredContact()
+    {
+        alert("Invalid Contacts", message: "Unregistered Contact List")
+    }
+    
+    func emptyContact()
+    {
+        alert("No Contacts", message: "Contact List Empty")
+    }
+    
     //PRAGMA MARK:- Error code mapping
     
     func mapErorMessageToErrorCode(errorCode:String)
@@ -219,6 +234,12 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             break
         case"CHANNEL002":
             invalidChannel()
+            break
+        case"CONTACT002":
+            unregisteredContact()
+            break
+        case"CONTACT001":
+            emptyContact()
             break
         default:
             alert("Error", message: "\(errorCode)")

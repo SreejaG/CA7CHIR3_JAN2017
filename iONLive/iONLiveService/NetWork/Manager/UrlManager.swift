@@ -76,6 +76,12 @@ class UrlManager {
         return getProfileDataAPI
     }
     
+    func getContactDataAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getContactDataAPI = contactAPIUrl() + "/" + userName + "/" + accessToken
+        return getContactDataAPI
+    }
+    
     func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
         let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
