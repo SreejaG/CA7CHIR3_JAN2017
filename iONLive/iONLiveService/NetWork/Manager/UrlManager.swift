@@ -51,7 +51,7 @@ class UrlManager {
     }
     func getChannelMediaDetails(channelId : String, userName: String, accessToken: String , limit : String , offset : String) -> String
     {
-        let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + "23" + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
+        let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + channelId + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
         return getchannelMediaDetailsAPI
 
     }
