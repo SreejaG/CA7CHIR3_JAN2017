@@ -26,3 +26,6 @@
 
 #import "NBPhoneNumberUtil.h"
 
+#import <CoreData/CoreData.h>
+
+
