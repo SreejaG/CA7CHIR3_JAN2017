@@ -109,4 +109,37 @@ class ChannelManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
+    
+        //Method to delete Channel details, success and failure block
+    func deleteChannelDetails(userName userName: String, accessToken: String, deleteChannelId:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().DELETE(UrlManager.sharedInstance.getAllChannelsAPIUrl(userName, accessToken: accessToken), parameters: ["channelId": deleteChannelId], success: { (operation, response) -> Void in
+            
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                //call the success block that was passed with response data
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+            }
+            
+            }, failure: { (operation, error) -> Void in
+                var failureErrorDesc:String = ""
+                //get the error message from API response if any
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorDesc = errorMessage
+                }
+                failure?(error: error, code:failureErrorDesc)
+        })
+    }
+    
+
+
+
 }
