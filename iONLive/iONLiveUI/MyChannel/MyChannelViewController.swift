@@ -27,11 +27,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     @IBOutlet var SearchBarBottomConstraint: NSLayoutConstraint!
     let channelManager = ChannelManager.sharedInstance
     
+    var sortedDataSource = NSArray!()
+    
     var loadingOverlay: UIView?
     
     let channelNameKey = "channelName"
     let channelItemCountKey = "channelItemCount"
     let channelHeadImageNameKey = "channelHeadImageName"
+    let channelIdKey = "channelId"
+    let channelCreatedTimeKey = "channelCreatedTime"
+    
     var searchActive : Bool = false
     
     var dataSource:[[String:String]] = [[String:String]]()
@@ -39,6 +44,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     var data:[String] = []
     
     var channelDetails: NSMutableArray = NSMutableArray()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,9 +106,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
-            
-            
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }
@@ -142,9 +145,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             }
         }
         
-        
     }
-    
     
     //Loading Overlay Methods
     func showOverlay(){
@@ -193,11 +194,11 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     func initialise()
     {
-        
-        myChannelSearchBar.delegate = self
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        myChannelSearchBar.delegate = self
+        
         channelCreateButton.hidden = true
         getChannelDetails(userId, token: accessToken)
     }
@@ -227,15 +228,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
-    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelDetails = json["channels"] as! NSMutableArray
-            print(channelDetails)
             setChannelDetails()
             
         }
@@ -265,24 +263,37 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         data.removeAll()
         dataSource.removeAll()
-        print(channelDetails)
         for var index = 0; index < channelDetails.count; index++
         {
+            let channelId = channelDetails[index].valueForKey("channel_detail_id")?.stringValue
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
             let mediaSharedCount = channelDetails[index].valueForKey("total_no_media_shared")?.stringValue
-            let thumbUrl = channelDetails[index].valueForKey("thumbnail_Url") as! String
-//            let dataImag =  NSData(contentsOfURL: NSURL(string: "https://abdulmanafcjbucket.commondatastorage.googleapis.com/ionliveobject91458550452938?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458640339&Signature=WXDohwkjiN9EZ%2F2bQhK8lc36xqb3FR6nyrYRODTdXYPLalOaPbM1xLtuqeBVIw19WDuXtXagxJ8AOHpo0vbMYzsB2wrLACdzO1rcFohfhTTDJOcj9%2FVHvjTrfk0pUhDaNoads%2Fo2BvWryI1a%2Bablkah%2By%2Fj4OoJezKI2q50lnkCYqvAw%2Fim36xny%2FkAVbCPNGbZN%2FWTwBfiFt6mAS12u4aPW508GFmAC3F7AtXp7wu2vSodqwjo3yPPrrQGQo8CukGH1RX%2FWeSzYnXEon2v3Uf0AH8JgYi0W9EZS9PahGmjMfsnuwYFzOMiPFDqKF3vwK8OO6e2gSzpvBnDlzAPc5Q%3D%3D")!)
-//            
-//            print(dataImag)
-//            dataSource.append([channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelHeadImageNameKey:dataImag!])
-              dataSource.append([channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelHeadImageNameKey:thumbUrl])
+            var thumbUrl = channelDetails[index].valueForKey("thumbnail_Url") as! String
+            if thumbUrl == "" {
+                thumbUrl = ""
+            }
+            let createdTime = channelDetails[index].valueForKey("last_updated_time_stamp") as! String
+            
+            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
             data.append(channelName)
         }
+        
+        dataSource.sortInPlace({ p1, p2 in
+            let time1 = p1[channelCreatedTimeKey]
+            let time2 = p2[channelCreatedTimeKey]
+            return time1 > time2
+        })
         myChannelTableView.reloadData()
         
     }
     
-    
+    func personSort(p1:[String:String], p2:[String:String]) -> Bool {
+        if (p1["surname"] == p2["surname"]) {
+            return p1["given"] < p2["given"]
+        } else {
+            return p1["surname"] < p2["surname"]
+        }
+    }
     
     func addKeyboardObservers()
     {
@@ -308,9 +319,77 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
+    func generateWaytoSendAlert(channelId: String)
+    {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
+        let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the channel", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.deleteChannelDetails(userId, token: accessToken, channelId: channelId)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func deleteChannelDetails(userName: String, token: String, channelId:String)
+    {
+        showOverlay()
+        channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
+            self.authenticationSuccessHandlerDelete(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandlerDelete(error, code: message)
+                return
+        }
+    }
+    
+    func authenticationSuccessHandlerDelete(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                getChannelDetails(userId, token: accessToken)
+            }
+            
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func authenticationFailureHandlerDelete(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
     
 }
-
 
 extension MyChannelViewController: UITableViewDelegate
 {
@@ -359,25 +438,24 @@ extension MyChannelViewController:UITableViewDataSource
             {
                 cell.channelNameLabel.text = dataSource[indexPath.row][channelNameKey]
                 cell.channelItemCount.text = dataSource[indexPath.row][channelItemCountKey]
-//                let data = dataSource[indexPath.row][channelHeadImageNameKey] as? NSData
-//                cell.channelHeadImageView.image = UIImage(data: data!)
                 
-                if let imageName = dataSource[indexPath.row][channelHeadImageNameKey]
+                //                let data = dataSource[indexPath.row][channelHeadImageNameKey] as? NSData
+                //                cell.channelHeadImageView.image = UIImage(data: data!)
+                let imageName =  dataSource[indexPath.row][channelHeadImageNameKey]! as String
+
+                if(imageName != "")
                 {
                     
-                    let url = NSURL(string: "https://abdulmanafcjbucket.commondatastorage.googleapis.com/ionliveobject91458550452938?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458640339&Signature=WXDohwkjiN9EZ%2F2bQhK8lc36xqb3FR6nyrYRODTdXYPLalOaPbM1xLtuqeBVIw19WDuXtXagxJ8AOHpo0vbMYzsB2wrLACdzO1rcFohfhTTDJOcj9%2FVHvjTrfk0pUhDaNoads%2Fo2BvWryI1a%2Bablkah%2By%2Fj4OoJezKI2q50lnkCYqvAw%2Fim36xny%2FkAVbCPNGbZN%2FWTwBfiFt6mAS12u4aPW508GFmAC3F7AtXp7wu2vSodqwjo3yPPrrQGQo8CukGH1RX%2FWeSzYnXEon2v3Uf0AH8JgYi0W9EZS9PahGmjMfsnuwYFzOMiPFDqKF3vwK8OO6e2gSzpvBnDlzAPc5Q%3D%3D")!
-                    
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
-                        if let data = responseData{
+                    let url: NSURL = convertStringtoURL(imageName)
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                        let data = NSData(contentsOfURL: url)
+                        if let imageData = data as NSData? {
                             
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                cell.channelHeadImageView.image = UIImage(data: data)
-                            })
+                            dispatch_async(dispatch_get_main_queue()) {
+                                cell.channelHeadImageView.image = UIImage(data: imageData)
+                            }
                         }
                     }
-                    
-                    task.resume()
-                    
                 }
             }
             cell.selectionStyle = .None
@@ -400,7 +478,8 @@ extension MyChannelViewController:UITableViewDataSource
         self.navigationController?.pushViewController(channelItemListVC, animated: true)
     }
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        if (indexPath.row==0)
+        let channelName = dataSource[indexPath.row][channelNameKey]
+        if ((channelName == "My Day") || (channelName == "Archive"))
         {
             return false
         }
@@ -412,25 +491,8 @@ extension MyChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            let alert = UIAlertController(title: "Do you want to delete channel ??", message: " ", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { action in
-                switch action.style{
-                case .Default:
-                    print("default")
-                    self.dataSource.removeAtIndex(indexPath.row)
-                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                    
-                case .Cancel:3
-                print("cancel")
-                    
-                    
-                case .Destructive:
-                    print("destructive")
-                }
-            }))
-            
+            let deletedChannelId = self.dataSource[indexPath.row][self.channelIdKey]! as String
+            generateWaytoSendAlert(deletedChannelId)
         }
     }
     

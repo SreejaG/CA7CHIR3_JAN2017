@@ -98,6 +98,7 @@ class UrlManager {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
         return getAllChannelsAPI
     }
+   
     func getMediaInteractionNotifications(userName: String, accessToken: String) -> String
     {
         let mediaInteractionNotification = MediaInteractionUrl() + "/" + userName + "/" + accessToken

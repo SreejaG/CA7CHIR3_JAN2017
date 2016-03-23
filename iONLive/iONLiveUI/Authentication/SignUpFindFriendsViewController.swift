@@ -7,10 +7,11 @@
 //
 
 import UIKit
-import AddressBook
-import AddressBookUI
 
-class SignUpFindFriendsViewController: UIViewController {
+import AddressBook
+
+
+class SignUpFindFriendsViewController: UIViewController{
     
     static let identifier = "SignUpFindFriendsViewController"
     
@@ -18,7 +19,7 @@ class SignUpFindFriendsViewController: UIViewController {
     let contactManagers = contactManager.sharedInstance
     
     var phoneCode: String!
-    var addressBookRef = ABAddressBook?()
+    var addressBookRef =  ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var contactPhoneNumbers: [String] = [String]()
@@ -36,17 +37,19 @@ class SignUpFindFriendsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         initialise()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+  
     
     func initialise()
     {
         self.title = "FIND FRIENDS"
-        addressBookRef = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+//        addressBookRef = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
     }
     
     
