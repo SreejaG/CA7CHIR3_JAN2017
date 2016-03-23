@@ -277,7 +277,7 @@ extension AddChannelViewController:UITableViewDataSource
         //        {
         if dataSource.count > indexPath.row
         {
-            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey]
+//            channelItemListVC.channelId = dataSource[indexPath.row][channe]
         }
         //        }
         channelItemListVC.navigationController?.navigationBarHidden = true

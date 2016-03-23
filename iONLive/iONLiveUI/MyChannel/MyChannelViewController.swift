@@ -162,7 +162,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     @IBAction func tapGestureRecognizer(sender: AnyObject) {
         myChannelSearchBar.text = ""
-        view.endEditing(true)
+//        view.endEditing(true)
     }
     
     
@@ -287,13 +287,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         
     }
     
-    func personSort(p1:[String:String], p2:[String:String]) -> Bool {
-        if (p1["surname"] == p2["surname"]) {
-            return p1["given"] < p2["given"]
-        } else {
-            return p1["surname"] < p2["surname"]
-        }
-    }
     
     func addKeyboardObservers()
     {
@@ -447,15 +440,15 @@ extension MyChannelViewController:UITableViewDataSource
                 {
                     
                     let url: NSURL = convertStringtoURL(imageName)
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                 //   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
                         let data = NSData(contentsOfURL: url)
                         if let imageData = data as NSData? {
                             
-                            dispatch_async(dispatch_get_main_queue()) {
+                     //       dispatch_async(dispatch_get_main_queue()) {
                                 cell.channelHeadImageView.image = UIImage(data: imageData)
-                            }
+                         //   }
                         }
-                    }
+                 //   }
                 }
             }
             cell.selectionStyle = .None
@@ -471,12 +464,14 @@ extension MyChannelViewController:UITableViewDataSource
         
         if dataSource.count > indexPath.row
         {
+            channelItemListVC.channelId = dataSource[indexPath.row][channelIdKey]
             channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey]
         }
         
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(channelItemListVC, animated: true)
     }
+    
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         let channelName = dataSource[indexPath.row][channelNameKey]
         if ((channelName == "My Day") || (channelName == "Archive"))

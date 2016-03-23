@@ -303,7 +303,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
                     {
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
-                        let sizeThumb = CGSizeMake(50,50)
+                        let sizeThumb = CGSizeMake(70,70)
                         let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                         let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
