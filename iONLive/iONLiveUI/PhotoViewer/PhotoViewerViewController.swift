@@ -24,6 +24,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var delegate:progressviewDelegate?
     let signedURLResponse: NSMutableDictionary = NSMutableDictionary()
     var channelDetails: NSMutableArray = NSMutableArray()
+    var thumbLinkArray: NSMutableArray = NSMutableArray()
+    var fullImageLinkArray: NSMutableArray = NSMutableArray()
+    var dummyImagesDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
+
 
     @IBOutlet var progressView: UIProgressView!
     let thumbImageKey = "thumbImage"
@@ -35,6 +39,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     @IBOutlet weak var fullScrenImageView: UIImageView!
     var dataSource:[[String:UIImage]] = [[String:UIImage]]()
     var cloudImage: [[String:UIImage]] = [[String:UIImage]]()
+    var mediaDictionary: NSMutableDictionary = NSMutableDictionary()
+
     let photo : PhotoThumbCollectionViewCell = PhotoThumbCollectionViewCell()
     @IBOutlet var fullScreenZoomView: UIImageView!
     var snapShots : NSMutableDictionary = NSMutableDictionary()
@@ -59,16 +65,28 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             //call api to fetch cloud datas
+            
+//        self.imageUploadManger.test("", accessToken: "", success: { (response) -> () in
+//            if let json = response as? [String: AnyObject]
+//            {
+//                
+//                print(json)
+//                if let name = json["user"]{
+//                    print(name)
+//                }
+//            }
+//            }, failure: { (error, code) -> () in
+//            print(error)
+//        })
+            
+            
             self.imageUploadManger.getSignedURL(userId, accessToken: accessToken, success: { (response) -> () in
                 self.authenticationSuccessHandlerSignedURL(response)
                 }, failure: { (error, message) -> () in
                     self.authenticationFailureHandlerSignedURL(error, code: message)
                     
             })
-            NSOperationQueue.mainQueue().addOperationWithBlock({
-                //   self.readImageFromDataBase()
-                
-            })
+           
         }
 
     }
@@ -102,7 +120,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
        
                 if let json = response as? [String: AnyObject]
                 {
-                   // print(json)
+                    
+                    
                     if let name = json["UploadObjectUrl"]{
                         signedURLResponse.setValue(name, forKey: "UploadObjectUrl")
                     }
@@ -148,9 +167,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func authenticationSuccessHandlerForDefaultMediaMapping(response:AnyObject?)
     {
-        if let json = response as? [String: AnyObject]
-        {
-        }
+//        if let json = response as? [String: AnyObject]
+//        {
+//        }
         
     }
     func authenticationFailureHandlerForDefaultMediaMapping(error: NSError?, code: String)
@@ -273,7 +292,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let descriptor: NSSortDescriptor = NSSortDescriptor(key: nil, ascending: false)
             let sortedSnapShotsKeys: NSArray = snapShotsKeys.sortedArrayUsingDescriptors([descriptor])
             
-            var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
             let screenRect : CGRect = UIScreen.mainScreen().bounds
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
@@ -289,16 +307,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                         let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
-                        dummyImagesDataSource.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
+                        dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
                     }
                 }
             }
             
-            dataSource = dummyImagesDataSource
-            print(dataSource)
-            if dummyImagesDataSource.count > 0
+            dataSource = dummyImagesDataSourceDatabase
+            if dummyImagesDataSourceDatabase.count > 0
             {
-                if let imagePath = dummyImagesDataSource[0][fullImageKey]
+                if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
                 {
                 
                     self.fullScrenImageView.image = imagePath
@@ -329,7 +346,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        print(dataSource.count)
         return dataSource.count
     }
     
@@ -341,6 +357,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         if dataSource.count > indexPath.row
         {
+            
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
@@ -351,8 +368,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
                 else
                 {
-                    uploadData( cell,rowIndex: indexPath.row)
-                    cell.progressView.progress = progrs
+                    if dummyImagesDataSourceDatabase.count > 0
+                    {
+                  uploadData( cell,rowIndex: indexPath.row)
+                   cell.progressView.progress = progrs
+                    }
 
                 }
                 [NSNotificationCenter.defaultCenter().addObserver(self, selector:"ProgresviewUpdate:", name:"MyNotification" , object:nil)]
@@ -366,19 +386,31 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func uploadData (celldata : UICollectionViewCell ,rowIndex : Int)
     {
         var dict = dataSource[rowIndex]
-        let  uploadImage = dict[fullImageKey]
-        let imageData = UIImageJPEGRepresentation(uploadImage!, 0.5)
+        let  uploadImageFull = dict[fullImageKey]
+        let imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)
 
        // let imageData = UIImagePNGRepresentation(uploadImage!)
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         if(imageData == nil )  { return }
-        test(imageData!)
+       
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+            //All stuff here
+            self.test(imageData!, row: rowIndex )
 
+        })
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+            //All stuff here
+            self.uploadThumbImage(rowIndex)
+            
+        })
+        dataSource = dummyImagesDataSourceDatabase
+        dummyImagesDataSourceDatabase.removeAll()
         
     }
-    func test( imagedata : NSData)
+    func test( imagedata : NSData ,row : Int)
 {
     
     let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String) //Remember to put ATS exception if the URL is not https
@@ -393,9 +425,40 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         else {
             let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
             print("Parsed JSON: '\(jsonStr)'")
+            
+            
         } 
     }
     dataTask.resume()
+    }
+    
+    
+    func uploadThumbImage(row : Int)
+    {
+        var dict = dataSource[row]
+        let  uploadImageThumb = dict[thumbImageKey]
+
+        let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
+        let url = NSURL(string: signedURLResponse.valueForKey("UploadThumbnailUrl") as! String) //Remember to put ATS exception if the URL is not https
+        let request = NSMutableURLRequest(URL: url!)
+        request.HTTPMethod = "PUT"
+        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        request.HTTPBody = imageData
+        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+            if error != nil {
+                //handle error
+            }
+            else {
+                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                print("Parsed JSON for thumbanil: '\(jsonStr)'")
+                
+                
+            }
+        }
+            dataTask.resume()
+
+           
+        
     }
     func authenticationSuccessHandler(response:AnyObject?)
     {
@@ -533,10 +596,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        //let channelId = channelDict["My Day"] as! NSNumber
-        let channelId:String = String(format:"%d",channelDict["My Day"] as! NSNumber)
-        print(channelId)
-        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "8", offset: "0" , success: { (response) -> () in
+        let channelId = channelDict["My Day"] as! NSNumber
+        
+        
+        
+        imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: "8", offset: "0" , success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
 
             }) { (error, message) -> () in
@@ -548,22 +612,83 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
         let mediaDict: NSMutableDictionary = NSMutableDictionary()
-
+         thumbLinkArray.removeAllObjects()
+        fullImageLinkArray.removeAllObjects()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
             
             for element in responseArr{
-                mediaDict.setDictionary(element as! [NSObject : AnyObject])
+                
+                for (key,value) in element as! NSDictionary {
+                    let thumbKey = key as! String
+                    if thumbKey == "thumbnail_name_SignedUrl"
+                    {
+                        thumbLinkArray.addObject(value)
+                    }
+                    else if thumbKey == "gcs_object_name_SignedUrl"
+                    {
+                        fullImageLinkArray.addObject(value)
+                        
+                    }
+                }
+                
+               
+  
+             //   print(thumbLinkArray.count)
+            //
+             //   print(self.fullImageLinkArray)
+                // downloadMedia(fullImageDownloadUrl, key: "FullImage")
+              
+             //   mediaDict.setDictionary(element as! [NSObject : AnyObject])
+               // thumbLinkArray
             }
 
-            //print(json)
         }
-        downloadCloudData(mediaDict)
+        downloadFirstEntry()
         
     }
     
-    
+    func download()
+    {
+        
+    }
+    func downloadFirstEntry()
+    {
+        var downloadedFullImage : UIImage = UIImage()
+        var downloadedThumbImage : UIImage = UIImage()
+
+        let mediaDict: NSMutableDictionary = NSMutableDictionary()
+
+        var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
+
+        let fullImageDownloadUrl = convertStringtoURL(self.fullImageLinkArray[0] as! String)
+        //   downloadMedia(fullImageDownloadUrl, key: "FullImage")
+        downloadMedia(fullImageDownloadUrl, key:  "FullImage") { (result) -> Void in
+        
+        print("Execution Completed" ,result)
+            mediaDict.setValue(result, forKey: "FullImage")
+
+        let downloadThumbURL =  self.convertStringtoURL(self.thumbLinkArray[0] as! String)
+
+         self.downloadMedia(downloadThumbURL, key: "ThumbImage", completion: { (result) -> Void in
+            print("Execution Completed 2",result)
+            mediaDict.setValue(result, forKey: "ThumbImage")
+
+            
+          })
+        
+        }
+        
+        self.fullScrenImageView.image = mediaDict["FullImage"] as? UIImage
+        self.fullScreenZoomView.image = mediaDict["FullImage"] as? UIImage
+               dummyImagesDataSource.append([self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["FullImage"] as! UIImage])
+              self.dataSource = dummyImagesDataSource
+                self.photoThumpCollectionView.reloadData()
+        mediaDictionary.setValue(mediaDict, forKey: "0")
+        downloadCloudData(mediaDict)
+        
+    }
     func getDataFromUrl(url:NSURL, completion: ((data: NSData?, response: NSURLResponse?, error: NSError? ) -> Void)) {
         
         NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) in
@@ -581,65 +706,58 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
     {
         var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
-        queue = NSOperationQueue()
-        for var i = 1 ; i <=  mediaDict.count ; ++i {
-        let operation1 = NSBlockOperation( block: {
+
+      //  let fullImageDownloadUrl = self.convertStringtoURL(self.fullImageLinkArray[0] as! String)
+        dummyImagesDataSource=self.dataSource
+        self.dataSource.removeAll()
+      //  downloadMedia(fullImageDownloadUrl, key: "FullImage")
             
-                let mediaURL = self.stringToURL(mediaDict["gcs_object_name_SignedUrl"] as! String)
-                let thumbnailURL = self.stringToURL(mediaDict["thumbnail_name_SignedUrl"] as! String)
-                // print(mediaURL)
-                let request = NSURLRequest(URL: mediaURL)
-                let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-                dispatch_async(queue) { () -> Void in
-                    NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
-                        (response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
-                        print(data)
-                        if let imageData = data as NSData? {
-                            print(imageData)
-                            self.thumbImage = UIImage(data: imageData)!
-                        }
-                    }
+            for var i = 1; i < self.thumbLinkArray.count ; ++i {
                 
-                    dispatch_async(dispatch_get_main_queue(), {
-//                        self.dataSource=dummyImagesDataSource
-//                        self.photoThumpCollectionView.reloadData()
-                    })
-                    
-                }
-                dispatch_async(queue) { () -> Void in
-                    
-                    let request1 = NSURLRequest(URL: thumbnailURL)
-                    NSURLConnection.sendAsynchronousRequest(request1, queue: NSOperationQueue.mainQueue()) {
-                        (response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
-                        if let imageData = data as NSData? {
-                            self.fullImage = UIImage(data: imageData)!
-                            
-                        }}
-                        
-                        
-                        dispatch_async(dispatch_get_main_queue(), {
-//                            self.dataSource=dummyImagesDataSource
-//                            self.photoThumpCollectionView.reloadData()
-                        })
-                    }
-                    
                 
-           
-            
-            
-        })
-            
-        operation1.completionBlock = {
-            dummyImagesDataSource.append([self.thumbImageKey:self.thumbImage,self.fullImageKey:self.fullImage])
-            
-            self.dataSource=dummyImagesDataSource
-            print(dummyImagesDataSource)
-            self.photoThumpCollectionView.reloadData()
+                let downloadURL =  self.convertStringtoURL(self.thumbLinkArray[i] as! String)
+                //            let url : NSString = self.thumbLinkArray[i] as! String
+                //            let searchURL : NSURL = NSURL(string: url as String)!
+                //      downloadMedia(downloadURL,key: "ThumbImage")
+              //  downloadMedia(downloadURL, key: "ThumbImage")
+                downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
+                    dummyImagesDataSource.append([self.thumbImageKey:result,self.fullImageKey:result])
+                    self.dataSource = dummyImagesDataSource
+                    self.photoThumpCollectionView.reloadData()
+                })
         }
-        }
-    
-        }
+        
+        
+      
     }
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    {
+        var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
+        var mediaImage : UIImage = UIImage()
+        
+        
+        
+        let data = NSData(contentsOfURL: downloadURL)
+        if let imageData = data as NSData? {
+            
+            mediaImage = UIImage(data: imageData)!
+            completion(result: UIImage(data: imageData)!)
+        }
+        else
+        {
+            completion(result:mediaImage)
+        }
+        
+       
+    }
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url 
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
+}
 
 
 
