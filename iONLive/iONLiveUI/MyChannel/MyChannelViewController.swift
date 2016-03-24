@@ -382,6 +382,24 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         return searchURL
     }
     
+    func handleTap(gestureRecognizer: UIGestureRecognizer) {
+        let swipeLocation = gestureRecognizer.locationInView(self.myChannelTableView)
+        if let swipedIndexPath = self.myChannelTableView.indexPathForRowAtPoint(swipeLocation) {
+            let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
+            
+            if dataSource.count > swipedIndexPath.row
+            {
+                channelItemListVC.channelId = dataSource[swipedIndexPath.row][channelIdKey]
+                channelItemListVC.channelName = dataSource[swipedIndexPath.row][channelNameKey]
+            }
+            
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(channelItemListVC, animated: true)
+
+        }
+    }
+    
 }
 
 extension MyChannelViewController: UITableViewDelegate
@@ -419,6 +437,7 @@ extension MyChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
+        myChannelTableView.allowsSelectionDuringEditing = true
         if dataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelCell.identifier, forIndexPath:indexPath) as! MyChannelCell
@@ -435,7 +454,7 @@ extension MyChannelViewController:UITableViewDataSource
                 //                let data = dataSource[indexPath.row][channelHeadImageNameKey] as? NSData
                 //                cell.channelHeadImageView.image = UIImage(data: data!)
                 let imageName =  dataSource[indexPath.row][channelHeadImageNameKey]! as String
-
+             
                 if(imageName != "")
                 {
                     
@@ -452,6 +471,10 @@ extension MyChannelViewController:UITableViewDataSource
                 }
             }
             cell.selectionStyle = .None
+            
+            let gestureRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
+            self.myChannelTableView.addGestureRecognizer(gestureRecognizer)
+            
             return cell
         }
         return UITableViewCell()
@@ -459,17 +482,17 @@ extension MyChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
-        
-        if dataSource.count > indexPath.row
-        {
-            channelItemListVC.channelId = dataSource[indexPath.row][channelIdKey]
-            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey]
-        }
-        
-        channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(channelItemListVC, animated: true)
+//        let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+//        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
+//        
+//        if dataSource.count > indexPath.row
+//        {
+//            channelItemListVC.channelId = dataSource[indexPath.row][channelIdKey]
+//            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey]
+//        }
+//        
+//        channelItemListVC.navigationController?.navigationBarHidden = true
+//        self.navigationController?.pushViewController(channelItemListVC, animated: true)
     }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

@@ -64,7 +64,7 @@ class ChannelItemListViewController: UIViewController {
             let responseArr = json["objectJson"] as! [AnyObject]
             print(responseArr)
             for element in responseArr{
-                imageDataSource.append(element["gcs_object_name_SignedUrl"] as! String)
+                imageDataSource.append(element["thumbnail_name_SignedUrl"] as! String)
             }
             channelItemCollectionView.reloadData()
         }
@@ -145,7 +145,6 @@ extension ChannelItemListViewController:UICollectionViewDataSource,UICollectionV
         if imageDataSource.count > 0
         {
             let imageUrl =  imageDataSource[indexPath.row] as String
-            
             if(imageUrl != "")
             {
                 let url: NSURL = convertStringtoURL(imageUrl)
@@ -153,9 +152,9 @@ extension ChannelItemListViewController:UICollectionViewDataSource,UICollectionV
                     let data = NSData(contentsOfURL: url)
                     if let imageData = data as NSData? {
                       //  dispatch_async(dispatch_get_main_queue()) {
-                        let sizeThumb = CGSizeMake(150,150)
-                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(UIImage(data: imageData), scaledToFillSize: sizeThumb) as UIImage
-                            cell.channelItemImageView.image = imageAfterConversionThumbnail
+//                        let sizeThumb = CGSizeMake(150,150)
+//                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(UIImage(data: imageData), scaledToFillSize: sizeThumb) as UIImage
+                            cell.channelItemImageView.image = UIImage(data: imageData)
                      //   }
                     }
                 }
