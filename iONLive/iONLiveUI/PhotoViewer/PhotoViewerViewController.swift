@@ -67,8 +67,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.imageUploadManger.getSignedURL(userId, accessToken: accessToken, success: { (response) -> () in
                 self.authenticationSuccessHandlerSignedURL(response)
                 }, failure: { (error, message) -> () in
-                   // self.authenticationFailureHandlerSignedURL(error, code: message)
-                    return
+                    self.authenticationFailureHandlerSignedURL(error, code: message)
+                 //   return
                     
             })
            
@@ -148,6 +148,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
    
     func authenticationFailureHandlerSignedURL(error: NSError?, code: String)
     {
+        self.removeOverlay()
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -170,6 +171,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     func authenticationFailureHandlerForDefaultMediaMapping(error: NSError?, code: String)
     {
+         self.removeOverlay()
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -464,6 +466,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     }
     func authenticationFailureHandler(error: NSError?, code: String)
     {
+         self.removeOverlay()
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {

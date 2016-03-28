@@ -172,9 +172,44 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
          alert("Channel Exist", message: "Channel name already exists")
     }
     
+    func invalidChannelId()
+    {
+        alert("Invalid Channel", message: "Channel details invalid")
+    }
+    
     func invalidChannel()
     {
+        alert("Invalid Channel", message: "Channel is invalid")
+    }
+    
+    func invalidChannelName()
+    {
         alert("Invalid Channel", message: "Channel name invalid")
+    }
+    
+    func invalidGCSName()
+    {
+        alert("Invalid GCS", message: "GCS name invalid")
+    }
+    
+    func invalidBucket()
+    {
+        alert("Invalid Bucket", message: "Bucket name invalid")
+    }
+
+    func invalidEmail()
+    {
+        alert("Invalid Email", message: "Email Id invalid")
+    }
+    
+    func invalidVerification()
+    {
+        alert("Invalid Verification", message: "Verification method invalid")
+    }
+    
+    func invalidMobileNo()
+    {
+        alert("Invalid mobile Numer", message: "Mobile number invalid/already registerd")
     }
     
     func unregisteredContact()
@@ -185,6 +220,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     func emptyContact()
     {
         alert("No Contacts", message: "Contact List Empty")
+    }
+    
+    func emptyMedia()
+    {
+        alert("No Media", message: "Media List Empty")
     }
     
     //PRAGMA MARK:- Error code mapping
@@ -214,6 +254,15 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         case "USER007": //missmatchVerificationCode
             verificationCodeMismatchError()
             break
+        case "USER008": //missmatchVerificationCode
+            invalidMobileNo()
+            break
+        case "USER009": //missmatchVerificationCode
+            invalidVerification()
+            break
+        case "USER010": //missmatchVerificationCode
+            invalidEmail()
+            break
         case "STREAM001": //invalidStreamToken
             invalidStream()
             break
@@ -233,13 +282,28 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             channelAlreayExist()
             break
         case"CHANNEL002":
+            invalidChannelId()
+            break
+        case"CHANNEL003":
             invalidChannel()
+            break
+        case"CHANNEL004":
+            invalidChannelName()
             break
         case"CONTACT002":
             unregisteredContact()
             break
         case"CONTACT001":
             emptyContact()
+            break
+        case"GCS001":
+            invalidBucket()
+            break
+        case"MEDIA002":
+            emptyMedia()
+            break
+        case"MEDIA001":
+            invalidGCSName()
             break
         default:
             alert("Error", message: "\(errorCode)")

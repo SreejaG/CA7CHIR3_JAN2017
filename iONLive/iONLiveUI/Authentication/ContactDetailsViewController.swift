@@ -177,6 +177,13 @@ class ContactDetailsViewController: UIViewController {
         contactTableView.reloadData()
     }
     
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
 }
 
 extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
@@ -266,7 +273,41 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
             
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
-            //            cell.contactProfileImage.image = cellDataSource[imageKey] as? UIImage
+           
+            if  cell.flag == 0
+            {
+                //selected
+                 cell.flag = 1
+               cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+            }
+            else
+            {
+                //deselected
+                cell.flag = 0
+               cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+            }
+           
+            if let imageName =  cellDataSource[imageKey]
+            {
+                print(imageName)
+                if(imageName is UIImage){
+                     cell.contactProfileImage.image = imageName as? UIImage
+                }
+                else if imageName is NSArray{
+                    let imageByteArray: NSArray = imageName["data"] as! NSArray
+                    var bytes:[UInt8] = []
+                    for serverByte in imageByteArray {
+                        bytes.append(UInt8(serverByte as! UInt))
+                    }
+                    let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                    if let datas = imageData as NSData? {
+                        cell.contactProfileImage.image = UIImage(data: datas)
+                    }
+                }
+                else{
+                    cell.contactProfileImage.image = UIImage(named: "user_profile_icon")
+                }
+            }
             return cell
         }
         else

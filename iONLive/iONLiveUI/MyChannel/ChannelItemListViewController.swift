@@ -47,7 +47,7 @@ class ChannelItemListViewController: UIViewController {
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         showOverlay()
        // print("\(channelId) \(userId) \(accessToken)")
-        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "15", offset: "0" , success: { (response) -> () in
+        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "10", offset: "0" , success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
             }) { (error, message) -> () in
@@ -64,7 +64,7 @@ class ChannelItemListViewController: UIViewController {
             let responseArr = json["objectJson"] as! [AnyObject]
             print(responseArr)
             for element in responseArr{
-                imageDataSource.append(element["gcs_object_name_SignedUrl"] as! String)
+                imageDataSource.append(element["thumbnail_name_SignedUrl"] as! String)
             }
             channelItemCollectionView.reloadData()
         }
@@ -106,7 +106,10 @@ class ChannelItemListViewController: UIViewController {
     
     @IBAction func didTapBackButton(sender: AnyObject)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+        let channelVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+        channelVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.popViewControllerAnimated(true)//(channelVC, animated: false)
     }
     
     
@@ -145,7 +148,6 @@ extension ChannelItemListViewController:UICollectionViewDataSource,UICollectionV
         if imageDataSource.count > 0
         {
             let imageUrl =  imageDataSource[indexPath.row] as String
-            
             if(imageUrl != "")
             {
                 let url: NSURL = convertStringtoURL(imageUrl)
@@ -153,9 +155,9 @@ extension ChannelItemListViewController:UICollectionViewDataSource,UICollectionV
                     let data = NSData(contentsOfURL: url)
                     if let imageData = data as NSData? {
                       //  dispatch_async(dispatch_get_main_queue()) {
-                        let sizeThumb = CGSizeMake(150,150)
-                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(UIImage(data: imageData), scaledToFillSize: sizeThumb) as UIImage
-                            cell.channelItemImageView.image = imageAfterConversionThumbnail
+//                        let sizeThumb = CGSizeMake(150,150)
+//                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(UIImage(data: imageData), scaledToFillSize: sizeThumb) as UIImage
+                            cell.channelItemImageView.image = UIImage(data: imageData)
                      //   }
                     }
                 }
