@@ -13,13 +13,10 @@ protocol progressviewDelegate
 {
     func ProgresviewUpdate (value : Float)
 }
-let dataSourceURL = NSURL(string:"http://www.raywenderlich.com/downloads/ClassicPhotosDictionary.plist")
 
 class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate  {
      let channelManager = ChannelManager.sharedInstance
-    var photos = [PhotoRecord]()
-    let pendingOperations = PendingOperations()
-    var channelDict = Dictionary<String, AnyObject>()
+      var channelDict = Dictionary<String, AnyObject>()
     var thumbImage : UIImage = UIImage()
     var fullImage  : UIImage = UIImage()
     var delegate:progressviewDelegate?
@@ -66,22 +63,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            //call api to fetch cloud datas
-            
-//        self.imageUploadManger.test("", accessToken: "", success: { (response) -> () in
-//            if let json = response as? [String: AnyObject]
-//            {
-//                
-//                print(json)
-//                if let name = json["user"]{
-//                    print(name)
-//                }
-//            }
-//            }, failure: { (error, code) -> () in
-//            print(error)
-//        })
-            
-            
+
             self.imageUploadManger.getSignedURL(userId, accessToken: accessToken, success: { (response) -> () in
                 self.authenticationSuccessHandlerSignedURL(response)
                 }, failure: { (error, message) -> () in
@@ -236,25 +218,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func shrinkImageView(Recognizer:UITapGestureRecognizer){
         fullScreenZoomView.hidden = true
     }
-    func fetchPhotoDetails() {
-        let request = NSURLRequest(URL:dataSourceURL!)
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-        
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {response,data,error in
-            if data != nil {
-              
-                
-             //   self.photoThumpCollectionView.reloadData()
-            }
-            
-            if error != nil {
-                let alert = UIAlertView(title:"Oops!",message:error!.localizedDescription, delegate:nil, cancelButtonTitle:"OK")
-                alert.show()
-            }
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-        }
-    }
-//    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
+   //    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
 //        if gestureReconizer.state != UIGestureRecognizerState.Ended {
 //            return
 //        }
@@ -416,12 +380,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        if(imageData == nil )  { return }
+        if(imageData == nil )  {
+            
+        }
+        else
+        {
        
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
             //All stuff here
-            self.test(imageData!, row: rowIndex )
+            self.uploadFullImage(imageData!, row: rowIndex )
 
         })
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
@@ -433,9 +401,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         dummyImagesDataSourceDatabase.removeAll()
         deleteCOreData()
         print("Count------>",dummyImagesDataSourceDatabase.count)
+        }
         
     }
-    func test( imagedata : NSData ,row : Int)
+    func uploadFullImage( imagedata : NSData ,row : Int)
 {
     
     let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String) //Remember to put ATS exception if the URL is not https
@@ -464,6 +433,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let  uploadImageThumb = dict[thumbImageKey]
 
         let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
+        if(imageData == nil)
+        {
+        return
+        }
         let url = NSURL(string: signedURLResponse.valueForKey("UploadThumbnailUrl") as! String) //Remember to put ATS exception if the URL is not https
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "PUT"
@@ -667,12 +640,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         self.readImageFromDataBase()
         
+        var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
+
+        if(self.fullImageLinkArray.count > 0 && self.thumbLinkArray.count > 0)
+        {
         var downloadedFullImage : UIImage = UIImage()
         var downloadedThumbImage : UIImage = UIImage()
 
         let mediaDict: NSMutableDictionary = NSMutableDictionary()
 
-        var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
 
         dummyImagesDataSource = self.dataSource
         self.dataSource .removeAll()
@@ -708,9 +684,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
           })
         
         }
-        
-       
-        downloadCloudData(mediaDict)
+            downloadCloudData(mediaDict)
+
+        }
+        else
+        {
+            self.dataSource = dummyImagesDataSource
+            self.photoThumpCollectionView.reloadData()
+
+        }
         
         
     }
