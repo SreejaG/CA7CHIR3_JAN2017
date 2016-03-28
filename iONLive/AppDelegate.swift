@@ -177,8 +177,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let deviceTokenString: String = ( deviceToken.description as NSString )
             .stringByTrimmingCharactersInSet( characterSet )
             .stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
-
-        
         print(deviceTokenString)
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(deviceTokenString, forKey: "deviceToken")

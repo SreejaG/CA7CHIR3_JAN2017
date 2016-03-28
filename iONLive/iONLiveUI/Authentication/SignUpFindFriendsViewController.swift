@@ -6,12 +6,20 @@
 //  Copyright © 2016 Gadgeon. All rights reserved.
 //
 
+import AddressBook
+import AddressBookUI
 import UIKit
 
-import AddressBook
+
 
 
 class SignUpFindFriendsViewController: UIViewController{
+    
+    private var addressBookRef: ABAddressBookRef?
+    
+    func setAddressBook(addressBook: ABAddressBookRef) {
+        addressBookRef = addressBook
+    }
     
     static let identifier = "SignUpFindFriendsViewController"
     
@@ -19,7 +27,15 @@ class SignUpFindFriendsViewController: UIViewController{
     let contactManagers = contactManager.sharedInstance
     
     var phoneCode: String!
-    var addressBookRef =  ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+    
+    
+//    lazy var addressBookRef: ABAddressBookRef = {
+//            var error: Unmanaged<CFError>?
+//            return ABAddressBookCreateWithOptions(nil,
+//              &error).takeRetainedValue() as ABAddressBookRef
+//            }()
+    
+//    var addressBookRef =  ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var contactPhoneNumbers: [String] = [String]()
@@ -49,7 +65,9 @@ class SignUpFindFriendsViewController: UIViewController{
     func initialise()
     {
         self.title = "FIND FRIENDS"
-//        addressBookRef = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+       
+       let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+        setAddressBook(addressBookRef1)
     }
     
     
