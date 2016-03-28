@@ -273,14 +273,28 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
             
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
-            let imageName =  cellDataSource[imageKey]
-            if(imageName != nil)
+           
+            if  cell.flag == 0
             {
+                //selected
+                 cell.flag = 1
+               cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+            }
+            else
+            {
+                //deselected
+                cell.flag = 0
+               cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+            }
+           
+            if let imageName =  cellDataSource[imageKey]
+            {
+                print(imageName)
                 if(imageName is UIImage){
                      cell.contactProfileImage.image = imageName as? UIImage
                 }
-                else{
-                    let imageByteArray: NSArray = imageName!["data"] as! NSArray
+                else if imageName is NSArray{
+                    let imageByteArray: NSArray = imageName["data"] as! NSArray
                     var bytes:[UInt8] = []
                     for serverByte in imageByteArray {
                         bytes.append(UInt8(serverByte as! UInt))
@@ -289,6 +303,9 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     if let datas = imageData as NSData? {
                         cell.contactProfileImage.image = UIImage(data: datas)
                     }
+                }
+                else{
+                    cell.contactProfileImage.image = UIImage(named: "user_profile_icon")
                 }
             }
             return cell

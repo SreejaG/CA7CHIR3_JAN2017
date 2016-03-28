@@ -93,6 +93,7 @@
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="sVZ-HZ-JoX">
                                         <rect key="frame" x="0.0" y="220" width="600" height="380"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <gestureRecognizers/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyChannelCell" id="2QT-r2-aX3" customClass="MyChannelCell" customModule="iONLive" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="70"/>
@@ -168,6 +169,7 @@
                                         <connections>
                                             <outlet property="dataSource" destination="HHn-oS-sje" id="bM8-sF-m4h"/>
                                             <outlet property="delegate" destination="HHn-oS-sje" id="kCS-tl-gdu"/>
+                                            <outletCollection property="gestureRecognizers" destination="BGl-QS-24z" appends="YES" id="aby-XV-wGN"/>
                                         </connections>
                                     </tableView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4y-o6-8l1" userLabel="AddChannelView">
@@ -264,6 +266,7 @@
                         <outlet property="myChannelTableView" destination="sVZ-HZ-JoX" id="wBu-62-dsr"/>
                         <outlet property="myChannelTableViewTopConstraint" destination="3mG-Ed-K3s" id="trx-YP-2eU"/>
                         <outlet property="tableViewBottomConstraint" destination="K5e-Rf-tGg" id="mwO-k1-SbG"/>
+                        <outlet property="tableviewBottomConstraint" destination="K5e-Rf-tGg" id="2an-BR-yfL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OgY-ey-y7b" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -712,7 +715,7 @@
                                                         <constraint firstAttribute="width" constant="310" id="nQF-kD-LNl"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -751,7 +754,7 @@
                                                                 <constraint firstAttribute="width" constant="445" id="dN7-Rk-8X2"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>

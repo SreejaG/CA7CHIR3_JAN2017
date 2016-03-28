@@ -47,7 +47,7 @@ class ChannelItemListViewController: UIViewController {
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         showOverlay()
        // print("\(channelId) \(userId) \(accessToken)")
-        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "15", offset: "0" , success: { (response) -> () in
+        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "10", offset: "0" , success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
             }) { (error, message) -> () in
@@ -106,7 +106,10 @@ class ChannelItemListViewController: UIViewController {
     
     @IBAction func didTapBackButton(sender: AnyObject)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+        let channelVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+        channelVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.popViewControllerAnimated(true)//(channelVC, animated: false)
     }
     
     
