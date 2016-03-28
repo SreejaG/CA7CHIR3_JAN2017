@@ -45,6 +45,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var cells: NSArray = NSArray()
     var progrs: Float = 0.0
     var queue = NSOperationQueue()
+    var uploadCount : Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
@@ -293,6 +294,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             
             dataSource = dummyImagesDataSourceDatabase
+            uploadCount = dummyImagesDataSourceDatabase.count
             if dummyImagesDataSourceDatabase.count > 0
             {
                 if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
@@ -355,9 +357,21 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 {
                     if dummyImagesDataSourceDatabase.count > 0
                     {
-                      uploadData( cell,rowIndex: indexPath.row)
-                      cell.progressView.progress = progrs
+                    
+                     //   if uploadCount == 100
+                     //   {
+                    //        cell.progressView.hidden = true
+                     //
+                    //        dummyImagesDataSourceDatabase.removeAll()
+                    //        deleteCOreData()
+                   //         uploadCount = 0
+                   //     }else
+                  //      {
+                            uploadData( cell,rowIndex: indexPath.row)
+                            cell.progressView.progress = progrs
+                   //     }
                     }
+                  
                     else
                     {
                         cell.progressView.hidden = true
@@ -399,8 +413,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.uploadThumbImage(rowIndex)
             
         })
+            
+            //uploadCount = uploadCount - 1
+          //  if(uploadCount == 0)
+          //  {
+                uploadCount = 100
+          //  }
        // dataSource = dummyImagesDataSourceDatabase
         dummyImagesDataSourceDatabase.removeAll()
+            
         deleteCOreData()
         print("Count------>",dummyImagesDataSourceDatabase.count)
         }
@@ -467,6 +488,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func authenticationFailureHandler(error: NSError?, code: String)
     {
          self.removeOverlay()
+        photoThumpCollectionView.reloadData()
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -597,13 +619,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.authenticationSuccessHandlerForFetchMedia(response)
 
             }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+                self.authenticationFailureHandlerForFetchMedia(error, code: message)
 
         }
     }
     
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
+        self.readImageFromDataBase()
+
         let mediaDict: NSMutableDictionary = NSMutableDictionary()
          thumbLinkArray.removeAllObjects()
         fullImageLinkArray.removeAllObjects()
@@ -632,7 +656,27 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         downloadFirstEntry()
         
     }
-    
+    func authenticationFailureHandlerForFetchMedia(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        photoThumpCollectionView.reloadData()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            
+            self.readImageFromDataBase()
+            self.photoThumpCollectionView.reloadData()
+
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+
     func download()
     {
         
@@ -641,7 +685,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         
         
-        self.readImageFromDataBase()
+       // self.readImageFromDataBase()
         
         var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
 
@@ -688,6 +732,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         }
             downloadCloudData(mediaDict)
+            self.photoThumpCollectionView.reloadData()
 
         }
         else
@@ -736,7 +781,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     self.photoThumpCollectionView.reloadData()
                 })
         }
-        
+        self.dataSource = dummyImagesDataSource
+        self.photoThumpCollectionView.reloadData()
         
       
     }
