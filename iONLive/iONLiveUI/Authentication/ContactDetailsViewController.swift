@@ -36,7 +36,7 @@ class ContactDetailsViewController: UIViewController {
     @IBOutlet var contactTableView: UITableView!
     
     @IBAction func gestureTapped(sender: AnyObject) {
-         view.endEditing(true)
+        view.endEditing(true)
         self.contactSearchBar.text = ""
         self.contactSearchBar.resignFirstResponder()
         searchActive = false
@@ -67,7 +67,7 @@ class ContactDetailsViewController: UIViewController {
         print("hiiiii")
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-         iPhoneCameraVC.navigationController?.navigationBarHidden = true
+        iPhoneCameraVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
     
@@ -82,7 +82,7 @@ class ContactDetailsViewController: UIViewController {
         else{
             setContactDetails()
         }
-//        indexTitles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+        //        indexTitles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
         contactTableView.tableFooterView = UIView()
     }
     
@@ -273,25 +273,20 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
             
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
-           
-            if  cell.flag == 0
-            {
-                //selected
-                 cell.flag = 1
-               cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-            }
-            else
-            {
-                //deselected
-                cell.flag = 0
-               cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-            }
-           
+            
             if let imageName =  cellDataSource[imageKey]
             {
                 print(imageName)
                 if(imageName is UIImage){
-                     cell.contactProfileImage.image = imageName as? UIImage
+                    var testImage = UIImage?()
+                    testImage = imageName as? UIImage
+                    if(testImage == nil || testImage == UIImage()){
+                        cell.contactProfileImage.image = UIImage(named: "avatar")
+                        
+                    }
+                    else{
+                        cell.contactProfileImage.image = testImage
+                    }
                 }
                 else if imageName is NSArray{
                     let imageByteArray: NSArray = imageName["data"] as! NSArray
@@ -305,7 +300,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     }
                 }
                 else{
-                    cell.contactProfileImage.image = UIImage(named: "user_profile_icon")
+                    cell.contactProfileImage.image = UIImage(named: "avatar")
                 }
             }
             return cell
@@ -335,13 +330,13 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         
     }
     
-//    func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-//        return indexTitles as? [String]
-//    }
-//    
-//    func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
-//        return indexTitles.indexOfObject(title)
-//    }
+    //    func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    //        return indexTitles as? [String]
+    //    }
+    //
+    //    func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
+    //        return indexTitles.indexOfObject(title)
+    //    }
 }
 
 
@@ -385,12 +380,12 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         if dataSource![1].count > 0
         {
             for element in dataSource![1]{
-               let tmp: String =  (element["user_name"]?.lowercaseString)!
+                let tmp: String =  (element["user_name"]?.lowercaseString)!
                 print(tmp)
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchContactDataSource.append(element)
-                      print(searchContactDataSource)
+                    print(searchContactDataSource)
                 }
             }
         }
