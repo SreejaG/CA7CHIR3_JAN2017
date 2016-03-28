@@ -112,7 +112,7 @@ class SignUpFindFriendsViewController: UIViewController{
             
             let currentContactName = ABRecordCopyCompositeName(currentContact).takeRetainedValue() as String
             
-            let currentContactImageData =  ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
+//            let currentContactImageData =  ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
             
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
             var phoneNumber = String!()
@@ -146,9 +146,13 @@ class SignUpFindFriendsViewController: UIViewController{
             }
             
             var currentContactImage : UIImage = UIImage()
-            if currentContactImageData != nil
+         
+            if let currentContactImageData = ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
             {
-                currentContactImage = UIImage(data: currentContactImageData!)!
+                currentContactImage = UIImage(data: currentContactImageData)!
+            }
+            else{
+                currentContactImage = UIImage(named: "avatar")!
             }
             contactPhoneNumbers.append(phoneNumber)
             self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage])
