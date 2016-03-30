@@ -86,7 +86,6 @@ class ImageUpload: NSObject {
 
         requestManager.httpManager().POST(UrlManager.sharedInstance.gesMediaObjectCreationUrl(), parameters: ["userName":userName, "access_token":accessToken], success: { (operation, response) -> Void in
 
-            print(response)
             if let responseObject = response as? [String:AnyObject]
             {
                 

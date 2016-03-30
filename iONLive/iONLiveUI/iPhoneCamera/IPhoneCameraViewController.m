@@ -446,6 +446,9 @@ IPhoneLiveStreaming * liveStreaming;
 //                    cleanup();
                 });
                 
+                
+                [self moveVideoToDocumentDirectory:outputFileURL];
+                
                 // Save the movie file to the photo library and cleanup.
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     // In iOS 9 and later, it's possible to move the file into the photo library without duplicating the file data.
@@ -483,6 +486,10 @@ IPhoneLiveStreaming * liveStreaming;
     });
 }
 
+-(void) moveVideoToDocumentDirectory : (NSURL *) path
+{
+    
+}
 #pragma mark Device Configuration
 
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
