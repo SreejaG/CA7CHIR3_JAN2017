@@ -13,11 +13,29 @@ class contactTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactProfileName: UILabel!
     @IBOutlet var contactSelectionButton: UIButton!
-    var cellDataSource:[String:String]?
-    let selectionKey = "selection"
+    var cellsDataSource:[String:AnyObject]?
+    var selectedCells : [[String:AnyObject]] = [[String:AnyObject]]()
+    
+    let inviteKey = "invitationKey"
+    let phoneKey = "mobile_no"
     
     @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-  
+        if cellsDataSource != nil{
+            if cellsDataSource![inviteKey]! as! String == "0"
+            {
+                //selected
+                cellsDataSource![inviteKey] = "1"
+                contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+                selectedCells.append([inviteKey:"1", phoneKey:cellsDataSource![phoneKey] as! String])
+            }
+            else
+            {
+                //deselected
+                cellsDataSource![inviteKey] = "0"
+                contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+                selectedCells.append([inviteKey:"0", phoneKey:cellsDataSource![phoneKey] as! String])
+            }
+        }
     }
     
     override func awakeFromNib() {

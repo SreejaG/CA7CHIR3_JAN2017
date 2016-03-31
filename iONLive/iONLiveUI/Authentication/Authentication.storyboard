@@ -989,10 +989,10 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2K5-7i-XEb">
-                                                    <rect key="frame" x="545" y="10" width="40" height="40"/>
+                                                    <rect key="frame" x="525" y="0.0" width="60" height="60"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="40" id="Cej-6I-mZz"/>
-                                                        <constraint firstAttribute="width" constant="40" id="oWg-Qq-woX"/>
+                                                        <constraint firstAttribute="height" constant="60" id="Cej-6I-mZz"/>
+                                                        <constraint firstAttribute="width" constant="60" id="oWg-Qq-woX"/>
                                                     </constraints>
                                                     <state key="normal" image="red-circle"/>
                                                     <connections>
