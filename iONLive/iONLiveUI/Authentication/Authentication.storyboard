@@ -1044,7 +1044,7 @@
                             <constraint firstAttribute="trailing" secondItem="Oa1-nu-F1Y" secondAttribute="trailing" id="zuH-L6-Udn"/>
                         </constraints>
                         <connections>
-                            <outletCollection property="gestureRecognizers" destination="2HJ-9V-H7U" appends="YES" id="VKF-Ov-Boe"/>
+                            <outletCollection property="gestureRecognizers" destination="2HJ-9V-H7U" appends="YES" id="dho-r7-dVr"/>
                         </connections>
                     </view>
                     <connections>

@@ -12,4 +12,11 @@ class ChannelItemListCollectionViewCell: UICollectionViewCell {
    
     static let identifier = "ChannelItemListCollectionViewCell"
     @IBOutlet weak var channelItemImageView: UIImageView!
+    @IBOutlet var selectionView: UIView!
+    
+
+    @IBOutlet var tickButton: UIButton!
+    
+    
+    
 }

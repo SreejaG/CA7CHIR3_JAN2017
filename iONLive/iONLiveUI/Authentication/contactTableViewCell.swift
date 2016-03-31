@@ -13,21 +13,11 @@ class contactTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactProfileName: UILabel!
     @IBOutlet var contactSelectionButton: UIButton!
-    var flag: Int = 0
+    var cellDataSource:[String:String]?
+    let selectionKey = "selection"
     
     @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-        if flag == 0
-        {
-            //selected
-            flag = 1
-            contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-        }
-        else
-        {
-            //deselected
-            flag = 0
-            contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-        }
+  
     }
     
     override func awakeFromNib() {

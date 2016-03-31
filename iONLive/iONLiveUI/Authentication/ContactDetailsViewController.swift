@@ -14,7 +14,7 @@ class ContactDetailsViewController: UIViewController {
     var appContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[[String:AnyObject]]]?
     var indexTitles : NSArray = NSArray()
-    
+   
     var searchDataSource : [[[String:AnyObject]]]?
     
     var searchActive: Bool = false
@@ -23,6 +23,8 @@ class ContactDetailsViewController: UIViewController {
     let nameKey = "user_name"
     let phoneKey = "mobile_no"
     let imageKey = "profile_image"
+    let selectionKey = "selection"
+   
     
     static let identifier = "ContactDetailsViewController"
     
@@ -64,7 +66,9 @@ class ContactDetailsViewController: UIViewController {
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
-        print("hiiiii")
+//        NSUserDefaults.standardUserDefaults().removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+//        NSUserDefaults.standardUserDefaults().synchronize()
+        
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -104,12 +108,10 @@ class ContactDetailsViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             appContactsArr.removeAll()
-            print(json["contactListOfUser"])
             let responseArr = json["contactListOfUser"] as! [AnyObject]
             for element in responseArr{
                 appContactsArr.append(element as! [String : AnyObject])
             }
-            print(appContactsArr)
             setContactDetails()
         }
         else
@@ -169,11 +171,7 @@ class ContactDetailsViewController: UIViewController {
             }
         }
         print(appContactsArr)
-        print(contactDataSource)
-        
-        
         dataSource = [appContactsArr,contactDataSource]
-        print(dataSource)
         contactTableView.reloadData()
     }
     
@@ -253,7 +251,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             datasourceTmp = dataSource
         }
         
-        print(datasourceTmp)
+   
         
         if let dataSource = datasourceTmp
         {
@@ -271,12 +269,10 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         {
             
             let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
-            
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
             
             if let imageName =  cellDataSource[imageKey]
             {
-                print(imageName)
                 if(imageName is UIImage){
                     var testImage = UIImage?()
                     testImage = imageName as? UIImage
@@ -303,6 +299,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     cell.contactProfileImage.image = UIImage(named: "avatar")
                 }
             }
+            cell.selectionStyle = .None
             return cell
         }
         else
@@ -369,11 +366,9 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         {
             for element in dataSource![0]{
                 let tmp: String = (element["user_name"]?.lowercaseString)!
-                print(tmp)
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchAppContactsArr.append(element)
-                    print(searchAppContactsArr)
                 }
             }
         }
@@ -381,17 +376,14 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         {
             for element in dataSource![1]{
                 let tmp: String =  (element["user_name"]?.lowercaseString)!
-                print(tmp)
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchContactDataSource.append(element)
-                    print(searchContactDataSource)
                 }
             }
         }
         
         searchDataSource = [searchAppContactsArr, searchContactDataSource]
-        print(searchDataSource)
         
         if((searchAppContactsArr.count == 0) && (searchContactDataSource.count == 0)){
             searchActive = false;

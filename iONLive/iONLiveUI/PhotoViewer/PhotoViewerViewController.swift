@@ -128,6 +128,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     if let name = json["UploadThumbnailUrl"]{
                         signedURLResponse.setValue(name, forKey: "UploadThumbnailUrl")
                     }
+                    if let name = json["MediaDetailId"]{
+                        signedURLResponse.setValue(name, forKey: "mediaId")
+                    }
                     
                   
             
@@ -549,7 +552,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: signedURLResponse.valueForKey("ObjectName") as! String, success: { (response) -> () in
+        let mediaId = defaults.valueForKey("mediaId")!.stringValue
+        imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId as String, success: { (response) -> () in
             self.authenticationSuccessHandlerForDefaultMediaMapping(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandlerForDefaultMediaMapping(error, code: message)
