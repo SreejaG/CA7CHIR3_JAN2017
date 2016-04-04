@@ -258,8 +258,8 @@ class AddChannelViewController: UIViewController {
             for(_,value) in channelSelected{
                 addChannelIds.append(value as! Int)
             }
-            for(_,value) in mediaDetailSelected{
-                addMediaIds.append(value as! Int)
+            for(key,value) in mediaDetailSelected{
+                addMediaIds.append(Int(key as! String)!)
             }
             print(addChannelIds)
             print(addMediaIds)
