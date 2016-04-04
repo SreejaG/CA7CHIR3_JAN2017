@@ -12,6 +12,12 @@
 #import "AAPLPreviewView.h"
 #import "iONLive-Swift.h"
 #import "VCSimpleSession.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVAsset.h>
+#import <CoreMedia/CoreMedia.h>
+
+
 
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
@@ -31,6 +37,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 {
     SnapCamSelectionMode _snapCamMode;
+    
 }
 
 
@@ -74,17 +81,22 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 NSMutableDictionary * snapShotsDict;
 IPhoneLiveStreaming * liveStreaming;
 
+
 - (void)viewDidLoad {
     
+ 
     [super viewDidLoad];
-
-    [self initialiseView];
+        [self initialiseView];
+    //   uploadMediaController *cnt = [[uploadMediaController alloc]init];
+//    [cnt upload];
+    
     
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -418,13 +430,13 @@ IPhoneLiveStreaming * liveStreaming;
     UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     
-    dispatch_block_t cleanup = ^{
-        [[NSFileManager defaultManager] removeItemAtURL:outputFileURL error:nil];
-        if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
-            [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
-        }
-    };
-    
+//    dispatch_block_t cleanup = ^{
+//        [[NSFileManager defaultManager] removeItemAtURL:outputFileURL error:nil];
+//        if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
+//            [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
+//        }
+//    };
+//    
     BOOL success = YES;
     
     if ( error ) {
@@ -439,15 +451,15 @@ IPhoneLiveStreaming * liveStreaming;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSData *imageData = [[NSData alloc]init];
-                    imageData = [self thumbnailFromVideoAtURL:outputFileURL];
+                    imageData = [self getThumbNail:outputFileURL];
                     self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
-                     [self saveImage:imageData];
-                    
+                    [self saveImage:imageData];
+                    [self moveVideoToDocumentDirectory:outputFileURL];
+
 //                    cleanup();
                 });
                 
                 
-                [self moveVideoToDocumentDirectory:outputFileURL];
                 
                 // Save the movie file to the photo library and cleanup.
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
@@ -466,16 +478,16 @@ IPhoneLiveStreaming * liveStreaming;
                     if ( ! success ) {
                         NSLog( @"Could not save movie to photo library: %@", error );
                     }
-                    cleanup();
+                   // cleanup();
                 }];
             }
             else {
-                cleanup();
+              //  cleanup();
             }
         }];
     }
     else {
-        cleanup();
+       // cleanup();
     }
     // Enable the Camera and Record buttons to let the user switch camera and start another recording.
     dispatch_async( dispatch_get_main_queue(), ^{
@@ -488,7 +500,40 @@ IPhoneLiveStreaming * liveStreaming;
 
 -(void) moveVideoToDocumentDirectory : (NSURL *) path
 {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
+    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    NSURL *fileURL = [self grabFileURL:[NSString stringWithFormat:@"%@%@",dateString,@".mov"]];
+    NSData *movieData = [NSData dataWithContentsOfURL:path];
+ //  BOOL success =  [movieData writeToURL:fileURL atomically:YES];
+    
+    NSLog(@"&&&&&&&&&%@",fileURL);
+   // [self saveIphoneCameraSnapShots:dateString path:[fileURL path]];
+  [self loaduploadManager : path ];
+    // save it to the Camera Roll
+    UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
+//    if(success)
+//    {
+//  //  [self loaduploadManager : fileURL];
+//    }
+//    else{
+//        NSLog(@"%@ failed to write");
+//    }
+    
+}
+
+
+
+- (NSURL*)grabFileURL:(NSString *)fileName {
+    
+    // find Documents directory
+    NSURL *documentsURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    
+    // append a file name to it
+    documentsURL = [documentsURL URLByAppendingPathComponent:fileName];
+    
+    return documentsURL;
 }
 #pragma mark Device Configuration
 
@@ -575,6 +620,9 @@ IPhoneLiveStreaming * liveStreaming;
                             
                             [self saveImage:imageData];
                             
+                        //    [self loaduploadManager];
+                          [self loaduploadManagerForImage];
+                            
                         } );
                     }
                 }];
@@ -585,7 +633,18 @@ IPhoneLiveStreaming * liveStreaming;
         }];
     } );
 }
-
+-(UIImage*) drawImage:(UIImage*) fgImage
+              inImage:(UIImage*) bgImage
+              atPoint:(CGPoint)  point
+{
+    UIGraphicsBeginImageContext(bgImage.size);
+    [bgImage drawInRect:CGRectMake( 0, 0, bgImage.size.width, bgImage.size.height)];
+    [fgImage drawInRect:CGRectMake( 0, 0,50, 50)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
 - (void)startMovieRecording
 {
     // Disable the Camera button until recording finishes, and disable the Record button until recording starts or finishes. See the
@@ -883,6 +942,8 @@ IPhoneLiveStreaming * liveStreaming;
     
     photoViewerViewController.snapShots = snapShotsDict;
     
+    
+
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -890,7 +951,29 @@ IPhoneLiveStreaming * liveStreaming;
         
     }];
 }
-
+-(void) loaduploadManager : (NSURL *)filePath
+{
+     snapShotsDict = [self displayIphoneCameraSnapShots];
+    upload *uploadManager =[[upload alloc]init];
+    uploadManager.snapShots = snapShotsDict;
+    
+    uploadManager.media = @"video";
+    NSLog(@"%@", filePath);
+    uploadManager.videoPath =filePath;
+    [uploadManager uploadMedia];
+    
+}
+-(void) loaduploadManagerForImage
+{
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    upload *uploadManager =[[upload alloc]init];
+    uploadManager.snapShots = snapShotsDict;
+    
+    uploadManager.media = @"image";
+   
+    [uploadManager uploadMedia];
+    
+}
 -(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
@@ -1184,5 +1267,34 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     // get image cropped from to and bottom
     return imageData;
 }
+-(NSData *)getThumbNail:(NSURL*)stringPath
+{
+    UIImage *firstImage =[[UIImage alloc] init];
+   // AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:stringPath options:nil];
+    //stringPath is a path of stored video file from document directory
+    NSURL *videoURL = [NSURL fileURLWithPath:[stringPath path]];
+    AVPlayerItem *SelectedItem = [AVPlayerItem playerItemWithURL:stringPath];
+    
+    CMTime duration = SelectedItem.duration;
+    float seconds = CMTimeGetSeconds(duration);
+    NSLog(@"duration: %.2f", seconds);
+    AVURLAsset *asset1 = [[AVURLAsset alloc] initWithURL:stringPath options:nil];
+    AVAssetImageGenerator *generate1 = [[AVAssetImageGenerator alloc] initWithAsset:asset1];
+    generate1.appliesPreferredTrackTransform = YES;
+    NSError *err = NULL;
+    CMTime time = CMTimeMake(0.0,600);
+    CGImageRef oneRef = [generate1 copyCGImageAtTime:time actualTime:NULL error:&err];
+    UIImage *one = [[UIImage alloc] initWithCGImage:oneRef];
+    one  =  [self drawImage:[UIImage imageNamed:@"Circled Play"] inImage:one atPoint:CGPointMake(50, 50)];
+
+    NSData *imageData = [[NSData alloc] init];
+    imageData = UIImageJPEGRepresentation(one, 1.0);
+    // get image cropped from to and bottom
+    return imageData;
+   // return theImage;
+}
+
+
+
 
 @end
