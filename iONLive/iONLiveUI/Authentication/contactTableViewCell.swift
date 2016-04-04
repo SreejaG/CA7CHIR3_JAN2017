@@ -13,20 +13,28 @@ class contactTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactProfileName: UILabel!
     @IBOutlet var contactSelectionButton: UIButton!
-    var flag: Int = 0
+    var cellsDataSource:[String:AnyObject]?
+    var selectedCells : [[String:AnyObject]] = [[String:AnyObject]]()
+    
+    let inviteKey = "invitationKey"
+    let phoneKey = "mobile_no"
     
     @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-        if flag == 0
-        {
-            //selected
-            flag = 1
-            contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-        }
-        else
-        {
-            //deselected
-            flag = 0
-            contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+        if cellsDataSource != nil{
+            if cellsDataSource![inviteKey]! as! String == "0"
+            {
+                //selected
+                cellsDataSource![inviteKey] = "1"
+                contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+                selectedCells.append([inviteKey:"1", phoneKey:cellsDataSource![phoneKey] as! String])
+            }
+            else
+            {
+                //deselected
+                cellsDataSource![inviteKey] = "0"
+                contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+                selectedCells.append([inviteKey:"0", phoneKey:cellsDataSource![phoneKey] as! String])
+            }
         }
     }
     

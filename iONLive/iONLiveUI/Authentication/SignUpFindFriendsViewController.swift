@@ -42,6 +42,7 @@ class SignUpFindFriendsViewController: UIViewController{
     let nameKey = "user_name"
     let phoneKey = "mobile_no"
     let imageKey = "profile_image"
+    let inviteKey = "invitationKey"
     
     var loadingOverlay: UIView?
     var contactExist: Bool = false
@@ -173,7 +174,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 currentContactImage = UIImage(named: "avatar")!
             }
             contactPhoneNumbers.append(phoneNumber)
-            self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage])
+            self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
         }
         print(contactPhoneNumbers)
         print(dataSource)

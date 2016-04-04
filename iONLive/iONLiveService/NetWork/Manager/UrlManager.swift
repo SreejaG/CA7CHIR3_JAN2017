@@ -70,6 +70,13 @@ class UrlManager {
         let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"
         return mediaInteractionAPI
     }
+    
+    func MediaByChannelAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let MediaByChannelAPI = gesMediaObjectCreationUrl() + "/" + userName + "/" + accessToken
+        return MediaByChannelAPI
+    }
+    
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName

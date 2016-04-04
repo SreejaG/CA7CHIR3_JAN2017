@@ -45,7 +45,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     var dataSource:[[String:String]] = [[String:String]]()
     var searchDataSource:[[String:String]] = [[String:String]]()
     
-    
     var channelDetails: NSMutableArray = NSMutableArray()
     
     override func viewDidLoad() {
@@ -402,6 +401,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 {
                     channelItemListVC.channelId = dataSource[swipedIndexPath.row][channelIdKey]
                     channelItemListVC.channelName = dataSource[swipedIndexPath.row][channelNameKey]
+                    channelItemListVC.totalMediaCount = Int(dataSource[swipedIndexPath.row][channelItemCountKey]!)!
                 }
             }
             else{
@@ -409,6 +409,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 {
                     channelItemListVC.channelId = searchDataSource[swipedIndexPath.row][channelIdKey]
                     channelItemListVC.channelName = searchDataSource[swipedIndexPath.row][channelNameKey]
+                    channelItemListVC.totalMediaCount = Int(searchDataSource[swipedIndexPath.row][channelItemCountKey]!)!
                 }
             }
             

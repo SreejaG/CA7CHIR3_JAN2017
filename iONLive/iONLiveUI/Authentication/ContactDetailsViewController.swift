@@ -16,6 +16,7 @@ class ContactDetailsViewController: UIViewController {
     var indexTitles : NSArray = NSArray()
     
     var searchDataSource : [[[String:AnyObject]]]?
+    var checkedMobiles : NSMutableDictionary = NSMutableDictionary()
     
     var searchActive: Bool = false
     var contactExistChk :Bool!
@@ -23,6 +24,9 @@ class ContactDetailsViewController: UIViewController {
     let nameKey = "user_name"
     let phoneKey = "mobile_no"
     let imageKey = "profile_image"
+    let selectionKey = "selection"
+    let inviteKey = "invitationKey"
+    
     
     static let identifier = "ContactDetailsViewController"
     
@@ -64,7 +68,42 @@ class ContactDetailsViewController: UIViewController {
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
-        print("hiiiii")
+        contactTableView.reloadData()
+        var contactsArray : [String] = [String]()
+        for(_,value) in checkedMobiles{
+            contactsArray.append(value as! String)
+        }
+        print(contactsArray)
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        showOverlay()
+        contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
+            self.authenticationSuccessHandlerInvite(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
+    
+    
+    func authenticationSuccessHandlerInvite(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                loadIphoneCameraController()
+            }
+        }
+        else
+        {
+            ErrorManager.sharedInstance.addContactError()
+        }
+    }
+    
+    func loadIphoneCameraController(){
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -104,12 +143,10 @@ class ContactDetailsViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             appContactsArr.removeAll()
-            print(json["contactListOfUser"])
             let responseArr = json["contactListOfUser"] as! [AnyObject]
             for element in responseArr{
                 appContactsArr.append(element as! [String : AnyObject])
             }
-            print(appContactsArr)
             setContactDetails()
         }
         else
@@ -168,12 +205,8 @@ class ContactDetailsViewController: UIViewController {
                 }
             }
         }
-        print(appContactsArr)
-        print(contactDataSource)
-        
         
         dataSource = [appContactsArr,contactDataSource]
-        print(dataSource)
         contactTableView.reloadData()
     }
     
@@ -243,6 +276,50 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
+        
+        
+        if(cell.cellsDataSource != nil){
+            
+            if(cell.selectedCells.count > 0)
+            {
+                for element in cell.selectedCells{
+                    if element[phoneKey] as? String == dataSource![indexPath.section][indexPath.row][phoneKey] as? String
+                    {
+                        if element[inviteKey] as! String == "1"
+                        {
+                            dataSource![indexPath.section][indexPath.row][inviteKey] = "1"
+                            let section = String(indexPath.section).stringByAppendingString("_")
+                            let keyVal = String(section).stringByAppendingString(String(indexPath.row))
+                            checkedMobiles.setValue(element[phoneKey]!, forKey: String(keyVal))
+                        }
+                        else{
+                            let section = String(indexPath.section).stringByAppendingString("_")
+                            let keyVal = String(section).stringByAppendingString(String(indexPath.row))
+                            dataSource![indexPath.section][indexPath.row][inviteKey] = "0"
+                            checkedMobiles.removeObjectForKey(String(keyVal))
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            if  dataSource![indexPath.section][indexPath.row][inviteKey] as! String == "0"
+            {
+                let section = String(indexPath.section).stringByAppendingString("_")
+                let keyVal = String(section).stringByAppendingString(String(indexPath.row))
+                checkedMobiles.removeObjectForKey(String(keyVal))
+                cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
+            }
+            else if  dataSource![indexPath.section][indexPath.row][inviteKey] as! String == "1"
+            {
+                let section = String(indexPath.section).stringByAppendingString("_")
+                let keyVal = String(section).stringByAppendingString(String(indexPath.row))
+                checkedMobiles.setValue(dataSource![indexPath.section][indexPath.row][phoneKey]!, forKey: String(keyVal))
+                cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+            }
+        }
         var cellDataSource:[String:AnyObject]?
         var datasourceTmp: [[[String:AnyObject]]]?
         
@@ -253,15 +330,13 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             datasourceTmp = dataSource
         }
         
-        print(datasourceTmp)
-        
-        if let dataSource = datasourceTmp
+        if let dataSources = datasourceTmp
         {
-            if dataSource.count > indexPath.section
+            if dataSources.count > indexPath.section
             {
-                if dataSource[indexPath.section].count > indexPath.row
+                if dataSources[indexPath.section].count > indexPath.row
                 {
-                    cellDataSource = dataSource[indexPath.section][indexPath.row]
+                    cellDataSource = dataSources[indexPath.section][indexPath.row]
                 }
             }
             
@@ -269,14 +344,10 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         
         if let cellDataSource = cellDataSource
         {
-            
-            let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
-            
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
             
             if let imageName =  cellDataSource[imageKey]
             {
-                print(imageName)
                 if(imageName is UIImage){
                     var testImage = UIImage?()
                     testImage = imageName as? UIImage
@@ -303,6 +374,9 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     cell.contactProfileImage.image = UIImage(named: "avatar")
                 }
             }
+            cell.reloadInputViews()
+            cell.cellsDataSource = dataSource![indexPath.section][indexPath.row]
+            cell.selectionStyle = .None
             return cell
         }
         else
@@ -369,11 +443,9 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         {
             for element in dataSource![0]{
                 let tmp: String = (element["user_name"]?.lowercaseString)!
-                print(tmp)
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchAppContactsArr.append(element)
-                    print(searchAppContactsArr)
                 }
             }
         }
@@ -381,17 +453,14 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         {
             for element in dataSource![1]{
                 let tmp: String =  (element["user_name"]?.lowercaseString)!
-                print(tmp)
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchContactDataSource.append(element)
-                    print(searchContactDataSource)
                 }
             }
         }
         
         searchDataSource = [searchAppContactsArr, searchContactDataSource]
-        print(searchDataSource)
         
         if((searchAppContactsArr.count == 0) && (searchContactDataSource.count == 0)){
             searchActive = false;
