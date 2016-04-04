@@ -19,7 +19,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        let dummyImageDataSource = ["photo8","photo9","photo7","photo6","photo5"]
+        let dummyImageDataSource = ["photo8","photo9","photo7","photo6","photo5","photo8","photo9","photo7","photo6","photo5","photo8","photo9","photo7","photo6","photo5"]
         dataSource = dummyImageDataSource
     }
     
