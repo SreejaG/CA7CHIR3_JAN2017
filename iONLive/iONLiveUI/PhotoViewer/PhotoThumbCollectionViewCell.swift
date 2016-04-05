@@ -10,6 +10,10 @@ import UIKit
 
 class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     
+    
+    
+    @IBOutlet weak var playIcon: UIImageView!
+    
     @IBOutlet weak var thumbImageView: UIImageView!
   
     @IBOutlet var progressView: UIProgressView!

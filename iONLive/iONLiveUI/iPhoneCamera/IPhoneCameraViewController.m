@@ -16,6 +16,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CoreMedia.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 
@@ -80,6 +81,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 NSMutableDictionary * snapShotsDict;
 IPhoneLiveStreaming * liveStreaming;
+NSMutableDictionary *ShotsDict;
 
 
 - (void)viewDidLoad {
@@ -189,7 +191,7 @@ IPhoneLiveStreaming * liveStreaming;
     __activityIndicatorView.hidden = true;
     [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     
-    
+    [_playiIconView setHidden:YES];
     
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
     
@@ -453,6 +455,8 @@ IPhoneLiveStreaming * liveStreaming;
                     NSData *imageData = [[NSData alloc]init];
                     imageData = [self getThumbNail:outputFileURL];
                     self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                    [_playiIconView setHidden:NO];
+
                     [self saveImage:imageData];
                     [self moveVideoToDocumentDirectory:outputFileURL];
 
@@ -637,13 +641,13 @@ IPhoneLiveStreaming * liveStreaming;
               inImage:(UIImage*) bgImage
               atPoint:(CGPoint)  point
 {
-    UIGraphicsBeginImageContext(bgImage.size);
-    [bgImage drawInRect:CGRectMake( 0, 0, bgImage.size.width, bgImage.size.height)];
-    [fgImage drawInRect:CGRectMake( 0, 0,50, 50)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsBeginImageContextWithOptions(bgImage.size, NO, 0.0);
+    [bgImage drawInRect:CGRectMake(0, 0, bgImage.size.width, bgImage.size.height)];
+    [fgImage drawInRect:CGRectMake(bgImage.size.width - fgImage.size.width, bgImage.size.height - fgImage.size.height, fgImage.size.width, fgImage.size.height)];
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return newImage;
+    return result;
 }
 - (void)startMovieRecording
 {
@@ -699,6 +703,9 @@ IPhoneLiveStreaming * liveStreaming;
     
     NSLog(@"BOOl%uud",s);
     [self saveIphoneCameraSnapShots:dateString path:filePath];
+    
+   ShotsDict = [[NSMutableDictionary alloc]init];
+  [ShotsDict setValue:filePath forKey:dateString];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
@@ -957,6 +964,8 @@ IPhoneLiveStreaming * liveStreaming;
     upload *uploadManager =[[upload alloc]init];
     uploadManager.snapShots = snapShotsDict;
     
+    uploadManager.shotDict = ShotsDict;
+
     uploadManager.media = @"video";
     NSLog(@"%@", filePath);
     uploadManager.videoPath =filePath;
@@ -968,7 +977,7 @@ IPhoneLiveStreaming * liveStreaming;
     snapShotsDict = [self displayIphoneCameraSnapShots];
     upload *uploadManager =[[upload alloc]init];
     uploadManager.snapShots = snapShotsDict;
-    
+    uploadManager.shotDict = ShotsDict;
     uploadManager.media = @"image";
    
     [uploadManager uploadMedia];
@@ -1285,10 +1294,11 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     CMTime time = CMTimeMake(0.0,600);
     CGImageRef oneRef = [generate1 copyCGImageAtTime:time actualTime:NULL error:&err];
     UIImage *one = [[UIImage alloc] initWithCGImage:oneRef];
-    one  =  [self drawImage:[UIImage imageNamed:@"Circled Play"] inImage:one atPoint:CGPointMake(50, 50)];
+   
+    UIImage *result  =  [self drawImage:[UIImage imageNamed:@"Circled Play"] inImage:one atPoint:CGPointMake(50, 50)];
 
     NSData *imageData = [[NSData alloc] init];
-    imageData = UIImageJPEGRepresentation(one, 1.0);
+    imageData = UIImageJPEGRepresentation(result,1.0);
     // get image cropped from to and bottom
     return imageData;
    // return theImage;

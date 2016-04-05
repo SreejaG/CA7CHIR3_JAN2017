@@ -40,6 +40,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var loadingOverlay: UIView?
     var progressDict : NSMutableArray = NSMutableArray()
     
+    
+
+ 
+    @IBOutlet var playIconInFullView: UIImageView!
     @IBOutlet var progressView: UIProgressView!
     let thumbImageKey = "thumbImage"
     let fullImageKey = "fullImageKey"
@@ -136,7 +140,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScreenZoomView.userInteractionEnabled = true
         fullScreenZoomView.hidden = true
         fullScrenImageView.userInteractionEnabled = true
-        
+        playIconInFullView.hidden = true;
+
         let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: "enlargeImageView:")
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
         fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
@@ -160,8 +165,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         if mediaType == "video"
         {
-            
+            //fullScreenZoomView.hidden = false
+            playIconInFullView.hidden = true
+
             downloadVideo(selectedCollectionViewIndex)
+           self.view.userInteractionEnabled = false
             
         }
         else
@@ -192,7 +200,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         // Add Label
         progressLabelDownload = UILabel()
-        let frame = CGRectMake(fullScrenImageView.center.x - 25, fullScrenImageView.center.y - 100, 100, 50)
+        let frame = CGRectMake(fullScrenImageView.center.x - 100, fullScrenImageView.center.y - 100, 200, 50)
         progressLabelDownload?.frame = frame
         view.addSubview(progressLabelDownload!)
         fullScrenImageView.alpha = 0.2
@@ -203,39 +211,27 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
-        // let p = progressViewLayer()
-        
-        //   p.animateProgressViewToProgress(progress)
-        //   p.updateProgressViewLabelWithProgress(progress * 100)
-        //  p.updateProgressViewWith(Float(totalBytesWritten), totalFileSize: Float(totalBytesExpectedToWrite))
-        //  self.view.addSubview(p)
-        progressViewDownload!.progress = progress
-        //  let progressValue = self.progressView?.progress
-        //  let s = NSString(format: "%.2f",progress*100)
         let y = Int(round(progress*100))
         
-        progressLabelDownload?.text = "\(y) %"
+        progressLabelDownload?.text = "Downloading  \(y) %"
+        progressLabelDownload!.textAlignment = NSTextAlignment.Center
+        progressViewDownload!.progress = progress
         print(progress)
         print(progress * 100)
         if progress == 1.0
         {
             fullScrenImageView.alpha = 1.0
-            
+            self.view.userInteractionEnabled = true
+
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
         }
-        // progressView.updateProgressViewWith(Float(totalBytesWritten), totalFileSize: Float(totalByte
-        
     }
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-        
         print(location)
-        
         let data = NSData(contentsOfURL: location)
         if let imageData = data as NSData? {
-            
-            //    self.removeOverlay()
             let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
             let writePath = documents.stringByAppendingString("/")
             let pa = writePath.stringByAppendingString("video.mov")
@@ -253,18 +249,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             if(imageData.writeToURL(url, atomically:true))
             {
-                //   let path = NSBundle.mainBundle().pathForResource("Video", ofType:"mp4")
-                //     let url = NSURL.fileURLWithPath(url)
-                
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("playerDidFinish:"), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
                 
                 
                 self.moviePlayer = MPMoviePlayerController(contentURL: url)
                 if let player = self.moviePlayer {
-                    player.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
+                    player.view.frame = CGRect(x: fullScrenImageView.frame.origin.x, y: fullScrenImageView.frame.origin.y, width: fullScrenImageView.frame.size.width, height: fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
                     player.scalingMode = MPMovieScalingMode.Fill
-                    player.fullscreen = true
+                  //  player.fullscreen = true
                     player.controlStyle = MPMovieControlStyle.None
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
@@ -279,6 +272,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func playerDidFinish(notif:NSNotification)
     {
         self.moviePlayer.view.removeFromSuperview()
+       playIconInFullView.hidden = false
         
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
@@ -416,6 +410,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
+                
+                if mediaTypeArray[indexPath.row] as! String == "video"
+                {
+                    cell.playIcon.hidden = false
+                }
+                else
+                {
+                    cell.playIcon.hidden = true
+
+                }
                 cell.thumbImageView.image = thumpImage
                 if(progressDict.count>0)
                 {
@@ -463,8 +467,19 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             selectedCollectionViewIndex = indexPath.row
             if let fullImage = dict[fullImageKey]
             {
+                
                 self.fullScrenImageView.image = fullImage
                 self.fullScreenZoomView.image = fullImage
+                if mediaTypeArray[indexPath.row] as! String == "video"
+                {
+                    playIconInFullView.hidden = false;
+                }
+                else
+                {
+                    playIconInFullView.hidden = true;
+
+                    
+                }
             }
         }
     }
@@ -966,11 +981,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     {
                         self.fullScrenImageView.image = dummyImagesDataSource[0][self.fullImageKey]
                         self.fullScreenZoomView.image = dummyImagesDataSource[0][self.fullImageKey]
+                        self.playIconInFullView.hidden = false
                     }
                     else
                     {
                         self.fullScrenImageView.image = mediaDict["ThumbImage"] as? UIImage
                         self.fullScreenZoomView.image = mediaDict["ThumbImage"] as? UIImage
+                        self.playIconInFullView.hidden = false
+
                     }
                     dummyImagesDataSource.append([self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["ThumbImage"] as! UIImage])
                     

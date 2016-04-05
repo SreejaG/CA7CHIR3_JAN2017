@@ -64,6 +64,13 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y62-6N-UtC">
                                 <rect key="frame" x="0.0" y="64" width="600" height="443"/>
                             </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="bjf-zC-TWq">
+                                <rect key="frame" x="280" y="280" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="bPb-9u-yVF"/>
+                                    <constraint firstAttribute="height" constant="40" id="pSB-KZ-bXr"/>
+                                </constraints>
+                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ncu-eZ-Tvl" userLabel="BottomView">
                                 <rect key="frame" x="0.0" y="558" width="600" height="42"/>
                                 <subviews>
@@ -118,6 +125,9 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="txC-iS-gZe">
                                                     <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
+                                                    <rect key="frame" x="14" y="14" width="15" height="15"/>
+                                                </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
                                                     <rect key="frame" x="0.0" y="41" width="42" height="2"/>
                                                 </progressView>
@@ -135,6 +145,7 @@
                                             <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="playIcon" destination="m5T-pj-pPH" id="HwH-qg-zCK"/>
                                             <outlet property="progressView" destination="tfd-dS-C7Z" id="4LC-Sc-iud"/>
                                             <outlet property="thumbImageView" destination="txC-iS-gZe" id="cgs-G7-TDY"/>
                                         </connections>
@@ -154,6 +165,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="bjf-zC-TWq" firstAttribute="centerY" secondItem="GmU-4f-pJO" secondAttribute="centerY" id="1cP-nB-Mrz"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="bottom" id="1us-Ly-ZrQ"/>
                             <constraint firstItem="mJr-dY-xwO" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="2XX-KU-J6s"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="Deu-dI-uIV"/>
@@ -168,6 +180,7 @@
                             <constraint firstAttribute="trailing" secondItem="Ncu-eZ-Tvl" secondAttribute="trailing" id="fiG-UJ-HXX"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="mJr-dY-xwO" secondAttribute="bottom" id="gDP-hU-RMA"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" constant="8" id="jxM-DN-VGY"/>
+                            <constraint firstItem="bjf-zC-TWq" firstAttribute="centerX" secondItem="GmU-4f-pJO" secondAttribute="centerX" id="lBs-rc-E9E"/>
                             <constraint firstItem="mJr-dY-xwO" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="pwu-ed-IjF"/>
                             <constraint firstAttribute="trailing" secondItem="e64-wp-j2s" secondAttribute="trailing" id="yAj-ac-Bre"/>
                             <constraint firstAttribute="trailing" secondItem="QIE-GV-Vdt" secondAttribute="trailing" id="zAB-Ah-fB3"/>
@@ -177,6 +190,7 @@
                         <outlet property="fullScreenZoomView" destination="mJr-dY-xwO" id="Ozp-h4-Kcc"/>
                         <outlet property="fullScrenImageView" destination="y62-6N-UtC" id="5Hf-lc-vaB"/>
                         <outlet property="photoThumpCollectionView" destination="QIE-GV-Vdt" id="NRF-PJ-s44"/>
+                        <outlet property="playIconInFullView" destination="bjf-zC-TWq" id="cPx-GS-lVq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VAf-h9-4f9" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -184,4 +198,7 @@
             <point key="canvasLocation" x="218" y="282"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Circled Play" width="25" height="25"/>
+    </resources>
 </document>

@@ -18,6 +18,7 @@ protocol uploadProgressDelegate
     let channelManager = ChannelManager.sharedInstance
     var channelDict = Dictionary<String, AnyObject>()
     var snapShots : NSMutableDictionary = NSMutableDictionary()
+    var shotDict : NSMutableDictionary = NSMutableDictionary()
     var channelDetails: NSMutableArray = NSMutableArray()
     let requestManager = RequestManager.sharedInstance
     var dummyImagesDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
@@ -27,7 +28,8 @@ protocol uploadProgressDelegate
     let signedURLResponse: NSMutableDictionary = NSMutableDictionary()
     var delegate : uploadProgressDelegate?
     var progressDictionary : NSMutableArray = NSMutableArray()
-    
+    var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
+
     var taskIndex :  Int = 0
   var media : NSString = ""
     var videoPath : NSURL = NSURL()
@@ -76,8 +78,8 @@ protocol uploadProgressDelegate
     }
     func setChannelDetails()
     {
-        self.readImageFromDataBase()
-
+      //  self.readImageFromDataBase()
+        self.readImage();
         
         for var index = 0; index < channelDetails.count; index++
         {
@@ -87,18 +89,69 @@ protocol uploadProgressDelegate
             
             
         }
-        if dummyImagesDataSourceDatabase.count > 0
+        if shotDict.count > 0
         {
-            for(var i = dummyImagesDataSourceDatabase.count-1 ; i >= 0 ; i--)
-            {
-                
-                uploadData( i,completion: { (result) -> Void in
-                    
-                })
-            }
+//            for(var i = dummyImagesDataSourceDatabase.count-1 ; i > 0 ; --i)
+//            {
+            var i=0;
+                print( "checking count =-------- %d",i)
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.uploadData( i,completion: { (result) -> Void in
+                        
+                    })
+               })
+               
+           // }
         }
 
         
+    }
+    func readImage()
+    {
+        let cameraController = IPhoneCameraViewController()
+
+       if shotDict.count > 0
+            {
+                
+                let snapShotsKeys = shotDict.allKeys as NSArray
+                
+                let descriptor: NSSortDescriptor = NSSortDescriptor(key: nil, ascending: false)
+                let sortedSnapShotsKeys: NSArray = snapShotsKeys.sortedArrayUsingDescriptors([descriptor])
+                
+                let screenRect : CGRect = UIScreen.mainScreen().bounds
+                let screenWidth = screenRect.size.width
+                let screenHeight = screenRect.size.height
+                let checkValidation = NSFileManager.defaultManager()
+                for var index = 0; index < sortedSnapShotsKeys.count; index++
+                {
+                    if let thumbNailImagePath = shotDict.valueForKey(sortedSnapShotsKeys[index] as! String)
+                    {
+                        if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
+                        {
+                            
+                            let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
+                            let sizeThumb = CGSizeMake(70,70)
+                            let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
+                            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                            let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                            if media == "video"
+                            {
+                                dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionFullscreen,fullImageKey:imageAfterConversionFullscreen!])
+                            }
+                            else
+                            {
+                                dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
+                            }
+                        }
+                    }
+                }
+                checksDataSourceDatabase = dummyImagesDataSourceDatabase
+                
+
+                
+        }
     }
     func readImageFromDataBase()
     {
@@ -138,13 +191,14 @@ protocol uploadProgressDelegate
                     }
                 }
             }
-            
+            checksDataSourceDatabase = dummyImagesDataSourceDatabase
+
             if dummyImagesDataSourceDatabase.count > 0
             {
-                if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
-                {
-                    print(imagePath)
-                }
+//                if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
+//                {
+//                    print(imagePath)
+//                }
             }
         }
     }
@@ -189,7 +243,7 @@ protocol uploadProgressDelegate
 
             
             
-            if dummyImagesDataSourceDatabase.count > 0
+            if checksDataSourceDatabase.count > 0
             {
                 
                 //                let mediaPath = medianameArray[rowIndex]
@@ -228,14 +282,14 @@ protocol uploadProgressDelegate
                             
                             if result == "Success"
                             {
-                                if self.dummyImagesDataSourceDatabase.count > 0
+                                if self.checksDataSourceDatabase.count > 0
                                 {
-                                    self.dummyImagesDataSourceDatabase.removeFirst()
+                                    self.checksDataSourceDatabase.removeFirst()
                                     
                                     
                                 }
                                 
-                                if  self.dummyImagesDataSourceDatabase.count==0
+                                if  self.checksDataSourceDatabase.count == 0
                                 {
                                     self.dummyImagesDataSourceDatabase.removeAll()
                                     
