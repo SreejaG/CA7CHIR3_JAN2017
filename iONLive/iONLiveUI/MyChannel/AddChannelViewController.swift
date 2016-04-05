@@ -38,8 +38,8 @@ class AddChannelViewController: UIViewController {
     
     var channelDetails: NSMutableArray = NSMutableArray()
     
-    var mediaDetailSelected : NSMutableDictionary = NSMutableDictionary()
-    var addMediaIds : [Int] = [Int]()
+    var mediaDetailSelected : NSMutableArray = NSMutableArray()
+  
     var addChannelIds : [Int] = [Int]()
     
     override func viewDidLoad() {
@@ -67,7 +67,6 @@ class AddChannelViewController: UIViewController {
     {
         addChannelIds.removeAll()
         channelSelected.removeAllObjects()
-        addMediaIds.removeAll()
         let defaults = NSUserDefaults.standardUserDefaults()
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -96,7 +95,7 @@ class AddChannelViewController: UIViewController {
         let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelVC = storyboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
         channelVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
     @IBAction func didTapGestureRecognizer(sender: AnyObject) {
@@ -252,18 +251,13 @@ class AddChannelViewController: UIViewController {
     
     @IBAction func didTapShareButton(sender: AnyObject) {
         addChannelIds.removeAll()
-        addMediaIds.removeAll()
-
         if(channelSelected.count > 0){
             for(_,value) in channelSelected{
                 addChannelIds.append(value as! Int)
             }
-            for(key,value) in mediaDetailSelected{
-                addMediaIds.append(Int(key as! String)!)
-            }
             print(addChannelIds)
-            print(addMediaIds)
-            addMediaToChannels(addChannelIds, mediaIds: addMediaIds)
+
+            addMediaToChannels(addChannelIds, mediaIds: mediaDetailSelected)
             
         }
     }
