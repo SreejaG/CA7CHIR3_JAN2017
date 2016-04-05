@@ -43,6 +43,7 @@ class UrlManager {
     
     func channelAPIUrl() -> String{
         let channelAPI = baseUrl+"/api/v1/channel"
+        print(channelAPI)
         return channelAPI
     }
     func mediaUploadUrl() -> String{

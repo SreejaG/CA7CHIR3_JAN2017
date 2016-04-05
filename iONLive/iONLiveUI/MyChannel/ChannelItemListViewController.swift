@@ -31,6 +31,7 @@ class ChannelItemListViewController: UIViewController {
     var channelName:String!
     
     var selectedArray:[Int] = [Int]()
+   
     
     @IBOutlet var deleteButton: UIButton!
     @IBOutlet var addButton: UIButton!
@@ -44,8 +45,9 @@ class ChannelItemListViewController: UIViewController {
     let mediaIdKey = "mediaId"
     let selectionKey = "selection"
     
-    var limit : Int = 6
+    var limit : Int = Int()
     var totalCount: Int = 0
+    var fixedLimit : Int =  0
     
     var cellStatus: NSMutableDictionary = NSMutableDictionary()
     
@@ -61,6 +63,15 @@ class ChannelItemListViewController: UIViewController {
         cancelButton.hidden = true
         selectionFlag = false
         
+        if totalMediaCount > 6
+        {
+            fixedLimit = 6
+        }
+        else{
+            fixedLimit = totalMediaCount
+        }
+        
+        limit = fixedLimit
         initialise()
     }
     
@@ -81,23 +92,26 @@ class ChannelItemListViewController: UIViewController {
         showOverlay()
         
         let offsetString : String = String(offsetToInt)
-        let fixedLimit : Int = 6
-        if limit < totalMediaCount
-        {
-            limit = totalMediaCount - limit
-            if limit > fixedLimit
-            {
-                limit = fixedLimit
-            }
-        }
-        totalCount = totalCount + limit
-        print("\(limit) \(offsetToInt) \(totalCount)")
+        
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         }
         offsetToInt = offsetToInt! + 6
+        
+        if offsetToInt <= totalMediaCount
+        {
+            totalCount = totalMediaCount - offsetToInt
+            if totalCount > fixedLimit
+            {
+                limit = fixedLimit
+            }
+            else
+            {
+                limit = totalCount
+            }
+        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -121,7 +135,7 @@ class ChannelItemListViewController: UIViewController {
                 }
             }
             
-            if(totalMediaCount >= totalCount){
+            if(totalMediaCount >= offsetToInt){
                 initialise()
             }
             self.channelItemCollectionView.reloadData()
@@ -255,10 +269,21 @@ class ChannelItemListViewController: UIViewController {
         {
             offset = "0"
             offsetToInt = Int(offset)
-            limit = 6
             totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
+            
+            if totalMediaCount > 6
+            {
+                fixedLimit = 6
+            }
+            else{
+                fixedLimit = totalMediaCount
+            }
+            
+            limit = fixedLimit
+            
             imageDataSource.removeAll()
+            selected.removeAllObjects()
             selectionFlag = false
             initialise()
             channelTitleLabel.text = channelName.uppercaseString

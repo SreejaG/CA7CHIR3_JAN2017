@@ -333,7 +333,9 @@ static NSMutableDictionary * gHistory;
 
 -(NSURL*)checkEmptyUrl
 {
-    NSString *urlStr = @"rtsp://192.168.42.1";
+  //  NSString *urlStr = @"rtsp://192.168.42.1/live";
+    
+     NSString *urlStr = @"rtsp://192.168.2.30";
     if (![urlStr isEqualToString:@""]) {
         NSURL *website = [NSURL URLWithString:urlStr];
         if (!website) {
