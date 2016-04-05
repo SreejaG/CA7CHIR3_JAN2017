@@ -182,9 +182,17 @@
                                             <action selector="didTapsCameraActionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="nIC-tq-Ujx"/>
                                         </connections>
                                     </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="cEw-NK-Mzz">
+                                        <rect key="frame" x="56" y="51" width="17" height="17"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="17" id="Irq-qE-DBL"/>
+                                            <constraint firstAttribute="width" constant="17" id="SC1-FE-E3u"/>
+                                        </constraints>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="cEw-NK-Mzz" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="51" id="04B-DS-lLl"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="40" id="11j-r3-wO9"/>
                                     <constraint firstAttribute="trailing" secondItem="xzX-a8-zLm" secondAttribute="trailing" constant="40" id="7Qg-9X-lCu"/>
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="8QX-eo-r1A"/>
@@ -196,6 +204,7 @@
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="l2E-me-gQ8"/>
                                     <constraint firstAttribute="trailing" secondItem="VfF-28-FyM" secondAttribute="trailing" constant="48" id="nig-A3-SEs"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="rsZ-Hs-EBD"/>
+                                    <constraint firstItem="cEw-NK-Mzz" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="56" id="yQ0-GB-Jvz"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sw1-iw-Cte" userLabel="activityView">
@@ -257,6 +266,7 @@
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="iphoneCameraButton" destination="ryW-Iz-I7M" id="8as-6J-mT1"/>
                         <outlet property="noDataFound" destination="BIV-8z-Rim" id="UAO-Fj-ncf"/>
+                        <outlet property="playiIconView" destination="cEw-NK-Mzz" id="VjG-m8-rVg"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>
                         <outlet property="startCameraActionButton" destination="ZpM-Fq-WiG" id="Xi5-OU-SEm"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>
@@ -271,6 +281,7 @@
     <resources>
         <image name="Camera_Button_OFF" width="86" height="86"/>
         <image name="Camera_Thumb" width="51" height="50"/>
+        <image name="Circled Play" width="25" height="25"/>
         <image name="Stream_Thumb" width="56" height="56"/>
         <image name="avatarCircleStroke" width="35" height="35"/>
         <image name="boyFace" width="28" height="28"/>

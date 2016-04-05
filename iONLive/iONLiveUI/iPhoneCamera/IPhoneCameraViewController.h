@@ -15,4 +15,5 @@
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
 -(void) deleteIphoneCameraSnapShots;
 
+@property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
 @end
