@@ -91,7 +91,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelTableViewTopConstraint.constant = 0
         hideView(0)
         myChannelSearchBar.delegate = self
-        print(channelname)
         addChannelDetails(userId, token: accessToken, channelName: channelname)
         
     }
@@ -112,7 +111,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }
@@ -249,6 +247,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         {
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
+            print(channelDetailsDict)
             setChannelDetails()
         }
         else
@@ -283,13 +282,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
             let thumbUrl = element["thumbnail_Url"] as! String
-            print(thumbUrl)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
-                print(url)
                 if let data = NSData(contentsOfURL: url){
-                    print(data)
                     imageDetailsData = (data as NSData?)!
                 }
             }
@@ -470,7 +466,6 @@ extension MyChannelViewController:UITableViewDataSource
             dataSourceTmp = dataSource
         }
         
-        print(dataSourceTmp)
         if dataSourceTmp!.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelCell.identifier, forIndexPath:indexPath) as! MyChannelCell

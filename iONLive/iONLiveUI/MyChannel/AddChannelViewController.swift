@@ -169,11 +169,8 @@ class AddChannelViewController: UIViewController {
         removeOverlay()
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
-        print(" selected array count= \(selectedArray.count)")
-         print(" channel selected array count= \(channelSelected.count)")
         if let json = response as? [String: AnyObject]
         {
-            print(json["channels"])
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
             setChannelDetails()
@@ -262,8 +259,6 @@ class AddChannelViewController: UIViewController {
     @IBAction func didTapShareButton(sender: AnyObject) {
         if channelSelected.count > 0
         {
-            print(channelSelected)
-            print(mediaDetailSelected)
             addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
         }
     }
