@@ -43,7 +43,7 @@ class ChannelItemListViewController: UIViewController {
     
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
-    let selectionKey = "selection"
+    let mediaTypeKey = "mediaType"
     
     var limit : Int = Int()
     var totalCount: Int = 0
@@ -124,13 +124,13 @@ class ChannelItemListViewController: UIViewController {
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
-                
+                let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 if(mediaUrl != "")
                 {
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     let data = NSData(contentsOfURL: url)
                     if let imageData = data as NSData? {
-                        imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:imageData])
+                        imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:imageData, mediaTypeKey:mediaType])
                     }
                 }
             }
@@ -186,7 +186,6 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapAddtoButton(sender: AnyObject) {
-        print(selected)
         let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
         addChannelVC.mediaDetailSelected = selected
@@ -243,7 +242,6 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapDeleteButton(sender: AnyObject) {
-         print(selected)
         var channelIds : [Int] = [Int]()
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)
@@ -335,7 +333,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         
         cell.selectionView.alpha = 0.4
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
-        
+        cell.videoView.alpha = 0.4
         if imageDataSource.count > 0
         {
             if(imageDataSource.count == selectedArray.count){
@@ -347,6 +345,21 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             let channelItemImageView = cell.viewWithTag(100) as! UIImageView
             let imageData =  imageDataSource[indexPath.row][mediaUrlKey] as! NSData
             channelItemImageView.image = UIImage(data: imageData)
+            
+            let mediaType = imageDataSource[indexPath.row][mediaTypeKey] as! String
+            print(mediaType)
+            
+            cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
+            
+            if mediaType == "video"
+            {
+                cell.videoView.hidden = false
+         
+            }
+            else{
+                cell.videoView.hidden = true
+             
+            }
         
             if(selectionFlag){
                 for var i = 0; i < selectedArray.count; i++
@@ -357,7 +370,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                         if selectedArray[i] == 1
                         {
                             cell.selectionView.hidden = false
-                            cell.insertSubview(cell.selectionView, aboveSubview: cell.channelItemImageView)
+                            cell.insertSubview(cell.selectionView, aboveSubview: cell.videoView)
                             if(selected.containsObject(Int(selectedValue)!)){
                                 
                             }
@@ -367,7 +380,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                         }
                         else{
                             cell.selectionView.hidden = true
-                            cell.insertSubview(cell.channelItemImageView, aboveSubview: cell.selectionView)
+                            cell.insertSubview(cell.videoView, aboveSubview: cell.selectionView)
                             if(selected.containsObject(Int(selectedValue)!)){
                                  selected.removeObject(Int(selectedValue)!)
                             }
@@ -378,7 +391,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                         }
                     }
                 }
-                print(selected)
                 
             }
             else{
