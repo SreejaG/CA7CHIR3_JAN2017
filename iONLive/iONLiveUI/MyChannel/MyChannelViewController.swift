@@ -283,12 +283,15 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
             let thumbUrl = element["thumbnail_Url"] as! String
-           
+            print(thumbUrl)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
-                let data = NSData(contentsOfURL: url)
-                imageDetailsData = (data as NSData?)!
+                print(url)
+                if let data = NSData(contentsOfURL: url){
+                    print(data)
+                    imageDetailsData = (data as NSData?)!
+                }
             }
             dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetailsData])
         }

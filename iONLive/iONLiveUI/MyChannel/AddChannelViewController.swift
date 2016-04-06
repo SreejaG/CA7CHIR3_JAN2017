@@ -32,15 +32,15 @@ class AddChannelViewController: UIViewController {
     let channelIdKey = "channelId"
     let channelCreatedTimeKey = "channelCreatedTime"
     
-    var channelSelected: NSMutableDictionary = NSMutableDictionary()
+    var channelSelected: NSMutableArray = NSMutableArray()
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
     var mediaDetailSelected : NSMutableArray = NSMutableArray()
-  
-    var addChannelIds : [Int] = [Int]()
+    
+    var selectedArray:[Int] = [Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,8 +66,9 @@ class AddChannelViewController: UIViewController {
     func initialise()
     {
         channelDetailsDict.removeAll()
-        addChannelIds.removeAll()
         channelSelected.removeAllObjects()
+        selectedArray.removeAll()
+        
         let defaults = NSUserDefaults.standardUserDefaults()
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -108,7 +109,6 @@ class AddChannelViewController: UIViewController {
         channelTextField.text = ""
         channelCreateButton.hidden = true
         channelTextField.resignFirstResponder()
-        channelSelected.removeAllObjects()
         addChannelDetails(userId, token: accessToken, channelName: channelname)
     }
     
@@ -167,12 +167,15 @@ class AddChannelViewController: UIViewController {
     func authenticationSuccessHandlerList(response:AnyObject?)
     {
         removeOverlay()
+        channelSelected.removeAllObjects()
+        selectedArray.removeAll()
+        print(" selected array count= \(selectedArray.count)")
+         print(" channel selected array count= \(channelSelected.count)")
         if let json = response as? [String: AnyObject]
         {
             print(json["channels"])
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
-            print(channelDetailsDict)
             setChannelDetails()
         }
         else
@@ -257,15 +260,11 @@ class AddChannelViewController: UIViewController {
   
     
     @IBAction func didTapShareButton(sender: AnyObject) {
-        addChannelIds.removeAll()
-        if(channelSelected.count > 0){
-            for(_,value) in channelSelected{
-                addChannelIds.append(value as! Int)
-            }
-            print(addChannelIds)
+        if channelSelected.count > 0
+        {
+            print(channelSelected)
             print(mediaDetailSelected)
-            addMediaToChannels(addChannelIds, mediaIds: mediaDetailSelected)
-            
+            addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
         }
     }
     
@@ -285,6 +284,7 @@ class AddChannelViewController: UIViewController {
     func authenticationSuccessHandlerAdd(response:AnyObject?)
     {
         removeOverlay()
+    
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
@@ -331,7 +331,15 @@ extension AddChannelViewController:UITableViewDataSource
         if dataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
-            cell.accessoryType = .None
+            
+            if(selectedArray.count != dataSource.count){
+                selectedArray.append(0)
+            }
+            if(selectedArray.count <= 0)
+            {
+                 cell.accessoryType = .None
+            }
+       
             cell.addChannelTextLabel.text = dataSource[indexPath.row][channelNameKey] as? String
             cell.addChannelCountLabel.text = dataSource[indexPath.row][channelItemCountKey] as? String
             if let imageData =  dataSource[indexPath.row][channelHeadImageNameKey]
@@ -342,6 +350,37 @@ extension AddChannelViewController:UITableViewDataSource
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
 
+            
+            for var i = 0; i < selectedArray.count; i++
+            {
+                let selectedValue: String = dataSource[i][channelIdKey] as! String
+                if indexPath.row == i
+                {
+                    if selectedArray[i] == 1
+                    {
+                        cell.accessoryType = .Checkmark
+                        if(channelSelected.containsObject(Int(selectedValue)!)){
+                            
+                        }
+                        else{
+                            channelSelected.addObject(Int(selectedValue)!)
+                        }
+                    }
+                    else{
+                        cell.accessoryType = .None
+                        if(channelSelected.containsObject(Int(selectedValue)!)){
+                            
+                            channelSelected.removeObject(Int(selectedValue)!)
+                        }
+                        else{
+                            
+                        }
+                        
+                    }
+                }
+            }
+
+            
             cell.selectionStyle = .None
             return cell
         }
@@ -350,21 +389,23 @@ extension AddChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
-        if let cell = tableView.cellForRowAtIndexPath(indexPath) {
-            let id: String = dataSource[indexPath.row][channelIdKey]! as! String
-            if(cell.accessoryType == .Checkmark){
-                channelSelected.removeObjectForKey( String(indexPath.row))
-                cell.accessoryType = .None
-            }
-            else{
-                channelSelected.setValue(Int(id), forKey: String(indexPath.row))
-                cell.accessoryType = .Checkmark
+        for var i = 0;i < selectedArray.count; i++
+        {
+            
+            if i == indexPath.row
+            {
+                if selectedArray[i] == 0
+                {
+                    selectedArray[i] = 1
+                    
+                }else{
+                    selectedArray[i] = 0
+                }
             }
         }
-        print(channelSelected)
+        tableView.reloadData()
     }
-    
+
 }
 
 

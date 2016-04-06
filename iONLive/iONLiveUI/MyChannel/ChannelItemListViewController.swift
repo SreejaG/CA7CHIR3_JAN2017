@@ -206,10 +206,10 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapSelectionButton(sender: AnyObject) {
-        for index in self.channelItemCollectionView.indexPathsForSelectedItems()!
-        {
-            self.channelItemCollectionView.deselectItemAtIndexPath(index, animated: false)
-        }
+//        for index in self.channelItemCollectionView.indexPathsForSelectedItems()!
+//        {
+//            self.channelItemCollectionView.deselectItemAtIndexPath(index, animated: false)
+//        }
         selected.removeAllObjects()
         selectedArray.removeAll()
         
@@ -225,6 +225,7 @@ class ChannelItemListViewController: UIViewController {
         deleteButton.enabled = false
         addButton.enabled = false
         addButton.setTitle("Share", forState: .Normal)
+        channelItemCollectionView.reloadData()
     }
     
     @IBAction func didTapCancelButton(sender: AnyObject) {
