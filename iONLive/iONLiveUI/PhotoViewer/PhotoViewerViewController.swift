@@ -68,7 +68,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var progrs: Float = 0.0
     var queue = NSOperationQueue()
     var uploadCount : Int = 0
-    
+    var selectedArray:[Int] = [Int]()
+
     
     
     private var downloadTask: NSURLSessionDownloadTask?
@@ -301,7 +302,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
                 cell?.layer.borderWidth = 2.0
                 cell?.layer.borderColor = UIColor.blueColor().CGColor
-    
+//    
                 let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: "singleTap:")
                 singleTapImageViewRecognizer.numberOfTapsRequired = 1
                 cell!.addGestureRecognizer(singleTapImageViewRecognizer)
@@ -320,6 +321,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
                 cell?.layer.borderColor = UIColor.clearColor().CGColor
                 cell?.removeGestureRecognizer(Recognizer)
+                longPressActive = false;
             }
         }
     
@@ -415,6 +417,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if dataSource.count > indexPath.row
         {
             
+            if(dataSource.count == selectedArray.count){
+            }
+            else{
+                selectedArray.append(0)
+            }
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
