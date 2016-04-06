@@ -183,6 +183,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     }
     
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        print(userInfo)
+    }
+    
     //Called if unable to register for APNS.
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
         
