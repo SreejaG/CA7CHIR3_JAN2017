@@ -29,7 +29,7 @@ protocol uploadProgressDelegate
     var delegate : uploadProgressDelegate?
     var progressDictionary : NSMutableArray = NSMutableArray()
     var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
-
+    var checkThumb : Bool = false
     var taskIndex :  Int = 0
   var media : NSString = ""
     var videoPath : NSURL = NSURL()
@@ -93,7 +93,7 @@ protocol uploadProgressDelegate
         {
 //            for(var i = dummyImagesDataSourceDatabase.count-1 ; i > 0 ; --i)
 //            {
-            var i=0;
+            let i=0;
                 print( "checking count =-------- %d",i)
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -282,14 +282,14 @@ protocol uploadProgressDelegate
                             
                             if result == "Success"
                             {
-                                if self.checksDataSourceDatabase.count > 0
+                                if self.dummyImagesDataSourceDatabase.count > 0
                                 {
-                                    self.checksDataSourceDatabase.removeFirst()
+                                    self.dummyImagesDataSourceDatabase.removeFirst()
                                     
                                     
                                 }
                                 
-                                if  self.checksDataSourceDatabase.count == 0
+                                if  self.dummyImagesDataSourceDatabase.count == 0
                                 {
                                     self.dummyImagesDataSourceDatabase.removeAll()
                                     
@@ -428,6 +428,11 @@ protocol uploadProgressDelegate
                     let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
                     controller.uploadProgress(self.progressDictionary)
                 }
+                if PhotoViewerInstance.iphoneCam != nil
+                {
+                    let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+                    controller.uploadprogress(2.0)
+                }
                 if(self.media == "video")
                 {
                 let fileManager = NSFileManager.defaultManager()
@@ -460,7 +465,7 @@ protocol uploadProgressDelegate
         var dict = dummyImagesDataSourceDatabase[row]
         let  uploadImageThumb = dict[thumbImageKey]
         print(uploadImageThumb)
-        
+        checkThumb = true
         let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
         if(imageData == nil)
         {
@@ -481,7 +486,8 @@ protocol uploadProgressDelegate
                 let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
                 print("Parsed JSON for thumbanil: '\(jsonStr)'")
                 //    completion(result:"Success")
-                
+                let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+                controller.uploadprogress(1.0)
                 
             }
             // completion(result:"Success")
@@ -552,21 +558,25 @@ protocol uploadProgressDelegate
         progressDictionary[taskIndex] = uploadProgress
        // self.delegate?.uploadProgress(progressDictionary)
     [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
-       
+     
         
         if PhotoViewerInstance.controller != nil
         {
         let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
         controller.uploadProgress(progressDictionary)
         }
+        
+//        if PhotoViewerInstance.iphoneCam != nil
+//        {
+//           
+//            let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+//            controller.uploadprogress(uploadProgress)
+//          
+//        }
     //    let controller = PhotoViewerViewController.sharedInstance
 
      //   controller.uploadProgress(progressDictionary)
-       if uploadProgress == 1.0
-        {
-            
-            
-        }
+      
         
     }
     

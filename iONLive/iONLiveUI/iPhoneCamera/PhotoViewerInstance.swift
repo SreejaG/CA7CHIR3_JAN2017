@@ -8,8 +8,9 @@
 
 import UIKit
 
-class PhotoViewerInstance{
+@objc class PhotoViewerInstance : NSObject{
     static var controller: UIViewController?
+    static var iphoneCam : UIViewController?
 
 
 }

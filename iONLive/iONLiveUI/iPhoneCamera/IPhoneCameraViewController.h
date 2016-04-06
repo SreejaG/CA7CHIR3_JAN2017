@@ -14,6 +14,10 @@
 -(NSMutableDictionary *) displayIphoneCameraSnapShots ;
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
 -(void) deleteIphoneCameraSnapShots;
+-(void) uploadprogress:(float) progress;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *uploadActivityIndicator;
+@property (weak, nonatomic) IBOutlet UIProgressView *uploadProgressCameraView;
 
 @property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
 @end
