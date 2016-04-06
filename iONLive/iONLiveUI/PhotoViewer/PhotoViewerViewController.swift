@@ -39,7 +39,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var progressLabelDownload: UILabel?
     var loadingOverlay: UIView?
     var progressDict : NSMutableArray = NSMutableArray()
-    
+    var mediaSelected: NSMutableArray = NSMutableArray()
+
     var offset: String = "0"
     var offsetToInt = Int!()
     var totalMediaCount: Int = Int()
@@ -81,6 +82,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         initialise()
         getSignedURL()
         PhotoViewerInstance.controller = self
@@ -105,6 +107,92 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         //        let uploadVC = segue.destinationViewController as! upload
         //        uploadVC.delegate = self;
     }
+    
+   
+    @IBAction func deleteButtonAction(sender: AnyObject) {
+        
+        
+        print(selectedArray)
+        
+        for (var i = 0;i < selectedArray.count ;i++)
+        {
+            
+            if selectedArray[i] == 1
+            {
+                mediaSelected.addObject(mediaIdArray[i])
+            }
+        }
+        print(mediaSelected)
+        
+        if(mediaSelected.count > 0)
+        {
+            var channelIds : [Int] = [Int]()
+            
+            channelIds.append(channelDict["My Day"] as! Int)
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            showOverlay()
+            
+            imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: mediaSelected, channelId: channelIds, success: { (response) -> () in
+                self.authenticationSuccessHandlerDelete(response)
+                }, failure: { (error, message) -> () in
+                    self.authenticationFailureHandlerDelete(error, code: message)
+            })
+        }
+        
+    }
+    func authenticationSuccessHandlerDelete(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+//            offset = "0"
+//            offsetToInt = Int(offset)
+//            totalCount = 0
+//            totalMediaCount = totalMediaCount - selected.count
+//            
+//            if totalMediaCount > 6
+//            {
+//                fixedLimit = 6
+//            }
+//            else{
+//                fixedLimit = totalMediaCount
+//            }
+//            
+//            limit = fixedLimit
+            
+            dataSource.removeAll()
+            mediaSelected.removeAllObjects()
+            selectedArray.removeAll()
+            mediaTypeArray.removeAllObjects()
+            mediaDictionary.removeAllObjects()
+            longPressActive = false
+           // dummyImagesDataSource.removeAllObjects()
+            selectedCollectionViewIndex = 0
+    
+           getSignedURL()
+        }
+    }
+    
+    func authenticationFailureHandlerDelete(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+
     func  uploadProgress ( progressDictionary : NSMutableArray)
     {
         
@@ -300,13 +388,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
             if let index = indexPath {
                 let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
-                cell?.layer.borderWidth = 2.0
-                cell?.layer.borderColor = UIColor.blueColor().CGColor
+               // cell?.layer.borderWidth = 2.0
+               // cell?.layer.borderColor = UIColor.blueColor().CGColor
 //    
                 let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: "singleTap:")
                 singleTapImageViewRecognizer.numberOfTapsRequired = 1
                 cell!.addGestureRecognizer(singleTapImageViewRecognizer)
-          longPressActive = true
+                longPressActive = true
+
+                selectedArray[(indexPath?.row)!] = 1
+               photoThumpCollectionView.reloadData()
                 print(index.row)
             } else {
                 print("Could not find index path")
@@ -321,16 +412,30 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
                 cell?.layer.borderColor = UIColor.clearColor().CGColor
                 cell?.removeGestureRecognizer(Recognizer)
-                longPressActive = false;
+             //   longPressActive = false;
             }
         }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
-        let storyboard = UIStoryboard(name:"MyChannel" , bundle: nil)
-        let addChannelVC = storyboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        addChannelVC.navigationItem.backBarButtonItem = backItem
-        self.navigationController?.pushViewController(addChannelVC, animated: false)
+         mediaSelected.removeAllObjects()
+        for (var i = 0;i < selectedArray.count ;i++)
+        {
+            
+            if selectedArray[i] == 1
+            {
+                mediaSelected.addObject(mediaIdArray[i])
+            }
+        }
+        print(mediaSelected)
+        
+        if(mediaSelected.count > 0)
+        {
+        let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+        let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
+        addChannelVC.mediaDetailSelected = mediaSelected
+        addChannelVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(addChannelVC, animated: true)
+        }
     }
     func readImageFromDataBase()
     {
@@ -467,7 +572,30 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     cell.progressView.hidden = true
                     
                 }
-                
+                if(longPressActive)
+                {
+                    for var i = 0; i < selectedArray.count; i++
+                    {
+                        if indexPath.row == i
+                        {
+                            if selectedArray[i] == 1
+                            {
+                                            cell.layer.borderWidth = 2.0
+                                            cell.layer.borderColor = UIColor.blueColor().CGColor
+                            }
+                            else{
+                                cell.layer.borderWidth = 1.0
+                                cell.layer.borderColor = UIColor.clearColor().CGColor
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    cell.layer.borderWidth = 1.0
+                    cell.layer.borderColor = UIColor.clearColor().CGColor
+                }
                 [NSNotificationCenter.defaultCenter().addObserver(self, selector:"ProgresviewUpdate:", name:"MyNotification" , object:nil)]
             }
         }
@@ -481,8 +609,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
        
         if(!longPressActive)
         {
-            cell!.layer.borderWidth = 2.0
-            cell!.layer.borderColor = UIColor.blueColor().CGColor
+//            cell!.layer.borderWidth = 2.0
+//            cell!.layer.borderColor = UIColor.blueColor().CGColor
         if dataSource.count > indexPath.row
         {
             var dict = dataSource[indexPath.row]
@@ -517,9 +645,35 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
         else
         {
-            cell!.layer.borderWidth = 2.0
-            cell!.layer.borderColor = UIColor.blueColor().CGColor
+//            cell!.layer.borderWidth = 2.0
+//            cell!.layer.borderColor = UIColor.blueColor().CGColor
+            
+            for var i = 0;i < selectedArray.count; i++
+            {
+                
+                if i == indexPath.row
+                {
+                    if selectedArray[i] == 0
+                    {
+                        selectedArray[i] = 1
+                        
+                    }else{
+                        selectedArray[i] = 0
+                    }
+                }
+            }
+            if selectedArray.contains(1) {
+                print("yes its have")
+            }
+            else
+            {
+                print("no never")
+                longPressActive = false
+
+            }
+            
         }
+        photoThumpCollectionView.reloadData()
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
@@ -936,7 +1090,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
                 
-                mediaSharedCount = "20"            }
+                mediaSharedCount = "20"
+            }
 
             channelDict[channelName] = channelId
             
@@ -966,7 +1121,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
 //            }) { (error, message) -> () in
 //                self.authenticationFailureHandlerForFetchMedia(error, code: message)
 //        }
-        imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: "8", offset: "0", success: { (response) -> () in
+        imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: "20", offset: "0", success: { (response) -> () in
                         self.authenticationSuccessHandlerForFetchMedia(response)
                         }) { (error, message) -> () in
                             self.authenticationFailureHandlerForFetchMedia(error, code: message)

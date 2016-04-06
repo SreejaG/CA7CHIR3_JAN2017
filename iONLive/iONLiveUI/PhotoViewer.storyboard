@@ -80,6 +80,9 @@
                                         <state key="normal" title="Delete">
                                             <color key="titleColor" red="0.36078431372549019" green="0.41960784313725491" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="deleteButtonAction:" destination="Ayi-XJ-Ys0" eventType="touchUpInside" id="j2Q-cs-TNo"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fa-dd-16L">
                                         <rect key="frame" x="532" y="2" width="48" height="30"/>
