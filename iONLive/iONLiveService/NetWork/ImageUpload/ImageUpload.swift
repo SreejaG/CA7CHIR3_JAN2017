@@ -240,7 +240,8 @@ class ImageUpload: NSObject {
     //Add media to channel
     func addMediaToChannel(userName: String, accessToken: String, mediaIds: NSArray, channelId:NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
-        
+        print(channelId)
+        print(mediaIds)
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.MediaByChannelAPIUrl(userName, accessToken: accessToken), parameters: ["mediaId":mediaIds, "channelId":channelId], success: { (operation, response) -> Void in
             
