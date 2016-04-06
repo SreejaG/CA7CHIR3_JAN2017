@@ -20,6 +20,7 @@
 
 
 
+
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
 
@@ -91,8 +92,9 @@ NSMutableDictionary *ShotsDict;
         [self initialiseView];
     //   uploadMediaController *cnt = [[uploadMediaController alloc]init];
 //    [cnt upload];
-    
-    
+    [_uploadActivityIndicator setHidden:YES];
+    PhotoViewerInstance.iphoneCam = self;
+    [_uploadProgressCameraView setHidden:YES];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -180,6 +182,27 @@ NSMutableDictionary *ShotsDict;
     } );
     }
     }
+}
+-(void) uploadprogress :(float) progress
+{
+ 
+
+    [ self.thumbnailImageView setAlpha:1.0];
+    if (!_playiIconView.hidden)
+    {
+        [_playiIconView setAlpha:1.0];
+
+    }
+    [_uploadProgressCameraView setHidden:YES];
+    if (progress == 1.0 || progress == 1)
+    {
+        [_uploadActivityIndicator stopAnimating];
+        [_uploadActivityIndicator setHidden:YES];
+        [_uploadProgressCameraView setHidden:YES];
+        
+    }
+   // _uploadProgressCameraView.progress = progress;
+   
 }
 
 #pragma mark initialise View
@@ -454,8 +477,13 @@ NSMutableDictionary *ShotsDict;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSData *imageData = [[NSData alloc]init];
                     imageData = [self getThumbNail:outputFileURL];
+                    [_uploadActivityIndicator setHidden:NO];
+                    
+                    [_uploadActivityIndicator startAnimating];
                     self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                     [_playiIconView setHidden:NO];
+                    [ self.thumbnailImageView setAlpha:0.4];
+                    [_playiIconView setAlpha:0.4];
 
                     [self saveImage:imageData];
                     [self moveVideoToDocumentDirectory:outputFileURL];
@@ -620,6 +648,11 @@ NSMutableDictionary *ShotsDict;
                         
                         //create and show thumbnail
                         dispatch_async( dispatch_get_main_queue(), ^{
+                            [_uploadActivityIndicator setHidden:NO];
+
+                            [_uploadActivityIndicator startAnimating];
+                            [ self.thumbnailImageView setAlpha:0.4];
+
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             
                             [self saveImage:imageData];
@@ -770,6 +803,7 @@ NSMutableDictionary *ShotsDict;
 {
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     if (shutterActionMode == SnapCamSelectionModePhotos) {
+        [_playiIconView setHidden:YES];
         [self takePicture];
     }
     else if (shutterActionMode == SnapCamSelectionModeVideo)
@@ -948,7 +982,8 @@ NSMutableDictionary *ShotsDict;
     PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
     
     photoViewerViewController.snapShots = snapShotsDict;
-    
+  //  PhotoViewerViewController.ShotsDictionary =ShotsDict;
+    photoViewerViewController.ShotsDictionary =ShotsDict;
     
 
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
