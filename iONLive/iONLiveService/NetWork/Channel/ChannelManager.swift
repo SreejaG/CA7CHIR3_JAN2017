@@ -52,6 +52,7 @@ class ChannelManager: NSObject {
     
     func addChannelDetails(userName: String, accessToken: String, channelName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
+        print("\(userName) \(accessToken)  \(channelName)")
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.channelAPIUrl(), parameters: ["userName":userName, "access_token":accessToken, "channelName":channelName], success: { (operation, response) -> Void in
             

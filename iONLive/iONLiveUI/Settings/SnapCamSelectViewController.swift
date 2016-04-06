@@ -235,6 +235,7 @@ extension SnapCamSelectViewController
     //PRAGMA MARK:- LoadViews for each table Actions
     func loadLiveStreamView()
     {
+        //rtsp://192.168.42.1:554/live
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! MovieViewController
         clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
         let navigationController:UINavigationController = UINavigationController(rootViewController: vc)

@@ -10,24 +10,28 @@ import UIKit
 
 class ChannelItemListViewController: UIViewController {
     
+    var selectionFlag : Bool = false
+    var selected: NSMutableArray = NSMutableArray()
+    
+    
     static let identifier = "ChannelItemListViewController"
     @IBOutlet weak var channelTitleLabel: UILabel!
     @IBOutlet weak var channelItemCollectionView: UICollectionView!
     
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
-    var selectionFlag : Bool = false
+    
     var offset: String = "0"
     var offsetToInt = Int!()
     var totalMediaCount: Int = Int()
-    var deleteMediaIds : [Int] = [Int]()
+    
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelId:String!
     var channelName:String!
-    var dataSource:[String]?
     
-    var mediaSelected: NSMutableDictionary = NSMutableDictionary()
+    var selectedArray:[Int] = [Int]()
+   
     
     @IBOutlet var deleteButton: UIButton!
     @IBOutlet var addButton: UIButton!
@@ -41,8 +45,9 @@ class ChannelItemListViewController: UIViewController {
     let mediaIdKey = "mediaId"
     let selectionKey = "selection"
     
-    var limit : Int = 6
+    var limit : Int = Int()
     var totalCount: Int = 0
+    var fixedLimit : Int =  0
     
     var cellStatus: NSMutableDictionary = NSMutableDictionary()
     
@@ -50,11 +55,23 @@ class ChannelItemListViewController: UIViewController {
     {
         super.viewDidLoad()
         imageDataSource.removeAll()
+        selectedArray.removeAll()
+        selected.removeAllObjects()
         offsetToInt = Int(offset)
         deleteButton.hidden = true
         addButton.hidden = true
         cancelButton.hidden = true
         selectionFlag = false
+        
+        if totalMediaCount > 6
+        {
+            fixedLimit = 6
+        }
+        else{
+            fixedLimit = totalMediaCount
+        }
+        
+        limit = fixedLimit
         initialise()
     }
     
@@ -75,22 +92,26 @@ class ChannelItemListViewController: UIViewController {
         showOverlay()
         
         let offsetString : String = String(offsetToInt)
-        let fixedLimit : Int = 6
-        if limit < totalMediaCount
-        {
-            limit = totalMediaCount - limit
-            if limit > fixedLimit
-            {
-                limit = fixedLimit
-            }
-        }
-        totalCount = totalCount + limit
+        
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         }
         offsetToInt = offsetToInt! + 6
+        
+        if offsetToInt <= totalMediaCount
+        {
+            totalCount = totalMediaCount - offsetToInt
+            if totalCount > fixedLimit
+            {
+                limit = fixedLimit
+            }
+            else
+            {
+                limit = totalCount
+            }
+        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -114,7 +135,7 @@ class ChannelItemListViewController: UIViewController {
                 }
             }
             
-            if(totalMediaCount >= totalCount){
+            if(totalMediaCount >= offsetToInt){
                 initialise()
             }
             self.channelItemCollectionView.reloadData()
@@ -165,9 +186,10 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapAddtoButton(sender: AnyObject) {
+        print(selected)
         let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
-        addChannelVC.mediaDetailSelected = mediaSelected
+        addChannelVC.mediaDetailSelected = selected
         addChannelVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(addChannelVC, animated: true)
     }
@@ -184,6 +206,16 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapSelectionButton(sender: AnyObject) {
+        for index in self.channelItemCollectionView.indexPathsForSelectedItems()!
+        {
+            self.channelItemCollectionView.deselectItemAtIndexPath(index, animated: false)
+        }
+        selected.removeAllObjects()
+        selectedArray.removeAll()
+        
+        selectionFlag = true
+        self.channelItemCollectionView.allowsMultipleSelection = true
+        
         channelTitleLabel.text = "SELECT"
         cancelButton.hidden = false
         selectionButton.hidden = true
@@ -193,12 +225,12 @@ class ChannelItemListViewController: UIViewController {
         deleteButton.enabled = false
         addButton.enabled = false
         addButton.setTitle("Share", forState: .Normal)
-        mediaSelected.removeAllObjects()
-        selectionFlag = true
     }
     
     @IBAction func didTapCancelButton(sender: AnyObject) {
-        mediaSelected.removeAllObjects()
+        selected.removeAllObjects()
+        selectedArray.removeAll()
+        
         channelTitleLabel.text = channelName.uppercaseString
         cancelButton.hidden = true
         selectionButton.hidden = false
@@ -210,20 +242,17 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapDeleteButton(sender: AnyObject) {
-        
+         print(selected)
         var channelIds : [Int] = [Int]()
-        if(mediaSelected.count > 0){
-            for(key,_) in mediaSelected{
-                deleteMediaIds.append(Int(key as! String)!)
-            }
+        if(selected.count > 0){
             channelIds.append(Int(channelId)!)
-            print(deleteMediaIds)
+            
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             showOverlay()
             
-            imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: deleteMediaIds, channelId: channelIds, success: { (response) -> () in
+            imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: selected, channelId: channelIds, success: { (response) -> () in
                 self.authenticationSuccessHandlerDelete(response)
                 }, failure: { (error, message) -> () in
                     self.authenticationFailureHandlerDelete(error, code: message)
@@ -239,10 +268,22 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             offset = "0"
-            offsetToInt = 0
-            totalMediaCount = totalMediaCount - mediaSelected.count
+            offsetToInt = Int(offset)
+            totalCount = 0
+            totalMediaCount = totalMediaCount - selected.count
+            
+            if totalMediaCount > 6
+            {
+                fixedLimit = 6
+            }
+            else{
+                fixedLimit = totalMediaCount
+            }
+            
+            limit = fixedLimit
+            
             imageDataSource.removeAll()
-            mediaSelected.removeAllObjects()
+            selected.removeAllObjects()
             selectionFlag = false
             initialise()
             channelTitleLabel.text = channelName.uppercaseString
@@ -291,30 +332,61 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(ChannelItemListCollectionViewCell.identifier, forIndexPath: indexPath) as! ChannelItemListCollectionViewCell
         
-       collectionView.allowsMultipleSelection = true
-        
-        if(selectionFlag){
-            
-            
-            if(cell.selected){
-                cell.selectionView.hidden = false
-            }
-            else{
-                cell.selectionView.hidden = true
-            }
-        }
-        else{
-            cell.selectionView.hidden = true
-        }
+        cell.selectionView.alpha = 0.4
+        cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         
         if imageDataSource.count > 0
         {
+            if(imageDataSource.count == selectedArray.count){
+            }
+            else{
+                selectedArray.append(0)
+            }
+            
+            let channelItemImageView = cell.viewWithTag(100) as! UIImageView
             let imageData =  imageDataSource[indexPath.row][mediaUrlKey] as! NSData
-            cell.channelItemImageView.image = UIImage(data: imageData)
+            channelItemImageView.image = UIImage(data: imageData)
+        
+            if(selectionFlag){
+                for var i = 0; i < selectedArray.count; i++
+                {
+                    let selectedValue: String = imageDataSource[i][mediaIdKey] as! String
+                    if indexPath.row == i
+                    {
+                        if selectedArray[i] == 1
+                        {
+                            cell.selectionView.hidden = false
+                            cell.insertSubview(cell.selectionView, aboveSubview: cell.channelItemImageView)
+                            if(selected.containsObject(Int(selectedValue)!)){
+                                
+                            }
+                            else{
+                                selected.addObject(Int(selectedValue)!)
+                            }
+                        }
+                        else{
+                            cell.selectionView.hidden = true
+                            cell.insertSubview(cell.channelItemImageView, aboveSubview: cell.selectionView)
+                            if(selected.containsObject(Int(selectedValue)!)){
+                                 selected.removeObject(Int(selectedValue)!)
+                            }
+                            else{
+                               
+                            }
+                           
+                        }
+                    }
+                }
+                print(selected)
+                
+            }
+            else{
+                  cell.selectionView.hidden = true
+            }
         }
-        cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         return cell
     }
+    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
@@ -333,6 +405,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
     }
     
+    
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if(selectionFlag){
             deleteButton.setTitleColor(UIColor.redColor(), forState: UIControlState.Normal)
@@ -340,33 +414,23 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             addButton.enabled = true
             addButton.setTitle("Add to", forState: .Normal)
            
-            let cell = channelItemCollectionView.cellForItemAtIndexPath(indexPath) as! ChannelItemListCollectionViewCell
-            cell.selectionView.alpha = 0.4
-            cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
-            cell.insertSubview(cell.selectionView, aboveSubview: cell.channelItemImageView)
-            
-            cell.selected = true
-            
-            cell.reloadInputViews()
-            cell.selectionView.hidden = false
-            
-            let id: String = imageDataSource[indexPath.row][mediaIdKey]! as! String
-            mediaSelected.setValue(String(indexPath.row), forKey: id)
+           
+            for var i = 0;i < selectedArray.count; i++
+            {
+              
+                if i == indexPath.row
+                {
+                    if selectedArray[i] == 0
+                    {
+                        selectedArray[i] = 1
+                       
+                    }else{
+                         selectedArray[i] = 0
+                    }
+                }
+            }
+        collectionView.reloadData()
         }
+       
     }
-    
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = channelItemCollectionView.cellForItemAtIndexPath(indexPath) as! ChannelItemListCollectionViewCell
-        cell.selected = false
-        cell.reloadInputViews()
-        cell.selectionView.hidden = true
-        let id: String = imageDataSource[indexPath.row][mediaIdKey]! as! String
-        mediaSelected.removeObjectForKey(id)
-        
-    }
-    
-    func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    
 }
