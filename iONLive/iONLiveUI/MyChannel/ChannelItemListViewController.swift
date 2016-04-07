@@ -49,8 +49,6 @@ class ChannelItemListViewController: UIViewController {
     var totalCount: Int = 0
     var fixedLimit : Int =  0
     
-    var cellStatus: NSMutableDictionary = NSMutableDictionary()
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -120,25 +118,28 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
+            var imageDetails = UIImage?()
             for var index = 0; index < responseArr.count; index++
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
+                print(mediaId)
+                print(mediaType)
                 if(mediaUrl != "")
                 {
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     let data = NSData(contentsOfURL: url)
                     if let imageData = data as NSData? {
-                        imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:imageData, mediaTypeKey:mediaType])
+                       imageDetails = UIImage(data: imageData)
                     }
                 }
+                 imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:imageDetails!, mediaTypeKey:mediaType])
             }
-            
-            if(totalMediaCount >= offsetToInt){
-                initialise()
-            }
-            self.channelItemCollectionView.reloadData()
+                if(totalMediaCount >= offsetToInt){
+                    self.initialise()
+                }
+                 channelItemCollectionView.reloadData()
         }
         else
         {
@@ -333,6 +334,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         
         cell.selectionView.alpha = 0.4
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
+        
         cell.videoView.alpha = 0.4
         if imageDataSource.count > 0
         {
@@ -341,26 +343,26 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             else{
                 selectedArray.append(0)
             }
-            
-            let channelItemImageView = cell.viewWithTag(100) as! UIImageView
-            let imageData =  imageDataSource[indexPath.row][mediaUrlKey] as! NSData
-            channelItemImageView.image = UIImage(data: imageData)
-            
+           
             let mediaType = imageDataSource[indexPath.row][mediaTypeKey] as! String
-            print(mediaType)
-            
-            cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
-            
+            let channelItemImageView = cell.viewWithTag(100) as! UIImageView
+            let imageData =  imageDataSource[indexPath.row][mediaUrlKey] as! UIImage
+           
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
-         
+                let imageToConvert: UIImage = imageData
+                let sizeThumb = CGSizeMake(150, 150)
+                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                  channelItemImageView.image = imageAfterConversionThumbnail
             }
             else{
                 cell.videoView.hidden = true
-             
+                channelItemImageView.image = imageData
             }
-        
+          
+            cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
+            
             if(selectionFlag){
                 for var i = 0; i < selectedArray.count; i++
                 {

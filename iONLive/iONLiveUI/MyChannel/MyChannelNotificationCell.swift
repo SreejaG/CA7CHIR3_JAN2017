@@ -9,12 +9,13 @@
 import UIKit
 
 class MyChannelNotificationCell: UITableViewCell {
-    static let identifier = "MyChannelNotificationCell"
-    @IBOutlet var NotificationSenderImageView: UIImageView!
-
-    @IBOutlet var notificationText: UILabel!
     
+    static let identifier = "MyChannelNotificationCell"
+    
+    @IBOutlet var NotificationSenderImageView: UIImageView!
+    @IBOutlet var notificationText: UILabel!
     @IBOutlet var NotificationImage: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         

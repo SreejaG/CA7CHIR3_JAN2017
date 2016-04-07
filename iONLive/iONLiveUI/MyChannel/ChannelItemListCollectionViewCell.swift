@@ -19,8 +19,7 @@ class ChannelItemListCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        // Initialization code
+        videoPlayIcon.center = videoView.center
     }
     
   
