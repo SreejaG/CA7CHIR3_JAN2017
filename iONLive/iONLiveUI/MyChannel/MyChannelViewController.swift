@@ -30,6 +30,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     @IBOutlet var tableviewBottomConstraint: NSLayoutConstraint!
     var gestureRecognizer = UIGestureRecognizer()
     
+    var notificationFlag : Bool?
+    
     var sortedDataSource = NSArray!()
     
     var loadingOverlay: UIView?
@@ -202,6 +204,11 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     func initialise()
     {
+        if((notificationFlag) != nil){
+            if(notificationFlag == true){
+                
+            }
+        }
         channelDetailsDict.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -248,6 +255,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
             print(channelDetailsDict)
+            print(channelDetailsDict)
             setChannelDetails()
         }
         else
@@ -275,7 +283,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func setChannelDetails()
     {
         dataSource.removeAll()
-        var imageDetailsData : NSData = NSData()
+        var imageDetails : UIImage?
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
@@ -286,10 +294,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
                 if let data = NSData(contentsOfURL: url){
-                    imageDetailsData = (data as NSData?)!
+                  let imageDetailsData = (data as NSData?)!
+                    imageDetails = UIImage(data: imageDetailsData)
                 }
             }
-            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetailsData])
+            else{
+                 imageDetails = UIImage(named: "thumb12")
+            }
+            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
         }
         
         dataSource.sortInPlace({ p1, p2 in
@@ -474,7 +486,7 @@ extension MyChannelViewController:UITableViewDataSource
             cell.channelItemCount.text = dataSourceTmp![indexPath.row][channelItemCountKey] as? String
             if let imageData =  dataSourceTmp![indexPath.row][channelHeadImageNameKey]
             {
-                cell.channelHeadImageView.image = UIImage(data: imageData as! NSData)
+                cell.channelHeadImageView.image = imageData as? UIImage
             }
             if(dataSourceTmp![indexPath.row][channelItemCountKey] as! String == "0"){
                  cell.channelHeadImageView.image = UIImage(named: "thumb12")

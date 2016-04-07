@@ -20,10 +20,18 @@ class AddChannelViewController: UIViewController {
     var userId : String!
     var accessToken : String!
     
+    @IBOutlet var doneButton: UIButton!
+    
+    @IBOutlet var shareButton: UIButton!
+    
+    
+    @IBOutlet var addToChannelTitleLabel: UILabel!
+    
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
+    var shareFlag : Bool = false
     var loadingOverlay: UIView?
     
     let channelNameKey = "channelName"
@@ -55,6 +63,7 @@ class AddChannelViewController: UIViewController {
    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        addToChannelTitleLabel.text = "ADD TO CHANNEL"
         addKeyboardObservers()
     }
     
@@ -68,6 +77,10 @@ class AddChannelViewController: UIViewController {
         channelDetailsDict.removeAll()
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
+        
+        doneButton.hidden = true
+        shareFlag = false
+        addToChannelTitleLabel.text = "ADD TO CHANNEL"
         
         let defaults = NSUserDefaults.standardUserDefaults()
         userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -169,6 +182,12 @@ class AddChannelViewController: UIViewController {
         removeOverlay()
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
+        if(shareFlag){
+            shareFlag = false
+            shareButton.hidden = false
+            doneButton.hidden = true
+            addToChannelTitleLabel.text = "ADD TO CHANNEL"
+        }
         if let json = response as? [String: AnyObject]
         {
             channelDetailsDict.removeAll()
@@ -191,7 +210,7 @@ class AddChannelViewController: UIViewController {
     func setChannelDetails()
     {
         dataSource.removeAll()
-        var imageDetailsData : NSData = NSData()
+        var imageDetails  = UIImage?()
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
@@ -203,9 +222,14 @@ class AddChannelViewController: UIViewController {
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
                 let data = NSData(contentsOfURL: url)
-                imageDetailsData = (data as NSData?)!
+                if let imageData = data as NSData? {
+                    imageDetails = UIImage(data: imageData)
+                }
             }
-            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetailsData])
+            else{
+                imageDetails = UIImage(named: "thumb12")
+            }
+            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
         }
         
         dataSource.sortInPlace({ p1, p2 in
@@ -257,10 +281,23 @@ class AddChannelViewController: UIViewController {
   
     
     @IBAction func didTapShareButton(sender: AnyObject) {
+        shareFlag = true
+        doneButton.hidden = false
+        shareButton.hidden = true
+        addToChannelTitleLabel.text = "SHARE"
+    }
+    
+    
+    @IBAction func didTapDoneButton(sender: AnyObject) {
+        
         if channelSelected.count > 0
         {
             addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
         }
+//        let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+//        let channelVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+//        channelVC.navigationController?.navigationBarHidden = true
+//        self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
     func addMediaToChannels(channelIds:NSArray, mediaIds:NSArray){
@@ -279,7 +316,7 @@ class AddChannelViewController: UIViewController {
     func authenticationSuccessHandlerAdd(response:AnyObject?)
     {
         removeOverlay()
-    
+       
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
@@ -339,8 +376,11 @@ extension AddChannelViewController:UITableViewDataSource
             cell.addChannelCountLabel.text = dataSource[indexPath.row][channelItemCountKey] as? String
             if let imageData =  dataSource[indexPath.row][channelHeadImageNameKey]
             {
-                cell.addChannelImageView.image = UIImage(data: imageData as! NSData)
+                cell.addChannelImageView.image = imageData as! UIImage
             }
+//            else{
+//                 cell.addChannelImageView.image = UIImage(named: "thumb12")
+//            }
             if(dataSource[indexPath.row][channelItemCountKey] as! String == "0"){
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
@@ -384,21 +424,32 @@ extension AddChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        for var i = 0;i < selectedArray.count; i++
-        {
-            
-            if i == indexPath.row
+        if(shareFlag){
+            for var i = 0;i < selectedArray.count; i++
             {
-                if selectedArray[i] == 0
+            
+                if i == indexPath.row
                 {
-                    selectedArray[i] = 1
+                    if selectedArray[i] == 0
+                    {
+                        selectedArray[i] = 1
                     
-                }else{
-                    selectedArray[i] = 0
+                    }else{
+                        selectedArray[i] = 0
+                    }
                 }
             }
+            tableView.reloadData()
         }
-        tableView.reloadData()
+        else{
+//            let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+//            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
+//            channelItemListVC.channelId = dataSource[indexPath.row][channelIdKey] as! String
+//            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
+//            channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][channelItemCountKey]! as! String)!
+//            channelItemListVC.navigationController?.navigationBarHidden = true
+//            self.navigationController?.pushViewController(channelItemListVC, animated: true)
+        }
     }
 
 }

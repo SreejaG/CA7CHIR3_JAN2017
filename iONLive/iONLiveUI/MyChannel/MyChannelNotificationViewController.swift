@@ -10,221 +10,212 @@ import UIKit
 
 
 class MyChannelNotificationViewController: UIViewController {
-
-    static let identifier = "MyChannelNotificationViewController"
-    var dataSource:[[String:String]] = [[String:String]]()
-    let channelNameKey = "channelName"
-    let channelShareCountKey = "channelShareCount"
-    let channelSelectionKey = "channelSelection"
     
-    let channelSubscribedUser="subscriber_user_id"
-    let channelNotificationTyp="notification_type"
-    let channelNotificationComment="comment"
-    var shadowLayer: CAShapeLayer!
-    let channelManager = ChannelManager.sharedInstance
-    let requestManager = RequestManager.sharedInstance
-    var loadingOverlay: UIView?
-    var channelDetails: NSMutableArray = NSMutableArray()
-    let userDict: NSMutableDictionary = NSMutableDictionary()
-
+    static let identifier = "MyChannelNotificationViewController"
+    
     @IBOutlet var triangleView: UIImageView!
     @IBOutlet var NotificationLabelView: UIView!
     @IBOutlet var NotificationTableView: UITableView!
+    
+    let channelManager = ChannelManager.sharedInstance
+    let requestManager = RequestManager.sharedInstance
+    
+    var loadingOverlay: UIView?
+    
+    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    
+    let usernameKey = "userName"
+    let profileImageKey = "profileImage"
+    let notificationTypeKey = "notificationType"
+    let mediaTypeKey = "mediaType"
+    let mediaImageKey = "mediaImage"
+    let messageKey = "message"
+    
+    var tapFlag : Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-      //  createDummyDataSource()
-createChannelNotificationDataSource()
-        roundViewCorner()
-        // Do any additional setup after loading the view.
+        initialise()
     }
-
-    @IBOutlet var triangleViewRight: UIImageView!
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    func roundViewCorner()
-    {
+    
+    
+    @IBAction func didTapNotificationButton(sender: AnyObject) {
+        if(tapFlag){
+            let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
+            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+            channelVC.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(channelVC, animated: true)
+        }
+    }
+    
+    func initialise(){
         NotificationTableView.layer.cornerRadius=10
-        //drawLeftTriangle(triangleView.bounds)
+        tapFlag = false
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        getNotificationDetails(userId, token: accessToken)
     }
-    func createDummyDataSource()
+    
+    func getNotificationDetails(userName: String, token: String)
     {
-        dataSource = [[channelNameKey:"My Day",channelShareCountKey:"9",channelSelectionKey:"0"],[channelNameKey:"Work stuff",channelShareCountKey:"5",channelSelectionKey:"0"],[channelNameKey:"Ideas",channelShareCountKey:"8",channelSelectionKey:"0"]]
+        showOverlay()
+        channelManager.getMediaInteractionDetails(userName, accessToken: token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response)
+            
+            }) { (error, message) -> () in
+                self.authenticationFailureHandler(error, code: message)
+                
+        }}
+    
+    //Loading Overlay Methods
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
-    /*
-    // MARK: - Navigation
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+    
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
+    func authenticationSuccessHandler(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let responseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
+            print(responseArr)
+            
+            var mediaImage : UIImage?
+            var profileImage : UIImage?
+            for element in responseArr{
+                let username = element["user_name"] as! String
+                let notifType = element["notification_type"] as! String
+                let mediaType = element["gcs_object_type"] as! String
+                let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)"
+                
+                let mediaThumbUrl = element["thumbnail_name_SignedUrl"] as! String
+               
+                if(mediaThumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(mediaThumbUrl)
+                    if let mediaData = NSData(contentsOfURL: url){
+                       let mediaImageData = (mediaData as NSData?)!
+                        mediaImage = UIImage(data: mediaImageData)
+                    }
+                }
+                else{
+                    mediaImage = UIImage(named: "thumb12")
+                }
+                let profileImageName = element["profile_image"]
+                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                {
+                    var bytes:[UInt8] = []
+                    for serverByte in imageByteArray {
+                        bytes.append(UInt8(serverByte as! UInt))
+                    }
+                    
+                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                        let profileImageData = profileData as NSData?
+                        profileImage = UIImage(data: profileImageData!)
+                    }
+                }
+                else{
+                    profileImage = UIImage(named: "girlFace1")
+                }
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+               dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!])
+
+            }
+            
+            tapFlag = true
+            NotificationTableView.reloadData()
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
     }
-    */
+ 
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
 }
 
-
-
-    extension MyChannelNotificationViewController: UITableViewDelegate
+extension MyChannelNotificationViewController: UITableViewDelegate
+{
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
-        func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+        return 55.0
+    }
+    
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    {
+        return 0.01   // to avoid extra blank lines
+    }
+}
+
+extension MyChannelNotificationViewController:UITableViewDataSource
+{
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        if dataSource.count > 0
         {
-            return 55.0
+            return dataSource.count
         }
-        
-        func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+        else
         {
-            return 0.01   // to avoid extra blank lines
+            return 0
         }
     }
     
-    
-    extension MyChannelNotificationViewController:UITableViewDataSource
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+        if dataSource.count > indexPath.row
         {
-            if dataSource.count > 0
-            {
-                return dataSource.count
-                
-            }
-            else
-            {
-                return 0
-            }
+            let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
+            
+            cell.notificationText.text = dataSource[indexPath.row][messageKey] as? String
+            cell.NotificationSenderImageView.image = dataSource[indexPath.row][profileImageKey] as? UIImage
+            cell.NotificationImage.image = dataSource[indexPath.row][mediaImageKey] as? UIImage
+            cell.selectionStyle = .None
+            return cell
         }
         
-        func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-        {
-            if dataSource.count > indexPath.row
-            {
-                let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
-                
-                    cell.notificationText.text = dataSource[indexPath.row][channelNotificationComment]
-
-                        cell.NotificationSenderImageView.image = UIImage(named: "boyFace")
-                cell.NotificationImage.image = UIImage(named: "boyFace")
-                
-                cell.selectionStyle = .None
-                return cell
-            }
-            return UITableViewCell()
-        }
+        return UITableViewCell()
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    {
         
-        func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-        {
-           
-        }
-        func drawLeftTriangle(rect: CGRect) {
-            
-            // Get Height and Width
-            let layerHeight = triangleView.layer.frame.height
-            let layerWidth = triangleView.layer.frame.width
-            
-            // Create Path
-            let bezierPath = UIBezierPath()
-            
-            // Draw Points
-            bezierPath.moveToPoint(CGPointMake(0, layerHeight))
-            bezierPath.addLineToPoint(CGPointMake(layerWidth, layerHeight))
-            bezierPath.addLineToPoint(CGPointMake(layerHeight, 0))
-            bezierPath.addLineToPoint(CGPointMake(0, layerHeight))
-            bezierPath.closePath()
-            
-            // Apply Color
-            UIColor.greenColor().setFill()
-            bezierPath.fill()
-            
-            // Mask to Path
-            let shapeLayer = CAShapeLayer()
-            shapeLayer.path = bezierPath.CGPath
-            triangleView.layer.mask = shapeLayer
-            
-        }
-        
-        func createChannelNotificationDataSource()
-        {
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            getChannelDetails(userId, token: accessToken)
-        }
-        func getChannelDetails(userName: String, token: String)
-        {
-            showOverlay()
-            channelManager.getMediaInteractionDetails(userName, accessToken: token, success: { (response) -> () in
-                self.authenticationSuccessHandler(response)
-
-                }) { (error, message) -> () in
-                    self.authenticationFailureHandler(error, code: message)
-
-            }}
-        //Loading Overlay Methods
-        func showOverlay(){
-            let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-            loadingOverlayController.view.frame = self.view.bounds
-            loadingOverlayController.startLoading()
-            self.loadingOverlay = loadingOverlayController.view
-            self.navigationController?.view.addSubview(self.loadingOverlay!)
-        }
-        func authenticationSuccessHandler(response:AnyObject?)
-        {
-            removeOverlay()
-            if let json = response as? [String: AnyObject]
-            {
-                print(json)
-             //   channelDetails = json["notification Details"] as! NSMutableArray
-                let responseArr = json["notification Details"] as! [AnyObject]
-                
-                for element in responseArr{
-                    userDict.setDictionary(element as! [NSObject : AnyObject])
-                }
-               
-                print(userDict)
-                setChannelDetails()
-            }
-            else
-            {
-                ErrorManager.sharedInstance.inValidResponseError()
-            }
-        }
-        func removeOverlay(){
-            self.loadingOverlay?.removeFromSuperview()
-        }
-        func setChannelDetails()
-        {
-            for var index = 0; index < channelDetails.count; index++
-            {
-              //  let channelName = userDict[index].valueForKey("channel_name") as! String
-                let channelSubscriberid = userDict["media_detail_id"] as! String
-                let channelSubscribComment = userDict["comment"] as! String
-                //            let totalMediaShared = channelDetails[index].valueForKey("total_no_media_shared") as! String
-                //            let channelImageName = channelDetails[index].valueForKey("thumbnail_name") as! String
-                
-                //            dataSource.append([channelNameKey:channelName, channelShareCountKey:"8", channelSelectionKey:"thumb9"])
-                dataSource.append([channelSubscribedUser:channelSubscriberid, channelNotificationComment:channelSubscribComment, channelSelectionKey:"thumb9"])
-            }
-            
-            
-           
-            NotificationTableView.reloadData()
-            
-        }
-        func authenticationFailureHandler(error: NSError?, code: String)
-        {
-            self.removeOverlay()
-            print("message = \(code) andError = \(error?.localizedDescription) ")
-            
-            if !self.requestManager.validConnection() {
-                ErrorManager.sharedInstance.noNetworkConnection()
-            }
-            else if code.isEmpty == false {
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            }
-            else{
-                ErrorManager.sharedInstance.inValidResponseError()
-            }
-        }
-        
-
+    }
+    
 }

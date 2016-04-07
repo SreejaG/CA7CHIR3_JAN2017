@@ -185,6 +185,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         print(userInfo)
+        var navigationController:UINavigationController?
+        let notificationStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
+        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
+        navigationController = UINavigationController(rootViewController: notificationViewController)
+        navigationController!.navigationBarHidden = true
+        
+        self.window!.rootViewController = navigationController
     }
     
     //Called if unable to register for APNS.
