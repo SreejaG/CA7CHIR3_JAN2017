@@ -24,5 +24,10 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     progressView.progress = value
 
     }
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        progressView.transform = CGAffineTransformScale(progressView.transform, 1,3)
+        // Initialization code
+    }
   
 }

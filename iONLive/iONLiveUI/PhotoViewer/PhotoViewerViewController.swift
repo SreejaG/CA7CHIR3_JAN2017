@@ -1355,12 +1355,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if(!scrolled)
         {
             for var i = limitMediaCount ; i <= currentLimit  ; i++ {
+                print(i)
+                print(currentLimit)
+                print(thumbLinkArray.count)
+                if(thumbLinkArray.count-1 >= i)
+                {
                 let downloadURL =  self.convertStringtoURL(self.thumbLinkArray[i] as! String)
                 print("Not scrolled %d",i)
-
                 downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
-                    let imgData: NSData = UIImageJPEGRepresentation(result, 0)!
-                    print("Size of Image: \(imgData.length) bytes")
                     dummyImagesDataSource.append([self.thumbImageKey:result,self.fullImageKey:result])
                 
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -1372,6 +1374,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     
                 
                 })
+                }
             }
         }
         else
@@ -1388,9 +1391,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 let downloadURL =  self.convertStringtoURL(self.thumbLinkArray[i] as! String)
                 
                 downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
-                    
-                    let imgData: NSData = UIImageJPEGRepresentation(result, 0)!
-                    print("Size of Image scrolled: \(imgData.length) bytes")
                     dummyImagesDataSource.append([self.thumbImageKey:result,self.fullImageKey:result])
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
