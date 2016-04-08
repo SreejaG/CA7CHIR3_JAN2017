@@ -106,7 +106,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {
-                    self.downloadCloudData(20, scrolled: true)
+                    self.downloadCloudData(15, scrolled: true)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                        // self.photoThumpCollectionView.reloadData()
@@ -250,12 +250,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         
         progressDict = progressDictionary
-        
-        
-        
         self.photoThumpCollectionView.reloadData();
         // }
-        print(progressDictionary)
         
     }
     func getSignedURL()
@@ -1292,7 +1288,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 })
             }
             
-            downloadCloudData(20, scrolled: false)
+            downloadCloudData(15, scrolled: false)
        
             
         }
@@ -1342,7 +1338,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 limitMediaCount = 1
             }
-            currentLimit = currentLimit + 20
+            currentLimit = currentLimit + 15
 
         }
         else if(currentLimit == thumbLinkArray.count)
