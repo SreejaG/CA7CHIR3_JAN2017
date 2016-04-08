@@ -276,7 +276,12 @@ protocol uploadProgressDelegate
                     // NSData *movieData = [NSData dataWithContentsOfURL:videoPath];
                     if ((videoPath.path?.isEmpty) != nil)
                     {
-                        imageData = NSData(contentsOfURL: videoPath)!
+                        if let imageDatadup = NSData(contentsOfURL: videoPath){
+                            imageData = imageDatadup
+                        }
+                        else{
+                            return
+                        }
 
                     }
                     else
