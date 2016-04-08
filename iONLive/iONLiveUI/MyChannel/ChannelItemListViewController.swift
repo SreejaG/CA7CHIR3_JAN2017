@@ -27,11 +27,12 @@ class ChannelItemListViewController: UIViewController {
     
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelId:String!
     var channelName:String!
     
     var selectedArray:[Int] = [Int]()
-   
+    
     
     @IBOutlet var deleteButton: UIButton!
     @IBOutlet var addButton: UIButton!
@@ -49,10 +50,15 @@ class ChannelItemListViewController: UIViewController {
     var totalCount: Int = 0
     var fixedLimit : Int =  0
     
+    var isLimitReached : Bool = true
+    var currentLimit : Int = 0
+    var limitMediaCount : Int = Int()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         imageDataSource.removeAll()
+        fullImageDataSource.removeAll()
         selectedArray.removeAll()
         selected.removeAllObjects()
         offsetToInt = Int(offset)
@@ -69,7 +75,9 @@ class ChannelItemListViewController: UIViewController {
             fixedLimit = totalMediaCount
         }
         
-        limit = fixedLimit
+        //  limit = fixedLimit
+        
+        limit = totalMediaCount
         initialise()
     }
     
@@ -96,20 +104,35 @@ class ChannelItemListViewController: UIViewController {
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         }
-        offsetToInt = offsetToInt! + 6
         
-        if offsetToInt <= totalMediaCount
-        {
-            totalCount = totalMediaCount - offsetToInt
-            if totalCount > fixedLimit
-            {
-                limit = fixedLimit
-            }
-            else
-            {
-                limit = totalCount
-            }
-        }
+        
+        //        offsetToInt = offsetToInt! + 6
+        //
+        //        if offsetToInt <= totalMediaCount
+        //        {
+        //            totalCount = totalMediaCount - offsetToInt
+        //            if totalCount > fixedLimit
+        //            {
+        //                limit = fixedLimit
+        //            }
+        //            else
+        //            {
+        //                limit = totalCount
+        //            }
+        //        }
+    }
+    
+    //Loading Overlay Methods
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -118,28 +141,15 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
-            var imageDetails = UIImage?()
             for var index = 0; index < responseArr.count; index++
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                print(mediaId)
-                print(mediaType)
-                if(mediaUrl != "")
-                {
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    let data = NSData(contentsOfURL: url)
-                    if let imageData = data as NSData? {
-                       imageDetails = UIImage(data: imageData)
-                    }
-                }
-                 imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:imageDetails!, mediaTypeKey:mediaType])
+                imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
-                if(totalMediaCount >= offsetToInt){
-                    self.initialise()
-                }
-                 channelItemCollectionView.reloadData()
+            
+            downloadCloudData(15, scrolled: false)
         }
         else
         {
@@ -149,7 +159,7 @@ class ChannelItemListViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        removeOverlay()
         if(offsetToInt <= totalMediaCount){
             print("message = \(code) andError = \(error?.localizedDescription) ")
             
@@ -165,17 +175,74 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    //Loading Overlay Methods
-    func showOverlay(){
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
-        loadingOverlayController.startLoading()
-        self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
     }
     
-    func removeOverlay(){
-        self.loadingOverlay?.removeFromSuperview()
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    {
+        var mediaImage : UIImage = UIImage()
+        let data = NSData(contentsOfURL: downloadURL)
+        if let imageData = data as NSData? {
+            if let mediaImage1 = UIImage(data: imageData)
+            {
+                mediaImage = mediaImage1
+            }
+            completion(result: UIImage(data: imageData)!)
+        }
+        else
+        {
+            print("null Image")
+            completion(result:mediaImage)
+        }
+    }
+    
+    func downloadCloudData(limitMedia : Int , scrolled : Bool)
+    {
+      
+        if(imageDataSource.count <  (currentLimit +  limitMedia))
+        {
+            limitMediaCount = currentLimit
+            currentLimit = currentLimit + (imageDataSource.count - currentLimit)
+            isLimitReached = false
+        }
+        else if (imageDataSource.count > (currentLimit +  limitMedia))
+        {
+            limitMediaCount = currentLimit
+            let count = imageDataSource.count - currentLimit
+            if count > 15
+            {
+                currentLimit = currentLimit + 15
+            }
+            else{
+                currentLimit = currentLimit + count
+            }
+            isLimitReached = true
+        }
+        else if(currentLimit == imageDataSource.count)
+        {
+            isLimitReached = false
+            return
+        }
+        
+        for var i = limitMediaCount ; i < currentLimit  ; i++ {
+            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+            if(mediaUrl != ""){
+                let url: NSURL = convertStringtoURL(mediaUrl)
+                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+                    
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.channelItemCollectionView.reloadData()
+                    })
+                })
+                
+            }
+        }
     }
     
     @IBAction func didTapBackButton(sender: AnyObject)
@@ -198,18 +265,9 @@ class ChannelItemListViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    func convertStringtoURL(url : String) -> NSURL
-    {
-        let url : NSString = url
-        let searchURL : NSURL = NSURL(string: url as String)!
-        return searchURL
-    }
+    
     
     @IBAction func didTapSelectionButton(sender: AnyObject) {
-//        for index in self.channelItemCollectionView.indexPathsForSelectedItems()!
-//        {
-//            self.channelItemCollectionView.deselectItemAtIndexPath(index, animated: false)
-//        }
         selected.removeAllObjects()
         selectedArray.removeAll()
         
@@ -272,19 +330,25 @@ class ChannelItemListViewController: UIViewController {
             totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
             
-            if totalMediaCount > 6
-            {
-                fixedLimit = 6
-            }
-            else{
-                fixedLimit = totalMediaCount
-            }
+//            if totalMediaCount > 6
+//            {
+//                fixedLimit = 6
+//            }
+//            else{
+//                fixedLimit = totalMediaCount
+//            }
             
-            limit = fixedLimit
-            
+            limit = totalMediaCount
+           
             imageDataSource.removeAll()
+            fullImageDataSource.removeAll()
             selected.removeAllObjects()
             selectionFlag = false
+            
+            limitMediaCount = 0
+            currentLimit = 0
+            isLimitReached = true
+            
             initialise()
             channelTitleLabel.text = channelName.uppercaseString
             cancelButton.hidden = true
@@ -314,13 +378,49 @@ class ChannelItemListViewController: UIViewController {
     
 }
 
+extension ChannelItemListViewController : UIScrollViewDelegate{
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let fullyScrolledContentOffset:CGFloat = channelItemCollectionView.frame.size.width
+        
+        if (scrollView.contentOffset.x >= fullyScrolledContentOffset)
+        {
+            if(scrollView.contentOffset.x == fullyScrolledContentOffset)
+            {
+                print("End of scroll view")
+                
+            }
+            
+        }
+        if offsetY > contentHeight - scrollView.frame.size.height {
+            
+            if(isLimitReached)
+            {
+                isLimitReached = false
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadCloudData(15, scrolled: true)
+                    
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        // self.photoThumpCollectionView.reloadData()
+                    })
+                })
+                
+            }
+            
+        }
+    }
+}
+
 extension ChannelItemListViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if imageDataSource.count > 0
+        if fullImageDataSource.count > 0
         {
-            return imageDataSource.count
+            return fullImageDataSource.count
         }
         else
         {
@@ -336,37 +436,37 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         
         cell.videoView.alpha = 0.4
-        if imageDataSource.count > 0
+        if fullImageDataSource.count > 0
         {
-            if(imageDataSource.count == selectedArray.count){
+            if(fullImageDataSource.count == selectedArray.count){
             }
             else{
                 selectedArray.append(0)
             }
-           
-            let mediaType = imageDataSource[indexPath.row][mediaTypeKey] as! String
+            
+            let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
             let channelItemImageView = cell.viewWithTag(100) as! UIImageView
-            let imageData =  imageDataSource[indexPath.row][mediaUrlKey] as! UIImage
-           
+            let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
+            
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
                 let imageToConvert: UIImage = imageData
                 let sizeThumb = CGSizeMake(150, 150)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                  channelItemImageView.image = imageAfterConversionThumbnail
+                channelItemImageView.image = imageAfterConversionThumbnail
             }
             else{
                 cell.videoView.hidden = true
                 channelItemImageView.image = imageData
             }
-          
+            
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
             if(selectionFlag){
                 for var i = 0; i < selectedArray.count; i++
                 {
-                    let selectedValue: String = imageDataSource[i][mediaIdKey] as! String
+                    let selectedValue: String = fullImageDataSource[i][mediaIdKey] as! String
                     if indexPath.row == i
                     {
                         if selectedArray[i] == 1
@@ -384,19 +484,19 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                             cell.selectionView.hidden = true
                             cell.insertSubview(cell.videoView, aboveSubview: cell.selectionView)
                             if(selected.containsObject(Int(selectedValue)!)){
-                                 selected.removeObject(Int(selectedValue)!)
+                                selected.removeObject(Int(selectedValue)!)
                             }
                             else{
-                               
+                                
                             }
-                           
+                            
                         }
                     }
                 }
                 
             }
             else{
-                  cell.selectionView.hidden = true
+                cell.selectionView.hidden = true
             }
         }
         return cell
@@ -428,24 +528,24 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             deleteButton.enabled = true
             addButton.enabled = true
             addButton.setTitle("Add to", forState: .Normal)
-           
-           
+            
+            
             for var i = 0;i < selectedArray.count; i++
             {
-              
+                
                 if i == indexPath.row
                 {
                     if selectedArray[i] == 0
                     {
                         selectedArray[i] = 1
-                       
+                        
                     }else{
-                         selectedArray[i] = 0
+                        selectedArray[i] = 0
                     }
                 }
             }
-        collectionView.reloadData()
+            collectionView.reloadData()
         }
-       
+        
     }
 }
