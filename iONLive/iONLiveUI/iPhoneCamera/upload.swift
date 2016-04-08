@@ -274,8 +274,15 @@ protocol uploadProgressDelegate
                 if media == "video"
                 {
                     // NSData *movieData = [NSData dataWithContentsOfURL:videoPath];
-                    
-                    imageData = NSData(contentsOfURL: videoPath)!
+                    if ((videoPath.path?.isEmpty) != nil)
+                    {
+                        imageData = NSData(contentsOfURL: videoPath)!
+
+                    }
+                    else
+                    {
+                        return
+                    }
                     
                     
                 }
@@ -303,7 +310,7 @@ protocol uploadProgressDelegate
                                     
                                 }
                                 
-                                if  self.dummyImagesDataSourceDatabase.count == 0
+                               else  if  self.dummyImagesDataSourceDatabase.count == 0
                                 {
                                     self.dummyImagesDataSourceDatabase.removeAll()
                                     
@@ -424,7 +431,7 @@ protocol uploadProgressDelegate
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
             if error != nil {
                 //handle error
-                //  completion(result:"Failed")
+                  completion(result:"Failed")
                 
             }
             else {
@@ -447,15 +454,16 @@ protocol uploadProgressDelegate
                     let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
                     controller.uploadprogress(2.0)
                 }
+                
                 self.deletePathContent()
                 self.clearTempFolder()
                 
-                
+                completion(result:"Success")
+  
             }
             //  completion(result:"Success")
             
         }
-        completion(result:"Success")
         
         dataTask.resume()
     }
@@ -497,7 +505,7 @@ protocol uploadProgressDelegate
                 if (checkValidation.fileExistsAtPath(self.thumbnailpath as String))
                 {
                     try fm.removeItemAtPath(self.thumbnailpath as String)
-                    print("Removed )")
+                    print("Removed error )")
                     
                 }
             }
@@ -506,7 +514,7 @@ protocol uploadProgressDelegate
                 if (checkValidation.fileExistsAtPath(self.thumbnailpath as String))
                 {
                     try fm.removeItemAtPath(self.thumbnailpath as String)
-                    print("Removed )")
+                    print("Removed error else)")
                     
                     
                     
@@ -522,6 +530,8 @@ protocol uploadProgressDelegate
     
     func uploadThumbImage(row : Int,completion: (result: String) -> Void)
     {
+        if(dummyImagesDataSourceDatabase.count > 0)
+        {
         var dict = dummyImagesDataSourceDatabase[row]
         let  uploadImageThumb = dict[thumbImageKey]
         print(uploadImageThumb)
@@ -557,7 +567,7 @@ protocol uploadProgressDelegate
         
         dataTask.resume()
         
-        
+        }
         
     }
     
@@ -565,6 +575,8 @@ protocol uploadProgressDelegate
     {
         
         
+        if(dummyImagesDataSourceDatabase.count > 0)
+        {
         var dict = dummyImagesDataSourceDatabase[index]
         
         let  uploadImageFull = dict[fullImageKey]
@@ -596,6 +608,7 @@ protocol uploadProgressDelegate
                     
             })
             
+        }
         }
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
