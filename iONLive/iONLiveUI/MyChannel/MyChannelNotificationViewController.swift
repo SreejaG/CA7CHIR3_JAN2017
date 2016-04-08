@@ -137,7 +137,7 @@ class MyChannelNotificationViewController: UIViewController {
                     }
                 }
                 else{
-                    profileImage = UIImage(named: "girlFace1")
+                    profileImage = UIImage(named: "defUser")
                 }
 
                dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!])
