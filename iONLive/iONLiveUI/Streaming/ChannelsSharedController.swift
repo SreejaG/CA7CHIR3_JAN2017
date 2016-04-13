@@ -8,17 +8,24 @@
 
 import UIKit
 
-class ChannelsSharedController: UIViewController {
+class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
   var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     let channelManager = ChannelManager.sharedInstance
     let requestManager = RequestManager.sharedInstance
-    let usernameKey = "userName"
-    let profileImageKey = "profileImage"
-    let notificationTypeKey = "notificationType"
-    let mediaTypeKey = "mediaType"
+    let channelNameKey = "channel_name"
+    let sharedMediaCount = "total_no_media_shared"
+    let timeStamp = "last_updated_time_stamp"
+    let usernameKey = "user_name"
+    let profileImageKey = "profile_image"
+    let liveStreamStatus = "liveChannel"
+    
+//    let notificationTypeKey = "notificationType"
+//    let mediaTypeKey = "mediaType"
     let mediaImageKey = "mediaImage"
-    let messageKey = "message"
+//    let messageKey = "message"
+    
+    
     var loadingOverlay: UIView?
 
     @IBOutlet weak var ChannelSharedTableView: UITableView!
@@ -69,7 +76,9 @@ class ChannelsSharedController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
+            
             print(json)
+            let liveStream = json[liveStreamStatus] as! String
 
             let responseArr = json["channels"] as! [[String:AnyObject]]
             print(responseArr)
@@ -80,13 +89,16 @@ class ChannelsSharedController: UIViewController {
             var mediaImage : UIImage?
             var profileImage : UIImage?
             for element in responseArr{
-                let username = element["user_name"] as! String
-                let notifType = element["notification_type"] as! String
-                let mediaType = element["gcs_object_type"] as! String
-                let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)"
+                let channelName = element[channelNameKey]
+                let mediaSharedCount = element[sharedMediaCount]
+                let time = element[timeStamp] as! String
+                let username = element[usernameKey] as! String
+               // let notifType = element["notification_type"] as! String
+              //  let mediaType = element["gcs_object_type"] as! String
+               // let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)"
                 
-                let mediaThumbUrl = element["thumbnail_name_SignedUrl"] as! String
-                
+               // let mediaThumbUrl = element["thumbnail_name_SignedUrl"] as! String
+                let mediaThumbUrl = ""
                 if(mediaThumbUrl != "")
                 {
                     let url: NSURL = convertStringtoURL(mediaThumbUrl)
@@ -98,7 +110,7 @@ class ChannelsSharedController: UIViewController {
                 else{
                     mediaImage = UIImage(named: "thumb12")
                 }
-                let profileImageName = element["profile_image"]
+                let profileImageName = element[profileImageKey]
                 if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
                 {
                     var bytes:[UInt8] = []
@@ -115,7 +127,7 @@ class ChannelsSharedController: UIViewController {
                     profileImage = UIImage(named: "defUser")
                 }
                 
-                dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!])
+                dataSource.append([channelNameKey:channelName!,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
                 
             }
             
@@ -165,16 +177,47 @@ extension ChannelsSharedController:UITableViewDataSource
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(ChannelSharedCell.identifier, forIndexPath:indexPath) as! ChannelSharedCell
             
-            
+//            cell.channelProfileImage.layer.cornerRadius = 15
+//            cell.channelProfileImage.clipsToBounds = true
+
             cell.channelProfileImage.image = dataSource[indexPath.row][profileImageKey] as? UIImage
             cell.channelNameLabel.text =  "My Day"
           //  cell.detailLabel.text =""
-            cell.currentUpdationImage.image  = dataSource[indexPath.row][profileImageKey] as? UIImage
-            cell.countLabel.text = "3"
-//            cell.notificationText.text = dataSource[indexPath.row][messageKey] as? String
-//            cell.NotificationSenderImageView.image = dataSource[indexPath.row][profileImageKey] as? UIImage
-//            cell.NotificationImage.image = dataSource[indexPath.row][mediaImageKey] as? UIImage
-//            cell.selectionStyle = .None
+          cell.countLabel.hidden = true
+           // cell.detailLabel.text = dataSource[indexPath.row][usernameKey] as! String
+
+            if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
+            {
+               // var mediaImage : UIImage = UIImage()
+                
+                let text = "@" + (dataSource[indexPath.row][usernameKey] as! String) + "Live"
+                  cell.currentUpdationImage.image  = UIImage(named: "Live_camera")
+                let linkTextWithColor = "Live"
+                
+                let range = (text as NSString).rangeOfString(linkTextWithColor)
+                
+                let attributedString = NSMutableAttributedString(string:text)
+                attributedString.addAttribute(NSForegroundColorAttributeName, value: UIColor.redColor() , range: range)
+                cell.detailLabel.attributedText = attributedString
+
+                
+            }
+            else if (dataSource[indexPath.row][sharedMediaCount]?.intValue == 0)
+            {
+                cell.currentUpdationImage.image  = UIImage(named: "thumb12")
+                cell.detailLabel.text = dataSource[indexPath.row][usernameKey] as? String
+
+            }
+            else
+            {
+                cell.countLabel.hidden = false
+
+                cell.countLabel.text = dataSource[indexPath.row][sharedMediaCount] as? String
+
+                cell.detailLabel.text = "@" + (dataSource[indexPath.row][usernameKey] as! String) + "Live"
+
+            }
+            cell.selectionStyle = .None
             return cell
         }
         
