@@ -75,8 +75,6 @@ class ChannelItemListViewController: UIViewController {
             fixedLimit = totalMediaCount
         }
         
-        //  limit = fixedLimit
-        
         limit = totalMediaCount
         initialise()
     }
@@ -148,7 +146,7 @@ class ChannelItemListViewController: UIViewController {
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
-            
+            print(imageDataSource)
             downloadCloudData(15, scrolled: false)
         }
         else
