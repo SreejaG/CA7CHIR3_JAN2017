@@ -33,6 +33,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Invalid Response", message: "Something bad happened, we're looking into it now.")
     }
     
+    func subscriptionEmpty ()
+    {
+        alert("Shared Channel Empty", message: "No Sharing Data.")
+
+    }
     func invalidRequest()
     {
         alert("Error", message:"Invalid request")

@@ -27,11 +27,17 @@ class StreamsGalleryViewController: UITabBarController {
         let tabBarItems = self.tabBar.items
         if let items = tabBarItems
         {
-            items[0].image = UIImage(named:"channels")?.imageWithRenderingMode(.AlwaysOriginal)
-            items[0].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
+            print(items)
+//            items[0].image = UIImage(named:"channels")?.imageWithRenderingMode(.AlwaysOriginal)
+//            items[0].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
         }
     }
-    
+    override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
+        //This method will be called when user changes tab.
+        
+        
+        
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

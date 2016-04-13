@@ -53,6 +53,8 @@
 		165B77DF1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 165B77DE1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard */; };
 		165B77E11C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */; };
 		165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77E21C4D099700BDB02F /* iONCamPictureAPIViewController.swift */; };
+		165D44E21CBBC0D700BEA24E /* ChannelsSharedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D44E11CBBC0D700BEA24E /* ChannelsSharedController.swift */; };
+		165D44E41CBBC10100BEA24E /* ChannelSharedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D44E31CBBC10100BEA24E /* ChannelSharedCell.swift */; };
 		165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165E50AB1C993DFA003718A4 /* ImageUpload.swift */; };
 		165E87451CAFB35F00CE03BD /* PhotoViewerInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */; };
 		166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */; };
@@ -252,6 +254,8 @@
 		165B77DE1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iONCamPictureAPITest.storyboard; sourceTree = "<group>"; };
 		165B77E01C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCamAPIListViewController.swift; sourceTree = "<group>"; };
 		165B77E21C4D099700BDB02F /* iONCamPictureAPIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONCamPictureAPIViewController.swift; sourceTree = "<group>"; };
+		165D44E11CBBC0D700BEA24E /* ChannelsSharedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsSharedController.swift; sourceTree = "<group>"; };
+		165D44E31CBBC10100BEA24E /* ChannelSharedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedCell.swift; sourceTree = "<group>"; };
 		165E50AB1C993DFA003718A4 /* ImageUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUpload.swift; sourceTree = "<group>"; };
 		165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerInstance.swift; sourceTree = "<group>"; };
 		166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelDetailViewController.swift; sourceTree = "<group>"; };
@@ -950,6 +954,8 @@
 				167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */,
 				1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */,
 				1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */,
+				165D44E11CBBC0D700BEA24E /* ChannelsSharedController.swift */,
+				165D44E31CBBC10100BEA24E /* ChannelSharedCell.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1631,6 +1637,7 @@
 				59BC3F5F1BFF848600710905 /* AFURLConnectionOperation.m in Sources */,
 				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
 				166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */,
+				165D44E41CBBC10100BEA24E /* ChannelSharedCell.swift in Sources */,
 				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
 				16DA06EB1C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
@@ -1663,6 +1670,7 @@
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */,
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
+				165D44E21CBBC0D700BEA24E /* ChannelsSharedController.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,

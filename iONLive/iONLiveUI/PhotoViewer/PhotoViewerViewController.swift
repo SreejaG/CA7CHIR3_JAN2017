@@ -218,7 +218,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             mediaTypeArray.removeAllObjects()
             mediaDictionary.removeAllObjects()
             longPressActive = false
-            // dummyImagesDataSource.removeAllObjects()
+            dummyImagesDataSourceDatabase.removeAll()
             selectedCollectionViewIndex = 0
             currentLimit = 0
             limitMediaCount = 0

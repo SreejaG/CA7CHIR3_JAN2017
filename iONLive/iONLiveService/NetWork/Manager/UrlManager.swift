@@ -73,6 +73,10 @@ let baseUrl = "http://104.196.113.247:3000";
         let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"
         return mediaInteractionAPI
     }
+    func SubscribedChannelUrl() -> String{
+        let SubscribedChannelAPI = baseUrl+"/api/v1/sharedChannel"
+        return SubscribedChannelAPI
+    }
     
     func MediaByChannelAPIUrl(userName: String, accessToken: String) -> String
     {
@@ -115,6 +119,13 @@ let baseUrl = "http://104.196.113.247:3000";
         let mediaInteractionNotification = MediaInteractionUrl() + "/" + userName + "/" + accessToken
         return mediaInteractionNotification
     }
+    
+    func getChannelSharedDetails(userName: String, accessToken: String) -> String
+    {
+        let channelSharedAPI = SubscribedChannelUrl() + "/" + userName + "/" + accessToken
+        return channelSharedAPI
+    }
+
     func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"
