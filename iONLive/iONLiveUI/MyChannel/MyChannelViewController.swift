@@ -282,6 +282,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         dataSource.removeAll()
         var imageDetails : UIImage?
+        print(channelDetailsDict)
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
@@ -294,6 +295,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 if let data = NSData(contentsOfURL: url){
                   let imageDetailsData = (data as NSData?)!
                     imageDetails = UIImage(data: imageDetailsData)
+                }
+                else{
+                    imageDetails = UIImage(named: "thumb12")
                 }
             }
             else{

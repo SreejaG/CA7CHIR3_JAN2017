@@ -110,6 +110,12 @@ let baseUrl = "http://104.196.113.247:3000";
         return getAllChannelsAPI
     }
    
+    func getAllContactsChannelAPIUrl(channelId: String, userName: String, accessToken: String) -> String
+    {
+        let getAllContactsChannelAPI = channelAPIUrl() + "/" + channelId  + "/" + userName + "/" + accessToken
+        return getAllContactsChannelAPI
+    }
+    
     func getMediaInteractionNotifications(userName: String, accessToken: String) -> String
     {
         let mediaInteractionNotification = MediaInteractionUrl() + "/" + userName + "/" + accessToken

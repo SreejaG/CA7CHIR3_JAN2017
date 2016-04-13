@@ -12,5 +12,14 @@ class MyChannelItemCell: UICollectionViewCell
 {
     static let identifier = "MyChannelItemCell"
     
-    @IBOutlet weak var itemImageView: UIImageView!
+    @IBOutlet var channelImageView: UIImageView!
+    
+    @IBOutlet var videoView: UIView!
+    
+    @IBOutlet var videoPlayIcon: UIImageView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        videoPlayIcon.center = videoView.center
+    }
 }

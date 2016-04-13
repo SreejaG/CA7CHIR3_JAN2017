@@ -9,11 +9,17 @@
 import UIKit
 
 class MyChannelDetailViewController: UITabBarController {
-
+    
     static let identifier = "MyChannelDetailViewController"
+    
+    var totalMediaCount: Int = Int()
+    var channelId:String!
+    var channelName:String!
+    
     var allItemTitleText = ""
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("\(channelId)  \(channelName)  \(totalMediaCount)")
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -22,11 +28,11 @@ class MyChannelDetailViewController: UITabBarController {
         let tabBarItems = self.tabBar.items
         if let items = tabBarItems
         {
-            items[1].image = UIImage(named:"friend_avatar")?.imageWithRenderingMode(.AlwaysOriginal)
+                items[1].image = UIImage(named:"friend_avatar")?.imageWithRenderingMode(.AlwaysOriginal)
             items[1].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
