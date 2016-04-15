@@ -43,7 +43,6 @@ let baseUrl = "http://104.196.113.247:3000";
     
     func channelAPIUrl() -> String{
         let channelAPI = baseUrl+"/api/v1/channel"
-        print(channelAPI)
         return channelAPI
     }
     func mediaUploadUrl() -> String{
@@ -114,6 +113,12 @@ let baseUrl = "http://104.196.113.247:3000";
     {
         let getAllContactsChannelAPI = channelAPIUrl() + "/" + channelId  + "/" + userName + "/" + accessToken
         return getAllContactsChannelAPI
+    }
+    
+    func inviteContactsChannelAPIUrl(channelId: String) -> String
+    {
+        let inviteContactsChannelAPI = channelAPIUrl() + "/" + channelId
+        return inviteContactsChannelAPI
     }
     
     func getMediaInteractionNotifications(userName: String, accessToken: String) -> String

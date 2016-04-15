@@ -108,6 +108,9 @@
 		16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A266141C994EC200650F24 /* ContactDetailsViewController.swift */; };
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
+		16AED00E1CBE1B3D00D72C0F /* ContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AED00D1CBE1B3D00D72C0F /* ContactListViewController.swift */; };
+		16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AED00F1CBE1D3400D72C0F /* ContactListTableViewCell.swift */; };
+		16AED0121CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AED0111CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift */; };
 		16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */; };
 		16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B457C41C86C145009D36A9 /* ChannelManager.swift */; };
 		16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */; };
@@ -315,6 +318,9 @@
 		16A266141C994EC200650F24 /* ContactDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsViewController.swift; sourceTree = "<group>"; };
 		16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerViewTableViewCell.swift; sourceTree = "<group>"; };
+		16AED00D1CBE1B3D00D72C0F /* ContactListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListViewController.swift; sourceTree = "<group>"; };
+		16AED00F1CBE1D3400D72C0F /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
+		16AED0111CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactListHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16B2D20D1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpFindFriendsViewController.swift; sourceTree = "<group>"; };
 		16B457C41C86C145009D36A9 /* ChannelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
 		16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelViewController.swift; sourceTree = "<group>"; };
@@ -821,6 +827,9 @@
 				166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */,
 				16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */,
 				16EC54A81CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift */,
+				16AED00D1CBE1B3D00D72C0F /* ContactListViewController.swift */,
+				16AED00F1CBE1D3400D72C0F /* ContactListTableViewCell.swift */,
+				16AED0111CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift */,
 			);
 			path = Sharing;
 			sourceTree = "<group>";
@@ -1617,6 +1626,7 @@
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
+				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
@@ -1666,6 +1676,7 @@
 				167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */,
 				160903F91C6C7ED1004E381D /* EditProfileViewController.swift in Sources */,
 				16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */,
+				16AED00E1CBE1B3D00D72C0F /* ContactListViewController.swift in Sources */,
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */,
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
@@ -1716,6 +1727,7 @@
 				166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */,
 				16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
+				16AED0121CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift in Sources */,
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
