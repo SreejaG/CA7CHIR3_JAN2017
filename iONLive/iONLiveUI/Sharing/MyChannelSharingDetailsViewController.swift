@@ -9,7 +9,7 @@
 import UIKit
 
 class MyChannelSharingDetailsViewController: UIViewController {
-
+    
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
@@ -42,10 +42,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -74,6 +74,20 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     
     @IBAction func inviteContacts(sender: AnyObject) {
+        
+        let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
+        let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ContactListViewController.identifier) as! ContactListViewController
+        inviteContactsVC.channelId = channelId
+        inviteContactsVC.channelName = channelName
+        inviteContactsVC.totalMediaCount = totalMediaCount
+        inviteContactsVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(inviteContactsVC, animated: true)
+        
+    }
+    
+    
+    @IBAction func didTapDoneButton(sender: AnyObject) {
+        
         contactTableView.reloadData()
         contactTableView.layoutIfNeeded()
         print(selectedContacts)
@@ -97,7 +111,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray, deleteUser: deleteUserArray)
         }
-
     }
     
     func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
@@ -117,7 +130,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-              initialise()
+                initialise()
             }
             
         }
@@ -152,7 +165,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 self.authenticationFailureHandler(error, code: message)
                 return
         }
-
+        
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -162,6 +175,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             dataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
+            var key : String = String()
             var contactImage : UIImage = UIImage()
             for element in responseArr{
                 let userName = element["userName"] as! String
@@ -179,14 +193,19 @@ class MyChannelSharingDetailsViewController: UIViewController {
                         }
                     }
                     else{
-                       contactImage = UIImage(named: "avatar")!
+                        contactImage = UIImage(named: "avatar")!
                     }
                 }
                 let subscriptionValue = element["sharedindicator"] as! String
                 if(subscriptionValue == "true")
                 {
-                    dataSource.append([userNameKey:userName, profileImageKey: contactImage , subscribedKey: subscriptionValue])
-                     selectedContacts.append([userNameKey:userName, selectionKey:"1"])
+//                    key = "1"
+//                }
+//                else{
+//                    key = "0"
+//                }
+                dataSource.append([userNameKey:userName, profileImageKey: contactImage , subscribedKey: subscriptionValue])
+                selectedContacts.append([userNameKey:userName, selectionKey:"1"])
                 }
             }
             contactTableView.reloadData()
@@ -225,7 +244,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-  
+    
 }
 
 extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewDataSource
@@ -267,20 +286,20 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
         var dataSourceTmp : [[String:AnyObject]]?
         
         let cell = tableView.dequeueReusableCellWithIdentifier(contactSharingDetailTableViewCell.identifier, forIndexPath:indexPath) as! contactSharingDetailTableViewCell
-
+        
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
         else{
             dataSourceTmp = dataSource
         }
-   
+        
         if dataSourceTmp?.count > 0
         {
             cell.contactUserName.text = dataSourceTmp![indexPath.row][userNameKey] as? String
             let imageName =  dataSourceTmp![indexPath.row][profileImageKey]
             cell.contactProfileImage.image = imageName as? UIImage
-           
+            
             if(cell.deselectedArray.count > 0){
                 
                 for var i = 0; i < selectedContacts.count; i++
@@ -302,7 +321,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
                     }
                 }
             }
-           
+            
             
             if selectedContacts.count > 0
             {
@@ -320,7 +339,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
                 }
             }
             cell.cellDataSource = dataSourceTmp![indexPath.row]
-      
+            
             cell.selectionStyle = .None
             return cell
         }
@@ -329,7 +348,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             return UITableViewCell()
         }
     }
-   
+    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
@@ -374,7 +393,7 @@ extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
                 }
             }
         }
-    
+        
         if(searchDataSource.count == 0){
             searchActive = false;
         } else {
