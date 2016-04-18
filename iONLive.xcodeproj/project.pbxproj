@@ -117,6 +117,8 @@
 		16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B457C41C86C145009D36A9 /* ChannelManager.swift */; };
 		16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */; };
 		16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA62301C8962090086DA30 /* AddChannelCell.swift */; };
+		16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */; };
+		16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
 		16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */; };
 		16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */; };
@@ -329,6 +331,8 @@
 		16B457C41C86C145009D36A9 /* ChannelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
 		16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelViewController.swift; sourceTree = "<group>"; };
 		16BA62301C8962090086DA30 /* AddChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelCell.swift; sourceTree = "<group>"; };
+		16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelViewController.swift; sourceTree = "<group>"; };
+		16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelCell.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCamConfigViewController.swift; sourceTree = "<group>"; };
 		16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactHeaderTableViewCell.swift; sourceTree = "<group>"; };
@@ -971,6 +975,8 @@
 				1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */,
 				165D44E11CBBC0D700BEA24E /* ChannelsSharedController.swift */,
 				165D44E31CBBC10100BEA24E /* ChannelSharedCell.swift */,
+				16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */,
+				16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */,
 			);
 			path = Streaming;
 			sourceTree = "<group>";
@@ -1691,6 +1697,7 @@
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,
+				16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */,
 				16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
@@ -1723,6 +1730,7 @@
 				168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */,
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
+				16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */,
 				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
 				16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */,
 				16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */,
