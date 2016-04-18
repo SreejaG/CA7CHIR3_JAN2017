@@ -163,22 +163,45 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                      mediaImage = UIImage(named: "thumb12")
                 }
                
-                let profileImageName = element[profileImageKey]
-                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                if let imageName =  element[profileImageKey]
                 {
-                    var bytes:[UInt8] = []
-                    for serverByte in imageByteArray {
-                        bytes.append(UInt8(serverByte as! UInt))
+                    if imageName is NSArray{
+                        let imageByteArray: NSArray = imageName["data"] as! NSArray
+                        var bytes:[UInt8] = []
+                        for serverByte in imageByteArray {
+                            bytes.append(UInt8(serverByte as! UInt))
+                        }
+                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                        if let datas = imageData as NSData? {
+                            profileImage = UIImage(data: datas)!
+                        }
                     }
-                    
-                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                        let profileImageData = profileData as NSData?
-                        profileImage = UIImage(data: profileImageData!)
+                    else{
+                        profileImage = UIImage(named: "avatar")!
                     }
                 }
-                else{
-                    profileImage = UIImage(named: "defUser")
-                }
+
+                
+                
+//                
+//               if let profileImageName = element[profileImageKey]
+//               {
+//                if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
+//                {
+//                    var bytes:[UInt8] = []
+//                    for serverByte in imageByteArray {
+//                        bytes.append(UInt8(serverByte as! UInt))
+//                    }
+//                    
+//                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+//                        let profileImageData = profileData as NSData?
+//                        profileImage = UIImage(data: profileImageData!)
+//                    }
+//                }
+//               }
+//                else{
+//                    profileImage = UIImage(named: "defUser")
+//                }
                 mediaSharedCountArray.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
                 for var i=0 ; i  < dataSource.count ;i++
                 {

@@ -10,7 +10,7 @@ import UIKit
 
 class StreamsListViewController: UIViewController{
     
-    let streamTockenKey = "streamToken"
+    let streamTockenKey = "wowza_stream_token" //"streamToken"
     let imageKey = "image"
     let typeKey = "type"
     let imageType = "imageType"
@@ -75,7 +75,7 @@ class StreamsListViewController: UIViewController{
     //    }
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.113.133:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: true) { () -> Void in
             
@@ -222,7 +222,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
         
         //cell for live streams
-        
+     
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.row
