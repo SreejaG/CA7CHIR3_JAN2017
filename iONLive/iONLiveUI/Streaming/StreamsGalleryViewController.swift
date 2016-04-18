@@ -10,6 +10,9 @@ import UIKit
 
 class StreamsGalleryViewController: UITabBarController {
 
+    var totalMediaCount: Int = Int()
+    var channelId:String!
+    var channelName:String!
     override func viewDidLoad() {
         
         super.viewDidLoad()
