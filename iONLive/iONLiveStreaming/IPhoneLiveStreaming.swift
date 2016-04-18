@@ -62,7 +62,9 @@ class IPhoneLiveStreaming: NSObject {
         
         func getHost() ->String
         {
-            return "104.196.113.133"
+          //  return "104.196.113.133"
+            
+            return "104.196.15.240"
             
             //return 192.168.16.12
 //            return "stream.ioncameras.com"

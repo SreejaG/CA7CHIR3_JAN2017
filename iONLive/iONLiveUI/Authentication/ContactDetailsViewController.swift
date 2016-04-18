@@ -10,6 +10,8 @@ import UIKit
 
 class ContactDetailsViewController: UIViewController {
     
+    var selectedContacts : [[String:AnyObject]] = [[String:AnyObject]]()
+    
     var contactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var appContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[[String:AnyObject]]]?
@@ -69,11 +71,16 @@ class ContactDetailsViewController: UIViewController {
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
         contactTableView.reloadData()
-        var contactsArray : [String] = [String]()
-        for(_,value) in checkedMobiles{
-            contactsArray.append(value as! String)
+        contactTableView.layoutIfNeeded()
+        let contactsArray : NSMutableArray = NSMutableArray()
+        contactsArray.removeAllObjects()
+        for element in selectedContacts
+        {
+            if element[selectionKey] as! String == "1"
+            {
+                contactsArray.addObject(element[phoneKey] as! String)
+            }
         }
-        print(contactsArray)
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -81,7 +88,7 @@ class ContactDetailsViewController: UIViewController {
         contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
             }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+                self.authenticationFailureHandlerInvite(error, code: message)
                 return
         }
     }
@@ -103,6 +110,30 @@ class ContactDetailsViewController: UIViewController {
         }
     }
     
+    func authenticationFailureHandlerInvite(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            if code == "CONTACT001"{
+               loadIphoneCameraController()
+            }
+            else  if code == "CONTACT002"{
+                loadIphoneCameraController()
+            }
+
+        }
+        else{
+            ErrorManager.sharedInstance.addContactError()
+        }
+    }
+    
+    
     func loadIphoneCameraController(){
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
@@ -112,6 +143,11 @@ class ContactDetailsViewController: UIViewController {
     
     func initialise()
     {
+        dataSource?.removeAll()
+        appContactsArr.removeAll()
+        selectedContacts.removeAll()
+        searchDataSource?.removeAll()
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -144,8 +180,30 @@ class ContactDetailsViewController: UIViewController {
         {
             appContactsArr.removeAll()
             let responseArr = json["contactListOfUser"] as! [AnyObject]
+            var contactImage : UIImage = UIImage()
             for element in responseArr{
-                appContactsArr.append(element as! [String : AnyObject])
+                let userName = element[nameKey] as! String
+                let selection = element[inviteKey] as! String
+                let mobNum = element[phoneKey] as! String
+                if let imageName =  element[imageKey]
+                {
+                    if imageName is NSArray{
+                        let imageByteArray: NSArray = imageName!["data"] as! NSArray
+                        var bytes:[UInt8] = []
+                        for serverByte in imageByteArray {
+                            bytes.append(UInt8(serverByte as! UInt))
+                        }
+                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                        if let datas = imageData as NSData? {
+                            contactImage = UIImage(data: datas)!
+                        }
+                    }
+                    else{
+                        contactImage = UIImage(named: "avatar")!
+                    }
+                }
+                
+                appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage,inviteKey:selection])
             }
             setContactDetails()
         }
@@ -207,6 +265,17 @@ class ContactDetailsViewController: UIViewController {
         }
         
         dataSource = [appContactsArr,contactDataSource]
+        
+        print(appContactsArr)
+        print(contactDataSource)
+        for ele in appContactsArr{
+            selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"1"])
+        }
+        
+        for ele in contactDataSource{
+            selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"0"])
+        }
+        
         contactTableView.reloadData()
     }
     
@@ -279,47 +348,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         
         let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
         
-        
-        if(cell.cellsDataSource != nil){
-            
-            if(cell.selectedCells.count > 0)
-            {
-                for element in cell.selectedCells{
-                    if element[phoneKey] as? String == dataSource![indexPath.section][indexPath.row][phoneKey] as? String
-                    {
-                        if element[inviteKey] as! String == "1"
-                        {
-                            dataSource![indexPath.section][indexPath.row][inviteKey] = "1"
-                            let section = String(indexPath.section).stringByAppendingString("_")
-                            let keyVal = String(section).stringByAppendingString(String(indexPath.row))
-                            checkedMobiles.setValue(element[phoneKey]!, forKey: String(keyVal))
-                        }
-                        else{
-                            let section = String(indexPath.section).stringByAppendingString("_")
-                            let keyVal = String(section).stringByAppendingString(String(indexPath.row))
-                            dataSource![indexPath.section][indexPath.row][inviteKey] = "0"
-                            checkedMobiles.removeObjectForKey(String(keyVal))
-                        }
-                    }
-                }
-            }
-        }
-        else{
-            if  dataSource![indexPath.section][indexPath.row][inviteKey] as! String == "0"
-            {
-                let section = String(indexPath.section).stringByAppendingString("_")
-                let keyVal = String(section).stringByAppendingString(String(indexPath.row))
-                checkedMobiles.removeObjectForKey(String(keyVal))
-                cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
-            }
-            else if  dataSource![indexPath.section][indexPath.row][inviteKey] as! String == "1"
-            {
-                let section = String(indexPath.section).stringByAppendingString("_")
-                let keyVal = String(section).stringByAppendingString(String(indexPath.row))
-                checkedMobiles.setValue(dataSource![indexPath.section][indexPath.row][phoneKey]!, forKey: String(keyVal))
-                cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
-            }
-        }
         var cellDataSource:[String:AnyObject]?
         var datasourceTmp: [[[String:AnyObject]]]?
         
@@ -340,42 +368,57 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                 }
             }
             
+            if(cell.deselectedArray.count > 0){
+                
+                for var i = 0; i < selectedContacts.count; i++
+                {
+                    let selectedValue: String = selectedContacts[i][nameKey] as! String
+                    if cell.deselectedArray.containsObject(selectedValue){
+                        selectedContacts[i][selectionKey] = "0"
+//                        let sections = String(indexPath.section).stringByAppendingString("_")
+//                        let keyVal = String(sections).stringByAppendingString(String(indexPath.row))
+//                        checkedMobiles.removeObjectForKey(String(keyVal))
+                    }
+                }
+            }
+            
+            if(cell.selectedArray.count > 0){
+                
+                for var i = 0; i < selectedContacts.count; i++
+                {
+                    let selectedValue: String = selectedContacts[i][nameKey] as! String
+                    if cell.selectedArray.containsObject(selectedValue){
+                        selectedContacts[i][selectionKey] = "1"
+//                        let sections = String(indexPath.section).stringByAppendingString("_")
+//                        let keyVal = String(sections).stringByAppendingString(String(indexPath.row))
+//                        checkedMobiles.setValue(dataSource![indexPath.section][indexPath.row][phoneKey]!, forKey: String(keyVal))
+                    }
+                }
+            }
         }
         
         if let cellDataSource = cellDataSource
         {
             cell.contactProfileName.text = cellDataSource[nameKey] as? String
+            cell.contactProfileImage.image = cellDataSource[imageKey] as? UIImage
             
-            if let imageName =  cellDataSource[imageKey]
+            if selectedContacts.count > 0
             {
-                if(imageName is UIImage){
-                    var testImage = UIImage?()
-                    testImage = imageName as? UIImage
-                    if(testImage == nil || testImage == UIImage()){
-                        cell.contactProfileImage.image = UIImage(named: "avatar")
-                        
+                for var i = 0; i < selectedContacts.count; i++
+                {
+                    if selectedContacts[i][nameKey] as! String == cellDataSource[nameKey] as! String{
+                        if selectedContacts[i][selectionKey] as! String == "0"
+                        {
+                            cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
+                        }
+                        else{
+                            cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+                        }
                     }
-                    else{
-                        cell.contactProfileImage.image = testImage
-                    }
-                }
-                else if imageName is NSArray{
-                    let imageByteArray: NSArray = imageName["data"] as! NSArray
-                    var bytes:[UInt8] = []
-                    for serverByte in imageByteArray {
-                        bytes.append(UInt8(serverByte as! UInt))
-                    }
-                    let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                    if let datas = imageData as NSData? {
-                        cell.contactProfileImage.image = UIImage(data: datas)
-                    }
-                }
-                else{
-                    cell.contactProfileImage.image = UIImage(named: "avatar")
                 }
             }
-            cell.reloadInputViews()
-            cell.cellsDataSource = dataSource![indexPath.section][indexPath.row]
+           // cell.reloadInputViews()
+            cell.cellDataSource = cellDataSource
             cell.selectionStyle = .None
             return cell
         }
@@ -434,6 +477,9 @@ extension ContactDetailsViewController: UISearchBarDelegate{
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         
         searchDataSource?.removeAll()
+        if contactSearchBar.text == "" {
+            contactSearchBar.resignFirstResponder()
+        }
         var searchContactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
         var searchAppContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
         searchContactDataSource.removeAll()
@@ -442,7 +488,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         if dataSource![0].count > 0
         {
             for element in dataSource![0]{
-                let tmp: String = (element["user_name"]?.lowercaseString)!
+                var tmp: String = ""
+                tmp = (element["user_name"]?.lowercaseString)!
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchAppContactsArr.append(element)
@@ -452,7 +499,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         if dataSource![1].count > 0
         {
             for element in dataSource![1]{
-                let tmp: String =  (element["user_name"]?.lowercaseString)!
+                var tmp: String =  ""
+                tmp = (element["user_name"]?.lowercaseString)!
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
                     searchContactDataSource.append(element)
@@ -469,5 +517,6 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         }
         
         self.contactTableView.reloadData()
+     
     }
 }
