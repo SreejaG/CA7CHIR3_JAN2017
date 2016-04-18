@@ -18,6 +18,8 @@ class MyChannelItemCell: UICollectionViewCell
     
     @IBOutlet var videoPlayIcon: UIImageView!
     
+ 
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         videoPlayIcon.center = videoView.center

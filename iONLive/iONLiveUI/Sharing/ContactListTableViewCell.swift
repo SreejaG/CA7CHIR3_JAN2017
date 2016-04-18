@@ -1,16 +1,16 @@
 //
-//  contactSharingDetailTableViewCell.swift
+//  ContactListTableViewCell.swift
 //  iONLive
 //
-//  Created by Gadgeon Smart Systems  on 12/04/16.
+//  Created by Gadgeon Smart Systems  on 13/04/16.
 //  Copyright © 2016 Gadgeon. All rights reserved.
 //
 
 import UIKit
 
-class contactSharingDetailTableViewCell: UITableViewCell {
+class ContactListTableViewCell: UITableViewCell {
 
-    static let identifier = "contactSharingDetailTableViewCell"
+    static let identifier = "ContactListTableViewCell"
     
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactUserName: UILabel!
@@ -18,7 +18,7 @@ class contactSharingDetailTableViewCell: UITableViewCell {
     
     let userNameKey = "userName"
     let selectionKey = "selected"
-    
+
     var cellDataSource:[String:AnyObject]?
     
     var selectedArray: NSMutableArray = NSMutableArray()
@@ -28,15 +28,16 @@ class contactSharingDetailTableViewCell: UITableViewCell {
         if cellDataSource != nil{
             let selectedValue: String = cellDataSource![userNameKey] as! String
             if(selectedArray.containsObject(selectedValue)){
-                subscriptionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
                 selectedArray.removeObject(selectedValue)
                 deselectedArray.addObject(selectedValue)
+                subscriptionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
             }
             else{
-                subscriptionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
                 selectedArray.addObject(selectedValue)
                 deselectedArray.removeObject(selectedValue)
+                subscriptionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
             }
+            
         }
     }
     

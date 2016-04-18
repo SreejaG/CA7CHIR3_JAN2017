@@ -142,14 +142,24 @@ class SignUpFindFriendsViewController: UIViewController{
                 let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
                 let phoneNumberWithCode: String!
                 
-                if phoneNumberStr.containsString("+"){
+                if(phoneNumberStr.hasPrefix("+")){
                     phoneNumberWithCode = phoneNumberStr
+                }
+                else if(phoneNumberStr.hasPrefix("00")){
+                    let stringLength = phoneNumberStr.characters.count 
+                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 2, length: stringLength - 2))
+                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
+                }
+                else if(phoneNumberStr.hasPrefix("0")){
+                    let stringLength = phoneNumberStr.characters.count
+                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 1, length: stringLength - 1))
+                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
                 }
                 else{
                     phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
                 }
                 
-                if phoneNumberWithCode.containsString("+")
+                if phoneNumberWithCode.hasPrefix("+")
                 {
                     appendPlus = "+"
                 }
@@ -176,8 +186,6 @@ class SignUpFindFriendsViewController: UIViewController{
             contactPhoneNumbers.append(phoneNumber)
             self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
         }
-        print(contactPhoneNumbers)
-        print(dataSource)
        addContactDetails(contactPhoneNumbers) 
       
     }

@@ -50,9 +50,11 @@ class MySharedChannelsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        let defaults = NSUserDefaults .standardUserDefaults()
         sharedChannelsTableView.reloadData()
+        sharedChannelsTableView.layoutIfNeeded()
+        let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setObject(channelArrayWithSelection, forKey: "channelArray")
+      
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -96,7 +98,6 @@ class MySharedChannelsViewController: UIViewController {
         self.sharedChannelsSearchBar.resignFirstResponder()
         searchActive = false
         self.sharedChannelsTableView.reloadData()
-        
     }
     
     func createChannelDataSource()
@@ -271,7 +272,7 @@ extension MySharedChannelsViewController:UITableViewDataSource
         
         if(searchActive){
             dataSourceTmp = searchDataSource
-            sharedChannelsTableView.reloadInputViews()
+         //   sharedChannelsTableView.reloadInputViews()
         }
         else{
             dataSourceTmp = dataSource
@@ -292,16 +293,6 @@ extension MySharedChannelsViewController:UITableViewDataSource
                 cell.userImage.image = UIImage(named: "thumb12")
             }
             
-            if(cell.selectedArray.count > 0){
-                
-                for var i = 0; i < channelArrayWithSelection.count; i++
-                {
-                    let selectedValue: String = channelArrayWithSelection[i][channelIdKey] as! String
-                    if cell.selectedArray.containsObject(selectedValue){
-                        channelArrayWithSelection[i][channelSelectionKey] = "1"
-                    }
-                }
-            }
             
             if(cell.deselectedArray.count > 0){
                 
@@ -313,6 +304,18 @@ extension MySharedChannelsViewController:UITableViewDataSource
                     }
                 }
             }
+            
+            if(cell.selectedArray.count > 0){
+                
+                for var i = 0; i < channelArrayWithSelection.count; i++
+                {
+                    let selectedValue: String = channelArrayWithSelection[i][channelIdKey] as! String
+                    if cell.selectedArray.containsObject(selectedValue){
+                        channelArrayWithSelection[i][channelSelectionKey] = "1"
+                    }
+                }
+            }
+
             
             if channelArrayWithSelection.count > 0
             {
@@ -336,7 +339,7 @@ extension MySharedChannelsViewController:UITableViewDataSource
                 }
                 
             }
-            
+         
             cell.cellDataSource = dataSourceTmp![indexPath.row]
             cell.selectionStyle = .None
             return cell

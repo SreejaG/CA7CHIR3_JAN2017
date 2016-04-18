@@ -13,28 +13,30 @@ class contactTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactProfileName: UILabel!
     @IBOutlet var contactSelectionButton: UIButton!
-    var cellsDataSource:[String:AnyObject]?
-    var selectedCells : [[String:AnyObject]] = [[String:AnyObject]]()
     
-    let inviteKey = "invitationKey"
-    let phoneKey = "mobile_no"
+    let nameKey = "user_name"
+    let selectionKey = "selection"
+    
+    var cellDataSource:[String:AnyObject]?
+    
+    var selectedArray: NSMutableArray = NSMutableArray()
+    var deselectedArray: NSMutableArray = NSMutableArray()
     
     @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-        if cellsDataSource != nil{
-            if cellsDataSource![inviteKey]! as! String == "0"
-            {
-                //selected
-                cellsDataSource![inviteKey] = "1"
-                contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-                selectedCells.append([inviteKey:"1", phoneKey:cellsDataSource![phoneKey] as! String])
-            }
-            else
-            {
-                //deselected
-                cellsDataSource![inviteKey] = "0"
+        
+        if cellDataSource != nil{
+            let selectedValue: String = cellDataSource![nameKey] as! String
+            if(selectedArray.containsObject(selectedValue)){
+                selectedArray.removeObject(selectedValue)
+                deselectedArray.addObject(selectedValue)
                 contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-                selectedCells.append([inviteKey:"0", phoneKey:cellsDataSource![phoneKey] as! String])
             }
+            else{
+                selectedArray.addObject(selectedValue)
+                deselectedArray.removeObject(selectedValue)
+                contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+            }
+            
         }
     }
     

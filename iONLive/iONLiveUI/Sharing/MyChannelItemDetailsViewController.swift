@@ -59,12 +59,26 @@ class MyChannelItemDetailsViewController: UIViewController {
 
     @IBAction func backClicked(sender: AnyObject)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
+        let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
+        sharingVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(sharingVC, animated: true)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    @IBAction func inviteContacts(sender: AnyObject) {
+        let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
+        let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ContactListViewController.identifier) as! ContactListViewController
+        inviteContactsVC.channelId = channelId
+        inviteContactsVC.channelName = channelName
+        inviteContactsVC.totalMediaCount = totalMediaCount
+        inviteContactsVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(inviteContactsVC, animated: true)
     }
     
     func initialise()
