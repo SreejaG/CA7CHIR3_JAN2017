@@ -265,9 +265,7 @@ class ContactDetailsViewController: UIViewController {
         }
         
         dataSource = [appContactsArr,contactDataSource]
-        
-        print(appContactsArr)
-        print(contactDataSource)
+      
         for ele in appContactsArr{
             selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"1"])
         }
@@ -375,9 +373,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     let selectedValue: String = selectedContacts[i][nameKey] as! String
                     if cell.deselectedArray.containsObject(selectedValue){
                         selectedContacts[i][selectionKey] = "0"
-//                        let sections = String(indexPath.section).stringByAppendingString("_")
-//                        let keyVal = String(sections).stringByAppendingString(String(indexPath.row))
-//                        checkedMobiles.removeObjectForKey(String(keyVal))
                     }
                 }
             }
@@ -389,9 +384,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     let selectedValue: String = selectedContacts[i][nameKey] as! String
                     if cell.selectedArray.containsObject(selectedValue){
                         selectedContacts[i][selectionKey] = "1"
-//                        let sections = String(indexPath.section).stringByAppendingString("_")
-//                        let keyVal = String(sections).stringByAppendingString(String(indexPath.row))
-//                        checkedMobiles.setValue(dataSource![indexPath.section][indexPath.row][phoneKey]!, forKey: String(keyVal))
                     }
                 }
             }
@@ -444,6 +436,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        tableView.reloadData()
         
     }
     
@@ -464,6 +457,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         searchActive = false;
+        contactTableView.reloadData()
+        contactTableView.layoutIfNeeded()
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -516,7 +511,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
             searchActive = true;
         }
         
-        self.contactTableView.reloadData()
+        contactTableView.reloadData()
+        contactTableView.layoutIfNeeded()
      
     }
 }

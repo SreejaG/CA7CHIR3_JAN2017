@@ -42,7 +42,7 @@ class IPhoneLiveStreaming: NSObject {
           //  rtsp://stream.ioncameras.com:1935/live/
             //rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf
             
-            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
+            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
             
             print("baseStream/", baseStream)
             return baseStream
@@ -77,6 +77,10 @@ class IPhoneLiveStreaming: NSObject {
         
         func getAppName() -> String{
             return "live"
+        }
+        
+        func getToken(token:String) -> String{
+            return "/" + token
         }
 
         //PRAGMA MARK:- Start Streaming API
