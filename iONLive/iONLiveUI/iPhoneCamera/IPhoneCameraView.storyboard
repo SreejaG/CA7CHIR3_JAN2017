@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--iPhone Camera View Controller-->
@@ -203,6 +203,17 @@
                                         </constraints>
                                         <color key="color" red="0.0" green="0.40000000000000002" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </activityIndicatorView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
+                                        <rect key="frame" x="507" y="40" width="45" height="45"/>
+                                        <color key="backgroundColor" red="0.20000000000000001" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="VAe-7E-Yus"/>
+                                            <constraint firstAttribute="width" constant="45" id="gu6-sb-aii"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -212,6 +223,8 @@
                                     <constraint firstAttribute="trailing" secondItem="xzX-a8-zLm" secondAttribute="trailing" constant="40" id="7Qg-9X-lCu"/>
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="8QX-eo-r1A"/>
                                     <constraint firstItem="mb8-jt-nr2" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="55" id="BBv-5I-z1M"/>
+                                    <constraint firstAttribute="trailing" secondItem="2fe-SJ-fm1" secondAttribute="trailing" constant="48" id="DR2-0K-xhU"/>
+                                    <constraint firstItem="2fe-SJ-fm1" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="40" id="I4k-BV-tZu"/>
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerX" secondItem="JqH-kr-rKo" secondAttribute="centerX" id="KWd-YN-cYO"/>
                                     <constraint firstAttribute="height" constant="120" id="OdD-b2-11Z"/>
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="42" id="Sve-zp-5eE"/>
@@ -281,6 +294,7 @@
                         <outlet property="activityImageView" destination="vGm-sF-zny" id="mhK-4k-giM"/>
                         <outlet property="bottomView" destination="JqH-kr-rKo" id="r6C-QY-lGG"/>
                         <outlet property="cameraButton" destination="lwm-xS-hJh" id="VOn-tB-XGY"/>
+                        <outlet property="countLabel" destination="2fe-SJ-fm1" id="kGr-cC-Dwj"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="iphoneCameraButton" destination="ryW-Iz-I7M" id="8as-6J-mT1"/>
                         <outlet property="noDataFound" destination="BIV-8z-Rim" id="UAO-Fj-ncf"/>

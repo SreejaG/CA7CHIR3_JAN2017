@@ -143,7 +143,7 @@ class StreamsListViewController: UIViewController{
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
-       // self.streamListCollectionView.reloadData()
+        // self.streamListCollectionView.reloadData()
         print("message = \(message)")
         
         if !self.requestManager.validConnection() {
@@ -169,13 +169,16 @@ class StreamsListViewController: UIViewController{
     
     func loadStaticImagesOnly()
     {
-         self.dataSource = dummyImageListingDataSource
-         self.streamListCollectionView.reloadData()
+        self.dataSource = dummyImageListingDataSource
+        self.streamListCollectionView.reloadData()
     }
     
     @IBAction func customBackButtonClicked(sender: AnyObject)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        iPhoneCameraVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -202,7 +205,7 @@ class StreamsListViewController: UIViewController{
     }
 }
 
-    
+
 extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
@@ -222,7 +225,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
         
         //cell for live streams
-     
+        
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.row
@@ -299,7 +302,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
     {
-         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
+        return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
     }
 }
 

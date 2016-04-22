@@ -40,9 +40,10 @@ class IPhoneLiveStreaming: NSObject {
         {
             
           //  rtsp://stream.ioncameras.com:1935/live/
-            //rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf
             
-            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
+      //     let baseStream  = "rtsp://192.168.16.44:1935/live?userName=remya123&token=in7bmn7x14610637429891"
+            
+           let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
             
             print("baseStream/", baseStream)
             return baseStream
@@ -58,10 +59,14 @@ class IPhoneLiveStreaming: NSObject {
         {
             //sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
             return "?userName=" + userName + "&token=" + streamToken
+            
+          //  return "?userName=remya123&token=in7bmn7x14610637429891"
         }
         
         func getHost() ->String
         {
+         //   return "192.168.16.44"
+            
           //  return "104.196.113.133"
             
             return "104.196.15.240"
@@ -81,6 +86,7 @@ class IPhoneLiveStreaming: NSObject {
         
         func getToken(token:String) -> String{
             return "/" + token
+          //  return "/in7bmn7x14610637429891"
         }
 
         //PRAGMA MARK:- Start Streaming API
@@ -132,7 +138,7 @@ class IPhoneLiveStreaming: NSObject {
             let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
             let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
             
-            cleanStreamingToken()
+       //     cleanStreamingToken()
             
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
             {
@@ -244,6 +250,7 @@ class IPhoneLiveStreaming: NSObject {
             UIApplication.sharedApplication().idleTimerDisabled = true
             
 //            let test = "rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf"
+            
             iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamToken)
         }
 
@@ -256,6 +263,8 @@ class IPhoneLiveStreaming: NSObject {
             let accessTocken = userDefault.objectForKey(userAccessTockenKey)
             let streamTocken = userDefault.objectForKey(streamingToken)
             
+            print(loginId as! String)
+            print(accessTocken as! String)
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
             {
                 livestreamingManager.stopLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken as! String,success: { (response) -> () in

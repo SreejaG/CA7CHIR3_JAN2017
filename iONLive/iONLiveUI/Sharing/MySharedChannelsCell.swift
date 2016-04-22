@@ -40,16 +40,16 @@ class MySharedChannelsCell: UITableViewCell {
         if cellDataSource != nil{
             let selectedValue: String = cellDataSource![channelIdKey] as! String
             if(selectedArray.containsObject(selectedValue)){
+                channelSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
                 selectedArray.removeObject(selectedValue)
                 deselectedArray.addObject(selectedValue)
-                channelSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
                 sharedCountLabel.hidden = true
                 avatarIconImageView.hidden = true
             }
             else{
+                channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
                 selectedArray.addObject(selectedValue)
                 deselectedArray.removeObject(selectedValue)
-                channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
                 sharedCountLabel.hidden = false
                 avatarIconImageView.hidden = false
             }

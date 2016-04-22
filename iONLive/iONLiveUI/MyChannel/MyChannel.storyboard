@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -58,7 +58,7 @@
                                                     <constraint firstAttribute="width" constant="30" id="Ch1-Ce-eur"/>
                                                     <constraint firstAttribute="height" constant="42" id="POw-hj-7fv"/>
                                                 </constraints>
-                                                <state key="normal" image="my stuff notification"/>
+                                                <state key="normal" image="notif"/>
                                                 <connections>
                                                     <action selector="didTapNotificationButton:" destination="HHn-oS-sje" eventType="touchUpInside" id="q83-XY-PEQ"/>
                                                 </connections>
@@ -265,6 +265,7 @@
                         <outlet property="myChannelSearchBar" destination="XKO-cD-U5I" id="htB-Lq-una"/>
                         <outlet property="myChannelTableView" destination="sVZ-HZ-JoX" id="wBu-62-dsr"/>
                         <outlet property="myChannelTableViewTopConstraint" destination="3mG-Ed-K3s" id="trx-YP-2eU"/>
+                        <outlet property="notifImage" destination="fp1-85-0Vm" id="lh6-eD-yzA"/>
                         <outlet property="tableViewBottomConstraint" destination="K5e-Rf-tGg" id="mwO-k1-SbG"/>
                         <outlet property="tableviewBottomConstraint" destination="K5e-Rf-tGg" id="2an-BR-yfL"/>
                     </connections>
@@ -649,6 +650,8 @@
                                                         <constraint firstItem="koW-7h-ltn" firstAttribute="top" secondItem="ZoG-wh-Oi1" secondAttribute="top" constant="3" id="qp9-3e-390"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <color key="tintColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                                 <connections>
                                                     <outlet property="addChannelCountLabel" destination="Cqq-MZ-IVh" id="NL1-xH-nJW"/>
                                                     <outlet property="addChannelImageView" destination="koW-7h-ltn" id="FdQ-yi-VQg"/>
@@ -712,6 +715,7 @@
                     </view>
                     <connections>
                         <outlet property="addChannelTableView" destination="mOo-XQ-QsS" id="4Rc-Pz-KAi"/>
+                        <outlet property="addChannelView" destination="GoL-4J-G1Y" id="KTo-MH-HCv"/>
                         <outlet property="addToChannelTitleLabel" destination="jzp-H8-NEg" id="acg-9e-con"/>
                         <outlet property="channelCreateButton" destination="iYk-u1-61I" id="Iva-Hl-4OQ"/>
                         <outlet property="channelTextField" destination="qoZ-jy-YVL" id="2M2-Ls-C2p"/>
@@ -767,7 +771,7 @@
                                                     <constraint firstAttribute="width" constant="40" id="NP4-VN-tH7"/>
                                                     <constraint firstAttribute="height" constant="40" id="nMe-XA-Yuk"/>
                                                 </constraints>
-                                                <state key="normal" image="my stuff notification"/>
+                                                <state key="normal" image="notif"/>
                                                 <connections>
                                                     <action selector="didTapNotificationButton:" destination="2nJ-KT-mUK" eventType="touchUpInside" id="S3f-Rh-bOV"/>
                                                 </connections>
@@ -913,6 +917,7 @@
                     <connections>
                         <outlet property="NotificationLabelView" destination="yMF-2G-kHG" id="4Hu-Tf-xgS"/>
                         <outlet property="NotificationTableView" destination="CPM-mt-YIw" id="eAJ-0N-ecc"/>
+                        <outlet property="notifImage" destination="350-DW-hho" id="eeo-9i-KMs"/>
                         <outlet property="triangleView" destination="7Zy-bp-RyN" id="iWP-UH-Rab"/>
                     </connections>
                 </viewController>
@@ -926,7 +931,7 @@
         <image name="Circled Play" width="25" height="25"/>
         <image name="Select thumbnails" width="34" height="31"/>
         <image name="checked" width="48" height="43"/>
-        <image name="my stuff notification" width="29" height="25"/>
+        <image name="notif" width="29" height="25"/>
         <image name="plusChannel" width="65" height="65"/>
         <image name="snapCamMode" width="25" height="25"/>
         <image name="thumb11" width="124" height="125"/>

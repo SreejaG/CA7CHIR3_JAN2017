@@ -173,10 +173,10 @@ extension SnapCamSelectViewController
         
         UIView .animateWithDuration(1.0, animations: { () -> Void in
             self.blurView.alpha = 1.0
-            }) { (Bool finished) -> Void in
+            }) { (finished) -> Void in
                 UIView.animateWithDuration(1.0, animations: { () -> Void in
                     self.blurView.alpha = 0.0
-                    }, completion: { (Bool finshed) -> Void in
+                    }, completion: { (finshed) -> Void in
                         self.switchToiPhoneView()
                 })
         }
@@ -193,7 +193,7 @@ extension SnapCamSelectViewController
             UIView .animateWithDuration(1.0, animations: { () -> Void in
                 self.blurView.alpha = 1.0
                 
-                }) { (Bool finished) -> Void in
+                }) { (finished) -> Void in
                         self.startSnapCamViewAnimation()
             }
     }
@@ -206,13 +206,13 @@ extension SnapCamSelectViewController
             self.activityLabel.hidden = true;
             self.iPhoneSnapCamImageView.image = UIImage(named: "SnapCam Switched modes");
             
-            }) { (Bool finished) -> Void in
+            }) { (finished) -> Void in
 
                 UIView.animateWithDuration(0.5, animations: { () -> Void in
 
                     self.blurView.alpha = 0.0
 
-                    }, completion: { (Bool finshed) -> Void in
+                    }, completion: { (finshed) -> Void in
                         self.switchToSnapCamView()
                 })
         }

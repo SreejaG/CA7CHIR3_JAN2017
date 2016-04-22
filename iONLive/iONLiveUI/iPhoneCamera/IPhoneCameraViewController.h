@@ -18,6 +18,7 @@
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *uploadActivityIndicator;
 @property (weak, nonatomic) IBOutlet UIProgressView *uploadProgressCameraView;
+@property (weak, nonatomic) IBOutlet UILabel *countLabel;
 
 @property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
 @end

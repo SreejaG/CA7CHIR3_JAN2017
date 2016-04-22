@@ -12,17 +12,20 @@ class OtherChannelViewController: UIViewController {
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     static let identifier = "OtherChannelViewController"
-
+    let channelIdkey = "ch_detail_id"
+    
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
     
     var offset: String = "0"
     var offsetToInt = Int!()
+    let isWatched = "isWatched"
     
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let cameraController = IPhoneCameraViewController()
     
@@ -59,7 +62,13 @@ class OtherChannelViewController: UIViewController {
     
     @IBAction func backClicked(sender: AnyObject)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        
+        
+        let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
+        let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
+        sharingVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(sharingVC, animated: true)
+        // self.navigationController?.popViewControllerAnimated(true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -69,9 +78,9 @@ class OtherChannelViewController: UIViewController {
     
     func initialise()
     {
-      //  channelId = (self.tabBarController as! //MyChannelDetailViewController).channelId
-      //  channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
-      //  totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
+        //  channelId = (self.tabBarController as! //MyChannelDetailViewController).channelId
+        //  channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
+        //  totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
         if totalMediaCount > 6
         {
             fixedLimit = 6
@@ -98,8 +107,8 @@ class OtherChannelViewController: UIViewController {
         
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
         }
     }
     
@@ -115,21 +124,40 @@ class OtherChannelViewController: UIViewController {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-    
+    func isWatchedTrue(){
+        let defaults = NSUserDefaults .standardUserDefaults()
+        mediaSharedCountArray = defaults.valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+        
+        for var i=0 ; i < mediaSharedCountArray.count ; i++
+        {
+            if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as! String
+            {
+                mediaSharedCountArray[i][isWatched] = "1";
+                
+                let defaults = NSUserDefaults .standardUserDefaults()
+                defaults.setObject(mediaSharedCountArray, forKey: "Shared")
+                // return
+            }
+        }
+    }
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
+        
+        isWatchedTrue()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
             for var index = 0; index < responseArr.count; index++
             {
-                let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
+                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
             
+            
+            print(responseArr)
             downloadCloudData(15, scrolled: false)
         }
         else
@@ -261,6 +289,9 @@ extension OtherChannelViewController : UIScrollViewDelegate{
             
         }
     }
+    
+    
+    
 }
 
 extension OtherChannelViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
@@ -279,7 +310,8 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(OtherChannelCell.identifier, forIndexPath: indexPath) as! OtherChannelCell
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("OtherChannelCell", forIndexPath: indexPath) as! OtherChannelCell
         
         cell.videoView.alpha = 0.4
         if fullImageDataSource.count > 0
@@ -330,6 +362,6 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         
         
     }
-
-
+    
+    
 }

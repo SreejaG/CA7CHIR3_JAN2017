@@ -82,7 +82,7 @@ protocol uploadProgressDelegate
         //  self.readImageFromDataBase()
         self.readImage();
         
-        for var index = 0; index < channelDetails.count; index++
+        for index in 0 ..< channelDetails.count
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
             let channelId = channelDetails[index].valueForKey("channel_detail_id")
@@ -137,7 +137,7 @@ protocol uploadProgressDelegate
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
             let checkValidation = NSFileManager.defaultManager()
-            for var index = 0; index < sortedSnapShotsKeys.count; index++
+            for index in 0 ..< sortedSnapShotsKeys.count
             {
                 if let thumbNailImagePath = shotDict.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
@@ -182,7 +182,7 @@ protocol uploadProgressDelegate
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
             let checkValidation = NSFileManager.defaultManager()
-            for var index = 0; index < sortedSnapShotsKeys.count; index++
+            for index in 0 ..< sortedSnapShotsKeys.count
             {
                 if let thumbNailImagePath = snapShots.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
@@ -325,9 +325,9 @@ protocol uploadProgressDelegate
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                                let mediaId = self.signedURLResponse.valueForKey("mediaId")!.stringValue
+                                let mediaId = self.signedURLResponse.valueForKey("mediaId")?.stringValue
                                 
-                                self.imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId as String, success: { (response) -> () in
+                                self.imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId! as String, success: { (response) -> () in
                                     self.authenticationSuccessHandlerForDefaultMediaMapping(response)
                                     }, failure: { (error, message) -> () in
                                         self.authenticationFailureHandlerForDefaultMediaMapping(error, code: message)

@@ -33,6 +33,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var moviePlayer : MPMoviePlayerController!
     var mediaSharedCount : String = "0"
     var fullImageLinkArray: NSMutableArray = NSMutableArray()
+    var mediaTimeArray: NSMutableArray = NSMutableArray()
     var dummyImagesDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
     var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
     var progressViewDownload: UIProgressView?
@@ -42,13 +43,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaSelected: NSMutableArray = NSMutableArray()
     
     var offset: String = "0"
-    var offsetToInt = Int!()
+    var offsetToInt : Int = Int()
     var totalMediaCount: Int = Int()
     var limitMediaCount : Int = Int()
     var totalCount: Int = 0
     var fixedLimit : Int =  0
     var longPressActive : Bool = false
     @IBOutlet var playIconInFullView: UIImageView!
+    
+    @IBOutlet weak var mediaTimeLabel: UILabel!
     @IBOutlet var progressView: UIProgressView!
     let thumbImageKey = "thumbImage"
     let fullImageKey = "fullImageKey"
@@ -72,7 +75,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var selectedArray:[Int] = [Int]()
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
-
+    
     
     
     private var downloadTask: NSURLSessionDownloadTask?
@@ -103,20 +106,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             {
                 isLimitReached = false
                 
-                                       let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {
                     self.downloadCloudData(15, scrolled: true)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                       // self.photoThumpCollectionView.reloadData()
+                        // self.photoThumpCollectionView.reloadData()
                     })
                 })
-           
-
-          
-          
-            
+                
+                
+                
+                
+                
             }
             if(scrollView.contentOffset.x == fullyScrolledContentOffset)
             {
@@ -162,7 +165,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         print(selectedArray)
         
-        for (var i = 0;i < selectedArray.count ;i++)
+        for i in 0 ..< selectedArray.count
         {
             
             if selectedArray[i] == 1
@@ -192,11 +195,61 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
     }
+    
+    func setLabelValue(index: NSInteger)
+    {
+        let dateFormatter = NSDateFormatter()
+        // dateFormatter.dateFormat = "yyyy-MM-dd"//this your string date format
+        //    dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        dateFormatter.dateFormat =  "yyyy-MM-dd'T'HH:mm:ss.sssZ"
+        if(mediaTimeArray.count > 0)
+        {
+            let date = dateFormatter.dateFromString(mediaTimeArray[index] as! String)
+            // let date = dateFormatter.dateFromString("2016-02-02T10:40:10")
+            //  print(dataSource[indexPath.row][timeStamp] as! NSDate)
+            print(date)
+            //  let fromdate = NSDate()
+            
+            let fromdate = NSDate();
+            // "Apr 1, 2015, 8:53 AM" <-- local without seconds
+            
+            // var formatter = NSDateFormatter();
+            //  formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ";
+            //  formatter.timeZone = NSTimeZone(abbreviation: "UTC");
+            
+            // let defaultTimeZoneStr = formatter.stringFromDate(fromdate);
+            // // "2015-04-01 08:52:00 -0400" <-- same date, local, but with seconds
+            //  let utcTimeZoneStr = formatter.stringFromDate(fromdate);
+            print(fromdate)
+            var sdifferentString =  offsetFrom(date!, todate: fromdate)
+            
+            switch(sdifferentString)
+            {
+            case "TODAY" :
+                break;
+            case "1d" : sdifferentString = "YESTERDAY"
+            break;
+            default :
+                
+                let formatter = NSDateFormatter()
+                formatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                //  formatter.timeStyle = .MediumStyle
+                let dateString = formatter.stringFromDate(date!)
+                let strSplit = dateString.characters.split("-").map(String.init)
+                sdifferentString = dateString
+                sdifferentString = "Date(" + strSplit[1] + " " + strSplit[0] + "," + strSplit[2] + " )"
+                break;
+            }
+            
+            mediaTimeLabel.text = sdifferentString
+        }
+    }
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
+            print(json)
             //            offset = "0"
             //            offsetToInt = Int(offset)
             //            totalCount = 0
@@ -467,7 +520,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         mediaSelected.removeAllObjects()
-        for (var i = 0;i < selectedArray.count ;i++)
+        for i in 0 ..< selectedArray.count
         {
             
             if selectedArray[i] == 1
@@ -501,7 +554,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let screenWidth = screenRect.size.width
             let screenHeight = screenRect.size.height
             let checkValidation = NSFileManager.defaultManager()
-            for var index = 0; index < sortedSnapShotsKeys.count; index++
+            for index in 0 ..< sortedSnapShotsKeys.count
             {
                 if let thumbNailImagePath = snapShots.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
@@ -592,7 +645,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 cell.thumbImageView.image = thumpImage
                 if(progressDict.count>0)
                 {
-                    for var i = 0; i < progressDict.count ;i++
+                    for i in 0 ..< progressDict.count 
                     {
                         if(indexPath.row == i)
                             
@@ -623,7 +676,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
                 if(longPressActive)
                 {
-                    for var i = 0; i < selectedArray.count; i++
+                    for i in 0 ..< selectedArray.count
                     {
                         if indexPath.row == i
                         {
@@ -664,6 +717,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 var dict = dataSource[indexPath.row]
                 selectedCollectionViewIndex = indexPath.row
+                
+                
+                
+                setLabelValue(indexPath.row)
                 print("Selected Index %d %d %d ", indexPath.row , thumbLinkArray.count ,mediaTypeArray.count)
                 if let fullImage = dict[fullImageKey]
                 {
@@ -698,7 +755,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             //            cell!.layer.borderWidth = 2.0
             //            cell!.layer.borderColor = UIColor.blueColor().CGColor
             
-            for var i = 0;i < selectedArray.count; i++
+            for i in 0 ..< selectedArray.count
             {
                 
                 if i == indexPath.row
@@ -760,9 +817,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             let imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)
             
             // let imageData = UIImagePNGRepresentation(uploadImage!)
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+     //       let defaults = NSUserDefaults .standardUserDefaults()
+//            let userId = defaults.valueForKey(userLoginIdKey) as! String
+//            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             if(imageData == nil )  {
                 
             }
@@ -881,9 +938,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandlerList(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -927,14 +984,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         self.readImageFromDataBase()
         
-        let mediaDict: NSMutableDictionary = NSMutableDictionary()
+    //    let mediaDict: NSMutableDictionary = NSMutableDictionary()
         
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
             
             for element in responseArr{
-                //  print(element)
+                print(element)
                 for (key,value) in element as! NSDictionary {
                     let thumbKey = key as! String
                     if thumbKey == "thumbnail_name_SignedUrl"
@@ -953,6 +1010,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     else if thumbKey == "gcs_object_type"
                     {
                         mediaTypeArray.addObject(value)
+                    }
+                    else if thumbKey == "created_time_stamp"
+                    {
+                        print(value)
+                        mediaTimeArray.addObject(value)
                     }
                 }
                 
@@ -978,7 +1040,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             
             if dummyImagesDataSourceDatabase.count > 0
             {
-                for(var i = dummyImagesDataSourceDatabase.count-1 ; i >= 0 ; i--)
+                for(var i = dummyImagesDataSourceDatabase.count-1 ; i >= 0 ; i -= 1)
                 {
                     
                     //                    uploadData( i,completion: { (result) -> Void in
@@ -1051,9 +1113,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                                let mediaId = self.signedURLResponse.valueForKey("mediaId")!.stringValue
+                                let mediaId = self.signedURLResponse.valueForKey("mediaId")?.stringValue
                                 
-                                self.imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId as String, success: { (response) -> () in
+                                self.imageUploadManger.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId! as String, success: { (response) -> () in
                                     self.authenticationSuccessHandlerForDefaultMediaMapping(response)
                                     }, failure: { (error, message) -> () in
                                         self.authenticationFailureHandlerForDefaultMediaMapping(error, code: message)
@@ -1134,7 +1196,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         thumbLinkArray.removeAllObjects()
         fullImageLinkArray.removeAllObjects()
-        for var index = 0; index < channelDetails.count; index++
+        for index in 0 ..< channelDetails.count
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
             let channelId = channelDetails[index].valueForKey("channel_detail_id")
@@ -1142,14 +1204,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
                 
-               // mediaSharedCount = "20"
+                // mediaSharedCount = "20"
             }
             
             channelDict[channelName] = channelId
             
             
         }
-      
+        
         getMediaFromCloud()
     }
     func getMediaFromCloud()
@@ -1168,11 +1230,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         //        }
         imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: mediaSharedCount, offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandlerForFetchMedia(error, code: message)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandlerForFetchMedia(error, code: message)
         }
         
-     
+        
         //        imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: "8", offset: "0" , success: { (response) -> () in
         //            self.authenticationSuccessHandlerForFetchMedia(response)
         //
@@ -1184,7 +1246,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func downloadFirstEntry()
     {
         playIconInFullView.hidden = true
-
+        
         var dummyImagesDataSource :[[String:UIImage]]  = [[String:UIImage]]()
         
         if(self.fullImageLinkArray.count > 0 && self.thumbLinkArray.count > 0)
@@ -1197,6 +1259,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             
             dummyImagesDataSource = self.dataSource
             self.dataSource .removeAll()
+            setLabelValue(0)
             let fullImageDownloadUrl = convertStringtoURL(self.fullImageLinkArray[0] as! String)
             //   downloadMedia(fullImageDownloadUrl, key: "FullImage")
             let downloadThumbURL =  self.convertStringtoURL(self.thumbLinkArray[0] as! String)
@@ -1289,7 +1352,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
             
             downloadCloudData(15, scrolled: false)
-       
+            
             
         }
         else
@@ -1323,12 +1386,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if(thumbLinkArray.count <  (currentLimit +  limitMedia))
         {
             
-                limitMediaCount = currentLimit
+            limitMediaCount = currentLimit
             if currentLimit == 0
             {
                 limitMediaCount = 1
             }
-                currentLimit = currentLimit + (thumbLinkArray.count - currentLimit)
+            currentLimit = currentLimit + (thumbLinkArray.count - currentLimit)
             
         }
         else if (thumbLinkArray.count > (currentLimit +  limitMedia))
@@ -1339,46 +1402,47 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 limitMediaCount = 1
             }
             currentLimit = currentLimit + 15
-
+            
         }
         else if(currentLimit == thumbLinkArray.count)
         {
             return
             
         }
-
+        
         
         if(!scrolled)
         {
-            for var i = limitMediaCount ; i <= currentLimit  ; i++ {
+            for var i = limitMediaCount; i <= currentLimit ; i += 1
+            {
                 print(i)
                 print(currentLimit)
                 print(thumbLinkArray.count)
                 if(thumbLinkArray.count-1 >= i)
                 {
-                let downloadURL =  self.convertStringtoURL(self.thumbLinkArray[i] as! String)
-                print("Not scrolled %d",i)
-                downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
-                    dummyImagesDataSource.append([self.thumbImageKey:result,self.fullImageKey:result])
-                
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.dataSource = dummyImagesDataSource
-                        self.photoThumpCollectionView.reloadData()
+                    let downloadURL =  self.convertStringtoURL(self.thumbLinkArray[i] as! String)
+                    print("Not scrolled %d",i)
+                    downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
+                        dummyImagesDataSource.append([self.thumbImageKey:result,self.fullImageKey:result])
+                        
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.dataSource = dummyImagesDataSource
+                            self.photoThumpCollectionView.reloadData()
+                        })
+                        
+                        
+                        
+                        
                     })
-
-                  
-                    
-                
-                })
                 }
             }
         }
         else
         {
-           
-            for var i = limitMediaCount+1; i <= currentLimit ; i++ {
+            
+            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
                 print(" scrolled %d",i)
-
+                
                 if(i >= thumbLinkArray.count - 1)
                 {
                     print("endreached")
@@ -1397,7 +1461,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     
                 })
             }
-
+            
         }
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.dataSource = dummyImagesDataSource
@@ -1406,7 +1470,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         isLimitReached = true
         self.fullScrenImageView.alpha = 1.0
         
-
+        
     }
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
@@ -1459,6 +1523,39 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
         
         
+    }
+    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
+    }
+    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Month, fromDate: date, toDate: todate, options: []).month
+    }
+    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    }
+    func daysFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Day, fromDate: date, toDate: todate, options: []).day
+    }
+    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    }
+    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    }
+    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
+    }
+    func offsetFrom(date:NSDate,todate:NSDate) -> String {
+        if yearsFrom(date,todate:todate)   > 0 {
+            return "\(yearsFrom(date,todate:todate))y"
+        }
+        if monthsFrom(date,todate:todate)  > 0 { return "\(monthsFrom(date,todate:todate))M"  }
+        if weeksFrom(date,todate:todate)   > 0 {  return "\(weeksFrom(date,todate:todate))w"   }
+        if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))d"    }
+        if hoursFrom(date,todate:todate)   > 0 { return "TODAY"   }
+        if minutesFrom(date,todate:todate) > 0 { return "TODAY"   }
+        if secondsFrom(date,todate:todate) > 0 { return "TODAY"   }
+        return ""
     }
     
 }

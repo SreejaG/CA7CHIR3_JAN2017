@@ -226,7 +226,9 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func ltzAbbrev() -> String
     {
-        return NSTimeZone.localTimeZone().abbreviation ?? ""
+        let zoneName = NSTimeZone.localTimeZone().name
+        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
+        return timeValue!
     }
     
     func generateWaytoSendAlert()
@@ -254,7 +256,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         
         let timeZoneOffsetInGMT : String = ltzAbbrev()
         let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
-        
+        print(timeZoneOffsetInUTC)
         authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, success: { (response) -> () in
                 self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
@@ -398,6 +400,7 @@ extension SignUpVerifyPhoneViewController:CountryPhoneCodePickerDelegate{
         self.countryTextField.text = countryCode + " - " + name
         self.countryCodeTextField.text = phoneCode
         CountryPhoneCode = phoneCode
+     //   defaults.setValue(phoneCode as String, forKey: "phoneCodes")
     }
 
 }

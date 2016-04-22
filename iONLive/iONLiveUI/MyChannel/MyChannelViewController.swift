@@ -18,6 +18,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     
+    @IBOutlet var notifImage: UIButton!
     @IBOutlet var addChannelView: UIView!
     
     @IBOutlet var channelTextField: UITextField!
@@ -32,7 +33,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     var notificationFlag : Bool?
     
-    var sortedDataSource = NSArray!()
+    var sortedDataSource: NSArray = NSArray()
     
     var loadingOverlay: UIView?
     
@@ -57,8 +58,22 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        let defaults = NSUserDefaults .standardUserDefaults()
+        if let notifFlag = defaults.valueForKey("notificationFlag")
+        {
+            if notifFlag as! String == "0"
+            {
+                let image = UIImage(named: "noNotif") as UIImage?
+                notifImage.setImage(image, forState: .Normal)
+            }
+        }
+        else{
+            let image = UIImage(named: "notif") as UIImage?
+            notifImage.setImage(image, forState: .Normal)
+        }
         addKeyboardObservers()
     }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -113,6 +128,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
+            print(json)
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }
@@ -542,16 +558,18 @@ extension MyChannelViewController:UITableViewDataSource
         
         
     }
-    
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchActive = true;
-        //    myChannelTableView.removeGestureRecognizer(gestureRecognizer)
+        if searchBar.text != ""
+        {
+            searchActive = true
+        }
+        else{
+            searchActive = false
+        }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         searchActive = false;
-        myChannelSearchBar.text = ""
-        myChannelSearchBar.resignFirstResponder()
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {

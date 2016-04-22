@@ -22,7 +22,7 @@ class ChannelItemListViewController: UIViewController {
     let requestManager = RequestManager.sharedInstance
     
     var offset: String = "0"
-    var offsetToInt = Int!()
+    var offsetToInt: Int = Int()
     var totalMediaCount: Int = Int()
     
     var loadingOverlay: UIView?
@@ -61,7 +61,7 @@ class ChannelItemListViewController: UIViewController {
         fullImageDataSource.removeAll()
         selectedArray.removeAll()
         selected.removeAllObjects()
-        offsetToInt = Int(offset)
+        offsetToInt = Int(offset)!
         deleteButton.hidden = true
         addButton.hidden = true
         cancelButton.hidden = true
@@ -139,12 +139,12 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
-            for var index = 0; index < responseArr.count; index++
+            for index in 0 ..< responseArr.count
             {
-                let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
+                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
             print(imageDataSource)
             downloadCloudData(15, scrolled: false)
@@ -226,8 +226,8 @@ class ChannelItemListViewController: UIViewController {
             isLimitReached = false
             return
         }
-        
-        for var i = limitMediaCount ; i < currentLimit  ; i++ {
+       
+        for i in limitMediaCount  ..< currentLimit   {
             let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
@@ -238,9 +238,10 @@ class ChannelItemListViewController: UIViewController {
                         self.channelItemCollectionView.reloadData()
                     })
                 })
-                
             }
+
         }
+       
     }
     
     @IBAction func didTapBackButton(sender: AnyObject)
@@ -323,8 +324,9 @@ class ChannelItemListViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
+            print(json)
             offset = "0"
-            offsetToInt = Int(offset)
+            offsetToInt = Int(offset)!
             totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
             
@@ -462,7 +464,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
             if(selectionFlag){
-                for var i = 0; i < selectedArray.count; i++
+                for i in 0 ..< selectedArray.count
                 {
                     let selectedValue: String = fullImageDataSource[i][mediaIdKey] as! String
                     if indexPath.row == i
@@ -528,7 +530,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             addButton.setTitle("Add to", forState: .Normal)
             
             
-            for var i = 0;i < selectedArray.count; i++
+            for i in 0 ..< selectedArray.count
             {
                 
                 if i == indexPath.row

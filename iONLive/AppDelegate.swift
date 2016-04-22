@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var photoViewController : PhotoViewerViewController?
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
     
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
@@ -180,11 +179,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(deviceTokenString)
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue(deviceTokenString, forKey: "deviceToken")
-    
+       
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         print(userInfo)
+//        
+//        let defaults = NSUserDefaults .standardUserDefaults()
+//        defaults.setValue("1", forKey: "notificationFlag")
         var navigationController:UINavigationController?
         let notificationStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
         let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController

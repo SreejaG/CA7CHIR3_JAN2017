@@ -22,6 +22,8 @@ class MyChannelNotificationViewController: UIViewController {
     
     var loadingOverlay: UIView?
     
+    var mediaDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var channelDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let usernameKey = "userName"
@@ -30,7 +32,9 @@ class MyChannelNotificationViewController: UIViewController {
     let mediaTypeKey = "mediaType"
     let mediaImageKey = "mediaImage"
     let messageKey = "message"
+    let notificationTimeKey = "notifTime"
     
+    @IBOutlet var notifImage: UIButton!
     var tapFlag : Bool = false
     
     override func viewDidLoad() {
@@ -42,7 +46,22 @@ class MyChannelNotificationViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+//        let defaults = NSUserDefaults .standardUserDefaults()
+//        if let notifFlag = defaults.valueForKey("notificationFlag")
+//        {
+//            if notifFlag as! String == "1"
+//            {
+//                let image = UIImage(named: "notif") as UIImage?
+//                notifImage.setImage(image, forState: .Normal)
+//            }
+//        }
+//        else{
+//                let image = UIImage(named: "noNotif") as UIImage?
+//                notifImage.setImage(image, forState: .Normal)
+//            }
+    }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
         if(tapFlag){
@@ -56,8 +75,12 @@ class MyChannelNotificationViewController: UIViewController {
     func initialise(){
         NotificationTableView.layer.cornerRadius=10
         tapFlag = false
+        channelDataSource.removeAll()
+        mediaDataSource.removeAll()
         
         let defaults = NSUserDefaults .standardUserDefaults()
+        defaults.setValue("0", forKey: "notificationFlag")
+        
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         getNotificationDetails(userId, token: accessToken)
@@ -94,55 +117,127 @@ class MyChannelNotificationViewController: UIViewController {
         return searchURL
     }
     
+    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
+    }
+    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Month, fromDate: date, toDate: todate, options: []).month
+    }
+    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    }
+    func daysFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Day, fromDate: date, toDate: todate, options: []).day
+    }
+    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    }
+    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    }
+    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
+    }
+    func offsetFrom(date:NSDate,todate:NSDate) -> String {
+        if yearsFrom(date,todate:todate)   > 0 { return "\(yearsFrom(date,todate:todate))y"   }
+        if monthsFrom(date,todate:todate)  > 0 { return "\(monthsFrom(date,todate:todate))m"  }
+        if weeksFrom(date,todate:todate)   > 0 { return "\(weeksFrom(date,todate:todate))w"   }
+        if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))d"    }
+        if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))h"   }
+        if minutesFrom(date,todate:todate) > 0 { return "\(minutesFrom(date,todate:todate))min" }
+        if secondsFrom(date,todate:todate) > 0 { return "\(secondsFrom(date,todate:todate))sec" }
+        return ""
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
-            print(responseArr)
+            print(json)
             
             var mediaImage : UIImage?
             var profileImage : UIImage?
-            for element in responseArr{
-                let username = element["user_name"] as! String
-                let notifType = element["notification_type"] as! String
-                let mediaType = element["gcs_object_type"] as! String
-                let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)"
-                
-                let mediaThumbUrl = element["thumbnail_name_SignedUrl"] as! String
-               
-                if(mediaThumbUrl != "")
-                {
-                    let url: NSURL = convertStringtoURL(mediaThumbUrl)
-                    if let mediaData = NSData(contentsOfURL: url){
-                       let mediaImageData = (mediaData as NSData?)!
-                        mediaImage = UIImage(data: mediaImageData)
+           
+            let mediaResponseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
+            if mediaResponseArr.count > 0
+            {
+                for element in mediaResponseArr{
+                    let username = element["user_name"] as! String
+                    let notifType = element["notification_type"] as! String
+                    let mediaType = element["gcs_object_type"] as! String
+                    let notTime = element["created_time_stamp"] as! String
+                    let timeDiff = getTimeDifference(notTime)
+                    
+                    let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)  \(timeDiff)"
+                    if let mediaThumbUrl: String = element["thumbnail_name_SignedUrl"] as? String
+                    {
+                        mediaImage = createMediaThumb(mediaThumbUrl)
                     }
-                }
-                else{
-                    mediaImage = UIImage(named: "thumb12")
-                }
-                let profileImageName = element["profile_image"]
-                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
-                {
-                    var bytes:[UInt8] = []
-                    for serverByte in imageByteArray {
-                        bytes.append(UInt8(serverByte as! UInt))
+                    else{
+                        mediaImage = UIImage(named: "thumb12")
+                    }
+                
+                    if let profileImageName = element["profile_image"]
+                    {
+                        if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
+                        {
+                            profileImage = createProfileImage(imageByteArray)
+                        }
+                        else{
+                            profileImage = UIImage(named: "avatar")
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "avatar")
                     }
                     
-                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                        let profileImageData = profileData as NSData?
-                        profileImage = UIImage(data: profileImageData!)
-                    }
+                    print("\(message)  \(profileImage)  \(mediaImage)   \(notTime)")
+                    dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!, notificationTimeKey:notTime])
                 }
-                else{
-                    profileImage = UIImage(named: "defUser")
-                }
-
-               dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!])
-
             }
+            
+            let channelResponseArr = json["notification Details"]!["channelDetails"] as! [[String:AnyObject]]
+            if channelResponseArr.count > 0
+            {
+                for element in channelResponseArr{
+                    let username = element["user_name"] as! String
+                    let notifType = element["notification_type"] as! String
+                    let mediaType = element["channel_name"] as! String
+                    let notTime = element["created_time_stamp"] as! String
+                    let timeDiff = getTimeDifference(notTime)
+                    let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)  \(timeDiff)"
+                    
+                    if let profileImageName = element["profile_image"]
+                    {
+                        if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
+                        {
+                            profileImage = createProfileImage(imageByteArray)
+                        }
+                        else{
+                            profileImage = UIImage(named: "avatar")
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "avatar")
+                    }
+                    dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:UIImage(),notificationTimeKey:notTime])
+                }
+                
+            }
+            
+            print(dataSource)
+            
+            if(dataSource.count > 0)
+            {
+                dataSource.sortInPlace({ p1, p2 in
+                    let time1 = p1[notificationTimeKey] as! String
+                    let time2 = p2[notificationTimeKey] as! String
+                    return time1 > time2
+                })
+            }
+         
+            print(dataSource)
             
             tapFlag = true
             NotificationTableView.reloadData()
@@ -153,6 +248,62 @@ class MyChannelNotificationViewController: UIViewController {
         }
     }
  
+    func createMediaThumb(mediaName: String) -> UIImage
+    {
+        var mediaImage : UIImage?
+        print(mediaName)
+        if(mediaName != "")
+        {
+            let url: NSURL = convertStringtoURL(mediaName)
+            if let mediaData = NSData(contentsOfURL: url){
+                let mediaImageData = (mediaData as NSData?)!
+                mediaImage = UIImage(data: mediaImageData)
+            }
+            else{
+                mediaImage = UIImage(named: "thumb12")
+            }
+        }
+        else{
+            mediaImage = UIImage(named: "thumb12")
+        }
+        return mediaImage!
+    }
+    
+    func createProfileImage(profileName: NSArray) -> UIImage
+    {
+        var profileImage : UIImage?
+        var bytes:[UInt8] = []
+        for serverByte in profileName {
+            bytes.append(UInt8(serverByte as! UInt))
+        }
+        
+        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+            let profileImageData = profileData as NSData?
+            profileImage = UIImage(data: profileImageData!)
+        }
+        else{
+            profileImage = UIImage(named: "avatar")
+        }
+        return profileImage!
+    }
+    
+    func  getTimeDifference(dateStr:String) -> String {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        
+        let cloudDate = dateFormatter.dateFromString(dateStr)
+        
+        let localDateStr = dateFormatter.stringFromDate(NSDate())
+        let localDate = dateFormatter.dateFromString(localDateStr)
+        
+        let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
+        print("\(cloudDate)   \(localDate)")
+        print(differenceString)
+        
+        return differenceString
+    }
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()

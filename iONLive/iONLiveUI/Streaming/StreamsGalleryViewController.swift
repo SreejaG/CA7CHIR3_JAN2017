@@ -9,7 +9,8 @@
 import UIKit
 
 class StreamsGalleryViewController: UITabBarController {
-
+    static let identifier = "StreamsGalleryViewController"
+    
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
@@ -31,8 +32,8 @@ class StreamsGalleryViewController: UITabBarController {
         if let items = tabBarItems
         {
             print(items)
-//            items[0].image = UIImage(named:"channels")?.imageWithRenderingMode(.AlwaysOriginal)
-//            items[0].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
+            //            items[0].image = UIImage(named:"channels")?.imageWithRenderingMode(.AlwaysOriginal)
+            //            items[0].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
         }
     }
     override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {

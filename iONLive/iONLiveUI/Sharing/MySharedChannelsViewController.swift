@@ -29,16 +29,23 @@ class MySharedChannelsViewController: UIViewController {
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     var searchActive : Bool = false
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    
-    var channelArrayFromDefaults : [[String:AnyObject]] = [[String:AnyObject]]()
+ 
     var channelArrayWithSelection : [[String:AnyObject]] = [[String:AnyObject]]()
+    var addChannelArray : NSMutableArray = NSMutableArray()
+    var deleteChannelArray : NSMutableArray = NSMutableArray()
+    
+    @IBOutlet var doneButton: UIButton!
     
     var loadingOverlay: UIView?
+    
+    var tapFlag : Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
         channelDetailsDict.removeAll()
         dataSource.removeAll()
+        addChannelArray.removeAllObjects()
+        deleteChannelArray.removeAllObjects()
         sharedChannelsSearchBar.delegate = self
         createChannelDataSource()
     }
@@ -50,11 +57,6 @@ class MySharedChannelsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        sharedChannelsTableView.reloadData()
-        sharedChannelsTableView.layoutIfNeeded()
-        let defaults = NSUserDefaults .standardUserDefaults()
-        defaults.setObject(channelArrayWithSelection, forKey: "channelArray")
-      
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -100,8 +102,64 @@ class MySharedChannelsViewController: UIViewController {
         self.sharedChannelsTableView.reloadData()
     }
     
+    
+    @IBAction func didTapDoneButton(sender: AnyObject) {
+        self.sharedChannelsTableView.reloadData()
+        sharedChannelsTableView.layoutIfNeeded()
+        addChannelArray.removeAllObjects()
+        deleteChannelArray.removeAllObjects()
+        print(channelArrayWithSelection)
+        for element in channelArrayWithSelection
+        {
+            if element[channelSelectionKey]?.stringValue == "0"
+            {
+                deleteChannelArray.addObject(element[channelIdKey]!)
+            }
+            else{
+                addChannelArray.addObject(element[channelIdKey]!)
+            }
+        }
+        print(addChannelArray)
+        print(deleteChannelArray)
+        
+        if((addChannelArray.count > 0) || (deleteChannelArray.count > 0)){
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            enableDisableChannels(userId, token: accessToken, addChannels: addChannelArray, deleteChannels: deleteChannelArray)
+        }
+    }
+    
+    func  enableDisableChannels(userName: String, token: String, addChannels: NSMutableArray, deleteChannels:NSMutableArray) {
+        showOverlay()
+        channelManager.enableDisableChannels(userName, accessToken: token, addChannel: addChannels, deleteChannel: deleteChannels, success: { (response) in
+                 self.authenticationSuccessHandlerEnableDisable(response)
+            }) { (error, message) in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
+    
+    func authenticationSuccessHandlerEnableDisable(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                createChannelDataSource()
+            }
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
     func createChannelDataSource()
     {
+        tapFlag = true
+        doneButton.hidden = true
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -131,6 +189,7 @@ class MySharedChannelsViewController: UIViewController {
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
+        channelDetailsDict.removeAll()
         if let json = response as? [String: AnyObject]
         {
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
@@ -156,12 +215,15 @@ class MySharedChannelsViewController: UIViewController {
     func setChannelDetails()
     {
         dataSource.removeAll()
+        channelArrayWithSelection.removeAll()
+        
         var imageDetails : UIImage?
         for element in channelDetailsDict{
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
-            if(sharedBool == 1){
-                let channelId = element["channel_detail_id"]?.stringValue
-                let channelName = element["channel_name"] as! String
+            let channelId = element["channel_detail_id"]?.stringValue
+            let channelName = element["channel_name"] as! String
+            if channelName != "Archive"
+            {
                 let mediaSharedCount = element["total_no_media_shared"]?.stringValue
                 let createdTime = element["last_updated_time_stamp"] as! String
                 let thumbUrl = element["thumbnail_Url"] as! String
@@ -176,36 +238,16 @@ class MySharedChannelsViewController: UIViewController {
                 else{
                     imageDetails = UIImage(named: "thumb12")
                 }
-                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
-                channelArrayWithSelection.append([channelIdKey:channelId!, channelSelectionKey:"0"])
+                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!, channelSelectionKey:sharedBool])
+                print(dataSource)
+              //  channelArrayWithSelection.append([channelIdKey:channelId!, channelSelectionKey:sharedBool])
             }
         }
-        
         dataSource.sortInPlace({ p1, p2 in
             let time1 = p1[channelCreatedTimeKey] as! String
             let time2 = p2[channelCreatedTimeKey] as! String
             return time1 > time2
         })
-        
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        if let channelArrayFromDefaults = defaults.arrayForKey("channelArray")
-        {
-            if(channelArrayFromDefaults.count > 0){
-                for elements in channelArrayFromDefaults
-                {
-                    for var i = 0; i < channelArrayWithSelection.count; i++
-                    {
-                        if elements[channelIdKey] as! String == channelArrayWithSelection[i][channelIdKey] as! String{
-                            if elements[channelSelectionKey] as! String == "1"
-                            {
-                                channelArrayWithSelection[i][channelSelectionKey] = "1"
-                            }
-                        }
-                    }
-                }
-            }
-        }
         
         sharedChannelsTableView.reloadData()
         
@@ -224,6 +266,17 @@ class MySharedChannelsViewController: UIViewController {
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func handleTap() {
+        tapFlag = false
+        if tapFlag == true
+        {
+            doneButton.hidden = true
+        }
+        else{
+            doneButton.hidden = false
         }
     }
 }
@@ -270,9 +323,18 @@ extension MySharedChannelsViewController:UITableViewDataSource
     {
         var dataSourceTmp : [[String:AnyObject]]?
         
+        if channelArrayWithSelection.count != dataSource.count{
+            for element in dataSource
+            {
+                let sharedBool = Int(element[channelSelectionKey] as! Bool)
+                let channelId = element[channelIdKey] as! String
+                channelArrayWithSelection.append([channelIdKey:channelId, channelSelectionKey:sharedBool])
+            }
+            print(channelArrayWithSelection)
+        }
+        
         if(searchActive){
             dataSourceTmp = searchDataSource
-         //   sharedChannelsTableView.reloadInputViews()
         }
         else{
             dataSourceTmp = dataSource
@@ -294,24 +356,35 @@ extension MySharedChannelsViewController:UITableViewDataSource
             }
             
             
+            if tapFlag == true
+            {
+                cell.channelSelectionButton.addTarget(self, action: "handleTap", forControlEvents: UIControlEvents.TouchUpInside)
+                cell.deselectedArray.removeAllObjects()
+                cell.selectedArray.removeAllObjects()
+            }
+            else{
+                tapFlag = false
+            }
+
+            
             if(cell.deselectedArray.count > 0){
                 
-                for var i = 0; i < channelArrayWithSelection.count; i++
+                for i in 0 ..< channelArrayWithSelection.count
                 {
                     let selectedValue: String = channelArrayWithSelection[i][channelIdKey] as! String
                     if cell.deselectedArray.containsObject(selectedValue){
-                        channelArrayWithSelection[i][channelSelectionKey] = "0"
+                        channelArrayWithSelection[i][channelSelectionKey] = 0
                     }
                 }
             }
             
             if(cell.selectedArray.count > 0){
                 
-                for var i = 0; i < channelArrayWithSelection.count; i++
+                for i in 0 ..< channelArrayWithSelection.count
                 {
                     let selectedValue: String = channelArrayWithSelection[i][channelIdKey] as! String
                     if cell.selectedArray.containsObject(selectedValue){
-                        channelArrayWithSelection[i][channelSelectionKey] = "1"
+                        channelArrayWithSelection[i][channelSelectionKey] = 1
                     }
                 }
             }
@@ -319,10 +392,10 @@ extension MySharedChannelsViewController:UITableViewDataSource
             
             if channelArrayWithSelection.count > 0
             {
-                for var i = 0; i < channelArrayWithSelection.count; i++
+                for i in 0 ..< channelArrayWithSelection.count
                 {
                     if channelArrayWithSelection[i][channelIdKey] as! String == dataSourceTmp![indexPath.row][channelIdKey] as! String{
-                        if channelArrayWithSelection[i][channelSelectionKey] as! String == "0"
+                        if channelArrayWithSelection[i][channelSelectionKey]!.stringValue == "0"
                         {
                             
                             cell.channelSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
@@ -375,15 +448,19 @@ extension MySharedChannelsViewController:UITableViewDataSource
     }
 }
 
-extension MySharedChannelsViewController : UISearchBarDelegate{
+extension MySharedChannelsViewController : UISearchBarDelegate,UISearchDisplayDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchActive = true;
+        if self.sharedChannelsSearchBar.text != ""
+        {
+            searchActive = true
+        }
+        else{
+            searchActive = false
+        }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         searchActive = false;
-        sharedChannelsSearchBar.text = ""
-        sharedChannelsSearchBar.resignFirstResponder()
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {

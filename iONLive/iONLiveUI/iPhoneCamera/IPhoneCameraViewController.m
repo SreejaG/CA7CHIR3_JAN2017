@@ -8,6 +8,7 @@
 @import AVFoundation;
 @import Photos;
 
+#import <UIKit/UIKit.h>
 #import "IPhoneCameraViewController.h"
 #import "AAPLPreviewView.h"
 #import "iONLive-Swift.h"
@@ -209,6 +210,9 @@ NSMutableDictionary *ShotsDict;
 
 -(void)initialiseView
 {
+    _countLabel.layer.cornerRadius = 5;
+    _countLabel.layer.masksToBounds = true;
+    
     _noDataFound.hidden = true;
     _activityImageView.hidden = true;
     __activityIndicatorView.hidden = true;
@@ -225,7 +229,30 @@ NSMutableDictionary *ShotsDict;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     
     [self deleteIphoneCameraSnapShots];
+     [self checkCountForLabel];
     self.thumbnailImageView.image = [self readImageFromDataBase];
+}
+
+-(void) checkCountForLabel
+{
+    
+    NSArray *mediaArray = [[NSUserDefaults standardUserDefaults] objectForKey:@"Shared"];
+    NSInteger count = 0;
+    
+    for (int i=0;i< mediaArray.count;i++)
+    {
+        count = count + [ mediaArray[i][@"total_no_media_shared"] integerValue];
+    }
+    if(count==0)
+    {
+        _countLabel.hidden= true;
+    }
+    else
+    {
+        _countLabel.hidden= false;
+        _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
+    }
+    NSLog(@"%ld",(long)count);
 }
 
 -(void)showProgressBar
@@ -233,7 +260,7 @@ NSMutableDictionary *ShotsDict;
     dispatch_async( dispatch_get_main_queue(), ^{
         
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
-        
+
         _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
         _activityImageView.hidden = false;
         [__activityIndicatorView startAnimating];
@@ -241,6 +268,7 @@ NSMutableDictionary *ShotsDict;
         _noDataFound.text = @"Initializing Stream";
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
+    
     } );
    
     
@@ -250,8 +278,9 @@ NSMutableDictionary *ShotsDict;
 -(void)hideProgressBar
 {
     dispatch_async( dispatch_get_main_queue(), ^{
+    
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
-        
+
         _activityImageView.hidden = true;
         [__activityIndicatorView stopAnimating];
         __activityIndicatorView.hidden = true;
@@ -259,7 +288,8 @@ NSMutableDictionary *ShotsDict;
         self.activitView.hidden = true;
         _liveSteamSession.previewView.hidden = false;
         [self.bottomView setUserInteractionEnabled:YES];
-    } );
+        } );
+   
 }
 
 -(UIImage*)readImageFromDataBase
@@ -367,6 +397,16 @@ NSMutableDictionary *ShotsDict;
 //        self.resumeButton.hidden = NO;
     }
 }
+
+
+- (void)dealloc {
+    AVCaptureInput* input = [_session.inputs objectAtIndex:0];
+    [_session removeInput:input];
+    AVCaptureVideoDataOutput* output = [_session.outputs objectAtIndex:0];
+    [_session removeOutput:output];
+    [_session stopRunning];
+}
+
 
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {
@@ -820,7 +860,6 @@ NSMutableDictionary *ShotsDict;
             case VCSessionStateError:
             {
                 [liveStreaming startLiveStreaming:_liveSteamSession];
-                
                 [self showProgressBar];
                 break;
             }
@@ -1051,6 +1090,7 @@ NSMutableDictionary *ShotsDict;
 #pragma mark : VCSessionState Delegate
 - (void) connectionStatusChanged:(VCSessionState) state
 {
+
     switch(state) {
             
         case VCSessionStateStarting:
@@ -1067,9 +1107,8 @@ NSMutableDictionary *ShotsDict;
             break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
+         //   [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-
             [liveStreaming stopStreamingClicked];
             NSLog(@"VCSessionStateError");
             break;
@@ -1106,6 +1145,7 @@ NSMutableDictionary *ShotsDict;
      */
     
 NSString * url  = @"rtsp://192.168.16.33:1935/live";
+    
 //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live";
 //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live";
 //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live";
@@ -1116,6 +1156,7 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
 //    NSString * url = @"rtsp://192.168.16.33:1935/live";+
 //    NSString * url = @"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live";
 //    NSString * url = @"rtsp://priyesh:priyesh@192.168.16.33:1935/live";
+    
     [_liveSteamSession startRtmpSessionWithURL:url andStreamKey:@"iPhoneliveStreaming"];
 }
 

@@ -47,6 +47,7 @@ class ContactDetailsViewController: UIViewController {
         self.contactSearchBar.resignFirstResponder()
         searchActive = false
         self.contactTableView.reloadData()
+        self.contactTableView.layoutIfNeeded()
     }
     
     override func viewDidLoad() {

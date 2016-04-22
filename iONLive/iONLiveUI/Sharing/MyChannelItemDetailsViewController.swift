@@ -18,7 +18,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var channelName:String!
     
     var offset: String = "0"
-    var offsetToInt = Int!()
+    var offsetToInt: Int = Int()
     
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
@@ -98,7 +98,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         
         imageDataSource.removeAll()
         fullImageDataSource.removeAll()
-        offsetToInt = Int(offset)
+        offsetToInt = Int(offset)!
     }
     
     func initialiseCloudData(){
@@ -136,12 +136,12 @@ class MyChannelItemDetailsViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
-            for var index = 0; index < responseArr.count; index++
+            for index in 0 ..< responseArr.count
             {
-                let mediaId = responseArr[index].valueForKey("media_detail_id")!.stringValue
+                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
             
             downloadCloudData(15, scrolled: false)
@@ -223,7 +223,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             return
         }
         
-        for var i = limitMediaCount ; i < currentLimit  ; i++ {
+        for i in limitMediaCount  ..< currentLimit   {
             let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
