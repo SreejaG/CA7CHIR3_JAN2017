@@ -501,7 +501,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         }
         return cell
     }
-    
+
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
@@ -545,6 +545,12 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 }
             }
             collectionView.reloadData()
+        }
+        else{
+            let storyboard = UIStoryboard(name:"Media", bundle: nil)
+            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MediaViewController.identifier) as! MediaViewController
+            channelVC.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(channelVC, animated: true)
         }
         
     }

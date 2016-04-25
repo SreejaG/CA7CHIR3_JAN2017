@@ -259,7 +259,7 @@ class ContactDetailsViewController: UIViewController {
                         if contactNumber == num {
                             contactDataSource.removeAtIndex(index)
                         }
-                        index++
+                        index += 1
                     }
                 }
             }
@@ -369,7 +369,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             
             if(cell.deselectedArray.count > 0){
                 
-                for var i = 0; i < selectedContacts.count; i++
+                for i in 0 ..< selectedContacts.count
                 {
                     let selectedValue: String = selectedContacts[i][nameKey] as! String
                     if cell.deselectedArray.containsObject(selectedValue){
@@ -380,7 +380,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             
             if(cell.selectedArray.count > 0){
                 
-                for var i = 0; i < selectedContacts.count; i++
+                for i in 0 ..< selectedContacts.count
                 {
                     let selectedValue: String = selectedContacts[i][nameKey] as! String
                     if cell.selectedArray.containsObject(selectedValue){
@@ -397,7 +397,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             
             if selectedContacts.count > 0
             {
-                for var i = 0; i < selectedContacts.count; i++
+                for i in 0 ..< selectedContacts.count
                 {
                     if selectedContacts[i][nameKey] as! String == cellDataSource[nameKey] as! String{
                         if selectedContacts[i][selectionKey] as! String == "0"

@@ -381,7 +381,7 @@ protocol uploadProgressDelegate
             }
             
         } catch let error as NSError {
-            print("Detele all data ")
+            print("Detele all data \(error)")
         }
         
         
