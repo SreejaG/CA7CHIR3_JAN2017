@@ -65,6 +65,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
         if(tapFlag){
+
             let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
             let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
             channelVC.navigationController?.navigationBarHidden = true

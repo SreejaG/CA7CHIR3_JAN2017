@@ -194,8 +194,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     @IBAction func didtapBackButton(sender: AnyObject)
     {
-        self.navigationController?.viewControllers[0].dismissViewControllerAnimated(true, completion: { () -> Void in
-        })
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+        navController.navigationBarHidden = true
+        self.presentViewController(navController, animated: false) { () -> Void in
+        }
+//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+//        iPhoneCameraViewController.navigationController?.navigationBarHidden = true
+//        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
