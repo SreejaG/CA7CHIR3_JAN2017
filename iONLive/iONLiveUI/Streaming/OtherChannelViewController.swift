@@ -19,7 +19,7 @@ class OtherChannelViewController: UIViewController {
     var channelName:String!
     
     var offset: String = "0"
-    var offsetToInt = Int!()
+    var offsetToInt : Int = Int()
     let isWatched = "isWatched"
     
     var loadingOverlay: UIView?
@@ -93,7 +93,7 @@ class OtherChannelViewController: UIViewController {
         
         imageDataSource.removeAll()
         fullImageDataSource.removeAll()
-        offsetToInt = Int(offset)
+        offsetToInt = Int(offset)!
     }
     
     func initialiseCloudData(){
@@ -128,9 +128,9 @@ class OtherChannelViewController: UIViewController {
         let defaults = NSUserDefaults .standardUserDefaults()
         mediaSharedCountArray = defaults.valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
         
-        for var i=0 ; i < mediaSharedCountArray.count ; i++
+        for i in 0  ..< mediaSharedCountArray.count 
         {
-            if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as! String
+            if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as String
             {
                 mediaSharedCountArray[i][isWatched] = "1";
                 
@@ -148,7 +148,7 @@ class OtherChannelViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
-            for var index = 0; index < responseArr.count; index++
+            for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
@@ -237,7 +237,8 @@ class OtherChannelViewController: UIViewController {
             return
         }
         
-        for var i = limitMediaCount ; i < currentLimit  ; i++ {
+        for i in limitMediaCount  ..< currentLimit  
+        {
             let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)

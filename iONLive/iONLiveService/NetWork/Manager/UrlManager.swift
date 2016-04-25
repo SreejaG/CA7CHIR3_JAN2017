@@ -119,6 +119,12 @@ class UrlManager {
         return getAllContactsChannelAPI
     }
     
+    func getDeleteContactChannelAPIUrl(channelId: String, userName: String, accessToken: String, contactName:String) -> String
+    {
+        let getDeleteContactChannelAPI = channelAPIUrl() + "/" + channelId  + "/" + contactName + "/" + userName + "/" + accessToken
+        return getDeleteContactChannelAPI
+    }
+    
     func getNonContactsChannelAPIUrl(channelId: String, userName: String, accessToken: String) -> String
     {
         let getNonContactsChannelAPI = contactAPIUrl() + "/" + channelId  + "/" + userName + "/" + accessToken

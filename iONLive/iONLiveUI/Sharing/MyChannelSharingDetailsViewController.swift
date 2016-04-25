@@ -219,13 +219,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let subscriptionValue =  Int(element["sharedindicator"] as! Bool)
                 if(subscriptionValue == 1)
                 {
-                        channelSelected = "1"
+                    channelSelected = "1"
                 }
                 else{
                     channelSelected = "0"
                 }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage, selectionKey:subscriptionValue])
-          //      selectedContacts.append([userNameKey:userName, selectionKey:channelSelected])
+                //      selectedContacts.append([userNameKey:userName, selectionKey:channelSelected])
             }
             contactTableView.reloadData()
         }
@@ -234,23 +234,23 @@ class MyChannelSharingDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
         }
     }
-
-func authenticationFailureHandler(error: NSError?, code: String)
-{
-    self.removeOverlay()
-    print("message = \(code) andError = \(error?.localizedDescription) ")
     
-    if !self.requestManager.validConnection() {
-        ErrorManager.sharedInstance.noNetworkConnection()
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.addContactError()
+        }
     }
-    else if code.isEmpty == false {
-        ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-    }
-    else{
-        ErrorManager.sharedInstance.addContactError()
-    }
-}
-
+    
     func handleTap() {
         tapFlag = false
         if tapFlag == true
@@ -263,21 +263,57 @@ func authenticationFailureHandler(error: NSError?, code: String)
             doneButton.hidden = false
         }
     }
-
     
-//Loading Overlay Methods
-func showOverlay(){
-    let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-    loadingOverlayController.view.frame = self.view.bounds
-    loadingOverlayController.startLoading()
-    self.loadingOverlay = loadingOverlayController.view
-    self.navigationController?.view.addSubview(self.loadingOverlay!)
-}
+    
+    //Loading Overlay Methods
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+    func generateWaytoSendAlert(ContactId: String)
+    {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
+        let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the contact", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.deleteContactDetails(userId, token: accessToken, contactName: ContactId, channelid: self.channelId)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func  deleteContactDetails(userName: String, token:String, contactName:String, channelid:String){
+        channelManager.deleteContactDetails(userName: userName, accessToken: token, channelId: channelid, contactName: contactName, success: { (response) in
+                 self.authenticationSuccessHandlerDeleteContact(response)
+            }) { (error, message) in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
+    func authenticationSuccessHandlerDeleteContact(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                initialise()
+            }
 
-func removeOverlay(){
-    self.loadingOverlay?.removeFromSuperview()
-}
-
+        }
+    }
+    
 }
 
 extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewDataSource
@@ -416,6 +452,14 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
         
     }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+            let deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
+            generateWaytoSendAlert(deletedUserId)
+        }
+    }
+    
     
 }
 
