@@ -578,8 +578,6 @@ protocol uploadProgressDelegate
     
     func uploadData (index : Int ,completion: (result: String) -> Void)
     {
-        
-        
         if(dummyImagesDataSourceDatabase.count > 0)
         {
         var dict = dummyImagesDataSourceDatabase[index]
@@ -643,19 +641,6 @@ protocol uploadProgressDelegate
             let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
             controller.uploadProgress(progressDictionary)
         }
-        
-        //        if PhotoViewerInstance.iphoneCam != nil
-        //        {
-        //
-        //            let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
-        //            controller.uploadprogress(uploadProgress)
-        //
-        //        }
-        //    let controller = PhotoViewerViewController.sharedInstance
-        
-        //   controller.uploadProgress(progressDictionary)
-        
-        
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)

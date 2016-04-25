@@ -99,11 +99,11 @@ class StreamsListViewController: UIViewController{
         {
             if pullToRefreshActive == false
             {
-                activityIndicator.hidden = false
+              //  activityIndicator.hidden = false
             }
             else
             {
-                activityIndicator.hidden = true
+              //  activityIndicator.hidden = true
             }
             
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
