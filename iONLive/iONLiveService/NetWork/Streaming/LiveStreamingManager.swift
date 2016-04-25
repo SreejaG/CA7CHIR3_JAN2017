@@ -143,4 +143,35 @@ class LiveStreamingManager: NSObject {
                 failure?(error: error, code:failureErrorDesc)
         })
     }
+    
+    //PRAGMA MARK:- Default Stream Mapping
+    
+    func defaultStreamMapping(loginId loginId: String, accesstocken: String, streamTockn: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamingToken, parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
+            
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                //call the success block that was passed with response data
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+            }
+            
+            },failure: { (operation, error) -> Void in
+                var failureErrorDesc:String = ""
+                //get the error message from API response if any
+                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorDesc = errorMessage
+                }
+                failure?(error: error, code:failureErrorDesc)
+        })
+    }
+
 }
