@@ -183,14 +183,12 @@ class OtherChannelViewController: UIViewController {
             }
         }
     }
-    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
-    
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -208,7 +206,6 @@ class OtherChannelViewController: UIViewController {
             completion(result:mediaImage)
         }
     }
-    
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
         

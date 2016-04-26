@@ -260,14 +260,7 @@ protocol uploadProgressDelegate
             if checksDataSourceDatabase.count > 0
             {
                 
-                //                let mediaPath = medianameArray[rowIndex]
-                //                if mediaPath.pathExtension == "mov"
-                //                {
-                //
-                //                    print("it has extension")
-                //
-                //
-                //                }
+          
                 var dict = dummyImagesDataSourceDatabase[rowIndex]
                 let  uploadImageFull = dict[fullImageKey]
                 let imageData : NSData
@@ -296,9 +289,6 @@ protocol uploadProgressDelegate
                     imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)!
                     
                 }
-                //  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
-                //All stuff here
-                //  self.uploadFullImage(imageData!, row: rowIndex )
                 self.uploadFullImage(imageData, row: rowIndex , completion: { (result) -> Void in
                     
                     if result == "Success"
@@ -308,20 +298,11 @@ protocol uploadProgressDelegate
                             
                             if result == "Success"
                             {
-                                if self.dummyImagesDataSourceDatabase.count > 0
-                                {
-                                    self.dummyImagesDataSourceDatabase.removeFirst()
-                                    
-                                    
-                                }
-                                
-                               else  if  self.dummyImagesDataSourceDatabase.count == 0
-                                {
                                     self.dummyImagesDataSourceDatabase.removeAll()
-                                    
+                                    self.checksDataSourceDatabase.removeAll()
                                     self.deleteCOreData()
-                                    
-                                }
+                                    self.shotDict.removeAllObjects()
+                                self.snapShots.removeAllObjects()
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -351,9 +332,6 @@ protocol uploadProgressDelegate
                         
                     }
                 })
-                
-                // })
-                
             }
         }
         else
@@ -428,9 +406,6 @@ protocol uploadProgressDelegate
         let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String) //Remember to put ATS exception if the URL is not https
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "PUT"
-        //        let mimeType = "text/csv"
-        //        let contentTypeString = "Content-Type: \(mimeType)\r\n\r\n"
-        
         let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         request.HTTPBody = imagedata
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
@@ -474,10 +449,22 @@ protocol uploadProgressDelegate
     }
     func deletePathContent()
     {
-        print(thumbnailpath)
+        
+        
+        let documents2 = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+        
+        
+        let fm2 = NSFileManager.defaultManager()
+        do {
+            let items = try fm2.contentsOfDirectoryAtPath(documents2)
+            
+            for item in items {
+                print("Items before------> \(item)")
+            }
+        } catch {
+            // failed to read directory – bad permissions, perhaps?
+        }
         let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-        
-        
         let fm = NSFileManager.defaultManager()
         do {
             let items = try fm.contentsOfDirectoryAtPath(documents)
@@ -490,7 +477,7 @@ protocol uploadProgressDelegate
                     print("Removed \(item)")
                     
                 }
-                print("Found \(item)")
+               // print("Found \(item)")
             }
         } catch {
             // failed to read directory – bad permissions, perhaps?
@@ -530,7 +517,19 @@ protocol uploadProgressDelegate
             print("Ooops! Something went wrong: \(error)")
         }
         
+        let documents1 = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
         
+        
+        let fm1 = NSFileManager.defaultManager()
+        do {
+            let items = try fm1.contentsOfDirectoryAtPath(documents1)
+            
+            for item in items {
+            print("Items after------> \(item)")
+            }
+        } catch {
+            // failed to read directory – bad permissions, perhaps?
+        }
     }
     
     func uploadThumbImage(row : Int,completion: (result: String) -> Void)

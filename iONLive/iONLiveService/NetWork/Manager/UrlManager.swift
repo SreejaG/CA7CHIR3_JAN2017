@@ -55,7 +55,11 @@ class UrlManager {
     {
         let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + channelId + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
         return getchannelMediaDetailsAPI
-
+    }
+    func getSubscribedChannelMediaDetails(userName: String, accessToken: String , limit : String , offset : String) -> String
+    {
+        let getchannelSubscribedMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + userName + "/" + accessToken + "/" + limit + "/" + offset
+        return getchannelSubscribedMediaDetailsAPI
     }
     func defaultCHannelMediaMapping(objectName: String) -> String
     {
@@ -65,7 +69,6 @@ class UrlManager {
     func gesMediaObjectCreationUrl() -> String
     {
         let gesMediaObjectCreationUrl = baseUrl+"/api/v1/media"
-       // let gesMediaObjectCreationUrl = baseUrl+"/api/v1/test"
         return gesMediaObjectCreationUrl
     }
     func MediaInteractionUrl() -> String{
@@ -76,49 +79,45 @@ class UrlManager {
         let SubscribedChannelAPI = baseUrl+"/api/v1/sharedChannel"
         return SubscribedChannelAPI
     }
-    
+    func SubscribedChannelMediaUrl() -> String{
+        let SubscribedChannelAPI = baseUrl+"/api/v1/media"
+        return SubscribedChannelAPI
+    }
     func MediaByChannelAPIUrl(userName: String, accessToken: String) -> String
     {
         let MediaByChannelAPI = gesMediaObjectCreationUrl() + "/" + userName + "/" + accessToken
         return MediaByChannelAPI
     }
-    
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
         return getUserRelatedDataAPI
     }
-    
     func getProfileDataAPIUrl(userName: String, accessToken: String) -> String
     {
         let getProfileDataAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
         return getProfileDataAPI
     }
-    
     func getContactDataAPIUrl(userName: String, accessToken: String) -> String
     {
         let getContactDataAPI = contactAPIUrl() + "/" + userName + "/" + accessToken
         return getContactDataAPI
     }
-    
     func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
         let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
         return getProfileImageAPI
     }
-    
     func getAllChannelsAPIUrl(userName: String, accessToken: String) -> String
     {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
         return getAllChannelsAPI
     }
-   
     func getAllContactsChannelAPIUrl(channelId: String, userName: String, accessToken: String) -> String
     {
         let getAllContactsChannelAPI = channelAPIUrl() + "/" + channelId  + "/" + userName + "/" + accessToken
         return getAllContactsChannelAPI
     }
-    
     func getDeleteContactChannelAPIUrl(channelId: String, userName: String, accessToken: String, contactName:String) -> String
     {
         let getDeleteContactChannelAPI = channelAPIUrl() + "/" + channelId  + "/" + contactName + "/" + userName + "/" + accessToken
@@ -130,7 +129,6 @@ class UrlManager {
         let getNonContactsChannelAPI = contactAPIUrl() + "/" + channelId  + "/" + userName + "/" + accessToken
         return getNonContactsChannelAPI
     }
-    
     func inviteContactsChannelAPIUrl(channelId: String) -> String
     {
         let inviteContactsChannelAPI = channelAPIUrl() + "/" + channelId

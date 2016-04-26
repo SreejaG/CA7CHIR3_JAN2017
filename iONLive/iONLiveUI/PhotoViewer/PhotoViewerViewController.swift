@@ -61,9 +61,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     @IBOutlet weak var photoThumpCollectionView: UICollectionView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
     var dataSource:[[String:UIImage]] = [[String:UIImage]]()
-    var cloudImage: [[String:UIImage]] = [[String:UIImage]]()
     var mediaDictionary: NSMutableDictionary = NSMutableDictionary()
-    
     let photo : PhotoThumbCollectionViewCell = PhotoThumbCollectionViewCell()
     @IBOutlet var fullScreenZoomView: UIImageView!
     var snapShots : NSMutableDictionary = NSMutableDictionary()
@@ -75,9 +73,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var selectedArray:[Int] = [Int]()
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
-    
-    
-    
     private var downloadTask: NSURLSessionDownloadTask?
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
@@ -87,7 +82,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         initialise()
         getSignedURL()
         PhotoViewerInstance.controller = self
@@ -105,41 +99,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(isLimitReached)
             {
                 isLimitReached = false
-                
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {
                     self.downloadCloudData(15, scrolled: true)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        // self.photoThumpCollectionView.reloadData()
                     })
                 })
-                
-                
-                
-                
-                
             }
             if(scrollView.contentOffset.x == fullyScrolledContentOffset)
             {
-                print("End of scroll view")
-                
             }
-            
         }
         if offsetY > contentHeight - scrollView.frame.size.height {
-            // numberOfItemsPerSection += 6
-            // self.collectionView.reloadData()
-            print("this is  not end, see you in console")
-            
         }
     }
-    
-    
-    
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -147,34 +122,17 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewWillDisappear(animated: Bool) {
         
         super.viewWillDisappear(true)
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
     }
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        //        if (segue.identifier == "Load View") {
-        //            // pass data to next view
-        //        }
-        //        let uploadVC = segue.destinationViewController as! upload
-        //        uploadVC.delegate = self;
-    }
-    
-    
     @IBAction func deleteButtonAction(sender: AnyObject) {
-        
-        
-        print(selectedArray)
-        
         for i in 0 ..< selectedArray.count
         {
-            
             if selectedArray[i] == 1
             {
                 mediaSelected.addObject(mediaIdArray[i])
             }
         }
-        print(mediaSelected)
-        
         if(mediaSelected.count > 0)
         {
             var channelIds : [Int] = [Int]()
@@ -199,30 +157,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func setLabelValue(index: NSInteger)
     {
         let dateFormatter = NSDateFormatter()
-        // dateFormatter.dateFormat = "yyyy-MM-dd"//this your string date format
-        //    dateFormatter.timeZone = NSTimeZone(name: "UTC")
         dateFormatter.dateFormat =  "yyyy-MM-dd'T'HH:mm:ss.sssZ"
         if(mediaTimeArray.count > 0)
         {
             let date = dateFormatter.dateFromString(mediaTimeArray[index] as! String)
-            // let date = dateFormatter.dateFromString("2016-02-02T10:40:10")
-            //  print(dataSource[indexPath.row][timeStamp] as! NSDate)
             print(date)
-            //  let fromdate = NSDate()
-            
             let fromdate = NSDate();
-            // "Apr 1, 2015, 8:53 AM" <-- local without seconds
-            
-            // var formatter = NSDateFormatter();
-            //  formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ";
-            //  formatter.timeZone = NSTimeZone(abbreviation: "UTC");
-            
-            // let defaultTimeZoneStr = formatter.stringFromDate(fromdate);
-            // // "2015-04-01 08:52:00 -0400" <-- same date, local, but with seconds
-            //  let utcTimeZoneStr = formatter.stringFromDate(fromdate);
-            print(fromdate)
             var sdifferentString =  offsetFrom(date!, todate: fromdate)
-            
             switch(sdifferentString)
             {
             case "TODAY" :
@@ -233,7 +174,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 
                 let formatter = NSDateFormatter()
                 formatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                //  formatter.timeStyle = .MediumStyle
                 let dateString = formatter.stringFromDate(date!)
                 let strSplit = dateString.characters.split("-").map(String.init)
                 sdifferentString = dateString
@@ -250,20 +190,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if let json = response as? [String: AnyObject]
         {
             print(json)
-            //            offset = "0"
-            //            offsetToInt = Int(offset)
-            //            totalCount = 0
-            //            totalMediaCount = totalMediaCount - selected.count
-            //
-            //            if totalMediaCount > 6
-            //            {
-            //                fixedLimit = 6
-            //            }
-            //            else{
-            //                fixedLimit = totalMediaCount
-            //            }
-            //
-            //            limit = fixedLimit
             
             dataSource.removeAll()
             mediaSelected.removeAllObjects()
@@ -275,8 +201,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             selectedCollectionViewIndex = 0
             currentLimit = 0
             limitMediaCount = 0
-            
-            
             getSignedURL()
         }
     }
@@ -297,14 +221,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    
     func  uploadProgress ( progressDictionary : NSMutableArray)
     {
         
         progressDict = progressDictionary
         self.photoThumpCollectionView.reloadData();
-        // }
         
     }
     func getSignedURL()
@@ -1219,7 +1140,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        let channelId = channelDict["My Day"] as! NSNumber
+        let channelId = channelDict["Archive"] as! NSNumber
         
         let offsetString : String = String(offsetToInt)
         

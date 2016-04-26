@@ -774,11 +774,11 @@ NSMutableDictionary *ShotsDict;
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
     BOOL s = [imageData writeToFile:filePath atomically:YES];
     
-    NSLog(@"BOOl%uud",s);
+    NSLog(@"BOOl%@",filePath);
     [self saveIphoneCameraSnapShots:dateString path:filePath];
     
    ShotsDict = [[NSMutableDictionary alloc]init];
-  [ShotsDict setValue:filePath forKey:dateString];
+   [ShotsDict setValue:filePath forKey:dateString];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
@@ -1038,13 +1038,13 @@ NSMutableDictionary *ShotsDict;
     upload *uploadManager =[[upload alloc]init];
     uploadManager.snapShots = snapShotsDict;
     
-    uploadManager.shotDict = ShotsDict;
+   uploadManager.shotDict = ShotsDict;
 
     uploadManager.media = @"video";
     NSLog(@"%@", filePath);
     uploadManager.videoPath =filePath;
     [uploadManager uploadMedia];
-    
+   
 }
 -(void) loaduploadManagerForImage
 {
@@ -1053,9 +1053,7 @@ NSMutableDictionary *ShotsDict;
     uploadManager.snapShots = snapShotsDict;
     uploadManager.shotDict = ShotsDict;
     uploadManager.media = @"image";
-   
     [uploadManager uploadMedia];
-    
 }
 -(void) loadStreamsGalleryView
 {
