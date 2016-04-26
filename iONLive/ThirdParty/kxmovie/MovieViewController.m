@@ -81,10 +81,16 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIButton *firstCircleButton;
     __weak IBOutlet UIButton *hidingHeartButton;
     
+    
+    IBOutlet UIButton *heart2Button;
+    
+    IBOutlet UIButton *heart4Button;
+    IBOutlet UIButton *heart3Button;
     IBOutlet UIImageView *activityImageView;
     IBOutlet UIImageView *imageView;
     IBOutlet KxMovieGLView *glView;
     
+    IBOutlet UIImageView *imageVideoView;
     IBOutlet UIView *topView;
     IBOutlet UIView *mainView;
     IBOutlet UIView *bottomView;
@@ -98,6 +104,14 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
+    BOOL *likeFlag;
+    
+    IBOutlet UIImageView *profilePicture;
+    
+    IBOutlet UILabel *typeMedia;
+    IBOutlet UILabel *userName;
+    
+    IBOutlet UILabel *channelName;
 
     BOOL                _interrupted;
     
@@ -167,6 +181,17 @@ static NSMutableDictionary * gHistory;
     return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
 }
 
+
++ (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
+                             channelName: (NSString *) channelname
+                                userName: (NSString *) username
+                               mediaType: (NSString *) mediaType
+                            profileImage: (UIImage *) profileImage
+{
+    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage];
+}
+
+
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
                  liveVideo:(BOOL)live
@@ -178,7 +203,6 @@ static NSMutableDictionary * gHistory;
         _liveVideo = live;
         rtspFilePath = path;
         _parameters = nil;
-
         [self setUpDefaultValues];
         NSLog(@"rtsp File Path = %@",path);
 //        [self setUpBlurView];
@@ -193,8 +217,87 @@ static NSMutableDictionary * gHistory;
     return self;
 }
 
+- (id) initWithImageVideo: (NSString *) mediaUrl
+              channelName: (NSString *) channelname
+                 userName: (NSString *) username
+                mediaType: (NSString *) mediaType
+             profileImage: (UIImage *) profileImage
+{
+   
+    self = [super initWithNibName:@"MovieViewController" bundle:nil];
+    if (self) {
+        [self setUpDefaultValues];
+        [self setUpViewForImageVideo];
+        [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        profilePicture.image = profileImage;
+        channelName.text = channelname;
+        if([mediaType  isEqual: @"live"]){
+            typeMedia.text = mediaType;
+        }
+        else{
+            typeMedia.text = @"";
+        }
+        userName.text = username;
+    }
+    return self;
+}
+
+-(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
+{
+    if([mediaType  isEqual: @"video"])
+    {
+        
+    }
+    else if([mediaType  isEqual: @"image"])
+    {
+        NSURL *url = [self convertStringToUrl:mediaUrl];
+        UIImage *mediaImage;
+        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
+        if(data != nil)
+        {
+            mediaImage = [[UIImage alloc]initWithData:data];
+        }
+        else{
+            mediaImage = [UIImage imageNamed:@"photo3"];
+        }
+        imageVideoView.image = mediaImage;
+    }
+}
+
+-(void) setUpViewForImageVideo
+{
+    heart2Button.hidden = true;
+    heart3Button.hidden = true;
+    heart4Button.hidden = true;
+    hidingHeartButton.hidden = true;
+    
+    likeFlag = false;
+    heartBottomDescView.hidden = false;
+    topView.hidden = false;
+    noDataFound.hidden = true;
+    _activityIndicatorView.hidden = true;
+    cameraSelectionButton.hidden = true;
+    liveView.hidden = true;
+    numberOfSharedChannels.hidden = true;
+    bottomView.hidden = true;
+    activityImageView.hidden = true;
+    closeButton.hidden = false;
+    heartView.hidden = false;
+    imageView.hidden = true;
+    imageVideoView.hidden = false;
+    topView.backgroundColor = [UIColor clearColor];
+}
+
+-(NSURL *) convertStringToUrl:(NSString *) url
+{
+    NSURL *searchURL = [NSURL URLWithString:url];
+    return searchURL;
+}
+
+
 -(void)setUpDefaultValues
 {
+     imageVideoView.hidden = true;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
@@ -208,7 +311,7 @@ static NSMutableDictionary * gHistory;
     [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
+
     glView.backgroundColor = [UIColor colorWithPatternImage:image];
 }
 
@@ -564,18 +667,21 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForLive
 {
+    imageVideoView.hidden = true;
     heartView.hidden = true;
     bottomView.hidden = false;
     topView.hidden = false;
     liveView.hidden = false;
     numberOfSharedChannels.hidden = false;
     closeButton.hidden = true;
+      heartBottomDescView.hidden = true;
 }
 
 -(void)customiseViewForStreaming
 {
+    imageVideoView.hidden = true;
     heartView.hidden = false;
-    heartBottomDescView.hidden = true;
+    heartBottomDescView.hidden = false;
     numberOfSharedChannels.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
@@ -1529,18 +1635,42 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapHeartImage:(id)sender
 {
-    if (heartButtomBottomConstraint.constant == 111.0)
-    {
-        // show heartDescView
-        heartBottomDescView.hidden = false;
-        hidingHeartButton.hidden = true;
-        heartButtomBottomConstraint.constant = 65.0;
+    NSArray *arrButtons = @[hidingHeartButton,heart2Button,heart3Button,heart4Button];
+    for (int i = 0 ; i < arrButtons.count; i++) {
+        UIButton* b = arrButtons[i];
+        b.hidden = false;
+        b.alpha = 0.0f;
+        [UIView animateKeyframesWithDuration:0.2 delay:0.2*i options:0 animations:^{
+            b.alpha = 1.0f;
+        } completion:^(BOOL finished) {
+            NSLog(@"Starting Fade Out for symbol");
+            [UIView animateWithDuration:0.2 animations:^{
+                b.hidden = true;
+            } completion:nil];
+            
+        }];
+        if(likeFlag == false){
+            likeFlag = true;
+            
+        }
+        else{
+            likeFlag = false;
+        }
+        
     }
-    else{
-        heartBottomDescView.hidden = true;
-        hidingHeartButton.hidden = false;
-        heartButtomBottomConstraint.constant = 111.0;
-    }
+//    if (heartButtomBottomConstraint.constant == 111.0)
+//    {
+//        // show heartDescView
+//        heartBottomDescView.hidden = false;
+//        hidingHeartButton.hidden = true;
+//        heartButtomBottomConstraint.constant = 65.0;
+//    }
+//    else{
+//        heartBottomDescView.hidden = true;
+//        hidingHeartButton.hidden = false;
+//        heartButtomBottomConstraint.constant = 111.0;
+//    }
+    
 }
 
 - (IBAction)didTapSharingListIcon:(id)sender

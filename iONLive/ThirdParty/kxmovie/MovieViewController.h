@@ -20,6 +20,15 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL) live;
 
++ (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
+                                channelName: (NSString *) channelName
+                                userName: (NSString *) userName
+                                mediaType: (NSString *) mediaType
+                            profileImage: (UIImage *) profileImage;
+
+
+
+
 @property (readonly) BOOL playing;
 
 @end
