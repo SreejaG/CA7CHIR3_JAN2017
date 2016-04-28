@@ -227,7 +227,7 @@
                                                         <constraint firstAttribute="height" constant="25" id="QHE-J4-NKk"/>
                                                         <constraint firstAttribute="width" constant="25" id="bZV-IQ-mG2"/>
                                                     </constraints>
-                                                    <state key="normal" image="hearth"/>
+                                                    <state key="normal" image="hearth_outline"/>
                                                     <connections>
                                                         <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="d4G-nd-i2h"/>
                                                     </connections>
@@ -426,6 +426,7 @@
         <image name="girlFace2" width="29" height="29"/>
         <image name="hearth" width="22" height="21"/>
         <image name="hearth_border" width="24" height="23"/>
+        <image name="hearth_outline" width="22" height="21"/>
         <image name="hearth_transp" width="22" height="20"/>
         <image name="live_stream_blur" width="107" height="190"/>
         <image name="photo1" width="50" height="50"/>

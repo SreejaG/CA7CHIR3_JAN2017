@@ -141,27 +141,28 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-            print(responseArr)
+           
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
-                var notificationType : String = String()
-                if let notifType =  responseArr[index].valueForKey("notification_type")
-                {
-                    if notifType as! String != ""
-                    {
-                        notificationType = (notifType as! String).lowercaseString
-                    }
-                    else{
-                        notificationType = "unliked"
-                    }
-                }
-                else{
-                    notificationType = "shared"
-                }
+                let notificationType : String = "likes"
+//                if let notifType =  responseArr[index].valueForKey("notification_type")
+//                {
+//                    print(notifType)
+//                    if notifType as! NSNull != NSNull()
+//                    {
+//                        notificationType = (notifType as! String).lowercaseString
+//                    }
+//                    else{
+//                        notificationType = "shared"
+//                    }
+//                }
+//                else{
+//                    notificationType = "shared"
+//                }
                 
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
@@ -566,7 +567,9 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String) as! MovieViewController
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String,mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
                 self.presentViewController(vc, animated: true) { () -> Void in
                 
             }

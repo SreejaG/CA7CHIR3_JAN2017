@@ -13,7 +13,7 @@ import UIKit
     let requestManager = RequestManager.sharedInstance
     let imageUploadManger = ImageUpload.sharedInstance
     var channelDetails: NSDictionary = NSDictionary()
-
+    var status: Int = Int()
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,4 +57,35 @@ import UIKit
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject])
     }
+    
+    
+    //channelMediaLike
+    
+    func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String)
+    {
+        channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: mediaDetailId, success: { (response) in
+                 self.authenticationSuccessHandlerSetMedia(response)
+            }) { (error, message) in
+                
+        }
+    }
+    
+    func authenticationSuccessHandlerSetMedia(response:AnyObject?)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            status = json["status"] as! Int
+        //    postLikeDetails()
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+//    func postLikeDetails(){
+//        
+//        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
+//        controller.mediaDetails(status)
+//    }
 }

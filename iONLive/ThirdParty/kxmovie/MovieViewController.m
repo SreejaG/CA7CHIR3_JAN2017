@@ -19,6 +19,7 @@
 #import "IPhoneCameraViewController.h"
 #import <SpriteKit/SpriteKit.h>
 
+
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
 
@@ -158,6 +159,8 @@ static NSMutableDictionary * gHistory;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
     
+    NSString *userId,*accessToken,*mediaDetailId,*notificationType;
+    
 }
 
 @property (readwrite) BOOL playing;
@@ -190,13 +193,14 @@ static NSMutableDictionary * gHistory;
 
 
 + (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
-                             channelName: (NSString *) channelname
+                                channelName: (NSString *) channelname
                                 userName: (NSString *) username
-                               mediaType: (NSString *) mediaType
-                            profileImage: (UIImage *) profileImage
-                               notifType: (NSString *) notifType
+                                mediaType: (NSString *) mediaType
+                                profileImage: (UIImage *) profileImage
+                                notifType: (NSString *) notifType
+                                mediaId: (NSString *) mediaId
 {
-    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage notifType:notifType];
+    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage notifType:notifType  mediaId:mediaId];
 }
 
 
@@ -226,11 +230,12 @@ static NSMutableDictionary * gHistory;
 }
 
 - (id) initWithImageVideo: (NSString *) mediaUrl
-              channelName: (NSString *) channelname
-                 userName: (NSString *) username
+                channelName: (NSString *) channelname
+                userName: (NSString *) username
                 mediaType: (NSString *) mediaType
-             profileImage: (UIImage *) profileImage
+                profileImage: (UIImage *) profileImage
                 notifType: (NSString *) notifType
+                mediaId: (NSString *) mediaId
 {
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
@@ -247,10 +252,27 @@ static NSMutableDictionary * gHistory;
             typeMedia.text = @"";
         }
         userName.text = username;
-        if([notifType  isEqual: @"shared"])
+        if([notifType isEqual: @"likes"])
         {
-            
+            likeFlag = 0;
         }
+        else{
+            likeFlag = 1;
+        }
+        
+        NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+        userId = [standardDefaults valueForKey:@"userLoginIdKey"];
+        accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
+        notificationType = @"LIKE";
+        mediaDetailId = mediaId;
+        
+        if([userId isEqualToString:username]){
+            heartTapButton.hidden = YES;
+            typeMedia.text = @"";
+            userName.text = @"";
+        }
+
+        
     }
     return self;
 }
@@ -1755,14 +1777,11 @@ static NSMutableDictionary * gHistory;
 - (IBAction)didTapHeartImage:(id)sender
 {
     [self addHeart];
-    
-        if(likeFlag == false){
-            likeFlag = true;
-            
-        }
-        else{
-            likeFlag = false;
-        }
+    if(likeFlag == 1){
+        SetUpView *setUpObj = [[SetUpView alloc]init];
+        [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId];
+        likeFlag = 0;
+    }
     
     //    if (heartButtomBottomConstraint.constant == 111.0)
     //    {
