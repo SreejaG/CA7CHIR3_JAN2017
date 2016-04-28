@@ -139,6 +139,10 @@ NSMutableDictionary *ShotsDict;
             
         });
     }
+    else{
+        _countLabel.hidden= false;
+        _countLabel.text = mediaSharedCount;
+    }
 
     
 }
