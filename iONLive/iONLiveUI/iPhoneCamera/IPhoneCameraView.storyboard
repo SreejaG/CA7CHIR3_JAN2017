@@ -297,9 +297,11 @@
                         <outlet property="countLabel" destination="2fe-SJ-fm1" id="kGr-cC-Dwj"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
                         <outlet property="iphoneCameraButton" destination="ryW-Iz-I7M" id="8as-6J-mT1"/>
+                        <outlet property="latestSharedMediaImage" destination="VfF-28-FyM" id="GNh-th-Xna"/>
                         <outlet property="noDataFound" destination="BIV-8z-Rim" id="UAO-Fj-ncf"/>
                         <outlet property="playiIconView" destination="cEw-NK-Mzz" id="VjG-m8-rVg"/>
                         <outlet property="previewView" destination="hPk-zc-tpz" id="j2E-7Z-fyy"/>
+                        <outlet property="sharedUserCount" destination="kQM-1r-I7s" id="313-Vi-6l1"/>
                         <outlet property="startCameraActionButton" destination="ZpM-Fq-WiG" id="Xi5-OU-SEm"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>
                         <outlet property="topView" destination="ucJ-gA-nDs" id="wVm-dG-t3h"/>

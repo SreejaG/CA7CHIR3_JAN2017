@@ -90,9 +90,9 @@ NSMutableDictionary *ShotsDict;
     
  
     [super viewDidLoad];
-        [self initialiseView];
-    //   uploadMediaController *cnt = [[uploadMediaController alloc]init];
-//    [cnt upload];
+    SetUpView *viewSet = [[SetUpView alloc]init];
+    [viewSet getValue];
+    [self initialiseView];
     [_uploadActivityIndicator setHidden:YES];
     PhotoViewerInstance.iphoneCam = self;
     [_uploadProgressCameraView setHidden:YES];
@@ -102,6 +102,45 @@ NSMutableDictionary *ShotsDict;
 {
     [super viewWillDisappear:animated];
 
+}
+-(void) loggedInDetails:(NSDictionary *) detailArray{
+    
+ 
+        
+        NSString * sharedUserCount = detailArray[@"sharedUserCount"];
+        NSArray * sharedUserThumbnail = detailArray[@"sharedUserThumbnails"];
+        NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
+        NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
+        NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
+        
+    _sharedUserCount.text = sharedUserCount;
+    
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
+        if ( data == nil )
+            return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // WARNING: is the cell still using the same data by this point??
+             self.thumbnailImageView.image= [UIImage imageWithData: data];
+        });
+      
+    });
+    
+    if([mediaSharedCount  isEqual: @"0"])
+    {
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
+            if ( data == nil )
+                return;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // WARNING: is the cell still using the same data by this point??
+                self.latestSharedMediaImage.image= [UIImage imageWithData: data];
+            });
+            
+        });
+    }
+
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -113,8 +152,6 @@ NSMutableDictionary *ShotsDict;
     if (! [self isStreamStarted]) {
     if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-//        [self configureCameraSettings];
-
         self.previewView.session = nil;
         self.previewView.hidden = true;
         _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
@@ -231,6 +268,9 @@ NSMutableDictionary *ShotsDict;
     [self deleteIphoneCameraSnapShots];
      [self checkCountForLabel];
     self.thumbnailImageView.image = [self readImageFromDataBase];
+    
+    
+   
 }
 
 -(void) checkCountForLabel
@@ -774,11 +814,11 @@ NSMutableDictionary *ShotsDict;
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
     BOOL s = [imageData writeToFile:filePath atomically:YES];
     
-    NSLog(@"BOOl%uud",s);
+    NSLog(@"BOOl%@",filePath);
     [self saveIphoneCameraSnapShots:dateString path:filePath];
     
    ShotsDict = [[NSMutableDictionary alloc]init];
-  [ShotsDict setValue:filePath forKey:dateString];
+   [ShotsDict setValue:filePath forKey:dateString];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
@@ -1038,13 +1078,13 @@ NSMutableDictionary *ShotsDict;
     upload *uploadManager =[[upload alloc]init];
     uploadManager.snapShots = snapShotsDict;
     
-    uploadManager.shotDict = ShotsDict;
+   uploadManager.shotDict = ShotsDict;
 
     uploadManager.media = @"video";
     NSLog(@"%@", filePath);
     uploadManager.videoPath =filePath;
     [uploadManager uploadMedia];
-    
+   
 }
 -(void) loaduploadManagerForImage
 {
@@ -1053,9 +1093,7 @@ NSMutableDictionary *ShotsDict;
     uploadManager.snapShots = snapShotsDict;
     uploadManager.shotDict = ShotsDict;
     uploadManager.media = @"image";
-   
     [uploadManager uploadMedia];
-    
 }
 -(void) loadStreamsGalleryView
 {

@@ -34,7 +34,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     //    let mediaTypeKey = "mediaType"
     let mediaImageKey = "mediaImage"
     //    let messageKey = "message"
-    
+    let thumbImageKey = "thumbImage"
+
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var loadingOverlay: UIView?
@@ -49,6 +50,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
         self.ChannelSharedTableView.addSubview(refreshControl)
         self.ChannelSharedTableView.alwaysBounceVertical = true
+        
         initialise()
     }
     @IBAction func backButtonClicked(sender: AnyObject) {
@@ -72,7 +74,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     func initialise(){
         
-        //     showOverlay()
         mediaShared.removeAll()
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -130,6 +131,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
                     let streamTocken = element[streamTockenKey] as! String
+                    let mediaSharedCount = element[sharedMediaCount]?.stringValue
+
                     let time = element[timeStamp] as! String
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
@@ -148,10 +151,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                         }
                     }
                     else{
-                        profileImage = UIImage(named: "defUser")
+                        profileImage = UIImage(named: "avatar")!
                     }
                     mediaImage = UIImage(named: "thumb12")
-                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:"0", streamTockenKey:streamTocken,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
+                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
                 }
             }
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
@@ -448,20 +451,20 @@ extension ChannelsSharedController:UITableViewDataSource
     {
         
         
-        if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
-        {
-            if let streamTocken = dataSource[indexPath.row][streamTockenKey]
-            {
-                self.loadLiveStreamView(streamTocken as! String)
-            }
-            else
-            {
-                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
-            }
-            
-        }
-        else
-        {
+//        if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
+//        {
+//            if let streamTocken = dataSource[indexPath.row][streamTockenKey]
+//            {
+//                self.loadLiveStreamView(streamTocken as! String)
+//            }
+//            else
+//            {
+//                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+//            }
+//            
+//        }
+//        else
+//        {
             let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
             let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
             
@@ -471,7 +474,7 @@ extension ChannelsSharedController:UITableViewDataSource
             
             channelItemListVC.navigationController?.navigationBarHidden = true
             self.navigationController?.pushViewController(channelItemListVC, animated: true)
-        }
+       // }
         
     }
     func loadLiveStreamView(streamTocken:String)

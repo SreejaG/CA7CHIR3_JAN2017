@@ -149,6 +149,8 @@ class IPhoneLiveStreaming: NSObject {
                         print("success = \(json["streamToken"])")
                         let streamToken:String = json["streamToken"] as! String
                         self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
+                        
+                        self.setDefaultMappingForLiveStream(streamTocken)
                     }
                     else
                     {
@@ -173,7 +175,19 @@ class IPhoneLiveStreaming: NSObject {
                 ErrorManager.sharedInstance.authenticationIssue()
             }
         }
-        
+        func setDefaultMappingForLiveStream(Tocken : String)
+        {
+            let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)as! String
+            let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey) as! String
+            livestreamingManager.defaultStreamMapping(loginId: loginId, accesstocken:accessTocken, streamTockn: Tocken, success: { (response) in
+                
+                
+                }) { (error, code) in
+                    
+                    
+            }
+ 
+        }
         
         //PRAGMA MARK: User Defaults
         
