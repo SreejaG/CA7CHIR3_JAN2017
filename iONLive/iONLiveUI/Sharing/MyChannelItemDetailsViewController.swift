@@ -135,7 +135,8 @@ class MyChannelItemDetailsViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            
+            let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -295,7 +296,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MyChannelItemCell.identifier, forIndexPath: indexPath) as! MyChannelItemCell
       
-        cell.videoView.alpha = 0.4
+     //   cell.videoView.alpha = 0.4
         if fullImageDataSource.count > 0
         {
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
@@ -314,7 +315,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 cell.videoView.hidden = true
                 channelImageView.image = imageData
             }
-            
+            cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 27 , width: 20, height: 20)
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelImageView)
             
         }

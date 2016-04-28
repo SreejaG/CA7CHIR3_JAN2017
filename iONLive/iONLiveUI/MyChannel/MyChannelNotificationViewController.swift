@@ -169,8 +169,8 @@ class MyChannelNotificationViewController: UIViewController {
                     let mediaType = element["gcs_object_type"] as! String
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
-                    
-                    let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)  \(timeDiff)"
+                    let messageFromCloud = element["message"] as! String
+                    let message = "\(messageFromCloud)  \(timeDiff)"
                     if let mediaThumbUrl: String = element["thumbnail_name_SignedUrl"] as? String
                     {
                         mediaImage = createMediaThumb(mediaThumbUrl)
@@ -193,7 +193,7 @@ class MyChannelNotificationViewController: UIViewController {
                         profileImage = UIImage(named: "avatar")
                     }
                     
-                    print("\(message)  \(profileImage)  \(mediaImage)   \(notTime)")
+                 //   print("\(message)  \(profileImage)  \(mediaImage)   \(notTime)")
                     dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!, notificationTimeKey:notTime])
                 }
             }

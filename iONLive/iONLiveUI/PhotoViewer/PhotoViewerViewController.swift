@@ -988,7 +988,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            let responseArr = json["MediaDetail"] as! [AnyObject]
             
             for element in responseArr{
                 print(element)

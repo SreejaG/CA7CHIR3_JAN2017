@@ -139,7 +139,7 @@ class ChannelItemListViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            let responseArr = json["MediaDetail"] as! [AnyObject]
             print(responseArr)
             for index in 0 ..< responseArr.count
             {
@@ -438,7 +438,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         cell.selectionView.alpha = 0.4
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         
-        cell.videoView.alpha = 0.4
         if fullImageDataSource.count > 0
         {
             if(fullImageDataSource.count == selectedArray.count){
@@ -463,7 +462,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 cell.videoView.hidden = true
                 channelItemImageView.image = imageData
             }
-            
+            print(Int((UIScreen.mainScreen().bounds.width/3)-2))
+            cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 27 , width: 20, height: 20)
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
             if(selectionFlag){
