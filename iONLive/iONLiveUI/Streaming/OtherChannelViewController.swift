@@ -28,7 +28,8 @@ class OtherChannelViewController: UIViewController {
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let cameraController = IPhoneCameraViewController()
-    
+    let streamTockenKey = "wowza_stream_token" //"streamToken"
+
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
@@ -38,7 +39,8 @@ class OtherChannelViewController: UIViewController {
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     var limitMediaCount : Int = Int()
-    
+    let thumbImageKey = "thumbImage"
+
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
     
@@ -147,7 +149,9 @@ class OtherChannelViewController: UIViewController {
         isWatchedTrue()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            
+            let responseArr = json["MediaDetail"] as! [AnyObject]
+            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -156,7 +160,30 @@ class OtherChannelViewController: UIViewController {
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             }
             
-            
+            let responseArrLive = json["LiveDetail"] as! [AnyObject]
+            print(responseArrLive)
+
+            for index in 0 ..< responseArrLive.count
+            {
+                let streamTocken = responseArrLive[index].valueForKey("wowza_stream_token")as! String
+
+                let mediaUrl = responseArrLive[index].valueForKey("signedUrl") as! String
+//                let mediaType =  responseArrLive[index].valueForKey("gcs_object_type") as! String
+                if(mediaUrl != ""){
+                    let url: NSURL = convertStringtoURL(mediaUrl)
+                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.mediaTypeKey:"live"])
+                        
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.channelItemsCollectionView.reloadData()
+                        })
+                    })
+                }
+
+             
+                
+
+            }
             print(responseArr)
             downloadCloudData(15, scrolled: false)
         }
@@ -240,8 +267,7 @@ class OtherChannelViewController: UIViewController {
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
-                    
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaUrlKey:self.imageDataSource[i][self.mediaUrlKey]!, self.thumbImageKey:result,self.streamTockenKey:"", self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemsCollectionView.reloadData()
                     })
@@ -288,7 +314,14 @@ extension OtherChannelViewController : UIScrollViewDelegate{
         }
     }
     
-    
+    func loadLiveStreamView(streamTocken:String)
+    {
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        
+        self.presentViewController(vc, animated: true) { () -> Void in
+            
+        }
+    }
     
 }
 
@@ -311,45 +344,49 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("OtherChannelCell", forIndexPath: indexPath) as! OtherChannelCell
         
-        cell.videoView.alpha = 0.4
+       // cell.videoView.alpha = 0.4
         if fullImageDataSource.count > 0
         {
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
-            let channelImageView = cell.viewWithTag(100) as! UIImageView
-            let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
-            
+          //  let channelImageView = cell.viewWithTag(100) as! UIImageView
+            let imageData =  fullImageDataSource[indexPath.row][thumbImageKey] as! UIImage
             if mediaType == "video"
             {
+                cell.detailLabel.hidden = false
+                cell.detailLabel.text = ""
                 cell.videoView.hidden = false
+                cell.videoView.image = UIImage(named: "Live_now_off_mode")
                 let imageToConvert: UIImage = imageData
-                let sizeThumb = CGSizeMake(150, 150)
-                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                channelImageView.image = imageAfterConversionThumbnail
+                                let sizeThumb = CGSizeMake(150, 150)
+                                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+
+                cell.channelMediaImage.image = imageAfterConversionThumbnail
+            }
+            else if mediaType == "image" {
+                cell.detailLabel.hidden = true
+                cell.videoView.hidden = true
+                cell.channelMediaImage.image = imageData
             }
             else{
-                cell.videoView.hidden = true
-                channelImageView.image = imageData
+                cell.detailLabel.hidden = false
+                cell.detailLabel.text = "LIVE"
+                cell.videoView.hidden = false
+                cell.videoView.image = UIImage(named: "Live_now")
+                cell.channelMediaImage.image = UIImage(named: "thumb1")
             }
-            
-            cell.insertSubview(cell.videoView, aboveSubview: cell.channelMediaImage)
-            
+          //  cell.insertSubview(cell.videoView, aboveSubview: cell.channelMediaImage)
         }
         return cell
     }
-    
-    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
     }
-    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
-    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
-    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
     {
         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
@@ -357,7 +394,24 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        
+        let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
+        if type == "media"
+        {
+            
+        }else if type == "video"
+        {
+            
+        }else
+        {
+            if let streamTocken = fullImageDataSource[indexPath.row][streamTockenKey]
+            {
+                self.loadLiveStreamView(streamTocken as! String)
+            }
+            else
+            {
+                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+            }
+        }
         
     }
     

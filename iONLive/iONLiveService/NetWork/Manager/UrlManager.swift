@@ -9,8 +9,8 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://104.196.113.247:3000";
-//    let baseUrl = "http://192.168.16.60:3000";
+   let baseUrl = "http://104.196.113.247:3000";
+   // let baseUrl = "http://192.168.16.24:3000";
     //"http://bpe.ioncameras.com:3000"
     let iONLiveCamUrl = "http://192.168.42.1:8888"
     
@@ -78,6 +78,10 @@ class UrlManager {
     func SubscribedChannelUrl() -> String{
         let SubscribedChannelAPI = baseUrl+"/api/v1/sharedChannel"
         return SubscribedChannelAPI
+    }
+    func LoggedInUrl() -> String{
+        let LoggedInUrlAPI = baseUrl+"/api/v1/session"
+        return LoggedInUrlAPI
     }
     func SubscribedChannelMediaUrl() -> String{
         let SubscribedChannelAPI = baseUrl+"/api/v1/media"
@@ -147,6 +151,11 @@ class UrlManager {
         return channelSharedAPI
     }
 
+    func getLoggedInDetails(userName: String, accessToken: String) -> String
+    {
+        let LoggedInDetails = LoggedInUrl() + "/" + userName + "/" + accessToken
+        return LoggedInDetails
+    }
     func iONLiveCamGetPictureUrl(scale: String!, burstCount: String!,burstInterval:String!,quality:String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"

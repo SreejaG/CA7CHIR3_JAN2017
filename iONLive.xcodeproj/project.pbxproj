@@ -45,6 +45,7 @@
 		164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */; };
 		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
 		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
+		164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164AEE541CD09DE8006ACAE0 /* SetUpView.swift */; };
 		165041241CABF6CC00F1166E /* upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165041231CABF6CC00F1166E /* upload.swift */; };
 		1656E4F31C1058C700F62D12 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */; };
 		1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */; };
@@ -257,6 +258,7 @@
 		164989F01C0D5C6C007C912C /* SnapCamSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamSelectViewController.swift; sourceTree = "<group>"; };
 		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
 		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
+		164AEE541CD09DE8006ACAE0 /* SetUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpView.swift; sourceTree = "<group>"; };
 		165041231CABF6CC00F1166E /* upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = upload.swift; sourceTree = "<group>"; };
 		1656E4F21C1058C700F62D12 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = PhotoViewer.storyboard; path = iONLive/iONLiveUI/PhotoViewer.storyboard; sourceTree = SOURCE_ROOT; };
 		1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
@@ -637,6 +639,7 @@
 				160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */,
 				165041231CABF6CC00F1166E /* upload.swift */,
 				165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */,
+				164AEE541CD09DE8006ACAE0 /* SetUpView.swift */,
 			);
 			path = iPhoneCamera;
 			sourceTree = "<group>";
@@ -1690,6 +1693,7 @@
 				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */,
+				164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
 				16DA06E91C7ED8A8004759D5 /* NBMetadataCoreMapper.m in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
@@ -1869,6 +1873,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1909,6 +1914,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1942,8 +1948,8 @@
 					"$(PROJECT_DIR)/iONLive/ThirdParty/FFmpeg-iOS/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
+				PRODUCT_NAME = iONLive;
+				PROVISIONING_PROFILE = "c238c2f9-7c42-47ca-9061-1d0d48441f97";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1975,8 +1981,8 @@
 					"$(PROJECT_DIR)/iONLive/ThirdParty/FFmpeg-iOS/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
+				PRODUCT_NAME = iONLive;
+				PROVISIONING_PROFILE = "c238c2f9-7c42-47ca-9061-1d0d48441f97";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;

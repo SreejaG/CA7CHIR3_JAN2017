@@ -14,6 +14,7 @@ class StreamsListViewController: UIViewController{
     let imageKey = "image"
     let typeKey = "type"
     let imageType = "imageType"
+    let timestamp = "last_updated_time_stamp"
     static let identifier = "StreamsListViewController"
     let imageUploadManger = ImageUpload.sharedInstance
 
@@ -35,22 +36,26 @@ class StreamsListViewController: UIViewController{
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
+    let timeKey = ""
+    let thumbImageKey = "thumbImage"
     
     var limit : Int = Int()
     var fixedLimit : Int =  0
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     var limitMediaCount : Int = Int()
+    var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
 
     //var loadingOverlay: UIView?
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
-    var dataSource:[[String:String]]?
+   // var dataSource:[[String:String]]?
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
-    
+    var dataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    var  dummy: [[String:AnyObject]] = [[String:AnyObject]]()
     //for temp image along with streams and stream thumbanes
     var dummyImagesArray:[String] = ["thumb1","thumb2","thumb3","thumb4","thumb5","thumb6" , "thumb7","thumb8","thumb9","thumb10","thumb11","thumb12"]
     var dummyImageListingDataSource = [[String:String]]()
@@ -65,11 +70,12 @@ class StreamsListViewController: UIViewController{
         self.streamListCollectionView.addSubview(refreshControl)
         self.streamListCollectionView.alwaysBounceVertical = true
         self.view.bringSubviewToFront(activityIndicator)
-        initialise()
-        initialiseCloudData()
+        showOverlay()
+        getAllLiveStreams()
+
+        
 //        dummyImageListingDataSource = [[imageKey:dummyImagesArray[0],typeKey:imageType],[imageKey:dummyImagesArray[1],typeKey:imageType],[imageKey:dummyImagesArray[2],typeKey:imageType],[imageKey:dummyImagesArray[3],typeKey:imageType],[imageKey:dummyImagesArray[4],typeKey:imageType],[imageKey:dummyImagesArray[5],typeKey:imageType],[imageKey:dummyImagesArray[6],typeKey:imageType],[imageKey:dummyImagesArray[7],typeKey:imageType],[imageKey:dummyImagesArray[8],typeKey:imageType],[imageKey:dummyImagesArray[9],typeKey:imageType],[imageKey:dummyImagesArray[10],typeKey:imageType],[imageKey:dummyImagesArray[11],typeKey:imageType]]
 //        self.dataSource = dummyImageListingDataSource
-//        getAllLiveStreams()
         
     }
     
@@ -87,27 +93,20 @@ class StreamsListViewController: UIViewController{
         // Dispose of any resources that can be recreated.
     }
     
-    //    override func viewWillDisappear(animated: Bool) {
-    //
-    //        if let viewControllers = self.navigationController?.viewControllers as [UIViewController]! {
-    //
-    //            if viewControllers.contains(self) == false{
-    //
-    //                let vc:MovieViewController = self.navigationController?.topViewController as! MovieViewController
-    //
-    //                vc.initialiseDecoder()
-    //            }
-    //        }
-    //    }
-    
-    
-    
     
     func initialise()
     {
-        //  channelId = (self.tabBarController as! //MyChannelDetailViewController).channelId
-        //  channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
-        //  totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
+        totalMediaCount = 0
+        if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+        {
+            //  mediaShared.removeAll()
+            mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+        }
+        
+        for i in 0 ..< mediaShared.count
+        {
+            totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
+        }
         if totalMediaCount > 6
         {
             fixedLimit = 6
@@ -117,9 +116,8 @@ class StreamsListViewController: UIViewController{
         }
         
         limit = totalMediaCount
-        
+        print(limit)
         imageDataSource.removeAll()
-        fullImageDataSource.removeAll()
         offsetToInt = Int(offset)!
     }
     
@@ -128,10 +126,10 @@ class StreamsListViewController: UIViewController{
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        showOverlay()
         
         let offsetString : String = String(offsetToInt)
-      //  print(channelId)
+        print(offsetString)
+        print(limit)
         imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) in
             self.authenticationSuccessHandler(response)
             }) { (error, message) in
@@ -148,7 +146,6 @@ class StreamsListViewController: UIViewController{
     }
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["objectJson"] as! [AnyObject]
@@ -159,7 +156,8 @@ class StreamsListViewController: UIViewController{
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                let time = responseArr[index].valueForKey("last_updated_time_stamp") as! String
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType, timestamp:time])
             }
             
             
@@ -246,9 +244,25 @@ class StreamsListViewController: UIViewController{
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+                    
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.thumbImageKey:result ,self.streamTockenKey:"",self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+                        if(self.dummy.count > 0)
+                        {
+                            self.dummy.sortInPlace({ p1, p2 in
+                                
+                                let time1 = p1[self.timestamp] as! String
+                                let time2 = p2[self.timestamp] as! String
+                                return time1 > time2
+                            })
+                        }
+                        for element in self.dummy
+                        {
+                            self.dataSource.append(element)
+                        }
+                        
+                        self.removeOverlay()
                         self.streamListCollectionView.reloadData()
                     })
                 })
@@ -284,7 +298,10 @@ class StreamsListViewController: UIViewController{
     func pullToRefresh()
     {
         pullToRefreshActive = true
+        currentLimit = 0
+        limitMediaCount = 0
         getAllLiveStreams()
+        showOverlay()
     }
     
     //PRAGMA MARK:- API Handlers
@@ -314,6 +331,7 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
+            removeOverlay()
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -324,12 +342,35 @@ class StreamsListViewController: UIViewController{
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
+        self.dataSource.removeAll()
+        dummy.removeAll()
+      //  imageDataSource.removeAll()
         if let json = response as? [String: AnyObject]
         {
-            print("success = \(json["liveStreams"])")
-            let liveStreamDataSource = json["liveStreams"] as? [[String:String]]
-            self.createDataSource(liveStreamDataSource)
-            self.streamListCollectionView.reloadData()
+//           print("success = \(json["liveStreams"])")
+//            
+            let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
+            print(responseArrLive.count)
+            if (responseArrLive.count != 0)
+            {
+                for element in responseArrLive{
+                    
+                    let stremTockn = element[streamTockenKey] as! String
+                    let thumbUrl = element["signedUrl"] as! String
+                    if(thumbUrl != ""){
+                        let url: NSURL = convertStringtoURL(thumbUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            self.dataSource.append([self.mediaIdKey:"", self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.mediaTypeKey:"live"])
+                            
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                self.streamListCollectionView.reloadData()
+                            })
+                        })
+                    }
+                }
+            }
+            initialise()
+            initialiseCloudData()
         }
         else
         {
@@ -339,12 +380,11 @@ class StreamsListViewController: UIViewController{
     
     func getAllStreamFailureHandler(error: NSError?, message: String)
     {
+        removeOverlay()
         activityIndicator.hidden = true
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
-        // self.streamListCollectionView.reloadData()
         print("message = \(message)")
-        
         if !self.requestManager.validConnection() {
             //clearing all live streams
             loadStaticImagesOnly()
@@ -368,7 +408,7 @@ class StreamsListViewController: UIViewController{
     
     func loadStaticImagesOnly()
     {
-        self.dataSource = dummyImageListingDataSource
+      //  self.dataSource = dummyImageListingDataSource
         self.streamListCollectionView.reloadData()
     }
     
@@ -382,25 +422,6 @@ class StreamsListViewController: UIViewController{
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent;
-    }
-    
-    //PRAGMA MARK:- dummy image helper functions
-    
-    func createDataSource(liveStreamDataSource:[[String:String]]?)
-    {
-        self.dataSource = dummyImageListingDataSource
-        if let liveStreams = liveStreamDataSource
-        {
-            var count = 0
-            for eachLiveStream in liveStreams
-            {
-                if dataSource?.count > count
-                {
-                    dataSource?[count] = eachLiveStream
-                    count = count + 1
-                }
-            }
-        }
     }
 }
 
@@ -438,9 +459,6 @@ extension StreamsListViewController : UIScrollViewDelegate{
             
         }
     }
-    
-    
-    
 }
 
 
@@ -448,7 +466,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if let dataSource = dataSource
+        if  dataSource.count>0
         {
             return dataSource.count
         }
@@ -464,35 +482,35 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
         
         //cell for live streams
         
-        if let dataSource = dataSource
+        if  dataSource.count>0
         {
             if dataSource.count > indexPath.row
             {
-                //image stream cell
-                var dict = dataSource[indexPath.row]
-                if let streamType = dict[typeKey]
-                {
-                    if streamType == imageType
-                    {
-                        cell.liveStatusLabel.hidden = true
-                        cell.liveNowIcon.hidden = true
-                        if let imageName = dict[imageKey]
-                        {
-                            cell.streamThumbnaleImageView.image = UIImage(named: imageName)
-                        }
-                    }
-                }
-                else   //live stream cell
+                let type = dataSource[indexPath.row][mediaTypeKey] as! String
+                let imageThumb = dataSource[indexPath.row][thumbImageKey] as? UIImage
+                if type == "video"
                 {
                     cell.liveStatusLabel.hidden = false
+                    cell.liveStatusLabel.text = ""
                     cell.liveNowIcon.hidden = false
+                    cell.liveNowIcon.image = UIImage(named: "Live_now_off_mode")
+                    cell.streamThumbnaleImageView.image = imageThumb
+                }
+                else if type == "image"{
                     
-                    var imageIndexPath = 0
-                    if dummyImagesArray.count > indexPath.row
-                    {
-                        imageIndexPath = indexPath.row
-                    }
-                    cell.streamThumbnaleImageView.image = UIImage(named: dummyImagesArray[imageIndexPath])
+                    cell.liveStatusLabel.hidden = true
+                    cell.liveNowIcon.hidden = true
+                    cell.streamThumbnaleImageView.image = imageThumb
+                }
+                 else   //live stream cell
+                {
+                    cell.liveStatusLabel.hidden = false
+                    cell.liveStatusLabel.text = "LIVE"
+
+                    cell.liveNowIcon.hidden = false
+                    cell.liveNowIcon.image = UIImage(named: "Live_now")
+                    cell.streamThumbnaleImageView.image = UIImage(named: "thumb1")
+                        //dataSource[indexPath.row][thumbImageKey] as? UIImage
                 }
             }
         }
@@ -501,19 +519,26 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        if let dataSource = dataSource
+        if  dataSource.count>0
         {
             if dataSource.count > indexPath.row
             {
-                var dict = dataSource[indexPath.row]
-                if let _ = dict[typeKey]
+                let type = dataSource[indexPath.row][mediaTypeKey] as! String
+                if type ==  "image"
                 {
                     //not clickable as of now
+                    
+                    
+                }
+                 else if type == "video"
+                {
+                    
                 }
                 else
                 {
+                    let streamTocken = dataSource[indexPath.row][streamTockenKey] as! String
                     //live stream click
-                    if let streamTocken = dict[streamTockenKey]
+                    if streamTocken != ""
                     {
                         self.loadLiveStreamView(streamTocken)
                     }
