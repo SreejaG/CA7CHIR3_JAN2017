@@ -22,6 +22,7 @@
                 <outlet property="heart4Button" destination="TH9-8s-Wr3" id="d30-Rh-t9h"/>
                 <outlet property="heartBottomDescView" destination="HwH-TP-m4n" id="24W-EF-B2y"/>
                 <outlet property="heartButtomBottomConstraint" destination="arV-26-hUZ" id="fMv-9u-YIB"/>
+                <outlet property="heartTapButton" destination="3g6-jO-oVl" id="apI-G5-beS"/>
                 <outlet property="heartView" destination="5C7-am-vGG" id="77o-n4-oQ8"/>
                 <outlet property="hidingHeartButton" destination="6wR-gB-ROq" id="DAL-VS-V2a"/>
                 <outlet property="imageVideoView" destination="JM0-t4-a8I" id="gHK-ZI-WtA"/>
@@ -172,7 +173,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5C7-am-vGG" userLabel="HeartView">
                                     <rect key="frame" x="0.0" y="400" width="600" height="200"/>
                                     <subviews>
-                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wR-gB-ROq" userLabel="hidingHeart">
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wR-gB-ROq" userLabel="hidingHeart">
                                             <rect key="frame" x="543" y="115" width="22" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="Lkn-Jp-8Zf"/>
@@ -183,7 +184,7 @@
                                                 <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="d18-tU-IG1"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1B-Ua-a0O" userLabel="heart2">
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1B-Ua-a0O" userLabel="heart2">
                                             <rect key="frame" x="553" y="68" width="22" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="HMn-5R-RlB"/>
@@ -194,7 +195,7 @@
                                                 <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="QnY-bu-cLD"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Pg-fba" userLabel="herat3">
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Pg-fba" userLabel="herat3">
                                             <rect key="frame" x="561" y="37" width="22" height="21"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <constraints>
@@ -206,7 +207,7 @@
                                                 <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="dzV-Da-U2T"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TH9-8s-Wr3" userLabel="heart4">
+                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TH9-8s-Wr3" userLabel="heart4">
                                             <rect key="frame" x="528" y="4" width="22" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="22" id="CzF-rZ-2Me"/>
@@ -221,12 +222,12 @@
                                             <rect key="frame" x="0.0" y="140" width="600" height="60"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3g6-jO-oVl" userLabel="heart2">
-                                                    <rect key="frame" x="543" y="20" width="22" height="21"/>
+                                                    <rect key="frame" x="543" y="20" width="25" height="25"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="21" id="QHE-J4-NKk"/>
-                                                        <constraint firstAttribute="width" constant="22" id="bZV-IQ-mG2"/>
+                                                        <constraint firstAttribute="height" constant="25" id="QHE-J4-NKk"/>
+                                                        <constraint firstAttribute="width" constant="25" id="bZV-IQ-mG2"/>
                                                     </constraints>
-                                                    <state key="normal" image="hearth_outline"/>
+                                                    <state key="normal" image="hearth"/>
                                                     <connections>
                                                         <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="d4G-nd-i2h"/>
                                                     </connections>
@@ -260,8 +261,8 @@
                                             <color key="backgroundColor" white="1" alpha="0.73116918103448281" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstItem="8mh-6L-jot" firstAttribute="top" secondItem="7DN-bo-KMh" secondAttribute="bottom" constant="3" id="57b-66-6lV"/>
-                                                <constraint firstItem="3g6-jO-oVl" firstAttribute="centerY" secondItem="HwH-TP-m4n" secondAttribute="centerY" id="5af-cT-ezO"/>
-                                                <constraint firstAttribute="trailing" secondItem="3g6-jO-oVl" secondAttribute="trailing" constant="35" id="Dii-ZH-PPJ"/>
+                                                <constraint firstItem="3g6-jO-oVl" firstAttribute="centerY" secondItem="HwH-TP-m4n" secondAttribute="centerY" constant="2.5" id="5af-cT-ezO"/>
+                                                <constraint firstAttribute="trailing" secondItem="3g6-jO-oVl" secondAttribute="trailing" constant="32" id="Dii-ZH-PPJ"/>
                                                 <constraint firstItem="6bR-V1-5Kc" firstAttribute="leading" secondItem="8mh-6L-jot" secondAttribute="trailing" constant="5" id="XDk-jJ-JtS"/>
                                                 <constraint firstItem="BMp-J9-C8j" firstAttribute="leading" secondItem="HwH-TP-m4n" secondAttribute="leading" constant="10" id="Ykt-aG-1NV"/>
                                                 <constraint firstItem="BMp-J9-C8j" firstAttribute="centerY" secondItem="HwH-TP-m4n" secondAttribute="centerY" id="mkm-Gy-lM4"/>
@@ -425,7 +426,6 @@
         <image name="girlFace2" width="29" height="29"/>
         <image name="hearth" width="22" height="21"/>
         <image name="hearth_border" width="24" height="23"/>
-        <image name="hearth_outline" width="22" height="21"/>
         <image name="hearth_transp" width="22" height="20"/>
         <image name="live_stream_blur" width="107" height="190"/>
         <image name="photo1" width="50" height="50"/>

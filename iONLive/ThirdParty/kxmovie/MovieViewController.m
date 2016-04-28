@@ -17,6 +17,11 @@
 #import "iONLive-Swift.h"
 #import <CFNetwork/CFNetwork.h>
 #import "IPhoneCameraViewController.h"
+#import <SpriteKit/SpriteKit.h>
+
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define kScreenHeight [[UIScreen mainScreen] bounds].size.height
+
 
 NSString * const KxMovieParameterMinBufferedDuration = @"KxMovieParameterMinBufferedDuration";
 NSString * const KxMovieParameterMaxBufferedDuration = @"KxMovieParameterMaxBufferedDuration";
@@ -99,13 +104,14 @@ static NSMutableDictionary * gHistory;
     __weak IBOutlet UIView *heartView;
     __weak IBOutlet UIView *heartBottomDescView;
     
+    IBOutlet UIButton *heartTapButton;
     IBOutlet UIButton *cameaThumbNailImage;
     IBOutlet UILabel *noDataFound;
     IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
-    BOOL *likeFlag;
+    int likeFlag;
     
     IBOutlet UIImageView *profilePicture;
     
@@ -159,7 +165,6 @@ static NSMutableDictionary * gHistory;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
 @property (nonatomic) Connectivity *wifiReachability;
 @property (nonatomic) Connectivity *internetReachability;
-@property (nonatomic) MPMoviePlayerViewController *movieplayer;
 
 @end
 
@@ -189,8 +194,9 @@ static NSMutableDictionary * gHistory;
                                 userName: (NSString *) username
                                mediaType: (NSString *) mediaType
                             profileImage: (UIImage *) profileImage
+                               notifType: (NSString *) notifType
 {
-    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage];
+    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage notifType:notifType];
 }
 
 
@@ -224,6 +230,7 @@ static NSMutableDictionary * gHistory;
                  userName: (NSString *) username
                 mediaType: (NSString *) mediaType
              profileImage: (UIImage *) profileImage
+                notifType: (NSString *) notifType
 {
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
@@ -240,6 +247,10 @@ static NSMutableDictionary * gHistory;
             typeMedia.text = @"";
         }
         userName.text = username;
+        if([notifType  isEqual: @"shared"])
+        {
+            
+        }
     }
     return self;
 }
@@ -296,23 +307,18 @@ static NSMutableDictionary * gHistory;
         bool write = [data writeToURL:fileURL atomically:YES];
         if(write){
 //            imageVideoView.hidden = true;
-//            MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:fileURL];
-//            
-//            player.view.frame = CGRectMake(20, 20, 200, 200);
-//            player.scalingMode = MPMovieScalingModeAspectFit;
-//            player.movieSourceType = MPMovieSourceTypeFile;
-//            player.controlStyle = MPMovieControlStyleDefault;
-//            player.shouldAutoplay = YES;
-//            [glView addSubview:[player view]];
-//            [player play];
+            MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:fileURL];
+            
+            player.view.frame = CGRectMake(20, 20, 200, 200);
+            player.scalingMode = MPMovieScalingModeAspectFit;
+            player.movieSourceType = MPMovieSourceTypeFile;
+            player.controlStyle = MPMovieControlStyleDefault;
+            player.shouldAutoplay = YES;
+            [glView addSubview:[player view]];
+            [player play];
         }
         
     }
-    NSURL *url = [NSURL URLWithString:@"http://www.example.com/myvideo.m4v"];
-    MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:url];
-    player.view.frame = CGRectMake(20, 20, 200, 200);
-    [glView addSubview:[player view]];
-    [player play];
   
 }
 
@@ -1685,22 +1691,71 @@ static NSMutableDictionary * gHistory;
     [self loadPhotoViewer];
 }
 
+
+- (void)addHeart {
+    
+    CALayer *heartLayer=[[CALayer alloc]init];
+    [heartLayer setFrame:CGRectMake(kScreenWidth - 20, kScreenHeight - 100, 28, 26)];
+    heartLayer.contents=(__bridge id _Nullable)([[UIImage imageNamed:@"hearth"] CGImage]);
+    [self.view.layer addSublayer:heartLayer];
+    __weak CALayer *weakHeartLayer=heartLayer;
+    [CATransaction begin];
+    [CATransaction setCompletionBlock:^(){
+        [weakHeartLayer removeFromSuperlayer];
+    }];
+    
+    CAAnimationGroup *animation = [self createAnimation:heartLayer.frame];
+    animation.duration = 2 + (arc4random() % 6 - 2);
+    animation.fillMode = kCAFillModeForwards;
+    animation.removedOnCompletion = NO;
+    [heartLayer addAnimation:animation forKey:nil];
+    [CATransaction commit];
+}
+
+- (CAAnimationGroup *)createAnimation:(CGRect)frame {
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    CGMutablePathRef path = CGPathCreateMutable();
+    
+    int height = -100 + arc4random() % 40 - 20;
+    int xOffset = frame.origin.x;
+    int yOffset = frame.origin.y;
+    int waveWidth = 50;
+    CGPoint p1 = CGPointMake(xOffset, height * 0 + yOffset);
+    CGPoint p2 = CGPointMake(xOffset, height * 1 + yOffset);
+    CGPoint p3 = CGPointMake(xOffset, height * 2 + yOffset);
+    CGPoint p4 = CGPointMake(xOffset, height * 2 + yOffset);
+    
+    CGPathMoveToPoint(path, NULL, p1.x,p1.y);
+    
+    if (arc4random() % 2) {
+        CGPathAddQuadCurveToPoint(path, NULL, p1.x - arc4random() % waveWidth, p1.y + height / 2.0, p2.x, p2.y);
+        CGPathAddQuadCurveToPoint(path, NULL, p2.x + arc4random() % waveWidth, p2.y + height / 2.0, p3.x, p3.y);
+        CGPathAddQuadCurveToPoint(path, NULL, p3.x - arc4random() % waveWidth, p3.y + height / 2.0, p4.x, p4.y);
+    } else {
+        CGPathAddQuadCurveToPoint(path, NULL, p1.x + arc4random() % waveWidth, p1.y + height / 2.0, p2.x, p2.y);
+        CGPathAddQuadCurveToPoint(path, NULL, p2.x - arc4random() % waveWidth, p2.y + height / 2.0, p3.x, p3.y);
+        CGPathAddQuadCurveToPoint(path, NULL, p3.x + arc4random() % waveWidth, p3.y + height / 2.0, p4.x, p4.y);
+    }
+    animation.path = path;
+    animation.calculationMode = kCAAnimationCubicPaced;
+    CGPathRelease(path);
+    
+    //透明渐变
+    CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    opacityAnimation.fromValue = @0.95f;
+    opacityAnimation.toValue  = @0.0f;
+    opacityAnimation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+    
+    
+    CAAnimationGroup *animGroup = [CAAnimationGroup animation];
+    animGroup.animations = @[animation, opacityAnimation];
+    return animGroup;
+}
+
 - (IBAction)didTapHeartImage:(id)sender
 {
-    NSArray *arrButtons = @[hidingHeartButton,heart2Button,heart3Button,heart4Button];
-    for (int i = 0 ; i < arrButtons.count; i++) {
-        UIButton* b = arrButtons[i];
-        b.hidden = false;
-        b.alpha = 0.0f;
-        [UIView animateKeyframesWithDuration:0.2 delay:0.2*i options:0 animations:^{
-            b.alpha = 1.0f;
-        } completion:^(BOOL finished) {
-            NSLog(@"Starting Fade Out for symbol");
-            [UIView animateWithDuration:0.2 animations:^{
-                b.hidden = true;
-            } completion:nil];
-            
-        }];
+    [self addHeart];
+    
         if(likeFlag == false){
             likeFlag = true;
             
@@ -1708,8 +1763,7 @@ static NSMutableDictionary * gHistory;
         else{
             likeFlag = false;
         }
-        
-    }
+    
     //    if (heartButtomBottomConstraint.constant == 111.0)
     //    {
     //        // show heartDescView
