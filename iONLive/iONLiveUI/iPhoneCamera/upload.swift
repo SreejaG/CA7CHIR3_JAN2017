@@ -420,6 +420,7 @@ protocol uploadProgressDelegate
                 //  completion(result:"Success")
                 
                 self.progressDictionary[self.taskIndex] = 1.0
+                self.checkThumb = false
                 // self.delegate?.uploadProgress(progressDictionary)
                 // [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
                 
@@ -539,7 +540,6 @@ protocol uploadProgressDelegate
         var dict = dummyImagesDataSourceDatabase[row]
         let  uploadImageThumb = dict[thumbImageKey]
         print(uploadImageThumb)
-        checkThumb = true
         let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
         if(imageData == nil)
         {
@@ -560,6 +560,8 @@ protocol uploadProgressDelegate
                 let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
                 print("Parsed JSON for thumbanil: '\(jsonStr)'")
                 //    completion(result:"Success")
+                self.checkThumb = true
+
                 let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
                 controller.uploadprogress(1.0)
                 
@@ -634,11 +636,13 @@ protocol uploadProgressDelegate
         // self.delegate?.uploadProgress(progressDictionary)
         [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
         
-        
+        if(checkThumb)
+        {
         if PhotoViewerInstance.controller != nil
         {
             let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
             controller.uploadProgress(progressDictionary)
+        }
         }
     }
     
