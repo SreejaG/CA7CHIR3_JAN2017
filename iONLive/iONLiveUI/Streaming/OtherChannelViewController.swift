@@ -13,7 +13,8 @@ class OtherChannelViewController: UIViewController {
     let requestManager = RequestManager.sharedInstance
     static let identifier = "OtherChannelViewController"
     let channelIdkey = "ch_detail_id"
-    
+    let notificationKey = "notification"
+
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
@@ -40,6 +41,7 @@ class OtherChannelViewController: UIViewController {
     var currentLimit : Int = 0
     var limitMediaCount : Int = Int()
     let thumbImageKey = "thumbImage"
+    let actualImageKey = "actualImage"
 
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
@@ -157,9 +159,27 @@ class OtherChannelViewController: UIViewController {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
+                var notificationType : String = String()
+                if let notifType =  responseArr[index].valueForKey("notification_type")
+                {
+                    if notifType as! String != ""
+                    {
+                        notificationType = (notifType as! String).lowercaseString
+                    }
+                    else{
+                        notificationType = "unliked"
+                    }
+                }
+                else{
+                    notificationType = "shared"
+                }
+                
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
+            //    imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
             
+        
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
             print(responseArrLive)
 
@@ -267,7 +287,8 @@ class OtherChannelViewController: UIViewController {
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaUrlKey:self.imageDataSource[i][self.mediaUrlKey]!, self.thumbImageKey:result,self.streamTockenKey:"", self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+//                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaUrlKey:self.imageDataSource[i][self.mediaUrlKey]!, self.thumbImageKey:result,self.streamTockenKey:"", self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+                     self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemsCollectionView.reloadData()
                     })
@@ -397,7 +418,10 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
         if type == "media"
         {
-            
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String) as! MovieViewController
+            self.presentViewController(vc, animated: true) { () -> Void in
+            }
+
         }else if type == "video"
         {
             
