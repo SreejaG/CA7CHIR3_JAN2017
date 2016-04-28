@@ -45,6 +45,7 @@ class ChannelItemListViewController: UIViewController {
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
+    let actualImageKey = "actualImage"
     
     var limit : Int = Int()
     var totalCount: Int = 0
@@ -138,13 +139,15 @@ class ChannelItemListViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            let responseArr = json["MediaDetail"] as! [AnyObject]
+            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType])
+                let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl])
             }
             print(imageDataSource)
             downloadCloudData(15, scrolled: false)
@@ -232,7 +235,7 @@ class ChannelItemListViewController: UIViewController {
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!])
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemCollectionView.reloadData()
@@ -435,7 +438,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         cell.selectionView.alpha = 0.4
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         
-        cell.videoView.alpha = 0.4
         if fullImageDataSource.count > 0
         {
             if(fullImageDataSource.count == selectedArray.count){
@@ -460,7 +462,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 cell.videoView.hidden = true
                 channelItemImageView.image = imageData
             }
-            
+            print(Int((UIScreen.mainScreen().bounds.width/3)-2))
+            cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 27 , width: 20, height: 20)
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
             if(selectionFlag){
@@ -547,10 +550,17 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            let storyboard = UIStoryboard(name:"Media", bundle: nil)
-            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MediaViewController.identifier) as! MediaViewController
-            channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: true)
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage()) as! MovieViewController
+                self.presentViewController(vc, animated: true) { () -> Void in
+                
+            }
+
+//            
+//            let storyboard = UIStoryboard(name:"Media", bundle: nil)
+//            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MediaViewController.identifier) as! MediaViewController
+//            channelVC.navigationController?.navigationBarHidden = true
+//            self.navigationController?.pushViewController(channelVC, animated: true)
         }
         
     }

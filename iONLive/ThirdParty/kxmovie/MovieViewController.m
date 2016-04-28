@@ -73,6 +73,7 @@ static NSMutableDictionary * gHistory;
 
 @interface MovieViewController () <StreamingProtocol>
 {
+    
     IBOutlet UIButton *cameraSelectionButton;
     IBOutlet UIButton *cameraButton;
     IBOutlet UIButton *closeButton;
@@ -81,24 +82,38 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIButton *firstCircleButton;
     __weak IBOutlet UIButton *hidingHeartButton;
     
+    
+    IBOutlet UIButton *heart2Button;
+    
+    IBOutlet UIButton *heart4Button;
+    IBOutlet UIButton *heart3Button;
     IBOutlet UIImageView *activityImageView;
     IBOutlet UIImageView *imageView;
     IBOutlet KxMovieGLView *glView;
     
+    IBOutlet UIImageView *imageVideoView;
     IBOutlet UIView *topView;
     IBOutlet UIView *mainView;
     IBOutlet UIView *bottomView;
     IBOutlet UIView *liveView;
     __weak IBOutlet UIView *heartView;
     __weak IBOutlet UIView *heartBottomDescView;
-
+    
     IBOutlet UIButton *cameaThumbNailImage;
     IBOutlet UILabel *noDataFound;
     IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
-
+    BOOL *likeFlag;
+    
+    IBOutlet UIImageView *profilePicture;
+    
+    IBOutlet UILabel *typeMedia;
+    IBOutlet UILabel *userName;
+    
+    IBOutlet UILabel *channelName;
+    
     BOOL                _interrupted;
     
     //heart View
@@ -121,15 +136,15 @@ static NSMutableDictionary * gHistory;
     BOOL                _liveVideo;
     BOOL                _disableUpdateHUD;
     BOOL                _buffered;
-
+    
     SnapCamSelectionMode _snapCamMode;
     
     CGFloat             _bufferedDuration;
     CGFloat             _minBufferedDuration;
     CGFloat             _maxBufferedDuration;
     CGFloat             _moviePosition;
-
-//    BOOL                _savedIdleTimer;
+    
+    //    BOOL                _savedIdleTimer;
     NSString *          rtspFilePath;
     NSDictionary        *_parameters;
     UIAlertView *alertViewTemp;
@@ -144,6 +159,7 @@ static NSMutableDictionary * gHistory;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
 @property (nonatomic) Connectivity *wifiReachability;
 @property (nonatomic) Connectivity *internetReachability;
+@property (nonatomic) MPMoviePlayerViewController *movieplayer;
 
 @end
 
@@ -161,11 +177,22 @@ static NSMutableDictionary * gHistory;
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL)live
 {
-//    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
-//    [audioManager activateAudioSession];
+    //    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
+    //    [audioManager activateAudioSession];
     
     return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
 }
+
+
++ (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
+                             channelName: (NSString *) channelname
+                                userName: (NSString *) username
+                               mediaType: (NSString *) mediaType
+                            profileImage: (UIImage *) profileImage
+{
+    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage];
+}
+
 
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
@@ -178,27 +205,155 @@ static NSMutableDictionary * gHistory;
         _liveVideo = live;
         rtspFilePath = path;
         _parameters = nil;
-
         [self setUpDefaultValues];
         NSLog(@"rtsp File Path = %@",path);
-//        [self setUpBlurView];
-//        if (_liveVideo) {
-//            [self checkWifiConnectionAndStartDecoder];
-//        }
-//        else
-//        {
-            [self startDecoder];
-//        }
+        //        [self setUpBlurView];
+        //        if (_liveVideo) {
+        //            [self checkWifiConnectionAndStartDecoder];
+        //        }
+        //        else
+        //        {
+        [self startDecoder];
+        //        }
     }
     return self;
 }
 
+- (id) initWithImageVideo: (NSString *) mediaUrl
+              channelName: (NSString *) channelname
+                 userName: (NSString *) username
+                mediaType: (NSString *) mediaType
+             profileImage: (UIImage *) profileImage
+{
+    
+    self = [super initWithNibName:@"MovieViewController" bundle:nil];
+    if (self) {
+        [self setUpDefaultValues];
+        [self setUpViewForImageVideo];
+        [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        profilePicture.image = profileImage;
+        channelName.text = channelname;
+        if([mediaType  isEqual: @"live"]){
+            typeMedia.text = mediaType;
+        }
+        else{
+            typeMedia.text = @"";
+        }
+        userName.text = username;
+    }
+    return self;
+}
+
+-(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
+{
+    
+    if([mediaType  isEqual: @"video"])
+    {
+        NSURL *url = [self convertStringToUrl:mediaUrl];
+        [self downloadVideo:url];
+    }
+    else if([mediaType  isEqual: @"image"])
+    {
+        
+        NSURL *url = [self convertStringToUrl:mediaUrl];
+        UIImage *mediaImage;
+        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
+        if(data != nil)
+        {
+            mediaImage = [[UIImage alloc]initWithData:data];
+        }
+        else{
+            mediaImage = [UIImage imageNamed:@"photo3"];
+        }
+        imageVideoView.image = mediaImage;
+    }
+}
+
+-(void) downloadVideo: (NSURL *) url
+{
+    NSMutableURLRequest *downloadReq = [[NSMutableURLRequest alloc]initWithURL:url];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration: [NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithRequest:downloadReq];
+    [downloadTask resume];
+    
+}
+
+-(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    
+}
+
+-(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+{
+    NSData *data = [[NSData alloc]initWithContentsOfURL:location];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *writePath = [[paths objectAtIndex:0] stringByAppendingString:@"/video.mov"];
+    NSURL *fileURL = [NSURL fileURLWithPath:writePath];
+    NSLog(@"%@",fileURL);
+    if(data!= nil)
+    {
+        bool write = [data writeToURL:fileURL atomically:YES];
+        if(write){
+//            imageVideoView.hidden = true;
+//            MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:fileURL];
+//            
+//            player.view.frame = CGRectMake(20, 20, 200, 200);
+//            player.scalingMode = MPMovieScalingModeAspectFit;
+//            player.movieSourceType = MPMovieSourceTypeFile;
+//            player.controlStyle = MPMovieControlStyleDefault;
+//            player.shouldAutoplay = YES;
+//            [glView addSubview:[player view]];
+//            [player play];
+        }
+        
+    }
+    NSURL *url = [NSURL URLWithString:@"http://www.example.com/myvideo.m4v"];
+    MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:url];
+    player.view.frame = CGRectMake(20, 20, 200, 200);
+    [glView addSubview:[player view]];
+    [player play];
+  
+}
+
+-(void) setUpViewForImageVideo
+{
+    heart2Button.hidden = true;
+    heart3Button.hidden = true;
+    heart4Button.hidden = true;
+    hidingHeartButton.hidden = true;
+    
+    likeFlag = false;
+    heartBottomDescView.hidden = false;
+    topView.hidden = false;
+    noDataFound.hidden = true;
+    _activityIndicatorView.hidden = true;
+    cameraSelectionButton.hidden = true;
+    liveView.hidden = true;
+    numberOfSharedChannels.hidden = true;
+    bottomView.hidden = true;
+    activityImageView.hidden = true;
+    closeButton.hidden = false;
+    heartView.hidden = false;
+    imageView.hidden = true;
+    imageVideoView.hidden = false;
+    topView.backgroundColor = [UIColor clearColor];
+}
+
+-(NSURL *) convertStringToUrl:(NSString *) url
+{
+    NSURL *searchURL = [NSURL URLWithString:url];
+    return searchURL;
+}
+
+
 -(void)setUpDefaultValues
 {
+    imageVideoView.hidden = true;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
-     [cameraButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    [cameraButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
 }
 
 -(void)setUpInitialBlurView
@@ -225,7 +380,7 @@ static NSMutableDictionary * gHistory;
 {
     activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
     [super viewWillAppear:animated];
-//    [self addApplicationObservers];
+    //    [self addApplicationObservers];
     [self.navigationController setNavigationBarHidden:true];
     [self changeCameraSelectionImage];
 }
@@ -234,32 +389,32 @@ static NSMutableDictionary * gHistory;
 {
     [super viewDidAppear:animated];
     NSLog(@"applicationDidBecomeActive");
-
+    
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     //
     //
     //TODO make _interrupted No ,click on back button
-//    _interrupted = NO;
-//    if (_decoder) {
-//        [self reInitialiseDecoder];
-//    }
+    //    _interrupted = NO;
+    //    if (_decoder) {
+    //        [self reInitialiseDecoder];
+    //    }
 }
 
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    //    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self hideProgressBar];
     
-//    if (_decoder) {
-//        
-//        [self close];
-//    }
-//    
-//    //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
-//    
-//    _buffered = NO;
-//    _interrupted = YES;
+    //    if (_decoder) {
+    //
+    //        [self close];
+    //    }
+    //
+    //    //    [[UIApplication sharedApplication] setIdleTimerDisabled:_savedIdleTimer];
+    //
+    //    _buffered = NO;
+    //    _interrupted = YES;
     
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -270,29 +425,29 @@ static NSMutableDictionary * gHistory;
 {
     NSLog(@"Status of outPutStream: %lu", (unsigned long)[inputStream streamStatus]);
     
-//    if ([inputStream streamStatus] == 2) {
-//        [self closeInputStream];
-        [self hideStatusMessage];
-        if (alertViewTemp.isVisible) {
-            [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
-        }
-        [self restartDecoder];
-//    }
-//    else
-//    {
-//        [self closeInputStream];
-//        [self showMessageForNoStreamOrLiveDataFound];
-//        [self showInputNetworkErrorMessage:nil];
-//    }
+    //    if ([inputStream streamStatus] == 2) {
+    //        [self closeInputStream];
+    [self hideStatusMessage];
+    if (alertViewTemp.isVisible) {
+        [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
+    }
+    [self restartDecoder];
+    //    }
+    //    else
+    //    {
+    //        [self closeInputStream];
+    //        [self showMessageForNoStreamOrLiveDataFound];
+    //        [self showInputNetworkErrorMessage:nil];
+    //    }
 }
 
 //- (void)closeInputStream {
 //    NSLog(@"Closing streams.");
-//    
+//
 //    [inputStream close];
-//    
+//
 //    [inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-//    
+//
 //    inputStream = nil;
 //}
 //
@@ -300,13 +455,13 @@ static NSMutableDictionary * gHistory;
 //{
 //
 //    NSURL *website = [self checkEmptyUrl];
-//    
+//
 //    if (!website) {
 //        [self showMessageForNoStreamOrLiveDataFound];
 //        [self showInputNetworkErrorMessage:nil];
 //        return;
 //    }
-//    
+//
 ////    [self openInputStream:website port:554];
 //    [self startTimer];
 //}
@@ -315,7 +470,7 @@ static NSMutableDictionary * gHistory;
 //{
 //    CFReadStreamRef readStream;
 //    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)[website host], 554, &readStream, nil);
-//    
+//
 //    inputStream = (__bridge_transfer NSInputStream *)readStream;
 //    [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 //    [inputStream open];
@@ -333,9 +488,9 @@ static NSMutableDictionary * gHistory;
 
 -(NSURL*)checkEmptyUrl
 {
-  //  NSString *urlStr = @"rtsp://192.168.42.1/live";
+    //  NSString *urlStr = @"rtsp://192.168.42.1/live";
     
-     NSString *urlStr = @"rtsp://192.168.2.30";
+    NSString *urlStr = @"rtsp://192.168.2.30";
     if (![urlStr isEqualToString:@""]) {
         NSURL *website = [NSURL URLWithString:urlStr];
         if (!website) {
@@ -358,9 +513,9 @@ static NSMutableDictionary * gHistory;
     _interrupted = false;
     self.playing = NO;
     [self showProgressBar];
-//    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
-//    [audioManager activateAudioSession];
-        [self startDecoder];
+    //    id<KxAudioManager> audioManager = [KxAudioManager audioManager];
+    //    [audioManager activateAudioSession];
+    [self startDecoder];
 }
 
 -(void)reInitialiseDecoder
@@ -369,13 +524,13 @@ static NSMutableDictionary * gHistory;
     
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (3 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         
-//        if (_liveVideo) {
-//            [self checkWifiConnectionAndStartDecoder];
-//        }
-//        else
-//        {
-            [self restartDecoder];
-//        }
+        //        if (_liveVideo) {
+        //            [self checkWifiConnectionAndStartDecoder];
+        //        }
+        //        else
+        //        {
+        [self restartDecoder];
+        //        }
     });
 }
 
@@ -430,25 +585,25 @@ static NSMutableDictionary * gHistory;
     [self setUpInitialBlurView];
     [self setUpInitialGLView];
     
-//    if (_decoder) {
-//        
-//        [self setupPresentView];
-//    }
+    //    if (_decoder) {
+    //
+    //        [self setupPresentView];
+    //    }
     //    _savedIdleTimer = [[UIApplication sharedApplication] isIdleTimerDisabled];
     [self addApplicationObservers];
-
+    
     [self setUpPresentViewAndRestorePlay];
-//    [self addApplicationObservers];
-//    _interrupted = NO;
-//    if (_decoder) {
-//        
-//        [self setupPresentView];
-//        [self restorePlay];
-//        
-//    } else {
-//        
-//        [_activityIndicatorView startAnimating];
-//    }
+    //    [self addApplicationObservers];
+    //    _interrupted = NO;
+    //    if (_decoder) {
+    //
+    //        [self setupPresentView];
+    //        [self restorePlay];
+    //
+    //    } else {
+    //
+    //        [_activityIndicatorView startAnimating];
+    //    }
     [self addTapGestures];
 }
 
@@ -462,8 +617,8 @@ static NSMutableDictionary * gHistory;
         
     } else {
         [self showProgressBar];
-//        activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
-//        [_activityIndicatorView startAnimating];
+        //        activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+        //        [_activityIndicatorView startAnimating];
     }
 }
 
@@ -511,7 +666,7 @@ static NSMutableDictionary * gHistory;
 -(void)setUpInitialGLView
 {
     [topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-     heartView.hidden = true;
+    heartView.hidden = true;
     [self updateGlViewDefaultValues];
     
 }
@@ -564,18 +719,21 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForLive
 {
+    imageVideoView.hidden = true;
     heartView.hidden = true;
     bottomView.hidden = false;
     topView.hidden = false;
     liveView.hidden = false;
     numberOfSharedChannels.hidden = false;
     closeButton.hidden = true;
+    heartBottomDescView.hidden = true;
 }
 
 -(void)customiseViewForStreaming
 {
+    imageVideoView.hidden = true;
     heartView.hidden = false;
-    heartBottomDescView.hidden = true;
+    heartBottomDescView.hidden = false;
     numberOfSharedChannels.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
@@ -800,7 +958,7 @@ static NSMutableDictionary * gHistory;
             
             if (_activityIndicatorView.isAnimating) {
                 [self hideProgressBar];
-
+                
                 NSLog(@"setMovieDecoder: (KxMovieDecoder *) decoder");
                 [self restorePlay];
             }
@@ -815,7 +973,7 @@ static NSMutableDictionary * gHistory;
         if (self.isViewLoaded && self.view.window) {
             
             [self hideProgressBar];
-//            [self showErrorMessage:error];
+            //            [self showErrorMessage:error];
         }
     }
 }
@@ -1054,7 +1212,7 @@ static NSMutableDictionary * gHistory;
     }
     
     if (isGlView == false) {
-    
+        
         LoggerVideo(0, @"fallback to use RGB video frame and UIKit");
         [_decoder setupVideoFrameFormat:KxVideoFrameFormatRGB];
     }
@@ -1266,11 +1424,11 @@ static NSMutableDictionary * gHistory;
     dispatch_async(_dispatchQueue, ^{
         
         {
-//            NSLog(@"_dispatchQueue");
+            //            NSLog(@"_dispatchQueue");
             __strong MovieViewController *strongSelf = weakSelf;
             if (!strongSelf.playing)
             {
-//                NSLog(@"strongSelf.playing:");
+                //                NSLog(@"strongSelf.playing:");
                 return;
             }
         }
@@ -1279,7 +1437,7 @@ static NSMutableDictionary * gHistory;
         while (good) {
             
             good = NO;
-//            NSLog(@"good");
+            //            NSLog(@"good");
             
             @autoreleasepool {
                 
@@ -1287,11 +1445,11 @@ static NSMutableDictionary * gHistory;
                 
                 if (decoder && (decoder.validVideo || decoder.validAudio)) {
                     
-//            NSLog(@"[decoder decodeFrames:duration];");
-//                    NSLog(@"decoder.validVideo");
+                    //            NSLog(@"[decoder decodeFrames:duration];");
+                    //                    NSLog(@"decoder.validVideo");
                     
                     NSArray *frames = [decoder decodeFrames:duration];
-//                    NSLog(@"frames.count %lu", (unsigned long)frames.count);
+                    //                    NSLog(@"frames.count %lu", (unsigned long)frames.count);
                     
                     if (frames.count) {
                         
@@ -1304,18 +1462,18 @@ static NSMutableDictionary * gHistory;
                     }
                     else{
                         //show disconnected pop up here.
-//                        NSLog(@"No frames found! %lu", (unsigned long)frames.count);
+                        //                        NSLog(@"No frames found! %lu", (unsigned long)frames.count);
                     }
                 }
             }
         }
         {
-//            NSLog(@"strongSelf.decoding = NO");
+            //            NSLog(@"strongSelf.decoding = NO");
             __strong MovieViewController *strongSelf = weakSelf;
             if (strongSelf) strongSelf.decoding = NO;
         }
     });
-//    NSLog(@"Exit async decode frames");
+    //    NSLog(@"Exit async decode frames");
 }
 
 - (void) tick
@@ -1324,8 +1482,8 @@ static NSMutableDictionary * gHistory;
         
         _tickCorrectionTime = 0;
         _buffered = NO;
-//        [_activityIndicatorView stopAnimating];
-//        _activityIndicatorView.hidden = true;
+        //        [_activityIndicatorView stopAnimating];
+        //        _activityIndicatorView.hidden = true;
     }
     
     CGFloat interval = 0;
@@ -1348,13 +1506,13 @@ static NSMutableDictionary * gHistory;
                 return;
                 
             }
-//            NSLog(@"0 == leftFrames0");
+            //            NSLog(@"0 == leftFrames0");
             if (_minBufferedDuration > 0 && !_buffered) {
                 
                 _buffered = YES;
-//                activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+                //                activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
                 [_activityIndicatorView startAnimating];
-//                NSLog(@"_minBufferedDuration > 0 && !_buffered");
+                //                NSLog(@"_minBufferedDuration > 0 && !_buffered");
                 
             }
         }
@@ -1367,7 +1525,7 @@ static NSMutableDictionary * gHistory;
         
         const NSTimeInterval correction = [self tickCorrection];
         const NSTimeInterval time = MAX(interval + correction, 0.01);
-//        NSLog(@"time%f",time);
+        //        NSLog(@"time%f",time);
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, time * NSEC_PER_SEC);
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
             [self tick];
@@ -1511,7 +1669,7 @@ static NSMutableDictionary * gHistory;
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
     snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeSnapCam;
-
+    
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:snapCamSelectVC];
     nav.navigationBarHidden = true;
     [self presentViewController:nav animated:YES completion:nil];
@@ -1519,7 +1677,7 @@ static NSMutableDictionary * gHistory;
     
 }
 - (IBAction)didTapPhotoViewer:(id)sender {
-
+    
     if ([self isViewFinderLoading]) {
         return;
     }
@@ -1529,18 +1687,42 @@ static NSMutableDictionary * gHistory;
 
 - (IBAction)didTapHeartImage:(id)sender
 {
-    if (heartButtomBottomConstraint.constant == 111.0)
-    {
-        // show heartDescView
-        heartBottomDescView.hidden = false;
-        hidingHeartButton.hidden = true;
-        heartButtomBottomConstraint.constant = 65.0;
+    NSArray *arrButtons = @[hidingHeartButton,heart2Button,heart3Button,heart4Button];
+    for (int i = 0 ; i < arrButtons.count; i++) {
+        UIButton* b = arrButtons[i];
+        b.hidden = false;
+        b.alpha = 0.0f;
+        [UIView animateKeyframesWithDuration:0.2 delay:0.2*i options:0 animations:^{
+            b.alpha = 1.0f;
+        } completion:^(BOOL finished) {
+            NSLog(@"Starting Fade Out for symbol");
+            [UIView animateWithDuration:0.2 animations:^{
+                b.hidden = true;
+            } completion:nil];
+            
+        }];
+        if(likeFlag == false){
+            likeFlag = true;
+            
+        }
+        else{
+            likeFlag = false;
+        }
+        
     }
-    else{
-        heartBottomDescView.hidden = true;
-        hidingHeartButton.hidden = false;
-        heartButtomBottomConstraint.constant = 111.0;
-    }
+    //    if (heartButtomBottomConstraint.constant == 111.0)
+    //    {
+    //        // show heartDescView
+    //        heartBottomDescView.hidden = false;
+    //        hidingHeartButton.hidden = true;
+    //        heartButtomBottomConstraint.constant = 65.0;
+    //    }
+    //    else{
+    //        heartBottomDescView.hidden = true;
+    //        hidingHeartButton.hidden = false;
+    //        heartButtomBottomConstraint.constant = 111.0;
+    //    }
+    
 }
 
 - (IBAction)didTapSharingListIcon:(id)sender

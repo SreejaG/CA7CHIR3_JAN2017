@@ -124,6 +124,7 @@
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
 		16CDDC8B1CCDE3B00070D9CE /* Media.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16CDDC8A1CCDE3B00070D9CE /* Media.storyboard */; };
 		16CDDC8D1CCDF31D0070D9CE /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CDDC8C1CCDF31D0070D9CE /* MediaViewController.swift */; };
+		16CEBF4A1CCF9FAF005AE3AE /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */; };
 		16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */; };
 		16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
@@ -344,6 +345,7 @@
 		16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCamConfigViewController.swift; sourceTree = "<group>"; };
 		16CDDC8A1CCDE3B00070D9CE /* Media.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Media.storyboard; sourceTree = "<group>"; };
 		16CDDC8C1CCDF31D0070D9CE /* MediaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaViewController.swift; sourceTree = "<group>"; };
+		16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactTableViewCell.swift; sourceTree = "<group>"; };
 		16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHeaderTableViewCell.swift; sourceTree = "<group>"; };
@@ -555,6 +557,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16CEBF4A1CCF9FAF005AE3AE /* MediaPlayer.framework in Frameworks */,
 				166B9CDE1CC8FF0E00396C4E /* CoreTelephony.framework in Frameworks */,
 				16DB09AD1CC7671F0092B742 /* QuartzCore.framework in Frameworks */,
 				16EC52841CA95D69000D38DF /* CoreFoundation.framework in Frameworks */,
@@ -1435,6 +1438,7 @@
 		657062C36B2B324EA47A48A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */,
 				166B9CDD1CC8FF0E00396C4E /* CoreTelephony.framework */,
 				16DB09AC1CC7671F0092B742 /* QuartzCore.framework */,
 				16EC52831CA95D69000D38DF /* CoreFoundation.framework */,

@@ -249,6 +249,15 @@ class MyChannelSharingDetailsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.addContactError()
         }
+        if tapFlag == false
+        {
+            tapFlag = true
+            doneButton.hidden = true
+            inviteButton.hidden = false
+            selectedContacts.removeAll()
+            contactTableView.reloadData()
+            contactTableView.layoutIfNeeded()
+        }
     }
     
     func handleTap() {

@@ -329,6 +329,14 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         else{
             ErrorManager.sharedInstance.addContactError()
         }
+        if tapFlag == false
+        {
+            tapFlag = true
+            doneButton.hidden = true
+            refreshButton.hidden = false
+            selectedContacts.removeAll()
+            contactListTableView.reloadData()
+        }
     }
     
     
@@ -418,6 +426,14 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         else{
             ErrorManager.sharedInstance.addContactError()
+        }
+        if tapFlag == false
+        {
+            tapFlag = true
+            doneButton.hidden = true
+            refreshButton.hidden = false
+            selectedContacts.removeAll()
+            contactListTableView.reloadData()
         }
     }
     

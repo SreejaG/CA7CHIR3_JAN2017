@@ -267,6 +267,15 @@ class MySharedChannelsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
+        if tapFlag == true
+        {
+            doneButton.hidden = true
+        }
+        else{
+            doneButton.hidden = false
+        }
+        self.sharedChannelsTableView.reloadData()
+
     }
     
     func handleTap() {

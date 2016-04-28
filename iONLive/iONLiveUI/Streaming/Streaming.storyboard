@@ -331,7 +331,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HIR-fv-DLV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="270" y="463"/>
+            <point key="canvasLocation" x="1152" y="393"/>
         </scene>
         <!--Stream-->
         <scene sceneID="fMq-yY-otP">

@@ -420,8 +420,8 @@
                                                         <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JrT-9P-d3y" userLabel="video view">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                             <subviews>
-                                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="jmg-ML-qEZ">
-                                                                    <rect key="frame" x="35" y="35" width="30" height="30"/>
+                                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="jmg-ML-qEZ">
+                                                                    <rect key="frame" x="2" y="77" width="20" height="20"/>
                                                                 </imageView>
                                                             </subviews>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -928,7 +928,7 @@
     </scenes>
     <resources>
         <image name="Add" width="21" height="21"/>
-        <image name="Circled Play" width="25" height="25"/>
+        <image name="Live_now_off_mode" width="26" height="26"/>
         <image name="Select thumbnails" width="34" height="31"/>
         <image name="checked" width="48" height="43"/>
         <image name="notif" width="29" height="25"/>
