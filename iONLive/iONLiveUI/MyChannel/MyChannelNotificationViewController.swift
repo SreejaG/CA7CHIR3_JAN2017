@@ -164,12 +164,13 @@ class MyChannelNotificationViewController: UIViewController {
             if mediaResponseArr.count > 0
             {
                 for element in mediaResponseArr{
-                    let username = element["user_name"] as! String
-                    let notifType = element["notification_type"] as! String
-                    let mediaType = element["gcs_object_type"] as! String
+//                    let username = element["user_name"] as! String
+//                    let notifType = element["notification_type"] as! String
+//                    let mediaType = element["gcs_object_type"] as! String
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
+                    print(messageFromCloud)
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     if let mediaThumbUrl: String = element["thumbnail_name_SignedUrl"] as? String
                     {
@@ -202,12 +203,14 @@ class MyChannelNotificationViewController: UIViewController {
             if channelResponseArr.count > 0
             {
                 for element in channelResponseArr{
-                    let username = element["user_name"] as! String
-                    let notifType = element["notification_type"] as! String
-                    let mediaType = element["channel_name"] as! String
+//                    let username = element["user_name"] as! String
+//                    let notifType = element["notification_type"] as! String
+//                    let mediaType = element["channel_name"] as! String
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
-                    let message = "\(username.capitalizedString) \(notifType.lowercaseString) your \(mediaType)  \(timeDiff)"
+                    let messageFromCloud = element["message"] as! String
+                    print(messageFromCloud)
+                    let message = "\(messageFromCloud)  \(timeDiff)"
                     
                     if let profileImageName = element["profile_image"]
                     {

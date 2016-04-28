@@ -46,6 +46,7 @@ class ChannelItemListViewController: UIViewController {
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
     let actualImageKey = "actualImage"
+    let notificationKey = "notification"
     
     var limit : Int = Int()
     var totalCount: Int = 0
@@ -147,7 +148,22 @@ class ChannelItemListViewController: UIViewController {
                 let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl])
+                var notificationType : String = String()
+                if let notifType =  responseArr[index].valueForKey("notification_type")
+                {
+                    if notifType as! String != ""
+                    {
+                        notificationType = (notifType as! String).lowercaseString
+                    }
+                    else{
+                        notificationType = "unliked"
+                    }
+                }
+                else{
+                    notificationType = "shared"
+                }
+                
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
             print(imageDataSource)
             downloadCloudData(15, scrolled: false)
@@ -235,7 +251,7 @@ class ChannelItemListViewController: UIViewController {
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!])
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemCollectionView.reloadData()
@@ -462,8 +478,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 cell.videoView.hidden = true
                 channelItemImageView.image = imageData
             }
-            print(Int((UIScreen.mainScreen().bounds.width/3)-2))
-            cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 27 , width: 20, height: 20)
+         
+            cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 16 , width: 10, height: 10)
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
             if(selectionFlag){
@@ -550,8 +566,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage()) as! MovieViewController
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String) as! MovieViewController
                 self.presentViewController(vc, animated: true) { () -> Void in
                 
             }
