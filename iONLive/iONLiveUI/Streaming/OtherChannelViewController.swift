@@ -161,14 +161,15 @@ class OtherChannelViewController: UIViewController {
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
                 var notificationType : String = String()
-                if let notifType =  responseArr[index].valueForKey("notification_type")
+                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
                 {
-                    if notifType as! String != ""
+                    print(notifType)
+                    if notifType != ""
                     {
-                        notificationType = (notifType as! String).lowercaseString
+                        notificationType = (notifType as? String)!.lowercaseString
                     }
                     else{
-                        notificationType = "unliked"
+                        notificationType = "shared"
                     }
                 }
                 else{
@@ -414,17 +415,21 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
         let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
         if type == "media"
         {
-            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: "", mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String) as! MovieViewController
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String, mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
             self.presentViewController(vc, animated: true) { () -> Void in
             }
 
         }else if type == "video"
         {
-            
+            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String, mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
+            self.presentViewController(vc, animated: true) { () -> Void in
+            }
+   
         }else
         {
             if let streamTocken = fullImageDataSource[indexPath.row][streamTockenKey]

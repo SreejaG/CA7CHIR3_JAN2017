@@ -24,8 +24,9 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                 channelName: (NSString *) channelName
                                 userName: (NSString *) userName
                                 mediaType: (NSString *) mediaType
-                            profileImage: (UIImage *) profileImage
-                            notifType: (NSString *) notifType;
+                                profileImage: (UIImage *) profileImage
+                               notifType: (NSString *) notifType
+                               mediaId: (NSString *) mediaId;
 
 
 
