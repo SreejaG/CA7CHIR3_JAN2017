@@ -564,7 +564,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 if type ==  "image"
                 {
                     //not clickable as of now
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
                     self.presentViewController(vc, animated: true) { () -> Void in
                     }
                     
@@ -573,7 +573,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 }
                  else if type == "video"
                 {
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
                     self.presentViewController(vc, animated: true) { () -> Void in
                     }
                     
