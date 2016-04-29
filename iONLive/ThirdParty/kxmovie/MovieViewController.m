@@ -123,7 +123,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UILabel *channelName;
     
     BOOL                _interrupted;
-    
+    NSURLSessionDownloadTask *downloadTask;
     //heart View
     
     KxMovieDecoder      *_decoder;
@@ -252,15 +252,12 @@ static NSMutableDictionary * gHistory;
             imageVideoView.hidden = true;
             imageView.hidden = true;
             videoProgressBar.hidden = false;
-            glView.backgroundColor = [UIColor colorWithPatternImage:VideoImageUrl];
             
-//            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, (glView.frame.size.height - (heartBottomDescView.frame.size.height + 40)))];
-//            [self.view insertSubview:closeButton aboveSubview:backgroundImage];
-//            backgroundImage.image = VideoImageUrl;
-//            backgroundImage.backgroundColor = [UIColor clearColor];
-//            topView.hidden = false;
-//            [glView addSubview:backgroundImage];
-            
+            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:glView.frame];
+            backgroundImage.image = VideoImageUrl;
+            topView.hidden = false;
+            [glView addSubview:backgroundImage];
+            [glView sendSubviewToBack:backgroundImage];
              NSURL *url = [self convertStringToUrl:mediaUrl];
             [self downloadVideo:url];
         }
@@ -323,12 +320,13 @@ static NSMutableDictionary * gHistory;
 {
     NSMutableURLRequest *downloadReq = [[NSMutableURLRequest alloc]initWithURL:url];
     NSURLSession *session = [NSURLSession sessionWithConfiguration: [NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
-    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithRequest:downloadReq];
+    downloadTask = [session downloadTaskWithRequest:downloadReq];
     videoProgressBar.hidden = false;
     videoProgressBar.progressViewStyle = UIProgressViewStyleDefault;
     videoProgressBar.center = glView.center;
     videoProgressBar.transform = CGAffineTransformScale(videoProgressBar.transform, 1, 4);
     [downloadTask resume];
+   
     
 }
 
@@ -1688,8 +1686,13 @@ static NSMutableDictionary * gHistory;
 #pragma mark : Button Actions
 
 - (IBAction)didTapCloseButton:(id)sender {
+    NSLog(@"%ld",(long)downloadTask.state);
+    if(downloadTask.state == 0)
+    {
+        [downloadTask cancel];
+    }
     
-    [self dismissViewControllerAnimated:true
+        [self dismissViewControllerAnimated:true
                              completion:^{
                                  
                              }];
