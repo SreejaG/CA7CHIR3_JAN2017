@@ -65,7 +65,7 @@ import UIKit
     
     func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String)
     {
-        channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: mediaDetailId, success: { (response) in
+        channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, success: { (response) in
                  self.authenticationSuccessHandlerSetMedia(response)
             }) { (error, message) in
                 

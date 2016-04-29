@@ -179,7 +179,7 @@ class ChannelManager: NSObject {
         })
     }
     
-    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         print("\(userName)  \(accessToken)  \(notifType)  \(mediaDetailId)")
         let requestManager = RequestManager.sharedInstance

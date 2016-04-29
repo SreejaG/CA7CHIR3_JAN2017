@@ -216,7 +216,8 @@ static NSMutableDictionary * gHistory;
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     
     if (self) {
-        
+        [self.view bringSubviewToFront:glView];
+        videoProgressBar.hidden = true;
         _liveVideo = live;
         rtspFilePath = path;
         _parameters = nil;
@@ -737,6 +738,7 @@ static NSMutableDictionary * gHistory;
 }
 -(void)setUpGlViewForLive
 {
+    videoProgressBar.hidden = true;
     closeButton.hidden = true;
     bottomView.hidden = false;
     noDataFound.text = @"Trying to connect camera";
@@ -748,6 +750,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)setUpGlViewForPlayBack
 {
+    videoProgressBar.hidden = true;
     closeButton.hidden = false;
     bottomView.hidden = true;
     noDataFound.text = @"Retrieving stream";
@@ -796,12 +799,14 @@ static NSMutableDictionary * gHistory;
 
 -(void)customiseViewForStreaming
 {
+    videoProgressBar.hidden = true;
     imageVideoView.hidden = true;
     heartView.hidden = false;
     heartBottomDescView.hidden = false;
     numberOfSharedChannels.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
+  //  topView.backgroundColor = [UIColor clearColor];
     liveView.hidden = true;
     closeButton.hidden = false;
 }
@@ -1803,8 +1808,7 @@ static NSMutableDictionary * gHistory;
     animation.path = path;
     animation.calculationMode = kCAAnimationCubicPaced;
     CGPathRelease(path);
-    
-    //透明渐变
+
     CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     opacityAnimation.fromValue = @0.95f;
     opacityAnimation.toValue  = @0.0f;

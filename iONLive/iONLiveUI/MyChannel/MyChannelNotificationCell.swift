@@ -18,7 +18,8 @@ class MyChannelNotificationCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+        NotificationSenderImageView.layer.cornerRadius = NotificationSenderImageView.frame.size.width/2
+        NotificationSenderImageView.layer.masksToBounds = true
         // Initialization code
     }
     

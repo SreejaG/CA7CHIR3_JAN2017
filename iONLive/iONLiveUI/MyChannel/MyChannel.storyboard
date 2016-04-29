@@ -854,10 +854,10 @@
                                                             </constraints>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PiX-fg-0mB">
-                                                            <rect key="frame" x="543" y="4" width="31" height="31"/>
+                                                            <rect key="frame" x="549" y="4" width="35" height="35"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="31" id="5Um-gV-BYu"/>
-                                                                <constraint firstAttribute="width" constant="31" id="pmI-qD-rYU"/>
+                                                                <constraint firstAttribute="height" constant="35" id="5Um-gV-BYu"/>
+                                                                <constraint firstAttribute="width" constant="35" id="pmI-qD-rYU"/>
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yCR-HB-IhG">
@@ -872,7 +872,7 @@
                                                         </label>
                                                     </subviews>
                                                     <constraints>
-                                                        <constraint firstAttribute="trailingMargin" secondItem="PiX-fg-0mB" secondAttribute="trailing" constant="18" id="6lw-G6-UIw"/>
+                                                        <constraint firstAttribute="trailingMargin" secondItem="PiX-fg-0mB" secondAttribute="trailing" constant="8" id="6lw-G6-UIw"/>
                                                         <constraint firstItem="yCR-HB-IhG" firstAttribute="leading" secondItem="Grn-lP-Ucd" secondAttribute="trailing" constant="8" id="G6W-Hq-bgN"/>
                                                         <constraint firstItem="yCR-HB-IhG" firstAttribute="centerY" secondItem="Ohu-D5-ehQ" secondAttribute="centerY" constant="-4.5" id="RMa-th-RCR"/>
                                                         <constraint firstItem="Grn-lP-Ucd" firstAttribute="leading" secondItem="Ohu-D5-ehQ" secondAttribute="leadingMargin" id="fOe-J9-vY0"/>
