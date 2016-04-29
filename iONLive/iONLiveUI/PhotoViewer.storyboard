@@ -128,8 +128,8 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="txC-iS-gZe">
                                                     <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
-                                                    <rect key="frame" x="14" y="14" width="15" height="15"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
+                                                    <rect key="frame" x="3" y="28" width="10" height="10"/>
                                                 </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
                                                     <rect key="frame" x="0.0" y="41" width="42" height="2"/>
@@ -203,5 +203,6 @@
     </scenes>
     <resources>
         <image name="Circled Play" width="25" height="25"/>
+        <image name="Live_now_off_mode" width="26" height="26"/>
     </resources>
 </document>
