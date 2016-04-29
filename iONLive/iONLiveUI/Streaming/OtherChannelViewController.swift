@@ -193,7 +193,7 @@ class OtherChannelViewController: UIViewController {
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                         self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.mediaTypeKey:"live"])
-                        
+//                         self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.channelItemsCollectionView.reloadData()
                         })
@@ -288,7 +288,7 @@ class OtherChannelViewController: UIViewController {
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
 //                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaUrlKey:self.imageDataSource[i][self.mediaUrlKey]!, self.thumbImageKey:result,self.streamTockenKey:"", self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
-                     self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                     self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemsCollectionView.reloadData()
                     })
