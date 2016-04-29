@@ -152,6 +152,10 @@ protocol uploadProgressDelegate
                         let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
                         if media == "video"
                         {
+                            let sizeFull = CGSizeMake(140,140)
+
+                            let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+
                             dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionFullscreen,fullImageKey:imageAfterConversionFullscreen!])
                         }
                         else
@@ -632,18 +636,19 @@ protocol uploadProgressDelegate
         //   progrs=uploadProgress
         //   [photoThumpCollectionView .reloadData()]
         print(uploadProgress)
-        progressDictionary[taskIndex] = uploadProgress
         // self.delegate?.uploadProgress(progressDictionary)
         [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
         
-        if(checkThumb)
-        {
+       // if(checkThumb)
+      //  {
+            progressDictionary[taskIndex] = uploadProgress
+
         if PhotoViewerInstance.controller != nil
         {
             let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
             controller.uploadProgress(progressDictionary)
         }
-        }
+   //     }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)

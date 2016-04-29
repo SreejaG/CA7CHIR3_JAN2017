@@ -18,6 +18,7 @@ class OtherChannelViewController: UIViewController {
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
+    var userName:String!
     
     var offset: String = "0"
     var offsetToInt : Int = Int()
@@ -193,7 +194,7 @@ class OtherChannelViewController: UIViewController {
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.mediaTypeKey:"live"])
+                        self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:self.imageDataSource[index][self.actualImageKey]!,self.notificationKey:self.imageDataSource[index][self.notificationKey]!,self.mediaTypeKey:"live"])
 //                         self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.channelItemsCollectionView.reloadData()
@@ -289,7 +290,7 @@ class OtherChannelViewController: UIViewController {
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
 //                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaUrlKey:self.imageDataSource[i][self.mediaUrlKey]!, self.thumbImageKey:result,self.streamTockenKey:"", self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!])
-                     self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                     self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemsCollectionView.reloadData()
                     })
@@ -415,10 +416,9 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let userId = userName
         let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
-        if type == "media"
+        if type == "image"
         {
 //            let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), notifType: fullImageDataSource[indexPath.row][notificationKey] as! String, mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
 //            self.presentViewController(vc, animated: true) { () -> Void in

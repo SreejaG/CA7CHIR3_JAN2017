@@ -471,7 +471,7 @@ extension ChannelsSharedController:UITableViewDataSource
             channelItemListVC.channelId = dataSource[indexPath.row][channelIdkey] as! String
             channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
             channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][sharedMediaCount]! as! String)!
-            
+            channelItemListVC.userName = dataSource[indexPath.row][usernameKey] as! String
             channelItemListVC.navigationController?.navigationBarHidden = true
             self.navigationController?.pushViewController(channelItemListVC, animated: true)
        // }
