@@ -1149,12 +1149,20 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         //            }) { (error, message) -> () in
         //                self.authenticationFailureHandlerForFetchMedia(error, code: message)
         //        }
+        
+        if mediaSharedCount == "0"
+        {
+            ErrorManager.sharedInstance.emptyMedia()
+           removeOverlay()
+
+        }else
+        {
         imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: mediaSharedCount, offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandlerForFetchMedia(error, code: message)
         }
-        
+        }
         
         //        imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: "8", offset: "0" , success: { (response) -> () in
         //            self.authenticationSuccessHandlerForFetchMedia(response)
