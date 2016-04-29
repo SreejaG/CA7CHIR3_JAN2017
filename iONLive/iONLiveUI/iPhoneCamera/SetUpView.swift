@@ -38,6 +38,8 @@ import UIKit
 
             }) { (error, code) in
                 
+                ErrorManager.sharedInstance.inValidResponseError()
+  
         }
     }
     func authenticationSuccessHandlerList(response:AnyObject?)
