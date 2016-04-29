@@ -149,7 +149,7 @@ class LiveStreamingManager: NSObject {
     func defaultStreamMapping(loginId loginId: String, accesstocken: String, streamTockn: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamingToken, parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTockn, parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
