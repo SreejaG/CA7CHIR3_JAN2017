@@ -111,6 +111,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
     
+    IBOutlet UIProgressView *videoProgressBar;
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
     int likeFlag;
     
@@ -161,6 +162,8 @@ static NSMutableDictionary * gHistory;
     
     NSString *userId,*accessToken,*mediaDetailId,*notificationType;
     
+    MPMoviePlayerController *moviePlayer;
+    
 }
 
 @property (readwrite) BOOL playing;
@@ -197,10 +200,12 @@ static NSMutableDictionary * gHistory;
                                 userName: (NSString *) username
                                 mediaType: (NSString *) mediaType
                                 profileImage: (UIImage *) profileImage
+                                VideoImageUrl: (UIImage *) VideoImageUrl
                                 notifType: (NSString *) notifType
                                 mediaId: (NSString *) mediaId
 {
-    return [[MovieViewController alloc] initWithImageVideo: mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage notifType:notifType  mediaId:mediaId];
+    
+    return [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId];
 }
 
 
@@ -234,15 +239,32 @@ static NSMutableDictionary * gHistory;
                 userName: (NSString *) username
                 mediaType: (NSString *) mediaType
                 profileImage: (UIImage *) profileImage
+                VideoImageUrl: (UIImage *) VideoImageUrl
                 notifType: (NSString *) notifType
                 mediaId: (NSString *) mediaId
 {
-    
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
         [self setUpDefaultValues];
         [self setUpViewForImageVideo];
-        [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        if([mediaType  isEqual: @"video"])
+        {
+            imageVideoView.hidden = true;
+            imageView.hidden = true;
+            videoProgressBar.hidden = false;
+            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, (glView.frame.size.height - (heartBottomDescView.frame.size.height + 40)))];
+            backgroundImage.image = VideoImageUrl;
+            topView.hidden = false;
+            [self.view insertSubview:topView aboveSubview:glView];
+            [glView addSubview:backgroundImage];
+             NSURL *url = [self convertStringToUrl:mediaUrl];
+            [self downloadVideo:url];
+        }
+        else{
+             [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        }
+        
+      
         profilePicture.image = profileImage;
         channelName.text = channelname;
         if([mediaType  isEqual: @"live"]){
@@ -279,27 +301,18 @@ static NSMutableDictionary * gHistory;
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
 {
-    
-    if([mediaType  isEqual: @"video"])
+    NSURL *url = [self convertStringToUrl:mediaUrl];
+    NSLog(@"%@",url);
+    UIImage *mediaImage;
+    NSData *data = [[NSData alloc] initWithContentsOfURL:url];
+    if(data != nil)
     {
-        NSURL *url = [self convertStringToUrl:mediaUrl];
-        [self downloadVideo:url];
+        mediaImage = [[UIImage alloc]initWithData:data];
     }
-    else if([mediaType  isEqual: @"image"])
-    {
-        
-        NSURL *url = [self convertStringToUrl:mediaUrl];
-        UIImage *mediaImage;
-        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
-        if(data != nil)
-        {
-            mediaImage = [[UIImage alloc]initWithData:data];
-        }
-        else{
-            mediaImage = [UIImage imageNamed:@"photo3"];
-        }
-        imageVideoView.image = mediaImage;
+    else{
+        mediaImage = [UIImage imageNamed:@"photo3"];
     }
+     imageVideoView.image = mediaImage;
 }
 
 -(void) downloadVideo: (NSURL *) url
@@ -307,17 +320,29 @@ static NSMutableDictionary * gHistory;
     NSMutableURLRequest *downloadReq = [[NSMutableURLRequest alloc]initWithURL:url];
     NSURLSession *session = [NSURLSession sessionWithConfiguration: [NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithRequest:downloadReq];
+    videoProgressBar.hidden = false;
+    videoProgressBar.progressViewStyle = UIProgressViewStyleDefault;
+    videoProgressBar.center = glView.center;
+    videoProgressBar.transform = CGAffineTransformScale(videoProgressBar.transform, 1, 4);
     [downloadTask resume];
     
 }
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
-    
+    float progress = (float)totalBytesWritten / (float)totalBytesExpectedToWrite;
+    videoProgressBar.progress = progress;
+    NSLog(@"%f", progress);
+   
+    if(progress == 1.0)
+    {
+        videoProgressBar.hidden = true;
+    }
 }
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
+    [self.view insertSubview:closeButton aboveSubview:glView];
     NSData *data = [[NSData alloc]initWithContentsOfURL:location];
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -328,14 +353,17 @@ static NSMutableDictionary * gHistory;
     {
         bool write = [data writeToURL:fileURL atomically:YES];
         if(write){
-//            imageVideoView.hidden = true;
-            MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:fileURL];
-            
-            player.view.frame = CGRectMake(20, 20, 200, 200);
-            player.scalingMode = MPMovieScalingModeAspectFit;
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playerDidFinish:)
+                                                name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayer];
+            moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:fileURL];
+            MPMoviePlayerController *player = moviePlayer;
+            player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - heartBottomDescView.frame.size.height);
+            [player.view sizeToFit];
+            player.scalingMode = MPMovieScalingModeFill;
             player.movieSourceType = MPMovieSourceTypeFile;
-            player.controlStyle = MPMovieControlStyleDefault;
-            player.shouldAutoplay = YES;
+            player.controlStyle = MPMovieControlStyleNone;
+            player.repeatMode = MPMovieRepeatModeNone;
             [glView addSubview:[player view]];
             [player play];
         }
@@ -344,13 +372,19 @@ static NSMutableDictionary * gHistory;
   
 }
 
+-(void) playerDidFinish :(NSNotification *) notif
+{
+    [moviePlayer.view removeFromSuperview];
+    
+}
+
 -(void) setUpViewForImageVideo
 {
     heart2Button.hidden = true;
     heart3Button.hidden = true;
     heart4Button.hidden = true;
     hidingHeartButton.hidden = true;
-    
+ //   videoProgressBar.hidden = true;
     likeFlag = false;
     heartBottomDescView.hidden = false;
     topView.hidden = false;
@@ -377,6 +411,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)setUpDefaultValues
 {
+    videoProgressBar.hidden = true;
     imageVideoView.hidden = true;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;

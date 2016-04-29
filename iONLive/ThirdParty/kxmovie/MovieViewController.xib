@@ -37,6 +37,7 @@
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
                 <outlet property="typeMedia" destination="6bR-V1-5Kc" id="z2e-f2-wGN"/>
                 <outlet property="userName" destination="8mh-6L-jot" id="Gro-IQ-yPI"/>
+                <outlet property="videoProgressBar" destination="KWR-bQ-XwK" id="uEg-YZ-srV"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -55,6 +56,12 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2J-HD-A0s" userLabel="glView" customClass="KxMovieGLView">
                             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             <subviews>
+                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KWR-bQ-XwK">
+                                    <rect key="frame" x="0.0" y="537" width="600" height="2"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="2" id="LRl-zJ-Sh4"/>
+                                    </constraints>
+                                </progressView>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JM0-t4-a8I">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -369,6 +376,7 @@
                             <constraints>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="1QZ-Em-Xnj"/>
                                 <constraint firstAttribute="bottom" secondItem="JM0-t4-a8I" secondAttribute="bottom" id="2Be-ZF-YJl"/>
+                                <constraint firstItem="KWR-bQ-XwK" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="2dp-eJ-E1F"/>
                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="KZE-R5-aYy" secondAttribute="trailing" constant="10" id="2nc-Es-cgo"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="top" secondItem="dwM-g7-MKl" secondAttribute="bottom" id="45O-m3-TX4"/>
                                 <constraint firstItem="BB9-od-AqJ" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="BeW-cL-yOw"/>
@@ -379,6 +387,8 @@
                                 <constraint firstItem="fVQ-mp-3vZ" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="Qv2-3C-8gJ"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="R2N-W9-00b"/>
                                 <constraint firstItem="8cA-HV-eex" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="WeN-QK-2BA"/>
+                                <constraint firstAttribute="trailing" secondItem="KWR-bQ-XwK" secondAttribute="trailing" id="WhH-yb-r9h"/>
+                                <constraint firstItem="8cA-HV-eex" firstAttribute="top" secondItem="KWR-bQ-XwK" secondAttribute="bottom" constant="-59" id="YFY-M3-3dy"/>
                                 <constraint firstItem="5C7-am-vGG" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="aYF-V3-ubx"/>
                                 <constraint firstAttribute="trailing" secondItem="8cA-HV-eex" secondAttribute="trailing" id="amB-XE-fRV"/>
                                 <constraint firstAttribute="trailing" secondItem="BB9-od-AqJ" secondAttribute="trailing" id="hAG-r5-L4J"/>
