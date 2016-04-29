@@ -252,11 +252,15 @@ static NSMutableDictionary * gHistory;
             imageVideoView.hidden = true;
             imageView.hidden = true;
             videoProgressBar.hidden = false;
-            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, (glView.frame.size.height - (heartBottomDescView.frame.size.height + 40)))];
-            backgroundImage.image = VideoImageUrl;
-            topView.hidden = false;
-            [self.view insertSubview:topView aboveSubview:glView];
-            [glView addSubview:backgroundImage];
+            glView.backgroundColor = [UIColor colorWithPatternImage:VideoImageUrl];
+            
+//            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, (glView.frame.size.height - (heartBottomDescView.frame.size.height + 40)))];
+//            [self.view insertSubview:closeButton aboveSubview:backgroundImage];
+//            backgroundImage.image = VideoImageUrl;
+//            backgroundImage.backgroundColor = [UIColor clearColor];
+//            topView.hidden = false;
+//            [glView addSubview:backgroundImage];
+            
              NSURL *url = [self convertStringToUrl:mediaUrl];
             [self downloadVideo:url];
         }
@@ -342,7 +346,7 @@ static NSMutableDictionary * gHistory;
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
-    [self.view insertSubview:closeButton aboveSubview:glView];
+ 
     NSData *data = [[NSData alloc]initWithContentsOfURL:location];
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
