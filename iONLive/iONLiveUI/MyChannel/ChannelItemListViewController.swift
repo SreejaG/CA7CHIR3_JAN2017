@@ -263,7 +263,10 @@ class ChannelItemListViewController: UIViewController {
                         FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                         
                         if(result != UIImage()){
-                            imageForMedia = result
+                            let imageToConvert: UIImage = result
+                            let sizeThumb = CGSizeMake(150, 150)
+                            let imageAfterConversionThumbnail = self.cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                            imageForMedia = imageAfterConversionThumbnail
                         }
                         else{
                             imageForMedia = UIImage()
@@ -488,10 +491,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
-                let imageToConvert: UIImage = imageData
-                let sizeThumb = CGSizeMake(150, 150)
-                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                channelItemImageView.image = imageAfterConversionThumbnail
+               
+                channelItemImageView.image = imageData
             }
             else{
                 cell.videoView.hidden = true
