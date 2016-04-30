@@ -272,8 +272,12 @@ class MyChannelItemDetailsViewController: UIViewController {
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                         FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                        
-                        imageForMedia = result
+                        if(result != UIImage()){
+                            imageForMedia = result
+                        }
+                        else{
+                            imageForMedia = UIImage()
+                        }
                     })
                     
                 }
