@@ -218,10 +218,14 @@ class StreamsListViewController: UIViewController{
             {
                 mediaImage = mediaImage1
             }
+            else{
+                mediaImage = UIImage()
+            }
             completion(result: UIImage(data: imageData)!)
         }
         else
         {
+            mediaImage = UIImage()
             print("null Image")
             completion(result:mediaImage)
         }
@@ -254,17 +258,34 @@ class StreamsListViewController: UIViewController{
             return
         }
         
+        
         for i in limitMediaCount  ..< currentLimit
         {
+            var imageForMedia : UIImage = UIImage()
+            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+            print(mediaIdForFilePath)
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaIdForFilePath)
+            if fileExistFlag == true{
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaIdForFilePath)
+                imageForMedia = mediaImageFromFile!
+            }
+            else{
+
             let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                     
-                    
+                    imageForMedia = result
+                    })
+                
+                }
+            }
+            
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
 //                          self.dataSource.append([self.mediaIdKey:"", self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey: userId,self.notificationKey:notificationType,self.mediaTypeKey:"live"])
-                        self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.thumbImageKey:result ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+                        self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
                         if(self.dummy.count > 0)
                         {
                             self.dummy.sortInPlace({ p1, p2 in
@@ -282,13 +303,10 @@ class StreamsListViewController: UIViewController{
                         self.removeOverlay()
                         self.streamListCollectionView.reloadData()
                     })
-                })
-                
-            }
-        }
+    
     }
     
-
+}
 
 
     //Loading Overlay Methods
