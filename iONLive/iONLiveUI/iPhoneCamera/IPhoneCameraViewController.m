@@ -734,7 +734,7 @@ NSMutableDictionary *ShotsDict;
                         dispatch_async( dispatch_get_main_queue(), ^{
                             [_uploadActivityIndicator setHidden:NO];
 
-                            [_uploadActivityIndicator startAnimating];
+                           [_uploadActivityIndicator startAnimating];
                             [ self.thumbnailImageView setAlpha:0.4];
 
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];

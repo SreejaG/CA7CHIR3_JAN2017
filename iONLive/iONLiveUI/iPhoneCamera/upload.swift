@@ -22,6 +22,8 @@ protocol uploadProgressDelegate
     var channelDetails: NSMutableArray = NSMutableArray()
     let requestManager = RequestManager.sharedInstance
     var dummyImagesDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
+    
+    var cacheDictionary : [[String:AnyObject]]  = [[String:AnyObject]]()
     let thumbImageKey = "thumbImage"
     let fullImageKey = "fullImageKey"
     let imageUploadManger = ImageUpload.sharedInstance
@@ -258,18 +260,15 @@ protocol uploadProgressDelegate
                 
                 signedURLResponse.setValue(name, forKey: "mediaId")
             }
-            
-            
-            
+           
             if checksDataSourceDatabase.count > 0
             {
-                
-          
                 var dict = dummyImagesDataSourceDatabase[rowIndex]
                 let  uploadImageFull = dict[fullImageKey]
                 let imageData : NSData
                 if media == "video"
                 {
+                    signedURLResponse.setValue("video", forKey: "type")
                     // NSData *movieData = [NSData dataWithContentsOfURL:videoPath];
                     if ((videoPath.path?.isEmpty) != nil)
                     {
@@ -279,34 +278,34 @@ protocol uploadProgressDelegate
                         else{
                             return
                         }
-
                     }
                     else
                     {
                         return
                     }
-                    
-                    
                 }
                 else
                 {
+                    signedURLResponse.setValue("image", forKey: "type")
+
                     imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)!
-                    
                 }
+            
+                saveToCache()
+                
                 self.uploadFullImage(imageData, row: rowIndex , completion: { (result) -> Void in
                     
                     if result == "Success"
                     {
-                        
                         self.uploadThumbImage(rowIndex, completion: { (result) -> Void in
                             
                             if result == "Success"
                             {
                                     self.dummyImagesDataSourceDatabase.removeAll()
-                                    self.checksDataSourceDatabase.removeAll()
+                                   self.checksDataSourceDatabase.removeAll()
                                     self.deleteCOreData()
-                                    self.shotDict.removeAllObjects()
-                                self.snapShots.removeAllObjects()
+                            //       self.shotDict.removeAllObjects()
+                          //     self.snapShots.removeAllObjects()
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -319,7 +318,6 @@ protocol uploadProgressDelegate
                                         
                                 })
                                 completion(result:"Success")
-                                
                             }
                             else
                             {
@@ -344,6 +342,22 @@ protocol uploadProgressDelegate
         }
         
         
+        
+    }
+    func saveToCache()
+    {
+        let mediaCachemanager = MediaCache.sharedInstance
+        mediaCachemanager.setResponse(signedURLResponse)
+        for( var i = 0 ; i < dummyImagesDataSourceDatabase.count ; i += 1 )
+        {
+            if(mediaCachemanager.createCa7chDirectory())
+            {
+                let path = mediaCachemanager.getDocumentsURL().URLByAppendingPathComponent((self.signedURLResponse.valueForKey("mediaId")?.stringValue)!)
+                mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][thumbImageKey]!, path: String(String(path)+"thumb"))
+                mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][fullImageKey]!, path: String(String(path)+"full"))
+            }
+            
+        }
         
     }
     func deleteCOreData()
@@ -536,6 +550,8 @@ protocol uploadProgressDelegate
             // failed to read directory – bad permissions, perhaps?
         }
     }
+    
+ 
     
     func uploadThumbImage(row : Int,completion: (result: String) -> Void)
     {
