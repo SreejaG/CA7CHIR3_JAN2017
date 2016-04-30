@@ -91,7 +91,6 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func initialise(){
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -149,24 +148,8 @@ class ChannelItemListViewController: UIViewController {
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
                 let notificationType : String = "likes"
-//                if let notifType =  responseArr[index].valueForKey("notification_type")
-//                {
-//                    print(notifType)
-//                    if notifType as! NSNull != NSNull()
-//                    {
-//                        notificationType = (notifType as! String).lowercaseString
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
-//                }
-//                else{
-//                    notificationType = "shared"
-//                }
-                
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
-            print(imageDataSource)
             downloadCloudData(15, scrolled: false)
         }
         else
@@ -247,20 +230,55 @@ class ChannelItemListViewController: UIViewController {
             return
         }
        
+//        for i in limitMediaCount  ..< currentLimit   {
+//            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+//            if(mediaUrl != ""){
+//                let url: NSURL = convertStringtoURL(mediaUrl)
+//                
+//                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+//                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+//                    
+//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                        self.channelItemCollectionView.reloadData()
+//                    })
+//                })
+//            }
+//
+//        }
+        
         for i in limitMediaCount  ..< currentLimit   {
-            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-            if(mediaUrl != ""){
-                let url: NSURL = convertStringtoURL(mediaUrl)
-                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                    
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.channelItemCollectionView.reloadData()
-                    })
-                })
+            var imageForMedia : UIImage = UIImage()
+            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+            print(mediaIdForFilePath)
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaIdForFilePath)
+            if fileExistFlag == true{
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaIdForFilePath)
+                imageForMedia = mediaImageFromFile!
             }
-
+            else{
+                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                if(mediaUrl != ""){
+                    let url: NSURL = convertStringtoURL(mediaUrl)
+                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                        
+                        if(result != UIImage()){
+                            imageForMedia = result
+                        }
+                        else{
+                            imageForMedia = UIImage()
+                        }
+                    })
+                    
+                }
+            }
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                self.channelItemCollectionView.reloadData()
+            })
+            
         }
+
        
     }
     
