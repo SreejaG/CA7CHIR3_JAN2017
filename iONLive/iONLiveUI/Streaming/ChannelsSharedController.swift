@@ -133,7 +133,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     let streamTocken = element[streamTockenKey] as! String
                     let mediaSharedCount = element[sharedMediaCount]?.stringValue
 
-                    let time = element[timeStamp] as! String
+                  //  let time = element[timeStamp] as! String
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
                     
@@ -154,7 +154,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                         profileImage = UIImage(named: "avatar")!
                     }
                     mediaImage = UIImage(named: "thumb12")
-                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
+                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:"",usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
                 }
             }
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]

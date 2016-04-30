@@ -69,6 +69,7 @@
 		16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
+		16670BAF1CD46CE700F982C8 /* MediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16670BAE1CD46CE700F982C8 /* MediaCache.swift */; };
 		166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */; };
 		166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */; };
 		166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */; };
@@ -282,6 +283,7 @@
 		16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationViewController.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
+		16670BAE1CD46CE700F982C8 /* MediaCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCache.swift; sourceTree = "<group>"; };
 		166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountViewController.swift; sourceTree = "<group>"; };
 		166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsCell.swift; sourceTree = "<group>"; };
 		166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsHeaderCell.swift; sourceTree = "<group>"; };
@@ -641,6 +643,7 @@
 				165041231CABF6CC00F1166E /* upload.swift */,
 				165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */,
 				164AEE541CD09DE8006ACAE0 /* SetUpView.swift */,
+				16670BAE1CD46CE700F982C8 /* MediaCache.swift */,
 			);
 			path = iPhoneCamera;
 			sourceTree = "<group>";
@@ -1658,6 +1661,7 @@
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
+				16670BAF1CD46CE700F982C8 /* MediaCache.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
