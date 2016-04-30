@@ -21,6 +21,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
         
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        
+        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        {
+            
+        }
+        else{
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+    
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window!.backgroundColor = UIColor.whiteColor()
         

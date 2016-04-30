@@ -122,8 +122,6 @@
 		16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */; };
 		16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
-		16CDDC8B1CCDE3B00070D9CE /* Media.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16CDDC8A1CCDE3B00070D9CE /* Media.storyboard */; };
-		16CDDC8D1CCDF31D0070D9CE /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CDDC8C1CCDF31D0070D9CE /* MediaViewController.swift */; };
 		16CEBF4A1CCF9FAF005AE3AE /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */; };
 		16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */; };
 		16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */; };
@@ -158,6 +156,7 @@
 		16EC52841CA95D69000D38DF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EC52831CA95D69000D38DF /* CoreFoundation.framework */; };
 		16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */; };
 		16EC54A91CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EC54A81CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift */; };
+		16F008601CD4A3D100360664 /* FileManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */; };
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
 		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
@@ -343,8 +342,6 @@
 		16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelCell.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
 		16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IONLiveCamConfigViewController.swift; sourceTree = "<group>"; };
-		16CDDC8A1CCDE3B00070D9CE /* Media.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Media.storyboard; sourceTree = "<group>"; };
-		16CDDC8C1CCDF31D0070D9CE /* MediaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaViewController.swift; sourceTree = "<group>"; };
 		16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactTableViewCell.swift; sourceTree = "<group>"; };
@@ -392,6 +389,7 @@
 		16EC52831CA95D69000D38DF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactSharingHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		16EC54A81CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactSharingDetailTableViewCell.swift; sourceTree = "<group>"; };
+		16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManagerViewController.swift; sourceTree = "<group>"; };
 		16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IONLLoadingOverlay.xib; sourceTree = "<group>"; };
 		16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
@@ -660,8 +658,7 @@
 			children = (
 				160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */,
 				16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */,
-				16CDDC8A1CCDE3B00070D9CE /* Media.storyboard */,
-				16CDDC8C1CCDF31D0070D9CE /* MediaViewController.swift */,
+				16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1578,7 +1575,6 @@
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
 				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
-				16CDDC8B1CCDE3B00070D9CE /* Media.storyboard in Resources */,
 				16DA06CA1C7ED830004759D5 /* CountryView.xib in Resources */,
 				162F97431CC9F0C7009F68F8 /* IPhoneCameraView.storyboard in Resources */,
 			);
@@ -1656,6 +1652,7 @@
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
 				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,
 				1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */,
+				16F008601CD4A3D100360664 /* FileManagerViewController.swift in Sources */,
 				1633D2401C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
@@ -1754,7 +1751,6 @@
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
 				16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */,
-				16CDDC8D1CCDF31D0070D9CE /* MediaViewController.swift in Sources */,
 				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
 				16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */,
 				16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */,
