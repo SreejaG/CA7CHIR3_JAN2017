@@ -193,12 +193,12 @@ class ChannelItemListViewController: UIViewController {
             {
                 mediaImage = mediaImage1
             }
-            completion(result: UIImage(data: imageData)!)
+            completion(result: mediaImage)
         }
         else
         {
-            print("null Image")
-            completion(result:mediaImage)
+//            print("null Image")
+//            completion(result:mediaImage)
         }
     }
     
@@ -249,10 +249,11 @@ class ChannelItemListViewController: UIViewController {
         for i in limitMediaCount  ..< currentLimit   {
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-            print(mediaIdForFilePath)
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaIdForFilePath)
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaIdForFilePath)
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                 imageForMedia = mediaImageFromFile!
             }
             else{
@@ -260,19 +261,11 @@ class ChannelItemListViewController: UIViewController {
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                        
                         if(result != UIImage()){
-                            let imageToConvert: UIImage = result
-                            let sizeThumb = CGSizeMake(150, 150)
-                            let imageAfterConversionThumbnail = self.cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                            imageForMedia = imageAfterConversionThumbnail
-                        }
-                        else{
-                            imageForMedia = UIImage()
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: result)
+                            imageForMedia = result
                         }
                     })
-                    
                 }
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -487,16 +480,15 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
             let channelItemImageView = cell.viewWithTag(100) as! UIImageView
             let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
-            
+          
+            channelItemImageView.image = imageData
+
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
-               
-                channelItemImageView.image = imageData
             }
             else{
                 cell.videoView.hidden = true
-                channelItemImageView.image = imageData
             }
          
             cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 16 , width: 10, height: 10)

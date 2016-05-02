@@ -76,7 +76,7 @@ class FileManagerViewController: UIViewController {
             mediaSaveFlag = result
         }
         else{
-        mediaSaveFlag = false
+            mediaSaveFlag = false
         }
         return mediaSaveFlag
     }

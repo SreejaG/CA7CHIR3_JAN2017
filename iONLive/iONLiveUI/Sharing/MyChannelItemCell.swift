@@ -14,7 +14,7 @@ class MyChannelItemCell: UICollectionViewCell
     
     @IBOutlet var channelImageView: UIImageView!
     
-    @IBOutlet var videoView: UIView!
+ //   @IBOutlet var videoView: UIView!
     
     @IBOutlet var videoPlayIcon: UIImageView!
     
@@ -22,6 +22,6 @@ class MyChannelItemCell: UICollectionViewCell
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        videoPlayIcon.center = videoView.center
+   //     videoPlayIcon.center = videoView.center
     }
 }
