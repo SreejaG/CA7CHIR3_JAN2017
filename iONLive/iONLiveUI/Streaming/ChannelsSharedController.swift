@@ -71,6 +71,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         dataSource.removeAll()
         pullToRefreshActive = true
         initialise()
+     //   ChannelSharedTableView.reloadData()
+     //   ChannelSharedTableView.layoutIfNeeded()
     }
     func initialise(){
         
@@ -389,8 +391,9 @@ extension ChannelsSharedController:UITableViewDataSource
             cell.countLabel.hidden = true
             if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
+               // cell.countLabel.hidden = true
                 cell.currentUpdationImage.hidden = false
-                
+                cell.latestImage.hidden = true
                 let text = "@" + (dataSource[indexPath.row][usernameKey] as! String) + " Live"
                 cell.currentUpdationImage.image  = UIImage(named: "Live_camera")
                 let linkTextWithColor = "Live"

@@ -30,12 +30,12 @@ class StreamsListViewController: UIViewController{
     var offsetToInt : Int = Int()
     let isWatched = "isWatched"
     let actualImageKey = "actualImage"
-    
+
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
-    
+
     let cameraController = IPhoneCameraViewController()
     
     let mediaUrlKey = "mediaUrl"
@@ -185,8 +185,7 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    func authenticationFailureHandler(error: NSError?, code: String)
+      func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
         if(offsetToInt <= totalMediaCount){
@@ -264,9 +263,13 @@ class StreamsListViewController: UIViewController{
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             print(mediaIdForFilePath)
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaIdForFilePath)
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            print(savingPath)
+
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaIdForFilePath)
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                 imageForMedia = mediaImageFromFile!
             }
             else{

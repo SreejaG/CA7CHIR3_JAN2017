@@ -140,8 +140,8 @@ NSMutableDictionary *ShotsDict;
         });
     }
     else{
-        _countLabel.hidden= false;
-        _countLabel.text = mediaSharedCount;
+     //   _countLabel.hidden= false;
+       // _countLabel.text = mediaSharedCount;
     }
 
     

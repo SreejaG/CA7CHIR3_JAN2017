@@ -19,7 +19,7 @@ class OtherChannelViewController: UIViewController {
     var channelId:String!
     var channelName:String!
     var userName:String!
-    
+
     var offset: String = "0"
     var offsetToInt : Int = Int()
     let isWatched = "isWatched"
@@ -35,7 +35,7 @@ class OtherChannelViewController: UIViewController {
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
-    
+
     var limit : Int = Int()
     var fixedLimit : Int =  0
     var isLimitReached : Bool = true
@@ -238,6 +238,7 @@ class OtherChannelViewController: UIViewController {
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
+ 
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -289,9 +290,13 @@ class OtherChannelViewController: UIViewController {
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             print(mediaIdForFilePath)
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaIdForFilePath)
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            print(savingPath)
+
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaIdForFilePath)
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                 imageForMedia = mediaImageFromFile!
             }
             else{

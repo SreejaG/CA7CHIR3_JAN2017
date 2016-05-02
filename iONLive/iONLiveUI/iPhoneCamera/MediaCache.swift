@@ -27,7 +27,7 @@ class MediaCache: UIViewController {
     func createCa7chDirectory()-> Bool
     {
         let flag:Bool
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/ca7ch"
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
                do {
             try NSFileManager.defaultManager().createDirectoryAtPath(documentsPath, withIntermediateDirectories: true, attributes: nil)
             flag = true
@@ -40,37 +40,19 @@ class MediaCache: UIViewController {
     }
     
     func getDocumentsURL() -> NSURL {
-         let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/ca7ch"
+         let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
        // let documentsURL = documentsPath.URLByAppendingPathComponent("ca7ch")
         return  NSURL(string: documentsPath)!
     }
     func saveImage (image: UIImage, path: String ) -> Bool{
-        
-//          let documentsFolderPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] as ns
-//        let documentsURL = documentsFolderPath.URLByAppendingPathComponent("ca7ch")
-//        let fm2 = NSFileManager.defaultManager()
-//        do {
-//            let items = try fm2.contentsOfDirectoryAtPath(String(documentsURL))
-//            
-//            for item in items {
-//                print("Items before------> \(item)")
-//            }
-//        } catch {
-//            // failed to read directory – bad permissions, perhaps?
-//        }
-
         let pngImageData = UIImageJPEGRepresentation(image, 0.5)
         //let jpgImageData = UIImageJPEGRepresentation(image, 1.0)   // if you want to save as JPEG
         let result = pngImageData!.writeToFile(path, atomically: true)
-        
         return result
-        
     }
     func fileExist(path: String) -> Bool
     {
-//        let documentsPath = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
-//        let documentsURL = documentsPath.URLByAppendingPathComponent("ca7ch")
-//        let mediaPath = documentsDirectoryPath + "everythingswift.txt"
+
         let fileManager = NSFileManager.defaultManager()
 
         if(fileManager.fileExistsAtPath(path))
