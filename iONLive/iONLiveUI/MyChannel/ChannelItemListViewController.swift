@@ -251,6 +251,7 @@ class ChannelItemListViewController: UIViewController {
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            print(savingPath)
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
                 let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
@@ -262,7 +263,7 @@ class ChannelItemListViewController: UIViewController {
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                         if(result != UIImage()){
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: result)
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                             imageForMedia = result
                         }
                     })
@@ -578,6 +579,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
+            print( fullImageDataSource[indexPath.row][mediaIdKey] as! String);
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String,mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController

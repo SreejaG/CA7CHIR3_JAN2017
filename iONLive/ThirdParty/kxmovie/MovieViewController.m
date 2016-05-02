@@ -161,8 +161,8 @@ static NSMutableDictionary * gHistory;
     NSMutableDictionary *snapShotsDict;
     
     NSString *userId,*accessToken,*mediaDetailId,*notificationType;
-    
-    MPMoviePlayerController *moviePlayer;
+    UIImageView *backgroundImage;
+  //  MPMoviePlayerController *moviePlayer;
     
 }
 
@@ -171,6 +171,7 @@ static NSMutableDictionary * gHistory;
 @property (readwrite, strong) KxArtworkFrame *artworkFrame;
 @property (nonatomic) Connectivity *wifiReachability;
 @property (nonatomic) Connectivity *internetReachability;
+@property(nonatomic,strong) MPMoviePlayerController *moviePlayer;
 
 @end
 
@@ -248,25 +249,6 @@ static NSMutableDictionary * gHistory;
     if (self) {
         [self setUpDefaultValues];
         [self setUpViewForImageVideo];
-        if([mediaType  isEqual: @"video"])
-        {
-            imageVideoView.hidden = true;
-            imageView.hidden = true;
-            videoProgressBar.hidden = false;
-            
-            UIImageView *backgroundImage = [[UIImageView alloc] initWithFrame:glView.frame];
-            backgroundImage.image = VideoImageUrl;
-            topView.hidden = false;
-            [glView addSubview:backgroundImage];
-            [glView sendSubviewToBack:backgroundImage];
-             NSURL *url = [self convertStringToUrl:mediaUrl];
-            [self downloadVideo:url];
-        }
-        else{
-             [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
-        }
-        
-      
         profilePicture.image = profileImage;
         channelName.text = channelname;
         if([mediaType  isEqual: @"live"]){
@@ -296,6 +278,54 @@ static NSMutableDictionary * gHistory;
             userName.text = @"";
         }
 
+        if([mediaType  isEqual: @"video"])
+        {
+            imageVideoView.hidden = true;
+            imageView.hidden = true;
+            videoProgressBar.hidden = false;
+            backgroundImage = [[UIImageView alloc] initWithFrame:glView.frame];
+            backgroundImage.image = VideoImageUrl;
+            topView.hidden = false;
+            [glView addSubview:backgroundImage];
+            [glView sendSubviewToBack:backgroundImage];
+            
+            NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+            NSString *parentPathStr = [parentPath absoluteString];
+            NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaId];
+            NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+            NSURL *fileUrl = [self convertStringToUrl:savingPath];
+            BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
+            
+            NSLog(@"%@", fileUrl);
+        
+            if(fileExistFlag == true){
+            
+                videoProgressBar.hidden = true;
+                self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
+                MPMoviePlayerController *player = self.moviePlayer;
+             //   [player setFullscreen: false];
+                [player setShouldAutoplay:YES];
+                [player prepareToPlay];
+                player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height + 30));
+              //  [player.view sizeToFit];
+                player.scalingMode = MPMovieScalingModeAspectFill;
+                player.movieSourceType = MPMovieSourceTypeFile;
+                player.controlStyle = MPMovieControlStyleNone;
+                player.repeatMode = MPMovieRepeatModeNone;
+                [glView addSubview:[player view]];
+                [player play];
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(playerDidFinish:)
+                                                             name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
+            }
+            else{
+                NSURL *url = [self convertStringToUrl:mediaUrl];
+                [self downloadVideo:url];
+            }
+        }
+        else{
+             [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        }
         
     }
     return self;
@@ -347,20 +377,23 @@ static NSMutableDictionary * gHistory;
 {
  
     NSData *data = [[NSData alloc]initWithContentsOfURL:location];
+    NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString *parentPathStr = [parentPath absoluteString];
+    NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
+    NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+    NSURL *fileURL = [NSURL fileURLWithPath:savingPath];
     
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *writePath = [[paths objectAtIndex:0] stringByAppendingString:@"/video.mov"];
-    NSURL *fileURL = [NSURL fileURLWithPath:writePath];
     NSLog(@"%@",fileURL);
+    
     if(data!= nil)
     {
         bool write = [data writeToURL:fileURL atomically:YES];
         if(write){
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(playerDidFinish:)
-                                                name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayer];
-            moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:fileURL];
-            MPMoviePlayerController *player = moviePlayer;
+                                                name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
+            _moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:fileURL];
+            MPMoviePlayerController *player = _moviePlayer;
             player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - heartBottomDescView.frame.size.height);
             [player.view sizeToFit];
             player.scalingMode = MPMovieScalingModeFill;
@@ -377,7 +410,7 @@ static NSMutableDictionary * gHistory;
 
 -(void) playerDidFinish :(NSNotification *) notif
 {
-    [moviePlayer.view removeFromSuperview];
+    [_moviePlayer.view removeFromSuperview];
     
 }
 
