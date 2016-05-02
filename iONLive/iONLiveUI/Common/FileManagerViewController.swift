@@ -69,6 +69,7 @@ class FileManagerViewController: UIViewController {
         let parentPath = getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaName)"
         let mediaSaveFlag : Bool
+       // print(savingPath)
         if(mediaImage != UIImage())
         {
             let image = UIImageJPEGRepresentation(mediaImage, 0.5)
@@ -76,13 +77,14 @@ class FileManagerViewController: UIViewController {
             mediaSaveFlag = result
         }
         else{
-        mediaSaveFlag = false
+            mediaSaveFlag = false
         }
         return mediaSaveFlag
     }
     
     func getImageFromFilePath(mediaPath: String) -> UIImage? {
         var mediaimage : UIImage = UIImage()
+    //    print(mediaPath)
         if(fileExist(mediaPath)){
             mediaimage = UIImage(contentsOfFile: mediaPath)!
         }

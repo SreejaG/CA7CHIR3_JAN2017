@@ -543,38 +543,43 @@
                                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="DK4-mn-G6o">
-                                            <size key="itemSize" width="50" height="50"/>
+                                            <size key="itemSize" width="150" height="150"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MyChannelItemCell" id="fW9-Xv-I2S" customClass="MyChannelItemCell" customModule="iONLive" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EJy-Mz-WaH">
+                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EJy-Mz-WaH">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                         </imageView>
-                                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R67-fe-iSb" userLabel="video view">
-                                                            <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
-                                                            <subviews>
-                                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="MnG-lM-VOW">
-                                                                    <rect key="frame" x="2" y="88" width="10" height="10"/>
-                                                                </imageView>
-                                                            </subviews>
-                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                        </view>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="MnG-lM-VOW">
+                                                            <rect key="frame" x="3" y="136" width="10" height="10"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="10" id="4kX-MB-aiG"/>
+                                                                <constraint firstAttribute="height" constant="10" id="oy7-Sb-5wo"/>
+                                                            </constraints>
+                                                        </imageView>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="EJy-Mz-WaH" secondAttribute="bottom" id="7zp-vf-naq"/>
+                                                    <constraint firstItem="EJy-Mz-WaH" firstAttribute="leading" secondItem="fW9-Xv-I2S" secondAttribute="leading" id="9G4-HF-AKa"/>
+                                                    <constraint firstItem="EJy-Mz-WaH" firstAttribute="top" secondItem="fW9-Xv-I2S" secondAttribute="top" id="Fvm-71-nrI"/>
+                                                    <constraint firstAttribute="trailing" secondItem="EJy-Mz-WaH" secondAttribute="trailing" id="Lla-Kl-hEa"/>
+                                                    <constraint firstAttribute="bottom" secondItem="MnG-lM-VOW" secondAttribute="bottom" constant="4" id="h2D-iW-eQP"/>
+                                                    <constraint firstItem="MnG-lM-VOW" firstAttribute="leading" secondItem="fW9-Xv-I2S" secondAttribute="leading" constant="3" id="is3-tp-7dn"/>
+                                                </constraints>
                                                 <connections>
                                                     <outlet property="channelImageView" destination="EJy-Mz-WaH" id="AVf-6a-IvI"/>
                                                     <outlet property="videoPlayIcon" destination="MnG-lM-VOW" id="4dn-az-riF"/>
-                                                    <outlet property="videoView" destination="R67-fe-iSb" id="53R-8K-NFJ"/>
                                                 </connections>
                                             </collectionViewCell>
                                         </cells>
@@ -612,7 +617,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x2f-sH-72p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="874" y="-320"/>
+            <point key="canvasLocation" x="925" y="-327"/>
         </scene>
         <!--Contact List View Controller-->
         <scene sceneID="GxG-tx-5og">

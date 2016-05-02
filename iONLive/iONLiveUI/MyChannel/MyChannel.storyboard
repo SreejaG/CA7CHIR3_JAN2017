@@ -408,13 +408,13 @@
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dfh-US-JSR">
                                                                     <rect key="frame" x="130" y="3" width="20" height="20"/>
-                                                                    <state key="normal" image="checked"/>
+                                                                    <state key="normal" image="DoneButton"/>
                                                                 </button>
                                                             </subviews>
                                                             <color key="backgroundColor" red="0.11137111819999999" green="0.28222178129999997" blue="0.90260022100000004" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="tintColor" red="0.9999125599861145" green="1" blue="0.99988144636154175" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </view>
-                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-Ob-zkJ">
+                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-Ob-zkJ">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                         </imageView>
                                                         <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JrT-9P-d3y" userLabel="video view">
@@ -928,9 +928,9 @@
     </scenes>
     <resources>
         <image name="Add" width="21" height="21"/>
+        <image name="DoneButton" width="32" height="32"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
         <image name="Select thumbnails" width="34" height="31"/>
-        <image name="checked" width="48" height="43"/>
         <image name="notif" width="29" height="25"/>
         <image name="plusChannel" width="65" height="65"/>
         <image name="snapCamMode" width="25" height="25"/>

@@ -25,7 +25,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
         {
-            
+//            let fileManager = NSFileManager.defaultManager()
+//            
+//            // Delete 'subfolder' folder
+//            
+//            do {
+//                try fileManager.removeItemAtPath(documentsPath)
+//            }
+//            catch let error as NSError {
+//                print("Ooops! Something went wrong: \(error)")
+//            }
         }
         else{
             let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
