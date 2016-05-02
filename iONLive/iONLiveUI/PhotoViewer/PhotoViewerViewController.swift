@@ -497,8 +497,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                         let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                        if(dict.count>0)
+                        {
                          dummyImagesDataSourceDatabase.append([thumbSignedUrlKey:dict["UploadThumbnailUrl"]!,fullSignedUrlKey:dict["UploadObjectUrl"]! ,mediaIdKey:dict["mediaId"]!,mediaTypeKey:dict["type"]!,timeStampKey :"",thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
-                        
+                        }
                         //dummyImagesDataSourceDatabase.append([thumbImageKey:imagefterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
                     }
                 }
@@ -1141,9 +1143,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 })
                 }
             }
-            
-            downloadCloudData(15, scrolled: false)
-            
+                       downloadCloudData(15, scrolled: false)
+          
             
         }
         else
@@ -1204,9 +1205,9 @@ cacheDatabase.removeAll()
         var dummyImagesDataSource :[[String:AnyObject]]  = [[String:AnyObject]]()
         
         dummyImagesDataSource=self.dataSource
-        self.dataSource.removeAll()
+     //   self.dataSource.removeAll()
         print(limitMedia)
-        
+        print(dataSource.count)
         if(imageDataSource.count <  (currentLimit +  limitMedia))
         {
             
@@ -1255,10 +1256,11 @@ cacheDatabase.removeAll()
                         for var j = 0 ;j < cacheThumb.count ;j++
                         {
                             
-                            dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[i][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[i][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[i][self.timeStampKey]!,self.thumbImageKey:cacheThumb[j][thumbImageKey]!,self.fullImageKey:cacheThumb[j][thumbImageKey]!])
+                           dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[i][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[i][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[i][self.timeStampKey]!,self.thumbImageKey:cacheThumb[j][thumbImageKey]!,self.fullImageKey:cacheThumb[j][thumbImageKey]!])
 //                            dummyImagesDataSource.append([self.thumbImageKey:cacheThumb[j][thumbImageKey]!,self.fullImageKey:cacheThumb[j][thumbImageKey]!])
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.dataSource = dummyImagesDataSource
+                              self.dataSource = dummyImagesDataSource
+                                print(self.dataSource.count)
 
                                 self.photoThumpCollectionView.reloadData()
 
