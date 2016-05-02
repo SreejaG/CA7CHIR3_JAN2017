@@ -93,6 +93,7 @@ class MediaCache: UIViewController {
     }
     func setResponse(dic : NSMutableDictionary)
     {
+       // Dict.removeAllObjects()
         Dict = dic
         print(Dict)
     }

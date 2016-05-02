@@ -420,7 +420,7 @@ protocol uploadProgressDelegate
     {
         taskIndex = row
         progressDictionary.addObject(0.0)
-        
+          self.checkThumb = true
         let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String) //Remember to put ATS exception if the URL is not https
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "PUT"
@@ -441,7 +441,8 @@ protocol uploadProgressDelegate
                 self.checkThumb = false
                 // self.delegate?.uploadProgress(progressDictionary)
                 // [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
-                
+                print("inside parsed full json")
+
                 
                 if PhotoViewerInstance.controller != nil
                 {
@@ -580,7 +581,7 @@ protocol uploadProgressDelegate
                 let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
                 print("Parsed JSON for thumbanil: '\(jsonStr)'")
                 //    completion(result:"Success")
-                self.checkThumb = true
+               // self.checkThumb = true
 
                 let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
                 controller.uploadprogress(1.0)
@@ -653,10 +654,10 @@ protocol uploadProgressDelegate
         //   [photoThumpCollectionView .reloadData()]
         print(uploadProgress)
         // self.delegate?.uploadProgress(progressDictionary)
-        [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
-        
-       // if(checkThumb)
-      //  {
+//        [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
+        print("inside url session")
+        if(checkThumb)
+        {
             progressDictionary[taskIndex] = uploadProgress
 
         if PhotoViewerInstance.controller != nil
@@ -664,7 +665,7 @@ protocol uploadProgressDelegate
             let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
             controller.uploadProgress(progressDictionary)
         }
-   //     }
+    }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)

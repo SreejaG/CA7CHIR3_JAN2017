@@ -429,6 +429,7 @@ class StreamsListViewController: UIViewController{
                     }
                 }
             }
+            print(dataSource)
             initialise()
             initialiseCloudData()
         }
@@ -566,7 +567,6 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 {
                     cell.liveStatusLabel.hidden = false
                     cell.liveStatusLabel.text = "LIVE"
-
                     cell.liveNowIcon.hidden = false
                     cell.liveNowIcon.image = UIImage(named: "Live_now")
                     cell.streamThumbnaleImageView.image = UIImage(named: "thumb1")

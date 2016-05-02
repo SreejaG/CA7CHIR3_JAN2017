@@ -561,13 +561,13 @@ NSMutableDictionary *ShotsDict;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSData *imageData = [[NSData alloc]init];
                     imageData = [self getThumbNail:outputFileURL];
-                    [_uploadActivityIndicator setHidden:NO];
+                  //  [_uploadActivityIndicator setHidden:NO];
                     
-                    [_uploadActivityIndicator startAnimating];
+                //    [_uploadActivityIndicator startAnimating];
                     self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                     [_playiIconView setHidden:NO];
-                    [ self.thumbnailImageView setAlpha:0.4];
-                    [_playiIconView setAlpha:0.4];
+                  //  [ self.thumbnailImageView setAlpha:0.4];
+                //    [_playiIconView setAlpha:0.4];
 
                     [self saveImage:imageData];
                     [self moveVideoToDocumentDirectory:outputFileURL];
@@ -732,10 +732,10 @@ NSMutableDictionary *ShotsDict;
                         
                         //create and show thumbnail
                         dispatch_async( dispatch_get_main_queue(), ^{
-                            [_uploadActivityIndicator setHidden:NO];
+                          //  [_uploadActivityIndicator setHidden:NO];
 
-                           [_uploadActivityIndicator startAnimating];
-                            [ self.thumbnailImageView setAlpha:0.4];
+                        //   [_uploadActivityIndicator startAnimating];
+                           // [ self.thumbnailImageView setAlpha:0.4];
 
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             
