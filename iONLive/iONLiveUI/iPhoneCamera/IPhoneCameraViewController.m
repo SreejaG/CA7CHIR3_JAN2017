@@ -1151,7 +1151,7 @@ FileManagerViewController *fileManager;
         case VCSessionStateStarted:
             [self hideProgressBar];
             NSLog(@"Disconnect");
-            [self saveThumbnailImageLive: [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"]];
+//            [self saveThumbnailImageLive: [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"]];
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];

@@ -91,6 +91,7 @@ int screencap(char *url,char*name) {
     struct SwsContext *sws_ctx = NULL;
     int frameFinished;
     AVPacket packet;
+    
     // initialize SWS context for software scaling
     sws_ctx = sws_getContext(pCodecCtx->width,
                              pCodecCtx->height,
@@ -122,6 +123,7 @@ int screencap(char *url,char*name) {
                 SaveFrame(pFrameRGB, pCodecCtx->width,
                           pCodecCtx->height, i,name);
                 
+                break;
                 //else
                 //return 0;
             }
@@ -129,6 +131,7 @@ int screencap(char *url,char*name) {
         
         // Free the packet that was allocated by av_read_frame
         av_free_packet(&packet);
+        
     }
     return 0;
 }
@@ -136,6 +139,7 @@ void SaveFrame(AVFrame *pFrame, int width, int height, int iFrame,char*name) {
     FILE *pFile;
     char szFilename[32];
     int  y;
+    printf("hiiiii");
     
     // Open file
     sprintf(szFilename, "%s%d.ppm", name,iFrame);
@@ -154,7 +158,3 @@ void SaveFrame(AVFrame *pFrame, int width, int height, int iFrame,char*name) {
     fclose(pFile);
 }
 
-//int main(int argc,char* argv[]){
-//    screencap(argv[1],argv[2]);
-//    
-//}

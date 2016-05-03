@@ -8,17 +8,21 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate {
+class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
     
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
     
     let requestManager = RequestManager.sharedInstance
     let profileManager = ProfileManager.sharedInstance
+    let imageUploadManger = ImageUpload.sharedInstance
     
     var loadingOverlay: UIView?
     let imagePicker = UIImagePickerController()
     var imageForProfile : UIImage = UIImage()
+    
+    var signedURL : String = String()
+    var signedURLName : String = String()
     
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
@@ -163,7 +167,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     //end
     
     @IBAction func saveClicked(sender: AnyObject) {
-        
+        getSignedUrl()
     }
     
     @IBAction func backClicked(sender: AnyObject) {
@@ -172,6 +176,62 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func getSignedUrl()  {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        imageUploadManger.getSignedURL(userId, accessToken: accessToken, mediaType: "image", success: { (response) in
+                self.authenticationSuccessHandlerSignedUrl(response)
+            }) { (error, message) in
+                self.authenticationFailureHandler(error, code: message)
+                return
+        }
+    }
+    
+    func authenticationSuccessHandlerSignedUrl(response:AnyObject?)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            if let url = json["UploadObjectUrl"]{
+               signedURL = url as! String
+            }
+            if let name = json["ObjectName"]{
+                signedURLName = name as! String
+            }
+           uploadFullImage(signedURL, objectName: signedURLName, completion: { (result) in
+                if(result == "Success"){
+                
+                }
+                else{
+                    
+                }
+           })
+        }
+        
+    }
+    
+    func  uploadFullImage(signedUrl: String, objectName:String, completion: (result: String) -> Void)
+    {
+        let url = NSURL(string: signedUrl)
+        let request = NSMutableURLRequest(URL: url!)
+        request.HTTPMethod = "PUT"
+        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        var imageData: NSData = NSData()
+        imageData = UIImageJPEGRepresentation(imageForProfile, 0.5)!
+        request.HTTPBody = imageData
+        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+            if error != nil {
+                completion(result:"Failed")
+            }
+            else {
+                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                print("Parsed JSON: '\(jsonStr)'")
+                completion(result:"Success")
+            }
+        }
+        dataTask.resume()
     }
     
     func addKeyboardObservers()
