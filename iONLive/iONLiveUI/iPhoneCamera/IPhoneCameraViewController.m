@@ -105,13 +105,13 @@ NSMutableDictionary *ShotsDict;
 }
 -(void) loggedInDetails:(NSDictionary *) detailArray{
     
- 
-        
         NSString * sharedUserCount = detailArray[@"sharedUserCount"];
         NSArray * sharedUserThumbnail = detailArray[@"sharedUserThumbnails"];
         NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
         NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
         NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
+        NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
+        NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
         
     _sharedUserCount.text = sharedUserCount;
     
@@ -121,6 +121,10 @@ NSMutableDictionary *ShotsDict;
             return;
         dispatch_async(dispatch_get_main_queue(), ^{
             // WARNING: is the cell still using the same data by this point??
+            if([latestCapturedMediaType  isEqual: @"video"])
+            {
+                self.playiIconView.hidden = false;
+            }
              self.thumbnailImageView.image= [UIImage imageWithData: data];
         });
       
@@ -134,6 +138,10 @@ NSMutableDictionary *ShotsDict;
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
                 // WARNING: is the cell still using the same data by this point??
+                if([latestCapturedMediaType  isEqual: @"video"])
+                {
+                    self.playiIconView.hidden = false;
+                }
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
             
