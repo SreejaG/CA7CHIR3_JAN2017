@@ -1107,8 +1107,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                         //                    print("Size of Image thumb for video  : \(imgData.length) bytes")
                         if self.dummyImagesDataSourceDatabase.count > 0
                         {
-                            self.fullScrenImageView.image = self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage
-                            self.fullScreenZoomView.image = self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage
+                            self.fullScrenImageView.image = (self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage)
+                            self.fullScreenZoomView.image = (self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage)
                         }
                         else
                         {

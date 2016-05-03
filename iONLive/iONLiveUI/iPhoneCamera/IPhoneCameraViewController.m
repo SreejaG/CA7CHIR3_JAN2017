@@ -18,6 +18,8 @@
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CoreMedia.h>
 #import <QuartzCore/QuartzCore.h>
+#import "screencap.h"
+
 
 
 
@@ -84,11 +86,11 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 NSMutableDictionary * snapShotsDict;
 IPhoneLiveStreaming * liveStreaming;
 NSMutableDictionary *ShotsDict;
-
+FileManagerViewController *fileManager;
 
 - (void)viewDidLoad {
     
- 
+   fileManager = [[FileManagerViewController alloc]init];
     [super viewDidLoad];
     SetUpView *viewSet = [[SetUpView alloc]init];
     [viewSet getValue];
@@ -1149,7 +1151,7 @@ NSMutableDictionary *ShotsDict;
         case VCSessionStateStarted:
             [self hideProgressBar];
             NSLog(@"Disconnect");
-    
+            [self saveThumbnailImageLive: [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"]];
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
@@ -1169,9 +1171,21 @@ NSMutableDictionary *ShotsDict;
     }
 }
 
-//-(void) saveThumbnailImageLive:(NSString *)streamToken username:(NSString *)username{
-//
-//}
+-(void) saveThumbnailImageLive:(NSString *)username{
+  //  let baseStreamUrl =
+    NSString *baseStreamUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"LiveStreamUrl"];
+    
+    NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString * finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,username,@"Live"];
+    const char *c = [baseStreamUrl UTF8String];
+    const char *d = [finalPath UTF8String];
+    
+    int fla = screencap(c,d);
+    NSLog(@"%d",fla);
+    BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:finalPath];
+    
+    NSLog(@"%@", fileExistFlag);
+}
 
 
 //func saveThumbnailImageLive(streamToken:String , AndUserName userName:String) {
