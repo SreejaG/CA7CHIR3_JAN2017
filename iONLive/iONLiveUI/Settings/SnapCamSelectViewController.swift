@@ -158,6 +158,9 @@ extension SnapCamSelectViewController
         {
             updateSnapCamSelection(row)
             changeSnapCamModeForCell(selectedCell)
+            self.presentingViewController?.dismissViewControllerAnimated(true, completion: { () -> Void in
+                
+            })
         }
     }
     

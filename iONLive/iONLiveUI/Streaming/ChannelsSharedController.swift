@@ -85,6 +85,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     func getChannelSharedDetails(userName: String, token: String)
     {
+        print(userName)
         channelManager.getChannelShared(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
@@ -351,7 +352,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
         }
         else{
-            ErrorManager.sharedInstance.inValidResponseError()
+        //    ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     
