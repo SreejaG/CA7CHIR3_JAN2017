@@ -140,7 +140,7 @@ FileManagerViewController *fileManager;
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
                 // WARNING: is the cell still using the same data by this point??
-                if([latestCapturedMediaType  isEqual: @"video"])
+                if([latestSharedMediaType  isEqual: @"video"])
                 {
                     self.playiIconView.hidden = false;
                 }
@@ -1180,8 +1180,8 @@ FileManagerViewController *fileManager;
     const char *c = [baseStreamUrl UTF8String];
     const char *d = [finalPath UTF8String];
     
-    int fla = screencap(c,d);
-    NSLog(@"%d",fla);
+   // int fla = screencap(c,d);
+  //  NSLog(@"%d",fla);
     BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:finalPath];
     
     NSLog(@"%@", fileExistFlag);
