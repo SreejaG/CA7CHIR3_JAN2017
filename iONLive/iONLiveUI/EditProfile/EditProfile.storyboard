@@ -147,16 +147,6 @@
                                                                 <constraint firstAttribute="width" constant="54" id="r8t-Fb-j6G"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gBP-l6-7cu">
-                                                            <rect key="frame" x="540" y="72" width="30" height="21"/>
-                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
-                                                            <state key="normal" title="Edit">
-                                                                <color key="titleColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
-                                                            </state>
-                                                            <connections>
-                                                                <action selector="didTapEditProfileButton:" destination="4qo-u3-kz3" eventType="touchUpInside" id="hTG-hr-e5d"/>
-                                                            </connections>
-                                                        </button>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Display Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Xtb-0Q-HNK">
                                                             <rect key="frame" x="10" y="0.0" width="466" height="44"/>
                                                             <constraints>
@@ -166,15 +156,27 @@
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                             <textInputTraits key="textInputTraits"/>
                                                         </textField>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gBP-l6-7cu">
+                                                            <rect key="frame" x="520" y="7" width="67" height="85"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="67" id="MJd-tG-34S"/>
+                                                                <constraint firstAttribute="height" constant="85" id="tCK-jw-wPN"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                                            <inset key="contentEdgeInsets" minX="5" minY="60" maxX="0.0" maxY="0.0"/>
+                                                            <state key="normal" title="Edit">
+                                                                <color key="titleColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                                            </state>
+                                                        </button>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="sA6-Gw-se4" firstAttribute="leading" secondItem="SjD-N2-qfl" secondAttribute="leading" constant="10" id="9w0-Pk-Ftx"/>
                                                         <constraint firstItem="Xtb-0Q-HNK" firstAttribute="top" secondItem="SjD-N2-qfl" secondAttribute="top" id="A3I-tf-ecM"/>
                                                         <constraint firstItem="fiD-uu-QsX" firstAttribute="leading" secondItem="sA6-Gw-se4" secondAttribute="trailing" constant="50" id="Ffh-9M-nIe"/>
-                                                        <constraint firstItem="gBP-l6-7cu" firstAttribute="trailing" secondItem="fiD-uu-QsX" secondAttribute="trailing" constant="-10" id="HoT-eV-tPW"/>
-                                                        <constraint firstItem="gBP-l6-7cu" firstAttribute="top" secondItem="fiD-uu-QsX" secondAttribute="bottom" constant="5" id="I6e-Og-Jr8"/>
+                                                        <constraint firstItem="gBP-l6-7cu" firstAttribute="trailing" secondItem="fiD-uu-QsX" secondAttribute="trailing" constant="7" id="HoT-eV-tPW"/>
+                                                        <constraint firstItem="gBP-l6-7cu" firstAttribute="top" secondItem="fiD-uu-QsX" secondAttribute="bottom" constant="-60" id="I6e-Og-Jr8"/>
                                                         <constraint firstItem="fiD-uu-QsX" firstAttribute="top" secondItem="SjD-N2-qfl" secondAttribute="topMargin" constant="5" id="ZHD-Zn-nfP"/>
-                                                        <constraint firstAttribute="bottom" secondItem="gBP-l6-7cu" secondAttribute="bottom" constant="7" id="gVI-NA-0Gw"/>
+                                                        <constraint firstAttribute="bottom" secondItem="gBP-l6-7cu" secondAttribute="bottom" constant="8" id="gVI-NA-0Gw"/>
                                                         <constraint firstItem="Xtb-0Q-HNK" firstAttribute="leading" secondItem="SjD-N2-qfl" secondAttribute="leading" constant="10" id="gdN-tw-W3g"/>
                                                         <constraint firstAttribute="trailing" secondItem="fiD-uu-QsX" secondAttribute="trailing" constant="20" id="hIV-Xa-aic"/>
                                                         <constraint firstAttribute="bottom" secondItem="sA6-Gw-se4" secondAttribute="bottom" id="tDo-JD-njq"/>
@@ -184,6 +186,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <connections>
                                                     <outlet property="displayNameTextField" destination="Xtb-0Q-HNK" id="BFR-Yt-iHb"/>
+                                                    <outlet property="editProfileImageButton" destination="gBP-l6-7cu" id="X5Q-nU-9AL"/>
                                                     <outlet property="userImage" destination="fiD-uu-QsX" id="PHd-Jg-9Qv"/>
                                                     <outlet property="userNameTextField" destination="sA6-Gw-se4" id="hh5-sP-qED"/>
                                                 </connections>
