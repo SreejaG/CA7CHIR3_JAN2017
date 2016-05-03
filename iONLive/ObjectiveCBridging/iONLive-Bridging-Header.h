@@ -28,5 +28,6 @@
 
 
 #import <CoreData/CoreData.h>
+#import "screencap.h"
 
 
