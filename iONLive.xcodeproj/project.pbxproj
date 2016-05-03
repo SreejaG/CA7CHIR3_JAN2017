@@ -612,8 +612,8 @@
 			isa = PBXGroup;
 			children = (
 				160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */,
-				160903F11C6C7ED1004E381D /* EditProfile.storyboard */,
 				160903F21C6C7ED1004E381D /* EditProfileHeaderCell.swift */,
+				160903F11C6C7ED1004E381D /* EditProfile.storyboard */,
 				160903F31C6C7ED1004E381D /* EditProfileViewController.swift */,
 				160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */,
 				160903F51C6C7ED1004E381D /* EditProfPrivateInfoCell.swift */,

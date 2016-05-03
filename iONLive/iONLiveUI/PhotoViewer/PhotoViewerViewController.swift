@@ -1347,8 +1347,8 @@ cacheDatabase.removeAll()
         }
         else
         {
-            print("null Image")
-            completion(result:mediaImage)
+//            print("null Image")
+//            completion(result:mediaImage)
         }
     }
     func convertStringtoURL(url : String) -> NSURL

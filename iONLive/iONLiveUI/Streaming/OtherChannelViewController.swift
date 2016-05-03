@@ -252,8 +252,8 @@ class OtherChannelViewController: UIViewController {
         }
         else
         {
-            print("null Image")
-            completion(result:mediaImage)
+//            print("null Image")
+//            completion(result:mediaImage)
         }
     }
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
