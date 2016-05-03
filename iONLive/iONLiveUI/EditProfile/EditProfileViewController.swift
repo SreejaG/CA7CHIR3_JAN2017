@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController {
+class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate {
     
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
@@ -17,7 +17,8 @@ class EditProfileViewController: UIViewController {
     let profileManager = ProfileManager.sharedInstance
     
     var loadingOverlay: UIView?
-    
+    let imagePicker = UIImagePickerController()
+    var imageForProfile : UIImage = UIImage()
     
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
@@ -149,9 +150,8 @@ class EditProfileViewController: UIViewController {
         let fullName = userDetails["full_name"] as! String
         let userName = userDetails["user_name"] as! String
         let email = userDetails["email"] as! String
-//        let location = userDetails["location"] as! String
         let mobileNo = userDetails["mobile_no"] as! String
-        
+        imageForProfile = UIImage(named: "girlFace2")!
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]] // replace uername etc here from API response of editP screen
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
         privateInfoOptions = [[titleKey:email],/*[titleKey:location],*/[titleKey:mobileNo]]
@@ -304,11 +304,15 @@ extension EditProfileViewController:UITableViewDataSource
                 {
                 case 0:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
+                    
+                    cell.editProfileImageButton.addTarget(self, action: "editProfileTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+                    
                     if cellDataSource[displayNameKey] == ""
                     {
                         cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Full Name",
                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
                     }
+                    cell.userImage.image = imageForProfile
                     cell.displayNameTextField.text = cellDataSource[displayNameKey]
                     cell.userNameTextField.text = cellDataSource[userNameKey]
                     cell.selectionStyle = .None
@@ -317,7 +321,6 @@ extension EditProfileViewController:UITableViewDataSource
                 case 1:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
-                    //no border line for last cell
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
                         cell.borderLine.hidden = true
@@ -353,6 +356,25 @@ extension EditProfileViewController:UITableViewDataSource
         return UITableViewCell()
     }
     
+    func editProfileTapped(sender:UIButton!)
+    {
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.SavedPhotosAlbum){
+            print("Button capture")
+            imagePicker.delegate = self
+            imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum;
+            imagePicker.allowsEditing = false
+        
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
+    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
+        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        
+        })
+        imageForProfile = image
+        editProfTableView.reloadData()
+    }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {

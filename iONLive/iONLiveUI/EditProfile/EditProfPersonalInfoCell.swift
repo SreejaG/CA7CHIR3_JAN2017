@@ -8,39 +8,22 @@
 
 import UIKit
 
-class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate /*,UINavigationControllerDelegate,UIImagePickerControllerDelegate */ {
+class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate {
     
    static let identifier = "EditProfPersonalInfoCell"
 
     @IBOutlet weak var userImage: UIImageView!
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var displayNameTextField: UITextField!
-  //  let imagePicker = UIImagePickerController()
     
-    @IBAction func didTapEditProfileButton(sender: AnyObject) {
-//        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.SavedPhotosAlbum){
-//            print("Button capture")
-//            imagePicker.delegate = self
-//            imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum;
-//            imagePicker.allowsEditing = false
-//            
-//            self.presentViewController(imagePicker, animated: true, completion: nil)
-//        }
-    }
-    
-//    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
-//        self.dismissViewControllerAnimated(true, completion: { () -> Void in
-//            
-//        })
-//        
-//        imageView.image = image
-//        
-//    }
-
+    @IBOutlet var editProfileImageButton: UIButton!
+ 
     override func awakeFromNib() {
         super.awakeFromNib()
         userNameTextField.delegate = self
         displayNameTextField.delegate = self
+        userImage.layer.cornerRadius = userImage.frame.size.width/2
+        userImage.layer.masksToBounds = true
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

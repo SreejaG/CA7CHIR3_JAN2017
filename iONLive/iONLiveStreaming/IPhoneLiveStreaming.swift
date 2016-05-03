@@ -35,8 +35,7 @@ class IPhoneLiveStreaming: NSObject {
         var currentStreamingTocken:String?
         var streamingStatus:StreamingProtocol?
         var iPhoneLiveStreamingSession:VCSimpleSession?
-        var streamTokenForLive : String = String()
-
+     
         //PRAGMA MARK:- Create Base Stream
         func getBaseStreamWithToken(streamToken:String , AndUserName userName:String) -> String
         {
@@ -46,8 +45,8 @@ class IPhoneLiveStreaming: NSObject {
       //     let baseStream  = "rtsp://192.168.16.44:1935/live?userName=remya123&token=in7bmn7x14610637429891"
             
            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
-            
-            streamTokenForLive = streamToken 
+            NSUserDefaults.standardUserDefaults().setObject(baseStream, forKey: "LiveStreamUrl")
+        
             print("baseStream/", baseStream)
             return baseStream
         }
