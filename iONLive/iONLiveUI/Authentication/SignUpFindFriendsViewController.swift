@@ -173,7 +173,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
                 
             }
-            
+//            print(phoneNumber)
             var currentContactImage : UIImage = UIImage()
          
             if let currentContactImageData = ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!

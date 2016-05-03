@@ -59,8 +59,8 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     @IBOutlet var doneButton: UIButton!
     
     @IBAction func didTapRefreshButton(sender: AnyObject) {
-        displayContacts()
-        
+//        displayContacts()
+        contactAuthorizationAlert()
     }
     
     override func viewDidLoad() {
@@ -218,13 +218,70 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         
     }
     
+    func contactAuthorizationAlert()
+    {
+        let authorizationStatus = ABAddressBookGetAuthorizationStatus()
+        
+        switch authorizationStatus {
+        case .Denied, .Restricted:
+            print("Denied")
+            generateContactSynchronizeAlert()
+        case .Authorized:
+            print("Authorized")
+            displayContacts()
+        case .NotDetermined:
+            print("Not Determined")
+            promptForAddressBookRequestAccess()
+        }
+        
+    }
+    func generateContactSynchronizeAlert()
+    {
+        let alert = UIAlertController(title: "\"Catch\" would like to access your contacts", message: "The contacts in your address book will be transmitted to Catch for you to decide who to add", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "Don't Allow", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
+         
+        }))
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.showEventsAcessDeniedAlert()
+        }))
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func promptForAddressBookRequestAccess() {
+        ABAddressBookRequestAccessWithCompletion(addressBookRef) {
+            (granted: Bool, error: CFError!) in
+            dispatch_async(dispatch_get_main_queue()) {
+                if !granted {
+                    print("Just denied")
+                    self.generateContactSynchronizeAlert()
+                } else {
+                    print("Just authorized")
+                    self.displayContacts()
+                }
+            }
+        }
+    }
+    
+    func showEventsAcessDeniedAlert() {
+        let alertController = UIAlertController(title: "Permission Denied!",
+                                                message: "The contact permission was not authorized. Please enable it in Settings to continue.",
+                                                preferredStyle: .Alert)
+        let settingsAction = UIAlertAction(title: "Settings", style: .Default) { (alertAction) in
+            if let appSettings = NSURL(string: UIApplicationOpenSettingsURLString) {
+                UIApplication.sharedApplication().openURL(appSettings)
+            }
+        }
+        alertController.addAction(settingsAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        presentViewController(alertController, animated: true, completion: nil)
+    }
     
     func displayContacts(){
+        
         contactPhoneNumbers.removeAll()
         let phoneCode = phoneCodeFromLocat
-//        let defaults = NSUserDefaults .standardUserDefaults()
-//        let phoneCode = defaults.valueForKey("phoneCodes")
-        print(phoneCode)
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
@@ -264,7 +321,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
                     NSCharacterSet.decimalDigitCharacterSet().invertedSet)
                 phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-                
+                print(phoneNumber)
                 contactPhoneNumbers.append(phoneNumber)
             }
         }
