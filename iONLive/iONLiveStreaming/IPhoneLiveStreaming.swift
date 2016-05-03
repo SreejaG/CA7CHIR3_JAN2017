@@ -46,7 +46,8 @@ class IPhoneLiveStreaming: NSObject {
       //     let baseStream  = "rtsp://192.168.16.44:1935/live?userName=remya123&token=in7bmn7x14610637429891"
             
            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
-            
+            let defaults = NSUserDefaults.standardUserDefaults()
+            defaults.setObject(getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken), forKey: "LiveStreamUrl")
             streamTokenForLive = streamToken 
             print("baseStream/", baseStream)
             return baseStream
