@@ -1149,6 +1149,7 @@ NSMutableDictionary *ShotsDict;
         case VCSessionStateStarted:
             [self hideProgressBar];
             NSLog(@"Disconnect");
+    
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
@@ -1168,6 +1169,28 @@ NSMutableDictionary *ShotsDict;
     }
 }
 
+//-(void) saveThumbnailImageLive:(NSString *)streamToken username:(NSString *)username{
+//
+//}
+
+
+//func saveThumbnailImageLive(streamToken:String , AndUserName userName:String) {
+//    let streamPathStr = self.getBaseStreamWithToken(streamToken, AndUserName: userName)
+//    let parentPathStr = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+//    let savingPathStr = "\(parentPathStr)/\(userName)Live"
+//    
+//    let streamPath = (streamPathStr as NSString).UTF8String
+//    let bufferStreampath = UnsafeMutablePointer<Int8>(streamPath)
+//    
+//    let savingPath = (savingPathStr as NSString).UTF8String
+//    let bufferSavingpath = UnsafeMutablePointer<Int8>(savingPath)
+//    let flag = screencap(bufferStreampath, bufferSavingpath)
+//    print(flag)
+//    
+//    if(NSFileManager.defaultManager().fileExistsAtPath(savingPathStr)){
+//        print("hi")
+//    }
+//}
 
 
 #pragma mark :- StreamingProtocol delegates

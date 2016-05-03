@@ -120,6 +120,9 @@
 		16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B457C41C86C145009D36A9 /* ChannelManager.swift */; };
 		16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */; };
 		16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA62301C8962090086DA30 /* AddChannelCell.swift */; };
+		16BBA8861CD8902B00742142 /* screencap.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA8851CD8902B00742142 /* screencap.m */; };
+		16BBA8871CD8912B00742142 /* screencap.m in Resources */ = {isa = PBXBuildFile; fileRef = 16BBA8851CD8902B00742142 /* screencap.m */; };
+		16BBA8881CD8913400742142 /* screencap.h in Resources */ = {isa = PBXBuildFile; fileRef = 16BBA8841CD8902B00742142 /* screencap.h */; };
 		16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */; };
 		16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
@@ -340,6 +343,8 @@
 		16B457C41C86C145009D36A9 /* ChannelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
 		16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelViewController.swift; sourceTree = "<group>"; };
 		16BA62301C8962090086DA30 /* AddChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelCell.swift; sourceTree = "<group>"; };
+		16BBA8841CD8902B00742142 /* screencap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screencap.h; sourceTree = "<group>"; };
+		16BBA8851CD8902B00742142 /* screencap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = screencap.m; sourceTree = "<group>"; };
 		16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelViewController.swift; sourceTree = "<group>"; };
 		16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelCell.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -612,8 +617,8 @@
 			isa = PBXGroup;
 			children = (
 				160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */,
-				160903F11C6C7ED1004E381D /* EditProfile.storyboard */,
 				160903F21C6C7ED1004E381D /* EditProfileHeaderCell.swift */,
+				160903F11C6C7ED1004E381D /* EditProfile.storyboard */,
 				160903F31C6C7ED1004E381D /* EditProfileViewController.swift */,
 				160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */,
 				160903F51C6C7ED1004E381D /* EditProfPrivateInfoCell.swift */,
@@ -628,6 +633,8 @@
 				160903FD1C6C7F31004E381D /* IPhoneLiveStreaming.swift */,
 				160903FE1C6C7F31004E381D /* rtsp_relay.h */,
 				160903FF1C6C7F31004E381D /* rtsp_relay.m */,
+				16BBA8841CD8902B00742142 /* screencap.h */,
+				16BBA8851CD8902B00742142 /* screencap.m */,
 			);
 			path = iONLiveStreaming;
 			sourceTree = "<group>";
@@ -1562,6 +1569,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16BBA8881CD8913400742142 /* screencap.h in Resources */,
+				16BBA8871CD8912B00742142 /* screencap.m in Resources */,
 				16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */,
 				162F97411CC9EB14009F68F8 /* Streaming.storyboard in Resources */,
 				163282551C7EE57100D03F51 /* Flags.xcassets in Resources */,
@@ -1734,6 +1743,7 @@
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
+				16BBA8861CD8902B00742142 /* screencap.m in Sources */,
 				16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
 				16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */,

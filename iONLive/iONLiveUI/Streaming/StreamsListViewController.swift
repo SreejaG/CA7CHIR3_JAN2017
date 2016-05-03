@@ -224,9 +224,9 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-            mediaImage = UIImage()
-            print("null Image")
-            completion(result:mediaImage)
+//            mediaImage = UIImage()
+//            print("null Image")
+//            completion(result:mediaImage)
         }
     }
     func downloadCloudData(limitMedia : Int , scrolled : Bool)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -140,7 +140,7 @@
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                             <textInputTraits key="textInputTraits"/>
                                                         </textField>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_profile_icon" translatesAutoresizingMaskIntoConstraints="NO" id="fiD-uu-QsX">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="girlFace2" translatesAutoresizingMaskIntoConstraints="NO" id="fiD-uu-QsX">
                                                             <rect key="frame" x="526" y="13" width="54" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="54" id="YGm-fx-cP2"/>
@@ -153,6 +153,9 @@
                                                             <state key="normal" title="Edit">
                                                                 <color key="titleColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="didTapEditProfileButton:" destination="4qo-u3-kz3" eventType="touchUpInside" id="hTG-hr-e5d"/>
+                                                            </connections>
                                                         </button>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Display Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Xtb-0Q-HNK">
                                                             <rect key="frame" x="10" y="0.0" width="466" height="44"/>
@@ -319,7 +322,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="user_profile_icon" width="54" height="54"/>
+        <image name="girlFace2" width="29" height="29"/>
         <image name="white_back" width="12" height="21"/>
     </resources>
 </document>
