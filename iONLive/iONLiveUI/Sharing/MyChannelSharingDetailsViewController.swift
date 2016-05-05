@@ -91,6 +91,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ContactListViewController.identifier) as! ContactListViewController
+        print(channelId)
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount

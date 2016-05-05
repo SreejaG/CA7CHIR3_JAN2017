@@ -44,7 +44,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var limitMediaCount : Int = Int()
     var totalCount: Int = 0
     var fixedLimit : Int =  0
-    var longPressActive : Bool = false
+  //  var longPressActive : Bool = false
     @IBOutlet var playIconInFullView: UIImageView!
     
     @IBOutlet weak var mediaTimeLabel: UILabel!
@@ -66,7 +66,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var progrs: Float = 0.0
     var queue = NSOperationQueue()
     var uploadCount : Int = 0
-    var selectedArray:[Int] = [Int]()
+ //   var selectedArray:[Int] = [Int]()
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     let thumbSignedUrlKey = "thumbnail_name_SignedUrl"
@@ -75,6 +75,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     let mediaTypeKey = "gcs_object_type"
     let timeStampKey = "created_time_stamp"
     var completed : Bool = false
+    
+    var mediaIdSelected : Int = 0
     private var downloadTask: NSURLSessionDownloadTask?
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
@@ -127,14 +129,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
     }
+    
     @IBAction func deleteButtonAction(sender: AnyObject) {
-        for i in 0 ..< selectedArray.count
+        
+        mediaSelected.removeAllObjects()
+        if mediaIdSelected == 0
         {
-            if selectedArray[i] == 1
-            {
-                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
-            }
+            mediaIdSelected = dataSource[0][mediaIdKey] as! Int
         }
+        mediaSelected.addObject(mediaIdSelected)
+      
+        
+//        for i in 0 ..< selectedArray.count
+//        {
+//            if selectedArray[i] == 1
+//            {
+//                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
+//            }
+//        }
         if(mediaSelected.count > 0)
         {
             var channelIds : [Int] = [Int]()
@@ -192,13 +204,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if let json = response as? [String: AnyObject]
         {
             print(json)
-            
+            mediaIdSelected = 0
             dataSource.removeAll()
             mediaSelected.removeAllObjects()
-            selectedArray.removeAll()
+        //    selectedArray.removeAll()
             imageDataSource.removeAll()
             mediaDictionary.removeAllObjects()
-            longPressActive = false
+           // longPressActive = false
             dummyImagesDataSourceDatabase.removeAll()
             selectedCollectionViewIndex = 0
             currentLimit = 0
@@ -278,12 +290,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
         
-        let lpgr = UILongPressGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleLongPress(_:)))
-        lpgr.minimumPressDuration = 0.5
-        lpgr.delaysTouchesBegan = true
-        lpgr.delegate = self
-        self.photoThumpCollectionView.addGestureRecognizer(lpgr)
-        self.photoThumpCollectionView.allowsMultipleSelection = true;
+//        let lpgr = UILongPressGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleLongPress(_:)))
+//        lpgr.minimumPressDuration = 0.5
+//        lpgr.delaysTouchesBegan = true
+//        lpgr.delegate = self
+//        self.photoThumpCollectionView.addGestureRecognizer(lpgr)
+//        self.photoThumpCollectionView.allowsMultipleSelection = true;
         
     }
     
@@ -410,55 +422,62 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func shrinkImageView(Recognizer:UITapGestureRecognizer){
         fullScreenZoomView.hidden = true
     }
-    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
-        if gestureReconizer.state != UIGestureRecognizerState.Ended {
-            return
-        }
-        
-        let p = gestureReconizer.locationInView(self.photoThumpCollectionView)
-        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
-        
-        if let index = indexPath {
-            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
-            // cell?.layer.borderWidth = 2.0
-            // cell?.layer.borderColor = UIColor.blueColor().CGColor
-            //
-            let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.singleTap(_:)))
-            singleTapImageViewRecognizer.numberOfTapsRequired = 1
-            cell!.addGestureRecognizer(singleTapImageViewRecognizer)
-            longPressActive = true
-            
-            selectedArray[(indexPath?.row)!] = 1
-            photoThumpCollectionView.reloadData()
-            print(index.row)
-        } else {
-            print("Could not find index path")
-        }
-    }
     
-    func singleTap(Recognizer:UITapGestureRecognizer){
-        let p = Recognizer.locationInView(self.photoThumpCollectionView)
-        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
-        
-        if let index = indexPath {
-            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
-            cell?.layer.borderColor = UIColor.clearColor().CGColor
-            cell?.removeGestureRecognizer(Recognizer)
-            //   longPressActive = false;
-        }
-    }
+//    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
+//        if gestureReconizer.state != UIGestureRecognizerState.Ended {
+//            return
+//        }
+//        
+//        let p = gestureReconizer.locationInView(self.photoThumpCollectionView)
+//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
+//        
+//        if let index = indexPath {
+//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
+//            // cell?.layer.borderWidth = 2.0
+//            // cell?.layer.borderColor = UIColor.blueColor().CGColor
+//            //
+//            let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.singleTap(_:)))
+//            singleTapImageViewRecognizer.numberOfTapsRequired = 1
+//            cell!.addGestureRecognizer(singleTapImageViewRecognizer)
+//            longPressActive = true
+//            
+//            selectedArray[(indexPath?.row)!] = 1
+//            photoThumpCollectionView.reloadData()
+//            print(index.row)
+//        } else {
+//            print("Could not find index path")
+//        }
+//    }
+    
+//    func singleTap(Recognizer:UITapGestureRecognizer){
+//        let p = Recognizer.locationInView(self.photoThumpCollectionView)
+//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
+//        
+//        if let index = indexPath {
+//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
+//            cell?.layer.borderColor = UIColor.clearColor().CGColor
+//            cell?.removeGestureRecognizer(Recognizer)
+//            //   longPressActive = false;
+//        }
+//    }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         mediaSelected.removeAllObjects()
-        for i in 0 ..< selectedArray.count
+        if mediaIdSelected == 0
         {
-            
-            if selectedArray[i] == 1
-            {
-                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
-            }
+           mediaIdSelected = dataSource[0][mediaIdKey] as! Int
         }
-        print(mediaSelected)
+        mediaSelected.addObject(mediaIdSelected)
+        mediaIdSelected = 0
+        
+//        for i in 0 ..< selectedArray.count
+//        {
+//            
+//            if selectedArray[i] == 1
+//            {
+//                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
+//            }
+//        }
         
         if(mediaSelected.count > 0)
         {
@@ -568,12 +587,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         if dataSource.count > indexPath.row
         {
-            //  cell.progressView.hidden = true
-            if(dataSource.count == selectedArray.count){
-            }
-            else{
-                selectedArray.append(0)
-            }
+//            //  cell.progressView.hidden = true
+//            if(dataSource.count == selectedArray.count){
+//            }
+//            else{
+//                selectedArray.append(0)
+//            }
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
@@ -627,30 +646,30 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     cell.progressView.hidden = true
                     
                 }
-                if(longPressActive)
-                {
-                    for i in 0 ..< selectedArray.count
-                    {
-                        if indexPath.row == i
-                        {
-                            if selectedArray[i] == 1
-                            {
-                                cell.layer.borderWidth = 2.0
-                                cell.layer.borderColor = UIColor.blueColor().CGColor
-                            }
-                            else{
-                                cell.layer.borderWidth = 1.0
-                                cell.layer.borderColor = UIColor.clearColor().CGColor
-                            }
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    cell.layer.borderWidth = 1.0
-                    cell.layer.borderColor = UIColor.clearColor().CGColor
-                }
+//                if(longPressActive)
+//                {
+//                    for i in 0 ..< selectedArray.count
+//                    {
+//                        if indexPath.row == i
+//                        {
+//                            if selectedArray[i] == 1
+//                            {
+//                                cell.layer.borderWidth = 2.0
+//                                cell.layer.borderColor = UIColor.blueColor().CGColor
+//                            }
+//                            else{
+//                                cell.layer.borderWidth = 1.0
+//                                cell.layer.borderColor = UIColor.clearColor().CGColor
+//                            }
+//                        }
+//                    }
+//                    
+//                }
+//                else
+//                {
+//                    cell.layer.borderWidth = 1.0
+//                    cell.layer.borderColor = UIColor.clearColor().CGColor
+//                }
                 
             }
         }
@@ -659,26 +678,26 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
+        
+        mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
+        print(mediaIdSelected)
         //   let cell = collectionView.cellForItemAtIndexPath(indexPath)
         
         
-        if(!longPressActive)
-        {
+//        if(!longPressActive)
+//        {
             //            cell!.layer.borderWidth = 2.0
             //            cell!.layer.borderColor = UIColor.blueColor().CGColor
+        
             if dataSource.count > indexPath.row
             {
                 var dict = dataSource[indexPath.row]
                 selectedCollectionViewIndex = indexPath.row
-                
-                
-                
+              
                 setLabelValue(indexPath.row)
                 //   print("Selected Index %d %d %d ", indexPath.row , imageDataSource.count ,mediaTypeArray.count)
                 if let fullImage = dict[fullImageKey]
                 {
-                    
-                    
                     if dataSource[indexPath.row][mediaTypeKey] as! String == "video"
                     {
                         playIconInFullView.hidden = false;
@@ -705,42 +724,41 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                             })
                         }
                         playIconInFullView.hidden = true;
-                        
-                        
+                      
                     }
                 }
             }
-        }
-        else
-        {
-            //            cell!.layer.borderWidth = 2.0
-            //            cell!.layer.borderColor = UIColor.blueColor().CGColor
-            
-            for i in 0 ..< selectedArray.count
-            {
-                
-                if i == indexPath.row
-                {
-                    if selectedArray[i] == 0
-                    {
-                        selectedArray[i] = 1
-                        
-                    }else{
-                        selectedArray[i] = 0
-                    }
-                }
-            }
-            if selectedArray.contains(1) {
-                print("yes its have")
-            }
-            else
-            {
-                print("no never")
-                longPressActive = false
-                
-            }
-            
-        }
+//        }
+//        else
+//        {
+//            //            cell!.layer.borderWidth = 2.0
+//            //            cell!.layer.borderColor = UIColor.blueColor().CGColor
+//            
+//            for i in 0 ..< selectedArray.count
+//            {
+//                
+//                if i == indexPath.row
+//                {
+//                    if selectedArray[i] == 0
+//                    {
+//                        selectedArray[i] = 1
+//                        
+//                    }else{
+//                        selectedArray[i] = 0
+//                    }
+//                }
+//            }
+//            if selectedArray.contains(1) {
+//                print("yes its have")
+//            }
+//            else
+//            {
+//                print("no never")
+//                longPressActive = false
+//                
+//            }
+//            
+//        }
         photoThumpCollectionView.reloadData()
     }
     
@@ -837,7 +855,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 let fullImage = responseArr[index].valueForKey(fullSignedUrlKey)
                 let mediaId = responseArr[index].valueForKey(mediaIdKey)
                 let mediaType = responseArr[index].valueForKey(mediaTypeKey)
-                
                 
                 // let timeStamp = responseArr[index].valueForKey(timeStampKey)
                 

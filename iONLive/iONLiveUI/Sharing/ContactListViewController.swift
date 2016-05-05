@@ -21,7 +21,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     static let identifier = "ContactListViewController"
     
-    let locationManager:CLLocationManager = CLLocationManager()
+    var locationManager:CLLocationManager = CLLocationManager()
     
     var channelId:String!
     var totalMediaCount: Int = Int()
@@ -89,7 +89,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         if (shouldIAllow == true) {
             NSLog("Location to Allowed")
             // Start location services
+            showOverlay()
             locationManager.startUpdatingLocation()
+
         } else {
             NSLog("Denied access: \(locationStatus)")
         }
@@ -98,9 +100,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         let location = locations.last! as CLLocation
-        
-        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
-        
+    
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
             if let _ = e {
@@ -117,6 +117,8 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 
                 let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
                 self.phoneCodeFromLocat = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
+                print(self.phoneCodeFromLocat)
+                self.displayContacts()
             }
         })
     }
@@ -126,6 +128,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         super.didReceiveMemoryWarning()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        locationManager.stopUpdatingLocation()
+    }
     
     @IBAction func didTapBackButton(sender: AnyObject) {
         if tapFlag == false
@@ -151,7 +156,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     @IBAction func didTapDoneButton(sender: AnyObject) {
         contactListTableView.reloadData()
         contactListTableView.layoutIfNeeded()
-        print(selectedContacts)
+      //  print(selectedContacts)
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         for element in selectedContacts
@@ -198,23 +203,19 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
-        
-        setUpLocationManager()
-        
         contactAuthorizationAlert()
     }
     
     func contactAuthorizationAlert()
     {
         let authorizationStatus = ABAddressBookGetAuthorizationStatus()
-        
         switch authorizationStatus {
         case .Denied, .Restricted:
             print("Denied")
             generateContactSynchronizeAlert()
         case .Authorized:
             print("Authorized")
-            displayContacts()
+            setUpLocationManager()
         case .NotDetermined:
             print("Not Determined")
             promptForAddressBookRequestAccess()
@@ -265,9 +266,11 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     }
     
     func displayContacts(){
-        
         contactPhoneNumbers.removeAll()
+        locationManager.stopUpdatingLocation()
+        locationManager.delegate = nil
         let phoneCode = phoneCodeFromLocat
+        print(phoneCode)
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
@@ -278,7 +281,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
                 let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
                 let phoneNumberWithCode: String!
-                print(phoneNumberStr)
                 if(phoneNumberStr.hasPrefix("+")){
                     phoneNumberWithCode = phoneNumberStr
                 }
@@ -307,7 +309,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
                     NSCharacterSet.decimalDigitCharacterSet().invertedSet)
                 phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-                print(phoneNumber)
                 contactPhoneNumbers.append(phoneNumber)
             }
         }
@@ -410,7 +411,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     func getChannelContactDetails(username: String, token: String, channelid: String)
     {
-        showOverlay()
+//        showOverlay()
         channelManager.getChannelNonContactDetails(channelid, userName: username, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
