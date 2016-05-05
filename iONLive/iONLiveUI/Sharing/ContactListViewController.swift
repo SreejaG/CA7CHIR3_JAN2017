@@ -244,7 +244,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                     self.generateContactSynchronizeAlert()
                 } else {
                     print("Just authorized")
-                    self.displayContacts()
+                    self.setUpLocationManager()
                 }
             }
         }

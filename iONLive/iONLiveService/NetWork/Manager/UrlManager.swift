@@ -9,12 +9,12 @@
 import Foundation
 class UrlManager {
     
-  // let baseUrl = "http://104.196.113.247:3000";
+   let baseUrl = "http://104.196.113.247:3000";
     
     
   //  let baseUrl = "http://104.197.93.133:3000";
     
-    let baseUrl = "http://192.168.16.58:3000";
+ //   let baseUrl = "http://192.168.16.58:3000";
     
     //"http://bpe.ioncameras.com:3000"
     let iONLiveCamUrl = "http://192.168.42.1:8888"
