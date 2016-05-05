@@ -53,6 +53,10 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     {
         alert("Invalid Email", message: "Please provide a valid email address.")
     }
+    func withouCodeMobNumber()
+    {
+        alert("Missing Code", message: "Mobile Number should be in the format +Country Code Mobile Number (+918967543467)")
+    }
     
     func loginError() {
         alert(loginErrorTitle, message: "We're sorry but there was an error retrieving your account. Please try again.")

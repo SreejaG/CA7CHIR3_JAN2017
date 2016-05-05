@@ -51,22 +51,13 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
     
-    
     @IBOutlet var contactListSearchBar: UISearchBar!
     @IBOutlet var contactListTableView: UITableView!
-    
-    @IBOutlet var refreshButton: UIButton!
     @IBOutlet var doneButton: UIButton!
-    
-    @IBAction func didTapRefreshButton(sender: AnyObject) {
-//        displayContacts()
-        contactAuthorizationAlert()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-        setUpLocationManager()
     }
     
     func setUpLocationManager()
@@ -141,7 +132,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         {
             tapFlag = true
             doneButton.hidden = true
-            refreshButton.hidden = false
             selectedContacts.removeAll()
             contactListTableView.reloadData()
         }
@@ -204,18 +194,14 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         searchActive = false
         tapFlag = true
         doneButton.hidden = true
-        refreshButton.hidden = false
         contactPhoneNumbers.removeAll()
         
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
         
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        setUpLocationManager()
         
-        getChannelContactDetails(userId, token: accessToken, channelid: channelId)
-        
+        contactAuthorizationAlert()
     }
     
     func contactAuthorizationAlert()
@@ -287,7 +273,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
             var phoneNumber: String = String()
             var appendPlus : String = String()
-            for(var numberIndex : CFIndex = 0; numberIndex < ABMultiValueGetCount(phones); numberIndex++)
+            for(var numberIndex : CFIndex = 0; numberIndex < ABMultiValueGetCount(phones); numberIndex += 1)
             {
                 let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
                 let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
@@ -355,7 +341,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             status = json["status"] as! Int
             if(status >= 1)
             {
-                initialise()
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                getChannelContactDetails(userId, token: accessToken, channelid: channelId)
             }
         }
         else
@@ -390,7 +379,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         {
             tapFlag = true
             doneButton.hidden = true
-            refreshButton.hidden = false
             selectedContacts.removeAll()
             contactListTableView.reloadData()
         }
@@ -488,7 +476,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         {
             tapFlag = true
             doneButton.hidden = true
-            refreshButton.hidden = false
             selectedContacts.removeAll()
             contactListTableView.reloadData()
         }
@@ -511,11 +498,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         tapFlag = false
         if tapFlag == true
         {
-            refreshButton.hidden = false
             doneButton.hidden = true
         }
         else{
-            refreshButton.hidden = true
             doneButton.hidden = false
         }
     }

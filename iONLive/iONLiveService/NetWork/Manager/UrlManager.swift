@@ -9,11 +9,13 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://104.196.113.247:3000";
+//   let baseUrl = "http://104.196.113.247:3000";
     
     
   //  let baseUrl = "http://104.197.93.133:3000";
-//    let baseUrl = "http://192.168.16.24:3000";
+    
+    let baseUrl = "http://192.168.16.58:3000";
+    
     //"http://bpe.ioncameras.com:3000"
     let iONLiveCamUrl = "http://192.168.42.1:8888"
     
@@ -47,6 +49,11 @@ class UrlManager {
     func channelAPIUrl() -> String{
         let channelAPI = baseUrl+"/api/v1/channel"
         return channelAPI
+    }
+    
+    func profileImageAPIUrl() -> String{
+        let profileImageAPI = baseUrl+"/api/v1/profileImage"
+        return profileImageAPI
     }
     func mediaUploadUrl() -> String{
         
@@ -112,8 +119,13 @@ class UrlManager {
     }
     func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
-        let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
+        let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken + "/"
         return getProfileImageAPI
+    }
+    func getProfileImageUploadAPIUrl(userName: String, accessToken: String, actualImageUrl: String) -> String
+    {
+        let getProfileImageUploadAPI = profileImageAPIUrl() + "/" + userName + "/" + actualImageUrl + "/" + accessToken
+        return getProfileImageUploadAPI
     }
     func getAllChannelsAPIUrl(userName: String, accessToken: String) -> String
     {

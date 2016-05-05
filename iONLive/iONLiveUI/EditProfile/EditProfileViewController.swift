@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
+class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate,UITextFieldDelegate {
     
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
@@ -23,13 +23,16 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     var signedURL : String = String()
     var signedURLName : String = String()
-    
+    var thumbURL : String = String()
+    var cellSection = Int()
+
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
     
     let userNameKey = "userNameKey"
     let displayNameKey = "displayNameKey"
     let titleKey = "titleKey"
+    let privateInfoKey = "privateInfo"
     
     let personalInfoCell = "personalInfoCell"
     let accountInfoCell = "accountInfoCell"
@@ -150,15 +153,36 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func setUserDetails()
     {
-        print(userDetails)
         let fullName = userDetails["full_name"] as! String
         let userName = userDetails["user_name"] as! String
         let email = userDetails["email"] as! String
         let mobileNo = userDetails["mobile_no"] as! String
-        imageForProfile = UIImage(named: "girlFace2")!
-        profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]] // replace uername etc here from API response of editP screen
+        if let imageName =  userDetails["profile_image"]
+        {
+          //  if imageName is NSArray{
+                let imageByteArray: NSArray = imageName["data"] as! NSArray
+                var bytes:[UInt8] = []
+                for serverByte in imageByteArray {
+                    bytes.append(UInt8(serverByte as! UInt))
+                }
+                let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                if let datas = imageData as NSData? {
+                    imageForProfile = UIImage(data: datas)!
+                }
+                else{
+                    imageForProfile = UIImage(named: "girlFace2")!
+                }
+//            }
+//            else{
+//                imageForProfile = UIImage(named: "girlFace2")!
+//            }
+        }
+
+        
+        
+        profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
-        privateInfoOptions = [[titleKey:email],/*[titleKey:location],*/[titleKey:mobileNo]]
+        privateInfoOptions = [[privateInfoKey:email],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
         
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
         editProfTableView.reloadData()
@@ -167,6 +191,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     //end
     
     @IBAction func saveClicked(sender: AnyObject) {
+        showOverlay()
         getSignedUrl()
     }
     
@@ -179,6 +204,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     func getSignedUrl()  {
+      
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -192,34 +218,115 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func authenticationSuccessHandlerSignedUrl(response:AnyObject?)
     {
+       
         if let json = response as? [String: AnyObject]
         {
-            if let url = json["UploadObjectUrl"]{
-               signedURL = url as! String
+            if let fullUrl = json["UploadObjectUrl"]{
+               signedURL = fullUrl as! String
             }
             if let name = json["ObjectName"]{
                 signedURLName = name as! String
             }
-           uploadFullImage(signedURL, objectName: signedURLName, completion: { (result) in
-                if(result == "Success"){
+            if let thumbUrl = json["UploadThumbnailUrl"]{
+               thumbURL = thumbUrl as! String
+            }
+            
+            let cameraController = IPhoneCameraViewController()
+            let sizeThumb = CGSizeMake(70,70)
+            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
+            let imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail, 0.5)
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            self.profileManager.uploadProfileImage(userId, accessToken: accessToken, profileImage:imageData!, actualImageUrl: self.signedURLName, success: { (response) in
                 
+                    self.updateProfileDetails()
+                
+                }, failure: { (error, message) in
+                    self.authenticationFailureHandler(error, code: message)
+                    return
+            })
+
+           uploadImage(signedURL, imageToSave: imageForProfile, completion: { (result) in
+            
+                if(result == "Success"){
+                    print("cloud uplaod success")
+//                    let cameraController = IPhoneCameraViewController()
+//                    let sizeThumb = CGSizeMake(70,70)
+//                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
+//                    self.uploadImage(self.thumbURL, imageToSave: imageAfterConversionThumbnail, completion: { (result) in
+//                        if(result == "Success"){
+//                            
+//                        }
+//                        else{
+//                            
+//                        }
+//                    })
                 }
                 else{
-                    
+                    print("cloud uplaod failed")
                 }
            })
+         
+       //     initialise()
         }
         
     }
     
-    func  uploadFullImage(signedUrl: String, objectName:String, completion: (result: String) -> Void)
+    func  updateProfileDetails() {
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
+        var email = String()
+        var mobNo = String()
+        var fullName = String()
+        
+        for(var i = 0; i < dataSource?.count; i += 1)
+        {
+            var j = 0
+            if i == 0
+            {
+                for  element in  dataSource![i]
+                {
+                    fullName = element[displayNameKey]!
+                }
+            }
+            else if( i == 2){
+                for  element in  dataSource![i]
+                {
+                    if j == 0
+                    {
+                        email = element[privateInfoKey]!
+                    }
+                    else{
+                        mobNo = element[privateInfoKey]!
+                    }
+                    j = j + 1
+                }
+            }
+        }
+        
+        let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
+            NSCharacterSet.decimalDigitCharacterSet().invertedSet)
+        let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+        
+        profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
+             self.removeOverlay()
+        }) { (error, message) in
+            self.authenticationFailureHandler(error, code: message)
+            return
+        }
+    }
+    func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: (result: String) -> Void)
     {
         let url = NSURL(string: signedUrl)
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "PUT"
         let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         var imageData: NSData = NSData()
-        imageData = UIImageJPEGRepresentation(imageForProfile, 0.5)!
+        imageData = UIImageJPEGRepresentation(imageToSave, 0.5)!
         request.HTTPBody = imageData
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
             if error != nil {
@@ -355,6 +462,7 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
+    //     self.automaticallyAdjustsScrollViewInsets = false
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
@@ -364,7 +472,6 @@ extension EditProfileViewController:UITableViewDataSource
                 {
                 case 0:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
-                    
                     cell.editProfileImageButton.addTarget(self, action: "editProfileTapped:", forControlEvents: UIControlEvents.TouchUpInside)
                     
                     if cellDataSource[displayNameKey] == ""
@@ -372,9 +479,20 @@ extension EditProfileViewController:UITableViewDataSource
                         cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Full Name",
                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
                     }
+                    let cameraController = IPhoneCameraViewController()
+                    let sizeThumb = CGSizeMake(70,70)
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
+                    imageForProfile = imageAfterConversionThumbnail
                     cell.userImage.image = imageForProfile
-                    cell.displayNameTextField.text = cellDataSource[displayNameKey]
+                    
                     cell.userNameTextField.text = cellDataSource[userNameKey]
+                    cell.userNameTextField.userInteractionEnabled = false
+                    
+                    cell.displayNameTextField.text = cellDataSource[displayNameKey]
+                  
+                    cell.displayNameTextField.tag = indexPath.section
+                    cell.displayNameTextField.delegate = self
+                    
                     cell.selectionStyle = .None
                     return cell
                     
@@ -394,8 +512,17 @@ extension EditProfileViewController:UITableViewDataSource
                     
                 case 2:
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPrivateInfoCell.identifier, forIndexPath:indexPath) as! EditProfPrivateInfoCell
-            
-                    cell.privateInfoTitleLabel.text = cellDataSource[titleKey]
+                    cell.privateInfoTitleLabel.tag = 100 + indexPath.row
+                    if(indexPath.row == 1){
+                        cell.privateInfoTitleLabel.keyboardType = .PhonePad
+                    }
+                    else{
+                        cell.privateInfoTitleLabel.keyboardType = .Default
+                    }
+                    cell.privateInfoTitleLabel.delegate = self
+                    cellSection = indexPath.row
+                    
+                    cell.privateInfoTitleLabel.text = cellDataSource[privateInfoKey]
                     //no border line for last cell
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
@@ -414,6 +541,42 @@ extension EditProfileViewController:UITableViewDataSource
             }
         }
         return UITableViewCell()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        
+        if(textField.tag == 0)
+        {
+            dataSource![textField.tag][0][displayNameKey] = textField.text
+        }
+        else if(textField.tag == 100){
+            let isEmailValid = isEmail(textField.text!) as Bool!
+            if isEmailValid == false
+            {
+                ErrorManager.sharedInstance.loginInvalidEmail()
+                return
+            }
+            else
+            {
+                dataSource![2][0][privateInfoKey] = textField.text
+            }
+        }
+        else if(textField.tag == 101){
+            let textStr = textField.text
+            if(textStr!.hasPrefix("+")){
+                dataSource![2][1][privateInfoKey] = textField.text
+            }
+            else{
+                ErrorManager.sharedInstance.withouCodeMobNumber()
+                return
+            }
+        }
+
+    }
+    
+    func isEmail(email:String) -> Bool {
+        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
+        return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
     }
     
     func editProfileTapped(sender:UIButton!)

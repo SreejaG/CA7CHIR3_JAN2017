@@ -21,18 +21,14 @@ class AddChannelViewController: UIViewController {
     var accessToken : String!
     
     @IBOutlet var doneButton: UIButton!
-    
-    @IBOutlet var shareButton: UIButton!
-    
     @IBOutlet var addChannelView: UIView!
-    
     @IBOutlet var addToChannelTitleLabel: UILabel!
     
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
-    var shareFlag : Bool = false
+    var shareFlag : Bool = true
     var loadingOverlay: UIView?
     
     let channelNameKey = "channelName"
@@ -79,11 +75,9 @@ class AddChannelViewController: UIViewController {
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
         doneButton.hidden = true
-        
-        shareFlag = false
+        shareFlag = true
         addChannelView.userInteractionEnabled = true
         addChannelView.alpha = 1
-        
         addToChannelTitleLabel.text = "ADD TO CHANNEL"
         let defaults = NSUserDefaults.standardUserDefaults()
         userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -111,11 +105,10 @@ class AddChannelViewController: UIViewController {
     
     @IBAction func didTapCancelButon(sender: AnyObject){
         
-        if(shareFlag){
-            shareFlag = false
+        if(shareFlag == false){
+            shareFlag = true
             addChannelView.userInteractionEnabled = true
             addChannelView.alpha = 1
-            shareButton.hidden = false
             doneButton.hidden = true
             addToChannelTitleLabel.text = "ADD TO CHANNEL"
             selectedArray.removeAll()
@@ -193,11 +186,10 @@ class AddChannelViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        if(shareFlag){
-            shareFlag = false
+        if(shareFlag == false){
+            shareFlag = true
             addChannelView.userInteractionEnabled = true
             addChannelView.alpha = 1
-            shareButton.hidden = false
             doneButton.hidden = true
             addToChannelTitleLabel.text = "ADD TO CHANNEL"
             selectedArray.removeAll()
@@ -211,11 +203,10 @@ class AddChannelViewController: UIViewController {
         removeOverlay()
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
-        if(shareFlag){
-            shareFlag = false
+        if(shareFlag == false){
+            shareFlag = true
             addChannelView.userInteractionEnabled = true
             addChannelView.alpha = 1
-            shareButton.hidden = false
             doneButton.hidden = true
             addToChannelTitleLabel.text = "ADD TO CHANNEL"
         }
@@ -261,11 +252,7 @@ class AddChannelViewController: UIViewController {
             else{
                 imageDetails = UIImage(named: "thumb12")
             }
-//            let sharedBool = Int(element["channel_shared_ind"] as! Bool)
-//            if sharedBool == 1
-//            {
-                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
-//            }
+            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
         }
         
         dataSource.sortInPlace({ p1, p2 in
@@ -314,17 +301,6 @@ class AddChannelViewController: UIViewController {
             self.tableViewBottomConstraint.constant = 0
         }
     }
-  
-    
-    @IBAction func didTapShareButton(sender: AnyObject) {
-        shareFlag = true
-        addChannelView.userInteractionEnabled = false
-        addChannelView.alpha = 0.6
-        doneButton.hidden = false
-        shareButton.hidden = true
-        addToChannelTitleLabel.text = "SHARE"
-    }
-    
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
         
@@ -332,10 +308,6 @@ class AddChannelViewController: UIViewController {
         {
             addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
         }
-//        let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-//        let channelVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
-//        channelVC.navigationController?.navigationBarHidden = true
-//        self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
     func addMediaToChannels(channelIds:NSArray, mediaIds:NSArray){
@@ -358,7 +330,11 @@ class AddChannelViewController: UIViewController {
         {
             print(json)
             channelTextField.text = ""
-            getChannelDetails(userId, token: accessToken)
+            let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
+            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+            channelVC.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(channelVC, animated: true)
+//            getChannelDetails(userId, token: accessToken)
         }
         else
         {
@@ -464,32 +440,23 @@ extension AddChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        if(shareFlag){
-            for i in 0 ..< selectedArray.count
+        shareFlag = false
+        addChannelView.userInteractionEnabled = false
+        doneButton.hidden = false
+        for i in 0 ..< selectedArray.count
+        {
+            if i == indexPath.row
             {
-            
-                if i == indexPath.row
+                if selectedArray[i] == 0
                 {
-                    if selectedArray[i] == 0
-                    {
-                        selectedArray[i] = 1
+                    selectedArray[i] = 1
                     
-                    }else{
-                        selectedArray[i] = 0
-                    }
+                }else{
+                    selectedArray[i] = 0
                 }
             }
-            tableView.reloadData()
         }
-        else{
-//            let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-//            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
-//            channelItemListVC.channelId = dataSource[indexPath.row][channelIdKey] as! String
-//            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
-//            channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][channelItemCountKey]! as! String)!
-//            channelItemListVC.navigationController?.navigationBarHidden = true
-//            self.navigationController?.pushViewController(channelItemListVC, animated: true)
-        }
+        tableView.reloadData()
     }
 
 }

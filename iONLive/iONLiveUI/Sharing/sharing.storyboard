@@ -668,28 +668,15 @@
                                                     <action selector="didTapBackButton:" destination="MyW-la-sCt" eventType="touchUpInside" id="uLN-d4-GDX"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CU1-OG-Fe8">
-                                                <rect key="frame" x="556" y="28" width="30" height="30"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="OT5-W9-HwC"/>
-                                                    <constraint firstAttribute="width" constant="30" id="Uwq-5k-ZrT"/>
-                                                </constraints>
-                                                <state key="normal" image="refreshImage"/>
-                                                <connections>
-                                                    <action selector="didTapRefreshButton:" destination="MyW-la-sCt" eventType="touchUpInside" id="Ue3-tj-UFK"/>
-                                                </connections>
-                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="CU1-OG-Fe8" secondAttribute="trailing" constant="14" id="3KE-hG-95h"/>
                                             <constraint firstItem="g6O-CT-cpL" firstAttribute="top" secondItem="39Y-F3-gbu" secondAttribute="top" constant="24" id="Ein-i8-Yt1"/>
                                             <constraint firstItem="g6O-CT-cpL" firstAttribute="leading" secondItem="39Y-F3-gbu" secondAttribute="leading" constant="8" id="LJd-we-9NL"/>
                                             <constraint firstItem="C4w-YE-zQQ" firstAttribute="top" secondItem="39Y-F3-gbu" secondAttribute="top" constant="30" id="RAO-77-2rb"/>
                                             <constraint firstAttribute="height" constant="64" id="RFY-Ej-1nk"/>
                                             <constraint firstAttribute="trailing" secondItem="C4w-YE-zQQ" secondAttribute="trailing" id="TZZ-yr-We0"/>
                                             <constraint firstItem="C4w-YE-zQQ" firstAttribute="leading" secondItem="39Y-F3-gbu" secondAttribute="leading" id="Yg5-c4-Bmh"/>
-                                            <constraint firstItem="CU1-OG-Fe8" firstAttribute="top" secondItem="39Y-F3-gbu" secondAttribute="top" constant="28" id="fQc-pu-vYf"/>
                                             <constraint firstAttribute="trailing" secondItem="eAQ-Cb-F0f" secondAttribute="trailing" constant="8" id="ing-1A-Wqp"/>
                                             <constraint firstAttribute="bottom" secondItem="C4w-YE-zQQ" secondAttribute="bottom" constant="13" id="mSz-eB-lUm"/>
                                             <constraint firstItem="eAQ-Cb-F0f" firstAttribute="top" secondItem="39Y-F3-gbu" secondAttribute="top" constant="24" id="ttL-yD-C3z"/>
@@ -827,7 +814,6 @@
                         <outlet property="contactListSearchBar" destination="e2e-yI-WeA" id="p1f-wM-l33"/>
                         <outlet property="contactListTableView" destination="JdV-kO-Abg" id="6LQ-h3-zxT"/>
                         <outlet property="doneButton" destination="eAQ-Cb-F0f" id="vWD-r9-gpz"/>
-                        <outlet property="refreshButton" destination="CU1-OG-Fe8" id="wVy-Oo-ETP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TpQ-1S-nuY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -867,7 +853,6 @@
         <image name="friend_avatar" width="18" height="24"/>
         <image name="friend_avatar_blue" width="18" height="24"/>
         <image name="red-circle" width="20" height="20"/>
-        <image name="refreshImage" width="32" height="32"/>
         <image name="snapCamMode" width="25" height="25"/>
         <image name="user_profile_icon" width="54" height="54"/>
         <image name="white_back" width="12" height="21"/>

@@ -35,10 +35,10 @@ class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate {
        textField.layoutIfNeeded()
     }
     
-    func textFieldDidEndEditing(textField: UITextField)
-    {
-        textField.layoutIfNeeded()
-    }
+//    func textFieldDidEndEditing(textField: UITextField)
+//    {
+//      //  textField.layoutIfNeeded()
+//    }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {

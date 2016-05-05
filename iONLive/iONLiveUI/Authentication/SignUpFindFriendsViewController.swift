@@ -183,8 +183,10 @@ class SignUpFindFriendsViewController: UIViewController{
             else{
                 currentContactImage = UIImage(named: "avatar")!
             }
-            contactPhoneNumbers.append(phoneNumber)
-            self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
+            if phoneNumber != nil{
+                contactPhoneNumbers.append(phoneNumber)
+                self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
+            }
         }
        addContactDetails(contactPhoneNumbers) 
       
