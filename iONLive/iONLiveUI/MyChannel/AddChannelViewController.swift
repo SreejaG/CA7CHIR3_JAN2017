@@ -442,6 +442,7 @@ extension AddChannelViewController:UITableViewDataSource
     {
         shareFlag = false
         addChannelView.userInteractionEnabled = false
+        addChannelView.alpha = 0.3
         doneButton.hidden = false
         for i in 0 ..< selectedArray.count
         {
