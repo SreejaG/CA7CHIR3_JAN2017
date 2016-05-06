@@ -390,17 +390,17 @@
                                         <rect key="frame" x="0.0" y="64" width="600" height="494"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="u7K-4w-HFL">
-                                            <size key="itemSize" width="50" height="50"/>
+                                            <size key="itemSize" width="150" height="150"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ChannelItemListCollectionViewCell" id="OFq-GC-9j1" customClass="ChannelItemListCollectionViewCell" customModule="iONLive" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jwy-pD-Wuy">
@@ -414,7 +414,7 @@
                                                             <color key="backgroundColor" red="0.11137111819999999" green="0.28222178129999997" blue="0.90260022100000004" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="tintColor" red="0.9999125599861145" green="1" blue="0.99988144636154175" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </view>
-                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-Ob-zkJ">
+                                                        <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-Ob-zkJ">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                         </imageView>
                                                         <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JrT-9P-d3y" userLabel="video view">
@@ -429,6 +429,12 @@
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
+                                                <constraints>
+                                                    <constraint firstItem="T7N-Ob-zkJ" firstAttribute="leading" secondItem="OFq-GC-9j1" secondAttribute="leading" id="29E-8d-dW3"/>
+                                                    <constraint firstAttribute="trailing" secondItem="T7N-Ob-zkJ" secondAttribute="trailing" id="AQZ-EB-UJA"/>
+                                                    <constraint firstAttribute="bottom" secondItem="T7N-Ob-zkJ" secondAttribute="bottom" id="Q5V-Jp-DhI"/>
+                                                    <constraint firstItem="T7N-Ob-zkJ" firstAttribute="top" secondItem="OFq-GC-9j1" secondAttribute="top" id="hOM-AZ-SEC"/>
+                                                </constraints>
                                                 <connections>
                                                     <outlet property="channelItemImageView" destination="T7N-Ob-zkJ" id="UjP-tX-bDW"/>
                                                     <outlet property="selectionView" destination="jwy-pD-Wuy" id="yIE-7M-Q1w"/>
