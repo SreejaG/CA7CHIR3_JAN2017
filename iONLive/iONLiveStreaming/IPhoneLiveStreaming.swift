@@ -151,7 +151,13 @@ class IPhoneLiveStreaming: NSObject {
                     
                     if let json = response as? [String: AnyObject]
                     {
+                    
                         print("success = \(json["streamToken"])")
+                        
+                        let url =  (json["Signed url"]) as! String
+                        let defaults = NSUserDefaults .standardUserDefaults()
+                        defaults.setValue(url, forKey: "liveStreamURL")
+                                        
                         let streamToken:String = json["streamToken"] as! String
                         NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
                         self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
@@ -194,6 +200,40 @@ class IPhoneLiveStreaming: NSObject {
  
         }
         
+//        func  saveLiveThumbNailToCloud(url: String, completion: (result: String) -> Void)
+//        {
+//            var imageForLive : UIImage = UIImage()
+//            let defaults = NSUserDefaults .standardUserDefaults()
+//            let userId = defaults.valueForKey(userLoginIdKey) as! String
+//            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+//            let savingPath = "\(parentPath)/\(userId)LiveThumb"
+//            print(savingPath)
+//            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+//            if fileExistFlag == true{
+//                imageForLive = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)!
+//                let imageData = UIImageJPEGRepresentation(imageForLive, 0.5)
+//                let request = NSMutableURLRequest(URL: NSURL(string: url as String)!)
+//                request.HTTPMethod = "PUT"
+//                let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+//                request.HTTPBody = imageData
+//                let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+//                    if error != nil {
+//                        //handle error
+//                    }
+//                    else {
+//                        let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+//                        print("Parsed JSON for thumbanil: '\(jsonStr)'")
+//                        let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+//                        controller.uploadprogress(1.0)
+//                        
+//                    }
+//                }
+//                completion(result:"Success")
+//                dataTask.resume()
+//            }
+//        }
+
+
         //PRAGMA MARK: User Defaults
         
         func setStreamingDefaults()

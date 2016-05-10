@@ -25,6 +25,7 @@
                 <constraint firstItem="n09-Ws-vAs" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="pdt-HI-3wG"/>
                 <constraint firstItem="n09-Ws-vAs" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="rMp-Et-1yV"/>
             </constraints>
+            <point key="canvasLocation" x="265" y="219"/>
         </view>
     </objects>
 </document>

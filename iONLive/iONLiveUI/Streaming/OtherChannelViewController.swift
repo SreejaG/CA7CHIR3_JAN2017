@@ -14,6 +14,8 @@ class OtherChannelViewController: UIViewController {
     static let identifier = "OtherChannelViewController"
     let channelIdkey = "ch_detail_id"
     let notificationKey = "notification"
+    let channelNameKey = "channel_name"
+    let userIdKey = "user_name"
     
     var totalMediaCount: Int = Int()
     var channelId:String!
@@ -65,6 +67,11 @@ class OtherChannelViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        removeOverlay()
+    }
+
     @IBAction func backClicked(sender: AnyObject)
     {
         
@@ -120,7 +127,8 @@ class OtherChannelViewController: UIViewController {
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -183,22 +191,26 @@ class OtherChannelViewController: UIViewController {
             
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
+        
             print(responseArrLive)
-            
             for index in 0 ..< responseArrLive.count
             {
                 let streamTocken = responseArrLive[index].valueForKey("wowza_stream_token")as! String
-                
+              //  let mediaId = responseArrLive[index].valueForKey("live_stream_detail_id")?.stringValue
+              //  print(mediaId)
+
                 let mediaUrl = responseArrLive[index].valueForKey("signedUrl") as! String
                 //                let mediaType =  responseArrLive[index].valueForKey("gcs_object_type") as! String
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:self.imageDataSource[index][self.actualImageKey]!,self.notificationKey:self.imageDataSource[index][self.notificationKey]!,self.mediaTypeKey:"live"])
+                        self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:self.imageDataSource[index][self.notificationKey]!,self.mediaTypeKey:"live", self.userIdKey:self.userName, self.channelNameKey:self.channelName])
+                        
+                        
                         //                         self.fullImageDataSource.append([self.mediaIdKey:"", self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:result,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                     //   dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.channelItemsCollectionView.reloadData()
-                        })
+                    //    })
                     })
                 }
                 
@@ -206,6 +218,8 @@ class OtherChannelViewController: UIViewController {
                 
                 
             }
+            print(self.fullImageDataSource)
+
             print(responseArr)
             downloadCloudData(15, scrolled: false)
         }
@@ -252,8 +266,8 @@ class OtherChannelViewController: UIViewController {
         }
         else
         {
-//            print("null Image")
-//            completion(result:mediaImage)
+           print("null Image")
+            completion(result:UIImage(named:"thumb12")!)
         }
     }
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
@@ -324,6 +338,7 @@ class OtherChannelViewController: UIViewController {
                 
                 self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                 
+                
                 self.channelItemsCollectionView.reloadData()
             })
         }
@@ -368,11 +383,15 @@ extension OtherChannelViewController : UIScrollViewDelegate{
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
-        
-        self.presentViewController(vc, animated: true) { () -> Void in
-            
-        }
+//        let userId = userName
+//        let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
+//
+//          let parameters : NSDictionary = ["channelName": channelName as! String, "userName":userId , "mediaType":self.dataSource[indexPath.row][mediaTypeKey] as! String, "profileImage":UIImage(), "notifType":self.dataSource[indexPath.row][notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][mediaIdKey] as! String]
+//        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: parameters , liveVideo: false) as! UIViewController
+//        
+//        self.presentViewController(vc, animated: true) { () -> Void in
+//            
+//        }
     }
     
 }
@@ -424,7 +443,7 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 cell.detailLabel.text = "LIVE"
                 cell.videoView.hidden = false
                 cell.videoView.image = UIImage(named: "Live_now")
-                cell.channelMediaImage.image = UIImage(named: "thumb1")
+                cell.channelMediaImage.image = imageData
             }
             //  cell.insertSubview(cell.videoView, aboveSubview: cell.channelMediaImage)
         }
@@ -471,7 +490,19 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         {
             if let streamTocken = fullImageDataSource[indexPath.row][streamTockenKey]
             {
-                self.loadLiveStreamView(streamTocken as! String)
+                
+                let userId = userName
+                let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
+                
+                let parameters : NSDictionary = ["channelName": channelName, "userName":userId , "mediaType":type, "profileImage":UIImage(), "notifType":self.fullImageDataSource[indexPath.row][notificationKey] as! String, "mediaId": self.fullImageDataSource[indexPath.row][mediaIdKey] as! String]
+                print(parameters)
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: parameters as [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                
+                self.presentViewController(vc, animated: true) { () -> Void in
+                    
+                }
+
+//                self.loadLiveStreamView(streamTocken as! String)
             }
             else
             {

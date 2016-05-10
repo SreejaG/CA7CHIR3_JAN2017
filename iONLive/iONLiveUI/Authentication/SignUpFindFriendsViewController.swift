@@ -52,6 +52,12 @@ class SignUpFindFriendsViewController: UIViewController{
         self.navigationController?.navigationBarHidden = false
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        removeOverlay()
+    }
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -271,7 +277,8 @@ class SignUpFindFriendsViewController: UIViewController{
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -284,7 +291,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live", parameters: nil , liveVideo: true) as! UIViewController
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)

@@ -14,7 +14,7 @@ class IONLLoadingView: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        //        initLoader()
+                //    initLoader()
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -32,22 +32,22 @@ class IONLLoadingView: UIViewController {
         activityIndicator.stopAnimating()
     }
     
-    //    func initLoader() {
-    //        var screenWidth = UIScreen.mainScreen().bounds.width
-    //        var screenHeight = UIScreen.mainScreen().bounds.height
-    //
-    //        var preloaderContainer = UIView(frame: CGRectMake(0, 0,screenWidth,screenHeight))
-    //        preloaderContainer.center = CGPointMake(screenWidth/2, screenHeight/2)
-    //        preloaderContainer.backgroundColor = UIColor.lightGrayColor()
-    //        preloaderContainer.alpha = 0.5
-    //
-    //        let indicator:UIActivityIndicatorView = UIActivityIndicatorView (activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
-    //        indicator.frame = CGRectMake(0.0, 0.0, 10.0, 10.0)
-    //        indicator.center = preloaderContainer.center
-    //        preloaderContainer.addSubview(indicator)
-    //        self.view.addSubview(preloaderContainer)
-    //
-    //        indicator.bringSubviewToFront(preloaderContainer)
-    //        indicator.startAnimating()
-    //    }
+//        func initLoader() {
+//            let screenWidth = UIScreen.mainScreen().bounds.width
+//            let screenHeight = UIScreen.mainScreen().bounds.height
+//    
+//            let preloaderContainer = UIView(frame: CGRectMake(0, 64,screenWidth,screenHeight-64))
+////            preloaderContainer.center = CGPointMake(screenWidth/2, screenHeight/2)
+//            preloaderContainer.backgroundColor = UIColor.lightGrayColor()
+////            preloaderContainer.alpha = 0.5
+////    
+//            let indicator:UIActivityIndicatorView = UIActivityIndicatorView (activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+//            indicator.frame = CGRectMake(0.0, 0.0, 10.0, 10.0)
+//            indicator.center = preloaderContainer.center
+//            preloaderContainer.addSubview(indicator)
+//            self.view.addSubview(preloaderContainer)
+//    
+//            indicator.bringSubviewToFront(preloaderContainer)
+//            indicator.startAnimating()
+//        }
 }

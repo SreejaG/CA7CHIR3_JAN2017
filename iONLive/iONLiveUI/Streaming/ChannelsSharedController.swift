@@ -64,6 +64,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        removeOverlay()
+    }
     func pullToRefresh()
     {
         mediaShared.removeAll()
@@ -97,7 +102,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -122,6 +128,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         pullToRefreshActive = false
         if let json = response as? [String: AnyObject]
         {
+            print(json)
             dummy.removeAll()
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
             print(responseArrLive.count)
@@ -483,6 +490,7 @@ extension ChannelsSharedController:UITableViewDataSource
     }
     func loadLiveStreamView(streamTocken:String)
     {
+        
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: true) { () -> Void in

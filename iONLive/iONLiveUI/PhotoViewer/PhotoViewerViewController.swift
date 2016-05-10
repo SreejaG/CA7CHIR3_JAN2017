@@ -127,7 +127,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        
+        removeOverlay()
     }
     
     @IBAction func deleteButtonAction(sender: AnyObject) {
@@ -257,14 +257,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         getChannelDetails(userId, token: accessToken)
     }
+    
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+       
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
+    
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
@@ -1288,7 +1292,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         else
         {
 //            print("null Image")
-//            completion(result:mediaImage)
+            completion(result:UIImage(named: "thumb12")!)
         }
     }
     func convertStringtoURL(url : String) -> NSURL

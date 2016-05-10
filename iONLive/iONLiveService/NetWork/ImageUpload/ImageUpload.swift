@@ -150,6 +150,7 @@ class ImageUpload: NSObject {
     
     func getChannelMediaDetails(channelId : String , userName: String, accessToken: String, limit: String, offset: String , success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
+        print("\(channelId)  \(userName)   \(accessToken)")
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getChannelMediaDetails(channelId, userName: userName, accessToken: accessToken, limit: limit, offset: offset), parameters: nil, success: { (operation, response) -> Void in
             

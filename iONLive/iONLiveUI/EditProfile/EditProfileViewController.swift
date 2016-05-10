@@ -69,6 +69,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
+        removeOverlay()
     }
     
     func initialise()
@@ -141,7 +142,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -159,7 +161,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let mobileNo = userDetails["mobile_no"] as! String
         if let imageName =  userDetails["profile_image"]
         {
-          //  if imageName is NSArray{
+            if imageName is NSArray{
                 let imageByteArray: NSArray = imageName["data"] as! NSArray
                 var bytes:[UInt8] = []
                 for serverByte in imageByteArray {
@@ -172,10 +174,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 else{
                     imageForProfile = UIImage(named: "girlFace2")!
                 }
-//            }
-//            else{
-//                imageForProfile = UIImage(named: "girlFace2")!
-//            }
+            }
+            else{
+                imageForProfile = UIImage(named: "girlFace2")!
+            }
         }
 
         

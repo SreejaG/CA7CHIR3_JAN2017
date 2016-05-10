@@ -20,17 +20,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "screencap.h"
 
-
-
-
-
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
 
 NSString* selectedFlashOption = @"selectedFlashOption";
 int thumbnailSize = 50;
-
-
 
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSuccess,
@@ -38,7 +32,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSessionConfigurationFailed
 };
 
-@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol,  VCSessionDelegate>
+@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol,  VCSessionDelegate, NSURLSessionDelegate,NSURLSessionTaskDelegate,NSURLSessionDataDelegate>
 
 {
     SnapCamSelectionMode _snapCamMode;
@@ -90,11 +84,14 @@ FileManagerViewController *fileManager;
 
 - (void)viewDidLoad {
     
-   fileManager = [[FileManagerViewController alloc]init];
+    fileManager = [[FileManagerViewController alloc]init];
     [super viewDidLoad];
+    
     SetUpView *viewSet = [[SetUpView alloc]init];
     [viewSet getValue];
+    
     [self initialiseView];
+    
     [_uploadActivityIndicator setHidden:YES];
     PhotoViewerInstance.iphoneCam = self;
     [_uploadProgressCameraView setHidden:YES];
@@ -103,18 +100,18 @@ FileManagerViewController *fileManager;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-
+    
 }
 -(void) loggedInDetails:(NSDictionary *) detailArray{
     
-        NSString * sharedUserCount = detailArray[@"sharedUserCount"];
-        NSArray * sharedUserThumbnail = detailArray[@"sharedUserThumbnails"];
-        NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
-        NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
-        NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
-        NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
-        NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
-        
+    NSString * sharedUserCount = detailArray[@"sharedUserCount"];
+    NSArray * sharedUserThumbnail = detailArray[@"sharedUserThumbnails"];
+    NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
+    NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
+    NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
+    NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
+    NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
+    
     _sharedUserCount.text = sharedUserCount;
     
     dispatch_async(dispatch_get_global_queue(0,0), ^{
@@ -127,9 +124,9 @@ FileManagerViewController *fileManager;
             {
                 self.playiIconView.hidden = false;
             }
-             self.thumbnailImageView.image= [UIImage imageWithData: data];
+            self.thumbnailImageView.image= [UIImage imageWithData: data];
         });
-      
+        
     });
     
     if([mediaSharedCount  isEqual: @"0"])
@@ -150,10 +147,10 @@ FileManagerViewController *fileManager;
         });
     }
     else{
-     //   _countLabel.hidden= false;
-       // _countLabel.text = mediaSharedCount;
+        //   _countLabel.hidden= false;
+        // _countLabel.text = mediaSharedCount;
     }
-
+    
     
 }
 
@@ -162,88 +159,80 @@ FileManagerViewController *fileManager;
     [super viewWillAppear:animated];
     self.activitView.hidden = true;
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-
+    
     if (! [self isStreamStarted]) {
-    if (shutterActionMode == SnapCamSelectionModeLiveStream)
-    {
-        self.previewView.session = nil;
-        self.previewView.hidden = true;
-        _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
-        //    _session.orientationLocked = YES;
-        AVCaptureVideoPreviewLayer  *ptr;
-        [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-//        _liveSteamSession.delegate = self;
-        [self.view addSubview:_liveSteamSession.previewView];
-        _liveSteamSession.previewView.frame = self.view.bounds;
-        _liveSteamSession.delegate = self;
-        [self.view bringSubviewToFront:self.bottomView];
-        [self.view bringSubviewToFront:self.topView];
-    }
-    else{
-        [_liveSteamSession.previewView removeFromSuperview];
-        [self removeObservers];
-
-        self.session = [[AVCaptureSession alloc] init];
-        //
-        self.previewView.hidden = false;
-        [self configureCameraSettings];
-
-        //    // Setup the preview view.
-        self.previewView.session = self.session;
-    //}
-
-    dispatch_async( self.sessionQueue, ^{
-        switch ( self.setupResult )
+        if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {
-            case AVCamSetupResultSuccess:
-            {
-                // Only setup observers and start the session running if setup succeeded.
-                [self addObservers];
-                [self.session startRunning];
-                self.sessionRunning = self.session.isRunning;
-                break;
-            }
-            case AVCamSetupResultCameraNotAuthorized:
-            {
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                    [alertController addAction:cancelAction];
-                    // Provide quick access to Settings.
-                    UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-                    }];
-                    [alertController addAction:settingsAction];
-                    [self presentViewController:alertController animated:YES completion:nil];
-                } );
-                break;
-            }
-            case AVCamSetupResultSessionConfigurationFailed:
-            {
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                    [alertController addAction:cancelAction];
-                    [self presentViewController:alertController animated:YES completion:nil];
-                } );
-                break;
-            }
+            self.previewView.session = nil;
+            self.previewView.hidden = true;
+            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+            AVCaptureVideoPreviewLayer  *ptr;
+            [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+            [self.view addSubview:_liveSteamSession.previewView];
+            _liveSteamSession.previewView.frame = self.view.bounds;
+            _liveSteamSession.delegate = self;
+            [self.view bringSubviewToFront:self.bottomView];
+            [self.view bringSubviewToFront:self.topView];
         }
-    } );
-    }
+        else{
+            [_liveSteamSession.previewView removeFromSuperview];
+            _liveSteamSession.delegate = nil;
+            [self removeObservers];
+            self.session = [[AVCaptureSession alloc] init];
+            self.previewView.hidden = false;
+            self.previewView.session = self.session;
+            [self configureCameraSettings];
+            
+            dispatch_async( self.sessionQueue, ^{
+                switch ( self.setupResult )
+                {
+                    case AVCamSetupResultSuccess:
+                    {
+                        // Only setup observers and start the session running if setup succeeded.
+                        [self addObservers];
+                        [self.session startRunning];
+                        self.sessionRunning = self.session.isRunning;
+                        break;
+                    }
+                    case AVCamSetupResultCameraNotAuthorized:
+                    {
+                        dispatch_async( dispatch_get_main_queue(), ^{
+                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                            [alertController addAction:cancelAction];
+                            // Provide quick access to Settings.
+                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                            }];
+                            [alertController addAction:settingsAction];
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        } );
+                        break;
+                    }
+                    case AVCamSetupResultSessionConfigurationFailed:
+                    {
+                        dispatch_async( dispatch_get_main_queue(), ^{
+                            NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                            [alertController addAction:cancelAction];
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        } );
+                        break;
+                    }
+                }
+            } );
+        }
     }
 }
+
 -(void) uploadprogress :(float) progress
 {
- 
-
     [ self.thumbnailImageView setAlpha:1.0];
     if (!_playiIconView.hidden)
     {
         [_playiIconView setAlpha:1.0];
-
     }
     [_uploadProgressCameraView setHidden:YES];
     if (progress == 1.0 || progress == 1)
@@ -253,8 +242,6 @@ FileManagerViewController *fileManager;
         [_uploadProgressCameraView setHidden:YES];
         
     }
-   // _uploadProgressCameraView.progress = progress;
-   
 }
 
 #pragma mark initialise View
@@ -263,12 +250,10 @@ FileManagerViewController *fileManager;
 {
     _countLabel.layer.cornerRadius = 5;
     _countLabel.layer.masksToBounds = true;
-    
     _noDataFound.hidden = true;
     _activityImageView.hidden = true;
     __activityIndicatorView.hidden = true;
     [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-    
     [_playiIconView setHidden:YES];
     
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
@@ -280,11 +265,9 @@ FileManagerViewController *fileManager;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     
     [self deleteIphoneCameraSnapShots];
-     [self checkCountForLabel];
+    [self checkCountForLabel];
     self.thumbnailImageView.image = [self readImageFromDataBase];
     
-    
-   
 }
 
 -(void) checkCountForLabel
@@ -306,7 +289,7 @@ FileManagerViewController *fileManager;
         _countLabel.hidden= false;
         _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
     }
-    NSLog(@"%ld",(long)count);
+//    NSLog(@"%ld",(long)count);
 }
 
 -(void)showProgressBar
@@ -314,7 +297,7 @@ FileManagerViewController *fileManager;
     dispatch_async( dispatch_get_main_queue(), ^{
         
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
-
+        
         _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
         _activityImageView.hidden = false;
         [__activityIndicatorView startAnimating];
@@ -322,19 +305,19 @@ FileManagerViewController *fileManager;
         _noDataFound.text = @"Initializing Stream";
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
-    
+        
+      
+        
     } );
-   
-    
     [self setUpInitialBlurView];
 }
 
 -(void)hideProgressBar
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-    
+        
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
-
+        
         _activityImageView.hidden = true;
         [__activityIndicatorView stopAnimating];
         __activityIndicatorView.hidden = true;
@@ -342,8 +325,77 @@ FileManagerViewController *fileManager;
         self.activitView.hidden = true;
         _liveSteamSession.previewView.hidden = false;
         [self.bottomView setUserInteractionEnabled:YES];
-        } );
-   
+    } );
+
+}
+
+-(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
+    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
+    NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString *finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,userName,@"LiveThumb"];
+    NSLog(@"%@",finalPath);
+    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
+    NSLog(@"%d",[[FileManagerViewController sharedInstance]fileExist:finalPath]);
+}
+
+-(void)screenCapture
+{
+    CGSize size = CGSizeMake(_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, 7);
+    
+    CGRect rec = CGRectMake(0,0,_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
+    [self.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
+    [self saveThumbnailImageLive:image1];
+    [self uploadThumbToCloud:image1];
+    UIImageWriteToSavedPhotosAlbum(image1, nil, nil, nil);
+}
+
+-(void) uploadThumbToCloud:(UIImage *)image
+{
+    NSString *urlStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"liveStreamURL"];
+    NSLog(@"%@",urlStr);
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:[NSURL URLWithString:urlStr]];
+    request.HTTPMethod = @"PUT";
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    request.HTTPBody = imageData;
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if(error != nil){
+            
+        }
+        else{
+            NSLog(@"finish");
+        }
+    }];
+    [dataTask resume];
+    
+  
+//    let imageData = UIImageJPEGRepresentation(imageForLive, 0.5)
+//    let request = NSMutableURLRequest(URL: NSURL(string: url as String)!)
+//    let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+//    request.HTTPBody = imageData
+//    let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+//        if error != nil {
+//            //handle error
+//        }
+//        else {
+//            let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+//            print("Parsed JSON for thumbanil: '\(jsonStr)'")
+//            let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+//            controller.uploadprogress(1.0)
+//            
+//        }
+//    }
+//    completion(result:"Success")
+//    dataTask.resume()
+                                      
 }
 
 -(UIImage*)readImageFromDataBase
@@ -418,8 +470,8 @@ FileManagerViewController *fileManager;
         dispatch_async( dispatch_get_main_queue(), ^{
             // Only enable the ability to change camera if the device has more than one camera.
             self.cameraButton.enabled = isSessionRunning && ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
-//            self.recordButton.enabled = isSessionRunning;
-//            self.stillButton.enabled = isSessionRunning;
+            //            self.recordButton.enabled = isSessionRunning;
+            //            self.stillButton.enabled = isSessionRunning;
         } );
     }
     else {
@@ -442,13 +494,13 @@ FileManagerViewController *fileManager;
             }
             else {
                 dispatch_async( dispatch_get_main_queue(), ^{
-//                    self.resumeButton.hidden = NO;
+                    //                    self.resumeButton.hidden = NO;
                 } );
             }
         } );
     }
     else {
-//        self.resumeButton.hidden = NO;
+        //        self.resumeButton.hidden = NO;
     }
 }
 
@@ -482,10 +534,10 @@ FileManagerViewController *fileManager;
         }
         else if ( reason == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps ) {
             // Simply fade-in a label to inform the user that the camera is unavailable.
-//            self.cameraUnavailableLabel.hidden = NO;
-//            self.cameraUnavailableLabel.alpha = 0.0;
+            //            self.cameraUnavailableLabel.hidden = NO;
+            //            self.cameraUnavailableLabel.alpha = 0.0;
             [UIView animateWithDuration:0.25 animations:^{
-//                self.cameraUnavailableLabel.alpha = 1.0;
+                //                self.cameraUnavailableLabel.alpha = 1.0;
             }];
         }
     }
@@ -496,10 +548,10 @@ FileManagerViewController *fileManager;
     
     if ( showResumeButton ) {
         // Simply fade-in a button to enable the user to try to resume the session running.
-//        self.resumeButton.hidden = NO;
-//        self.resumeButton.alpha = 0.0;
+        //        self.resumeButton.hidden = NO;
+        //        self.resumeButton.alpha = 0.0;
         [UIView animateWithDuration:0.25 animations:^{
-//            self.resumeButton.alpha = 1.0;
+            //            self.resumeButton.alpha = 1.0;
         }];
     }
 }
@@ -508,20 +560,20 @@ FileManagerViewController *fileManager;
 {
     NSLog( @"Capture session interruption ended" );
     
-//    if ( ! self.resumeButton.hidden ) {
-//        [UIView animateWithDuration:0.25 animations:^{
-//            self.resumeButton.alpha = 0.0;
-//        } completion:^( BOOL finished ) {
-//            self.resumeButton.hidden = YES;
-//        }];
-//    }
-//    if ( ! self.cameraUnavailableLabel.hidden ) {
-//        [UIView animateWithDuration:0.25 animations:^{
-//            self.cameraUnavailableLabel.alpha = 0.0;
-//        } completion:^( BOOL finished ) {
-//            self.cameraUnavailableLabel.hidden = YES;
-//        }];
-//    }
+    //    if ( ! self.resumeButton.hidden ) {
+    //        [UIView animateWithDuration:0.25 animations:^{
+    //            self.resumeButton.alpha = 0.0;
+    //        } completion:^( BOOL finished ) {
+    //            self.resumeButton.hidden = YES;
+    //        }];
+    //    }
+    //    if ( ! self.cameraUnavailableLabel.hidden ) {
+    //        [UIView animateWithDuration:0.25 animations:^{
+    //            self.cameraUnavailableLabel.alpha = 0.0;
+    //        } completion:^( BOOL finished ) {
+    //            self.cameraUnavailableLabel.hidden = YES;
+    //        }];
+    //    }
 }
 
 #pragma mark File Output Recording Delegate
@@ -532,7 +584,7 @@ FileManagerViewController *fileManager;
     dispatch_async( dispatch_get_main_queue(), ^{
         self.cameraButton.enabled = YES;
         self.startCameraActionButton.enabled = YES;
-//        [self.recordButton setTitle:NSLocalizedString( @"Stop", @"Recording button stop title") forState:UIControlStateNormal];
+        //        [self.recordButton setTitle:NSLocalizedString( @"Stop", @"Recording button stop title") forState:UIControlStateNormal];
     });
 }
 
@@ -549,13 +601,13 @@ FileManagerViewController *fileManager;
     UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     
-//    dispatch_block_t cleanup = ^{
-//        [[NSFileManager defaultManager] removeItemAtURL:outputFileURL error:nil];
-//        if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
-//            [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
-//        }
-//    };
-//    
+    //    dispatch_block_t cleanup = ^{
+    //        [[NSFileManager defaultManager] removeItemAtURL:outputFileURL error:nil];
+    //        if ( currentBackgroundRecordingID != UIBackgroundTaskInvalid ) {
+    //            [[UIApplication sharedApplication] endBackgroundTask:currentBackgroundRecordingID];
+    //        }
+    //    };
+    //
     BOOL success = YES;
     
     if ( error ) {
@@ -571,18 +623,18 @@ FileManagerViewController *fileManager;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSData *imageData = [[NSData alloc]init];
                     imageData = [self getThumbNail:outputFileURL];
-                  //  [_uploadActivityIndicator setHidden:NO];
+                    //  [_uploadActivityIndicator setHidden:NO];
                     
-                //    [_uploadActivityIndicator startAnimating];
+                    //    [_uploadActivityIndicator startAnimating];
                     self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                     [_playiIconView setHidden:NO];
-                  //  [ self.thumbnailImageView setAlpha:0.4];
-                //    [_playiIconView setAlpha:0.4];
-
+                    //  [ self.thumbnailImageView setAlpha:0.4];
+                    //    [_playiIconView setAlpha:0.4];
+                    
                     [self saveImage:imageData];
                     [self moveVideoToDocumentDirectory:outputFileURL];
-
-//                    cleanup();
+                    
+                    //                    cleanup();
                 });
                 
                 
@@ -604,23 +656,23 @@ FileManagerViewController *fileManager;
                     if ( ! success ) {
                         NSLog( @"Could not save movie to photo library: %@", error );
                     }
-                   // cleanup();
+                    // cleanup();
                 }];
             }
             else {
-              //  cleanup();
+                //  cleanup();
             }
         }];
     }
     else {
-       // cleanup();
+        // cleanup();
     }
     // Enable the Camera and Record buttons to let the user switch camera and start another recording.
     dispatch_async( dispatch_get_main_queue(), ^{
         // Only enable the ability to change camera if the device has more than one camera.
         self.cameraButton.enabled = ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
-//        self.recordButton.enabled = YES;
-//        [self.recordButton setTitle:NSLocalizedString( @"Record", @"Recording button record title" ) forState:UIControlStateNormal];
+        //        self.recordButton.enabled = YES;
+        //        [self.recordButton setTitle:NSLocalizedString( @"Record", @"Recording button record title" ) forState:UIControlStateNormal];
     });
 }
 
@@ -632,20 +684,20 @@ FileManagerViewController *fileManager;
     NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
     NSURL *fileURL = [self grabFileURL:[NSString stringWithFormat:@"%@%@",dateString,@".mov"]];
     NSData *movieData = [NSData dataWithContentsOfURL:path];
- //  BOOL success =  [movieData writeToURL:fileURL atomically:YES];
+    //  BOOL success =  [movieData writeToURL:fileURL atomically:YES];
     
     NSLog(@"&&&&&&&&&%@",fileURL);
-   // [self saveIphoneCameraSnapShots:dateString path:[fileURL path]];
-  [self loaduploadManager : path ];
+    // [self saveIphoneCameraSnapShots:dateString path:[fileURL path]];
+    [self loaduploadManager : path ];
     // save it to the Camera Roll
     UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
-//    if(success)
-//    {
-//  //  [self loaduploadManager : fileURL];
-//    }
-//    else{
-//        NSLog(@"%@ failed to write");
-//    }
+    //    if(success)
+    //    {
+    //  //  [self loaduploadManager : fileURL];
+    //    }
+    //    else{
+    //        NSLog(@"%@ failed to write");
+    //    }
     
 }
 
@@ -742,17 +794,17 @@ FileManagerViewController *fileManager;
                         
                         //create and show thumbnail
                         dispatch_async( dispatch_get_main_queue(), ^{
-                          //  [_uploadActivityIndicator setHidden:NO];
-
-                        //   [_uploadActivityIndicator startAnimating];
-                           // [ self.thumbnailImageView setAlpha:0.4];
-
+                            //  [_uploadActivityIndicator setHidden:NO];
+                            
+                            //   [_uploadActivityIndicator startAnimating];
+                            // [ self.thumbnailImageView setAlpha:0.4];
+                            
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             
                             [self saveImage:imageData];
                             
-                        //    [self loaduploadManager];
-                          [self loaduploadManagerForImage];
+                            //    [self loaduploadManager];
+                            [self loaduploadManagerForImage];
                             
                         } );
                     }
@@ -831,8 +883,8 @@ FileManagerViewController *fileManager;
     NSLog(@"BOOl%@",filePath);
     [self saveIphoneCameraSnapShots:dateString path:filePath];
     
-   ShotsDict = [[NSMutableDictionary alloc]init];
-   [ShotsDict setValue:filePath forKey:dateString];
+    ShotsDict = [[NSMutableDictionary alloc]init];
+    [ShotsDict setValue:filePath forKey:dateString];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
@@ -861,7 +913,7 @@ FileManagerViewController *fileManager;
     NSLog(@"Array%@",snapShotsArray);
     
     if([snapShotsArray count] > 0){
-    
+        
         for(NSString *snapShotValue in snapShotsArray)
         {
             NSString *snapImageName =[snapShotValue valueForKey:@"imageName"];
@@ -906,7 +958,7 @@ FileManagerViewController *fileManager;
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-      
+        
         switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
@@ -943,8 +995,8 @@ FileManagerViewController *fileManager;
 - (IBAction)didTapChangeCamera:(id)sender
 {
     self.cameraButton.enabled = NO;
-//    self.recordButton.enabled = NO;
-//    self.stillButton.enabled = NO;
+    //    self.recordButton.enabled = NO;
+    //    self.stillButton.enabled = NO;
     // flip camera view
     [UIView transitionWithView:_previewView duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:nil completion:^(BOOL finished) {
     }];
@@ -968,7 +1020,7 @@ FileManagerViewController *fileManager;
                 
                 preferredPosition = AVCaptureDevicePositionFront;
                 [self showFlashImage:false];
-
+                
                 break;
         }
         
@@ -1002,8 +1054,8 @@ FileManagerViewController *fileManager;
         
         dispatch_async( dispatch_get_main_queue(), ^{
             self.cameraButton.enabled = YES;
-//            self.recordButton.enabled = YES;
-//            self.stillButton.enabled = YES;
+            //            self.recordButton.enabled = YES;
+            //            self.stillButton.enabled = YES;
             
         } );
     } );
@@ -1011,7 +1063,7 @@ FileManagerViewController *fileManager;
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
-//    [self stopLiveStreaming];
+    //    [self stopLiveStreaming];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1035,18 +1087,18 @@ FileManagerViewController *fileManager;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self.navigationController presentViewController:navController animated:true completion:^{
     }];
-//    [self presentViewController:mysharedChannelVC animated:true completion:^{
-//        
-//    }];
+    //    [self presentViewController:mysharedChannelVC animated:true completion:^{
+    //
+    //    }];
 }
 
 - (IBAction)didTapPhotoViewer:(id)sender {
-        
+    
     [self loadPhotoViewer];
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
-
+    
     [self loadStreamsGalleryView];
 }
 
@@ -1075,10 +1127,10 @@ FileManagerViewController *fileManager;
     PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
     
     photoViewerViewController.snapShots = snapShotsDict;
-  //  PhotoViewerViewController.ShotsDictionary =ShotsDict;
+    //  PhotoViewerViewController.ShotsDictionary =ShotsDict;
     photoViewerViewController.ShotsDictionary =ShotsDict;
     
-
+    
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1088,17 +1140,17 @@ FileManagerViewController *fileManager;
 }
 -(void) loaduploadManager : (NSURL *)filePath
 {
-     snapShotsDict = [self displayIphoneCameraSnapShots];
+    snapShotsDict = [self displayIphoneCameraSnapShots];
     upload *uploadManager =[[upload alloc]init];
     uploadManager.snapShots = snapShotsDict;
     
-   uploadManager.shotDict = ShotsDict;
-
+    uploadManager.shotDict = ShotsDict;
+    
     uploadManager.media = @"video";
     NSLog(@"%@", filePath);
     uploadManager.videoPath =filePath;
     [uploadManager uploadMedia];
-   
+    
 }
 -(void) loaduploadManagerForImage
 {
@@ -1142,7 +1194,7 @@ FileManagerViewController *fileManager;
 #pragma mark : VCSessionState Delegate
 - (void) connectionStatusChanged:(VCSessionState) state
 {
-
+    
     switch(state) {
             
         case VCSessionStateStarting:
@@ -1151,16 +1203,16 @@ FileManagerViewController *fileManager;
         case VCSessionStateStarted:
             [self hideProgressBar];
             NSLog(@"Disconnect");
-//            [self saveThumbnailImageLive: [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"]];
+            [self performSelector:@selector(screenCapture) withObject:nil afterDelay:2.0];
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
             NSLog(@"End Stream");
             break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-         //   [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
+            //   [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
             [liveStreaming stopStreamingClicked];
             NSLog(@"VCSessionStateError");
@@ -1171,40 +1223,6 @@ FileManagerViewController *fileManager;
     }
 }
 
--(void) saveThumbnailImageLive:(NSString *)username{
-  //  let baseStreamUrl =
-    NSString *baseStreamUrl = [[NSUserDefaults standardUserDefaults] objectForKey:@"LiveStreamUrl"];
-    
-    NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-    NSString * finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,username,@"Live"];
-    const char *c = [baseStreamUrl UTF8String];
-    const char *d = [finalPath UTF8String];
-    
-   // int fla = screencap(c,d);
-  //  NSLog(@"%d",fla);
-    BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:finalPath];
-    
-    NSLog(@"%@", fileExistFlag);
-}
-
-
-//func saveThumbnailImageLive(streamToken:String , AndUserName userName:String) {
-//    let streamPathStr = self.getBaseStreamWithToken(streamToken, AndUserName: userName)
-//    let parentPathStr = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-//    let savingPathStr = "\(parentPathStr)/\(userName)Live"
-//    
-//    let streamPath = (streamPathStr as NSString).UTF8String
-//    let bufferStreampath = UnsafeMutablePointer<Int8>(streamPath)
-//    
-//    let savingPath = (savingPathStr as NSString).UTF8String
-//    let bufferSavingpath = UnsafeMutablePointer<Int8>(savingPath)
-//    let flag = screencap(bufferStreampath, bufferSavingpath)
-//    print(flag)
-//    
-//    if(NSFileManager.defaultManager().fileExistsAtPath(savingPathStr)){
-//        print("hi")
-//    }
-//}
 
 
 #pragma mark :- StreamingProtocol delegates
@@ -1231,18 +1249,18 @@ FileManagerViewController *fileManager;
      rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live/stream
      */
     
-NSString * url  = @"rtsp://192.168.16.33:1935/live";
+    NSString * url  = @"rtsp://192.168.16.33:1935/live";
     
-//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live";
-//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live";
-//NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live";
-//    NSDate * now = [NSDate date];
-//    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
-//    [outputFormatter setDateFormat:@"HH:mm:ss"];
-//    NSString *streamName = [outputFormatter stringFromDate:now];
-//    NSString * url = @"rtsp://192.168.16.33:1935/live";+
-//    NSString * url = @"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live";
-//    NSString * url = @"rtsp://priyesh:priyesh@192.168.16.33:1935/live";
+    //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live";
+    //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live";
+    //NSString * url  = @"rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live";
+    //    NSDate * now = [NSDate date];
+    //    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+    //    [outputFormatter setDateFormat:@"HH:mm:ss"];
+    //    NSString *streamName = [outputFormatter stringFromDate:now];
+    //    NSString * url = @"rtsp://192.168.16.33:1935/live";+
+    //    NSString * url = @"rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live";
+    //    NSString * url = @"rtsp://priyesh:priyesh@192.168.16.33:1935/live";
     
     [_liveSteamSession startRtmpSessionWithURL:url andStreamKey:@"iPhoneliveStreaming"];
 }
@@ -1442,7 +1460,7 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
 -(NSData *)getThumbNail:(NSURL*)stringPath
 {
     UIImage *firstImage =[[UIImage alloc] init];
-   // AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:stringPath options:nil];
+    // AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:stringPath options:nil];
     //stringPath is a path of stored video file from document directory
     NSURL *videoURL = [NSURL fileURLWithPath:[stringPath path]];
     AVPlayerItem *SelectedItem = [AVPlayerItem playerItemWithURL:stringPath];
@@ -1457,14 +1475,14 @@ NSString * url  = @"rtsp://192.168.16.33:1935/live";
     CMTime time = CMTimeMake(0.0,600);
     CGImageRef oneRef = [generate1 copyCGImageAtTime:time actualTime:NULL error:&err];
     UIImage *one = [[UIImage alloc] initWithCGImage:oneRef];
-   
+    
     UIImage *result  =  [self drawImage:[UIImage imageNamed:@"Circled Play"] inImage:one atPoint:CGPointMake(50, 50)];
-
+    
     NSData *imageData = [[NSData alloc] init];
     imageData = UIImageJPEGRepresentation(result,1.0);
     // get image cropped from to and bottom
     return imageData;
-   // return theImage;
+    // return theImage;
 }
 
 

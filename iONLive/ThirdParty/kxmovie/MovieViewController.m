@@ -221,6 +221,38 @@ static NSMutableDictionary * gHistory;
         videoProgressBar.hidden = true;
         _liveVideo = live;
         rtspFilePath = path;
+        
+        if([parameters count] > 0)
+        {
+            NSString *channel = [parameters valueForKey:@"channelName"];
+            NSString *user = [parameters valueForKey:@"userName"];
+            UIImage *image = [parameters valueForKey:@"profileImage"];
+            NSString *notif = [parameters valueForKey:@"notifType"];
+            profilePicture.image = image;
+            channelName.text = channel;
+            typeMedia.text = @"Live";
+            userName.text = user;
+            if([notif isEqual: @"likes"])
+            {
+                likeFlag = 0;
+            }
+            else{
+                likeFlag = 1;
+            }
+            
+            NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+            userId = [standardDefaults valueForKey:@"userLoginIdKey"];
+            accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
+            notificationType = @"LIKE";
+            mediaDetailId = [parameters valueForKey:@"mediaId"];
+            
+            if([userId isEqualToString:user]){
+                heartTapButton.hidden = YES;
+                typeMedia.text = @"";
+                userName.text = @"";
+            }
+
+        }
         _parameters = nil;
         [self setUpDefaultValues];
         NSLog(@"rtsp File Path = %@",path);

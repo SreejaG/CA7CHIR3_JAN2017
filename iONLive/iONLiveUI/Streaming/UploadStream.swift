@@ -257,7 +257,7 @@ class UploadStream : NSObject
     
     func getCameraServer() -> UnsafeMutablePointer<CChar>
     {
-        let cameraServer = "rtsp://192.168.42.1:554/live"
+        let cameraServer = "rtsp://104.196.15.240:1935/live"
         let cameraServerPtr = strdup(cameraServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
         let cameraServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(cameraServerPtr)
         return cameraServerName

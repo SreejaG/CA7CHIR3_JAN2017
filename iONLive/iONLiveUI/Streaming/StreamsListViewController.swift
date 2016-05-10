@@ -93,6 +93,11 @@ class StreamsListViewController: UIViewController{
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        removeOverlay()
+    }
+
     
     func initialise()
     {
@@ -224,9 +229,9 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-//            mediaImage = UIImage()
-//            print("null Image")
-//            completion(result:mediaImage)
+            mediaImage = UIImage()
+            print("null Image")
+            completion(result:UIImage(named: "thumb12")!)
         }
     }
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
@@ -320,7 +325,8 @@ class StreamsListViewController: UIViewController{
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = self.view.bounds
+         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -329,6 +335,7 @@ class StreamsListViewController: UIViewController{
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
+    
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
@@ -390,19 +397,21 @@ class StreamsListViewController: UIViewController{
         //  imageDataSource.removeAll()
         if let json = response as? [String: AnyObject]
         {
-            //           print("success = \(json["liveStreams"])")
-            //
+            print(json)
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
-            print(responseArrLive.count)
+            print(responseArrLive)
             if (responseArrLive.count != 0)
             {
+                print(responseArrLive)
                 for element in responseArrLive{
                     
                     let stremTockn = element[streamTockenKey] as! String
                     let thumbUrl = element["signedUrl"] as! String
-                    //   let userId = element[userIdKey] as! String
-                    //let channelname = element[channelNameKey] as! String
-                    let userId = ""
+                    let userId = element[userIdKey] as! String
+                    let channelname = element[channelNameKey] as! String
+                    let mediaId = element["live_stream_detail_id"]?.stringValue
+                    print(mediaId)
+//                    let userId = ""
                     var notificationType : String = String()
                     
                     if let notifType =  element["notification_type"] as? String
@@ -422,9 +431,10 @@ class StreamsListViewController: UIViewController{
                     
                     if(thumbUrl != ""){
                         let url: NSURL = convertStringtoURL(thumbUrl)
+                        print(url)
                         downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            //   self.dataSource.append([self.mediaIdKey:"", self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.mediaTypeKey:"live"])
-                            self.dataSource.append([self.mediaIdKey:"", self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey: userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:""])
+                          
+                            self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey: userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname])
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.streamListCollectionView.reloadData()
                             })
@@ -432,7 +442,7 @@ class StreamsListViewController: UIViewController{
                     }
                 }
             }
-            print(dataSource)
+//            print(dataSource)
             initialise()
             initialiseCloudData()
         }
@@ -572,7 +582,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                     cell.liveStatusLabel.text = "LIVE"
                     cell.liveNowIcon.hidden = false
                     cell.liveNowIcon.image = UIImage(named: "Live_now")
-                    cell.streamThumbnaleImageView.image = UIImage(named: "thumb1")
+                    cell.streamThumbnaleImageView.image = imageThumb
                     //dataSource[indexPath.row][thumbImageKey] as? UIImage
                 }
             }
@@ -608,10 +618,17 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 else
                 {
                     let streamTocken = dataSource[indexPath.row][streamTockenKey] as! String
-                    //live stream click
                     if streamTocken != ""
                     {
-                        self.loadLiveStreamView(streamTocken)
+                        let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][channelNameKey] as! String, "userName":self.dataSource[indexPath.row][userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][mediaTypeKey] as! String, "profileImage":UIImage(), "notifType":self.dataSource[indexPath.row][notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][mediaIdKey] as! String]
+                        
+                        print(parameters)
+                        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: parameters as [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                        
+                        self.presentViewController(vc, animated: true) { () -> Void in
+                            
+                        }
+//                        self.loadLiveStreamView(streamTocken)
                     }
                     else
                     {
