@@ -9,7 +9,7 @@
 import UIKit
 
 class FileManagerViewController: UIViewController {
-
+    
     class var sharedInstance: FileManagerViewController {
         struct Singleton {
             static let instance = FileManagerViewController()
@@ -20,7 +20,7 @@ class FileManagerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -47,6 +47,7 @@ class FileManagerViewController: UIViewController {
     func fileExist(mediaPath: String) -> Bool
     {
         let flag : Bool
+        print(mediaPath)
         let fileManager = NSFileManager.defaultManager()
         if(fileManager.fileExistsAtPath(mediaPath))
         {
@@ -69,7 +70,7 @@ class FileManagerViewController: UIViewController {
         let parentPath = getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaName)"
         let mediaSaveFlag : Bool
-       // print(savingPath)
+        print(savingPath)
         if(mediaImage != UIImage())
         {
             let image = UIImageJPEGRepresentation(mediaImage, 0.5)
@@ -84,7 +85,7 @@ class FileManagerViewController: UIViewController {
     
     func getImageFromFilePath(mediaPath: String) -> UIImage? {
         var mediaimage : UIImage = UIImage()
-    //    print(mediaPath)
+        print(mediaPath)
         if(fileExist(mediaPath)){
             mediaimage = UIImage(contentsOfFile: mediaPath)!
         }
@@ -92,5 +93,33 @@ class FileManagerViewController: UIViewController {
             mediaimage = UIImage()
         }
         return mediaimage
+    }
+    
+    
+    func deleteImageFromFilePath(mediaPath: String) -> Int {
+        let mediaDeleteFlag : Int
+        let fileManager = NSFileManager.defaultManager()
+        print(mediaPath)
+        if(fileExist(mediaPath)){
+            do {
+                try fileManager.removeItemAtPath(mediaPath)
+                mediaDeleteFlag = 1
+            }
+            catch let error as NSError {
+                mediaDeleteFlag = 0
+                print("Ooops! Something went wrong: \(error)")
+            }
+        }
+        else{
+            mediaDeleteFlag = 0
+        }
+        if(fileExist(mediaPath)){
+            print("hi exist")
+        }
+        else{
+            print("no file")
+        }
+        
+        return mediaDeleteFlag
     }
 }

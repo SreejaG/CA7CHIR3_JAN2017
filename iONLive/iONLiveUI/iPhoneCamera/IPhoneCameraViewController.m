@@ -25,6 +25,7 @@ static void * SessionRunningContext = &SessionRunningContext;
 
 NSString* selectedFlashOption = @"selectedFlashOption";
 int thumbnailSize = 50;
+int deleteCount = 0;
 
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSuccess,
@@ -330,12 +331,22 @@ FileManagerViewController *fileManager;
 }
 
 -(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
+    deleteCount = 0;
+    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
+    NSString *finalPath = [NSString stringWithFormat:@"%@LiveThumb",userName];
+    NSLog(@"%@",finalPath);
+    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
+}
+
+-(void) deleteThumbnailImageLive{
+//    deleteCount = deleteCount + 1;
     NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
     NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,userName,@"LiveThumb"];
     NSLog(@"%@",finalPath);
-    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
-    NSLog(@"%d",[[FileManagerViewController sharedInstance]fileExist:finalPath]);
+    int deletFlag = [[FileManagerViewController sharedInstance] deleteImageFromFilePath:finalPath];
+    NSLog(@"%d",deletFlag);
+    
 }
 
 -(void)screenCapture
@@ -353,7 +364,7 @@ FileManagerViewController *fileManager;
     UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
     [self saveThumbnailImageLive:image1];
     [self uploadThumbToCloud:image1];
-    UIImageWriteToSavedPhotosAlbum(image1, nil, nil, nil);
+ //   UIImageWriteToSavedPhotosAlbum(image1, nil, nil, nil);
 }
 
 -(void) uploadThumbToCloud:(UIImage *)image
@@ -371,7 +382,7 @@ FileManagerViewController *fileManager;
             
         }
         else{
-            NSLog(@"finish");
+            [self deleteThumbnailImageLive];
         }
     }];
     [dataTask resume];
@@ -1206,9 +1217,13 @@ FileManagerViewController *fileManager;
             [self performSelector:@selector(screenCapture) withObject:nil afterDelay:2.0];
             break;
         case VCSessionStateEnded:
+            NSLog(@"%d",deleteCount);
+           // if(deleteCount == 0){
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+          //  [self deleteThumbnailImageLive];
             NSLog(@"End Stream");
+          //  }
             break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
@@ -1222,7 +1237,6 @@ FileManagerViewController *fileManager;
             break;
     }
 }
-
 
 
 #pragma mark :- StreamingProtocol delegates

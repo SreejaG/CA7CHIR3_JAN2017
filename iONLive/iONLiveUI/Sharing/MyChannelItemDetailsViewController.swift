@@ -247,21 +247,6 @@ class MyChannelItemDetailsViewController: UIViewController {
             return
         }
         
-//        for i in limitMediaCount  ..< currentLimit   {
-//            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-//            if(mediaUrl != ""){
-//                let url: NSURL = convertStringtoURL(mediaUrl)
-//                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-//                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-//                    
-//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                        self.channelItemsCollectionView.reloadData()
-//                    })
-//                })
-//                
-//            }
-//        }
-        
         for i in limitMediaCount  ..< currentLimit   {
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
@@ -284,12 +269,13 @@ class MyChannelItemDetailsViewController: UIViewController {
                     })
                 }
             }
+             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+        }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+               
                 self.channelItemsCollectionView.reloadData()
             })
-            
-        }    
+        
         
     }
 

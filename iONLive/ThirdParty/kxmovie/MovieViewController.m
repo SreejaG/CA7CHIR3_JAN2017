@@ -221,7 +221,7 @@ static NSMutableDictionary * gHistory;
         videoProgressBar.hidden = true;
         _liveVideo = live;
         rtspFilePath = path;
-        
+        closeButton.hidden = true;
         if([parameters count] > 0)
         {
             NSString *channel = [parameters valueForKey:@"channelName"];
@@ -256,13 +256,16 @@ static NSMutableDictionary * gHistory;
         _parameters = nil;
         [self setUpDefaultValues];
         NSLog(@"rtsp File Path = %@",path);
+        
         //        [self setUpBlurView];
         //        if (_liveVideo) {
         //            [self checkWifiConnectionAndStartDecoder];
         //        }
         //        else
         //        {
+        
         [self startDecoder];
+        
         //        }
     }
     return self;
@@ -365,16 +368,33 @@ static NSMutableDictionary * gHistory;
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
 {
-    NSURL *url = [self convertStringToUrl:mediaUrl];
-    NSLog(@"%@",url);
+    
+    NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString *parentPathStr = [parentPath absoluteString];
+    NSString *mediaNamePath = [NSString stringWithFormat:@"%@full",mediaDetailId];
+    NSString *savingPath = [NSString stringWithFormat:@"%@/%@full",parentPathStr,mediaDetailId];
+//    NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
     UIImage *mediaImage;
-    NSData *data = [[NSData alloc] initWithContentsOfURL:url];
-    if(data != nil)
-    {
-        mediaImage = [[UIImage alloc]initWithData:data];
+    NSLog(@"%@ %@",mediaNamePath,savingPath);
+    bool fileExistFlag = [[FileManagerViewController sharedInstance] fileExist:savingPath];
+    
+    if(fileExistFlag == true){
+        mediaImage = [[FileManagerViewController sharedInstance] getImageFromFilePath:savingPath];
     }
     else{
-        mediaImage = [UIImage imageNamed:@"photo3"];
+        
+        NSURL *url = [self convertStringToUrl:mediaUrl];
+        NSLog(@"%@",url);
+   
+        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
+        if(data != nil)
+        {
+            mediaImage = [[UIImage alloc]initWithData:data];
+        }
+        else{
+            mediaImage = [UIImage imageNamed:@"photo3"];
+        }
+        [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
     }
      imageVideoView.image = mediaImage;
 }

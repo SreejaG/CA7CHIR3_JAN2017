@@ -30,12 +30,12 @@ class StreamsListViewController: UIViewController{
     var offsetToInt : Int = Int()
     let isWatched = "isWatched"
     let actualImageKey = "actualImage"
-
+    
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
-
+    
     let cameraController = IPhoneCameraViewController()
     
     let mediaUrlKey = "mediaUrl"
@@ -97,7 +97,7 @@ class StreamsListViewController: UIViewController{
         super.viewWillDisappear(true)
         removeOverlay()
     }
-
+    
     
     func initialise()
     {
@@ -190,7 +190,7 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-      func authenticationFailureHandler(error: NSError?, code: String)
+    func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
         if(offsetToInt <= totalMediaCount){
@@ -229,7 +229,7 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-            mediaImage = UIImage()
+            //            mediaImage = UIImage()
             print("null Image")
             completion(result:UIImage(named: "thumb12")!)
         }
@@ -271,7 +271,7 @@ class StreamsListViewController: UIViewController{
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
             print(savingPath)
-
+            
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
                 let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
@@ -325,8 +325,8 @@ class StreamsListViewController: UIViewController{
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        //        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -410,8 +410,7 @@ class StreamsListViewController: UIViewController{
                     let userId = element[userIdKey] as! String
                     let channelname = element[channelNameKey] as! String
                     let mediaId = element["live_stream_detail_id"]?.stringValue
-                    print(mediaId)
-//                    let userId = ""
+                    
                     var notificationType : String = String()
                     
                     if let notifType =  element["notification_type"] as? String
@@ -428,21 +427,25 @@ class StreamsListViewController: UIViewController{
                     else{
                         notificationType = "shared"
                     }
-                    
+                    var imageForMedia : UIImage = UIImage()
                     if(thumbUrl != ""){
-                        let url: NSURL = convertStringtoURL(thumbUrl)
-                        print(url)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                          
-                            self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:result ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey: userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname])
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.streamListCollectionView.reloadData()
+                            let url: NSURL = convertStringtoURL(thumbUrl)
+                            print(url)
+                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                if(result != UIImage()){
+                                    imageForMedia = result
+                                }
                             })
-                        })
                     }
+                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname])
                 }
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    
+                    self.streamListCollectionView.reloadData()
+                })
+                
             }
-//            print(dataSource)
+            
             initialise()
             initialiseCloudData()
         }
@@ -628,7 +631,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                         self.presentViewController(vc, animated: true) { () -> Void in
                             
                         }
-//                        self.loadLiveStreamView(streamTocken)
+                        //                        self.loadLiveStreamView(streamTocken)
                     }
                     else
                     {

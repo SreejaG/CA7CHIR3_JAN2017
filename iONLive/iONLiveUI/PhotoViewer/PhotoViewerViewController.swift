@@ -44,6 +44,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var limitMediaCount : Int = Int()
     var totalCount: Int = 0
     var fixedLimit : Int =  0
+    var videoDownloadIntex : Int = 0
   //  var longPressActive : Bool = false
     @IBOutlet var playIconInFullView: UIImageView!
     
@@ -314,7 +315,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             playIconInFullView.hidden = true
             
             downloadVideo(selectedCollectionViewIndex)
-            self.view.userInteractionEnabled = false
+          //  self.view.userInteractionEnabled = false
             
         }
         else
@@ -324,13 +325,44 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     func downloadVideo(index : Int)
     {
+        videoDownloadIntex = index
         let videoDownloadUrl = convertStringtoURL(self.imageDataSource[index][fullSignedUrlKey] as! String)
         
-        //   self.showOverlay()
-        
-        
-        // Create Progress View Control
-        
+        let mediaIdForFilePath = "\(imageDataSource[index][mediaIdKey]!)"
+        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+        let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
+    
+        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+        if fileExistFlag == true
+        {
+//            fullScrenImageView.alpha = 1.0
+//            self.view.userInteractionEnabled = true
+//            progressLabelDownload?.removeFromSuperview()
+//            progressViewDownload?.removeFromSuperview()
+            
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
+            
+            let url = NSURL(fileURLWithPath: savingPath)
+            self.moviePlayer = MPMoviePlayerController.init(contentURL: url)
+    
+            if let player = self.moviePlayer
+            {
+                 self.view.userInteractionEnabled = false
+                player.shouldAutoplay = true
+                player.prepareToPlay()
+                player.view.frame = CGRect(x: fullScrenImageView.frame.origin.x, y: fullScrenImageView.frame.origin.y, width: fullScrenImageView.frame.size.width, height: fullScrenImageView.frame.size.height)
+                              
+                player.view.sizeToFit()
+                player.scalingMode = MPMovieScalingMode.Fill
+                player.controlStyle = MPMovieControlStyle.None
+                player.movieSourceType = MPMovieSourceType.File
+                player.repeatMode = MPMovieRepeatMode.None
+                self.view.addSubview(player.view)
+                player.play()
+            }
+        }
+        else{
+
         
         // Add Label
         
@@ -351,6 +383,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScrenImageView.alpha = 0.2
         
         downloadTask!.resume()
+        }
         
     }
     
@@ -366,8 +399,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if progress == 1.0
         {
             fullScrenImageView.alpha = 1.0
-            self.view.userInteractionEnabled = true
-            
+        //    self.view.userInteractionEnabled = true
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
         }
@@ -377,47 +409,62 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         print(location)
         let data = NSData(contentsOfURL: location)
         if let imageData = data as NSData? {
-            let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-            let writePath = documents.stringByAppendingString("/")
-            let pa = writePath.stringByAppendingString("video.mov")
-            let url = NSURL(fileURLWithPath: pa)
+            let mediaIdForFilePath = "\(imageDataSource[videoDownloadIntex][mediaIdKey]!)"
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
+            let url = NSURL(fileURLWithPath: savingPath)
             print(url)
-            let fm = NSFileManager.defaultManager()
-            do {
-                let items = try fm.contentsOfDirectoryAtPath(documents)
-                
-                for item in items {
-                    print("Found \(item)")
-                }
-            } catch {
-                // failed to read directory – bad permissions, perhaps?
-            }
-            if(imageData.writeToURL(url, atomically:true))
-            {
+            let writeFlag = imageData.writeToURL(url, atomically: true)
+            if(writeFlag){
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
+                videoDownloadIntex = 0
                 
-                
-                self.moviePlayer = MPMoviePlayerController(contentURL: url)
+                self.moviePlayer = MPMoviePlayerController.init(contentURL: url)
                 if let player = self.moviePlayer {
+                     self.view.userInteractionEnabled = false
                     player.view.frame = CGRect(x: fullScrenImageView.frame.origin.x, y: fullScrenImageView.frame.origin.y, width: fullScrenImageView.frame.size.width, height: fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
                     player.scalingMode = MPMovieScalingMode.Fill
-                    //  player.fullscreen = true
                     player.controlStyle = MPMovieControlStyle.None
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
-                    
                     player.prepareToPlay()
                 }
-                
+
             }
+            
+
+            
+//            let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+//            let writePath = documents.stringByAppendingString("/")
+//            let pa = writePath.stringByAppendingString("video.mov")
+//            let url = NSURL(fileURLWithPath: pa)
+//            print(url)
+//            let fm = NSFileManager.defaultManager()
+//            do {
+//                let items = try fm.contentsOfDirectoryAtPath(documents)
+//                
+//                for item in items {
+//                    print("Found \(item)")
+//                }
+//            } catch {
+//                // failed to read directory – bad permissions, perhaps?
+//            }
+            
+        
+//            if(imageData.writeToURL(url, atomically:true))
+//            {
+//            }
+            
+            
         }
     }
     func playerDidFinish(notif:NSNotification)
     {
         self.moviePlayer.view.removeFromSuperview()
         playIconInFullView.hidden = false
+         self.view.userInteractionEnabled = true
         
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {

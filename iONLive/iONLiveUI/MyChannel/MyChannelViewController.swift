@@ -315,6 +315,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
             let thumbUrl = element["thumbnail_Url"] as! String
+            
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
