@@ -31,7 +31,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaSharedCount : String = "0"
     var dummyImagesDataSourceDatabase :[[String:AnyObject]] = [[String:AnyObject]]()
     var cacheDatabase :[[String:UIImage]]  = [[String:UIImage]]()
-    //var imageDataSource
     var progressViewDownload: UIProgressView?
     var progressLabelDownload: UILabel?
     var loadingOverlay: UIView?
@@ -45,7 +44,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var totalCount: Int = 0
     var fixedLimit : Int =  0
     var videoDownloadIntex : Int = 0
-  //  var longPressActive : Bool = false
     @IBOutlet var playIconInFullView: UIImageView!
     
     @IBOutlet weak var mediaTimeLabel: UILabel!
@@ -67,7 +65,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var progrs: Float = 0.0
     var queue = NSOperationQueue()
     var uploadCount : Int = 0
- //   var selectedArray:[Int] = [Int]()
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     let thumbSignedUrlKey = "thumbnail_name_SignedUrl"
@@ -78,6 +75,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var completed : Bool = false
     
     var mediaIdSelected : Int = 0
+ 
     private var downloadTask: NSURLSessionDownloadTask?
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
@@ -85,13 +83,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         return Singleton.instance
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
         getSignedURL()
         PhotoViewerInstance.controller = self
-        
     }
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
@@ -99,8 +98,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         if (scrollView.contentOffset.x >= fullyScrolledContentOffset)
         {
-            print("this is end, see you in console")
-            
             if(isLimitReached)
             {
                 isLimitReached = false
@@ -120,6 +117,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if offsetY > contentHeight - scrollView.frame.size.height {
         }
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -129,6 +127,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
         removeOverlay()
+        
+        if(downloadTask?.state == .Running)
+        {
+            downloadTask?.cancel()
+        }
     }
     
     @IBAction func deleteButtonAction(sender: AnyObject) {
@@ -139,15 +142,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             mediaIdSelected = dataSource[0][mediaIdKey] as! Int
         }
         mediaSelected.addObject(mediaIdSelected)
-      
         
-//        for i in 0 ..< selectedArray.count
-//        {
-//            if selectedArray[i] == 1
-//            {
-//                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
-//            }
-//        }
         if(mediaSelected.count > 0)
         {
             var channelIds : [Int] = [Int]()
@@ -199,20 +194,19 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         //            mediaTimeLabel.text = sdifferentString
         //        }
     }
+    
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             mediaIdSelected = 0
             dataSource.removeAll()
             mediaSelected.removeAllObjects()
-        //    selectedArray.removeAll()
             imageDataSource.removeAll()
             mediaDictionary.removeAllObjects()
-           // longPressActive = false
             dummyImagesDataSourceDatabase.removeAll()
+            
             selectedCollectionViewIndex = 0
             currentLimit = 0
             limitMediaCount = 0
@@ -240,16 +234,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         
         progressDict = progressDictionary
-        // if(progressDict[0] as! NSObject == 1)
-        //    {
-        //        completed = true
-        //    }
-        //    if(!completed)
-        //     {
         self.photoThumpCollectionView.reloadData();
-        //     }
-        
     }
+    
     func getSignedURL()
     {
         showOverlay()
@@ -259,12 +246,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         getChannelDetails(userId, token: accessToken)
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-       
-//        loadingOverlayController.view.frame = self.view.bounds
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -276,12 +260,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func initialise()
     {
-        
-        //        let kKeychainItemName: String = "ion-live-1120"
-        //        let kMyClientID: String = "821885679497-88oi8625g6g9kmpojmi5edv8t6qibu59.apps.googleusercontent.com"
-        //        let kMyClientSecret: String = "YjoqEGOdqEKuQHVuDxH0bYgW"
-        //        let kScope: String = "signedurl@ion-live-1120.iam.gserviceaccount.com"
-        
         fullScreenZoomView.userInteractionEnabled = true
         fullScreenZoomView.hidden = true
         fullScrenImageView.userInteractionEnabled = true
@@ -294,35 +272,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
-        
-//        let lpgr = UILongPressGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleLongPress(_:)))
-//        lpgr.minimumPressDuration = 0.5
-//        lpgr.delaysTouchesBegan = true
-//        lpgr.delegate = self
-//        self.photoThumpCollectionView.addGestureRecognizer(lpgr)
-//        self.photoThumpCollectionView.allowsMultipleSelection = true;
-        
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         
         let mediaType = dataSource[selectedCollectionViewIndex][mediaTypeKey] as! String
-        
-        
         if mediaType == "video"
         {
-            //fullScreenZoomView.hidden = false
             playIconInFullView.hidden = true
-            
             downloadVideo(selectedCollectionViewIndex)
-          //  self.view.userInteractionEnabled = false
-            
         }
         else
         {
             fullScreenZoomView.hidden = false
         }
     }
+    
     func downloadVideo(index : Int)
     {
         videoDownloadIntex = index
@@ -331,27 +296,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let mediaIdForFilePath = "\(imageDataSource[index][mediaIdKey]!)"
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
-    
+        
         let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
         if fileExistFlag == true
         {
-//            fullScrenImageView.alpha = 1.0
-//            self.view.userInteractionEnabled = true
-//            progressLabelDownload?.removeFromSuperview()
-//            progressViewDownload?.removeFromSuperview()
-            
             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
             
             let url = NSURL(fileURLWithPath: savingPath)
             self.moviePlayer = MPMoviePlayerController.init(contentURL: url)
-    
+            
             if let player = self.moviePlayer
             {
-                 self.view.userInteractionEnabled = false
+                self.view.userInteractionEnabled = false
                 player.shouldAutoplay = true
                 player.prepareToPlay()
                 player.view.frame = CGRect(x: fullScrenImageView.frame.origin.x, y: fullScrenImageView.frame.origin.y, width: fullScrenImageView.frame.size.width, height: fullScrenImageView.frame.size.height)
-                              
+                
                 player.view.sizeToFit()
                 player.scalingMode = MPMovieScalingMode.Fill
                 player.controlStyle = MPMovieControlStyle.None
@@ -362,27 +322,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
         }
         else{
-
-        
-        // Add Label
-        
-        let downloadRequest = NSMutableURLRequest(URL: videoDownloadUrl)
-        let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        
-        downloadTask = session.downloadTaskWithRequest(downloadRequest)
-        progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
-        progressViewDownload?.center = fullScrenImageView.center
-        
-        view.addSubview(progressViewDownload!)
-        
-        // Add Label
-        progressLabelDownload = UILabel()
-        let frame = CGRectMake(fullScrenImageView.center.x - 100, fullScrenImageView.center.y - 100, 200, 50)
-        progressLabelDownload?.frame = frame
-        view.addSubview(progressLabelDownload!)
-        fullScrenImageView.alpha = 0.2
-        
-        downloadTask!.resume()
+            let downloadRequest = NSMutableURLRequest(URL: videoDownloadUrl)
+            let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            
+            downloadTask = session.downloadTaskWithRequest(downloadRequest)
+            progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
+            progressViewDownload?.center = fullScrenImageView.center
+            
+            view.addSubview(progressViewDownload!)
+            
+            progressLabelDownload = UILabel()
+            let frame = CGRectMake(fullScrenImageView.center.x - 100, fullScrenImageView.center.y - 100, 200, 50)
+            progressLabelDownload?.frame = frame
+            view.addSubview(progressLabelDownload!)
+            fullScrenImageView.alpha = 0.2
+            
+            downloadTask!.resume()
         }
         
     }
@@ -394,26 +349,21 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         progressLabelDownload?.text = "Downloading  \(y) %"
         progressLabelDownload!.textAlignment = NSTextAlignment.Center
         progressViewDownload!.progress = progress
-        print(progress)
-        print(progress * 100)
         if progress == 1.0
         {
             fullScrenImageView.alpha = 1.0
-        //    self.view.userInteractionEnabled = true
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
         }
     }
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-        print(location)
         let data = NSData(contentsOfURL: location)
         if let imageData = data as NSData? {
             let mediaIdForFilePath = "\(imageDataSource[videoDownloadIntex][mediaIdKey]!)"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
-            print(url)
             let writeFlag = imageData.writeToURL(url, atomically: true)
             if(writeFlag){
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
@@ -421,7 +371,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 
                 self.moviePlayer = MPMoviePlayerController.init(contentURL: url)
                 if let player = self.moviePlayer {
-                     self.view.userInteractionEnabled = false
+                    self.view.userInteractionEnabled = false
                     player.view.frame = CGRect(x: fullScrenImageView.frame.origin.x, y: fullScrenImageView.frame.origin.y, width: fullScrenImageView.frame.size.width, height: fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
                     player.scalingMode = MPMovieScalingMode.Fill
@@ -431,40 +381,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.view.addSubview(player.view)
                     player.prepareToPlay()
                 }
-
             }
-            
-
-            
-//            let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-//            let writePath = documents.stringByAppendingString("/")
-//            let pa = writePath.stringByAppendingString("video.mov")
-//            let url = NSURL(fileURLWithPath: pa)
-//            print(url)
-//            let fm = NSFileManager.defaultManager()
-//            do {
-//                let items = try fm.contentsOfDirectoryAtPath(documents)
-//                
-//                for item in items {
-//                    print("Found \(item)")
-//                }
-//            } catch {
-//                // failed to read directory – bad permissions, perhaps?
-//            }
-            
-        
-//            if(imageData.writeToURL(url, atomically:true))
-//            {
-//            }
-            
-            
         }
     }
     func playerDidFinish(notif:NSNotification)
     {
         self.moviePlayer.view.removeFromSuperview()
         playIconInFullView.hidden = false
-         self.view.userInteractionEnabled = true
+        self.view.userInteractionEnabled = true
         
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
@@ -474,61 +398,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScreenZoomView.hidden = true
     }
     
-//    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer) {
-//        if gestureReconizer.state != UIGestureRecognizerState.Ended {
-//            return
-//        }
-//        
-//        let p = gestureReconizer.locationInView(self.photoThumpCollectionView)
-//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
-//        
-//        if let index = indexPath {
-//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
-//            // cell?.layer.borderWidth = 2.0
-//            // cell?.layer.borderColor = UIColor.blueColor().CGColor
-//            //
-//            let singleTapImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.singleTap(_:)))
-//            singleTapImageViewRecognizer.numberOfTapsRequired = 1
-//            cell!.addGestureRecognizer(singleTapImageViewRecognizer)
-//            longPressActive = true
-//            
-//            selectedArray[(indexPath?.row)!] = 1
-//            photoThumpCollectionView.reloadData()
-//            print(index.row)
-//        } else {
-//            print("Could not find index path")
-//        }
-//    }
-    
-//    func singleTap(Recognizer:UITapGestureRecognizer){
-//        let p = Recognizer.locationInView(self.photoThumpCollectionView)
-//        let indexPath = self.photoThumpCollectionView.indexPathForItemAtPoint(p)
-//        
-//        if let index = indexPath {
-//            let cell = self.photoThumpCollectionView.cellForItemAtIndexPath(index)
-//            cell?.layer.borderColor = UIColor.clearColor().CGColor
-//            cell?.removeGestureRecognizer(Recognizer)
-//            //   longPressActive = false;
-//        }
-//    }
-    
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         mediaSelected.removeAllObjects()
         if mediaIdSelected == 0
         {
-           mediaIdSelected = dataSource[0][mediaIdKey] as! Int
+            mediaIdSelected = dataSource[0][mediaIdKey] as! Int
         }
         mediaSelected.addObject(mediaIdSelected)
         mediaIdSelected = 0
-        
-//        for i in 0 ..< selectedArray.count
-//        {
-//            
-//            if selectedArray[i] == 1
-//            {
-//                mediaSelected.addObject(dataSource[i][mediaIdKey]!)
-//            }
-//        }
         
         if(mediaSelected.count > 0)
         {
@@ -536,9 +413,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
             addChannelVC.mediaDetailSelected = mediaSelected
             addChannelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(addChannelVC, animated: true)
+            self.navigationController?.pushViewController(addChannelVC, animated: false)
         }
     }
+    
     func readImageFromDataBase()
     {
         let cameraController = IPhoneCameraViewController()
@@ -546,7 +424,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if snapShots.count > 0
         {
             let snapShotsKeys = snapShots.allKeys as NSArray
-            
             let descriptor: NSSortDescriptor = NSSortDescriptor(key: nil, ascending: false)
             let sortedSnapShotsKeys: NSArray = snapShotsKeys.sortedArrayUsingDescriptors([descriptor])
             
@@ -561,7 +438,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
                     {
                         let dict = mediaCacheManager.getResponse() as NSMutableDictionary
-                        print(dict)
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
                         let sizeThumb = CGSizeMake(70,70)
                         let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
@@ -571,15 +447,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         {
                             dummyImagesDataSourceDatabase.append([thumbSignedUrlKey:dict["UploadThumbnailUrl"]!,fullSignedUrlKey:dict["UploadObjectUrl"]! ,mediaIdKey:dict["mediaId"]!,mediaTypeKey:dict["type"]!,timeStampKey :"",thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
                         }
-                        //dummyImagesDataSourceDatabase.append([thumbImageKey:imagefterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
                     }
                 }
             }
             
-            // dataSource = dummyImagesDataSourceDatabase
-            /// checksDataSourceDatabase = dummyImagesDataSourceDatabase
             uploadCount = dummyImagesDataSourceDatabase.count
-            print(uploadCount)
             if dummyImagesDataSourceDatabase.count > 0
             {
                 let type = dummyImagesDataSourceDatabase[0][mediaTypeKey] as! String
@@ -594,14 +466,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 }
                 if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
                 {
-                    print(imagePath)
-                    
                     self.fullScrenImageView.image = (imagePath as! UIImage)
                     self.fullScreenZoomView.image = (imagePath as! UIImage)
                 }
             }
         }
     }
+    
     //PRAGMA MARK:- IBActions
     
     @IBAction func channelButtonClicked(sender: AnyObject)
@@ -609,11 +480,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let myChannelStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
         let myChannelVC = myChannelStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier)
         myChannelVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(myChannelVC, animated: true)
+        self.navigationController?.pushViewController(myChannelVC, animated: false)
     }
+    
     @IBAction func donebuttonClicked(sender: AnyObject)
     {
-        self.dismissViewControllerAnimated(true) { () -> Void in
+        self.dismissViewControllerAnimated(false) { () -> Void in
             
         }
     }
@@ -634,16 +506,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
         
-        //cell for live streams
-        
         if dataSource.count > indexPath.row
         {
-//            //  cell.progressView.hidden = true
-//            if(dataSource.count == selectedArray.count){
-//            }
-//            else{
-//                selectedArray.append(0)
-//            }
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
@@ -651,14 +515,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 if dataSource[indexPath.row][mediaTypeKey] as! String == "video"
                 {
                     cell.playIcon.hidden = false
-                    
-                    //  playIconInFullView.hidden = false
-                    
                 }
                 else
                 {
                     cell.playIcon.hidden = true
-                    
                 }
                 cell.thumbImageView.image = (thumpImage as! UIImage)
                 if(progressDict.count>0)
@@ -676,18 +536,13 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                             {
                                 cell.progressView.hidden = true
                                 fullScrenImageView.userInteractionEnabled = true
-                                // progressDict.removeAllObjects()
-                                
                             }
                             else{
                                 
                             }
-                            
                         }
                         else
                         {
-                            // cell.playIcon.hidden = true
-                            
                             cell.progressView.hidden = true
                         }
                     }
@@ -695,33 +550,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 else
                 {
                     cell.progressView.hidden = true
-                    
                 }
-//                if(longPressActive)
-//                {
-//                    for i in 0 ..< selectedArray.count
-//                    {
-//                        if indexPath.row == i
-//                        {
-//                            if selectedArray[i] == 1
-//                            {
-//                                cell.layer.borderWidth = 2.0
-//                                cell.layer.borderColor = UIColor.blueColor().CGColor
-//                            }
-//                            else{
-//                                cell.layer.borderWidth = 1.0
-//                                cell.layer.borderColor = UIColor.clearColor().CGColor
-//                            }
-//                        }
-//                    }
-//                    
-//                }
-//                else
-//                {
-//                    cell.layer.borderWidth = 1.0
-//                    cell.layer.borderColor = UIColor.clearColor().CGColor
-//                }
-                
             }
         }
         return cell
@@ -731,85 +560,43 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         
         mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
-        print(mediaIdSelected)
-        //   let cell = collectionView.cellForItemAtIndexPath(indexPath)
-        
-        
-//        if(!longPressActive)
-//        {
-            //            cell!.layer.borderWidth = 2.0
-            //            cell!.layer.borderColor = UIColor.blueColor().CGColor
-        
-            if dataSource.count > indexPath.row
+        if dataSource.count > indexPath.row
+        {
+            var dict = dataSource[indexPath.row]
+            selectedCollectionViewIndex = indexPath.row
+            
+            setLabelValue(indexPath.row)
+            
+            if let fullImage = dict[fullImageKey]
             {
-                var dict = dataSource[indexPath.row]
-                selectedCollectionViewIndex = indexPath.row
-              
-                setLabelValue(indexPath.row)
-                //   print("Selected Index %d %d %d ", indexPath.row , imageDataSource.count ,mediaTypeArray.count)
-                if let fullImage = dict[fullImageKey]
+                if dataSource[indexPath.row][mediaTypeKey] as! String == "video"
                 {
-                    if dataSource[indexPath.row][mediaTypeKey] as! String == "video"
+                    playIconInFullView.hidden = false;
+                    self.fullScrenImageView.image = (fullImage as! UIImage)
+                    self.fullScreenZoomView.image = (fullImage as! UIImage)
+                }
+                else
+                {
+                    let url = dataSource[indexPath.row][fullSignedUrlKey]
+                    let downloadURL =  self.convertStringtoURL(url as! String)
+                    
+                    let cacheThumb = checkCacheMedia(String(dataSource[indexPath.row][mediaIdKey]))
+                    if(cacheThumb.count>0)
                     {
-                        playIconInFullView.hidden = false;
-                        self.fullScrenImageView.image = (fullImage as! UIImage)
-                        self.fullScreenZoomView.image = (fullImage as! UIImage)
+                        self.fullScrenImageView.image = cacheThumb[0][fullImageKey]! as UIImage
+                        self.fullScreenZoomView.image = cacheThumb[0][fullImageKey]! as UIImage
                     }
-                    else
-                    {
-                        //       print(fullImageLinkArray.count)
-                        let url = dataSource[indexPath.row][fullSignedUrlKey]
-                        
-                        let downloadURL =  self.convertStringtoURL(url as! String)
-                        
-                        let cacheThumb = checkCacheMedia(String(dataSource[indexPath.row][mediaIdKey]))
-                        if(cacheThumb.count>0)
-                        {
-                            self.fullScrenImageView.image = cacheThumb[0][fullImageKey]! as UIImage
-                            self.fullScreenZoomView.image = cacheThumb[0][fullImageKey]! as UIImage
-                        }
-                        else{
-                            self.downloadMedia(downloadURL, key: "FullImage", completion: { (result) -> Void in
-                                self.fullScrenImageView.image = result
-                                self.fullScreenZoomView.image = result
-                            })
-                        }
-                        playIconInFullView.hidden = true;
-                      
+                    else{
+                        self.downloadMedia(downloadURL, key: "FullImage", completion: { (result) -> Void in
+                            self.fullScrenImageView.image = result
+                            self.fullScreenZoomView.image = result
+                        })
                     }
+                    playIconInFullView.hidden = true;
+                    
                 }
             }
-//        }
-//        else
-//        {
-//            //            cell!.layer.borderWidth = 2.0
-//            //            cell!.layer.borderColor = UIColor.blueColor().CGColor
-//            
-//            for i in 0 ..< selectedArray.count
-//            {
-//                
-//                if i == indexPath.row
-//                {
-//                    if selectedArray[i] == 0
-//                    {
-//                        selectedArray[i] = 1
-//                        
-//                    }else{
-//                        selectedArray[i] = 0
-//                    }
-//                }
-//            }
-//            if selectedArray.contains(1) {
-//                print("yes its have")
-//            }
-//            else
-//            {
-//                print("no never")
-//                longPressActive = false
-//                
-//            }
-//            
-//        }
+        }
         photoThumpCollectionView.reloadData()
     }
     
@@ -829,14 +616,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if cell?.selected == false{
             cell?.layer.borderColor = UIColor.clearColor().CGColor
         }
-        
-        
-        
     }
-    
-    
-    
-    
     
     //PRAGMA MARK:- Channel details
     
@@ -864,10 +644,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         
     }
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
@@ -885,23 +667,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
     }
     
-    
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
         self.readImageFromDataBase()
-        
-        //    let mediaDict: NSMutableDictionary = NSMutableDictionary()
         
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
             
-            
-            //   print(responseArr)
             for index in 0 ..< responseArr.count
             {
-                //let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                
                 let thumb = responseArr[index].valueForKey(thumbSignedUrlKey)
                 let fullImage = responseArr[index].valueForKey(fullSignedUrlKey)
                 let mediaId = responseArr[index].valueForKey(mediaIdKey)
@@ -910,14 +685,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 // let timeStamp = responseArr[index].valueForKey(timeStampKey)
                 
                 imageDataSource.append([thumbSignedUrlKey:thumb!,fullSignedUrlKey: fullImage! ,mediaIdKey:mediaId!,mediaTypeKey:mediaType!,timeStampKey :""])
-                
             }
-            
         }
-        print(imageDataSource)
         downloadFirstEntry()
-        
     }
+    
     func authenticationFailureHandlerForFetchMedia(error: NSError?, code: String)
     {
         self.removeOverlay()
@@ -931,28 +703,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             
             self.readImageFromDataBase()
-            
-            if dummyImagesDataSourceDatabase.count > 0
-            {
-                for(var i = dummyImagesDataSourceDatabase.count-1 ; i >= 0 ; i -= 1)
-                {
-                    
-                    //                    uploadData( i,completion: { (result) -> Void in
-                    //                        self.photoThumpCollectionView.reloadData()
-                    //
-                    //                    })
-                    
-                    
-                }
-            }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    
-    
     
     func authenticationFailureHandlerSignedURL(error: NSError?, code: String)
     {
@@ -996,7 +751,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func setChannelDetails()
     {
         imageDataSource.removeAll()
-        //  fullImageLinkArray.removeAllObjects()
         for index in 0 ..< channelDetails.count
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
@@ -1004,17 +758,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             if channelName == "Archive"
             {
                 mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
-                
-                // mediaSharedCount = "20"
             }
-            
             channelDict[channelName] = channelId
-            
-            
         }
-        
         getMediaFromCloud()
     }
+    
     func getMediaFromCloud()
     {
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -1027,7 +776,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.emptyMedia()
             removeOverlay()
             
-        }else
+        }
+        else
         {
             imageUploadManger.getChannelMediaDetails(channelId.stringValue , userName: userId, accessToken: accessToken, limit: mediaSharedCount, offset: "0", success: { (response) -> () in
                 self.authenticationSuccessHandlerForFetchMedia(response)
@@ -1035,19 +785,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 self.authenticationFailureHandlerForFetchMedia(error, code: message)
             }
         }
-        
     }
     func downloadFirstEntry()
     {
-        
-        
-        //    playIconInFullView.hidden = true
         self.dataSource = dummyImagesDataSourceDatabase
         var dummyImagesDataSource :[[String:AnyObject]]  = [[String:AnyObject]]()
         
         if( self.imageDataSource.count > 0)
         {
-            
             let mediaDict: NSMutableDictionary = NSMutableDictionary()
             dummyImagesDataSource = self.dataSource
             self.dataSource .removeAll()
@@ -1058,8 +803,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             let mediaType = imageDataSource[0][mediaTypeKey] as! String
             if mediaType == "image"
             {
-                
-                let cacheMedia  =   checkCacheMedia(String(imageDataSource[0][mediaIdKey]))
+                let mediaIdDownload : String = imageDataSource[0][mediaIdKey]!.stringValue
+                let cacheMedia  =   checkCacheMedia(mediaIdDownload)
                 
                 if(cacheMedia.count > 0)
                 {
@@ -1067,25 +812,17 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     mediaDict.setValue(cacheMedia[0][fullImageKey], forKey: "FullImage")
                     if dummyImagesDataSourceDatabase.count > 0
                     {
-                        //  playIconInFullView.hidden = true
                         self.fullScrenImageView.image = dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage
                         self.fullScreenZoomView.image = dummyImagesDataSourceDatabase[0][self.fullImageKey] as!  UIImage
                     }
                     else
                     {
-                        print("from media dict")
                         playIconInFullView.hidden = true
-                        
                         self.fullScrenImageView.image = mediaDict["FullImage"] as? UIImage
                         self.fullScreenZoomView.image = mediaDict["FullImage"] as? UIImage
                         
                     }
                     
-                    
-                    // self.fullScrenImageView.image = mediaDict["FullImage"] as? UIImage
-                    //   self.fullScreenZoomView.image = mediaDict["FullImage"] as? UIImage
-                    
-                    //                    imageDataSource.append(thumbSignedUrlKey:thumb,fullSignedUrlKey: fullImage ,mediaIdKey:mediaId,mediaTypeKey:mediaType,timeStampKey :timeStamp)
                     dummyImagesDataSource.append([thumbSignedUrlKey:imageDataSource[0][thumbSignedUrlKey]!,fullSignedUrlKey: imageDataSource[0][fullSignedUrlKey]! ,mediaIdKey:imageDataSource[0][mediaIdKey]!,mediaTypeKey:imageDataSource[0][mediaTypeKey]!,timeStampKey :imageDataSource[0][timeStampKey]!,self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["FullImage"] as! UIImage])
                     self.mediaDictionary.setValue(mediaDict, forKey: "0")
                     self.dataSource = dummyImagesDataSource
@@ -1094,8 +831,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
                 else
                 {
-                    let path = self.mediaCacheManager.getDocumentsURL().URLByAppendingPathComponent(String(imageDataSource[0][mediaIdKey]))
+                    let mediaIdDownload : String = imageDataSource[0][mediaIdKey]!.stringValue
                     
+                    let path = self.mediaCacheManager.getDocumentsURL().URLByAppendingPathComponent(mediaIdDownload)
                     downloadMedia(fullImageDownloadUrl, key:  "FullImage") { (result) -> Void in
                         
                         self.mediaCacheManager.saveImage(result, path: String(String(path)+"full"))
@@ -1104,22 +842,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                         
                         
                         self.downloadMedia(downloadThumbURL, key: "ThumbImage", completion: { (result) -> Void in
-                            print("Execution Completed 2",result)
-                            
                             self.mediaCacheManager.saveImage(result, path: String(String(path)+"thumb"))
                             mediaDict.setValue(result, forKey: "ThumbImage")
                             if self.dummyImagesDataSourceDatabase.count > 0
                             {
-                                //  self.playIconInFullView.hidden = true
-                                
                                 self.fullScrenImageView.image = self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage
                                 self.fullScreenZoomView.image = self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage
                             }
                             else
                             {
                                 self.playIconInFullView.hidden = true
-                                
-                                print("from media dict")
                                 self.fullScrenImageView.image = mediaDict["FullImage"] as? UIImage
                                 self.fullScreenZoomView.image = mediaDict["FullImage"] as? UIImage
                             }
@@ -1128,12 +860,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                             if(image == nil)
                             {
                                 dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[0][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[0][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[0][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[0][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[0][self.timeStampKey]!,self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["ThumbImage"] as! UIImage])
-                                //                            dummyImagesDataSource.append([self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["ThumbImage"] as! UIImage])
                             }
                             else
                             {
                                 dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[0][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[0][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[0][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[0][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[0][self.timeStampKey]!,self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["FullImage"] as! UIImage])
-                                //                            dummyImagesDataSource.append([self.thumbImageKey:mediaDict["ThumbImage"] as! UIImage,self.fullImageKey:mediaDict["FullImage"] as! UIImage])
                             }
                             self.dataSource = dummyImagesDataSource
                             self.photoThumpCollectionView.reloadData()
@@ -1145,13 +875,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
             else
             {
-                
                 let cacheMedia  =   checkCacheMedia(String(imageDataSource[0][mediaIdKey]))
-                
                 if(cacheMedia.count > 0)
                 {
                     dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[0][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[0][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[0][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[0][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[0][self.timeStampKey]!,self.thumbImageKey:cacheMedia[0]["ThumbImage"]!,self.fullImageKey:cacheMedia[0]["ThumbImage"]!])
-                    //dummyImagesDataSource = cacheMedia
+                    
                     mediaDict.setValue(cacheMedia[0][thumbImageKey], forKey: "thumbImage")
                     mediaDict.setValue(cacheMedia[0][fullImageKey], forKey: "FullImage")
                     self.playIconInFullView.hidden = false
@@ -1167,12 +895,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
                 else
                 {
-                    //if media type video set thumbnail image as fullview
                     self.downloadMedia(downloadThumbURL, key: "ThumbImage", completion: { (result) -> Void in
-                        print("Execution Completed 2",result)
                         mediaDict.setValue(result, forKey: "ThumbImage")
-                        //                    let imgData: NSData = UIImageJPEGRepresentation(result, 0)!
-                        //                    print("Size of Image thumb for video  : \(imgData.length) bytes")
+                        
                         if self.dummyImagesDataSourceDatabase.count > 0
                         {
                             self.fullScrenImageView.image = (self.dummyImagesDataSourceDatabase[0][self.fullImageKey] as! UIImage)
@@ -1203,6 +928,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.photoThumpCollectionView.reloadData()
         }
     }
+    
     func checkCacheMedia(mediaId :String) -> [[String : UIImage]]
     {
         cacheDatabase.removeAll()
@@ -1219,6 +945,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             return cacheDatabase
         }
     }
+    
     func checkCacheThumb(mediaId :String) -> [[String : UIImage]]
     {
         cacheDatabase.removeAll()
@@ -1230,6 +957,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
         return cacheDatabase
     }
+    
     func stringToURL( stringURl :String) -> NSURL
     {
         let url : NSString = stringURl
@@ -1237,6 +965,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         let searchURL : NSURL = NSURL(string: urlStr as String)!
         return searchURL
     }
+    
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
         var dummyImagesDataSource :[[String:AnyObject]]  = [[String:AnyObject]]()
@@ -1275,7 +1004,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 if(imageDataSource.count-1 >= i)
                 {
                     let downloadURL =  self.convertStringtoURL(imageDataSource[i][thumbSignedUrlKey] as! String)
-                    let cacheThumb = checkCacheThumb(String(imageDataSource[i][mediaIdKey]))
+                    let mediaIdDownload: String = imageDataSource[i][mediaIdKey]!.stringValue
+                    let cacheThumb = checkCacheThumb(mediaIdDownload)
                     if(cacheThumb.count>0)
                     {
                         for j in 0  ..< cacheThumb.count
@@ -1290,7 +1020,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     else
                     {
                         downloadMedia(downloadURL, key:  "ThumbImage", completion: { (result) -> Void in
-                            let path = self.mediaCacheManager.getDocumentsURL().URLByAppendingPathComponent(String(self.imageDataSource[i][self.mediaIdKey]))
+                            let mediaIdDownload : String = self.imageDataSource[i][self.mediaIdKey]!.stringValue
+                            let path = self.mediaCacheManager.getDocumentsURL().URLByAppendingPathComponent(mediaIdDownload)
                             self.mediaCacheManager.saveImage(result, path: String(String(path)+"thumb"))
                             dummyImagesDataSource.append([self.thumbSignedUrlKey:self.imageDataSource[i][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[i][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[i][self.timeStampKey]!,self.thumbImageKey:result,self.fullImageKey:result])
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -1325,6 +1056,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         isLimitReached = true
         self.fullScrenImageView.alpha = 1.0
     }
+    
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -1338,16 +1070,17 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
         else
         {
-//            print("null Image")
             completion(result:UIImage(named: "thumb12")!)
         }
     }
+    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
+    
     func deleteCOreData()
     {
         let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -1363,9 +1096,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 context.deleteObject(managedObjectData)
             }
         } catch let error as NSError {
-            print("Detele all data ")
         }
     }
+    
     func yearsFrom(date:NSDate, todate:NSDate) -> Int{
         return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
     }

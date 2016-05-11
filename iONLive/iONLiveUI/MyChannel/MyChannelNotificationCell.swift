@@ -20,13 +20,10 @@ class MyChannelNotificationCell: UITableViewCell {
         super.awakeFromNib()
         NotificationSenderImageView.layer.cornerRadius = NotificationSenderImageView.frame.size.width/2
         NotificationSenderImageView.layer.masksToBounds = true
-        // Initialization code
     }
     
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
     }
 
 }

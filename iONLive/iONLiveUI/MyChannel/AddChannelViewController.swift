@@ -9,7 +9,7 @@
 import UIKit
 
 class AddChannelViewController: UIViewController {
-
+    
     static let identifier = "AddChannelViewController"
     
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
@@ -38,26 +38,20 @@ class AddChannelViewController: UIViewController {
     let channelCreatedTimeKey = "channelCreatedTime"
     
     var channelSelected: NSMutableArray = NSMutableArray()
-    
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
-    
     var mediaDetailSelected : NSMutableArray = NSMutableArray()
-    
     var selectedArray:[Int] = [Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-        // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-   
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         addToChannelTitleLabel.text = "ADD TO CHANNEL"
@@ -105,7 +99,6 @@ class AddChannelViewController: UIViewController {
     }
     
     @IBAction func didTapCancelButon(sender: AnyObject){
-        
         if(shareFlag == false){
             shareFlag = true
             addChannelView.userInteractionEnabled = true
@@ -119,7 +112,7 @@ class AddChannelViewController: UIViewController {
             let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
             let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
             channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: true)
+            self.navigationController?.pushViewController(channelVC, animated: false)
         }
     }
     
@@ -140,9 +133,9 @@ class AddChannelViewController: UIViewController {
         showOverlay()
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandlerList(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -151,18 +144,17 @@ class AddChannelViewController: UIViewController {
         showOverlay()
         channelManager.addChannelDetails(userName, accessToken: token, channelName: channelName, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
-
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }
@@ -196,9 +188,8 @@ class AddChannelViewController: UIViewController {
             selectedArray.removeAll()
             addChannelTableView.reloadData()
         }
-
     }
-
+    
     func authenticationSuccessHandlerList(response:AnyObject?)
     {
         removeOverlay()
@@ -222,7 +213,7 @@ class AddChannelViewController: UIViewController {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-
+    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
@@ -235,7 +226,7 @@ class AddChannelViewController: UIViewController {
         dataSource.removeAll()
         var imageDetails  = UIImage?()
         for element in channelDetailsDict{
-           
+            
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
@@ -264,12 +255,10 @@ class AddChannelViewController: UIViewController {
         addChannelTableView.reloadData()
         
     }
-
-    //Loading Overlay Methods
+    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -318,10 +307,10 @@ class AddChannelViewController: UIViewController {
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         showOverlay()
         imageUploadManger.addMediaToChannel(userId, accessToken: accessToken, mediaIds: mediaIds, channelId: channelIds, success: { (response) -> () in
-                self.authenticationSuccessHandlerAdd(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationSuccessHandlerAdd(response)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -330,13 +319,11 @@ class AddChannelViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelTextField.text = ""
             let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
             let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
             channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: true)
-//            getChannelDetails(userId, token: accessToken)
+            self.navigationController?.pushViewController(channelVC, animated: false)
         }
         else
         {
@@ -355,7 +342,7 @@ extension AddChannelViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
 }
 
@@ -363,7 +350,6 @@ extension AddChannelViewController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        //        return dataSource != nil ? (dataSource.count)! :0
         if dataSource.count > 0
         {
             return dataSource.count
@@ -380,29 +366,23 @@ extension AddChannelViewController:UITableViewDataSource
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
             
-      //      cell.tintColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
-            
             if(selectedArray.count != dataSource.count){
                 selectedArray.append(0)
             }
             if(selectedArray.count <= 0)
             {
-                 cell.accessoryType = .None
+                cell.accessoryType = .None
             }
-       
+            
             cell.addChannelTextLabel.text = dataSource[indexPath.row][channelNameKey] as? String
             cell.addChannelCountLabel.text = dataSource[indexPath.row][channelItemCountKey] as? String
             if let imageData =  dataSource[indexPath.row][channelHeadImageNameKey]
             {
                 cell.addChannelImageView.image = imageData as? UIImage
             }
-//            else{
-//                 cell.addChannelImageView.image = UIImage(named: "thumb12")
-//            }
             if(dataSource[indexPath.row][channelItemCountKey] as! String == "0"){
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
-
             
             for i in 0 ..< selectedArray.count
             {
@@ -432,7 +412,6 @@ extension AddChannelViewController:UITableViewDataSource
                     }
                 }
             }
-
             
             cell.selectionStyle = .None
             return cell
@@ -461,7 +440,7 @@ extension AddChannelViewController:UITableViewDataSource
         }
         tableView.reloadData()
     }
-
+    
 }
 
 

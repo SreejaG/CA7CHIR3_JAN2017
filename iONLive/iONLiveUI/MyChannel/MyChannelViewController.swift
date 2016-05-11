@@ -93,7 +93,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
         channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(channelItemListVC, animated: true)
+        self.navigationController?.pushViewController(channelItemListVC, animated: false)
         
     }
     
@@ -112,16 +112,18 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         addChannelDetails(userId, token: accessToken, channelName: channelname)
         
     }
+    
     func addChannelDetails(userName: String, token: String, channelName: String)
     {
         showOverlay()
         channelManager.addChannelDetails(userName, accessToken: token, channelName: channelName, success: { (response) -> () in
             self.authenticationSuccessHandlerAddChannel(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandlerAddChannel(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandlerAddChannel(error, code: message)
+            return
         }
     }
+    
     func authenticationSuccessHandlerAddChannel(response:AnyObject?)
     {     let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -129,7 +131,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelTextField.text = ""
             getChannelDetails(userId, token: accessToken)
         }
@@ -168,14 +169,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 channelCreateButton.hidden = true
             }
         }
-        
     }
     
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -193,7 +192,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         self.myChannelTableView.reloadData()
     }
     
-    
     @IBAction func didtapBackButton(sender: AnyObject)
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -202,18 +200,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         navController.navigationBarHidden = true
         self.presentViewController(navController, animated: false) { () -> Void in
         }
-//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-//        iPhoneCameraViewController.navigationController?.navigationBarHidden = true
-//        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         
         showviewWithNewConstraints()
         searchActive = false
-        //   myChannelTableView.reloadData()
     }
+    
     func  showviewWithNewConstraints()
     {
         addChannelView.hidden = false
@@ -222,12 +216,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelTableViewTopConstraint.constant = 0
         
     }
+    
     func hideView(constraintConstant: CGFloat)
     {
         addChannelView.hidden = true
         myChannelSearchBar.hidden = true
         myChannelTableViewTopConstraint.constant = -120 + constraintConstant
     }
+    
     func initialise()
     {
         if((notificationFlag) != nil){
@@ -246,6 +242,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         channelCreateButton.hidden = true
         getChannelDetails(userId, token: accessToken)
     }
+    
     func textFieldDidChange(textField: UITextField)
     {
         if let text = textField.text where !text.isEmpty
@@ -261,14 +258,15 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
         
     }
+    
     func getChannelDetails(userName: String, token: String)
     {
         showOverlay()
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -315,20 +313,33 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
             let thumbUrl = element["thumbnail_Url"] as! String
-            
-            if(thumbUrl != "")
+            let mediaDetailId = element["media_detail_id"]?.stringValue
+            if mediaDetailId != nil
             {
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                if let data = NSData(contentsOfURL: url){
-                  let imageDetailsData = (data as NSData?)!
-                    imageDetails = UIImage(data: imageDetailsData)
+                let mediaIdForFilePath = "\(mediaDetailId!)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageDetails = mediaImageFromFile!
+                }
+            }
+            else{
+                if(thumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        let imageDetailsData = (data as NSData?)!
+                        imageDetails = UIImage(data: imageDetailsData)
+                    }
+                    else{
+                        imageDetails = UIImage(named: "thumb12")
+                    }
                 }
                 else{
                     imageDetails = UIImage(named: "thumb12")
                 }
-            }
-            else{
-                 imageDetails = UIImage(named: "thumb12")
             }
             dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
         }
@@ -341,7 +352,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelTableView.reloadData()
         
     }
-    
     
     func addKeyboardObservers()
     {
@@ -388,9 +398,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         showOverlay()
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
             self.authenticationSuccessHandlerDelete(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandlerDelete(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandlerDelete(error, code: message)
+            return
         }
     }
     
@@ -438,7 +448,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     func handleTap(gestureRecognizer: UIGestureRecognizer) {
-        //   if(!searchActive){
         let swipeLocation = gestureRecognizer.locationInView(self.myChannelTableView)
         if let swipedIndexPath = self.myChannelTableView.indexPathForRowAtPoint(swipeLocation) {
             let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -461,10 +470,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             }
             
             channelItemListVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelItemListVC, animated: true)
+            self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
-        
-        //    }
     }
     
 }
@@ -478,7 +485,7 @@ extension MyChannelViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
 }
 
@@ -518,7 +525,7 @@ extension MyChannelViewController:UITableViewDataSource
                 cell.channelHeadImageView.image = imageData as? UIImage
             }
             if(dataSourceTmp![indexPath.row][channelItemCountKey] as! String == "0"){
-                 cell.channelHeadImageView.image = UIImage(named: "thumb12")
+                cell.channelHeadImageView.image = UIImage(named: "thumb12")
             }
             cell.selectionStyle = .None
             
@@ -553,7 +560,6 @@ extension MyChannelViewController:UITableViewDataSource
         }
     }
     
-    
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
         if(addChannelView.hidden)
@@ -566,9 +572,8 @@ extension MyChannelViewController:UITableViewDataSource
         {
             searchActive = false
         }
-        
-        
     }
+    
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         if searchBar.text != ""
         {

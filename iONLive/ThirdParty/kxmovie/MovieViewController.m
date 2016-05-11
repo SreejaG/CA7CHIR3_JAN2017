@@ -14,7 +14,7 @@
 #import "KxMovieGLView.h"
 #import "KxLogger.h"
 #import "Connectivity.h"
-#import "iONLive-Swift.h"
+#import "CA7CH-Swift.h"
 #import <CFNetwork/CFNetwork.h>
 #import "IPhoneCameraViewController.h"
 #import <SpriteKit/SpriteKit.h>
@@ -217,6 +217,27 @@ static NSMutableDictionary * gHistory;
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     
     if (self) {
+        
+        if(live){
+            _liveVideo = live;
+            rtspFilePath = path;
+            _parameters = nil;
+            [self setUpDefaultValues];
+            NSLog(@"rtsp File Path = %@",path);
+            
+            //        [self setUpBlurView];
+            //        if (_liveVideo) {
+            //            [self checkWifiConnectionAndStartDecoder];
+            //        }
+            //        else
+            //        {
+            
+            [self startDecoder];
+            
+            //        }
+            
+        }
+        else{
         [self.view bringSubviewToFront:glView];
         videoProgressBar.hidden = true;
         _liveVideo = live;
@@ -266,7 +287,7 @@ static NSMutableDictionary * gHistory;
         
         [self startDecoder];
         
-        //        }
+                }
     }
     return self;
 }

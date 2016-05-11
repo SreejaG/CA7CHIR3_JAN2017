@@ -9,7 +9,7 @@
 import UIKit
 
 class MyChannelItemDetailsViewController: UIViewController {
-
+    
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
@@ -23,7 +23,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
- 
+    
     let cameraController = IPhoneCameraViewController()
     
     let mediaUrlKey = "mediaUrl"
@@ -52,30 +52,29 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         if let channelName = channelName
         {
             channelTitleLabel.text = channelName.uppercaseString
         }
     }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         removeOverlay()
     }
-
+    
     @IBAction func backClicked(sender: AnyObject)
     {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
         sharingVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(sharingVC, animated: true)
+        self.navigationController?.pushViewController(sharingVC, animated: false)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
     
     @IBAction func inviteContacts(sender: AnyObject) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
@@ -84,7 +83,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
         inviteContactsVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(inviteContactsVC, animated: true)
+        self.navigationController?.pushViewController(inviteContactsVC, animated: false)
     }
     
     func initialise()
@@ -118,16 +117,14 @@ class MyChannelItemDetailsViewController: UIViewController {
         
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
         }
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -142,7 +139,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            
             let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
@@ -151,21 +147,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
                 let notificationType : String = "likes"
-//                if let notifType =  responseArr[index].valueForKey("notification_type")
-//                {
-//                    if notifType as! String != ""
-//                    {
-//                        notificationType = (notifType as! String).lowercaseString
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
-//                }
-//                else{
-//                    notificationType = "shared"
-//                }
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
-                
             }
             
             downloadCloudData(15, scrolled: false)
@@ -214,14 +196,12 @@ class MyChannelItemDetailsViewController: UIViewController {
         }
         else
         {
-//            print("null Image")
             completion(result:UIImage(named: "thumb12")!)
         }
     }
     
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
-        
         if(imageDataSource.count <  (currentLimit +  limitMedia))
         {
             limitMediaCount = currentLimit
@@ -269,16 +249,13 @@ class MyChannelItemDetailsViewController: UIViewController {
                     })
                 }
             }
-             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+            self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
         }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-               
-                self.channelItemsCollectionView.reloadData()
-            })
-        
-        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemsCollectionView.reloadData()
+        })
     }
-
+    
 }
 
 extension MyChannelItemDetailsViewController : UIScrollViewDelegate{
@@ -291,10 +268,8 @@ extension MyChannelItemDetailsViewController : UIScrollViewDelegate{
         {
             if(scrollView.contentOffset.x == fullyScrolledContentOffset)
             {
-                print("End of scroll view")
                 
             }
-            
         }
         if offsetY > contentHeight - scrollView.frame.size.height {
             
@@ -307,7 +282,7 @@ extension MyChannelItemDetailsViewController : UIScrollViewDelegate{
                     self.downloadCloudData(15, scrolled: true)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
+                        
                     })
                 })
                 
@@ -334,7 +309,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MyChannelItemCell.identifier, forIndexPath: indexPath) as! MyChannelItemCell
-      
+        
         if fullImageDataSource.count > 0
         {
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
@@ -368,13 +343,13 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     {
         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
     }
-  
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String,mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
-
-        self.presentViewController(vc, animated: true) { () -> Void in
+        
+        self.presentViewController(vc, animated: false) { () -> Void in
             
         }
         

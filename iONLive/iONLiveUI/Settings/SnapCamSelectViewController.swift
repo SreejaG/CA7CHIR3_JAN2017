@@ -15,14 +15,14 @@ class SnapCamSelectViewController: UIViewController {
     var streamingDelegate:StreamingProtocol?
     var snapCamMode : SnapCamSelectionMode = .Photos
     var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
-
+    
     var rowAfterAlertHit: Int!
     var cellAfterAlertHit : UITableViewCell = UITableViewCell()
     
     @IBOutlet var activityLabel: UILabel!
     @IBOutlet var activityImageView: UIImageView!
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
-   
+    
     @IBOutlet var iPhoneSnapCamImageView: UIImageView!
     @IBOutlet var blurView: UIView!
     @IBOutlet var snapCamButton: UIButton!
@@ -57,21 +57,21 @@ class SnapCamSelectViewController: UIViewController {
             dataSource[5] = "Switch to SnapCam"
         }
     }
-//    // Blur for ios 8
-//    
-//        override func viewWillAppear(animated: Bool) {
-//                self.view.backgroundColor = UIColor.clearColor()
-//                let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-//                let blurEffectView = UIVisualEffectView(effect: blurEffect)
-//                //always fill the view
-//                blurEffectView.frame = self.view.bounds
-//                blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-////            blurView = blurEffectView;
-//                self.view.addSubview(blurEffectView)
-//                self.view.bringSubviewToFront(containerView)//if you have more UIViews, use an insertSubview API to place it where needed
-//            }
-
-
+    //    // Blur for ios 8
+    //
+    //        override func viewWillAppear(animated: Bool) {
+    //                self.view.backgroundColor = UIColor.clearColor()
+    //                let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+    //                let blurEffectView = UIVisualEffectView(effect: blurEffect)
+    //                //always fill the view
+    //                blurEffectView.frame = self.view.bounds
+    //                blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+    ////            blurView = blurEffectView;
+    //                self.view.addSubview(blurEffectView)
+    //                self.view.bringSubviewToFront(containerView)//if you have more UIViews, use an insertSubview API to place it where needed
+    //            }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -96,7 +96,7 @@ extension SnapCamSelectViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-       let cell = tableView.dequeueReusableCellWithIdentifier(SnapCamTableViewCell.identifier, forIndexPath: indexPath) as! SnapCamTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(SnapCamTableViewCell.identifier, forIndexPath: indexPath) as! SnapCamTableViewCell
         
         if dataSource.count > indexPath.row
         {
@@ -104,7 +104,7 @@ extension SnapCamSelectViewController:UITableViewDataSource
         }
         
         customizeCellBasedOnSnapCamSelectionMode(cell , row: indexPath.row)
-
+        
         return cell
     }
 }
@@ -121,10 +121,14 @@ extension SnapCamSelectViewController:UITableViewDelegate
         case 5:
             if  toggleSnapCamIPhoneMode == SnapCamSelectionMode.iPhone
             {
+                
                 loadCameraViewWithFadeInFadeOutAnimation()
             }
             else
             {
+                let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+                let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+                self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
                 loadSnapCamViewWithFadeInFadeOutAnimation()
             }
             break
@@ -135,10 +139,16 @@ extension SnapCamSelectViewController:UITableViewDelegate
             break
             
         default :
+            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+            let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+            self.presentViewController(navController, animated: false) { () -> Void in
+            }
+//            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
             break;
         }
     }
-
+    
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
         return 60
@@ -158,9 +168,7 @@ extension SnapCamSelectViewController
         {
             updateSnapCamSelection(row)
             changeSnapCamModeForCell(selectedCell)
-            self.presentingViewController?.dismissViewControllerAnimated(true, completion: { () -> Void in
-                
-            })
+            
         }
     }
     
@@ -171,53 +179,53 @@ extension SnapCamSelectViewController
         self.blurView.hidden = false;
         activityImageView.hidden = true;
         activityLabel.hidden = true;
-        iPhoneSnapCamImageView.image = UIImage(named: "Switched_mode_Camera"); 
+        iPhoneSnapCamImageView.image = UIImage(named: "Switched_mode_Camera");
         snapCamSettingsTableView.hidden = true;
         
         UIView .animateWithDuration(1.0, animations: { () -> Void in
             self.blurView.alpha = 1.0
-            }) { (finished) -> Void in
-                UIView.animateWithDuration(1.0, animations: { () -> Void in
-                    self.blurView.alpha = 0.0
-                    }, completion: { (finshed) -> Void in
-                        self.switchToiPhoneView()
-                })
+        }) { (finished) -> Void in
+            UIView.animateWithDuration(1.0, animations: { () -> Void in
+                self.blurView.alpha = 0.0
+                }, completion: { (finshed) -> Void in
+                    self.switchToiPhoneView()
+            })
         }
     }
     
     func loadCameraViewWithFadeInFadeOutAnimation()
     {
-            self.blurView.alpha = 0;
-            self.blurView.hidden = false;
-            activityImageView.image =  UIImage.animatedImageNamed("loader-", duration: 1.0)
-            iPhoneSnapCamImageView.image = UIImage(named: "Switched modes");
-            snapCamSettingsTableView.hidden = true;
+        self.blurView.alpha = 0;
+        self.blurView.hidden = false;
+        activityImageView.image =  UIImage.animatedImageNamed("loader-", duration: 1.0)
+        iPhoneSnapCamImageView.image = UIImage(named: "Switched modes");
+        snapCamSettingsTableView.hidden = true;
+        
+        UIView .animateWithDuration(1.0, animations: { () -> Void in
+            self.blurView.alpha = 1.0
             
-            UIView .animateWithDuration(1.0, animations: { () -> Void in
-                self.blurView.alpha = 1.0
-                
-                }) { (finished) -> Void in
-                        self.startSnapCamViewAnimation()
-            }
+        }) { (finished) -> Void in
+            self.startSnapCamViewAnimation()
+        }
     }
     
     func startSnapCamViewAnimation()
     {
         UIView .animateWithDuration(1.0, animations: { () -> Void in
-
+            
             self.activityImageView.hidden = true;
             self.activityLabel.hidden = true;
             self.iPhoneSnapCamImageView.image = UIImage(named: "SnapCam Switched modes");
             
-            }) { (finished) -> Void in
-
-                UIView.animateWithDuration(0.5, animations: { () -> Void in
-
-                    self.blurView.alpha = 0.0
-
-                    }, completion: { (finshed) -> Void in
-                        self.switchToSnapCamView()
-                })
+        }) { (finished) -> Void in
+            
+            UIView.animateWithDuration(0.5, animations: { () -> Void in
+                
+                self.blurView.alpha = 0.0
+                
+                }, completion: { (finshed) -> Void in
+                    self.switchToSnapCamView()
+            })
         }
     }
     
@@ -263,13 +271,13 @@ extension SnapCamSelectViewController
         let testAPIListVC = storyBoard.instantiateViewControllerWithIdentifier(iONLiveCamAPIListViewController.identifier)
         self.navigationController?.pushViewController(testAPIListVC, animated: true)
     }
-
+    
     
     func changeSelectedSnapCamMode(selectedMode:SnapCamSelectionMode)
     {
         if snapCamMode == selectedMode
         {
-//            snapCamMode = .DefaultMode
+            //            snapCamMode = .DefaultMode
         }
         else
         {
@@ -339,7 +347,7 @@ extension SnapCamSelectViewController
         stream.stopStreamingClicked()
         
         streamingDelegate?.cameraSelectionMode(snapCamMode)
-
+        
     }
     
     func stopIPhoneCameraLiveStreaming()
@@ -411,14 +419,14 @@ extension SnapCamSelectViewController
         let defaults = NSUserDefaults.standardUserDefaults()
         return  defaults.boolForKey("StartedStreaming")
     }
-
+    
     func clearStreamingUserDefaults(defaults:NSUserDefaults)
     {
         defaults.removeObjectForKey(streamingToken)
         defaults.removeObjectForKey(startedStreaming)
         defaults.removeObjectForKey(initializingStream)
     }
-
+    
     //PRAGMA MARK:- IBActions
     @IBAction func settingsbuttonClicked(sender: AnyObject)
     {

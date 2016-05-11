@@ -13,7 +13,6 @@ class ChannelItemListViewController: UIViewController {
     var selectionFlag : Bool = false
     var selected: NSMutableArray = NSMutableArray()
     
-    
     static let identifier = "ChannelItemListViewController"
     @IBOutlet weak var channelTitleLabel: UILabel!
     @IBOutlet weak var channelItemCollectionView: UICollectionView!
@@ -33,7 +32,6 @@ class ChannelItemListViewController: UIViewController {
     
     var selectedArray:[Int] = [Int]()
     
-    
     @IBOutlet var deleteButton: UIButton!
     @IBOutlet var addButton: UIButton!
     @IBOutlet var selectionButton: UIButton!
@@ -51,7 +49,6 @@ class ChannelItemListViewController: UIViewController {
     var limit : Int = Int()
     var totalCount: Int = 0
     var fixedLimit : Int =  0
-    
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     var limitMediaCount : Int = Int()
@@ -87,7 +84,6 @@ class ChannelItemListViewController: UIViewController {
         {
             channelTitleLabel.text = channelName.uppercaseString
         }
-        
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -105,32 +101,14 @@ class ChannelItemListViewController: UIViewController {
         
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
         }
-        
-        
-        //        offsetToInt = offsetToInt! + 6
-        //
-        //        if offsetToInt <= totalMediaCount
-        //        {
-        //            totalCount = totalMediaCount - offsetToInt
-        //            if totalCount > fixedLimit
-        //            {
-        //                limit = fixedLimit
-        //            }
-        //            else
-        //            {
-        //                limit = totalCount
-        //            }
-        //        }
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -146,7 +124,7 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-           
+            
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -182,7 +160,6 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
@@ -203,14 +180,12 @@ class ChannelItemListViewController: UIViewController {
         }
         else
         {
-//            print("null Image")
             completion(result:UIImage(named: "thumb12")!)
         }
     }
     
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
-      
         if(imageDataSource.count <  (currentLimit +  limitMedia))
         {
             limitMediaCount = currentLimit
@@ -235,29 +210,11 @@ class ChannelItemListViewController: UIViewController {
             isLimitReached = false
             return
         }
-       
-//        for i in limitMediaCount  ..< currentLimit   {
-//            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-//            if(mediaUrl != ""){
-//                let url: NSURL = convertStringtoURL(mediaUrl)
-//                
-//                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-//                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:result, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-//                    
-//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                        self.channelItemCollectionView.reloadData()
-//                    })
-//                })
-//            }
-//
-//        }
-        
         for i in limitMediaCount  ..< currentLimit   {
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            print(savingPath)
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
             if fileExistFlag == true{
                 let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
@@ -275,13 +232,11 @@ class ChannelItemListViewController: UIViewController {
                     })
                 }
             }
-             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-            }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-               
-                self.channelItemCollectionView.reloadData()
-            })
- 
+            self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+        }
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemCollectionView.reloadData()
+        })
     }
     
     @IBAction func didTapBackButton(sender: AnyObject)
@@ -289,7 +244,7 @@ class ChannelItemListViewController: UIViewController {
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
         channelVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(channelVC, animated: true)
+        self.navigationController?.pushViewController(channelVC, animated: false)
     }
     
     @IBAction func didTapAddtoButton(sender: AnyObject) {
@@ -297,14 +252,12 @@ class ChannelItemListViewController: UIViewController {
         let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
         addChannelVC.mediaDetailSelected = selected
         addChannelVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(addChannelVC, animated: true)
+        self.navigationController?.pushViewController(addChannelVC, animated: false)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-    
     
     @IBAction func didTapSelectionButton(sender: AnyObject) {
         selected.removeAllObjects()
@@ -364,22 +317,12 @@ class ChannelItemListViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             offset = "0"
             offsetToInt = Int(offset)!
             totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
-            
-//            if totalMediaCount > 6
-//            {
-//                fixedLimit = 6
-//            }
-//            else{
-//                fixedLimit = totalMediaCount
-//            }
-            
             limit = totalMediaCount
-           
+            
             imageDataSource.removeAll()
             fullImageDataSource.removeAll()
             selected.removeAllObjects()
@@ -428,10 +371,8 @@ extension ChannelItemListViewController : UIScrollViewDelegate{
         {
             if(scrollView.contentOffset.x == fullyScrolledContentOffset)
             {
-                print("End of scroll view")
                 
             }
-            
         }
         if offsetY > contentHeight - scrollView.frame.size.height {
             
@@ -444,7 +385,7 @@ extension ChannelItemListViewController : UIScrollViewDelegate{
                     self.downloadCloudData(15, scrolled: true)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        // self.photoThumpCollectionView.reloadData()
+                        
                     })
                 })
                 
@@ -486,9 +427,9 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
             let channelItemImageView = cell.viewWithTag(100) as! UIImageView
             let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
-          
+            
             channelItemImageView.image = imageData
-
+            
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
@@ -496,7 +437,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             else{
                 cell.videoView.hidden = true
             }
-         
+            
             cell.videoPlayIcon.frame = CGRect(x: 2, y: (Int(UIScreen.mainScreen().bounds.width/3)-2) - 16 , width: 10, height: 10)
             cell.insertSubview(cell.videoView, aboveSubview: cell.channelItemImageView)
             
@@ -538,7 +479,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         }
         return cell
     }
-
+    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
@@ -557,15 +498,12 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
     }
     
-    
-    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if(selectionFlag){
             deleteButton.setTitleColor(UIColor.redColor(), forState: UIControlState.Normal)
             deleteButton.enabled = true
             addButton.enabled = true
             addButton.setTitle("Add to", forState: .Normal)
-            
             
             for i in 0 ..< selectedArray.count
             {
@@ -584,19 +522,12 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            print( fullImageDataSource[indexPath.row][mediaIdKey] as! String);
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String,mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
-                self.presentViewController(vc, animated: true) { () -> Void in
+            self.presentViewController(vc, animated: false) { () -> Void in
                 
             }
-
-//            
-//            let storyboard = UIStoryboard(name:"Media", bundle: nil)
-//            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MediaViewController.identifier) as! MediaViewController
-//            channelVC.navigationController?.navigationBarHidden = true
-//            self.navigationController?.pushViewController(channelVC, animated: true)
         }
         
     }

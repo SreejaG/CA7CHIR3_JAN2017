@@ -45,6 +45,8 @@ class MediaCache: UIViewController {
         return  NSURL(string: documentsPath)!
     }
     func saveImage (image: UIImage, path: String ) -> Bool{
+        
+     //   print(path)
         let pngImageData = UIImageJPEGRepresentation(image, 0.5)
         //let jpgImageData = UIImageJPEGRepresentation(image, 1.0)   // if you want to save as JPEG
         let result = pngImageData!.writeToFile(path, atomically: true)
@@ -67,7 +69,7 @@ class MediaCache: UIViewController {
         
         if image == nil {
             
-            print("missing image at: \(path)")
+         //   print("missing image at: \(path)")
         }
         print("Loading image from path: \(path)") // this is just for you to see the path in case you want to go to the directory, using Finder.
         return image

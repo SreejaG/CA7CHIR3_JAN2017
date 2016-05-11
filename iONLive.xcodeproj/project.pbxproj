@@ -307,7 +307,7 @@
 		167512C51C3152CE007F5326 /* MyChannel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MyChannel.storyboard; sourceTree = "<group>"; };
 		1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamPickerTableViewCell.swift; sourceTree = "<group>"; };
 		1677FEB81C48BFF900261F59 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		167AF02B1BFDC1F6003CDF30 /* iONLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iONLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		167AF02B1BFDC1F6003CDF30 /* CA7CH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CA7CH.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		167AF0301BFDC1F6003CDF30 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		167AF0331BFDC1F6003CDF30 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -898,7 +898,7 @@
 		167AF02C1BFDC1F6003CDF30 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				167AF02B1BFDC1F6003CDF30 /* iONLive.app */,
+				167AF02B1BFDC1F6003CDF30 /* CA7CH.app */,
 				167AF03F1BFDC1F6003CDF30 /* iONLiveTests.xctest */,
 				167AF04A1BFDC1F6003CDF30 /* iONLiveUITests.xctest */,
 			);
@@ -1473,7 +1473,7 @@
 			);
 			name = iONLive;
 			productName = iONLive;
-			productReference = 167AF02B1BFDC1F6003CDF30 /* iONLive.app */;
+			productReference = 167AF02B1BFDC1F6003CDF30 /* CA7CH.app */;
 			productType = "com.apple.product-type.application";
 		};
 		167AF03E1BFDC1F6003CDF30 /* iONLiveTests */ = {
@@ -1962,7 +1962,7 @@
 					"$(PROJECT_DIR)/iONLive/ThirdParty/FFmpeg-iOS/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
-				PRODUCT_NAME = iONLive;
+				PRODUCT_NAME = CA7CH;
 				PROVISIONING_PROFILE = "c238c2f9-7c42-47ca-9061-1d0d48441f97";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1995,7 +1995,7 @@
 					"$(PROJECT_DIR)/iONLive/ThirdParty/FFmpeg-iOS/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
-				PRODUCT_NAME = iONLive;
+				PRODUCT_NAME = CA7CH;
 				PROVISIONING_PROFILE = "c238c2f9-7c42-47ca-9061-1d0d48441f97";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};

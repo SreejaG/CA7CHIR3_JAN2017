@@ -68,8 +68,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         locationManager.startUpdatingLocation()
     }
     
-    
-    // authorization status
     func locationManager(manager: CLLocationManager,
                          didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         var shouldIAllow = false
@@ -87,20 +85,16 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
         if (shouldIAllow == true) {
-            NSLog("Location to Allowed")
-            // Start location services
             showOverlay()
             locationManager.startUpdatingLocation()
-
+            
         } else {
-            NSLog("Denied access: \(locationStatus)")
         }
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         let location = locations.last! as CLLocation
-    
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
             if let _ = e {
@@ -117,12 +111,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 
                 let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
                 self.phoneCodeFromLocat = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
-                print(self.phoneCodeFromLocat)
                 self.displayContacts()
             }
         })
     }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -142,7 +134,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             contactListTableView.reloadData()
         }
         else{
-            self.navigationController?.popViewControllerAnimated(true)
+            self.navigationController?.popViewControllerAnimated(false)
         }
     }
     
@@ -157,7 +149,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     @IBAction func didTapDoneButton(sender: AnyObject) {
         contactListTableView.reloadData()
         contactListTableView.layoutIfNeeded()
-      //  print(selectedContacts)
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         for element in selectedContacts
@@ -176,8 +167,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         {
             inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray, deleteUser: deleteUserArray)
         }
-        
-        
     }
     
     func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
@@ -223,17 +212,18 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         
     }
+    
     func generateContactSynchronizeAlert()
     {
         let alert = UIAlertController(title: "\"Catch\" would like to access your contacts", message: "The contacts in your address book will be transmitted to Catch for you to decide who to add", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "Don't Allow", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-         
+            
         }))
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
             self.showEventsAcessDeniedAlert()
         }))
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.presentViewController(alert, animated: false, completion: nil)
     }
     
     func promptForAddressBookRequestAccess() {
@@ -263,7 +253,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         alertController.addAction(settingsAction)
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         alertController.addAction(cancelAction)
-        presentViewController(alertController, animated: true, completion: nil)
+        presentViewController(alertController, animated: false, completion: nil)
     }
     
     func displayContacts(){
@@ -271,7 +261,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         locationManager.stopUpdatingLocation()
         locationManager.delegate = nil
         let phoneCode = phoneCodeFromLocat
-        print(phoneCode)
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
@@ -324,8 +313,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        print(contactPhoneNumbers)
-        
+
         contactManagers.addContactDetails(userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
             self.authenticationSuccessHandlerAdd(response)
         }) { (error, message) -> () in
@@ -407,12 +395,11 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         (channelDetailVC as! MyChannelDetailViewController).channelName = channelName as String
         (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(totalMediaCount)
         channelDetailVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(channelDetailVC, animated: true)
+        self.navigationController?.pushViewController(channelDetailVC, animated: false)
     }
     
     func getChannelContactDetails(username: String, token: String, channelid: String)
     {
-//        showOverlay()
         channelManager.getChannelNonContactDetails(channelid, userName: username, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
@@ -450,7 +437,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                     }
                 }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage])
-                //      selectedContacts.append([userNameKey:userName, selectionKey:"0"])
             }
             contactListTableView.reloadData()
         }
@@ -483,11 +469,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -522,7 +506,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
@@ -635,7 +619,6 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
     }
     
 }
-
 
 extension ContactListViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {

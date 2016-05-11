@@ -44,23 +44,9 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-//        let defaults = NSUserDefaults .standardUserDefaults()
-//        if let notifFlag = defaults.valueForKey("notificationFlag")
-//        {
-//            if notifFlag as! String == "1"
-//            {
-//                let image = UIImage(named: "notif") as UIImage?
-//                notifImage.setImage(image, forState: .Normal)
-//            }
-//        }
-//        else{
-//                let image = UIImage(named: "noNotif") as UIImage?
-//                notifImage.setImage(image, forState: .Normal)
-//            }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -70,11 +56,10 @@ class MyChannelNotificationViewController: UIViewController {
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
         if(tapFlag){
-
             let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
             let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
             channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: true)
+            self.navigationController?.pushViewController(channelVC, animated: false)
         }
     }
     
@@ -98,16 +83,15 @@ class MyChannelNotificationViewController: UIViewController {
         channelManager.getMediaInteractionDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                
-        }}
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            
+        }
+    }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -161,22 +145,16 @@ class MyChannelNotificationViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
-            
             var mediaImage : UIImage?
             var profileImage : UIImage?
-           
+            
             let mediaResponseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
             if mediaResponseArr.count > 0
             {
                 for element in mediaResponseArr{
-//                    let username = element["user_name"] as! String
-//                    let notifType = element["notification_type"] as! String
-//                    let mediaType = element["gcs_object_type"] as! String
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
-                    print(messageFromCloud)
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     if let mediaThumbUrl: String = element["thumbnail_name_SignedUrl"] as? String
                     {
@@ -185,7 +163,7 @@ class MyChannelNotificationViewController: UIViewController {
                     else{
                         mediaImage = UIImage(named: "thumb12")
                     }
-                
+                    
                     if let profileImageName = element["profile_image"]
                     {
                         if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
@@ -199,8 +177,6 @@ class MyChannelNotificationViewController: UIViewController {
                     else{
                         profileImage = UIImage(named: "avatar")
                     }
-                    
-                 //   print("\(message)  \(profileImage)  \(mediaImage)   \(notTime)")
                     dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!, notificationTimeKey:notTime])
                 }
             }
@@ -209,13 +185,9 @@ class MyChannelNotificationViewController: UIViewController {
             if channelResponseArr.count > 0
             {
                 for element in channelResponseArr{
-//                    let username = element["user_name"] as! String
-//                    let notifType = element["notification_type"] as! String
-//                    let mediaType = element["channel_name"] as! String
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
-                    print(messageFromCloud)
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     
                     if let profileImageName = element["profile_image"]
@@ -235,9 +207,6 @@ class MyChannelNotificationViewController: UIViewController {
                 }
                 
             }
-            
-            print(dataSource)
-            
             if(dataSource.count > 0)
             {
                 dataSource.sortInPlace({ p1, p2 in
@@ -246,9 +215,6 @@ class MyChannelNotificationViewController: UIViewController {
                     return time1 > time2
                 })
             }
-         
-            print(dataSource)
-            
             tapFlag = true
             NotificationTableView.reloadData()
         }
@@ -257,11 +223,10 @@ class MyChannelNotificationViewController: UIViewController {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
- 
+    
     func createMediaThumb(mediaName: String) -> UIImage
     {
         var mediaImage : UIImage?
-        print(mediaName)
         if(mediaName != "")
         {
             let url: NSURL = convertStringtoURL(mediaName)
@@ -308,9 +273,6 @@ class MyChannelNotificationViewController: UIViewController {
         let localDate = dateFormatter.dateFromString(localDateStr)
         
         let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
-        print("\(cloudDate)   \(localDate)")
-        print(differenceString)
-        
         return differenceString
     }
     
@@ -340,7 +302,7 @@ extension MyChannelNotificationViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
 }
 
@@ -370,7 +332,6 @@ extension MyChannelNotificationViewController:UITableViewDataSource
             cell.selectionStyle = .None
             return cell
         }
-        
         return UITableViewCell()
     }
     

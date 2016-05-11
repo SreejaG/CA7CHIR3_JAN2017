@@ -19,7 +19,6 @@ class MyChannelDetailViewController: UITabBarController {
     var allItemTitleText = ""
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(channelId)  \(channelName)  \(totalMediaCount)")
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -30,11 +29,7 @@ class MyChannelDetailViewController: UITabBarController {
         {
                 items[1].image = UIImage(named:"friend_avatar")?.imageWithRenderingMode(.AlwaysOriginal)
             items[1].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
-//
-//            items[0].image = UIImage(named:"all_media")?.imageWithRenderingMode(.AlwaysOriginal)
-//            items[0].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
         }
-        
     }
     
     override func didReceiveMemoryWarning() {

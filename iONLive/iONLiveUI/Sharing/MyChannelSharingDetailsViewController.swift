@@ -41,13 +41,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-        
-        // Do any additional setup after loading the view.
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -87,30 +84,26 @@ class MyChannelSharingDetailsViewController: UIViewController {
             let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
             let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
             sharingVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(sharingVC, animated: true)
+            self.navigationController?.pushViewController(sharingVC, animated: false)
         }
     }
-    
     
     @IBAction func inviteContacts(sender: AnyObject) {
         
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ContactListViewController.identifier) as! ContactListViewController
-        print(channelId)
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
         inviteContactsVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(inviteContactsVC, animated: true)
+        self.navigationController?.pushViewController(inviteContactsVC, animated: false)
         
     }
-    
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
         
         contactTableView.reloadData()
         contactTableView.layoutIfNeeded()
-        print(selectedContacts)
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         for element in selectedContacts
@@ -152,7 +145,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             if(status == 1){
                 initialise()
             }
-            
         }
     }
     
@@ -231,7 +223,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     channelSelected = "0"
                 }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage, selectionKey:subscriptionValue])
-                //      selectedContacts.append([userNameKey:userName, selectionKey:channelSelected])
             }
             contactTableView.reloadData()
         }
@@ -279,12 +270,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }
     }
     
-    
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -306,17 +294,18 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.presentViewController(alert, animated: false, completion: nil)
     }
     
     func  deleteContactDetails(userName: String, token:String, contactName:String, channelid:String){
         channelManager.deleteContactDetails(userName: userName, accessToken: token, channelId: channelid, contactName: contactName, success: { (response) in
-                 self.authenticationSuccessHandlerDeleteContact(response)
-            }) { (error, message) in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationSuccessHandlerDeleteContact(response)
+        }) { (error, message) in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
+    
     func authenticationSuccessHandlerDeleteContact(response:AnyObject?)
     {
         removeOverlay()
@@ -326,7 +315,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             if(status == 1){
                 initialise()
             }
-
+            
         }
     }
     
@@ -345,7 +334,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
@@ -388,7 +377,6 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
                 }
                 selectedContacts.append([userNameKey:userName, selectionKey:channelSelected])
             }
-            print(selectedContacts)
         }
         
         if(searchActive){
@@ -475,10 +463,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             generateWaytoSendAlert(deletedUserId)
         }
     }
-    
-    
 }
-
 
 extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
