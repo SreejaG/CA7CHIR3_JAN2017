@@ -22,7 +22,6 @@ class ChannelSharedCell: UITableViewCell {
     @IBOutlet weak var currentUpdationImage: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         countLabel.layer.cornerRadius = 5
         countLabel.layer.masksToBounds = true
         channelProfileImage.layer.cornerRadius = channelProfileImage.frame.size.width/2

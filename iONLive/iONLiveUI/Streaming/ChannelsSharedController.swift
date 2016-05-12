@@ -28,14 +28,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     let profileImageKey = "profile_image"
     let liveStreamStatus = "liveChannel"
     let isWatched = "isWatched"
-    let streamTockenKey = "wowza_stream_token" //"streamToken"
-    
-    //    let notificationTypeKey = "notificationType"
-    //    let mediaTypeKey = "mediaType"
+    let streamTockenKey = "wowza_stream_token"
     let mediaImageKey = "mediaImage"
-    //    let messageKey = "message"
     let thumbImageKey = "thumbImage"
-
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var loadingOverlay: UIView?
@@ -53,13 +49,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         
         initialise()
     }
+    
     @IBAction func backButtonClicked(sender: AnyObject) {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
-    
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
@@ -76,21 +72,18 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         dataSource.removeAll()
         pullToRefreshActive = true
         initialise()
-     //   ChannelSharedTableView.reloadData()
-     //   ChannelSharedTableView.layoutIfNeeded()
     }
+    
     func initialise(){
-        
         mediaShared.removeAll()
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         getChannelSharedDetails(userId, token: accessToken)
     }
+    
     func getChannelSharedDetails(userName: String, token: String)
     {
-        print(userName)
         channelManager.getChannelShared(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
@@ -99,11 +92,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             
         }}
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -112,6 +103,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
+    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
@@ -122,19 +114,15 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
-        
-        
         self.refreshControl.endRefreshing()
         pullToRefreshActive = false
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             dummy.removeAll()
+
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
-            print(responseArrLive.count)
             if (responseArrLive.count != 0)
             {
-                
                 var mediaImage : UIImage?
                 var profileImage : UIImage?
                 for element in responseArrLive{
@@ -142,8 +130,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     let channelName = element[channelNameKey] as! String
                     let streamTocken = element[streamTockenKey] as! String
                     let mediaSharedCount = element[sharedMediaCount]?.stringValue
-
-                  //  let time = element[timeStamp] as! String
+                    
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
                     
@@ -168,18 +155,15 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 }
             }
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
-            print(responseArr.count)
             if (responseArr.count == 0)
             {
                 ErrorManager.sharedInstance.subscriptionEmpty()
             }
             if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
             {
-                //  mediaShared.removeAll()
                 mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
             }
             for element in responseArr{
-                // print(responseArr)
                 var mediaImage : UIImage?
                 var profileImage : UIImage?
                 let channelId = element[channelIdkey]?.stringValue
@@ -201,7 +185,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                         else
                         {
                             mediaImage = UIImage(named: "thumb12")
-                            
                         }
                     }
                     else{
@@ -247,7 +230,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                                         let countString = String(                                      callAbsolute(count!))
                                         mediaShared[i][sharedMediaCount] = countString
                                         mediaShared[i][totalNoShared] = mediaSharedCount
-                                        print("Array %d",mediaShared)
                                         mediaShared[i][isWatched] = "0"
                                     }
                                     else
@@ -261,9 +243,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                                 {
                                     if(mediaShared[i][totalNoShared] as? String != mediaSharedCount)
                                     {
-                                        print(Int(mediaSharedCount!))
-                                        print(Int(mediaShared[i][totalNoShared] as! String))
-                                        
                                         let count = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
                                         let p = mediaShared[i][sharedMediaCount] as! String
                                         let countString:Int
@@ -283,7 +262,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                                     }
                                 }
                             }
-        
+                            
                         }
                     }
                     if(!flag)
@@ -294,8 +273,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 else
                 {
                     mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
-                    
-                    
                 }
                 dummy.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:profileImage!,mediaImageKey:mediaImage!])
             }
@@ -359,7 +336,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
         }
         else{
-        //    ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     
@@ -399,7 +375,6 @@ extension ChannelsSharedController:UITableViewDataSource
             cell.countLabel.hidden = true
             if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
-               // cell.countLabel.hidden = true
                 cell.currentUpdationImage.hidden = false
                 cell.latestImage.hidden = true
                 let text = "@" + (dataSource[indexPath.row][usernameKey] as! String) + " Live"
@@ -460,32 +435,15 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+        let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
+        let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
         
-        
-//        if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
-//        {
-//            if let streamTocken = dataSource[indexPath.row][streamTockenKey]
-//            {
-//                self.loadLiveStreamView(streamTocken as! String)
-//            }
-//            else
-//            {
-//                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
-//            }
-//            
-//        }
-//        else
-//        {
-            let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
-            let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
-            
-            channelItemListVC.channelId = dataSource[indexPath.row][channelIdkey] as! String
-            channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
-            channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][sharedMediaCount]! as! String)!
-            channelItemListVC.userName = dataSource[indexPath.row][usernameKey] as! String
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelItemListVC, animated: true)
-       // }
+        channelItemListVC.channelId = dataSource[indexPath.row][channelIdkey] as! String
+        channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
+        channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][sharedMediaCount]! as! String)!
+        channelItemListVC.userName = dataSource[indexPath.row][usernameKey] as! String
+        channelItemListVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(channelItemListVC, animated: false)
         
     }
     func loadLiveStreamView(streamTocken:String)
@@ -493,7 +451,7 @@ extension ChannelsSharedController:UITableViewDataSource
         
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.196.15.240:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
-        self.presentViewController(vc, animated: true) { () -> Void in
+        self.presentViewController(vc, animated: false) { () -> Void in
             
         }
     }

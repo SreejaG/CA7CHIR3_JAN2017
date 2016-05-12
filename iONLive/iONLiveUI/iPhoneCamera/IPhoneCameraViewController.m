@@ -101,6 +101,7 @@ FileManagerViewController *fileManager;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    [self removeObservers];
     
 }
 -(void) loggedInDetails:(NSDictionary *) detailArray{

@@ -119,9 +119,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         navigationController = UINavigationController(rootViewController: iPhoneCameraViewController)
         navigationController!.navigationBarHidden = true
-        
         self.window!.rootViewController = navigationController
     }
+    
     func loadLiveStreamView()
     {
         

@@ -35,8 +35,7 @@ class MyChannelNotificationViewController: UIViewController {
     let notificationTimeKey = "notifTime"
     
     @IBOutlet var notifImage: UIButton!
-    var tapFlag : Bool = false
-    
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
@@ -55,17 +54,14 @@ class MyChannelNotificationViewController: UIViewController {
     }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
-//        if(tapFlag){
-            let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
-            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
-            channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: false)
-//        }
+        let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
+        let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+        channelVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(channelVC, animated: false)
     }
     
     func initialise(){
         NotificationTableView.layer.cornerRadius=10
-        tapFlag = false
         channelDataSource.removeAll()
         mediaDataSource.removeAll()
         
@@ -215,7 +211,6 @@ class MyChannelNotificationViewController: UIViewController {
                     return time1 > time2
                 })
             }
-            tapFlag = true
             NotificationTableView.reloadData()
         }
         else

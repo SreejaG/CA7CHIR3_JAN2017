@@ -9,8 +9,7 @@
 import UIKit
 
 class OtherChannelCell: UICollectionViewCell {
-    
-    //static let identifier = "OtherChannelCell"
+   
     
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var videoPlayIcon: UIImageView!

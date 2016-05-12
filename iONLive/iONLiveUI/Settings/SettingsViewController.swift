@@ -48,10 +48,12 @@ class SettingsViewController: UIViewController {
     }
 
     @IBAction func doneClicked(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true) { () -> Void in
-            
-        }
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }

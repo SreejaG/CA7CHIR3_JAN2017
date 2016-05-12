@@ -25,7 +25,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     var signedURLName : String = String()
     var thumbURL : String = String()
     var cellSection = Int()
-
+    
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
     
@@ -77,7 +77,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        getUserDetails(userId, token: accessToken)       
+        getUserDetails(userId, token: accessToken)
     }
     
     func getUserDetails(userName: String, token: String)
@@ -85,9 +85,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         showOverlay()
         profileManager.getUserDetails(userName, accessToken:token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -139,11 +139,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -155,32 +153,26 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func setUserDetails()
     {
+        imageForProfile = UIImage()
         let fullName = userDetails["full_name"] as! String
         let userName = userDetails["user_name"] as! String
         let email = userDetails["email"] as! String
         let mobileNo = userDetails["mobile_no"] as! String
         if let imageName =  userDetails["profile_image"]
         {
-            if imageName is NSArray{
-                let imageByteArray: NSArray = imageName["data"] as! NSArray
-                var bytes:[UInt8] = []
-                for serverByte in imageByteArray {
-                    bytes.append(UInt8(serverByte as! UInt))
-                }
-                let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                if let datas = imageData as NSData? {
-                    imageForProfile = UIImage(data: datas)!
-                }
-                else{
-                    imageForProfile = UIImage(named: "girlFace2")!
-                }
+            let imageByteArray: NSArray = imageName["data"] as! NSArray
+            var bytes:[UInt8] = []
+            for serverByte in imageByteArray {
+                bytes.append(UInt8(serverByte as! UInt))
+            }
+            let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+            if let datas = imageData as NSData? {
+                imageForProfile = UIImage(data: datas)!
             }
             else{
                 imageForProfile = UIImage(named: "girlFace2")!
             }
         }
-
-        
         
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
@@ -189,8 +181,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
         editProfTableView.reloadData()
     }
-    
-    //end
     
     @IBAction func saveClicked(sender: AnyObject) {
         showOverlay()
@@ -202,35 +192,34 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func getSignedUrl()  {
-      
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         imageUploadManger.getSignedURL(userId, accessToken: accessToken, mediaType: "image", success: { (response) in
-                self.authenticationSuccessHandlerSignedUrl(response)
-            }) { (error, message) in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationSuccessHandlerSignedUrl(response)
+        }) { (error, message) in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
     func authenticationSuccessHandlerSignedUrl(response:AnyObject?)
     {
-       
+        
         if let json = response as? [String: AnyObject]
         {
             if let fullUrl = json["UploadObjectUrl"]{
-               signedURL = fullUrl as! String
+                signedURL = fullUrl as! String
             }
             if let name = json["ObjectName"]{
                 signedURLName = name as! String
             }
             if let thumbUrl = json["UploadThumbnailUrl"]{
-               thumbURL = thumbUrl as! String
+                thumbURL = thumbUrl as! String
             }
             
             let cameraController = IPhoneCameraViewController()
@@ -242,41 +231,25 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             self.profileManager.uploadProfileImage(userId, accessToken: accessToken, profileImage:imageData!, actualImageUrl: self.signedURLName, success: { (response) in
                 
-                    self.updateProfileDetails()
+                self.updateProfileDetails()
                 
                 }, failure: { (error, message) in
                     self.authenticationFailureHandler(error, code: message)
                     return
             })
-
-           uploadImage(signedURL, imageToSave: imageForProfile, completion: { (result) in
             
+            uploadImage(signedURL, imageToSave: imageForProfile, completion: { (result) in
                 if(result == "Success"){
                     print("cloud uplaod success")
-//                    let cameraController = IPhoneCameraViewController()
-//                    let sizeThumb = CGSizeMake(70,70)
-//                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
-//                    self.uploadImage(self.thumbURL, imageToSave: imageAfterConversionThumbnail, completion: { (result) in
-//                        if(result == "Success"){
-//                            
-//                        }
-//                        else{
-//                            
-//                        }
-//                    })
                 }
                 else{
                     print("cloud uplaod failed")
                 }
-           })
-         
-       //     initialise()
+            })
         }
-        
     }
     
     func  updateProfileDetails() {
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -315,12 +288,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
         
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
-             self.removeOverlay()
+            self.removeOverlay()
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
             return
         }
     }
+    
     func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: (result: String) -> Void)
     {
         let url = NSURL(string: signedUrl)
@@ -335,8 +309,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 completion(result:"Failed")
             }
             else {
-                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                print("Parsed JSON: '\(jsonStr)'")
                 completion(result:"Success")
             }
         }
@@ -367,7 +339,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
     }
 }
-
 
 extension EditProfileViewController: UITableViewDelegate
 {
@@ -432,7 +403,7 @@ extension EditProfileViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
 }
 
@@ -454,7 +425,7 @@ extension EditProfileViewController:UITableViewDataSource
             return dataSource != nil ? (dataSource?[2].count)! :0
             
         case 3:
-            return 0  // for terms and conditn sectn
+            return 0
             
         default:
             return 0
@@ -464,7 +435,7 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-    //     self.automaticallyAdjustsScrollViewInsets = false
+        
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
@@ -479,7 +450,7 @@ extension EditProfileViewController:UITableViewDataSource
                     if cellDataSource[displayNameKey] == ""
                     {
                         cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Full Name",
-                            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
                     }
                     let cameraController = IPhoneCameraViewController()
                     let sizeThumb = CGSizeMake(70,70)
@@ -491,7 +462,7 @@ extension EditProfileViewController:UITableViewDataSource
                     cell.userNameTextField.userInteractionEnabled = false
                     
                     cell.displayNameTextField.text = cellDataSource[displayNameKey]
-                  
+                    
                     cell.displayNameTextField.tag = indexPath.section
                     cell.displayNameTextField.delegate = self
                     
@@ -525,7 +496,7 @@ extension EditProfileViewController:UITableViewDataSource
                     cellSection = indexPath.row
                     
                     cell.privateInfoTitleLabel.text = cellDataSource[privateInfoKey]
-                    //no border line for last cell
+                    
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
                         cell.borderLine.hidden = true
@@ -573,7 +544,7 @@ extension EditProfileViewController:UITableViewDataSource
                 return
             }
         }
-
+        
     }
     
     func isEmail(email:String) -> Bool {
@@ -584,18 +555,17 @@ extension EditProfileViewController:UITableViewDataSource
     func editProfileTapped(sender:UIButton!)
     {
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.SavedPhotosAlbum){
-            print("Button capture")
             imagePicker.delegate = self
             imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum;
             imagePicker.allowsEditing = false
-        
+            
             self.presentViewController(imagePicker, animated: true, completion: nil)
         }
     }
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
         self.dismissViewControllerAnimated(true, completion: { () -> Void in
-        
+            
         })
         imageForProfile = image
         editProfTableView.reloadData()
@@ -605,7 +575,7 @@ extension EditProfileViewController:UITableViewDataSource
     {
         if let dataSource = dataSource
         {
-            return dataSource.count + 1 //1 for last termsAndConditn section
+            return dataSource.count + 1
         }
         else
         {

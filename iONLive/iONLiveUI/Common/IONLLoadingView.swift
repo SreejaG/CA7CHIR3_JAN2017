@@ -10,11 +10,8 @@ import Foundation
 class IONLLoadingView: UIViewController {
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    //MARK: ViewLifeCycle
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-                //    initLoader()
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -31,23 +28,4 @@ class IONLLoadingView: UIViewController {
     func stopLoading(){
         activityIndicator.stopAnimating()
     }
-    
-//        func initLoader() {
-//            let screenWidth = UIScreen.mainScreen().bounds.width
-//            let screenHeight = UIScreen.mainScreen().bounds.height
-//    
-//            let preloaderContainer = UIView(frame: CGRectMake(0, 64,screenWidth,screenHeight-64))
-////            preloaderContainer.center = CGPointMake(screenWidth/2, screenHeight/2)
-//            preloaderContainer.backgroundColor = UIColor.lightGrayColor()
-////            preloaderContainer.alpha = 0.5
-////    
-//            let indicator:UIActivityIndicatorView = UIActivityIndicatorView (activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
-//            indicator.frame = CGRectMake(0.0, 0.0, 10.0, 10.0)
-//            indicator.center = preloaderContainer.center
-//            preloaderContainer.addSubview(indicator)
-//            self.view.addSubview(preloaderContainer)
-//    
-//            indicator.bringSubviewToFront(preloaderContainer)
-//            indicator.startAnimating()
-//        }
 }

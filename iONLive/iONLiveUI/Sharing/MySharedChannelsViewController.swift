@@ -67,8 +67,10 @@ class MySharedChannelsViewController: UIViewController {
     
     @IBAction func backButtonClicked(sender: AnyObject)
     {
-        self.dismissViewControllerAnimated(false) { () -> Void in
-        }
+        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
     
     func addKeyboardObservers()
