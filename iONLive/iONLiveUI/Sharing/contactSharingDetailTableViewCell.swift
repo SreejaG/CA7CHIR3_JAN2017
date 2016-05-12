@@ -42,6 +42,9 @@ class contactSharingDetailTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        contactProfileImage.layer.cornerRadius = contactProfileImage.frame.size.width/2
+        contactProfileImage.layer.masksToBounds = true
+
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

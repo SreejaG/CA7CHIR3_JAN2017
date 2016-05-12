@@ -14,6 +14,7 @@ import UIKit
     let imageUploadManger = ImageUpload.sharedInstance
     var channelDetails: NSDictionary = NSDictionary()
     var status: Int = Int()
+    var userImages : [UIImage] = [UIImage]()
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,8 +57,34 @@ import UIKit
     }
     func setChannelDetails()
     {
+        userImages.removeAll()
+        let userThumbnailImage = channelDetails["sharedUserThumbnails"]
+        let cameraController = IPhoneCameraViewController()
+        let sizeThumb = CGSizeMake(28,28)
+        if userThumbnailImage != nil
+        {
+            if userThumbnailImage?.count > 0
+            {
+                for var i = 0; i < userThumbnailImage?.count; i += 1
+                {
+                    var image = UIImage()
+                    if let imageByteArray: NSArray = userThumbnailImage![i]["data"] as? NSArray{
+                        var bytes:[UInt8] = []
+                        for serverByte in imageByteArray {
+                            bytes.append(UInt8(serverByte as! UInt))
+                        }
+                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                        if let datas = imageData as NSData? {
+                            image = UIImage(data: datas)!
+                            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(image, scaledToFillSize: sizeThumb)
+                            userImages.append(imageAfterConversionThumbnail)
+                        }
+                    }
+                }
+            }
+        }
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
-        controller.loggedInDetails(channelDetails as [NSObject : AnyObject])
+        controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
     
     

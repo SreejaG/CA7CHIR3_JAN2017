@@ -421,21 +421,26 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 let userName = element["userName"] as! String
                 if let imageName =  element["profile_image"]
                 {
-                    if imageName is NSArray{
-                        let imageByteArray: NSArray = imageName!["data"] as! NSArray
+                    if let imageByteArray: NSArray = imageName!["data"] as? NSArray
+                    {
                         var bytes:[UInt8] = []
                         for serverByte in imageByteArray {
                             bytes.append(UInt8(serverByte as! UInt))
                         }
-                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                        if let datas = imageData as NSData? {
-                            contactImage = UIImage(data: datas)!
+                        
+                        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                            let profileImageData = profileData as NSData?
+                            contactImage = UIImage(data: profileImageData!)!
                         }
                     }
                     else{
                         contactImage = UIImage(named: "avatar")!
                     }
                 }
+                else{
+                    contactImage = UIImage(named: "avatar")!
+                }
+
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage])
             }
             contactListTableView.reloadData()

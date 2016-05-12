@@ -164,7 +164,25 @@ class StreamsListViewController: UIViewController{
                 else{
                     notificationType = "shared"
                 }
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName])
+                var profileImage = UIImage()
+                let profileImageName = responseArr[index].valueForKey("profile_image")
+                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                {
+                    var bytes:[UInt8] = []
+                    for serverByte in imageByteArray {
+                        bytes.append(UInt8(serverByte as! UInt))
+                    }
+                    
+                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                        let profileImageData = profileData as NSData?
+                        profileImage = UIImage(data: profileImageData!)!
+                    }
+                }
+                else{
+                    profileImage = UIImage(named: "avatar")!
+                }
+
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName,"profile":profileImage])
             }
             downloadCloudData(15, scrolled: false)
         }
@@ -278,7 +296,7 @@ class StreamsListViewController: UIViewController{
             }
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,"profile" :self.imageDataSource[i]["profile"]!])
                 if(self.dummy.count > 0)
                 {
                     self.dummy.sortInPlace({ p1, p2 in
@@ -363,6 +381,7 @@ class StreamsListViewController: UIViewController{
         dummy.removeAll()
         if let json = response as? [String: AnyObject]
         {
+            print(json)
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
             if (responseArrLive.count != 0)
             {
@@ -398,7 +417,7 @@ class StreamsListViewController: UIViewController{
                             }
                         })
                     }
-                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname])
+                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname,"profile":UIImage()])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     
@@ -556,13 +575,13 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 let type = dataSource[indexPath.row][mediaTypeKey] as! String
                 if type ==  "image"
                 {
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: self.dataSource[indexPath.row]["profile"] as! UIImage, videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
                     }
                 }
                 else if type == "video"
                 {
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: self.dataSource[indexPath.row]["profile"] as! UIImage, videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String) as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
                     }
                 }

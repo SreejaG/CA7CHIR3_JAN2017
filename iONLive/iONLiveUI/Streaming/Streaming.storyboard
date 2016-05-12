@@ -9,7 +9,7 @@
         <!--Other Channel View Controller-->
         <scene sceneID="YEE-QM-6se">
             <objects>
-                <viewController storyboardIdentifier="OtherChannelViewController" id="q5E-EL-prV" customClass="OtherChannelViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OtherChannelViewController" id="q5E-EL-prV" customClass="OtherChannelViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Atf-dE-cib"/>
                         <viewControllerLayoutGuide type="bottom" id="Qt6-KQ-io9"/>
@@ -57,7 +57,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="OtherChannelCell" id="wuH-75-aTj" customClass="OtherChannelCell" customModule="iONLive" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="OtherChannelCell" id="wuH-75-aTj" customClass="OtherChannelCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -140,7 +140,7 @@
         <!--Channels-->
         <scene sceneID="T3j-Eu-9ZH">
             <objects>
-                <viewController storyboardIdentifier="ChannelsSharedController" id="gAD-jA-0co" customClass="ChannelsSharedController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChannelsSharedController" id="gAD-jA-0co" customClass="ChannelsSharedController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="I4h-KZ-Ez6"/>
                         <viewControllerLayoutGuide type="bottom" id="YC5-04-P5h"/>
@@ -183,7 +183,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" red="0.62748634815216064" green="0.72943800687789917" blue="0.077636025846004486" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChannelSharedCell" rowHeight="58" id="mG9-Qn-hPz" customClass="ChannelSharedCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChannelSharedCell" rowHeight="58" id="mG9-Qn-hPz" customClass="ChannelSharedCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="600" height="58"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mG9-Qn-hPz" id="DEm-B3-oEV">
@@ -304,7 +304,7 @@
         <!--Streams Gallery View Controller-->
         <scene sceneID="ADr-cP-8p0">
             <objects>
-                <tabBarController storyboardIdentifier="StreamsGalleryViewController" id="zff-kv-ABG" customClass="StreamsGalleryViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="StreamsGalleryViewController" id="zff-kv-ABG" customClass="StreamsGalleryViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" id="mos-wk-eL0">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -336,7 +336,7 @@
         <!--Stream-->
         <scene sceneID="fMq-yY-otP">
             <objects>
-                <viewController storyboardIdentifier="StreamsListViewController" id="K3I-ov-Eit" customClass="StreamsListViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="StreamsListViewController" id="K3I-ov-Eit" customClass="StreamsListViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="7Rs-Yc-6jP"/>
                         <viewControllerLayoutGuide type="bottom" id="crS-UD-ZdI"/>
@@ -397,7 +397,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StreamListCollectionViewCell" id="ihv-og-1uJ" customClass="StreamListCollectionViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StreamListCollectionViewCell" id="ihv-og-1uJ" customClass="StreamListCollectionViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">

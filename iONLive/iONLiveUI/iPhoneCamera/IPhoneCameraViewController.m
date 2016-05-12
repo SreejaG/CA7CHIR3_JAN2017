@@ -74,6 +74,11 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @property (strong, nonatomic) IBOutlet UIView *activitView;
 @property (strong, nonatomic) IBOutlet UIButton *iphoneCameraButton;
 
+@property (strong, nonatomic) IBOutlet UIButton *firstButton;
+@property (strong, nonatomic) IBOutlet UIButton *secondButton;
+@property (strong, nonatomic) IBOutlet UIButton *thirdButton;
+
+
 @end
 
 @implementation IPhoneCameraViewController
@@ -84,6 +89,15 @@ NSMutableDictionary *ShotsDict;
 FileManagerViewController *fileManager;
 
 - (void)viewDidLoad {
+    _firstButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _firstButton.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _firstButton.layer.masksToBounds = YES;
+    _secondButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _secondButton.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _secondButton.layer.masksToBounds = YES;
+    _thirdButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _thirdButton.layer.cornerRadius = _firstButton.frame.size.width/2;
+    _thirdButton.layer.masksToBounds = YES;
     
     fileManager = [[FileManagerViewController alloc]init];
     [super viewDidLoad];
@@ -104,15 +118,48 @@ FileManagerViewController *fileManager;
     [self removeObservers];
     
 }
--(void) loggedInDetails:(NSDictionary *) detailArray{
+-(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
     
     NSString * sharedUserCount = detailArray[@"sharedUserCount"];
-    NSArray * sharedUserThumbnail = detailArray[@"sharedUserThumbnails"];
     NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
     NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
     NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
+    if(userImages.count > 0){
+        for(int i=0;i<userImages.count;i++){
+            if(i==0){
+                if(userImages[0] != nil){
+                    [_firstButton setImage:userImages[0] forState:UIControlStateNormal];
+                }
+                else{
+                    [_firstButton setImage:[UIImage imageNamed:@"girlFace1"] forState:UIControlStateNormal];
+                }
+            }
+            else if(i==1){
+                if(userImages[1] != nil){
+                    [_secondButton setImage:userImages[1] forState:UIControlStateNormal];
+                }
+                else{
+                    [_secondButton setImage:[UIImage imageNamed:@"girlFace2"] forState:UIControlStateNormal];
+                }
+            }
+            else if(i==3){
+                if(userImages[3] != nil){
+                    [_thirdButton setImage:userImages[3] forState:UIControlStateNormal];
+                }
+                else{
+                    [_thirdButton setImage:[UIImage imageNamed:@"boyFace"] forState:UIControlStateNormal];
+                }
+            }
+        }
+    }
+  
+//    else{
+//        [_firstButton setImage:[UIImage imageNamed:@"girlFace1"] forState:UIControlStateNormal];
+//        [_secondButton setImage:[UIImage imageNamed:@"girlFace2"] forState:UIControlStateNormal];
+//        [_thirdButton setImage:[UIImage imageNamed:@"boyFace"] forState:UIControlStateNormal];
+//    }
     
     _sharedUserCount.text = sharedUserCount;
     
@@ -149,8 +196,11 @@ FileManagerViewController *fileManager;
         });
     }
     else{
-        //   _countLabel.hidden= false;
-        // _countLabel.text = mediaSharedCount;
+        if([_countLabel isHidden])
+        {
+            _countLabel.hidden= false;
+            _countLabel.text = mediaSharedCount;
+        }
     }
     
     

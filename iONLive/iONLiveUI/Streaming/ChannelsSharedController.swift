@@ -196,22 +196,21 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     mediaImage = UIImage(named: "thumb12")
                 }
                 
-                if let imageName =  element[profileImageKey]
+                let profileImageName = element[profileImageKey]
+                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
                 {
-                    if imageName is NSArray{
-                        let imageByteArray: NSArray = imageName["data"] as! NSArray
-                        var bytes:[UInt8] = []
-                        for serverByte in imageByteArray {
-                            bytes.append(UInt8(serverByte as! UInt))
-                        }
-                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                        if let datas = imageData as NSData? {
-                            profileImage = UIImage(data: datas)!
-                        }
+                    var bytes:[UInt8] = []
+                    for serverByte in imageByteArray {
+                        bytes.append(UInt8(serverByte as! UInt))
                     }
-                    else{
-                        profileImage = UIImage(named: "avatar")!
+                    
+                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                        let profileImageData = profileData as NSData?
+                        profileImage = UIImage(data: profileImageData!)
                     }
+                }
+                else{
+                    profileImage = UIImage(named: "avatar")!
                 }
                 if( mediaShared.count > 0)
                 {
@@ -442,6 +441,7 @@ extension ChannelsSharedController:UITableViewDataSource
         channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
         channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][sharedMediaCount]! as! String)!
         channelItemListVC.userName = dataSource[indexPath.row][usernameKey] as! String
+        channelItemListVC.profileImage = dataSource[indexPath.row][profileImageKey] as! UIImage
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
         

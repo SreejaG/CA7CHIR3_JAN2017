@@ -160,20 +160,24 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let mobileNo = userDetails["mobile_no"] as! String
         if let imageName =  userDetails["profile_image"]
         {
-            let imageByteArray: NSArray = imageName["data"] as! NSArray
-            var bytes:[UInt8] = []
-            for serverByte in imageByteArray {
-                bytes.append(UInt8(serverByte as! UInt))
-            }
-            let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-            if let datas = imageData as NSData? {
-                imageForProfile = UIImage(data: datas)!
+            if let imageByteArray: NSArray = imageName["data"] as? NSArray{
+                var bytes:[UInt8] = []
+                for serverByte in imageByteArray {
+                    bytes.append(UInt8(serverByte as! UInt))
+                }
+                let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+                if let datas = imageData as NSData? {
+                    imageForProfile = UIImage(data: datas)!
+                }
             }
             else{
                 imageForProfile = UIImage(named: "girlFace2")!
             }
         }
-        
+        else{
+            imageForProfile = UIImage(named: "girlFace2")!
+        }
+    
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
         privateInfoOptions = [[privateInfoKey:email],/*[titleKey:location],*/[privateInfoKey:mobileNo]]

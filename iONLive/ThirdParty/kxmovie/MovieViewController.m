@@ -544,6 +544,8 @@ static NSMutableDictionary * gHistory;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
+    profilePicture.layer.masksToBounds = YES;
     [self setUpView];
     [self setUpThumbailImage];
 }
