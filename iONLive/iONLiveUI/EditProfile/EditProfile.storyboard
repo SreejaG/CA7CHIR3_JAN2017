@@ -9,7 +9,7 @@
         <!--Edit Profile View Controller-->
         <scene sceneID="Fzc-0a-0AS">
             <objects>
-                <viewController storyboardIdentifier="EditProfileViewController" id="NLI-gS-dTY" customClass="EditProfileViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EditProfileViewController" id="NLI-gS-dTY" customClass="EditProfileViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="vOL-X2-Afq"/>
                         <viewControllerLayoutGuide type="bottom" id="5ZT-Yw-tEZ"/>
@@ -25,7 +25,7 @@
                                         <rect key="frame" x="0.0" y="44" width="600" height="556"/>
                                         <color key="backgroundColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfileHeaderCell" id="TNq-L2-K8e" customClass="EditProfileHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfileHeaderCell" id="TNq-L2-K8e" customClass="EditProfileHeaderCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="100"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TNq-L2-K8e" id="TKm-Es-PGb">
@@ -85,7 +85,7 @@
                                                     <outlet property="topBorderLine" destination="gRI-B2-Mru" id="9ys-6y-IAh"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="EditProfAccountInfoCell" id="ECW-zE-bWD" customClass="EditProfAccountInfoCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="EditProfAccountInfoCell" id="ECW-zE-bWD" customClass="EditProfAccountInfoCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="128" width="600" height="100"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ECW-zE-bWD" id="wRP-jj-e3r">
@@ -124,7 +124,7 @@
                                                     <outlet property="borderLine" destination="4IC-Ik-0m8" id="I45-Bs-gvR"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfPersonalInfoCell" id="4qo-u3-kz3" customClass="EditProfPersonalInfoCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfPersonalInfoCell" id="4qo-u3-kz3" customClass="EditProfPersonalInfoCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="228" width="600" height="100"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4qo-u3-kz3" id="SjD-N2-qfl">
@@ -205,7 +205,7 @@
                                                     <outlet property="userNameTextField" destination="sA6-Gw-se4" id="hh5-sP-qED"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfPrivateInfoCell" id="aCy-Al-rb9" customClass="EditProfPrivateInfoCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EditProfPrivateInfoCell" id="aCy-Al-rb9" customClass="EditProfPrivateInfoCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="328" width="600" height="100"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aCy-Al-rb9" id="jQG-oJ-Y3i">

@@ -194,12 +194,21 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     @IBAction func didtapBackButton(sender: AnyObject)
     {
+        
+        
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
-        }
+        
+//        var navigationController:UINavigationController?
+//        navigationController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//        navigationController!.navigationBarHidden = true
+        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+//        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//        navController.navigationBarHidden = true
+        
+//        self.presentViewController(navigationController!, animated: false) { () -> Void in
+//        }
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
@@ -306,7 +315,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         dataSource.removeAll()
         var imageDetails : UIImage?
-        print(channelDetailsDict)
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
@@ -323,6 +331,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 if fileExistFlag == true{
                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                     imageDetails = mediaImageFromFile!
+                }
+                else{
+                    imageDetails = UIImage(named: "thumb12")
                 }
             }
             else{

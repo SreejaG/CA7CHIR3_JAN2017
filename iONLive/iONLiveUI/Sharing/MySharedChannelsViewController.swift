@@ -233,6 +233,20 @@ class MySharedChannelsViewController: UIViewController {
                         let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                         imageDetails = mediaImageFromFile!
                     }
+                    else{
+                        if(thumbUrl != "")
+                        {
+                            let url: NSURL = convertStringtoURL(thumbUrl)
+                            if let data = NSData(contentsOfURL: url){
+                                let imageDetailsData = (data as NSData?)!
+                                imageDetails = UIImage(data: imageDetailsData)
+                            }
+                        }
+                        else{
+                            imageDetails = UIImage(named: "thumb12")
+                        }
+
+                    }
                 }
                 else{
                     if(thumbUrl != "")
