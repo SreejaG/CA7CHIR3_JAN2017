@@ -162,7 +162,7 @@ static NSMutableDictionary * gHistory;
     
     NSString *userId,*accessToken,*mediaDetailId,*notificationType;
     UIImageView *backgroundImage;
-  //  MPMoviePlayerController *moviePlayer;
+    //  MPMoviePlayerController *moviePlayer;
     
 }
 
@@ -197,16 +197,17 @@ static NSMutableDictionary * gHistory;
 
 
 + (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
-                                channelName: (NSString *) channelname
+                             channelName: (NSString *) channelname
                                 userName: (NSString *) username
-                                mediaType: (NSString *) mediaType
-                                profileImage: (UIImage *) profileImage
-                                VideoImageUrl: (UIImage *) VideoImageUrl
-                                notifType: (NSString *) notifType
-                                mediaId: (NSString *) mediaId
+                               mediaType: (NSString *) mediaType
+                            profileImage: (UIImage *) profileImage
+                           VideoImageUrl: (UIImage *) VideoImageUrl
+                               notifType: (NSString *) notifType
+                                 mediaId: (NSString *) mediaId
+                               isProfile: (BOOL) isProfile
 {
     
-    return [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId];
+    return [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId isProfile:isProfile];
 }
 
 
@@ -224,27 +225,16 @@ static NSMutableDictionary * gHistory;
             _parameters = nil;
             [self setUpDefaultValues];
             NSLog(@"rtsp File Path = %@",path);
-            
-            //        [self setUpBlurView];
-            //        if (_liveVideo) {
-            //            [self checkWifiConnectionAndStartDecoder];
-            //        }
-            //        else
-            //        {
-            
+            closeButton.hidden = true;
             [self startDecoder];
-            
-            //        }
-            
         }
         else{
-        [self.view bringSubviewToFront:glView];
-        videoProgressBar.hidden = true;
-        _liveVideo = live;
-        rtspFilePath = path;
-        closeButton.hidden = true;
-        if([parameters count] > 0)
-        {
+            
+            [self.view bringSubviewToFront:glView];
+            videoProgressBar.hidden = true;
+            _liveVideo = live;
+            rtspFilePath = path;
+            
             NSString *channel = [parameters valueForKey:@"channelName"];
             NSString *user = [parameters valueForKey:@"userName"];
             UIImage *image = [parameters valueForKey:@"profileImage"];
@@ -272,48 +262,50 @@ static NSMutableDictionary * gHistory;
                 typeMedia.text = @"";
                 userName.text = @"";
             }
-
+            closeButton.hidden = false;
+            
+            _parameters = nil;
+            [self setUpDefaultValues];
+            [self startDecoder];
         }
-        _parameters = nil;
-        [self setUpDefaultValues];
-        NSLog(@"rtsp File Path = %@",path);
-        
-        //        [self setUpBlurView];
-        //        if (_liveVideo) {
-        //            [self checkWifiConnectionAndStartDecoder];
-        //        }
-        //        else
-        //        {
-        
-        [self startDecoder];
-        
-                }
     }
     return self;
 }
 
 - (id) initWithImageVideo: (NSString *) mediaUrl
-                channelName: (NSString *) channelname
-                userName: (NSString *) username
+              channelName: (NSString *) channelname
+                 userName: (NSString *) username
                 mediaType: (NSString *) mediaType
-                profileImage: (UIImage *) profileImage
-                VideoImageUrl: (UIImage *) VideoImageUrl
+             profileImage: (UIImage *) profileImage
+            VideoImageUrl: (UIImage *) VideoImageUrl
                 notifType: (NSString *) notifType
-                mediaId: (NSString *) mediaId
+                  mediaId: (NSString *) mediaId
+                isProfile: (BOOL) isProfile
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
         [self setUpDefaultValues];
         [self setUpViewForImageVideo];
-        profilePicture.image = profileImage;
+        
+        if(isProfile == true){
+            profilePicture.image = profileImage;
+        }
+        else{
+            SetUpView *SV = [[SetUpView alloc]init];
+            [SV getProfileImageFromByteArray];
+        }
+        
         channelName.text = channelname;
+        
         if([mediaType  isEqual: @"live"]){
             typeMedia.text = mediaType;
         }
         else{
             typeMedia.text = @"";
         }
+        
         userName.text = username;
+        
         if([notifType isEqual: @"likes"])
         {
             likeFlag = 0;
@@ -333,7 +325,7 @@ static NSMutableDictionary * gHistory;
             typeMedia.text = @"";
             userName.text = @"";
         }
-
+        
         if([mediaType  isEqual: @"video"])
         {
             imageVideoView.hidden = true;
@@ -353,17 +345,15 @@ static NSMutableDictionary * gHistory;
             BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
             
             NSLog(@"%@", fileUrl);
-        
-            if(fileExistFlag == true){
             
+            if(fileExistFlag == true){
+                
                 videoProgressBar.hidden = true;
                 self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
                 MPMoviePlayerController *player = self.moviePlayer;
-             //   [player setFullscreen: false];
                 [player setShouldAutoplay:YES];
                 [player prepareToPlay];
                 player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height + 30));
-              //  [player.view sizeToFit];
                 player.scalingMode = MPMovieScalingModeAspectFill;
                 player.movieSourceType = MPMovieSourceTypeFile;
                 player.controlStyle = MPMovieControlStyleNone;
@@ -380,11 +370,16 @@ static NSMutableDictionary * gHistory;
             }
         }
         else{
-             [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+            [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
         }
         
     }
     return self;
+}
+
+-(void) setProfileImage:(UIImage *) profileImageUser
+{
+    profilePicture.image = profileImageUser;
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
@@ -394,7 +389,7 @@ static NSMutableDictionary * gHistory;
     NSString *parentPathStr = [parentPath absoluteString];
     NSString *mediaNamePath = [NSString stringWithFormat:@"%@full",mediaDetailId];
     NSString *savingPath = [NSString stringWithFormat:@"%@/%@full",parentPathStr,mediaDetailId];
-//    NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+    //    NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
     UIImage *mediaImage;
     NSLog(@"%@ %@",mediaNamePath,savingPath);
     bool fileExistFlag = [[FileManagerViewController sharedInstance] fileExist:savingPath];
@@ -406,7 +401,7 @@ static NSMutableDictionary * gHistory;
         
         NSURL *url = [self convertStringToUrl:mediaUrl];
         NSLog(@"%@",url);
-   
+        
         NSData *data = [[NSData alloc] initWithContentsOfURL:url];
         if(data != nil)
         {
@@ -417,7 +412,7 @@ static NSMutableDictionary * gHistory;
         }
         [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
     }
-     imageVideoView.image = mediaImage;
+    imageVideoView.image = mediaImage;
 }
 
 -(void) downloadVideo: (NSURL *) url
@@ -430,7 +425,7 @@ static NSMutableDictionary * gHistory;
     videoProgressBar.center = glView.center;
     videoProgressBar.transform = CGAffineTransformScale(videoProgressBar.transform, 1, 4);
     [downloadTask resume];
-   
+    
     
 }
 
@@ -439,7 +434,7 @@ static NSMutableDictionary * gHistory;
     float progress = (float)totalBytesWritten / (float)totalBytesExpectedToWrite;
     videoProgressBar.progress = progress;
     NSLog(@"%f", progress);
-   
+    
     if(progress == 1.0)
     {
         videoProgressBar.hidden = true;
@@ -448,7 +443,7 @@ static NSMutableDictionary * gHistory;
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
- 
+    
     NSData *data = [[NSData alloc]initWithContentsOfURL:location];
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
@@ -464,7 +459,7 @@ static NSMutableDictionary * gHistory;
         if(write){
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(playerDidFinish:)
-                                                name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
+                                                         name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
             _moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:fileURL];
             MPMoviePlayerController *player = _moviePlayer;
             player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - heartBottomDescView.frame.size.height);
@@ -478,7 +473,7 @@ static NSMutableDictionary * gHistory;
         }
         
     }
-  
+    
 }
 
 -(void) playerDidFinish :(NSNotification *) notif
@@ -493,7 +488,7 @@ static NSMutableDictionary * gHistory;
     heart3Button.hidden = true;
     heart4Button.hidden = true;
     hidingHeartButton.hidden = true;
- //   videoProgressBar.hidden = true;
+    //   videoProgressBar.hidden = true;
     likeFlag = false;
     heartBottomDescView.hidden = false;
     topView.hidden = false;
@@ -859,7 +854,7 @@ static NSMutableDictionary * gHistory;
 -(void)setUpGlViewForPlayBack
 {
     videoProgressBar.hidden = true;
-    closeButton.hidden = false;
+    closeButton.hidden = true;
     bottomView.hidden = true;
     noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
@@ -914,7 +909,7 @@ static NSMutableDictionary * gHistory;
     numberOfSharedChannels.hidden = true;
     bottomView.hidden = true;
     topView.hidden = false;
-  //  topView.backgroundColor = [UIColor clearColor];
+    //  topView.backgroundColor = [UIColor clearColor];
     liveView.hidden = true;
     closeButton.hidden = false;
 }
@@ -1805,7 +1800,7 @@ static NSMutableDictionary * gHistory;
         [downloadTask cancel];
     }
     
-        [self dismissViewControllerAnimated:true
+    [self dismissViewControllerAnimated:true
                              completion:^{
                                  
                              }];
@@ -1916,7 +1911,7 @@ static NSMutableDictionary * gHistory;
     animation.path = path;
     animation.calculationMode = kCAAnimationCubicPaced;
     CGPathRelease(path);
-
+    
     CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     opacityAnimation.fromValue = @0.95f;
     opacityAnimation.toValue  = @0.0f;

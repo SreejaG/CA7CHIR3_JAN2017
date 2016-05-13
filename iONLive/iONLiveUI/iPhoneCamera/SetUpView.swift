@@ -9,7 +9,7 @@
 import UIKit
 
 @objc class SetUpView: UIViewController {
- let channelManager = ChannelManager.sharedInstance
+    let channelManager = ChannelManager.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let imageUploadManger = ImageUpload.sharedInstance
     var channelDetails: NSDictionary = NSDictionary()
@@ -24,23 +24,23 @@ import UIKit
         super.didReceiveMemoryWarning()
     }
     
-  func getValue()
-  {
-    let defaults = NSUserDefaults .standardUserDefaults()
-    let userId = defaults.valueForKey(userLoginIdKey) as! String
-    let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-    getLoginDetails(userId, token: accessToken)
+    func getValue()
+    {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        getLoginDetails(userId, token: accessToken)
     }
     
     func getLoginDetails(userName: String, token: String)
     {
         channelManager.getLoggedInDetails(userName, accessToken: token, success: { (response) in
             self.authenticationSuccessHandlerList(response)
-
-            }) { (error, code) in
-                
-                ErrorManager.sharedInstance.inValidResponseError()
-  
+            
+        }) { (error, code) in
+            
+            ErrorManager.sharedInstance.inValidResponseError()
+            
         }
     }
     func authenticationSuccessHandlerList(response:AnyObject?)
@@ -93,9 +93,9 @@ import UIKit
     func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String)
     {
         channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, success: { (response) in
-                 self.authenticationSuccessHandlerSetMedia(response)
-            }) { (error, message) in
-                
+            self.authenticationSuccessHandlerSetMedia(response)
+        }) { (error, message) in
+            
         }
     }
     
@@ -104,7 +104,7 @@ import UIKit
         if let json = response as? [String: AnyObject]
         {
             status = json["status"] as! Int
-        //    postLikeDetails()
+            //    postLikeDetails()
         }
         else
         {
@@ -112,9 +112,47 @@ import UIKit
         }
     }
     
-//    func postLikeDetails(){
-//        
-//        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
-//        controller.mediaDetails(status)
-//    }
+    //    func postLikeDetails(){
+    //
+    //        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
+    //        controller.mediaDetails(status)
+    //    }
+    
+    func getProfileImageFromByteArray()
+    {
+       
+    }
+    
+    func authenticationSuccessHandlerGetProfileImage(response:AnyObject?)
+    {
+        var profileImage = UIImage()
+        if let json = response as? [String: AnyObject]
+        {
+           
+            let profileImageName = json["profile_image"]
+            if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+            {
+                var bytes:[UInt8] = []
+                for serverByte in imageByteArray {
+                    bytes.append(UInt8(serverByte as! UInt))
+                }
+                
+                if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                    let profileImageData = profileData as NSData?
+                    profileImage = UIImage(data: profileImageData!)!
+                }
+            }
+            else{
+                profileImage = UIImage(named: "avatar")!
+            }
+        }
+        else
+        {
+           profileImage = UIImage(named: "avatar")!
+        }
+        
+        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
+        controller.setProfileImage(profileImage)
+    }
+
 }

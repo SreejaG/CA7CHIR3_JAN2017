@@ -146,6 +146,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = navigationController
     }
     
+    func  loadInitialViewController(){
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        
+        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        {
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                try fileManager.removeItemAtPath(documentsPath)
+            }
+            catch let error as NSError {
+                print("Ooops! Something went wrong: \(error)")
+            }
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        else{
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let deviceToken = defaults.valueForKey("deviceToken") as! String
+        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+        defaults.setValue(deviceToken, forKey: "deviceToken")
+        defaults.setObject(1, forKey: "shutterActionMode");
+        
+        var controller : UIViewController = UIViewController()
+        let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
+        controller = authenticationStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController")
+        self.window!.rootViewController = controller
+      
+    }
+
+    
     // MARK: - Core Data stack
     
     lazy var applicationDocumentsDirectory: NSURL = {

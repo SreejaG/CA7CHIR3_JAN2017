@@ -36,7 +36,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     func subscriptionEmpty ()
     {
         alert("Shared Channel Empty", message: "No Sharing Data.")
-
+        
     }
     func invalidRequest()
     {
@@ -141,18 +141,22 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     
     func invalidTockenError()
     {
-        alert("Invalid Tocken", message:"Invalid Tocken error. Please try again")
+        alert("Invalid Token", message:"Invalid Token error. Please try again")
+        let appDel = AppDelegate()
+        appDel.loadInitialViewController()
+        
     }
     
     func tockenExpired()
     {
-        alert("Tocken Expired", message:"Tocken expired error. please try again")
+        alert("Token Expired", message:"Token expired error. please try again")
     }
     
     func tockenMissingError()
     {
-        alert("Tocken Missing", message: "Tocken missing error. Please try again")
+        alert("Token Missing", message: "Token missing error. Please try again")
     }
+    
     
     func invalidStream()
     {
@@ -161,7 +165,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     
     func verificationCodeMismatchError()
     {
-         alert("Code Mismatch", message: "Verification code mismatch error. Please try again")
+        alert("Code Mismatch", message: "Verification code mismatch error. Please try again")
     }
     
     func alert(var title: String?, var message: String?) {
@@ -172,13 +176,13 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         if message as String? == nil {
             message = "\nWe're sorry, but an error occurred. Please try again."
         }
-        
         UIAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: "OK").show()
+
     }
-    
+
     func channelAlreayExist()
     {
-         alert("Channel Exist", message: "Channel name already exists")
+        alert("Channel Exist", message: "Channel name already exists")
     }
     
     func invalidChannelId()
@@ -205,7 +209,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     {
         alert("Invalid Bucket", message: "Bucket name invalid")
     }
-
+    
     func invalidEmail()
     {
         alert("Invalid Email", message: "Email Id invalid")
@@ -242,7 +246,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     {
         switch errorCode
         {
-         case "USER001": //userAllreadyRegisterd
+        case "USER001": //userAllreadyRegisterd
             userAlreadyRegError()
             break
         case "USER002":  //invalidUserNameOrPassword

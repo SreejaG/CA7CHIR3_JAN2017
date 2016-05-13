@@ -9,7 +9,7 @@
         <!--Authenticate Navigation Controller-->
         <scene sceneID="ljK-yv-S3n">
             <objects>
-                <navigationController storyboardIdentifier="AuthenticateNavigationController" id="g1s-gG-kzr" customClass="AuthenticateNavigationController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AuthenticateNavigationController" id="g1s-gG-kzr" customClass="AuthenticateNavigationController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ch8-lZ-WwU">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -25,7 +25,7 @@
         <!--Authenticate View Controller-->
         <scene sceneID="PIa-0v-rFP">
             <objects>
-                <viewController id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jZK-O0-9hG"/>
                         <viewControllerLayoutGuide type="bottom" id="ild-vM-hCo"/>
@@ -107,7 +107,7 @@
         <!--Login View Controller-->
         <scene sceneID="r17-Gn-ZcT">
             <objects>
-                <viewController id="Bhq-WG-290" customClass="LoginViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Bhq-WG-290" customClass="LoginViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bpa-BX-iUT"/>
                         <viewControllerLayoutGuide type="bottom" id="YM5-By-EZ3"/>
@@ -234,7 +234,7 @@
         <!--Sign Up View Controller-->
         <scene sceneID="xlq-Et-i9B">
             <objects>
-                <viewController id="lMF-nl-J2n" customClass="SignUpViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="lMF-nl-J2n" customClass="SignUpViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mk0-rh-ZBe"/>
                         <viewControllerLayoutGuide type="bottom" id="ap1-Rr-tgc"/>
@@ -369,7 +369,7 @@
         <!--Forgot Password View Controller-->
         <scene sceneID="bTA-IZ-D74">
             <objects>
-                <viewController storyboardIdentifier="ForgotPasswordViewController" id="sle-RY-xcI" customClass="ForgotPasswordViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ForgotPasswordViewController" id="sle-RY-xcI" customClass="ForgotPasswordViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="vsA-r3-hH6"/>
                         <viewControllerLayoutGuide type="bottom" id="8wy-sK-Tt6"/>
@@ -464,7 +464,7 @@
         <!--Sign Up User Name View Controller-->
         <scene sceneID="P8H-0K-u55">
             <objects>
-                <viewController storyboardIdentifier="SignUpUserNameViewController" id="hww-vD-Jb7" customClass="SignUpUserNameViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignUpUserNameViewController" id="hww-vD-Jb7" customClass="SignUpUserNameViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="WhI-Fa-Nan"/>
                         <viewControllerLayoutGuide type="bottom" id="fNv-NT-Rhu"/>
@@ -565,7 +565,7 @@
         <!--Sign Up Verify Phone View Controller-->
         <scene sceneID="UhN-cU-ohS">
             <objects>
-                <viewController storyboardIdentifier="SignUpVerifyPhoneViewController" id="nvi-gf-ENa" customClass="SignUpVerifyPhoneViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignUpVerifyPhoneViewController" id="nvi-gf-ENa" customClass="SignUpVerifyPhoneViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="n4T-5y-cLA"/>
                         <viewControllerLayoutGuide type="bottom" id="JH6-do-nV3"/>
@@ -681,7 +681,7 @@
                                                     <constraint firstItem="Riw-sr-yt4" firstAttribute="top" secondItem="HY9-hv-Qfr" secondAttribute="top" id="rqh-ji-ABz"/>
                                                 </constraints>
                                             </view>
-                                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kNe-dP-v8p" customClass="CountryPicker" customModule="iONLive" customModuleProvider="target">
+                                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kNe-dP-v8p" customClass="CountryPicker" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="79" y="239" width="442" height="186"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="442" id="7Ew-Or-p1i"/>
@@ -747,7 +747,7 @@
         <!--Sign Up Find Friends View Controller-->
         <scene sceneID="TLh-if-WpP">
             <objects>
-                <viewController storyboardIdentifier="SignUpFindFriendsViewController" id="3xD-Dj-UzF" customClass="SignUpFindFriendsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignUpFindFriendsViewController" id="3xD-Dj-UzF" customClass="SignUpFindFriendsViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4h8-Pd-7ro"/>
                         <viewControllerLayoutGuide type="bottom" id="mWc-Ux-PB7"/>
@@ -892,7 +892,7 @@
         <!--Contact Details View Controller-->
         <scene sceneID="F5J-7m-rtC">
             <objects>
-                <viewController storyboardIdentifier="ContactDetailsViewController" id="ha3-cN-q5O" customClass="ContactDetailsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ContactDetailsViewController" id="ha3-cN-q5O" customClass="ContactDetailsViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3So-jf-xJ2"/>
                         <viewControllerLayoutGuide type="bottom" id="wKg-v6-DyN"/>
@@ -951,7 +951,7 @@
                                 <rect key="frame" x="0.0" y="108" width="600" height="492"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="contactHeaderTableViewCell" id="Nl1-DE-JVZ" userLabel="MyContactHeaderCell" customClass="contactHeaderTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="contactHeaderTableViewCell" id="Nl1-DE-JVZ" userLabel="MyContactHeaderCell" customClass="contactHeaderTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="600" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Nl1-DE-JVZ" id="ePG-Fd-kic">
@@ -975,7 +975,7 @@
                                             <outlet property="contactHeaderTitle" destination="24j-LG-LOB" id="qAV-Tt-JGV"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="contactTableViewCell" id="wFm-Wz-HUC" userLabel="MyContactDataCell" customClass="contactTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="contactTableViewCell" id="wFm-Wz-HUC" userLabel="MyContactDataCell" customClass="contactTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="88" width="600" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wFm-Wz-HUC" id="v26-j9-K0D">

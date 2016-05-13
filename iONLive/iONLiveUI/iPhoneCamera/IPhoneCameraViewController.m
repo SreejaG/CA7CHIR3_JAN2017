@@ -196,10 +196,36 @@ FileManagerViewController *fileManager;
         });
     }
     else{
-        if([_countLabel isHidden])
+        
+        NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:@"First"];
+        if([status isEqualToString:@"FirstEntry"])
         {
-            _countLabel.hidden= false;
-            _countLabel.text = mediaSharedCount;
+             _countLabel.hidden= false;
+              _countLabel.text = mediaSharedCount;
+            [[NSUserDefaults standardUserDefaults] setObject:@"default" forKey:@"First"] ;
+        }
+        NSArray *mediaArray = [[NSUserDefaults standardUserDefaults] objectForKey:@"Shared"];
+        NSInteger count = 0;
+        for (int i=0;i< mediaArray.count;i++)
+        {
+            count = count + [ mediaArray[i][@"total_no_media_shared"] integerValue];
+        }
+        if(count==0)
+        {
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
+                if ( data == nil )
+                    return;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // WARNING: is the cell still using the same data by this point??
+                    if([latestSharedMediaType  isEqual: @"video"])
+                    {
+                        self.playiIconView.hidden = false;
+                    }
+                    self.latestSharedMediaImage.image= [UIImage imageWithData: data];
+                });
+                
+            });
         }
     }
     
@@ -326,6 +352,12 @@ FileManagerViewController *fileManager;
 {
     
     NSArray *mediaArray = [[NSUserDefaults standardUserDefaults] objectForKey:@"Shared"];
+    
+    if([mediaArray count] <= 0)
+    {
+        [[NSUserDefaults standardUserDefaults] setObject:@"FirstEntry" forKey:@"First"];
+  
+    }
     NSInteger count = 0;
     
     for (int i=0;i< mediaArray.count;i++)

@@ -44,7 +44,10 @@ class IPhoneLiveStreaming: NSObject {
             
       //     let baseStream  = "rtsp://192.168.16.44:1935/live?userName=remya123&token=in7bmn7x14610637429891"
             
-           let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken) +  getUserNameAndToken(streamToken, WithUserName: "test3@ionlive.com")
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            
+           let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() +  getUserNameAndToken(streamToken, WithUserName: userId)
             
             let streamPath = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken)
             print(streamPath)
@@ -74,7 +77,8 @@ class IPhoneLiveStreaming: NSObject {
             
           //  return "104.196.113.133"
             
-            return "104.196.15.240"
+//            return "104.196.15.240"
+            return "104.154.69.174"
             
             //return 192.168.16.12
 //            return "stream.ioncameras.com"
