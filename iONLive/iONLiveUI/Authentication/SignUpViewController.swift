@@ -53,9 +53,20 @@ class SignUpViewController: UIViewController {
         passwdTextField.secureTextEntry = true
         emailTextfield.delegate = self
         passwdTextField.delegate = self
+        passwdTextField.tag = 10
         addObserver()
     }
   
+//    func textFieldDidEndEditing(textField: UITextField) {
+//        if(textField.tag == 10){
+//          let text = textField.text
+//            if((text?.characters.count > 8) || ())
+//            {
+//                
+//            }
+//        }
+//    }
+    
     func addObserver()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)

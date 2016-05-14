@@ -210,7 +210,6 @@ static NSMutableDictionary * gHistory;
     return [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId isProfile:isProfile];
 }
 
-
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
                  liveVideo:(BOOL)live
@@ -286,15 +285,13 @@ static NSMutableDictionary * gHistory;
     if (self) {
         [self setUpDefaultValues];
         [self setUpViewForImageVideo];
-        
+        NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+        userId = [standardDefaults valueForKey:@"userLoginIdKey"];
+        accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
         if(isProfile == true){
             profilePicture.image = profileImage;
         }
-        else{
-            SetUpView *SV = [[SetUpView alloc]init];
-            [SV getProfileImageFromByteArray];
-        }
-        
+    
         channelName.text = channelname;
         
         if([mediaType  isEqual: @"live"]){
@@ -314,9 +311,7 @@ static NSMutableDictionary * gHistory;
             likeFlag = 1;
         }
         
-        NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
-        userId = [standardDefaults valueForKey:@"userLoginIdKey"];
-        accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
+       
         notificationType = @"LIKE";
         mediaDetailId = mediaId;
         
@@ -377,10 +372,6 @@ static NSMutableDictionary * gHistory;
     return self;
 }
 
--(void) setProfileImage:(UIImage *) profileImageUser
-{
-    profilePicture.image = profileImageUser;
-}
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
 {

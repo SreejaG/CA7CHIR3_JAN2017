@@ -12,5 +12,4 @@ import UIKit
     static var controller: UIViewController?
     static var iphoneCam : UIViewController?
 
-
 }

@@ -51,19 +51,17 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
         
     }
   
-    func getUserProfileImage(userName: String, accessToken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
+    func getSubUserProfileImage(userName: String, accessToken: String, subscriberUserName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
         
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
-            
-      
+        requestManager.httpManager().GET(UrlManager.sharedInstance.getSubscriberProfileImageAPIUrl(userName, accessToken: accessToken, subscriberUserName: subscriberUserName), parameters: nil, success: { (operation, response) -> Void in
+        
             //Get and parse the response
-            if let responseObject = response as? [[String:AnyObject]]
+            if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
                 success?(response: responseObject)
-                
-                
+               
             }
             else
             {

@@ -12,6 +12,8 @@ import UIKit
     let channelManager = ChannelManager.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let imageUploadManger = ImageUpload.sharedInstance
+    let profileManager = ProfileManager.sharedInstance
+    
     var channelDetails: NSDictionary = NSDictionary()
     var status: Int = Int()
     var userImages : [UIImage] = [UIImage]()
@@ -118,41 +120,4 @@ import UIKit
     //        controller.mediaDetails(status)
     //    }
     
-    func getProfileImageFromByteArray()
-    {
-       
-    }
-    
-    func authenticationSuccessHandlerGetProfileImage(response:AnyObject?)
-    {
-        var profileImage = UIImage()
-        if let json = response as? [String: AnyObject]
-        {
-           
-            let profileImageName = json["profile_image"]
-            if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
-            {
-                var bytes:[UInt8] = []
-                for serverByte in imageByteArray {
-                    bytes.append(UInt8(serverByte as! UInt))
-                }
-                
-                if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                    let profileImageData = profileData as NSData?
-                    profileImage = UIImage(data: profileImageData!)!
-                }
-            }
-            else{
-                profileImage = UIImage(named: "avatar")!
-            }
-        }
-        else
-        {
-           profileImage = UIImage(named: "avatar")!
-        }
-        
-        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
-        controller.setProfileImage(profileImage)
-    }
-
 }

@@ -25,7 +25,7 @@
         <!--Authenticate View Controller-->
         <scene sceneID="PIa-0v-rFP">
             <objects>
-                <viewController id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AuthenticateViewController" id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jZK-O0-9hG"/>
                         <viewControllerLayoutGuide type="bottom" id="ild-vM-hCo"/>

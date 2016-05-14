@@ -142,9 +142,6 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     func invalidTockenError()
     {
         alert("Invalid Token", message:"Invalid Token error. Please try again")
-        let appDel = AppDelegate()
-        appDel.loadInitialViewController()
-        
     }
     
     func tockenExpired()
@@ -237,7 +234,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     
     func emptyMedia()
     {
-        alert("No Media", message: "Media List Empty")
+        alert("No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")
     }
     
     //PRAGMA MARK:- Error code mapping
@@ -313,6 +310,9 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             invalidBucket()
             break
         case"MEDIA002":
+            emptyMedia()
+            break
+        case"MEDIA003":
             emptyMedia()
             break
         case"MEDIA001":

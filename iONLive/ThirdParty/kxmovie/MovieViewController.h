@@ -30,8 +30,6 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                 mediaId: (NSString *) mediaId
                                isProfile: (BOOL) isProfile;
 
--(void) setProfileImage:(UIImage *) profileImageUser;
-
 
 @property (readonly) BOOL playing;
 

@@ -21,6 +21,7 @@ class StreamsListViewController: UIViewController{
     let userIdKey = "user_name"
     static let identifier = "StreamsListViewController"
     let imageUploadManger = ImageUpload.sharedInstance
+    let profileManager = ProfileManager.sharedInstance
     
     var totalMediaCount: Int = Int()
     var channelId:String!
@@ -133,6 +134,37 @@ class StreamsListViewController: UIViewController{
             self.authenticationFailureHandler(error, code: message)
         }
     }
+    func  loadInitialViewController(){
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        
+        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        {
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                try fileManager.removeItemAtPath(documentsPath)
+            }
+            catch let error as NSError {
+                print("Ooops! Something went wrong: \(error)")
+            }
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        else{
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let deviceToken = defaults.valueForKey("deviceToken") as! String
+        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+        defaults.setValue(deviceToken, forKey: "deviceToken")
+        defaults.setObject(1, forKey: "shutterActionMode");
+        
+        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+        channelItemListVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
+    }
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
@@ -140,7 +172,7 @@ class StreamsListViewController: UIViewController{
         {
             imageDataSource.removeAll()
             let responseArr = json["objectJson"] as! [AnyObject]
-            print(responseArr)
+            //    print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -185,6 +217,9 @@ class StreamsListViewController: UIViewController{
             }
             else if code.isEmpty == false {
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                    loadInitialViewController()
+                }
             }
             else{
                 ErrorManager.sharedInstance.inValidResponseError()
@@ -555,35 +590,111 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
             if dataSource.count > indexPath.row
             {
                 let type = dataSource[indexPath.row][mediaTypeKey] as! String
-                if type ==  "image"
-                {
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String, isProfile: false) as! MovieViewController
-                    self.presentViewController(vc, animated: false) { () -> Void in
-                    }
-                }
-                else if type == "video"
-                {
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][actualImageKey] as! String, channelName: self.dataSource[indexPath.row][channelNameKey] as! String, userName: self.dataSource[indexPath.row][userIdKey] as! String, mediaType: self.dataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.dataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][notificationKey] as! String, mediaId: self.dataSource[indexPath.row][mediaIdKey] as! String, isProfile: false) as! MovieViewController
-                    self.presentViewController(vc, animated: false) { () -> Void in
-                    }
-                }
-                else
-                {
-                    let streamTocken = dataSource[indexPath.row][streamTockenKey] as! String
-                    if streamTocken != ""
+                
+                let subUserName = dataSource[indexPath.row][userIdKey] as! String
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                var profileImage = UIImage()
+                
+                profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+                    
+                    if let json = response as? [String: AnyObject]
                     {
-                        let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][channelNameKey] as! String, "userName":self.dataSource[indexPath.row][userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][mediaTypeKey] as! String, "profileImage":UIImage(), "notifType":self.dataSource[indexPath.row][notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][mediaIdKey] as! String, "isProfile":false]
-                        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as [NSObject : AnyObject] , liveVideo: false) as! UIViewController
-                        
+                        var userDetailsDict : [AnyObject] = [AnyObject]()
+                        userDetailsDict = json["user"] as! [AnyObject]
+                        print(userDetailsDict)
+                        for element in userDetailsDict{
+                            let profileImageName = element["profile_image"]
+                            if let imageByteArray: NSArray = profileImageName!!["data"] as? NSArray
+                            {
+                                var bytes:[UInt8] = []
+                                for serverByte in imageByteArray {
+                                    bytes.append(UInt8(serverByte as! UInt))
+                                }
+                                if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                                    let profileImageData = profileData as NSData?
+                                    profileImage = UIImage(data: profileImageData!)!
+                                }
+                                else{
+                                    profileImage = UIImage(named: "avatar")!
+                                }
+                            }
+                            else   
+                            {
+                                profileImage = UIImage(named: "avatar")!
+                            }
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "avatar")!
+                    }
+                    
+                    
+                    if type ==  "image"
+                    {
+                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
                         self.presentViewController(vc, animated: false) { () -> Void in
-                            
+                        }
+                    }
+                    else if type == "video"
+                    {
+                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage:profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
+                        self.presentViewController(vc, animated: false) { () -> Void in
                         }
                     }
                     else
                     {
-                        ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+                        let streamTocken = self.dataSource[indexPath.row][self.streamTockenKey] as! String
+                        if streamTocken != ""
+                        {
+                            let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][self.channelNameKey] as! String, "userName":self.dataSource[indexPath.row][self.userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPath.row][self.notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][self.mediaIdKey] as! String, "isProfile":true]
+                            let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                            
+                            self.presentViewController(vc, animated: false) { () -> Void in
+                                
+                            }
+                        }
+                        else
+                        {
+                            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+                        }
                     }
+                    
+                }) { (error, message) in
+                    profileImage = UIImage(named: "avatar")!
+                    if type ==  "image"
+                    {
+                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
+                        self.presentViewController(vc, animated: false) { () -> Void in
+                        }
+                    }
+                    else if type == "video"
+                    {
+                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage:profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
+                        self.presentViewController(vc, animated: false) { () -> Void in
+                        }
+                    }
+                    else
+                    {
+                        let streamTocken = self.dataSource[indexPath.row][self.streamTockenKey] as! String
+                        if streamTocken != ""
+                        {
+                            let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][self.channelNameKey] as! String, "userName":self.dataSource[indexPath.row][self.userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPath.row][self.notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][self.mediaIdKey] as! String, "isProfile":true]
+                            let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                            
+                            self.presentViewController(vc, animated: false) { () -> Void in
+                                
+                            }
+                        }
+                        else
+                        {
+                            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+                        }
+                    }
+
                 }
+                
             }
         }
     }

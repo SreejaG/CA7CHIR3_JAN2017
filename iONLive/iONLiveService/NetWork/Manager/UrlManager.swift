@@ -121,9 +121,16 @@ class UrlManager {
     }
     func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
-        let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken + "/"
+        let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
         return getProfileImageAPI
     }
+    
+    func getSubscriberProfileImageAPIUrl(userName: String, accessToken: String, subscriberUserName:String) -> String
+    {
+        let getSubscriberProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken + "/" + subscriberUserName
+        return getSubscriberProfileImageAPI
+    }
+    
     func getProfileImageUploadAPIUrl(userName: String, accessToken: String, actualImageUrl: String) -> String
     {
         let getProfileImageUploadAPI = profileImageAPIUrl() + "/" + userName + "/" + actualImageUrl + "/" + accessToken

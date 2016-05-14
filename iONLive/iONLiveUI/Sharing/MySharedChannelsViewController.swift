@@ -138,6 +138,39 @@ class MySharedChannelsViewController: UIViewController {
         }
     }
     
+    func  loadInitialViewController(){
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        
+        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        {
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                try fileManager.removeItemAtPath(documentsPath)
+            }
+            catch let error as NSError {
+                print("Ooops! Something went wrong: \(error)")
+            }
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        else{
+            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
+            print(createGCSParentPath)
+        }
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let deviceToken = defaults.valueForKey("deviceToken") as! String
+        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+        defaults.setValue(deviceToken, forKey: "deviceToken")
+        defaults.setObject(1, forKey: "shutterActionMode");
+        
+        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+        channelItemListVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
+    }
+
+    
     func authenticationSuccessHandlerEnableDisable(response:AnyObject?)
     {
         removeOverlay()
@@ -288,6 +321,9 @@ class MySharedChannelsViewController: UIViewController {
         }
         else if code.isEmpty == false {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController()
+            }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
