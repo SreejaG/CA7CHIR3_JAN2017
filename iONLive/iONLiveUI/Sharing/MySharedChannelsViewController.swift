@@ -150,12 +150,10 @@ class MySharedChannelsViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -169,7 +167,7 @@ class MySharedChannelsViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func authenticationSuccessHandlerEnableDisable(response:AnyObject?)
     {

@@ -38,6 +38,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
     @IBOutlet weak var ChannelSharedTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,6 +66,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         super.viewWillDisappear(true)
         removeOverlay()
     }
+    
     func pullToRefresh()
     {
         mediaShared.removeAll()
@@ -105,12 +107,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -124,7 +124,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
@@ -153,7 +153,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         if let json = response as? [String: AnyObject]
         {
             dummy.removeAll()
-
+            
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
             if (responseArrLive.count != 0)
             {
@@ -355,6 +355,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
@@ -423,7 +424,6 @@ extension ChannelsSharedController:UITableViewDataSource
             }
             else
             {
-                
                 if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
                 {
                     mediaShared.removeAll()
@@ -483,15 +483,16 @@ extension ChannelsSharedController:UITableViewDataSource
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
         
     }
+    
     func loadLiveStreamView(streamTocken:String)
     {
-        
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: false) { () -> Void in
             
         }
     }
+    
     func yearsFrom(date:NSDate, todate:NSDate) -> Int{
         return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
     }
@@ -513,6 +514,7 @@ extension ChannelsSharedController:UITableViewDataSource
     func secondsFrom(date:NSDate,todate:NSDate) -> Int{
         return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
     }
+    
     func offsetFrom(date:NSDate,todate:NSDate) -> String {
         if yearsFrom(date,todate:todate)   > 0 {
             return "\(yearsFrom(date,todate:todate))y"

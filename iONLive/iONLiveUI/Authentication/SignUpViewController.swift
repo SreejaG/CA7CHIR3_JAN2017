@@ -9,11 +9,11 @@
 import UIKit
 
 class SignUpViewController: UIViewController {
-
+    
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwdTextField: UITextField!
     @IBOutlet weak var signUpBottomConstraint: NSLayoutConstraint!
-
+    
     var loadingOverlay: UIView?
     
     let requestManager = RequestManager.sharedInstance
@@ -33,7 +33,7 @@ class SignUpViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         view.endEditing(true)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -45,9 +45,9 @@ class SignUpViewController: UIViewController {
         self.navigationItem.backBarButtonItem = backItem
         
         emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         passwdTextField.attributedPlaceholder = NSAttributedString(string: "New Password",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                   attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         emailTextfield.autocorrectionType = UITextAutocorrectionType.No
         passwdTextField.autocorrectionType = UITextAutocorrectionType.No
         passwdTextField.secureTextEntry = true
@@ -56,16 +56,16 @@ class SignUpViewController: UIViewController {
         passwdTextField.tag = 10
         addObserver()
     }
-  
-//    func textFieldDidEndEditing(textField: UITextField) {
-//        if(textField.tag == 10){
-//          let text = textField.text
-//            if((text?.characters.count > 8) || ())
-//            {
-//                
-//            }
-//        }
-//    }
+    
+    //    func textFieldDidEndEditing(textField: UITextField) {
+    //        if(textField.tag == 10){
+    //          let text = textField.text
+    //            if((text?.characters.count > 8) || ())
+    //            {
+    //
+    //            }
+    //        }
+    //    }
     
     func addObserver()
     {
@@ -122,9 +122,6 @@ class SignUpViewController: UIViewController {
             validateEmail()
         }
     }
-   
-    
-    //extra wrk sreeja
     
     func validateEmail(){
         let isEmailValid = isEmail(self.emailTextfield.text!) as Bool!
@@ -135,11 +132,9 @@ class SignUpViewController: UIViewController {
         }
         else
         {
-             loadUserNameView()
+            loadUserNameView()
         }
     }
-    
-    //end
     
     func loadUserNameView()
     {
@@ -153,7 +148,7 @@ class SignUpViewController: UIViewController {
         userNameVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(userNameVC, animated: false)
     }
-   
+    
     //PRAGMA MARK:- Helper functions
     
     func isEmail(email:String) -> Bool {

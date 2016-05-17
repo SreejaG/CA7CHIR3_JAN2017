@@ -18,7 +18,6 @@ class LiveStreamingManager: NSObject {
     }
     
     //PRAGMA MARK:- initialiseLiveStreaming
-    
     //Method to initialize live streaming with userid, tocken, success and failure block
     func initialiseLiveStreaming(loginId loginId: String, tocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
@@ -49,9 +48,7 @@ class LiveStreamingManager: NSObject {
         })
     }
     
-    
     //PRAGMA MARK:- startLiveStreaming
-    
     //Method to start live streaming with user tocken and stream tocken, success and failure block
     func startLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
@@ -81,9 +78,7 @@ class LiveStreamingManager: NSObject {
         })
     }
     
-    
     //PRAGMA MARK:- stopLiveStreaming
-    
     //Method to start live streaming with user tocken and stream tocken, success and failure block
     func stopLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
@@ -173,5 +168,4 @@ class LiveStreamingManager: NSObject {
                 failure?(error: error, code:failureErrorDesc)
         })
     }
-
 }

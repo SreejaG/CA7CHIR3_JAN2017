@@ -9,7 +9,7 @@
 import UIKit
 
 class iONLiveCameraStatus: NSObject {
-
+    
     
     class var sharedInstance: iONLiveCameraStatus {
         

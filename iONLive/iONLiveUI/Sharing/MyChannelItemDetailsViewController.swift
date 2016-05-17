@@ -26,6 +26,9 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     let cameraController = IPhoneCameraViewController()
     
+    var refreshControl:UIRefreshControl!
+    var pullToRefreshActive = false
+    
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
@@ -46,6 +49,12 @@ class MyChannelItemDetailsViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
+        self.channelItemsCollectionView.addSubview(refreshControl)
+        self.channelItemsCollectionView.alwaysBounceVertical = true
+        
         initialise()
         initialiseCloudData()
     }
@@ -61,7 +70,25 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        removeOverlay()
+        if(!pullToRefreshActive){
+            removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+        }
+    }
+    
+    func pullToRefresh()
+    {
+        pullToRefreshActive = true
+        currentLimit = 0
+        limitMediaCount = 0
+        totalMediaCount = 0
+        fixedLimit = 0
+        offset = "0"
+        initialise()
+        initialiseCloudData()
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -111,8 +138,9 @@ class MyChannelItemDetailsViewController: UIViewController {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        showOverlay()
-        
+        if(!pullToRefreshActive){
+            showOverlay()
+        }
         let offsetString : String = String(offsetToInt)
         
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
@@ -134,12 +162,10 @@ class MyChannelItemDetailsViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -153,7 +179,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
@@ -169,7 +195,13 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+        if(!pullToRefreshActive){
+            removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+        }
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
@@ -193,7 +225,13 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        removeOverlay()
+        if(!pullToRefreshActive){
+            removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+        }
         if(offsetToInt <= totalMediaCount){
             print("message = \(code) andError = \(error?.localizedDescription) ")
             

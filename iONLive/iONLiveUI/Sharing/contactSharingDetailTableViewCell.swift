@@ -9,7 +9,7 @@
 import UIKit
 
 class contactSharingDetailTableViewCell: UITableViewCell {
-
+    
     static let identifier = "contactSharingDetailTableViewCell"
     
     @IBOutlet var contactProfileImage: UIImageView!
@@ -44,11 +44,11 @@ class contactSharingDetailTableViewCell: UITableViewCell {
         super.awakeFromNib()
         contactProfileImage.layer.cornerRadius = contactProfileImage.frame.size.width/2
         contactProfileImage.layer.masksToBounds = true
-
+        
     }
-
+    
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
+    
 }

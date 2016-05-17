@@ -29,7 +29,6 @@ class ContactDetailsViewController: UIViewController {
     let selectionKey = "selection"
     let inviteKey = "invitationKey"
     
-    
     static let identifier = "ContactDetailsViewController"
     
     let requestManager = RequestManager.sharedInstance
@@ -53,9 +52,8 @@ class ContactDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-        
-        // Do any additional setup after loading the view.
     }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         removeOverlay()
@@ -63,7 +61,6 @@ class ContactDetailsViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -71,7 +68,6 @@ class ContactDetailsViewController: UIViewController {
         self.navigationController?.navigationBarHidden = true
         self.contactTableView.backgroundView = nil
         self.contactTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-        
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
@@ -92,9 +88,9 @@ class ContactDetailsViewController: UIViewController {
         showOverlay()
         contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandlerInvite(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandlerInvite(error, code: message)
+            return
         }
     }
     
@@ -110,12 +106,10 @@ class ContactDetailsViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -129,7 +123,7 @@ class ContactDetailsViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
         removeOverlay()
@@ -157,7 +151,7 @@ class ContactDetailsViewController: UIViewController {
         else if code.isEmpty == false {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             if code == "CONTACT001"{
-               loadIphoneCameraController()
+                loadIphoneCameraController()
             }
             else  if code == "CONTACT002"{
                 loadIphoneCameraController()
@@ -165,13 +159,12 @@ class ContactDetailsViewController: UIViewController {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController()
             }
-
+            
         }
         else{
             ErrorManager.sharedInstance.addContactError()
         }
     }
-    
     
     func loadIphoneCameraController(){
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -196,7 +189,6 @@ class ContactDetailsViewController: UIViewController {
         else{
             setContactDetails()
         }
-        //        indexTitles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
         contactTableView.tableFooterView = UIView()
     }
     
@@ -205,12 +197,11 @@ class ContactDetailsViewController: UIViewController {
         showOverlay()
         contactManagers.getContactDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
-    
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
@@ -278,11 +269,9 @@ class ContactDetailsViewController: UIViewController {
         }
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -312,7 +301,7 @@ class ContactDetailsViewController: UIViewController {
         }
         
         dataSource = [appContactsArr,contactDataSource]
-      
+        
         for ele in appContactsArr{
             selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"1"])
         }
@@ -346,7 +335,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
@@ -456,7 +445,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
                     }
                 }
             }
-           // cell.reloadInputViews()
             cell.cellDataSource = cellDataSource
             cell.selectionStyle = .None
             return cell
@@ -486,16 +474,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         tableView.reloadData()
         
     }
-    
-    //    func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-    //        return indexTitles as? [String]
-    //    }
-    //
-    //    func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
-    //        return indexTitles.indexOfObject(title)
-    //    }
 }
-
 
 extension ContactDetailsViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
@@ -517,7 +496,6 @@ extension ContactDetailsViewController: UISearchBarDelegate{
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
         searchDataSource?.removeAll()
         if contactSearchBar.text == "" {
             contactSearchBar.resignFirstResponder()
@@ -560,6 +538,5 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         
         contactTableView.reloadData()
         contactTableView.layoutIfNeeded()
-     
     }
 }

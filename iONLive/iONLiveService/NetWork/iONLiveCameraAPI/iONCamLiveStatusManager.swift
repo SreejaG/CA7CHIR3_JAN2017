@@ -10,7 +10,6 @@ import UIKit
 
 class iONCamLiveStatusManager: NSObject {
     class var sharedInstance: iONLiveCameraStatus {
-        
         struct Singleton {
             static let instance = iONLiveCameraStatus()
         }
@@ -77,5 +76,4 @@ class iONCamLiveStatusManager: NSObject {
 //    }
 //    
 
-   
 }

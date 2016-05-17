@@ -176,12 +176,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -195,37 +193,37 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func setLabelValue(index: NSInteger)
     {
-//        let dateFormatter = NSDateFormatter()
-//        dateFormatter.dateFormat =  "yyyy-MM-dd'T'HH:mm:ss.sssZ"
-//        if(dataSource.count > 0)
-//        {
-//            let date = dateFormatter.dateFromString(dataSource[index][timeStampKey] as! String)
-//            print(date)
-//            let fromdate = NSDate();
-//            var sdifferentString =  offsetFrom(date!, todate: fromdate)
-//            switch(sdifferentString)
-//            {
-//            case "TODAY" :
-//                break;
-//            case "1d" : sdifferentString = "YESTERDAY"
-//            break;
-//            default :
-//                
-//                let formatter = NSDateFormatter()
-//                formatter.dateStyle = NSDateFormatterStyle.MediumStyle
-//                let dateString = formatter.stringFromDate(date!)
-//                let strSplit = dateString.characters.split("-").map(String.init)
-//                sdifferentString = dateString
-//                sdifferentString = "Date(" + strSplit[1] + " " + strSplit[0] + "," + strSplit[2] + " )"
-//                break;
-//            }
-//            
-//            mediaTimeLabel.text = sdifferentString
-//        }
+        //        let dateFormatter = NSDateFormatter()
+        //        dateFormatter.dateFormat =  "yyyy-MM-dd'T'HH:mm:ss.sssZ"
+        //        if(dataSource.count > 0)
+        //        {
+        //            let date = dateFormatter.dateFromString(dataSource[index][timeStampKey] as! String)
+        //            print(date)
+        //            let fromdate = NSDate();
+        //            var sdifferentString =  offsetFrom(date!, todate: fromdate)
+        //            switch(sdifferentString)
+        //            {
+        //            case "TODAY" :
+        //                break;
+        //            case "1d" : sdifferentString = "YESTERDAY"
+        //            break;
+        //            default :
+        //
+        //                let formatter = NSDateFormatter()
+        //                formatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        //                let dateString = formatter.stringFromDate(date!)
+        //                let strSplit = dateString.characters.split("-").map(String.init)
+        //                sdifferentString = dateString
+        //                sdifferentString = "Date(" + strSplit[1] + " " + strSplit[0] + "," + strSplit[2] + " )"
+        //                break;
+        //            }
+        //
+        //            mediaTimeLabel.text = sdifferentString
+        //        }
     }
     
     func authenticationSuccessHandlerDelete(response:AnyObject?)

@@ -35,13 +35,16 @@ protocol uploadProgressDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
     func uploadMedia()
     {
         getSignedURL()
     }
+    
     func getSignedURL()
     {
         self.readImage();
@@ -56,6 +59,7 @@ protocol uploadProgressDelegate
             })
         }
     }
+    
     func clearTempFolder() {
         let fileManager = NSFileManager.defaultManager()
         let tempFolderPath = NSTemporaryDirectory()
@@ -68,6 +72,7 @@ protocol uploadProgressDelegate
             print("Could not clear temp folder: \(error)")
         }
     }
+    
     func readImage()
     {
         let cameraController = IPhoneCameraViewController()
@@ -97,9 +102,9 @@ protocol uploadProgressDelegate
                         if media == "video"
                         {
                             let sizeFull = CGSizeMake(140,140)
-
+                            
                             let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
-
+                            
                             dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionFullscreen,fullImageKey:imageAfterConversionFullscreen!])
                         }
                         else
@@ -125,12 +130,10 @@ protocol uploadProgressDelegate
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -144,8 +147,8 @@ protocol uploadProgressDelegate
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
-      func authenticationFailureHandler(error: NSError?, code: String)
+    
+    func authenticationFailureHandler(error: NSError?, code: String)
     {
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
@@ -162,9 +165,10 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func authenticationSuccessHandlerSignedURL(response:AnyObject? , rowIndex : Int ,completion: (result: String) -> Void)
     {
-   
+        
         if let json = response as? [String: AnyObject]
         {
             if let name = json["UploadObjectUrl"]{
@@ -246,6 +250,7 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func saveToCache()
     {
         let mediaCachemanager = MediaCache.sharedInstance
@@ -258,10 +263,9 @@ protocol uploadProgressDelegate
                 mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][thumbImageKey]!, path: String(String(path)+"thumb"))
                 mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][fullImageKey]!, path: String(String(path)+"full"))
             }
-            
         }
-        
     }
+    
     func deleteCOreData()
     {
         let appDel = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -281,14 +285,12 @@ protocol uploadProgressDelegate
         } catch let error as NSError {
             print("Detele all data \(error)")
         }
-        
-        
     }
     
     func authenticationSuccessHandlerForDefaultMediaMapping(response:AnyObject?)
     {
-        
     }
+    
     func authenticationFailureHandlerForDefaultMediaMapping(error: NSError?, code: String)
     {
         print("message = \(code) andError = \(error?.localizedDescription) ")
@@ -305,8 +307,8 @@ protocol uploadProgressDelegate
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        
     }
+    
     func authenticationFailureHandlerSignedURL(error: NSError?, code: String)
     {
         print("message = \(code) andError = \(error?.localizedDescription) ")
@@ -324,25 +326,23 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func uploadFullImage( imagedata : NSData ,row : Int ,completion: (result: String) -> Void)
     {
         taskIndex = row
         progressDictionary.addObject(0.0)
-          self.checkThumb = true
-        let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String) //Remember to put ATS exception if the URL is not https
+        self.checkThumb = true
+        let url = NSURL(string: signedURLResponse.valueForKey("UploadObjectUrl") as! String)
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "PUT"
         let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         request.HTTPBody = imagedata
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
             if error != nil {
-                //handle error
-                  completion(result:"Failed")
-                
+                completion(result:"Failed")
             }
             else {
                 let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                print("Parsed JSON: '\(jsonStr)'")
                 self.progressDictionary[self.taskIndex] = 1.0
                 self.checkThumb = false
                 if PhotoViewerInstance.controller != nil
@@ -360,9 +360,9 @@ protocol uploadProgressDelegate
                 completion(result:"Success")
             }
         }
-        
         dataTask.resume()
     }
+    
     func deletePathContent()
     {
         let documents = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
@@ -373,7 +373,6 @@ protocol uploadProgressDelegate
             for item in items {
                 if self.thumbnailpath.lastPathComponent == item
                 {
-                    print("Removed \(item)")
                 }
             }
         } catch {
@@ -390,7 +389,6 @@ protocol uploadProgressDelegate
                 if (checkValidation.fileExistsAtPath(self.thumbnailpath as String))
                 {
                     try fm.removeItemAtPath(self.thumbnailpath as String)
-                    print("Removed error )")
                 }
             }
             else
@@ -398,7 +396,6 @@ protocol uploadProgressDelegate
                 if (checkValidation.fileExistsAtPath(self.thumbnailpath as String))
                 {
                     try fm.removeItemAtPath(self.thumbnailpath as String)
-                    print("Removed error else)")
                 }
             }
         }
@@ -406,122 +403,92 @@ protocol uploadProgressDelegate
             print("Ooops! Something went wrong: \(error)")
         }
     }
+    
     func uploadThumbImage(row : Int,completion: (result: String) -> Void)
     {
         if(dummyImagesDataSourceDatabase.count > 0)
         {
-        var dict = dummyImagesDataSourceDatabase[row]
-        let  uploadImageThumb = dict[thumbImageKey]
-        print(uploadImageThumb)
-        let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
-        if(imageData == nil)
-        {
-            return
-        }
-        let url = NSURL(string: signedURLResponse.valueForKey("UploadThumbnailUrl") as! String) //Remember to put ATS exception if the URL is not https
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "PUT"
-        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        request.HTTPBody = imageData
-        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
-            if error != nil {
-                //handle error
+            var dict = dummyImagesDataSourceDatabase[row]
+            let  uploadImageThumb = dict[thumbImageKey]
+            let imageData = UIImageJPEGRepresentation(uploadImageThumb!, 0.5)
+            if(imageData == nil)
+            {
+                return
             }
-            else {
-                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                print("Parsed JSON for thumbanil: '\(jsonStr)'")
-                let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
-                controller.uploadprogress(1.0)
-                
+            let url = NSURL(string: signedURLResponse.valueForKey("UploadThumbnailUrl") as! String)
+            let request = NSMutableURLRequest(URL: url!)
+            request.HTTPMethod = "PUT"
+            let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            request.HTTPBody = imageData
+            let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                if error != nil {
+                }
+                else {
+                    let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                    let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
+                    controller.uploadprogress(1.0)
+                    
+                }
             }
-            // completion(result:"Success")
-            
+            completion(result:"Success")
+            dataTask.resume()
         }
-        completion(result:"Success")
-        
-        dataTask.resume()
-        
-        }
-        
     }
     
     func uploadData (index : Int ,completion: (result: String) -> Void)
     {
         if(dummyImagesDataSourceDatabase.count > 0)
         {
-        var dict = dummyImagesDataSourceDatabase[index]
-        
-        let  uploadImageFull = dict[fullImageKey]
-        let imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)
-        
-        // let imageData = UIImagePNGRepresentation(uploadImage!)
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        if(imageData == nil )  {
-            
-        }
-        else
-        {
-            
+            var dict = dummyImagesDataSourceDatabase[index]
+            let  uploadImageFull = dict[fullImageKey]
+            let imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            
-            self.imageUploadManger.getSignedURL(userId, accessToken: accessToken, mediaType: media as String,success: { (response) -> () in
-                //    self.authenticationSuccessHandlerSignedURL(response,rowIndex: rowIndex)
-                self.authenticationSuccessHandlerSignedURL(response, rowIndex: index, completion: { (result) -> Void in
-                    completion(result : "Success")
+            if(imageData == nil )  {
+            }
+            else
+            {
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                
+                self.imageUploadManger.getSignedURL(userId, accessToken: accessToken, mediaType: media as String,success: { (response) -> () in
+                    self.authenticationSuccessHandlerSignedURL(response, rowIndex: index, completion: { (result) -> Void in
+                        completion(result : "Success")
+                    })
+                    }, failure: { (error, message) -> () in
+                        completion(result: "Failed")
+                        self.authenticationFailureHandlerSignedURL(error, code: message)
                 })
-                }, failure: { (error, message) -> () in
-                    completion(result: "Failed")
-                    self.authenticationFailureHandlerSignedURL(error, code: message)
-                    //   return
-                    
-            })
-            
-        }
+                
+            }
         }
     }
+    
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
     {
         let myAlert = UIAlertView(title: "Alert", message: error?.localizedDescription, delegate: nil, cancelButtonTitle: "Ok")
         myAlert.show()
-        
-        //   self.uploadButton.enabled = true
-        print("Task completed -----------------------------:")
-        
     }
-    
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64)
     {
         let uploadProgress:Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-        //   progrs=uploadProgress
-        //   [photoThumpCollectionView .reloadData()]
-        print(uploadProgress)
-        // self.delegate?.uploadProgress(progressDictionary)
-//        [NSNotificationCenter.defaultCenter().addObserver(self, selector:"uploadProgress:", name:"Notification" , object:progressDictionary)]
-        print("inside url session")
         if(checkThumb)
         {
             progressDictionary[taskIndex] = uploadProgress
-
-        if PhotoViewerInstance.controller != nil
-        {
-            let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
-            controller.uploadProgress(progressDictionary)
+            
+            if PhotoViewerInstance.controller != nil
+            {
+                let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
+                controller.uploadProgress(progressDictionary)
+            }
         }
-    }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)
     {
-        //  self.uploadButton.enabled = true
-        
-        print("Task completed:")
-        
-        
     }
     
 }

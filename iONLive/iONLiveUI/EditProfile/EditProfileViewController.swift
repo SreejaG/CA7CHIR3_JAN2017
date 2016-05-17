@@ -103,12 +103,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -122,7 +120,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func nullToNil(value : AnyObject?) -> AnyObject? {
         if value is NSNull {
@@ -213,7 +211,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             imageForProfile = UIImage(named: "girlFace2")!
         }
-    
+        
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
         privateInfoOptions = [[privateInfoKey:email],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
@@ -279,12 +277,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             })
             
             uploadImage(signedURL, imageToSave: imageForProfile, completion: { (result) in
-                if(result == "Success"){
-                    print("cloud uplaod success")
-                }
-                else{
-                    print("cloud uplaod failed")
-                }
             })
         }
     }

@@ -8,7 +8,7 @@
         <!--Snap Cam Select View Controller-->
         <scene sceneID="QQB-pi-6pJ">
             <objects>
-                <viewController storyboardIdentifier="SnapCamSelectViewController" id="ly1-be-vXc" customClass="SnapCamSelectViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SnapCamSelectViewController" id="ly1-be-vXc" customClass="SnapCamSelectViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="OHC-ZU-Vbs"/>
                         <viewControllerLayoutGuide type="bottom" id="ppB-sH-Q2H"/>
@@ -119,7 +119,7 @@
                                         <rect key="frame" x="0.0" y="72" width="600" height="528"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnapCamTableViewCell" rowHeight="80" id="eE0-5e-MnK" customClass="SnapCamTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnapCamTableViewCell" rowHeight="80" id="eE0-5e-MnK" customClass="SnapCamTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="80"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eE0-5e-MnK" id="rt5-5K-eCl">
@@ -202,7 +202,7 @@
         <!--Settings View Controller-->
         <scene sceneID="ez0-hd-uGg">
             <objects>
-                <viewController storyboardIdentifier="SettingsViewController" id="6V6-yG-NJE" customClass="SettingsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SettingsViewController" id="6V6-yG-NJE" customClass="SettingsViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="7D6-Jm-GRI"/>
                         <viewControllerLayoutGuide type="bottom" id="JEz-H8-fFo"/>
@@ -250,7 +250,7 @@
                                         <color key="backgroundColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsHeaderTableViewCell" id="Bxi-mt-QiJ" userLabel="HeaderCell" customClass="SettingsHeaderTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsHeaderTableViewCell" id="Bxi-mt-QiJ" userLabel="HeaderCell" customClass="SettingsHeaderTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Bxi-mt-QiJ" id="fiA-Q7-CyN">
@@ -276,7 +276,7 @@
                                                     <outlet property="headerTitle" destination="t1w-KS-jxs" id="0Bu-zr-Dbt"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsToggleTableViewCell" id="kcp-h3-pSn" customClass="SettingsToggleTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsToggleTableViewCell" id="kcp-h3-pSn" customClass="SettingsToggleTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kcp-h3-pSn" id="BzW-gZ-Lcm">
@@ -313,7 +313,7 @@
                                                     <outlet property="toggleCellSwitch" destination="ekh-kN-Dk5" id="Wag-Oc-sqF"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="SettingsTableViewCell" id="zhG-Nn-K74" customClass="SettingsTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="SettingsTableViewCell" id="zhG-Nn-K74" customClass="SettingsTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="116" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zhG-Nn-K74" id="5ik-RU-LNb">
@@ -392,7 +392,7 @@
         <!--Time Lapse Settings View Controller-->
         <scene sceneID="h6P-DG-RwW">
             <objects>
-                <viewController storyboardIdentifier="TimeLapseSettingsViewController" id="Qef-Bn-A2f" customClass="TimeLapseSettingsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TimeLapseSettingsViewController" id="Qef-Bn-A2f" customClass="TimeLapseSettingsViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jdV-29-1Rb"/>
                         <viewControllerLayoutGuide type="bottom" id="6Hb-Y9-mPY"/>
@@ -443,7 +443,7 @@
                                         <color key="separatorColor" red="0.92549019607843142" green="0.92549019607843142" blue="0.92549019607843142" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="sectionIndexBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TimeLapseHeaderCell" id="J8j-am-8rF" customClass="TimeLapseHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TimeLapseHeaderCell" id="J8j-am-8rF" customClass="TimeLapseHeaderCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="J8j-am-8rF" id="xog-OQ-EHt">
@@ -496,7 +496,7 @@
                                                     <outlet property="topBorder" destination="0gO-mi-uec" id="5pF-fG-IC6"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TimeTapseCell" id="dKS-Ad-Xdr" customClass="TimeTapseCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TimeTapseCell" id="dKS-Ad-Xdr" customClass="TimeTapseCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dKS-Ad-Xdr" id="SSx-y7-9Lu">
@@ -570,7 +570,7 @@
         <!--Delete Media Settings View Controller-->
         <scene sceneID="4RC-jV-UkD">
             <objects>
-                <viewController storyboardIdentifier="DeleteMediaSettingsViewController" id="0Ke-Fa-xIi" customClass="DeleteMediaSettingsViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DeleteMediaSettingsViewController" id="0Ke-Fa-xIi" customClass="DeleteMediaSettingsViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="kpj-Mi-8Ok"/>
                         <viewControllerLayoutGuide type="bottom" id="7t6-Lu-Ds8"/>
@@ -620,7 +620,7 @@
                                         <color key="backgroundColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="separatorColor" red="0.92549019610000005" green="0.92549019610000005" blue="0.92549019610000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeleteMediaSettingsHeaderCell" id="Ozn-BP-TVI" customClass="DeleteMediaSettingsHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeleteMediaSettingsHeaderCell" id="Ozn-BP-TVI" customClass="DeleteMediaSettingsHeaderCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ozn-BP-TVI" id="UWh-4i-zTf">
@@ -673,7 +673,7 @@
                                                     <outlet property="topBorder" destination="4SI-qr-3gw" id="Pop-Ca-HBM"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeleteMediaOptionCell" id="Ayh-en-yz1" customClass="DeleteMediaOptionCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeleteMediaOptionCell" id="Ayh-en-yz1" customClass="DeleteMediaOptionCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ayh-en-yz1" id="stO-Na-BOX">
@@ -747,7 +747,7 @@
         <!--Connect Account View Controller-->
         <scene sceneID="IPz-Nr-ww2">
             <objects>
-                <viewController storyboardIdentifier="ConnectAccountViewController" id="OlL-tX-KMa" customClass="ConnectAccountViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ConnectAccountViewController" id="OlL-tX-KMa" customClass="ConnectAccountViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3AW-qu-Igq"/>
                         <viewControllerLayoutGuide type="bottom" id="KTX-sS-fgr"/>
@@ -797,7 +797,7 @@
                                         <color key="backgroundColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="separatorColor" red="0.92549019610000005" green="0.92549019610000005" blue="0.92549019610000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConnectAccountOptionsHeaderCell" id="PBN-ud-9YG" customClass="ConnectAccountOptionsHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConnectAccountOptionsHeaderCell" id="PBN-ud-9YG" customClass="ConnectAccountOptionsHeaderCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PBN-ud-9YG" id="6NY-Yx-yXd">
@@ -850,7 +850,7 @@
                                                     <outlet property="topBorder" destination="iTh-GF-ubg" id="EBu-dV-doj"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConnectAccountOptionsCell" id="l52-qV-ccs" customClass="ConnectAccountOptionsCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConnectAccountOptionsCell" id="l52-qV-ccs" customClass="ConnectAccountOptionsCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="l52-qV-ccs" id="75W-Ny-vNE">
@@ -912,7 +912,7 @@
         <!--Program Camera Button View Controller-->
         <scene sceneID="LJE-pp-sEP">
             <objects>
-                <viewController storyboardIdentifier="ProgramCameraButtonViewController" id="3bW-ib-Lqq" customClass="ProgramCameraButtonViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProgramCameraButtonViewController" id="3bW-ib-Lqq" customClass="ProgramCameraButtonViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="P9A-bf-OXp"/>
                         <viewControllerLayoutGuide type="bottom" id="nfy-3h-atK"/>
@@ -963,7 +963,7 @@
                                         <color key="separatorColor" red="0.92549019610000005" green="0.92549019610000005" blue="0.92549019610000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProgramCameraButtonHeaderCell" id="Lk2-Gr-SfT" customClass="ProgramCameraButtonHeaderCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProgramCameraButtonHeaderCell" id="Lk2-Gr-SfT" customClass="ProgramCameraButtonHeaderCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Lk2-Gr-SfT" id="oov-Ia-uSY">
@@ -1016,7 +1016,7 @@
                                                     <outlet property="topBorder" destination="yJt-ZS-qmU" id="T9V-af-QE6"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProgramCameraButtonCell" id="6W5-4D-Dbf" customClass="ProgramCameraButtonCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProgramCameraButtonCell" id="6W5-4D-Dbf" customClass="ProgramCameraButtonCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6W5-4D-Dbf" id="RzK-dL-t0C">

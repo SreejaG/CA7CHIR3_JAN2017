@@ -49,7 +49,7 @@ class iOnLiveCameraPictureCapture: NSObject {
     }
     
     
-//    //Method to get burst id of the image from connected iONLIve Cam, success and failure block
+    //    //Method to get burst id of the image from connected iONLIve Cam, success and failure block
     func deleteiONLiveCameraPicture(burstID: String!, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance

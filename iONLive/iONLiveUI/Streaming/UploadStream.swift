@@ -15,7 +15,7 @@ class UploadStream : NSObject
     var currentStreamingTocken:String?
     var showAlert : Bool = true;
     var streamingStatus:StreamingProtocol?
-
+    
     override init(){
     }
     
@@ -38,14 +38,10 @@ class UploadStream : NSObject
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
-            
             livestreamingManager.initialiseLiveStreaming(loginId:loginId as! String , tocken:accessTocken as! String, success: { (response) -> () in
-                
                 if let json = response as? [String: AnyObject]
                 {
                     self.currentStreamingTocken = json["streamToken"] as? String
-                    print("success = \(json["streamToken"])")
-                    //call start stream api here
                     self.startLiveStreamingToken(self.currentStreamingTocken)
                 }
                 else
@@ -81,33 +77,27 @@ class UploadStream : NSObject
         let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
         
         cleanStreamingToken()
-
+        
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
-
+                
                 if let json = response as? [String: AnyObject]
                 {
-                    print("success = \(json["streamToken"])")
                     let streamToken:String = json["streamToken"] as! String
                     self.InitialiseStreamWithToken(streamToken)
                 }
                 else
                 {
                     self.streamingFailed()
-
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
-                
                 }, failure: { (error, message) -> () in
                     
                     self.streamingFailed()
-
-                    print("message = \(message)")
                     self.handleFailure(message)
                     return
             })
-            
         }
         else
         {
@@ -150,7 +140,6 @@ class UploadStream : NSObject
             showAlert = false
             self.stopLiveStreaming()
             self.streamingFailed()
-            
             NSUserDefaults.standardUserDefaults().setValue(false, forKey: startedStreaming)
             ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
         }
@@ -180,13 +169,12 @@ class UploadStream : NSObject
             UIApplication.sharedApplication().endBackgroundTask(taskId)
             self.clearStreamingDefaults()
         }
-
     }
-
+    
     func startStreamAndHandleInterruption(streamtoken:String)
     {
         self.streamingStatus?.updateStreamingStatus!();
-
+        
         let errCode = start_stream()
         let defaults = NSUserDefaults .standardUserDefaults()
         
@@ -214,11 +202,7 @@ class UploadStream : NSObject
     
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
-//        var baseStream = "rtsp://ionlive:ion#Ca7hDec11%Live@stream.ioncameras.com:1935/live/"
         var baseStream = getProtocol() + "://" + getUserName() + ":" + getPassword() + "@" + getMainStream() + "." + getSubStream() + ".com" + ":" + getRTSPPort() + "/live/"
-        
-        print("baseStream/", baseStream)
-        
         baseStream.appendContentsOf(streamToken)
         let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
         let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
@@ -268,10 +252,7 @@ class UploadStream : NSObject
         let userDefault = NSUserDefaults.standardUserDefaults()
         let loginId = userDefault.objectForKey(userLoginIdKey)
         let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        let streamTocken = userDefault.objectForKey(streamingToken) 
-        print("LoginId \(loginId)")
-        print("accessTocken \(accessTocken)")
-        print("streamTocken \(streamTocken)")
+        let streamTocken = userDefault.objectForKey(streamingToken)
         
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
@@ -280,7 +261,6 @@ class UploadStream : NSObject
                 if let json = response as? [String: AnyObject]
                 {
                     self.removeStreaming()
-                    print("success = \(json["streamToken"])")
                 }
                 else
                 {
@@ -288,8 +268,6 @@ class UploadStream : NSObject
                 }
                 
                 }, failure: { (error, message) -> () in
-                    
-                    print("message = \(message)")
                     if self.showAlert
                     {
                         self.handleFailure(message)

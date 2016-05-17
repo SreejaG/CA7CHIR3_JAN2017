@@ -17,9 +17,9 @@ import UIKit
     var channelDetails: NSDictionary = NSDictionary()
     var status: Int = Int()
     var userImages : [UIImage] = [UIImage]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -38,13 +38,11 @@ import UIKit
     {
         channelManager.getLoggedInDetails(userName, accessToken: token, success: { (response) in
             self.authenticationSuccessHandlerList(response)
-            
         }) { (error, code) in
-            
             ErrorManager.sharedInstance.inValidResponseError()
-            
         }
     }
+    
     func authenticationSuccessHandlerList(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
@@ -57,6 +55,7 @@ import UIKit
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func setChannelDetails()
     {
         userImages.removeAll()
@@ -89,9 +88,6 @@ import UIKit
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
     
-    
-    //channelMediaLike
-    
     func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String)
     {
         channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, success: { (response) in
@@ -106,18 +102,10 @@ import UIKit
         if let json = response as? [String: AnyObject]
         {
             status = json["status"] as! Int
-            //    postLikeDetails()
         }
         else
         {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    //    func postLikeDetails(){
-    //
-    //        let controller = PhotoViewerInstance.iphoneCam as! MovieViewController
-    //        controller.mediaDetails(status)
-    //    }
-    
 }

@@ -96,9 +96,7 @@ class ChannelItemListViewController: UIViewController {
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         showOverlay()
-        
         let offsetString : String = String(offsetToInt)
-        
         imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
@@ -118,12 +116,10 @@ class ChannelItemListViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -137,8 +133,7 @@ class ChannelItemListViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
-    
+ 
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -157,7 +152,6 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -298,10 +292,8 @@ class ChannelItemListViewController: UIViewController {
     @IBAction func didTapSelectionButton(sender: AnyObject) {
         selected.removeAllObjects()
         selectedArray.removeAll()
-        
         selectionFlag = true
         self.channelItemCollectionView.allowsMultipleSelection = true
-        
         channelTitleLabel.text = "SELECT"
         cancelButton.hidden = false
         selectionButton.hidden = true
@@ -317,7 +309,6 @@ class ChannelItemListViewController: UIViewController {
     @IBAction func didTapCancelButton(sender: AnyObject) {
         selected.removeAllObjects()
         selectedArray.removeAll()
-        
         channelTitleLabel.text = channelName.uppercaseString
         cancelButton.hidden = true
         selectionButton.hidden = false
@@ -358,16 +349,13 @@ class ChannelItemListViewController: UIViewController {
             totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
             limit = totalMediaCount
-            
             imageDataSource.removeAll()
             fullImageDataSource.removeAll()
             selected.removeAllObjects()
             selectionFlag = false
-            
             limitMediaCount = 0
             currentLimit = 0
             isLimitReached = true
-            
             initialise()
             channelTitleLabel.text = channelName.uppercaseString
             cancelButton.hidden = true

@@ -23,8 +23,6 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         return Singleton.instance
     }
     
-    //PRAGMA MARK:- General Errors
-    
     func serverError() {
         alert("Something went wrong :-/", message: "Something bad happened, we're looking into it now.")
     }
@@ -38,6 +36,7 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Shared Channel Empty", message: "No Sharing Data.")
         
     }
+    
     func invalidRequest()
     {
         alert("Error", message:"Invalid request")
@@ -47,7 +46,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     {
         alert("Error", message:"Operation failed")
     }
-    //PRAGMA MARK:- Login Errors
+    
+    func updationFailed()
+    {
+        alert("Error", message:"Updation failed")
+    }
+    
+    func invalidImage()
+    {
+        alert("Invalid Email", message:"Please provide a valid image")
+    }
     
     func loginInvalidEmail()
     {
@@ -86,8 +94,6 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert(loginErrorTitle, message: "Invalid user")
     }
     
-    //PRAGMA MARK:- Sign up errors
-    
     func signUpError() {
         alert(signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")
     }
@@ -121,13 +127,9 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert(signUpErrorTitle, message: "Please enter your password")
     }
     
-    //PRAGMA MARK:- Connectivity errors
-    
     func noNetworkConnection() {
         alert("Network Error", message: "Oops, it looks like you don't have a working internet connection. Please connect and try again.")
     }
-    
-    //PRAGMA MARK:- Streaming errors
     
     func streamingError()
     {
@@ -144,6 +146,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("Invalid Token", message:"Invalid Token error. Please try again")
     }
     
+    func passwordMismatch()
+    {
+        alert("Password Mismatch", message:"The new and re-enter passwords should be same")
+    }
+    
     func tockenExpired()
     {
         alert("Token Expired", message:"Token expired error. please try again")
@@ -153,7 +160,6 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     {
         alert("Token Missing", message: "Token missing error. Please try again")
     }
-    
     
     func invalidStream()
     {
@@ -174,12 +180,21 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             message = "\nWe're sorry, but an error occurred. Please try again."
         }
         UIAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: "OK").show()
-
     }
-
+    
     func channelAlreayExist()
     {
         alert("Channel Exist", message: "Channel name already exists")
+    }
+    
+    func unsubscribedUserChannel()
+    {
+        alert("Unsubscribed User", message: "channel is not subscribed")
+    }
+    
+    func invalidUserChannel()
+    {
+        alert("Invalid User", message: "sorry! you dont have the permission to access the channel")
     }
     
     func invalidChannelId()
@@ -225,6 +240,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
     func unregisteredContact()
     {
         alert("Invalid Contacts", message: "Unregistered Contact List")
+    }
+    
+    func mobileExist()
+    {
+        alert(signUpErrorTitle, message: "Mobile number already exists")
+    }
+    
+    func invalidContacts()
+    {
+        alert("Invalid Contacts", message: "Invalid Contact List")
     }
     
     func emptyContact()
@@ -273,6 +298,9 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         case "USER010": //missmatchVerificationCode
             invalidEmail()
             break
+        case "USER012":
+            mobileExist()
+            break
         case "STREAM001": //invalidStreamToken
             invalidStream()
             break
@@ -282,11 +310,16 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         case "GENERAL002": //operationFailed
             operationFailed()
             break
+        case "GENERAL004":
+            invalidImage()
+            break
+        case "GENERAL005":
+            updationFailed()
+            break
         case"ResponseInvalid":
             inValidResponseError()
             break
         case "WOWZA001":  //"Wowza stream empty."
-            //Currently avoiding alert when live steam is empty.
             break
         case"CHANNEL001":
             channelAlreayExist()
@@ -300,11 +333,20 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         case"CHANNEL004":
             invalidChannelName()
             break
+        case"CHANNEL005":
+            unsubscribedUserChannel()
+            break
+        case"CHANNEL006":
+            invalidUserChannel()
+            break
         case"CONTACT002":
             unregisteredContact()
             break
         case"CONTACT001":
             emptyContact()
+            break
+        case"CONTACT003":
+            invalidContacts()
             break
         case"GCS001":
             invalidBucket()
@@ -320,7 +362,6 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
             break
         default:
             alert("Error", message: "\(errorCode)")
-            //serverError()
             break
         }
     }

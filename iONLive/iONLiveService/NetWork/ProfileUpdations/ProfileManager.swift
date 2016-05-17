@@ -9,7 +9,7 @@
 import UIKit
 
 class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
-
+    
     class var sharedInstance: ProfileManager {
         struct Singleton {
             static let instance = ProfileManager()
@@ -22,14 +22,9 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getProfileDataAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
-            print(response)
             if let responseObject = response as? [String:AnyObject]
             {
-                //call the success block that was passed with response data
-//                self.getUserProfileImage(userName, accessToken: accessToken, success: success, failure: failure)
-                
                 success?(response: responseObject)
-                
             }
             else
             {
@@ -48,20 +43,18 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
                 //The credentials were wrong or the network call failed
                 failure?(error: error, code:failureErrorCode)
         })
-        
     }
-  
+    
     func getSubUserProfileImage(userName: String, accessToken: String, subscriberUserName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
         
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getSubscriberProfileImageAPIUrl(userName, accessToken: accessToken, subscriberUserName: subscriberUserName), parameters: nil, success: { (operation, response) -> Void in
-        
+            
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
                 success?(response: responseObject)
-               
             }
             else
             {
@@ -80,36 +73,10 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
                 //The credentials were wrong or the network call failed
                 failure?(error: error, code:failureErrorCode)
         })
-
+        
     }
     
     func uploadProfileImage(userName: String, accessToken: String, profileImage: NSData, actualImageUrl: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
-//    
-//        let request = NSMutableURLRequest(URL: NSURL(string: UrlManager.sharedInstance.getProfileImageUploadAPIUrl(userName, accessToken: accessToken, actualImageUrl: actualImageUrl))!)
-//        request.HTTPMethod = "PUT"
-//        
-////        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.addValue("application/json", forHTTPHeaderField: "Accept")
-//        
-//        let boundary = "FileUploader-boundary-\(arc4random())-\(arc4random())"
-//        request.setValue( "multipart/form-data;boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//        
-//        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-//        request.HTTPBody = profileImage
-//        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
-//            if error != nil {
-//                print("failed")
-//            }
-//            else {
-//                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-//                print("Parsed JSON: '\(jsonStr)'")
-//              
-//            }
-//        }
-//        dataTask.resume()
-//        
-//        
-        
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.getProfileImageUploadAPIUrl(userName, accessToken: accessToken, actualImageUrl: actualImageUrl), parameters: nil, constructingBodyWithBlock: { (formData: AFMultipartFormData!) -> Void in
             formData.appendPartWithFileData(profileImage, name: "Photo", fileName: "photo.jpg", mimeType: "image/jpeg")
@@ -132,14 +99,13 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
                 }
                 failure?(error: error, code:failureErrorCode)
         })
-
     }
-
+    
     func updateUserDetails(userName: String, accessToken: String, email: String, location: String, mobNo: String,fullName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
         
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: ["email":email,"mobileNumber":mobNo,"fullName":fullName], success: { (operation, response) -> Void in
-           
+            
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
@@ -163,8 +129,5 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
                 //The credentials were wrong or the network call failed
                 failure?(error: error, code:failureErrorCode)
         })
-        
     }
-
-
 }

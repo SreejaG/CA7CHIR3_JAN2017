@@ -28,14 +28,11 @@ class SnapCamSelectViewController: UIViewController {
     @IBOutlet var snapCamButton: UIButton!
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        
         loadDefaults()
     }
     
     override func viewWillDisappear(animated: Bool) {
-        
     }
     
     func loadDefaults()
@@ -57,20 +54,6 @@ class SnapCamSelectViewController: UIViewController {
             dataSource[5] = "Switch to SnapCam"
         }
     }
-    //    // Blur for ios 8
-    //
-    //        override func viewWillAppear(animated: Bool) {
-    //                self.view.backgroundColor = UIColor.clearColor()
-    //                let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-    //                let blurEffectView = UIVisualEffectView(effect: blurEffect)
-    //                //always fill the view
-    //                blurEffectView.frame = self.view.bounds
-    //                blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-    ////            blurView = blurEffectView;
-    //                self.view.addSubview(blurEffectView)
-    //                self.view.bringSubviewToFront(containerView)//if you have more UIViews, use an insertSubview API to place it where needed
-    //            }
-    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -134,7 +117,6 @@ extension SnapCamSelectViewController:UITableViewDelegate
             break
             
         case 6:
-            // TestAPI
             loadAPITestView()
             break
             
@@ -144,7 +126,7 @@ extension SnapCamSelectViewController:UITableViewDelegate
             let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
             self.presentViewController(navController, animated: false) { () -> Void in
             }
-//            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
+            //            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
             break;
         }
     }
@@ -168,7 +150,6 @@ extension SnapCamSelectViewController
         {
             updateSnapCamSelection(row)
             changeSnapCamModeForCell(selectedCell)
-            
         }
     }
     
@@ -246,7 +227,6 @@ extension SnapCamSelectViewController
     //PRAGMA MARK:- LoadViews for each table Actions
     func loadLiveStreamView()
     {
-        //rtsp://192.168.42.1:554/live
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! MovieViewController
         clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
         let navigationController:UINavigationController = UINavigationController(rootViewController: vc)
@@ -277,7 +257,7 @@ extension SnapCamSelectViewController
     {
         if snapCamMode == selectedMode
         {
-            //            snapCamMode = .DefaultMode
+            //snapCamMode = .DefaultMode
         }
         else
         {
@@ -304,8 +284,6 @@ extension SnapCamSelectViewController
     
     func changeSnapCamModeForCell(selectedCell:UITableViewCell)
     {
-        print("indexPathForSelectedRow = \(snapCamSettingsTableView.indexPathForSelectedRow?.row)")
-        
         streamingDelegate?.cameraSelectionMode(snapCamMode)
         self.snapCamSettingsTableView.reloadData()
     }
@@ -313,8 +291,6 @@ extension SnapCamSelectViewController
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
         
         let buttonTitle = alertView.buttonTitleAtIndex(buttonIndex)
-        
-        print("\(buttonTitle) pressed")
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
@@ -325,7 +301,6 @@ extension SnapCamSelectViewController
         else
         {
             self.snapCamSettingsTableView.reloadData()
-            print("No Pressed")
         }
     }
     
@@ -345,9 +320,7 @@ extension SnapCamSelectViewController
     {
         let stream = UploadStream()
         stream.stopStreamingClicked()
-        
         streamingDelegate?.cameraSelectionMode(snapCamMode)
-        
     }
     
     func stopIPhoneCameraLiveStreaming()

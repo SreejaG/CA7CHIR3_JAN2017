@@ -12,8 +12,6 @@ import UIKit
 class IPhoneLiveStreaming: NSObject {
     
     var showAlert : Bool = true;
-    
-    
     let liveStreamingHelpers = LiveStreamingHelpers()
     
     func startLiveStreaming(session:VCSimpleSession)
@@ -35,28 +33,19 @@ class IPhoneLiveStreaming: NSObject {
         var currentStreamingTocken:String?
         var streamingStatus:StreamingProtocol?
         var iPhoneLiveStreamingSession:VCSimpleSession?
-     
+        
         //PRAGMA MARK:- Create Base Stream
         func getBaseStreamWithToken(streamToken:String , AndUserName userName:String) -> String
         {
-            
-          //  rtsp://stream.ioncameras.com:1935/live/
-            
-      //     let baseStream  = "rtsp://192.168.16.44:1935/live?userName=remya123&token=in7bmn7x14610637429891"
-            
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             
-           let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() +  getUserNameAndToken(streamToken, WithUserName: userId)
+            let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() +  getUserNameAndToken(streamToken, WithUserName: userId)
             
             let streamPath = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken)
-            print(streamPath)
             NSUserDefaults.standardUserDefaults().setObject(streamPath, forKey: "LiveStreamUrl")
-        
-            print("baseStream/", baseStream)
             return baseStream
         }
-        
         
         func getProtocol() ->String
         {
@@ -65,23 +54,12 @@ class IPhoneLiveStreaming: NSObject {
         
         func getUserNameAndToken(streamToken:String , WithUserName userName:String) ->String
         {
-            //sdfgsdfsfsfsfsdfsdfsf?userName=test3@ionlive.com
             return "?userName=" + userName + "&token=" + streamToken
-            
-          //  return "?userName=remya123&token=in7bmn7x14610637429891"
         }
         
         func getHost() ->String
         {
-         //   return "192.168.16.44"
-            
-          //  return "104.196.113.133"
-            
-//            return "104.196.15.240"
             return "104.154.69.174"
-            
-            //return 192.168.16.12
-//            return "stream.ioncameras.com"
         }
         
         func getPort() ->String
@@ -95,9 +73,8 @@ class IPhoneLiveStreaming: NSObject {
         
         func getToken(token:String) -> String{
             return "/" + token
-          //  return "/in7bmn7x14610637429891"
         }
-
+        
         //PRAGMA MARK:- Start Streaming API
         func startStreamingClicked()
         {
@@ -112,14 +89,11 @@ class IPhoneLiveStreaming: NSObject {
             
             if let loginId = loginId, let accessTocken = accessTocken
             {
-                print(loginId as! String)
                 livestreamingManager.initialiseLiveStreaming(loginId:loginId as! String , tocken:accessTocken as! String, success: { (response) -> () in
                     
                     if let json = response as? [String: AnyObject]
                     {
                         self.currentStreamingTocken = json["streamToken"] as? String
-                        print("success = \(json["streamToken"])")
-                        //call start stream api here
                         self.startLiveStreamingToken(self.currentStreamingTocken)
                     }
                     else
@@ -147,7 +121,7 @@ class IPhoneLiveStreaming: NSObject {
             let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
             let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
             
-       //     cleanStreamingToken()
+            //     cleanStreamingToken()
             
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
             {
@@ -155,17 +129,14 @@ class IPhoneLiveStreaming: NSObject {
                     
                     if let json = response as? [String: AnyObject]
                     {
-                    
-                        print("success = \(json["streamToken"])")
-                        
                         let url =  (json["Signed url"]) as! String
                         let defaults = NSUserDefaults .standardUserDefaults()
                         defaults.setValue(url, forKey: "liveStreamURL")
-                                        
+                        
                         let streamToken:String = json["streamToken"] as! String
                         NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
                         self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
-                       
+                        
                         self.setDefaultMappingForLiveStream(streamTocken)
                     }
                     else
@@ -178,12 +149,9 @@ class IPhoneLiveStreaming: NSObject {
                     }, failure: { (error, message) -> () in
                         
                         self.streamingFailed()
-                        
-                        print("message = \(message)")
                         self.handleFailure(message)
                         return
                 })
-                
             }
             else
             {
@@ -191,55 +159,18 @@ class IPhoneLiveStreaming: NSObject {
                 ErrorManager.sharedInstance.authenticationIssue()
             }
         }
+        
         func setDefaultMappingForLiveStream(Tocken : String)
         {
             let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)as! String
             let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey) as! String
             livestreamingManager.defaultStreamMapping(loginId: loginId, accesstocken:accessTocken, streamTockn: Tocken, success: { (response) in
-               
-                }) { (error, code) in
-                    
-                    
+                
+            }) { (error, code) in
             }
- 
         }
         
-//        func  saveLiveThumbNailToCloud(url: String, completion: (result: String) -> Void)
-//        {
-//            var imageForLive : UIImage = UIImage()
-//            let defaults = NSUserDefaults .standardUserDefaults()
-//            let userId = defaults.valueForKey(userLoginIdKey) as! String
-//            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-//            let savingPath = "\(parentPath)/\(userId)LiveThumb"
-//            print(savingPath)
-//            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-//            if fileExistFlag == true{
-//                imageForLive = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)!
-//                let imageData = UIImageJPEGRepresentation(imageForLive, 0.5)
-//                let request = NSMutableURLRequest(URL: NSURL(string: url as String)!)
-//                request.HTTPMethod = "PUT"
-//                let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-//                request.HTTPBody = imageData
-//                let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
-//                    if error != nil {
-//                        //handle error
-//                    }
-//                    else {
-//                        let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-//                        print("Parsed JSON for thumbanil: '\(jsonStr)'")
-//                        let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
-//                        controller.uploadprogress(1.0)
-//                        
-//                    }
-//                }
-//                completion(result:"Success")
-//                dataTask.resume()
-//            }
-//        }
-
-
         //PRAGMA MARK: User Defaults
-        
         func setStreamingDefaults()
         {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
@@ -251,14 +182,14 @@ class IPhoneLiveStreaming: NSObject {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
             self.streamingStatus?.updateStreamingStatus!();
         }
-
+        
         func clearStreamingDefaults()
         {
             let defaults = NSUserDefaults .standardUserDefaults()
             defaults.setValue(false, forKey: startedStreaming)
             self.streamingStatus?.updateStreamingStatus!();
         }
-
+        
         func cleanStreamingToken()
         {
             let userDefault = NSUserDefaults.standardUserDefaults()
@@ -301,7 +232,6 @@ class IPhoneLiveStreaming: NSObject {
                 case .None, .PreviewStarted, .Ended, .Error:
                     startiPhoneCameraLiveStreamingWithUrl(url, andStreamToken: streamToken)
                     break
-                    
                 default:
                     stopLiveStreaming()
                     break
@@ -312,9 +242,6 @@ class IPhoneLiveStreaming: NSObject {
         func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamToken streamToken:String)
         {
             UIApplication.sharedApplication().idleTimerDisabled = true
-            
-//            let test = "rtsp://104.196.113.133:1935/live?userName=test3@ionlive.com&token=fdsfsfsdfsdfsdfsdf"
-            
             iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamToken)
         }
         
@@ -326,17 +253,12 @@ class IPhoneLiveStreaming: NSObject {
             let loginId = userDefault.objectForKey(userLoginIdKey)
             let accessTocken = userDefault.objectForKey(userAccessTockenKey)
             let streamTocken = userDefault.objectForKey(streamingToken)
-            
-            print(loginId as! String)
-            print(accessTocken as! String)
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
             {
                 livestreamingManager.stopLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken as! String,success: { (response) -> () in
-                    
                     if let json = response as? [String: AnyObject]
                     {
                         self.removeStreaming()
-                        print("success = \(json["streamToken"])")
                     }
                     else
                     {
@@ -345,7 +267,6 @@ class IPhoneLiveStreaming: NSObject {
                     
                     }, failure: { (error, message) -> () in
                         
-                        print("message = \(message)")
                         if iPhoneLiveStreaming.showAlert
                         {
                             self.handleFailure(message)

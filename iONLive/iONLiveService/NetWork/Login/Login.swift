@@ -15,14 +15,10 @@ class Login:NSObject
     var user :AnyObject?
     var expire:AnyObject?
     
-  
-    
-    
     func createModelFromJson(response:AnyObject?)->Login
     {
         if let json = response as? [String:AnyObject]
         {
-            print("success = \(json["status"]),\(json["token"]),\(json["user"])")
             if let _ = json["status"]
             {
                 self.status = json["status"]
@@ -40,7 +36,6 @@ class Login:NSObject
                 self.expire = json["expire"]
             }
         }
-        
         return self
     }
 }

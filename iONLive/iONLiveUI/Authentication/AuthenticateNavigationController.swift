@@ -17,7 +17,6 @@ class AuthenticateNavigationController: UINavigationController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func customise()
@@ -27,13 +26,11 @@ class AuthenticateNavigationController: UINavigationController {
          }
          else
          {
-             // Fallback on earlier versions
              UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont(name: "HelveticaNeue-Regular", size: 18)!,NSForegroundColorAttributeName: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0)]
          }
         
        UINavigationBar.appearance().tintColor = UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0)
         UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
         UINavigationBar.appearance().shadowImage = UIImage()
-        //UINavigationBar.appearance().translucent = false
     }
 }

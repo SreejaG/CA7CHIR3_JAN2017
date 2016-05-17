@@ -10,7 +10,7 @@ import UIKit
 
 class StreamsListViewController: UIViewController{
     
-    let streamTockenKey = "wowza_stream_token" //"streamToken"
+    let streamTockenKey = "wowza_stream_token"
     let imageKey = "image"
     let typeKey = "type"
     let imageType = "imageType"
@@ -121,7 +121,6 @@ class StreamsListViewController: UIViewController{
     }
     
     func initialiseCloudData(){
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -134,6 +133,7 @@ class StreamsListViewController: UIViewController{
             self.authenticationFailureHandler(error, code: message)
         }
     }
+    
     func  loadInitialViewController(){
         let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
         
@@ -146,12 +146,10 @@ class StreamsListViewController: UIViewController{
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -172,7 +170,6 @@ class StreamsListViewController: UIViewController{
         {
             imageDataSource.removeAll()
             let responseArr = json["objectJson"] as! [AnyObject]
-            //    print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -256,7 +253,6 @@ class StreamsListViewController: UIViewController{
     
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
-        
         if(imageDataSource.count <  (currentLimit +  limitMedia))
         {
             limitMediaCount = currentLimit
@@ -306,9 +302,7 @@ class StreamsListViewController: UIViewController{
                         else{
                             imageForMedia = UIImage()
                         }
-                        
                     })
-                    
                 }
             }
             
@@ -331,7 +325,6 @@ class StreamsListViewController: UIViewController{
                 self.removeOverlay()
                 self.streamListCollectionView.reloadData()
             })
-            
         }
     }
     
@@ -350,7 +343,6 @@ class StreamsListViewController: UIViewController{
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
-        
         self.presentViewController(vc, animated: false) { () -> Void in
             
         }
@@ -387,7 +379,6 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
-    
     
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
@@ -442,7 +433,6 @@ class StreamsListViewController: UIViewController{
                 })
                 
             }
-            
             initialise()
             initialiseCloudData()
         }
@@ -530,7 +520,6 @@ extension StreamsListViewController : UIScrollViewDelegate{
     }
 }
 
-
 extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
@@ -548,7 +537,6 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("StreamListCollectionViewCell", forIndexPath: indexPath) as! StreamListCollectionViewCell
-        
         
         if  dataSource.count>0
         {
@@ -603,7 +591,6 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                     {
                         var userDetailsDict : [AnyObject] = [AnyObject]()
                         userDetailsDict = json["user"] as! [AnyObject]
-                        print(userDetailsDict)
                         for element in userDetailsDict{
                             let profileImageName = element["profile_image"]
                             if let imageByteArray: NSArray = profileImageName!!["data"] as? NSArray
@@ -620,7 +607,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                                     profileImage = UIImage(named: "avatar")!
                                 }
                             }
-                            else   
+                            else
                             {
                                 profileImage = UIImage(named: "avatar")!
                             }
@@ -692,7 +679,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                             ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
                         }
                     }
-
+                    
                 }
                 
             }

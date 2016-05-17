@@ -8,20 +8,25 @@
 
 import UIKit
 
-class ForgotPasswordViewController: UIViewController {
+class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     
     static let identifier = "ForgotPasswordViewController"
-    
-    @IBOutlet weak var emailTextfield: UITextField!
+
     @IBOutlet weak var resetPasswdBottomConstraint: NSLayoutConstraint!
     
+    var verificationCode : String!
+    var mobileNumber : String!
     var loadingOverlay: UIView?
     
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
     
+    @IBOutlet var reEnterPwdText: UITextField!
+    @IBOutlet var newPwdText: UITextField!
+  
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(verificationCode)
         initialise()
     }
     
@@ -34,10 +39,20 @@ class ForgotPasswordViewController: UIViewController {
         self.title = "RESET PASSWORD"
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
-        emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        emailTextfield.autocorrectionType = UITextAutocorrectionType.No
+        newPwdText.attributedPlaceholder = NSAttributedString(string: "New Password",
+                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+        newPwdText.autocorrectionType = UITextAutocorrectionType.No
+        
+        reEnterPwdText.attributedPlaceholder = NSAttributedString(string: "Re-enter Password",
+                                                              attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+        reEnterPwdText.autocorrectionType = UITextAutocorrectionType.No
         addObserver()
+        newPwdText.becomeFirstResponder()
+        newPwdText.secureTextEntry = true
+        newPwdText.delegate = self
+        reEnterPwdText.secureTextEntry = true
+        reEnterPwdText.delegate = self
+        print("\(mobileNumber)      \(verificationCode)")       
     }
     
     func addObserver()
@@ -56,8 +71,8 @@ class ForgotPasswordViewController: UIViewController {
         if resetPasswdBottomConstraint.constant == 0
         {
             UIView.animateWithDuration(1.0, animations: { () -> Void in
-               self.resetPasswdBottomConstraint.constant += keyboardFrame.size.height
-                 self.view.layoutIfNeeded()
+                self.resetPasswdBottomConstraint.constant += keyboardFrame.size.height
+                self.view.layoutIfNeeded()
             })
         }
     }
@@ -68,7 +83,7 @@ class ForgotPasswordViewController: UIViewController {
         if resetPasswdBottomConstraint.constant != 0
         {
             UIView.animateWithDuration(1.0, animations: { () -> Void in
-               self.resetPasswdBottomConstraint.constant = 0
+                self.resetPasswdBottomConstraint.constant = 0
             })
         }
     }
@@ -87,33 +102,98 @@ class ForgotPasswordViewController: UIViewController {
         view.endEditing(true)
     }
     
-    @IBAction func resetPasswdClicked(sender: AnyObject)
-    {
-        if emailTextfield.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.noEmailEnteredError()
+    @IBAction func didTapResetButton(sender: AnyObject) {
+        let newPaswrd = newPwdText.text
+        let confirmPaswrd = reEnterPwdText.text
+        if(newPaswrd != confirmPaswrd){
+            ErrorManager.sharedInstance.passwordMismatch()
         }
-        else
-        {
-            //check for valid email
-            let isEmailValid = isEmail(emailTextfield.text!) as Bool!
-            if isEmailValid == false
-            {
-                ErrorManager.sharedInstance.loginInvalidEmail()
-                return
-            }
-            else
-            {
-                 ErrorManager.sharedInstance.alert("Reset Password", message:"Instructions to reset your password has been sent to your email Id")
-            }
+        else{
+            showOverlay()
+            authenticationManager.resetPassword(mobileNumber, newPassword: newPaswrd!, verificationCode: verificationCode, success: { (response) in
+                    self.authenticationSuccessHandler(response)
+                }, failure: { (error, message) in
+                    self.authenticationFailureHandler(error, code: message)
+                    return
+            })
         }
     }
     
+    func authenticationSuccessHandler(response:AnyObject?)
+    {
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                let alert = UIAlertController(title: "", message: "Your password has been changed", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "Go To Login Screen", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                     self.loadInitialViewController()
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
+        else
+        {
+            ErrorManager.sharedInstance.signUpError()
+        }
+    }
     
-    //PRAGMA MARK:- Helper functions
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+        }
+        else{
+            ErrorManager.sharedInstance.signUpError()
+        }
+    }
     
-    func isEmail(email:String) -> Bool {
-        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
-        return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.navigationController?.view.addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+    
+    func  loadInitialViewController(){
+        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        
+        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        {
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                try fileManager.removeItemAtPath(documentsPath)
+            }
+            catch let error as NSError {
+                print("Ooops! Something went wrong: \(error)")
+            }
+            FileManagerViewController.sharedInstance.createParentDirectory()
+        }
+        else{
+            FileManagerViewController.sharedInstance.createParentDirectory()
+        }
+        
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let deviceToken = defaults.valueForKey("deviceToken") as! String
+        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+        defaults.setValue(deviceToken, forKey: "deviceToken")
+        defaults.setObject(1, forKey: "shutterActionMode");
+        
+        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+        channelItemListVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.presentViewController(channelItemListVC, animated: false, completion: nil)
     }
 }

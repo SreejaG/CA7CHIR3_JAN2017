@@ -48,8 +48,6 @@ class AuthenticationManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
-    
     
     func signUp(email email: String, password: String, userName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
@@ -80,7 +78,6 @@ class AuthenticationManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-    
     
     //verification code generation
     
@@ -114,10 +111,70 @@ class AuthenticationManager: NSObject {
         })
     }
     
+    func generateVerificationCodeForResetPassword(mobileNumber: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().POST(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber], success: { (operation, response) -> Void in
+            
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                //call the success block that was passed with response data
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+            }
+            
+            }, failure: { (operation, error) -> Void in
+                
+                var failureErrorCode:String = ""
+                //get the error message from API if any
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorCode = errorCode
+                }
+                //The credentials were wrong or the network call failed
+                failure?(error: error, code:failureErrorCode)
+        })
+    }
+
     func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["action":action,"verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
+            
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                //call the success block that was passed with response data
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+            }
+            
+            }, failure: { (operation, error) -> Void in
+                
+                var failureErrorCode:String = ""
+                //get the error message from API if any
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorCode = errorCode
+                }
+                //The credentials were wrong or the network call failed
+                failure?(error: error, code:failureErrorCode)
+        })
+    }
+    
+    func resetPassword(mobileNumber: String, newPassword: String, verificationCode: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber,"newPassword":newPassword,"verificationCode":verificationCode], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

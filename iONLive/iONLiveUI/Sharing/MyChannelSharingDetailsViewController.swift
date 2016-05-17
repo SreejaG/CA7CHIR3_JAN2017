@@ -29,6 +29,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     let profileImageKey = "profile_image"
     let selectionKey = "selected"
     
+    var refreshControlSecnd:UIRefreshControl!
+    var pullToRefreshActiveSecnd = false
+    
     var searchActive: Bool = false
     var tapFlag : Bool = true
     
@@ -40,6 +43,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.refreshControlSecnd = UIRefreshControl()
+        self.refreshControlSecnd.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControlSecnd.addTarget(self, action: "pullToRefreshSecnd", forControlEvents: UIControlEvents.ValueChanged)
+        self.contactTableView.addSubview(refreshControlSecnd)
+        self.contactTableView.alwaysBounceVertical = true
+    
         initialise()
     }
     
@@ -58,7 +67,19 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        removeOverlay()
+        if(!pullToRefreshActiveSecnd){
+            removeOverlay()
+        }
+        else{
+            self.refreshControlSecnd.endRefreshing()
+            pullToRefreshActiveSecnd = false
+        }
+    }
+    
+    func pullToRefreshSecnd()
+    {
+        pullToRefreshActiveSecnd = true
+        initialise()
     }
     
     @IBAction func gestureTapped(sender: AnyObject) {
@@ -127,7 +148,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     }
     
     func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
-        showOverlay()
+        if(!pullToRefreshActiveSecnd){
+             showOverlay()
+        }
         channelManager.inviteContactList(userName, accessToken: accessToken, channelId: channelid, adduser: addUser, deleteUser: deleteUser, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
         }) { (error, message) -> () in
@@ -147,12 +170,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -166,10 +187,17 @@ class MyChannelSharingDetailsViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
-        removeOverlay()
+        if(!pullToRefreshActiveSecnd){
+            removeOverlay()
+        }
+        else{
+            self.refreshControlSecnd.endRefreshing()
+            pullToRefreshActiveSecnd = false
+        }
+
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int
@@ -203,7 +231,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func getChannelContactDetails(username: String, token: String, channelid: String)
     {
-        showOverlay()
+        if(!pullToRefreshActiveSecnd){
+            showOverlay()
+        }
         channelManager.getChannelContactDetails(channelid, userName: username, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
@@ -215,7 +245,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+        if(!pullToRefreshActiveSecnd){
+            removeOverlay()
+        }
+        else{
+            self.refreshControlSecnd.endRefreshing()
+            pullToRefreshActiveSecnd = false
+        }
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -266,7 +302,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        if(!pullToRefreshActiveSecnd){
+            removeOverlay()
+        }
+        else{
+            self.refreshControlSecnd.endRefreshing()
+            pullToRefreshActiveSecnd = false
+        } 
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -343,7 +385,14 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandlerDeleteContact(response:AnyObject?)
     {
-        removeOverlay()
+        if(!pullToRefreshActiveSecnd){
+            removeOverlay()
+        }
+        else{
+            self.refreshControlSecnd.endRefreshing()
+            pullToRefreshActiveSecnd = false
+        }
+
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int

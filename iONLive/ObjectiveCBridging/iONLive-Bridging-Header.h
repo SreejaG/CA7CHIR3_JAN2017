@@ -26,7 +26,6 @@
 
 #import "NBPhoneNumberUtil.h"
 
-
 #import <CoreData/CoreData.h>
 #import "screencap.h"
 

@@ -367,7 +367,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             return time1 > time2
         })
         myChannelTableView.reloadData()
-        
     }
     
     func addKeyboardObservers()
@@ -480,12 +479,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -501,7 +498,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     func handleTap(gestureRecognizer: UIGestureRecognizer) {
-        
         let swipeLocation = gestureRecognizer.locationInView(self.myChannelTableView)
         if let swipedIndexPath = self.myChannelTableView.indexPathForRowAtPoint(swipeLocation) {
             let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -559,8 +555,7 @@ extension MyChannelViewController:UITableViewDataSource
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
         var dataSourceTmp : [[String:AnyObject]]?
-        
-        
+       
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
@@ -674,7 +669,6 @@ extension MyChannelViewController:UITableViewDataSource
         }
         self.myChannelTableView.reloadData()
     }
-    
 }
 
 

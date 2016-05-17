@@ -19,8 +19,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     var loadingOverlay: UIView?
     
-//    let locationManager:CLLocationManager = CLLocationMvarger()
-    
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
     
@@ -45,17 +43,15 @@ class SignUpVerifyPhoneViewController: UIViewController
         mobileNumberTextField.resignFirstResponder()
         verificationCodeTextField.resignFirstResponder()
     }
-   
+    
     @IBOutlet weak var topConstaintDescriptionLabel: NSLayoutConstraint!
-  
+    
     @IBOutlet var countryCodeTextField: UITextField!
     
     @IBOutlet weak var verificationCodeTextField: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
-//        setUpLocationManager()
-        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -68,62 +64,33 @@ class SignUpVerifyPhoneViewController: UIViewController
         super.viewWillDisappear(true)
         removeOverlay()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-//    func setUpLocationManager()
-//    {
-//        self.locationManager.requestWhenInUseAuthorization()
-//        locationManager.delegate = self
-//        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-//        locationManager.startUpdatingLocation()
-//    }
-//    
-//    
-//    // authorization status
-//    func locationManager(manager: CLLocationManager,
-//        didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-//            var shouldIAllow = false
-//            var locationStatus = ""
-//            switch status {
-//            case CLAuthorizationStatus.Restricted:
-//                locationStatus = "Restricted Access to location"
-//            case CLAuthorizationStatus.Denied:
-//                locationStatus = "User denied access to location"
-//            case CLAuthorizationStatus.NotDetermined:
-//                locationStatus = "Status not determined"
-//            default:
-//                locationStatus = "Allowed to location Access"
-//                shouldIAllow = true
-//            }
-//            NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
-//            if (shouldIAllow == true) {
-//                NSLog("Location to Allowed")
-//                // Start location services
-//                locationManager.startUpdatingLocation()
-//            } else {
-//                NSLog("Denied access: \(locationStatus)")
-//            }
-//    }
-//    
-
     func initialise()
     {
-        self.title = "VERIFY PHONE #"
+        if((userName == "invalid") && (email == "invalid"))
+        {
+            self.title = ""
+        }
+        else{
+            self.title = "VERIFY PHONE #"
+        }
+       
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
         countryTextField.attributedPlaceholder = NSAttributedString(string: "Country",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                    attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         mobileNumberTextField.attributedPlaceholder = NSAttributedString(string: "Mobile Number",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                         attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         countryCodeTextField.attributedPlaceholder = NSAttributedString(string: "Code",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                        attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         verificationCodeTextField.attributedPlaceholder = NSAttributedString(string: "Verification Code",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-    
+                                                                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+        
         countryPicker.countryPhoneCodeDelegate = self
         countryTextField.userInteractionEnabled = false
         countryCodeTextField.userInteractionEnabled = true
@@ -147,14 +114,13 @@ class SignUpVerifyPhoneViewController: UIViewController
             mobileNumberTextField.resignFirstResponder()
             verificationCodeTextField.becomeFirstResponder()
             topConstaintDescriptionLabel.constant = 67
-           
+            
         }
         else
         {
             verificationCodeTextField.hidden = true
             topConstaintDescriptionLabel.constant = 1
         }
-        
     }
     
     func addObserver()
@@ -214,19 +180,35 @@ class SignUpVerifyPhoneViewController: UIViewController
                 {
                     ErrorManager.sharedInstance.signUpNoCodeEnteredError()
                 }
-                else
+                else if((userName == "invalid") && (email == "invalid"))
                 {
+                   loadForgotPasswordView()
+                }
+                else{
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
                     let gcmRegId = "ios".stringByAppendingString(deviceToken)
-                    print(gcmRegId)
-                    
                     validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
                 }
             }
             else{
-                generateWaytoSendAlert()
+                if((userName == "invalid") && (email == "invalid")){
+                    generateWaytoSendAlertForResetPassword()
+                }
+                else{
+                    generateWaytoSendAlert()
+                }
             }
         }
+    }
+    
+    func  loadForgotPasswordView(){
+        let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
+        let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(ForgotPasswordViewController.identifier) as! ForgotPasswordViewController
+        verifyPhoneVC.verificationCode = verificationCodeTextField.text!
+        verifyPhoneVC.mobileNumber = countryCodeTextField.text! + mobileNumberTextField.text!
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        verifyPhoneVC.navigationItem.backBarButtonItem = backItem
+        self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
     }
     
     func ltzAbbrev() -> String
@@ -241,10 +223,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "sms")
-            }))
+            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "sms")
+        }))
         alert.addAction(UIAlertAction(title: "Send to Email", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-              self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "email")
+            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "email")
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
@@ -252,23 +234,41 @@ class SignUpVerifyPhoneViewController: UIViewController
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    
-    //extra wrk
-    func generateVerificationCode(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String)
+    func generateWaytoSendAlertForResetPassword()
     {
-        //authenticate through authenticationManager
-        showOverlay()
+        let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
         
-        let timeZoneOffsetInGMT : String = ltzAbbrev()
-        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
-        print(timeZoneOffsetInUTC)
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, success: { (response) -> () in
+        alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.generateVerificationCodeForResetPassword(self.countryCodeTextField.text! + self.mobileNumberTextField.text!)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func generateVerificationCodeForResetPassword(mobileNumber: String)
+    {
+        showOverlay()
+        authenticationManager.generateVerificationCodeForResetPassword(mobileNumber, success: { (response) in
                 self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
+            }) { (error, message) in
                 self.authenticationFailureHandler(error, code: message)
                 return
         }
     }
+    
+    func generateVerificationCode(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String)
+    {
+        showOverlay()
+        let timeZoneOffsetInGMT : String = ltzAbbrev()
+        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, success: { (response) -> () in
+            self.authenticationSuccessHandler(response)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
+        }
+    }
+    
     func  loadInitialViewController(){
         let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
         
@@ -281,12 +281,10 @@ class SignUpVerifyPhoneViewController: UIViewController
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -300,7 +298,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
@@ -342,16 +340,15 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String)
     {
-        //authenticate through authenticationManager
         showOverlay()
         authenticationManager.validateVerificationCode(userName, action: action, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
             self.authenticationSuccessHandlerVerification(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
-
+    
     func authenticationSuccessHandlerVerification(response:AnyObject?)
     {
         removeOverlay()
@@ -378,10 +375,9 @@ class SignUpVerifyPhoneViewController: UIViewController
             ErrorManager.sharedInstance.loginError()
         }
     }
- 
+    
     func loadFindFriendsView()
     {
-        
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
         let findFriendsVC = storyboard.instantiateViewControllerWithIdentifier(SignUpFindFriendsViewController.identifier) as! SignUpFindFriendsViewController
         findFriendsVC.phoneCode = CountryPhoneCode
@@ -389,11 +385,9 @@ class SignUpVerifyPhoneViewController: UIViewController
         self.navigationController?.pushViewController(findFriendsVC, animated: false)
     }
     
-    //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -402,9 +396,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-    
-    //end
-    
     
     func loadUserNameView()
     {
@@ -420,7 +411,7 @@ extension SignUpVerifyPhoneViewController:UITextFieldDelegate{
     
     func textFieldDidEndEditing(textField: UITextField)
     {
-         textField.layoutIfNeeded()
+        textField.layoutIfNeeded()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool
@@ -441,47 +432,5 @@ extension SignUpVerifyPhoneViewController:CountryPhoneCodePickerDelegate{
         self.countryTextField.text = countryCode + " - " + name
         self.countryCodeTextField.text = phoneCode
         CountryPhoneCode = phoneCode
-     //   defaults.setValue(phoneCode as String, forKey: "phoneCodes")
     }
-
 }
-
-//extension SignUpVerifyPhoneViewController:CLLocationManagerDelegate
-//{
-//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        
-//        let location = locations.last! as CLLocation
-//        
-//        print("didUpdateLocations:  \(location.coordinate.latitude), \(location.coordinate.longitude)")
-//        
-//        let geocoder = CLGeocoder()
-//        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
-//            if let _ = e {
-//                print("Error:  \(e!.localizedDescription)")
-//            } else {
-//                let placemark = placemarks!.last! as CLPlacemark
-//                
-//                let userInfo = [
-//                    "city":     placemark.locality,
-//                    "state":    placemark.administrativeArea,
-//                    "country":  placemark.country,
-//                    "code":placemark.ISOcountryCode
-//                ]
-//                
-////                let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
-////                let phoneCode: String? = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
-////              
-////                self.countryCodeTextField.text = phoneCode
-//                print("Location:  \(userInfo)")
-//                
-//            }
-//        })
-//    }
-//    
-//    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-//        locationManager.stopUpdatingLocation()
-//        print(error)
-//    }
-//}
-//
-//

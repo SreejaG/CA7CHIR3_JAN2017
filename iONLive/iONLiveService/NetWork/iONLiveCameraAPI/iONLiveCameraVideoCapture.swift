@@ -9,7 +9,7 @@
 import UIKit
 
 class iONLiveCameraVideoCapture: NSObject {
-
+    
     class var sharedInstance: iONLiveCameraVideoCapture {
         
         struct Singleton {
@@ -78,7 +78,7 @@ class iONLiveCameraVideoCapture: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
     
     func startVideoWithSegments(numSegments numSegments: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
@@ -135,7 +135,7 @@ class iONLiveCameraVideoCapture: NSObject {
                 failure?(error: error, code:failureErrorDesc)
         })
     }
-
+    
     func deleteVideoWithHlsId(hlsID hlsID: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
@@ -168,7 +168,7 @@ class iONLiveCameraVideoCapture: NSObject {
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getiONLiveVideom3u8Url(hlsID), parameters: nil, success: { (operation, response) -> Void in
-
+            
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
@@ -180,9 +180,9 @@ class iONLiveCameraVideoCapture: NSObject {
                 //The response did not match the form we expected, error/fail
                 failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
             }
-
+            
             }, failure: { (operation, error) -> Void in
-
+                
                 var failureErrorCode:String = ""
                 //get the error code from API if any
                 if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error)

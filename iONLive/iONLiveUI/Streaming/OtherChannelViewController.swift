@@ -137,12 +137,10 @@ class OtherChannelViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -156,8 +154,7 @@ class OtherChannelViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
-    
+   
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
@@ -171,7 +168,6 @@ class OtherChannelViewController: UIViewController {
             if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as String
             {
                 mediaSharedCountArray[i][isWatched] = "1";
-                
                 let defaults = NSUserDefaults .standardUserDefaults()
                 defaults.setObject(mediaSharedCountArray, forKey: "Shared")
             }
@@ -184,7 +180,6 @@ class OtherChannelViewController: UIViewController {
         isWatchedTrue()
         if let json = response as? [String: AnyObject]
         {
-            print(response)
             let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
@@ -253,6 +248,7 @@ class OtherChannelViewController: UIViewController {
             }
         }
     }
+    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
@@ -276,9 +272,9 @@ class OtherChannelViewController: UIViewController {
             completion(result:UIImage(named:"thumb12")!)
         }
     }
+    
     func downloadCloudData(limitMedia : Int , scrolled : Bool)
     {
-        
         if(imageDataSource.count <  (currentLimit +  limitMedia))
         {
             limitMediaCount = currentLimit
@@ -331,11 +327,9 @@ class OtherChannelViewController: UIViewController {
                     
                 }
             }
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                
-                
                 self.channelItemsCollectionView.reloadData()
             })
         }
@@ -376,8 +370,6 @@ extension OtherChannelViewController : UIScrollViewDelegate{
             
         }
     }
-    
-    
 }
 
 extension OtherChannelViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
@@ -396,7 +388,6 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("OtherChannelCell", forIndexPath: indexPath) as! OtherChannelCell
         
         if fullImageDataSource.count > 0
@@ -412,7 +403,6 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 let imageToConvert: UIImage = imageData
                 let sizeThumb = CGSizeMake(150, 150)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                
                 cell.channelMediaImage.image = imageAfterConversionThumbnail
             }
             else if mediaType == "image" {
@@ -430,6 +420,7 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         }
         return cell
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
     }
@@ -449,25 +440,20 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
         if type == "image"
         {
-            
-            
             let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage:profileImage,videoImageUrl:self.fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String, mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String, isProfile: true) as! MovieViewController
             
             self.presentViewController(vc, animated: false) { () -> Void in
             }
-            
         }else if type == "video"
         {
             let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: profileImage,videoImageUrl:self.fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String, mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String, isProfile: true) as! MovieViewController
             
             self.presentViewController(vc, animated: false) { () -> Void in
             }
-            
         }else
         {
             if let streamTocken = fullImageDataSource[indexPath.row][streamTockenKey]
             {
-                
                 let userId = userName
                 let type = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
                 
@@ -485,6 +471,4 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         }
         
     }
-    
-    
 }

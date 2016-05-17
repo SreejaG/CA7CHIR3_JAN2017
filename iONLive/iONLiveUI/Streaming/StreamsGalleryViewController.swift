@@ -15,7 +15,6 @@ class StreamsGalleryViewController: UITabBarController {
     var channelId:String!
     var channelName:String!
     override func viewDidLoad() {
-        
         super.viewDidLoad()
     }
     
@@ -28,12 +27,9 @@ class StreamsGalleryViewController: UITabBarController {
     {
         self.selectedIndex = 1
         let tabBarItems = self.tabBar.items
-        if let items = tabBarItems
-        {
-        }
     }
+    
     override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
-      
     }
     
     override func didReceiveMemoryWarning() {

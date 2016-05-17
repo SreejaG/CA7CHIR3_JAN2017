@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextfield: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var logInBottomConstraint: NSLayoutConstraint!
-
+    
     var loadingOverlay: UIView?
     
     let requestManager = RequestManager.sharedInstance
@@ -43,9 +43,9 @@ class LoginViewController: UIViewController {
         self.navigationItem.backBarButtonItem = backItem
         
         userNameTextfield.attributedPlaceholder = NSAttributedString(string: "Username",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         passwordTextField.attributedPlaceholder = NSAttributedString(string: "Password",
-            attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         passwordTextField.autocorrectionType = UITextAutocorrectionType.No
         passwordTextField.secureTextEntry = true
@@ -93,9 +93,18 @@ class LoginViewController: UIViewController {
     
     @IBAction func forgetPasswordClicked(sender: AnyObject)
     {
-        let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let forgotPasswordViewController = authenticationStoryboard.instantiateViewControllerWithIdentifier(ForgotPasswordViewController.identifier)
-        self.navigationController?.pushViewController(forgotPasswordViewController, animated: true)
+        loadVerifyPhoneView()
+    }
+    
+    func loadVerifyPhoneView()
+    {
+        let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
+        let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
+        verifyPhoneVC.email = "invalid"
+        verifyPhoneVC.userName = "invalid"
+        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        verifyPhoneVC.navigationItem.backBarButtonItem = backItem
+        self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
     }
     
     @IBAction func tapGestureRecognized(sender: AnyObject) {
@@ -113,16 +122,13 @@ class LoginViewController: UIViewController {
             ErrorManager.sharedInstance.loginNoPasswordEnteredError()
         }
         else
-        {            
+        {
             let deviceToken = defaults.valueForKey("deviceToken") as! String
-//            let deviceToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE0NTczNDQ4MDAwNjgsInVzZXJOYW1lIjoiR2FkZ2VvbiBpT24gTGl2ZSBUZXN0IFVzZXIifQ.We_xqPPr-94paiTQepcaRrJnHFR1JYMJkM8QW23_7kvmKlg-LQV3UwistLx9bxfxu7l1u0chAUUNC8vX1LFY8Q"
-       let gcmRegId = "ios".stringByAppendingString(deviceToken)
+            let gcmRegId = "ios".stringByAppendingString(deviceToken)
             
-            print(deviceToken)
             self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
         }
     }
-    
     
     //PRAGMA MARK:- Helper functions
     
@@ -134,8 +140,7 @@ class LoginViewController: UIViewController {
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height)
-//        loadingOverlayController.view.frame = self.view.bounds
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -145,25 +150,16 @@ class LoginViewController: UIViewController {
         self.loadingOverlay?.removeFromSuperview()
     }
     
-    
     //PRAGMA MARK:- API handlers
+    
     func loginUser(email: String, password: String, gcmRegistrationId: String, withLoginButton: Bool)
     {
-        //check for valid email
-//        let isEmailValid = isEmail(email) as Bool!
-//        if isEmailValid == false
-//        {
-//            ErrorManager.sharedInstance.loginInvalidEmail()
-//            return
-//        }
-        
-        //authenticate through authenticationManager
         showOverlay()
         authenticationManager.authenticate(email, password: password, gcmRegId: gcmRegistrationId, success: { (response) -> () in
-             self.authenticationSuccessHandler(response)
-            }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationSuccessHandler(response)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -179,12 +175,10 @@ class LoginViewController: UIViewController {
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -198,19 +192,16 @@ class LoginViewController: UIViewController {
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
         self.passwordTextField.text = ""
         self.removeOverlay()
-       // loadLiveStreamView()
         loadCameraViewController()
         if let json = response as? [String: AnyObject]
         {
-            
             clearStreamingUserDefaults(defaults)
-            
             print("success = \(json["status"]),\(json["token"]),\(json["user"])")
             if let tocken = json["token"]
             {
@@ -257,13 +248,13 @@ class LoginViewController: UIViewController {
     {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-
+    
     func loadLiveStreamView()
     {
-        
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
         self.navigationController?.pushViewController(vc, animated: false)
     }
+    
     func loadCameraViewController()
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)

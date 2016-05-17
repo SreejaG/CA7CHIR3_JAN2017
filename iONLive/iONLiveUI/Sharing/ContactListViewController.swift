@@ -26,7 +26,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     var channelId:String!
     var totalMediaCount: Int = Int()
     var channelName:String!
-    var phoneCodeFromLocat : String = String()
+    var phoneCodeFromLocat : String = "nilValue"
+    
+    var callingFlag : Int = 0
     
     var loadingOverlay: UIView?
     
@@ -57,6 +59,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+        setAddressBook(addressBookRef1)
+        contactAuthorizationAlert()
         initialise()
     }
     
@@ -65,7 +70,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         self.locationManager.requestWhenInUseAuthorization()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-        locationManager.startUpdatingLocation()
     }
     
     func locationManager(manager: CLLocationManager,
@@ -83,6 +87,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             locationStatus = "Allowed to location Access"
             shouldIAllow = true
         }
+        
         NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
         if (shouldIAllow == true) {
             showOverlay()
@@ -108,7 +113,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                     "country":  placemark.country,
                     "code":placemark.ISOcountryCode
                 ]
-                
+                self.callingFlag = self.callingFlag + 1
                 let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
                 self.phoneCodeFromLocat = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
                 self.displayContacts()
@@ -191,12 +196,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             catch let error as NSError {
                 print("Ooops! Something went wrong: \(error)")
             }
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         else{
-            let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+            FileManagerViewController.sharedInstance.createParentDirectory()
         }
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -210,7 +213,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
     }
-
+    
     
     func initialise()
     {
@@ -223,10 +226,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         tapFlag = true
         doneButton.hidden = true
         contactPhoneNumbers.removeAll()
-        
-        let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
-        setAddressBook(addressBookRef1)
-        contactAuthorizationAlert()
     }
     
     func contactAuthorizationAlert()
@@ -291,8 +290,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     func displayContacts(){
         contactPhoneNumbers.removeAll()
-        locationManager.stopUpdatingLocation()
-        locationManager.delegate = nil
+        self.locationManager.stopUpdatingLocation()
+        self.locationManager.stopUpdatingHeading()
+        self.locationManager.stopMonitoringVisits()
         let phoneCode = phoneCodeFromLocat
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
@@ -337,7 +337,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         if contactPhoneNumbers.count > 0
         {
-            addContactDetails(self.contactPhoneNumbers)
+            if callingFlag == 3
+            {
+                addContactDetails(self.contactPhoneNumbers)
+            }
         }
     }
     
@@ -346,7 +349,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-
+        
         contactManagers.addContactDetails(userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
             self.authenticationSuccessHandlerAdd(response)
         }) { (error, message) -> () in
@@ -357,7 +360,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     func authenticationSuccessHandlerAdd(response:AnyObject?)
     {
-        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             var status: Int!
@@ -386,12 +388,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         else if code.isEmpty == false {
             if code == "CONTACT002" {
-                initialise()
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 if code == "CONTACT001"{
-                    initialise()
                 }
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
@@ -413,7 +413,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
-        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int
@@ -476,7 +475,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                 else{
                     contactImage = UIImage(named: "avatar")!
                 }
-
+                
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage])
             }
             contactListTableView.reloadData()
