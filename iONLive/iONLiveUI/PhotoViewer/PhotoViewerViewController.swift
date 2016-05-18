@@ -46,6 +46,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var videoDownloadIntex : Int = 0
     @IBOutlet var playIconInFullView: UIImageView!
     
+    @IBOutlet var BottomView: UIView!
     @IBOutlet weak var mediaTimeLabel: UILabel!
     @IBOutlet var progressView: UIProgressView!
     let thumbImageKey = "thumbImage"
@@ -76,6 +77,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     var mediaIdSelected : Int = 0
     
+    @IBOutlet var addToButton: UIButton!
+    @IBOutlet var deletButton: UIButton!
     private var downloadTask: NSURLSessionDownloadTask?
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
@@ -141,6 +144,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
             mediaIdSelected = dataSource[0][mediaIdKey] as! Int
         }
+        print(mediaIdSelected)
         mediaSelected.addObject(mediaIdSelected)
         
         if(mediaSelected.count > 0)
@@ -249,6 +253,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         self.removeOverlay()
         self.fullScrenImageView.alpha = 1.0
+        print(code)
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -306,6 +311,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
+        
+        deletButton.hidden = true
+        addToButton.hidden = true
+        BottomView.hidden = true
+        BottomView.alpha = 0.3
+        mediaIdSelected = 0
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
@@ -370,7 +381,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             progressLabelDownload?.frame = frame
             view.addSubview(progressLabelDownload!)
             fullScrenImageView.alpha = 0.2
-            
             downloadTask!.resume()
         }
         
@@ -472,6 +482,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
                     {
                         let dict = mediaCacheManager.getResponse() as NSMutableDictionary
+                        print(dict)
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
                         let sizeThumb = CGSizeMake(70,70)
                         let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
@@ -593,10 +604,21 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        
-        mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
         if dataSource.count > indexPath.row
         {
+            mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
+            if(mediaIdSelected != 0){
+                deletButton.hidden = false
+                addToButton.hidden = false
+                BottomView.hidden = false
+                BottomView.alpha = 1.0
+            }
+            else{
+                deletButton.hidden = true
+                addToButton.hidden = true
+                BottomView.hidden = true
+                BottomView.alpha = 0.3
+            }
             var dict = dataSource[indexPath.row]
             selectedCollectionViewIndex = indexPath.row
             
@@ -657,6 +679,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func getChannelDetails(userName: String, token: String)
     {
+        self.deletButton.hidden = true
+        self.addToButton.hidden = true
+        BottomView.hidden = true
+        BottomView.alpha = 0.3
+        mediaIdSelected = 0
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandlerList(response)
         }) { (error, message) -> () in
@@ -671,6 +698,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         if let json = response as? [String: AnyObject]
         {
+        
             channelDetails = json["channels"] as! NSMutableArray
             setChannelDetails()
         }
@@ -712,7 +740,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-            
             for index in 0 ..< responseArr.count
             {
                 let thumb = responseArr[index].valueForKey(thumbSignedUrlKey)

@@ -105,17 +105,37 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     @IBAction func didTapResetButton(sender: AnyObject) {
         let newPaswrd = newPwdText.text
         let confirmPaswrd = reEnterPwdText.text
-        if(newPaswrd != confirmPaswrd){
+        if newPwdText.text!.isEmpty
+        {
+            ErrorManager.sharedInstance.newPaswrdEmpty()
+        }
+        else if reEnterPwdText.text!.isEmpty
+        {
+            ErrorManager.sharedInstance.confirmPaswrdEmpty()
+        }
+        else if(newPaswrd != confirmPaswrd){
             ErrorManager.sharedInstance.passwordMismatch()
         }
         else{
-            showOverlay()
-            authenticationManager.resetPassword(mobileNumber, newPassword: newPaswrd!, verificationCode: verificationCode, success: { (response) in
-                    self.authenticationSuccessHandler(response)
-                }, failure: { (error, message) in
-                    self.authenticationFailureHandler(error, code: message)
-                    return
-            })
+            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
+            if((newPaswrd?.characters.count < 8) || (newPaswrd?.characters.count > 20) || (confirmPaswrd?.characters.count < 8) || (confirmPaswrd?.characters.count > 20))
+            {
+                ErrorManager.sharedInstance.InvalidPwdEnteredError()
+                return
+            }
+            else if((newPaswrd!.rangeOfCharacterFromSet(chrSet) == nil) || (confirmPaswrd!.rangeOfCharacterFromSet(chrSet) == nil)) {
+                ErrorManager.sharedInstance.noNumberInPassword()
+                return
+            }
+            else{
+                showOverlay()
+                authenticationManager.resetPassword(mobileNumber, newPassword: newPaswrd!, verificationCode: verificationCode, success: { (response) in
+                        self.authenticationSuccessHandler(response)
+                    }, failure: { (error, message) in
+                        self.authenticationFailureHandler(error, code: message)
+                        return
+                })
+            }
         }
     }
     

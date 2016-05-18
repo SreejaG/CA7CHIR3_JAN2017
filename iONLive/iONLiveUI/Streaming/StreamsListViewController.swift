@@ -74,7 +74,7 @@ class StreamsListViewController: UIViewController{
         self.streamListCollectionView.addSubview(refreshControl)
         self.streamListCollectionView.alwaysBounceVertical = true
         self.view.bringSubviewToFront(activityIndicator)
-        showOverlay()
+     //   showOverlay()
         dataSource.removeAll()
         getAllLiveStreams()
     }
@@ -305,27 +305,28 @@ class StreamsListViewController: UIViewController{
                     })
                 }
             }
-            
+            self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+            if(self.dummy.count > 0)
+            {
+                self.dummy.sortInPlace({ p1, p2 in
+                    
+                    let time1 = p1[self.timestamp] as! String
+                    let time2 = p2[self.timestamp] as! String
+                    return time1 > time2
+                })
+            }
+            for element in self.dummy
+            {
+                self.dataSource.append(element)
+            }
+            self.dummy.removeAll()
+            removeOverlay()
+        }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
-                if(self.dummy.count > 0)
-                {
-                    self.dummy.sortInPlace({ p1, p2 in
-                        
-                        let time1 = p1[self.timestamp] as! String
-                        let time2 = p2[self.timestamp] as! String
-                        return time1 > time2
-                    })
-                }
-                for element in self.dummy
-                {
-                    self.dataSource.append(element)
-                }
-                self.dummy.removeAll()
-                self.removeOverlay()
+               
                 self.streamListCollectionView.reloadData()
             })
-        }
+//        }
     }
     
     func showOverlay(){
@@ -354,7 +355,7 @@ class StreamsListViewController: UIViewController{
         currentLimit = 0
         limitMediaCount = 0
         getAllLiveStreams()
-        showOverlay()
+     //   showOverlay()
     }
     
     //PRAGMA MARK:- API Handlers
@@ -366,6 +367,7 @@ class StreamsListViewController: UIViewController{
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
+            showOverlay()
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in

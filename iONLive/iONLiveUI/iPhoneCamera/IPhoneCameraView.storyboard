@@ -33,7 +33,7 @@
                                                     <constraint firstAttribute="height" constant="35" id="VZe-Mr-W90"/>
                                                     <constraint firstAttribute="width" constant="35" id="gdH-Vy-EFU"/>
                                                 </constraints>
-                                                <state key="normal" image="boyFace" backgroundImage="avatarCircleStroke"/>
+                                                <state key="normal" image="dummyUser" backgroundImage="avatarCircleStroke"/>
                                                 <connections>
                                                     <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="0SX-U4-mjQ"/>
                                                 </connections>
@@ -44,7 +44,7 @@
                                                     <constraint firstAttribute="height" constant="35" id="4oY-cV-tAx"/>
                                                     <constraint firstAttribute="width" constant="35" id="80k-nH-VZm"/>
                                                 </constraints>
-                                                <state key="normal" image="girlFace2" backgroundImage="avatarCircleStroke"/>
+                                                <state key="normal" image="dummyUser" backgroundImage="avatarCircleStroke"/>
                                                 <connections>
                                                     <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="DvO-Pm-Tuq"/>
                                                 </connections>
@@ -55,7 +55,7 @@
                                                     <constraint firstAttribute="height" constant="35" id="cad-cN-CWh"/>
                                                     <constraint firstAttribute="width" constant="35" id="tGg-BG-f9Z"/>
                                                 </constraints>
-                                                <state key="normal" image="girlFace1" backgroundImage="avatarCircleStroke"/>
+                                                <state key="normal" image="dummyUser" backgroundImage="avatarCircleStroke"/>
                                                 <connections>
                                                     <action selector="didTapSharingListIcon:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="86K-Kb-Y6u"/>
                                                 </connections>
@@ -73,7 +73,7 @@
                                             <constraint firstAttribute="width" constant="90" id="f8M-ss-p1I"/>
                                         </constraints>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-1r-I7s">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-1r-I7s">
                                         <rect key="frame" x="469" y="38" width="21" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="21" id="7g3-5n-gZZ"/>
@@ -135,7 +135,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JqH-kr-rKo" userLabel="BottomView">
                                 <rect key="frame" x="0.0" y="480" width="600" height="120"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo1" translatesAutoresizingMaskIntoConstraints="NO" id="joa-mg-5MH">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="joa-mg-5MH">
                                         <rect key="frame" x="42" y="37" width="46" height="46"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="IPW-x1-cwk"/>
@@ -153,7 +153,7 @@
                                             <action selector="didTapStreamThumb:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="vVn-N9-Ogm"/>
                                         </connections>
                                     </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo2" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="StreamThumbImage">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="StreamThumbImage">
                                         <rect key="frame" x="507" y="40" width="45" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="45" id="9XI-EL-yle"/>
@@ -323,13 +323,10 @@
         <image name="Circled Play" width="25" height="25"/>
         <image name="Stream_Thumb" width="56" height="56"/>
         <image name="avatarCircleStroke" width="35" height="35"/>
-        <image name="boyFace" width="28" height="28"/>
+        <image name="dummyUser" width="128" height="128"/>
         <image name="flash_off" width="21" height="26"/>
-        <image name="girlFace1" width="29" height="29"/>
-        <image name="girlFace2" width="29" height="29"/>
         <image name="iphone" width="17" height="26"/>
-        <image name="photo1" width="50" height="50"/>
-        <image name="photo2" width="50" height="50"/>
         <image name="swap_camera" width="30" height="23"/>
+        <image name="thumb12" width="128" height="128"/>
     </resources>
 </document>

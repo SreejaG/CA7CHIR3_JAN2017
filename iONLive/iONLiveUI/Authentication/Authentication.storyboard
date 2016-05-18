@@ -250,7 +250,7 @@
                                     <constraint firstAttribute="height" constant="90" id="Elq-MQ-WRU"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="27"/>
-                                <state key="normal" title="SIGN UP">
+                                <state key="normal" title="CONTINUE">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -369,7 +369,6 @@
         <!--View Controller-->
         <scene sceneID="6Gl-1d-h1f">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Jlg-yZ-lZR" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="0kL-KO-dZk" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="MJP-kv-6yD"/>
@@ -381,6 +380,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jlg-yZ-lZR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1785" y="1584"/>
         </scene>

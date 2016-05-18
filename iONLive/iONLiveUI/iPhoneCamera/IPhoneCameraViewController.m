@@ -132,7 +132,7 @@ FileManagerViewController *fileManager;
                     [_firstButton setImage:userImages[0] forState:UIControlStateNormal];
                 }
                 else{
-                    [_firstButton setImage:[UIImage imageNamed:@"girlFace1"] forState:UIControlStateNormal];
+                    [_firstButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
                 }
             }
             else if(i==1){
@@ -140,7 +140,7 @@ FileManagerViewController *fileManager;
                     [_secondButton setImage:userImages[1] forState:UIControlStateNormal];
                 }
                 else{
-                    [_secondButton setImage:[UIImage imageNamed:@"girlFace2"] forState:UIControlStateNormal];
+                    [_secondButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
                 }
             }
             else if(i==3){
@@ -148,12 +148,13 @@ FileManagerViewController *fileManager;
                     [_thirdButton setImage:userImages[3] forState:UIControlStateNormal];
                 }
                 else{
-                    [_thirdButton setImage:[UIImage imageNamed:@"boyFace"] forState:UIControlStateNormal];
+                    [_thirdButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
                 }
             }
         }
     }
     _sharedUserCount.text = sharedUserCount;
+    
     dispatch_async(dispatch_get_global_queue(0,0), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
         if ( data == nil )
@@ -460,7 +461,7 @@ FileManagerViewController *fileManager;
         thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
     }
     else{
-        thumbNailImage = [UIImage imageNamed:@"photo1"];
+        thumbNailImage = [UIImage imageNamed:@"thumb12"];
     }
     return thumbNailImage;
 }

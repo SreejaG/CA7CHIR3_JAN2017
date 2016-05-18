@@ -57,16 +57,6 @@ class SignUpViewController: UIViewController {
         addObserver()
     }
     
-    //    func textFieldDidEndEditing(textField: UITextField) {
-    //        if(textField.tag == 10){
-    //          let text = textField.text
-    //            if((text?.characters.count > 8) || ())
-    //            {
-    //
-    //            }
-    //        }
-    //    }
-    
     func addObserver()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
@@ -132,7 +122,24 @@ class SignUpViewController: UIViewController {
         }
         else
         {
-            loadUserNameView()
+            let text = passwdTextField.text
+            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
+            if((text?.characters.count < 8) || (text?.characters.count > 20))
+            {
+                ErrorManager.sharedInstance.InvalidPwdEnteredError()
+                passwdTextField.text = ""
+                passwdTextField.becomeFirstResponder()
+                return
+            }
+            else if text!.rangeOfCharacterFromSet(chrSet) == nil {
+                ErrorManager.sharedInstance.noNumberInPassword()
+                passwdTextField.text = ""
+                passwdTextField.becomeFirstResponder()
+                return
+            }
+            else{
+                loadUserNameView()
+            }
         }
     }
     

@@ -9,7 +9,7 @@
         <!--My Channel View Controller-->
         <scene sceneID="pHw-g9-RqN">
             <objects>
-                <viewController storyboardIdentifier="MyChannelViewController" id="HHn-oS-sje" customClass="MyChannelViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MyChannelViewController" id="HHn-oS-sje" customClass="MyChannelViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9Ae-sC-ucA"/>
                         <viewControllerLayoutGuide type="bottom" id="UON-fT-Bj3"/>
@@ -95,7 +95,7 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <gestureRecognizers/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyChannelCell" id="2QT-r2-aX3" customClass="MyChannelCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyChannelCell" id="2QT-r2-aX3" customClass="MyChannelCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="70"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2QT-r2-aX3" id="f2L-KP-Shl">
@@ -282,7 +282,7 @@
         <!--Channel Item List View Controller-->
         <scene sceneID="7Fb-4f-L53">
             <objects>
-                <viewController storyboardIdentifier="ChannelItemListViewController" id="mkf-lJ-34S" customClass="ChannelItemListViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChannelItemListViewController" id="mkf-lJ-34S" customClass="ChannelItemListViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0uo-Dw-vca"/>
                         <viewControllerLayoutGuide type="bottom" id="c07-9Z-A8B"/>
@@ -396,7 +396,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ChannelItemListCollectionViewCell" id="OFq-GC-9j1" customClass="ChannelItemListCollectionViewCell" customModule="iONLive" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ChannelItemListCollectionViewCell" id="OFq-GC-9j1" customClass="ChannelItemListCollectionViewCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -491,7 +491,7 @@
         <!--Add Channel View Controller-->
         <scene sceneID="HXV-lq-ndF">
             <objects>
-                <viewController storyboardIdentifier="AddChannelViewController" id="96L-k1-ZA8" customClass="AddChannelViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddChannelViewController" id="96L-k1-ZA8" customClass="AddChannelViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ENK-PF-5QT"/>
                         <viewControllerLayoutGuide type="bottom" id="KDt-cc-HDz"/>
@@ -603,7 +603,7 @@
                                         <rect key="frame" x="0.0" y="158" width="600" height="442"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddChannelCell" rowHeight="71" id="LdH-TV-XvR" userLabel="channelView" customClass="AddChannelCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddChannelCell" rowHeight="71" id="LdH-TV-XvR" userLabel="channelView" customClass="AddChannelCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="600" height="71"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LdH-TV-XvR" id="ZoG-wh-Oi1">
@@ -729,7 +729,7 @@
         <!--My Channel Notification View Controller-->
         <scene sceneID="ZVj-B3-7Ba">
             <objects>
-                <viewController storyboardIdentifier="MyChannelNotificationViewController" id="2nJ-KT-mUK" customClass="MyChannelNotificationViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MyChannelNotificationViewController" id="2nJ-KT-mUK" customClass="MyChannelNotificationViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5Mi-kM-gDG"/>
                         <viewControllerLayoutGuide type="bottom" id="Fhm-iV-c2M"/>
@@ -832,7 +832,7 @@
                                             </constraints>
                                         </view>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="MyChannelNotificationCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyChannelNotificationCell" rowHeight="44" id="Lsc-NA-4UH" customClass="MyChannelNotificationCell" customModule="iONLive" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="MyChannelNotificationCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyChannelNotificationCell" rowHeight="44" id="Lsc-NA-4UH" customClass="MyChannelNotificationCell" customModule="CA7CH" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="97" width="600" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Lsc-NA-4UH" id="Ohu-D5-ehQ">

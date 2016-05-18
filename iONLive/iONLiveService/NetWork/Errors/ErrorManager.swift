@@ -94,6 +94,17 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert(loginErrorTitle, message: "Invalid user")
     }
     
+    func newPaswrdEmpty ()
+    {
+        alert("New Password Empty", message: "Please enter your password")
+    }
+    
+    func confirmPaswrdEmpty ()
+    {
+        alert("Re-enter Password Empty", message: "Please Re-enter your password")
+    }
+    
+    
     func signUpError() {
         alert(signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")
     }
@@ -112,9 +123,54 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("No Email", message: "Please enter your Email")
     }
     
+    func InvalidPwdEnteredError()
+    {
+        alert("Invalid Password", message: "Password must contain atleast 8 charactes and atmost 20 characters")
+    }
+    
+    func noNumberInPassword()
+    {
+        alert("Invalid Password", message: "Password must contain atleast 1 digit")
+    }
+    
+    func InvalidUsernameEnteredError()
+    {
+        alert("Invalid Username", message: "Username must contain atleast 5 charactes and atmost 20 characters")
+    }
+    
+    func noSpaceInUsername()
+    {
+        alert("Invalid Username", message: "Username should not contain white spaces")
+    }
+    
     func signUpNoEmailEnteredError()
     {
+        alert(signUpErrorTitle, message: "Please enter your email Id")
+    }
+    
+    func signUpNoUsernameEnteredError()
+    {
         alert(signUpErrorTitle, message: "Please enter your username")
+    }
+    
+    func emptyCountryError()
+    {
+        alert(signUpErrorTitle, message: "Please select your country")
+    }
+    
+    func emptyMobileError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your mobile number")
+    }
+    
+    func emptyCodeError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your country code")
+    }
+
+    func emptyCountryCodeError()
+    {
+        alert(signUpErrorTitle, message: "Please enter your country code")
     }
     
     func signUpNoCodeEnteredError()

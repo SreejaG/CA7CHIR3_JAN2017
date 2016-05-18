@@ -39,7 +39,7 @@ import UIKit
         channelManager.getLoggedInDetails(userName, accessToken: token, success: { (response) in
             self.authenticationSuccessHandlerList(response)
         }) { (error, code) in
-            ErrorManager.sharedInstance.inValidResponseError()
+          //  ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     

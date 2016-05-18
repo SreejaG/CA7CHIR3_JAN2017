@@ -10,7 +10,7 @@
         <!--Photo Viewer View Controller-->
         <scene sceneID="PTu-bS-VKX">
             <objects>
-                <viewController storyboardIdentifier="PhotoViewerViewController" id="Ayi-XJ-Ys0" customClass="PhotoViewerViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoViewerViewController" id="Ayi-XJ-Ys0" customClass="PhotoViewerViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="EEP-hd-F3N"/>
                         <viewControllerLayoutGuide type="bottom" id="x1k-wQ-7XO"/>
@@ -118,7 +118,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoThumbCollectionViewCell" id="L2p-5p-IUd" customClass="PhotoThumbCollectionViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoThumbCollectionViewCell" id="L2p-5p-IUd" customClass="PhotoThumbCollectionViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -190,6 +190,9 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="BottomView" destination="Ncu-eZ-Tvl" id="ngR-Fr-PqL"/>
+                        <outlet property="addToButton" destination="6Fa-dd-16L" id="ItE-GW-gGh"/>
+                        <outlet property="deletButton" destination="DAc-0e-fze" id="CSC-LG-zMg"/>
                         <outlet property="fullScreenZoomView" destination="mJr-dY-xwO" id="Ozp-h4-Kcc"/>
                         <outlet property="fullScrenImageView" destination="y62-6N-UtC" id="5Hf-lc-vaB"/>
                         <outlet property="photoThumpCollectionView" destination="QIE-GV-Vdt" id="NRF-PJ-s44"/>

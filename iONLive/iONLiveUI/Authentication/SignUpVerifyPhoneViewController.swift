@@ -167,11 +167,15 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         if countryTextField.text!.isEmpty
         {
-            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
+            ErrorManager.sharedInstance.emptyCountryError()
         }
-        else if countryTextField.text!.isEmpty
+        else if mobileNumberTextField.text!.isEmpty
         {
-            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
+            ErrorManager.sharedInstance.emptyMobileError()
+        }
+        else if countryCodeTextField.text!.isEmpty
+        {
+            ErrorManager.sharedInstance.emptyCodeError()
         }
         else
         {

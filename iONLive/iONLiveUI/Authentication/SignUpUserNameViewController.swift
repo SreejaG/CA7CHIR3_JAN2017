@@ -51,6 +51,7 @@ class SignUpUserNameViewController: UIViewController {
                                                                      attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         userNameTextfield.delegate = self
+        userNameTextfield.becomeFirstResponder()
         addObserver()
     }
     
@@ -98,11 +99,28 @@ class SignUpUserNameViewController: UIViewController {
     {
         if userNameTextfield.text!.isEmpty
         {
-            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
+            ErrorManager.sharedInstance.signUpNoUsernameEnteredError()
         }
         else
         {
-            signUpUser(email, password: password, userName: self.userNameTextfield.text!)
+            let text = userNameTextfield.text
+            let chrSet = NSCharacterSet.whitespaceCharacterSet()
+            if((text?.characters.count < 5) || (text?.characters.count > 20))
+            {
+                ErrorManager.sharedInstance.InvalidUsernameEnteredError()
+                userNameTextfield.text = ""
+                userNameTextfield.becomeFirstResponder()
+                return
+            }
+            else if text!.rangeOfCharacterFromSet(chrSet) != nil {
+                ErrorManager.sharedInstance.noSpaceInUsername()
+                userNameTextfield.text = ""
+                userNameTextfield.becomeFirstResponder()
+                return
+            }
+            else{
+                signUpUser(email, password: password, userName: self.userNameTextfield.text!)
+            }
         }
     }
     
