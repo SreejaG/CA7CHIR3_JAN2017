@@ -813,6 +813,13 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         if dataSource.count > indexPath.row
         {
+            if(downloadTask?.state == .Running)
+            {
+                downloadTask?.cancel()
+            }
+            progressViewDownload?.hidden = true
+            progressLabelDownload?.hidden = true
+            
             mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
             if(mediaIdSelected != 0){
                 deletButton.hidden = false
