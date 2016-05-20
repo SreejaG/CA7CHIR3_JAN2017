@@ -215,19 +215,32 @@ protocol uploadProgressDelegate
                     let data  =  defaults.objectForKey("uploaObjectDict") as! NSData
                     uploadMediaDict =  NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [[String : AnyObject]]
                 }
+                let type = self.signedURLResponse.valueForKey("type")
                 let cameraController = IPhoneCameraViewController()
-                let imageToConvert = UIImage(data:imageData)
+                var imageToConvert : UIImage = UIImage()
+
+                if( String(type!) == "video")
+                {
+                    var dict = dummyImagesDataSourceDatabase[rowIndex]
+                    let  uploadImageThumb = dict[thumbImageKey]
+                    imageToConvert = uploadImageThumb!
+                }
+                else
+                {
+                    imageToConvert = UIImage(data:imageData)!
+                }
+              //  let
                 let sizeThumb = CGSizeMake(70,70)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                 print(imageAfterConversionThumbnail)
                 uploadMediaDict.append([mediaIdKey : mediaId!,mediaTypeKey : self.signedURLResponse.valueForKey("type") as! String,timeStampKey:"",thumbSignedUrlKey :signedURLResponse.valueForKey("UploadThumbnailUrl") as! String!,fullSignedUrlKey : signedURLResponse.valueForKey("UploadObjectUrl") as! String!,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionThumbnail])
                 let data = NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict)
                 defaults.setObject(data , forKey :"uploaObjectDict")
-//                if PhotoViewerInstance.controller != nil
-//                {
-//                    let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
-//                    controller.uploadMediaProgress(uploadMediaDict)
-//                }
+                if PhotoViewerInstance.controller != nil
+                {
+                    let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
+                    controller.uploadMediaProgress()
+                }
                 self.uploadFullImage(imageData, row: rowIndex , completion: { (result) -> Void in
                     if result == "Success"
                     {

@@ -132,6 +132,9 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
                                                     <rect key="frame" x="3" y="28" width="10" height="10"/>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="CloudIcon" translatesAutoresizingMaskIntoConstraints="NO" id="6HG-oF-4JZ">
+                                                    <rect key="frame" x="2" y="2" width="12" height="12"/>
+                                                </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
                                                     <rect key="frame" x="0.0" y="41" width="42" height="2"/>
                                                 </progressView>
@@ -149,6 +152,7 @@
                                             <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="cloudIcon" destination="6HG-oF-4JZ" id="wlA-QI-5DP"/>
                                             <outlet property="playIcon" destination="m5T-pj-pPH" id="HwH-qg-zCK"/>
                                             <outlet property="progressView" destination="tfd-dS-C7Z" id="4LC-Sc-iud"/>
                                             <outlet property="thumbImageView" destination="txC-iS-gZe" id="cgs-G7-TDY"/>
@@ -208,6 +212,7 @@
     </scenes>
     <resources>
         <image name="Circled Play" width="25" height="25"/>
+        <image name="CloudIcon" width="512" height="512"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
     </resources>
 </document>

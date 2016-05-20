@@ -46,6 +46,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var fixedLimit : Int =  0
     var videoDownloadIntex : Int = 0
     var timerUpload : NSTimer = NSTimer()
+    var timerStop : NSTimer = NSTimer()
     @IBOutlet var playIconInFullView: UIImageView!
     
     @IBOutlet var BottomView: UIView!
@@ -291,10 +292,27 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         progressDict = progressDictionary
         print(progressDict.count)
+        var count: Int = Int()
+        count = 0
         for(var  i = 0 ; i < progressDict.count ; i++)
         {
+            
             print(progressDict[i][mediaIdKey])
             print(progressDict[i]["progress"] as! Float)
+            
+            if(progressDict[i]["progress"] as! Float == 1.0 || progressDict[i]["progress"] as! Float == 1)
+            {
+                count = count+1
+            }
+            
+        }
+        if(count == progressDictionary.count)
+        {
+           // timerUpload .invalidate()
+         //  progressDict.removeAll()
+          //  NSUserDefaults.standardUserDefaults().setValue(nil, forKey: "ProgressDict")
+          //  NSUserDefaults.standardUserDefaults().setValue(nil, forKey: "uploaObjectDict")
+
         }
         self.photoThumpCollectionView.reloadData();
     }
@@ -456,15 +474,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.moviePlayer.view.removeFromSuperview()
         playIconInFullView.hidden = false
         self.view.userInteractionEnabled = true
-        
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        
     }
     func shrinkImageView(Recognizer:UITapGestureRecognizer){
         fullScreenZoomView.hidden = true
     }
-    
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         mediaSelected.removeAllObjects()
         if mediaIdSelected == 0
@@ -473,7 +488,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         mediaSelected.addObject(mediaIdSelected)
         mediaIdSelected = 0
-        
         if(mediaSelected.count > 0)
         {
             let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -483,22 +497,47 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.navigationController?.pushViewController(addChannelVC, animated: false)
         }
     }
-    
     func checkData()
     {
         let defaults = NSUserDefaults .standardUserDefaults()
-        
         if defaults.objectForKey("uploaObjectDict") != nil{
             let data  =  defaults.objectForKey("uploaObjectDict") as! NSData
             uploadMediaDict =  NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [[String : AnyObject]]
         }
         if(uploadMediaDict.count > 0)
         {
-            
-            timerUpload = NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: "update", userInfo: nil, repeats: true)
+            timerUpload.invalidate()
+            timerStop.invalidate()
+            timerUpload = NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: #selector(PhotoViewerViewController.update), userInfo: nil, repeats: true)
+             timerStop = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(PhotoViewerViewController.stopTimer), userInfo: nil, repeats: true)
             //  update()
         }
+    }
+    func stopTimer()
+    {
         
+        update()
+        timerUpload.invalidate()
+        timerStop.invalidate()
+        progressDict.removeAll()
+        NSUserDefaults.standardUserDefaults().setValue(nil, forKey: "ProgressDict")
+        NSUserDefaults.standardUserDefaults().setValue(nil, forKey: "uploaObjectDict")
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            let imagePath = self.dataSource[0][self.fullImageKey]!
+            
+            
+           // self.fullScrenImageView.image = UIImage(named:"thumb11")
+          //  self.fullScreenZoomView.image =  UIImage(named:"thumb11")
+
+                //(imagePath as! UIImage)
+            //self.fullScreenZoomView.image = (imagePath as! UIImage)
+            self.photoThumpCollectionView.reloadData()
+        })
+
+    }
+    func uploadMediaProgress()
+    {
+        update()
     }
     func update()
     {
@@ -540,9 +579,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                                 self.fullScrenImageView.image = (imagePath as! UIImage)
                                 self.fullScreenZoomView.image = (imagePath as! UIImage)
                             })
-                            
-                            
-                            
                         }
                     }
                     
@@ -552,31 +588,17 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     var flag : Bool = false
                     for(var i = 0 ;i < dataSource.count ; i++)
                     {
-                        
                         if dataSource[i][mediaIdKey]?.stringValue == element[mediaIdKey]?.stringValue
                         {
                             flag = true
-                            
                         }
                     }
                     if(!flag)
                     {
                         self.dataSource.append(element)
-                        
                     }
-                    
                 }
-                // timerUpload .invalidate()
-                
-                //  print(dataSource.count)
-                //  defaults.setObject(nil, forKey: "uploaObjectDict")
-                
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
                     self.photoThumpCollectionView.reloadData()
-                })
-                
-                
             }
             else
             {
@@ -630,82 +652,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 print(dataSource.count)
                 timerUpload .invalidate()
                 defaults.setObject(nil, forKey: "uploaObjectDict")
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
                     self.photoThumpCollectionView.reloadData()
-                })
-                
-                
             }
-            
-            
         }
-        
     }
 
     func readImageFromDataBase()
     {
-        
         let cameraController = IPhoneCameraViewController()
-        print(snapShots.count)
-        
-        
         uploadCount = snapShots.count
         checkData()
-
-//        let cameraController = IPhoneCameraViewController()
-//        
-//        if snapShots.count > 0
-//        {
-//            let snapShotsKeys = snapShots.allKeys as NSArray
-//            let descriptor: NSSortDescriptor = NSSortDescriptor(key: nil, ascending: false)
-//            let sortedSnapShotsKeys: NSArray = snapShotsKeys.sortedArrayUsingDescriptors([descriptor])
-//            
-//            let screenRect : CGRect = UIScreen.mainScreen().bounds
-//            let screenWidth = screenRect.size.width
-//            let screenHeight = screenRect.size.height
-//            let checkValidation = NSFileManager.defaultManager()
-//            for index in 0 ..< sortedSnapShotsKeys.count
-//            {
-//                if let thumbNailImagePath = snapShots.valueForKey(sortedSnapShotsKeys[index] as! String)
-//                {
-//                    if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
-//                    {
-//                        let dict = mediaCacheManager.getResponse() as NSMutableDictionary
-//                        print(dict)
-//                        let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
-//                        let sizeThumb = CGSizeMake(70,70)
-//                        let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
-//                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-//                        let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
-//                        if(dict.count>0)
-//                        {
-//                            dummyImagesDataSourceDatabase.append([thumbSignedUrlKey:dict["UploadThumbnailUrl"]!,fullSignedUrlKey:dict["UploadObjectUrl"]! ,mediaIdKey:dict["mediaId"]!,mediaTypeKey:dict["type"]!,timeStampKey :"",thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
-//                        }
-//                    }
-//                }
-//            }
-//            
-//            uploadCount = dummyImagesDataSourceDatabase.count
-//            if dummyImagesDataSourceDatabase.count > 0
-//            {
-//                let type = dummyImagesDataSourceDatabase[0][mediaTypeKey] as! String
-//                
-//                if type == "video"
-//                {
-//                    self.playIconInFullView.hidden = false
-//                }
-//                else{
-//                    self.playIconInFullView.hidden = true
-//                    
-//                }
-//                if let imagePath = dummyImagesDataSourceDatabase[0][fullImageKey]
-//                {
-//                    self.fullScrenImageView.image = (imagePath as! UIImage)
-//                    self.fullScreenZoomView.image = (imagePath as! UIImage)
-//                }
-//            }
-//        }
     }
     
     //PRAGMA MARK:- IBActions
@@ -741,13 +697,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
-        
         if dataSource.count > indexPath.row
         {
             var dict = dataSource[indexPath.row]
             if let thumpImage = dict[thumbImageKey]
             {
-                
                 if dataSource[indexPath.row][mediaTypeKey] as! String == "video"
                 {
                     cell.playIcon.hidden = false
@@ -756,6 +710,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 {
                     cell.playIcon.hidden = true
                 }
+               cell.progressView.hidden = true
+
                 cell.thumbImageView.image = (thumpImage as! UIImage)
                 if(progressDict.count>0)
                 {
@@ -763,19 +719,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     {
                         if(indexPath.row < upCount)
                         {
-                            
                             var mediaId : String = String()
                             mediaId = progressDict[i][mediaIdKey] as! String
                             cell.progressView.hidden = false
-                            
                             if(upCount == 1)
                             {
+                                cell.cloudIcon.hidden = true
                                 fullScrenImageView.userInteractionEnabled = false
-                                
                                 cell.progressView.progress = progressDict[i]["progress"]!.floatValue
                                 print(progressDict[i]["progress"]!.floatValue)
-                                
-                                
                             }
                             if mediaId == String(dataSource[indexPath.row][mediaIdKey]!)
                             {
@@ -786,22 +738,26 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                                 
                                 if(progressDict[i]["progress"]!.floatValue == 1.0 || progressDict[i]["progress"]!.floatValue == 1)
                                 {
-                                    //cell.progressView.hidden = true
+                                    cell.progressView.hidden = true
+                                    cell.cloudIcon.hidden = false
                                     fullScrenImageView.userInteractionEnabled = true
                                 }
                                 else{
-                                    
+                                    cell.cloudIcon.hidden = false
                                 }
                             }
                         }
                         else
                         {
+                            cell.cloudIcon.hidden = false
                             cell.progressView.hidden = true
                         }
                     }
                 }
                 else
                 {
+                    cell.cloudIcon.hidden = false
+
                     cell.progressView.hidden = true
                 }
             }
@@ -813,6 +769,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         if dataSource.count > indexPath.row
         {
+            if(downloadTask?.state == .Running)
+            {
+                downloadTask?.cancel()
+            }
+            progressViewDownload?.hidden = true
+            progressLabelDownload?.hidden = true
             mediaIdSelected = dataSource[indexPath.row][mediaIdKey] as! Int
             if(mediaIdSelected != 0){
                 deletButton.hidden = false
