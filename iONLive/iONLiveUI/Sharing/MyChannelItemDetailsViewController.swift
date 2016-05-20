@@ -304,34 +304,73 @@ class MyChannelItemDetailsViewController: UIViewController {
             isLimitReached = false
             return
         }
-        
-        for i in limitMediaCount  ..< currentLimit   {
-            var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        if(result != UIImage()){
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            imageForMedia = result
-                        }
-                    })
+        if(!scrolled)
+        {
+            for i in limitMediaCount  ..< currentLimit   {
+                var imageForMedia : UIImage = UIImage()
+                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
                 }
+                else{
+                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            if(result != UIImage()){
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                imageForMedia = result
+                            }
+                        })
+                    }
+                }
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                    self.channelItemsCollectionView.reloadData()
+                })
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                self.channelItemsCollectionView.reloadData()
-            })
         }
+        else{
+            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
+                if(i >= imageDataSource.count - 1)
+                {
+                    return
+                }
+                var imageForMedia : UIImage = UIImage()
+                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
+                }
+                else{
+                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            if(result != UIImage()){
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                imageForMedia = result
+                            }
+                        })
+                    }
+                }
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                    self.channelItemsCollectionView.reloadData()
+                })
+            }
+        }
+        
+        isLimitReached = true
+
+        
     }
     
 }
