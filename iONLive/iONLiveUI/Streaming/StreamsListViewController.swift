@@ -282,6 +282,7 @@ class StreamsListViewController: UIViewController{
             return
         }
         
+        print("\(limitMediaCount)  \(currentLimit)")
         for i in limitMediaCount  ..< currentLimit
         {
             var imageForMedia : UIImage = UIImage()
@@ -309,8 +310,10 @@ class StreamsListViewController: UIViewController{
                     })
                 }
             }
+            print(i)
             self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
         }
+        print(dummy)
         if(self.dummy.count > 0)
         {
                 self.dummy.sortInPlace({ p1, p2 in
@@ -324,7 +327,7 @@ class StreamsListViewController: UIViewController{
         {
             self.dataSource.append(element)
         }
-        self.dummy.removeAll()
+//        self.dummy.removeAll()
         removeOverlay()
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                

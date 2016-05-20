@@ -86,6 +86,7 @@ NSMutableDictionary * snapShotsDict;
 IPhoneLiveStreaming * liveStreaming;
 NSMutableDictionary *ShotsDict;
 FileManagerViewController *fileManager;
+int cameraChangeFlag = 0;
 
 - (void)viewDidLoad {
      _startCameraActionButton.enabled = false;
@@ -239,6 +240,8 @@ FileManagerViewController *fileManager;
     if (! [self isStreamStarted]) {
         if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {
+            _flashButton.hidden = true;
+            _cameraButton.hidden = true;
             self.previewView.session = nil;
             self.previewView.hidden = true;
             _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
@@ -251,6 +254,15 @@ FileManagerViewController *fileManager;
             [self.view bringSubviewToFront:self.topView];
         }
         else{
+//            if (shutterActionMode == SnapCamSelectionModePhotos) {
+//                _flashButton.hidden = false;
+//                _cameraButton.hidden = false;
+//            }
+//            else if (shutterActionMode == SnapCamSelectionModeVideo)
+//            {
+//                _flashButton.hidden = true;
+//                _cameraButton.hidden = true;
+//            }
             [_liveSteamSession.previewView removeFromSuperview];
             _liveSteamSession.delegate = nil;
             [self removeObservers];
@@ -377,7 +389,8 @@ FileManagerViewController *fileManager;
     dispatch_async( dispatch_get_main_queue(), ^{
         
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
-        
+        _flashButton.hidden = true;
+        _cameraButton.hidden = true;
         _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
         _activityImageView.hidden = false;
         [__activityIndicatorView startAnimating];
@@ -919,16 +932,33 @@ FileManagerViewController *fileManager;
 - (IBAction)didTapsCameraActionButton:(id)sender
 {
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+   if (shutterActionMode != SnapCamSelectionModeLiveStream)
+   {
+       if(_cameraButton.isHidden) {
+           dispatch_async(dispatch_get_main_queue(), ^{
+               _flashButton.hidden = false;
+               _cameraButton.hidden = false;
+           });
+       }
+   }
+  
     if (shutterActionMode == SnapCamSelectionModePhotos) {
+        _flashButton.hidden = false;
+        _cameraButton.hidden = false;
         [_playiIconView setHidden:YES];
         [self takePicture];
     }
     else if (shutterActionMode == SnapCamSelectionModeVideo)
     {
         [self startMovieRecording];
+            _flashButton.hidden = true;
+            _cameraButton.hidden = true;
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
+            _flashButton.hidden = true;
+            _cameraButton.hidden = true;
+        
         switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
@@ -963,6 +993,7 @@ FileManagerViewController *fileManager;
 
 - (IBAction)didTapChangeCamera:(id)sender
 {
+   
     self.cameraButton.enabled = NO;
     
     // flip camera view
@@ -988,7 +1019,6 @@ FileManagerViewController *fileManager;
                 
                 preferredPosition = AVCaptureDevicePositionFront;
                 [self showFlashImage:false];
-                
                 break;
         }
         

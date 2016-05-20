@@ -244,7 +244,11 @@ class ChannelItemListViewController: UIViewController {
             isLimitReached = false
             return
         }
-        for i in limitMediaCount  ..< currentLimit   {
+        
+        print("\(limitMediaCount)   \(currentLimit)")
+        for var i = limitMediaCount; i <= currentLimit ; i += 1
+        {
+            print(i)
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()

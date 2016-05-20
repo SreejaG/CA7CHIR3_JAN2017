@@ -248,9 +248,9 @@ static NSMutableDictionary * gHistory;
                 userName.text = @"";
             }
             closeButton.hidden = false;
-            _parameters = nil;
-            [self setUpDefaultValues];
-            [self startDecoder];
+         //   _parameters = nil;
+         //   [self setUpDefaultValues];
+//            [self startDecoder];
         }
     }
     return self;
