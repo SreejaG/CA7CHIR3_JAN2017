@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var photoViewController : PhotoViewerViewController?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+       
+       
         
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
@@ -30,7 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
             print(createGCSParentPath)
         }
-        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(nil, forKey: "uploaObjectDict")
+        defaults.setObject(nil, forKey: "ProgressDict")
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window!.backgroundColor = UIColor.whiteColor()
         
@@ -52,12 +56,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(application: UIApplication) {
-        
+      
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
     
     func applicationWillEnterForeground(application: UIApplication) {
+//        let defaults = NSUserDefaults .standardUserDefaults()
+//        defaults.setValue(false, forKey: "StartedStreaming")
+//        NSUserDefaults.standardUserDefaults().setObject(0, forKey: "shutterActionMode");
         
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }

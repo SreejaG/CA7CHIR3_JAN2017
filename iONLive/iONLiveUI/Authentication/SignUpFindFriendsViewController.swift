@@ -109,59 +109,68 @@ class SignUpFindFriendsViewController: UIViewController{
         contactPhoneNumbers.removeAll()
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
-            let currentContact: ABRecordRef = record
-            let currentContactName = ABRecordCopyCompositeName(currentContact).takeRetainedValue() as String
+            print(record)
+            if let currentContact: ABRecordRef = record
+            {
+                let currentContactName = ABRecordCopyCompositeName(currentContact).takeRetainedValue() as String
+                print(currentContactName)
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
-            var phoneNumber = String!()
-            var appendPlus = String!()
+            var phoneNumber = String?()
+            var appendPlus = String?()
             for(var numberIndex : CFIndex = 0; numberIndex < ABMultiValueGetCount(phones); numberIndex++)
             {
-                let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
-                let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
-                let phoneNumberWithCode: String!
-                
-                if(phoneNumberStr.hasPrefix("+")){
-                    phoneNumberWithCode = phoneNumberStr
-                }
-                else if(phoneNumberStr.hasPrefix("00")){
-                    let stringLength = phoneNumberStr.characters.count
-                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 2, length: stringLength - 2))
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
-                }
-                else if(phoneNumberStr.hasPrefix("0")){
-                    let stringLength = phoneNumberStr.characters.count
-                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 1, length: stringLength - 1))
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
-                }
-                else{
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
-                }
-                
-                if phoneNumberWithCode.hasPrefix("+")
+                if let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
                 {
-                    appendPlus = "+"
+                    print(phoneUnmaganed)
+                    let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
+                    print(phoneNumberStr)
+                    let phoneNumberWithCode: String!
+                
+                    if(phoneNumberStr.hasPrefix("+")){
+                        phoneNumberWithCode = phoneNumberStr
+                    }
+                    else if(phoneNumberStr.hasPrefix("00")){
+                        let stringLength = phoneNumberStr.characters.count
+                        let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 2, length: stringLength - 2))
+                        phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
+                    }
+                    else if(phoneNumberStr.hasPrefix("0")){
+                        let stringLength = phoneNumberStr.characters.count
+                        let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 1, length: stringLength - 1))
+                        phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
+                    }
+                    else{
+                        phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
+                    }
+                
+                    if phoneNumberWithCode.hasPrefix("+")
+                    {
+                        appendPlus = "+"
+                    }
+                    else{
+                        appendPlus = ""
+                    }
+                    
+                    let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
+                    NSCharacterSet.decimalDigitCharacterSet().invertedSet)
+                    phoneNumber = appendPlus!.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                }
+                var currentContactImage : UIImage = UIImage()
+            
+                if let currentContactImageData = ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
+                {
+                    currentContactImage = UIImage(data: currentContactImageData)!
                 }
                 else{
-                    appendPlus = ""
+                    currentContactImage = UIImage(named: "avatar")!
                 }
-                
-                let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
-                    NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-                phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                print(phoneNumber)
+                if phoneNumber != nil{
+                    contactPhoneNumbers.append(phoneNumber!)
+                    self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber!, self.imageKey: currentContactImage, inviteKey:"0"])
+                }
             }
-            var currentContactImage : UIImage = UIImage()
-            
-            if let currentContactImageData = ABPersonCopyImageDataWithFormat(currentContact, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
-            {
-                currentContactImage = UIImage(data: currentContactImageData)!
-            }
-            else{
-                currentContactImage = UIImage(named: "avatar")!
-            }
-            if phoneNumber != nil{
-                contactPhoneNumbers.append(phoneNumber)
-                self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
-            }
+        }
         }
         addContactDetails(contactPhoneNumbers)
     }

@@ -21,6 +21,7 @@ class SnapCamSelectViewController: UIViewController {
     
     @IBOutlet var activityLabel: UILabel!
     @IBOutlet var activityImageView: UIImageView!
+    
     var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
     
     @IBOutlet var iPhoneSnapCamImageView: UIImageView!
@@ -266,6 +267,12 @@ extension SnapCamSelectViewController
             {
                 NSUserDefaults.standardUserDefaults().setObject(selectedMode.rawValue, forKey: "shutterActionMode");
             }
+//            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+//            let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//            self.presentViewController(navController, animated: false) { () -> Void in
+//            }
+
         }
     }
     
@@ -294,6 +301,7 @@ extension SnapCamSelectViewController
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
+            print(rowAfterAlertHit)
             updateSnapCamSelection(rowAfterAlertHit)
             changeSnapCamModeForCell(cellAfterAlertHit)
             self.snapCamSettingsTableView.reloadData()
@@ -358,6 +366,7 @@ extension SnapCamSelectViewController
     
     func updateSnapCamSelection(rowVal:Int)
     {
+        let defaults = NSUserDefaults .standardUserDefaults()
         switch(rowVal)
         {
         case 0 :

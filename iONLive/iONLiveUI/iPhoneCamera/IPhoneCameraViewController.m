@@ -88,6 +88,8 @@ NSMutableDictionary *ShotsDict;
 FileManagerViewController *fileManager;
 
 - (void)viewDidLoad {
+     _startCameraActionButton.enabled = false;
+    
     _firstButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.masksToBounds = YES;
@@ -100,10 +102,15 @@ FileManagerViewController *fileManager;
     
     fileManager = [[FileManagerViewController alloc]init];
     [super viewDidLoad];
-    
-    SetUpView *viewSet = [[SetUpView alloc]init];
-    [viewSet getValue];
-    
+
+    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+    NSLog(@"%ld",(long)shutterActionMode);
+    if (shutterActionMode != SnapCamSelectionModeLiveStream)
+    {
+            SetUpView *viewSet = [[SetUpView alloc]init];
+            [viewSet getValue];
+    }
+ 
     [self initialiseView];
     
     [_uploadActivityIndicator setHidden:YES];
@@ -114,8 +121,10 @@ FileManagerViewController *fileManager;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+//    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+//    [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
     [self removeObservers];
-    
+  
 }
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
     
@@ -125,6 +134,7 @@ FileManagerViewController *fileManager;
     NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
+    
     if(userImages.count > 0){
         for(int i=0;i<userImages.count;i++){
             if(i==0){
@@ -202,6 +212,8 @@ FileManagerViewController *fileManager;
         }
         if(count==0)
         {
+             _countLabel.hidden= true;
+            [self.view bringSubviewToFront:self.latestSharedMediaImage];
             dispatch_async(dispatch_get_global_queue(0,0), ^{
                 NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
                 if ( data == nil )
@@ -211,7 +223,7 @@ FileManagerViewController *fileManager;
                     {
                         self.playiIconView.hidden = false;
                     }
-                    self.latestSharedMediaImage.image= [UIImage imageWithData: data];
+                    self.latestSharedMediaImage.image = [UIImage imageWithData: data];
                 });
                 
             });
@@ -288,6 +300,7 @@ FileManagerViewController *fileManager;
             } );
         }
     }
+     _startCameraActionButton.enabled = true;
 }
 
 -(void) uploadprogress :(float) progress
@@ -379,7 +392,7 @@ FileManagerViewController *fileManager;
 -(void)hideProgressBar
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-        
+
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
         _activityImageView.hidden = true;
         [__activityIndicatorView stopAnimating];
@@ -916,7 +929,6 @@ FileManagerViewController *fileManager;
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
     {
-        
         switch(_liveSteamSession.rtmpSessionState) {
             case VCSessionStateNone:
             case VCSessionStatePreviewStarted:
@@ -1016,6 +1028,31 @@ FileManagerViewController *fileManager;
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
+    if ([self isStreamStarted])
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+        [alertController addAction:cancelAction];
+        
+        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+            
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+            [liveStreaming stopStreamingClicked];
+            [_liveSteamSession endRtmpSession];
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+            [self settingsPageView];
+        }];
+        [alertController addAction:OkAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else{
+        [self settingsPageView];
+    }
+}
+
+-(void) settingsPageView{
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1023,11 +1060,35 @@ FileManagerViewController *fileManager;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
     snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeiPhone;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
-    
+
 }
 
 - (IBAction)didTapSharingListIcon:(id)sender
 {
+    if ([self isStreamStarted])
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+        [alertController addAction:cancelAction];
+        
+        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+            
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+            [liveStreaming stopStreamingClicked];
+            [_liveSteamSession endRtmpSession];
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+            [self loadSharingView];
+        }];
+        [alertController addAction:OkAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else{
+        [self loadSharingView];
+    }
+}
+
+-(void) loadSharingView{
     UIStoryboard *sharingStoryboard = [UIStoryboard storyboardWithName:@"sharing" bundle:nil];
     UIViewController *mysharedChannelVC = [sharingStoryboard instantiateViewControllerWithIdentifier:@"MySharedChannelsViewController"];
     
@@ -1040,13 +1101,54 @@ FileManagerViewController *fileManager;
 }
 
 - (IBAction)didTapPhotoViewer:(id)sender {
-    
-    [self loadPhotoViewer];
+    if ([self isStreamStarted])
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+        [alertController addAction:cancelAction];
+        
+        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+            
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+            [liveStreaming stopStreamingClicked];
+            [_liveSteamSession endRtmpSession];
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+             [self loadPhotoViewer];
+        }];
+        [alertController addAction:OkAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else{
+       [self loadPhotoViewer];
+    }
+
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
     
-    [self loadStreamsGalleryView];
+    if ([self isStreamStarted])
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+        [alertController addAction:cancelAction];
+        
+        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+            
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+            [liveStreaming stopStreamingClicked];
+            [_liveSteamSession endRtmpSession];
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+            [self loadStreamsGalleryView];
+        }];
+        [alertController addAction:OkAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else{
+        [self loadStreamsGalleryView];
+    }
+    
 }
 
 - (IBAction)didTapFlashImage:(id)sender {
@@ -1128,6 +1230,7 @@ FileManagerViewController *fileManager;
 
 -(BOOL) isStreamStarted
 {
+   
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     return  [defaults boolForKey:@"StartedStreaming"];//defaults.boolForKey("StartedStreaming")
 }
@@ -1146,11 +1249,13 @@ FileManagerViewController *fileManager;
             break;
         case VCSessionStateEnded:
             NSLog(@"%d",deleteCount);
+          
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
             NSLog(@"End Stream");
             break;
         case VCSessionStateError:
+     
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             //   [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];

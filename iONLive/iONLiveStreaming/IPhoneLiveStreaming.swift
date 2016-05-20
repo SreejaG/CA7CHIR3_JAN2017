@@ -94,6 +94,7 @@ class IPhoneLiveStreaming: NSObject {
                     if let json = response as? [String: AnyObject]
                     {
                         self.currentStreamingTocken = json["streamToken"] as? String
+                        print(self.currentStreamingTocken)
                         self.startLiveStreamingToken(self.currentStreamingTocken)
                     }
                     else
@@ -120,9 +121,9 @@ class IPhoneLiveStreaming: NSObject {
         {
             let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
             let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
-            
-            //     cleanStreamingToken()
-            
+             print(streamTocken)
+                 cleanStreamingToken()
+           
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
             {
                 livestreamingManager.startLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken,success: { (response) -> () in
@@ -134,6 +135,7 @@ class IPhoneLiveStreaming: NSObject {
                         defaults.setValue(url, forKey: "liveStreamURL")
                         
                         let streamToken:String = json["streamToken"] as! String
+                         print(streamTocken)
                         NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
                         self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
                         
@@ -262,6 +264,7 @@ class IPhoneLiveStreaming: NSObject {
                     }
                     else
                     {
+                        self.removeStreaming()
                         ErrorManager.sharedInstance.inValidResponseError()
                     }
                     
@@ -269,6 +272,7 @@ class IPhoneLiveStreaming: NSObject {
                         
                         if iPhoneLiveStreaming.showAlert
                         {
+                            self.removeStreaming()
                             self.handleFailure(message)
                         }
                         return
@@ -276,6 +280,7 @@ class IPhoneLiveStreaming: NSObject {
             }
             else
             {
+//                self.removeStreaming()
                 ErrorManager.sharedInstance.authenticationIssue()
             }
         }

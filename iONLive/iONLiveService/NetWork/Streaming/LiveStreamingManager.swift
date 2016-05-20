@@ -85,6 +85,7 @@ class LiveStreamingManager: NSObject {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTocken, parameters: ["userName":loginId,"access_token":accesstocken,"action":"stopStream"],success: { (operation, response) -> Void in
             
+            print(streamTocken)
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {

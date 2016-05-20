@@ -282,13 +282,16 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     func  updateProfileDetails() {
+        view.endEditing(true)
+        editProfTableView.reloadData()
+        editProfTableView.layoutIfNeeded()
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
-        var email = String()
-        var mobNo = String()
-        var fullName = String()
+        var email: String = String()
+        var mobNo: String = String()
+        var fullName: String = String()
         
         for(var i = 0; i < dataSource?.count; i += 1)
         {
@@ -318,7 +321,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-        
+    
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
             self.removeOverlay()
         }) { (error, message) in

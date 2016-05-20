@@ -51,18 +51,19 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.17254901960784313" green="0.83921568627450982" blue="0.89803921568627454" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="tuh-W8-1lF" secondAttribute="trailing" id="CP7-DW-u3c"/>
                                     <constraint firstItem="Csb-BG-yaO" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" constant="15" id="GTr-Yb-EUV"/>
-                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" id="Gxn-1Q-Vni"/>
+                                    <constraint firstAttribute="bottom" secondItem="tuh-W8-1lF" secondAttribute="bottom" constant="13" id="Kli-ju-n3s"/>
                                     <constraint firstItem="E08-1q-r1T" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="LaR-oM-9MA"/>
                                     <constraint firstAttribute="height" constant="64" id="Otu-Th-m9Y"/>
                                     <constraint firstItem="Csb-BG-yaO" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="28" id="UdC-we-xEa"/>
-                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="30" id="Zxk-KC-Whk"/>
+                                    <constraint firstAttribute="trailing" secondItem="tuh-W8-1lF" secondAttribute="trailing" id="mnT-Zh-6WY"/>
+                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="top" constant="30" id="mqo-Az-Rtv"/>
+                                    <constraint firstItem="tuh-W8-1lF" firstAttribute="leading" secondItem="e64-wp-j2s" secondAttribute="leading" id="r99-lx-tIg"/>
                                     <constraint firstAttribute="trailing" secondItem="E08-1q-r1T" secondAttribute="trailing" constant="18" id="xzC-b5-hmA"/>
                                 </constraints>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y62-6N-UtC">
-                                <rect key="frame" x="0.0" y="64" width="600" height="443"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="451"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="bjf-zC-TWq">
                                 <rect key="frame" x="280" y="280" width="40" height="40"/>
@@ -75,7 +76,7 @@
                                 <rect key="frame" x="0.0" y="558" width="600" height="42"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-0e-fze">
-                                        <rect key="frame" x="20" y="2" width="47" height="30"/>
+                                        <rect key="frame" x="20" y="10" width="47" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Delete">
                                             <color key="titleColor" red="0.36078431372549019" green="0.41960784313725491" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
@@ -85,7 +86,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Fa-dd-16L">
-                                        <rect key="frame" x="532" y="2" width="48" height="30"/>
+                                        <rect key="frame" x="532" y="10" width="48" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <state key="normal" title="Add to"/>
                                         <connections>
@@ -96,17 +97,17 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" red="0.28235294117647058" green="0.33725490196078434" blue="0.9137254901960784" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="DAc-0e-fze" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="2" id="5cU-Tm-m0D"/>
                                     <constraint firstAttribute="height" constant="42" id="9y1-Kr-nFZ"/>
-                                    <constraint firstItem="DAc-0e-fze" firstAttribute="leading" secondItem="Ncu-eZ-Tvl" secondAttribute="leading" constant="20" id="CFm-qG-wwG"/>
-                                    <constraint firstItem="6Fa-dd-16L" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="2" id="FJU-br-Bpz"/>
-                                    <constraint firstAttribute="bottom" secondItem="DAc-0e-fze" secondAttribute="bottom" constant="10" id="TR0-tg-IY6"/>
-                                    <constraint firstAttribute="trailing" secondItem="6Fa-dd-16L" secondAttribute="trailing" constant="20" id="Yh4-NT-iIP"/>
-                                    <constraint firstAttribute="bottom" secondItem="6Fa-dd-16L" secondAttribute="bottom" constant="10" id="r2f-Lo-trY"/>
+                                    <constraint firstAttribute="bottom" secondItem="DAc-0e-fze" secondAttribute="bottom" constant="2" id="FWW-35-fos"/>
+                                    <constraint firstItem="6Fa-dd-16L" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="10" id="Nmw-JC-F2e"/>
+                                    <constraint firstAttribute="trailing" secondItem="6Fa-dd-16L" secondAttribute="trailing" constant="20" id="Sri-A3-ak1"/>
+                                    <constraint firstItem="DAc-0e-fze" firstAttribute="leading" secondItem="Ncu-eZ-Tvl" secondAttribute="leading" constant="20" id="VlE-sD-8mi"/>
+                                    <constraint firstItem="DAc-0e-fze" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="top" constant="10" id="hvr-bP-7Qf"/>
+                                    <constraint firstAttribute="bottom" secondItem="6Fa-dd-16L" secondAttribute="bottom" constant="2" id="ja8-aO-Yrd"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="QIE-GV-Vdt">
-                                <rect key="frame" x="0.0" y="507" width="600" height="43"/>
+                                <rect key="frame" x="0.0" y="515" width="600" height="43"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="43" id="1CS-sZ-3hw"/>
@@ -182,7 +183,7 @@
                             <constraint firstItem="e64-wp-j2s" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="XSy-xg-gCY"/>
                             <constraint firstAttribute="trailing" secondItem="Ncu-eZ-Tvl" secondAttribute="trailing" id="fiG-UJ-HXX"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="mJr-dY-xwO" secondAttribute="bottom" id="gDP-hU-RMA"/>
-                            <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" constant="8" id="jxM-DN-VGY"/>
+                            <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" id="jxM-DN-VGY"/>
                             <constraint firstItem="bjf-zC-TWq" firstAttribute="centerX" secondItem="GmU-4f-pJO" secondAttribute="centerX" id="lBs-rc-E9E"/>
                             <constraint firstItem="mJr-dY-xwO" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="pwu-ed-IjF"/>
                             <constraint firstAttribute="trailing" secondItem="e64-wp-j2s" secondAttribute="trailing" id="yAj-ac-Bre"/>
@@ -195,6 +196,7 @@
                         <outlet property="deletButton" destination="DAc-0e-fze" id="CSC-LG-zMg"/>
                         <outlet property="fullScreenZoomView" destination="mJr-dY-xwO" id="Ozp-h4-Kcc"/>
                         <outlet property="fullScrenImageView" destination="y62-6N-UtC" id="5Hf-lc-vaB"/>
+                        <outlet property="mediaTimeLabel" destination="tuh-W8-1lF" id="ZsN-OO-gdr"/>
                         <outlet property="photoThumpCollectionView" destination="QIE-GV-Vdt" id="NRF-PJ-s44"/>
                         <outlet property="playIconInFullView" destination="bjf-zC-TWq" id="cPx-GS-lVq"/>
                     </connections>

@@ -295,6 +295,10 @@ class MyChannelItemDetailsViewController: UIViewController {
             }
             isLimitReached = true
         }
+        else if(imageDataSource.count == (currentLimit +  limitMedia))
+        {
+            currentLimit = imageDataSource.count
+        }
         else if(currentLimit == imageDataSource.count)
         {
             isLimitReached = false

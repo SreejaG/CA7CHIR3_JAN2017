@@ -84,6 +84,7 @@ import UIKit
                 }
             }
         }
+//        print(channelDetails)
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
