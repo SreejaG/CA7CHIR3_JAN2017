@@ -249,8 +249,7 @@ static NSMutableDictionary * gHistory;
             closeButton.hidden = false;
             _parameters = nil;
             [self setUpDefaultValues];
-//            [self startDecoder];
-            [self hideProgressBar];
+            [self startDecoder];
         }
     }
     return self;
@@ -492,10 +491,12 @@ static NSMutableDictionary * gHistory;
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
-    [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:true];
-    [self changeCameraSelectionImage];
+     if (_liveVideo) {
+         activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+         [super viewWillAppear:animated];
+         [self.navigationController setNavigationBarHidden:true];
+         [self changeCameraSelectionImage];
+     }
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -601,13 +602,13 @@ static NSMutableDictionary * gHistory;
     
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (3 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         
-        //        if (_liveVideo) {
+//                if (_liveVideo) {
         //            [self checkWifiConnectionAndStartDecoder];
         //        }
         //        else
         //        {
         [self restartDecoder];
-        //        }
+//                }
     });
 }
 
@@ -615,10 +616,12 @@ static NSMutableDictionary * gHistory;
 
 -(void)showProgressBar
 {
+//    if(_liveVideo){
     activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
     activityImageView.hidden = false;
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
+//    }
 }
 
 -(void)hideProgressBar
@@ -858,8 +861,11 @@ static NSMutableDictionary * gHistory;
 -(void)applicationDidBecomeActive: (NSNotification *)notification
 {
     if (_backGround) {
-        _backGround = false;
-        [self reInitialiseDecoder];
+           _backGround = false;
+        if(_liveVideo){
+         
+            [self reInitialiseDecoder];
+        }
     }
 }
 
