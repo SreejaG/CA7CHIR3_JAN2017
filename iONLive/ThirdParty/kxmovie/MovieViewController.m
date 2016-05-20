@@ -241,16 +241,16 @@ static NSMutableDictionary * gHistory;
             accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
             notificationType = @"LIKE";
             mediaDetailId = [parameters valueForKey:@"mediaId"];
-            
             if([userId isEqualToString:user]){
                 heartTapButton.hidden = YES;
                 typeMedia.text = @"";
                 userName.text = @"";
             }
             closeButton.hidden = false;
-         //   _parameters = nil;
-         //   [self setUpDefaultValues];
+            _parameters = nil;
+            [self setUpDefaultValues];
 //            [self startDecoder];
+            [self hideProgressBar];
         }
     }
     return self;
