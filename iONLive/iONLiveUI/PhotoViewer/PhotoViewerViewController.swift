@@ -362,7 +362,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         
+        if dataSource[selectedCollectionViewIndex][mediaTypeKey] != nil
+        {
         let mediaType = dataSource[selectedCollectionViewIndex][mediaTypeKey] as! String
+        
         if mediaType == "video"
         {
             playIconInFullView.hidden = true
@@ -371,6 +374,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         else
         {
             fullScreenZoomView.hidden = false
+        }
         }
     }
     

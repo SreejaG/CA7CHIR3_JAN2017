@@ -257,7 +257,7 @@ class StreamsListViewController: UIViewController{
         {
             limitMediaCount = currentLimit
             currentLimit = currentLimit + (imageDataSource.count - currentLimit)
-            isLimitReached = false
+           // isLimitReached = false
         }
         else if (imageDataSource.count > (currentLimit +  limitMedia))
         {
@@ -270,81 +270,147 @@ class StreamsListViewController: UIViewController{
             else{
                 currentLimit = currentLimit + count
             }
-            isLimitReached = true
+         //   isLimitReached = true
         }
         else if(imageDataSource.count == (currentLimit +  limitMedia))
         {
             currentLimit = imageDataSource.count
         }
+      
         else if(currentLimit == imageDataSource.count)
         {
-            isLimitReached = false
+         //   isLimitReached = false
             return
         }
         
-        for i in limitMediaCount  ..< currentLimit
+     
+        
+        
+        if(!scrolled)
         {
-            var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                        if(result != UIImage()){
-                            imageForMedia = result
-                        }
-                        else{
-                            imageForMedia = UIImage()
-                        }
-                    })
+            for var i = limitMediaCount; i <= currentLimit ; i += 1
+            {
+                var imageForMedia : UIImage = UIImage()
+                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
                 }
+                else{
+                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                            if(result != UIImage()){
+                                imageForMedia = result
+                            }
+                            else{
+                                imageForMedia = UIImage()
+                            }
+                        })
+                    }
+                }
+                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
             }
-            self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
-        }
-        if(self.dummy.count > 0)
-        {
+            if(self.dummy.count > 0)
+            {
                 self.dummy.sortInPlace({ p1, p2 in
                     
                     let time1 = p1[self.timestamp] as! String
                     let time2 = p2[self.timestamp] as! String
                     return time1 > time2
                 })
-        }
-        for element in self.dummy
-        {
-            self.dataSource.append(element)
-        }
-        self.dummy.removeAll()
-        removeOverlay()
+            }
+            for element in self.dummy
+            {
+                self.dataSource.append(element)
+            }
+            self.dummy.removeAll()
+            removeOverlay()
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-               
+                
                 self.streamListCollectionView.reloadData()
             })
-//        }
-    }
+        }
     
-    func showOverlay(){
+        else
+        {
+            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
+                if(i >= imageDataSource.count - 1)
+                {
+                    return
+                }
+                var imageForMedia : UIImage = UIImage()
+                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
+                }
+                else{
+                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                            if(result != UIImage()){
+                                imageForMedia = result
+                            }
+                            else{
+                                imageForMedia = UIImage()
+                            }
+                        })
+                    }
+                }
+                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+            }
+            if(self.dummy.count > 0)
+            {
+                self.dummy.sortInPlace({ p1, p2 in
+                    
+                    let time1 = p1[self.timestamp] as! String
+                    let time2 = p2[self.timestamp] as! String
+                    return time1 > time2
+                })
+            }
+            for element in self.dummy
+            {
+                self.dataSource.append(element)
+            }
+            self.dummy.removeAll()
+            removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                self.streamListCollectionView.reloadData()
+            })
+            
+        }
+        isLimitReached = true
+        
+    }
+
+//}
+
+func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
-    
+
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-    
+
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
