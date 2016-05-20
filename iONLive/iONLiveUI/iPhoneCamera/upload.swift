@@ -193,6 +193,17 @@ protocol uploadProgressDelegate
                     {
                         if let imageDatadup = NSData(contentsOfURL: videoPath){
                             imageData = imageDatadup
+                            
+                         //   if let imageData = data as NSData? {
+                                let mediaIdForFilePath = "\(self.signedURLResponse.valueForKey("mediaId")!)"
+                                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                                let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
+                                let url = NSURL(fileURLWithPath: savingPath)
+                                let writeFlag = imageData.writeToURL(url, atomically: true)
+                                if(writeFlag){
+                                    
+                                }
+                            
                         }
                         else{
                             return
