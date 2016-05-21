@@ -21,7 +21,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     
-    var tapCount : Int = 0
+    var tapCount : Int = 1
     let cameraController = IPhoneCameraViewController()
     
     var refreshControl:UIRefreshControl!
