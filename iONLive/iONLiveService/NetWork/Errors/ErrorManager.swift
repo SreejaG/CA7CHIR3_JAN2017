@@ -318,6 +318,12 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert("No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")
     }
     
+    func installFailure()
+    {
+        alert("Install Failed", message: "Ooops, The CA7CH is not installed properly, please reinstall the application once again...")
+    }
+
+    
     //PRAGMA MARK:- Error code mapping
     
     func mapErorMessageToErrorCode(errorCode:String)

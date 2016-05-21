@@ -21,6 +21,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     
+    var tapCount : Int = 0
     let cameraController = IPhoneCameraViewController()
     
     var refreshControl:UIRefreshControl!
@@ -71,9 +72,18 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func pullToRefresh()
     {
-        pullToRefreshActive = true
-        totalMediaCount = 0
-        initialise()
+        tapCount = tapCount + 1
+        if(tapCount == 1){
+            pullToRefreshActive = true
+            totalMediaCount = 0
+            print(tapCount)
+        
+            initialise()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            
+        }
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -200,6 +210,9 @@ class MyChannelItemDetailsViewController: UIViewController {
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.tapCount = 0
+                        self.refreshControl.endRefreshing()
+                        self.pullToRefreshActive = false
                     })
                 })
             }

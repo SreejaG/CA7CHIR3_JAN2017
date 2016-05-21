@@ -17,8 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
        
-       
-        
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
@@ -217,8 +215,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .stringByTrimmingCharactersInSet( characterSet )
             .stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
         print(deviceTokenString)
-        let defaults = NSUserDefaults .standardUserDefaults()
-        defaults.setValue(deviceTokenString, forKey: "deviceToken")
+        
+        if(deviceTokenString != ""){
+            let defaults = NSUserDefaults .standardUserDefaults()
+            defaults.setValue(deviceTokenString, forKey: "deviceToken")
+        }
+        else{
+            ErrorManager.sharedInstance.installFailure()
+        }
         
     }
     

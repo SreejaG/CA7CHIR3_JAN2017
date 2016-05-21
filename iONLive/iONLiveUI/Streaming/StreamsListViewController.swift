@@ -46,6 +46,8 @@ class StreamsListViewController: UIViewController{
     let thumbImageKey = "thumbImage"
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     
+    var tapCount : Int = 1
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     let livestreamingManager = LiveStreamingManager()
@@ -195,7 +197,9 @@ class StreamsListViewController: UIViewController{
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-
+                        self.tapCount = 0
+                        self.refreshControl.endRefreshing()
+                        self.pullToRefreshActive = false
                     })
                 })
             }
@@ -209,25 +213,27 @@ class StreamsListViewController: UIViewController{
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        removeOverlay()
-        if(pullToRefreshActive){
+        if(!pullToRefreshActive){
+            removeOverlay()
+        }
+        else{
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
         }
-            print("message = \(code) andError = \(error?.localizedDescription) ")
+        print("message = \(code) andError = \(error?.localizedDescription) ")
             
-            if !self.requestManager.validConnection() {
-                ErrorManager.sharedInstance.noNetworkConnection()
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController()
             }
-            else if code.isEmpty == false {
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                    loadInitialViewController()
-                }
-            }
-            else{
-                ErrorManager.sharedInstance.inValidResponseError()
-            }
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -310,9 +316,16 @@ func showOverlay(){
     
     func pullToRefresh()
     {
-        pullToRefreshActive = true
-        totalMediaCount = 0
-        getAllLiveStreams()
+        tapCount = tapCount + 1
+        if(tapCount == 1){
+            pullToRefreshActive = true
+            totalMediaCount = 0
+            print(tapCount)
+            getAllLiveStreams()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+        }
     }
     
     //PRAGMA MARK:- API Handlers
@@ -350,7 +363,6 @@ func showOverlay(){
     {
         activityIndicator.hidden = true
         self.dataSource.removeAll()
-        dummy.removeAll()
         if let json = response as? [String: AnyObject]
         {
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
