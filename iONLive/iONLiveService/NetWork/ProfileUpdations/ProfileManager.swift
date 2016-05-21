@@ -103,8 +103,15 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
     
     func updateUserDetails(userName: String, accessToken: String, email: String, location: String, mobNo: String,fullName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
         
+        var paramet = NSMutableDictionary()
+        if(fullName == ""){
+           paramet  = ["email":email,"mobileNumber":mobNo]
+        }
+        else{
+           paramet  = ["email":email,"mobileNumber":mobNo,"fullName":fullName]
+        }
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: ["email":email,"mobileNumber":mobNo,"fullName":fullName], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: paramet, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
