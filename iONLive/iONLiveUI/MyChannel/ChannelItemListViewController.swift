@@ -20,8 +20,6 @@ class ChannelItemListViewController: UIViewController {
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
-    var offset: String = "0"
-    var offsetToInt: Int = Int()
     var totalMediaCount: Int = Int()
     
     var loadingOverlay: UIView?
@@ -45,36 +43,17 @@ class ChannelItemListViewController: UIViewController {
     let mediaTypeKey = "mediaType"
     let actualImageKey = "actualImage"
     let notificationKey = "notification"
-    
-    var limit : Int = Int()
-    var totalCount: Int = 0
-    var fixedLimit : Int =  0
-    var isLimitReached : Bool = true
-    var currentLimit : Int = 0
-    var limitMediaCount : Int = Int()
-    
+   
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        imageDataSource.removeAll()
-        fullImageDataSource.removeAll()
-        selectedArray.removeAll()
-        selected.removeAllObjects()
-        offsetToInt = Int(offset)!
+      
         deleteButton.hidden = true
         addButton.hidden = true
         cancelButton.hidden = true
         selectionFlag = false
         self.channelItemCollectionView.alwaysBounceVertical = true
-        if totalMediaCount > 6
-        {
-            fixedLimit = 6
-        }
-        else{
-            fixedLimit = totalMediaCount
-        }
         
-        limit = totalMediaCount
         initialise()
     }
     
@@ -92,12 +71,23 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func initialise(){
+        imageDataSource.removeAll()
+        fullImageDataSource.removeAll()
+        selectedArray.removeAll()
+        selected.removeAllObjects()
+
+        selectionButton.hidden = true
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
         showOverlay()
-        let offsetString : String = String(offsetToInt)
-        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) -> () in
+        
+        let startValue = "0"
+        let endValue = String(totalMediaCount)
+     
+        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
@@ -161,7 +151,19 @@ class ChannelItemListViewController: UIViewController {
                 let notificationType : String = "likes"
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
-            downloadCloudData(15, scrolled: false)
+            if(imageDataSource.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                   self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                      self.selectionButton.hidden = false
+                    })
+                })
+            }
+            else{
+                 selectionButton.hidden = true
+            }
         }
         else
         {
@@ -172,21 +174,19 @@ class ChannelItemListViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
-        if(offsetToInt <= totalMediaCount){
-            print("message = \(code) andError = \(error?.localizedDescription) ")
+        print("message = \(code) andError = \(error?.localizedDescription) ")
             
-            if !self.requestManager.validConnection() {
-                ErrorManager.sharedInstance.noNetworkConnection()
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController()
             }
-            else if code.isEmpty == false {
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                    loadInitialViewController()
-                }
-            }
-            else{
-                ErrorManager.sharedInstance.inValidResponseError()
-            }
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     
@@ -214,106 +214,36 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    func downloadCloudData(limitMedia : Int , scrolled : Bool)
-    {
-        if(imageDataSource.count <  (currentLimit +  limitMedia))
+    func downloadMediaFromGCS(){
+        for i in 0 ..< totalMediaCount
         {
-            limitMediaCount = currentLimit
-            currentLimit = currentLimit + (imageDataSource.count - currentLimit)
-          //  isLimitReached = false
-        }
-        else if (imageDataSource.count > (currentLimit +  limitMedia))
-        {
-            limitMediaCount = currentLimit
-            let count = imageDataSource.count - currentLimit
-            if count > 15
-            {
-                currentLimit = currentLimit + 15
+            var imageForMedia : UIImage = UIImage()
+            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+            if fileExistFlag == true{
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                imageForMedia = mediaImageFromFile!
             }
             else{
-                currentLimit = currentLimit + count
+                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                if(mediaUrl != ""){
+                    let url: NSURL = convertStringtoURL(mediaUrl)
+                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        if(result != UIImage()){
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                            imageForMedia = result
+                        }
+                    })
+                }
             }
-           // isLimitReached = true
-        }
-        else if(imageDataSource.count == (currentLimit +  limitMedia))
-        {
-            currentLimit = imageDataSource.count
-        }
-        else if(currentLimit == imageDataSource.count)
-        {
-          //  isLimitReached = false
-            return
-        }
         
-        print("\(limitMediaCount)   \(currentLimit)")
-        if(!scrolled)
-        {
-            for var i = limitMediaCount; i <= currentLimit ; i += 1
-            {
-                print(i)
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            if(result != UIImage()){
-                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                imageForMedia = result
-                            }
-                        })
-                    }
-                }
+                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                    self.channelItemCollectionView.reloadData()
-                })
-            }
+               self.channelItemCollectionView.reloadData()
+           })
         }
-        else{
-            
-            
-            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
-                if(i >= imageDataSource.count - 1)
-                {
-                    return
-                }
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            if(result != UIImage()){
-                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                imageForMedia = result
-                            }
-                        })
-                    }
-                }
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                    self.channelItemCollectionView.reloadData()
-                })
-            }
-        }
-        isLimitReached = true
     }
     
     @IBAction func didTapBackButton(sender: AnyObject)
@@ -383,7 +313,6 @@ class ChannelItemListViewController: UIViewController {
             })
             
         }
-        
     }
     
     func authenticationSuccessHandlerDelete(response:AnyObject?)
@@ -391,19 +320,15 @@ class ChannelItemListViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            offset = "0"
-            offsetToInt = Int(offset)!
-            totalCount = 0
             totalMediaCount = totalMediaCount - selected.count
-            limit = totalMediaCount
             imageDataSource.removeAll()
             fullImageDataSource.removeAll()
             selected.removeAllObjects()
+            
             selectionFlag = false
-            limitMediaCount = 0
-            currentLimit = 0
-            isLimitReached = true
+            
             initialise()
+            
             channelTitleLabel.text = channelName.uppercaseString
             cancelButton.hidden = true
             selectionButton.hidden = false
@@ -432,47 +357,13 @@ class ChannelItemListViewController: UIViewController {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-}
-
-extension ChannelItemListViewController : UIScrollViewDelegate{
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let fullyScrolledContentOffset:CGFloat = channelItemCollectionView.frame.size.width
-        
-        if (scrollView.contentOffset.x >= fullyScrolledContentOffset)
-        {
-            if(scrollView.contentOffset.x == fullyScrolledContentOffset)
-            {
-                
-            }
-        }
-        if offsetY > contentHeight - scrollView.frame.size.height {
-            
-            if(isLimitReached)
-            {
-                isLimitReached = false
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadCloudData(15, scrolled: true)
-                    
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        
-                    })
-                })
-                
-            }
-            
-        }
-    }
 }
 
 extension ChannelItemListViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
+        print(fullImageDataSource.count)
         if fullImageDataSource.count > 0
         {
             return fullImageDataSource.count
@@ -490,6 +381,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         cell.selectionView.alpha = 0.4
         cell.tickButton.frame = CGRect(x: ((UIScreen.mainScreen().bounds.width/3)-2) - 25, y: 3, width: 20, height: 20)
         
+        let channelItemImageView = cell.viewWithTag(100) as! UIImageView
+        
         if fullImageDataSource.count > 0
         {
             if(fullImageDataSource.count == selectedArray.count){
@@ -499,7 +392,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             }
             
             let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
-            let channelItemImageView = cell.viewWithTag(100) as! UIImageView
+          
             let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
             
             channelItemImageView.image = imageData
@@ -545,11 +438,15 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                         }
                     }
                 }
-                
             }
             else{
                 cell.selectionView.hidden = true
             }
+        }
+        else{
+            channelItemImageView.image = UIImage(named: "thumb12")
+//            cell.videoView.hidden = true
+//            cell.selectionView.hidden = true
         }
         return cell
     }
