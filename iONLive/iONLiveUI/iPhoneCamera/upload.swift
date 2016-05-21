@@ -240,7 +240,6 @@ protocol uploadProgressDelegate
                 {
                     imageToConvert = UIImage(data:imageData)!
                 }
-              //  let
                 let sizeThumb = CGSizeMake(70,70)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
                 print(imageAfterConversionThumbnail)
@@ -576,8 +575,11 @@ protocol uploadProgressDelegate
         defaults.setValue(progressDictionary, forKey: "ProgressDict")
         if PhotoViewerInstance.controller != nil
         {
+            if(progressDictionary.count>0)
+            {
             let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
             controller.uploadProgress(progressDictionary)
+            }
         }
     }
     

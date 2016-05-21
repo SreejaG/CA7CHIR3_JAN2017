@@ -530,11 +530,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let imagePath = self.dataSource[0][self.fullImageKey]!
             
             
-           // self.fullScrenImageView.image = UIImage(named:"thumb11")
-          //  self.fullScreenZoomView.image =  UIImage(named:"thumb11")
+           self.fullScrenImageView.image = (imagePath as! UIImage)
+           self.fullScreenZoomView.image = (imagePath as! UIImage)
 
-                //(imagePath as! UIImage)
-            //self.fullScreenZoomView.image = (imagePath as! UIImage)
             self.photoThumpCollectionView.reloadData()
         })
 
@@ -771,6 +769,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
+        fullScrenImageView.alpha = 0.1
         if dataSource.count > indexPath.row
         {
             if(downloadTask?.state == .Running)
@@ -804,21 +803,58 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
                 else
                 {
-                    let url = dataSource[indexPath.row][fullSignedUrlKey]
-                    let downloadURL =  self.convertStringtoURL(url as! String)
-                    
-                    let cacheThumb = checkCacheMedia(String(dataSource[indexPath.row][mediaIdKey]))
-                    if(cacheThumb.count>0)
+
+//                    }
+//                    else{
+                    var imageForMedia : UIImage = UIImage()
+                    if(indexPath.row < uploadCount)
                     {
-                        self.fullScrenImageView.image = cacheThumb[0][fullImageKey]! as UIImage
-                        self.fullScreenZoomView.image = cacheThumb[0][fullImageKey]! as UIImage
+                        
+
+                        imageForMedia = dataSource[indexPath.row][fullImageKey] as! UIImage
                     }
-                    else{
-                        self.downloadMedia(downloadURL, key: "FullImage", completion: { (result) -> Void in
-                            self.fullScrenImageView.image = result
-                            self.fullScreenZoomView.image = result
-                        })
+                    else if(indexPath.row >= uploadCount)
+                    {
+                        
+                        
+                        let url = dataSource[indexPath.row][fullSignedUrlKey]
+                        //  let downloadURL =  self.convertStringtoURL(url as! String)
+                        var imageForMedia : UIImage = UIImage()
+                        let id = String(dataSource[indexPath.row][mediaIdKey]!)
+                        print(String(dataSource[indexPath.row][mediaIdKey]!))
+                        let mediaIdForFilePath = "\(id))Full"
+                        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                        let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                        
+                        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                        if fileExistFlag == true{
+                            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                            imageForMedia = mediaImageFromFile!
+                            
+                        }
+                        else{
+                            
+                            let mediaUrl = dataSource[indexPath.row][fullSignedUrlKey] as! String
+                            if(mediaUrl != ""){
+                                let url: NSURL = convertStringtoURL(mediaUrl)
+                                
+                                
+                                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                    //  FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    if(result != UIImage()){
+                                        imageForMedia = result
+                                    }
+                                    else{
+                                        imageForMedia = UIImage()
+                                    }
+                                })
+                            }
+                        }
                     }
+                    fullScrenImageView.alpha = 1.0
+                    
+                    self.fullScrenImageView.image = imageForMedia as UIImage
+                    self.fullScreenZoomView.image = imageForMedia as UIImage
                     playIconInFullView.hidden = true;
                 }
             }
