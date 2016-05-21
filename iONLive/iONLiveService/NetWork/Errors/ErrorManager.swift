@@ -183,6 +183,11 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         alert(signUpErrorTitle, message: "Please enter your password")
     }
     
+    func missingFullNameError()
+    {
+        alert("Missing Fullname", message: "Please enter your Full name")
+    }
+    
     func noNetworkConnection() {
         alert("Network Error", message: "Oops, it looks like you don't have a working internet connection. Please connect and try again.")
     }

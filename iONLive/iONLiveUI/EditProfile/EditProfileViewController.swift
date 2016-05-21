@@ -288,6 +288,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+       
         
         var email: String = String()
         var mobNo: String = String()
@@ -317,17 +318,16 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 }
             }
         }
-        
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
-            NSCharacterSet.decimalDigitCharacterSet().invertedSet)
+                NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
     
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
-            self.removeOverlay()
-        }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
-            return
-        }
+                self.removeOverlay()
+            }) { (error, message) in
+                self.authenticationFailureHandler(error, code: message)
+                return
+            }
     }
     
     func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: (result: String) -> Void)
