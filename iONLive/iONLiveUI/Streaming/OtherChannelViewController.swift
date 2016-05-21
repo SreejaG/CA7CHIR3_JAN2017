@@ -220,7 +220,17 @@ class OtherChannelViewController: UIViewController {
                 }
             }
             
-            downloadCloudData(15, scrolled: false)
+            if(imageDataSource.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.channelItemsCollectionView.reloadData()
+                    })
+                })
+            }
+
         }
         else
         {
@@ -255,7 +265,44 @@ class OtherChannelViewController: UIViewController {
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
-    
+    func downloadMediaFromGCS(){
+        for var i in 0 ..< imageDataSource.count
+        {
+            
+            var imageForMedia : UIImage = UIImage()
+            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+            if fileExistFlag == true{
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                imageForMedia = mediaImageFromFile!
+            }
+            else{
+                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                if(mediaUrl != ""){
+                    let url: NSURL = convertStringtoURL(mediaUrl)
+                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                        if(result != UIImage()){
+                            imageForMedia = result
+                        }
+                        else{
+                            imageForMedia = UIImage()
+                        }
+                    })
+                    
+                }
+            }
+              self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+              
+                self.channelItemsCollectionView.reloadData()
+            })
+        
+
+        }
+    }
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -273,155 +320,8 @@ class OtherChannelViewController: UIViewController {
         }
     }
     
-    func downloadCloudData(limitMedia : Int , scrolled : Bool)
-    {
-        if(imageDataSource.count <  (currentLimit +  limitMedia))
-        {
-            limitMediaCount = currentLimit
-            currentLimit = currentLimit + (imageDataSource.count - currentLimit)
-           // isLimitReached = false
-        }
-        else if (imageDataSource.count > (currentLimit +  limitMedia))
-        {
-            limitMediaCount = currentLimit
-            let count = imageDataSource.count - currentLimit
-            if count > 15
-            {
-                currentLimit = currentLimit + 15
-            }
-            else{
-                currentLimit = currentLimit + count
-            }
-           // isLimitReached = true
-        }
-        else if(imageDataSource.count == (currentLimit +  limitMedia))
-        {
-            currentLimit = imageDataSource.count
-        }
-        else if(currentLimit == imageDataSource.count)
-        {
-          //  isLimitReached = false
-            return
-        }
-        if(!scrolled)
-        {
-            
-            for var i = limitMediaCount; i <= currentLimit ; i += 1
-            {
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            if(result != UIImage()){
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage()
-                            }
-                        })
-                    
-                    }
-                }
-            
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                    self.channelItemsCollectionView.reloadData()
-                })
-            }
-        
-        }
-        else{
-            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
-                if(i >= imageDataSource.count - 1)
-                {
-                    return
-                }
-                
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            if(result != UIImage()){
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage()
-                            }
-                        })
-                        
-                    }
-                }
-                
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                    self.channelItemsCollectionView.reloadData()
-                })
-            }
-            
-        }
-        isLimitReached = true
-
-    }
-
+   
 }
-
-extension OtherChannelViewController : UIScrollViewDelegate{
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let fullyScrolledContentOffset:CGFloat = channelItemsCollectionView.frame.size.width
-        
-        if (scrollView.contentOffset.x >= fullyScrolledContentOffset)
-        {
-            if(scrollView.contentOffset.x == fullyScrolledContentOffset)
-            {
-        
-            }
-            
-        }
-        if offsetY > contentHeight - scrollView.frame.size.height {
-            
-            if(isLimitReached)
-            {
-                isLimitReached = false
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadCloudData(15, scrolled: true)
-                    
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        
-                    })
-                })
-                
-            }
-            
-        }
-    }
-}
-
 extension OtherChannelViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int

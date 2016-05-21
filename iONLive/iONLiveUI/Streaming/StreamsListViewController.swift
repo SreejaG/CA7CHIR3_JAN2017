@@ -44,12 +44,6 @@ class StreamsListViewController: UIViewController{
     let mediaTypeKey = "mediaType"
     let timeKey = ""
     let thumbImageKey = "thumbImage"
-    
-    var limit : Int = Int()
-    var fixedLimit : Int =  0
-    var isLimitReached : Bool = true
-    var currentLimit : Int = 0
-    var limitMediaCount : Int = Int()
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -108,16 +102,10 @@ class StreamsListViewController: UIViewController{
         {
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
         }
-        if totalMediaCount > 6
-        {
-            fixedLimit = 6
-        }
-        else{
-            fixedLimit = totalMediaCount
-        }
-        limit = totalMediaCount
+        
         imageDataSource.removeAll()
-        offsetToInt = Int(offset)!
+        initialiseCloudData()
+
     }
     
     func initialiseCloudData(){
@@ -125,9 +113,10 @@ class StreamsListViewController: UIViewController{
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
-        let offsetString : String = String(offsetToInt)
+        let startValue = "0"
+        let endValue = String(totalMediaCount)
         
-        imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: String(limit), offset: offsetString, success: { (response) in
+        imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
@@ -169,6 +158,8 @@ class StreamsListViewController: UIViewController{
         if let json = response as? [String: AnyObject]
         {
             imageDataSource.removeAll()
+            removeOverlay()
+
             let responseArr = json["objectJson"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
@@ -195,7 +186,17 @@ class StreamsListViewController: UIViewController{
                 }
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName])
             }
-            downloadCloudData(15, scrolled: false)
+            if(imageDataSource.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                      self.streamListCollectionView.reloadData()
+                    })
+                })
+            }
+
         }
         else
         {
@@ -250,155 +251,64 @@ class StreamsListViewController: UIViewController{
             completion(result:UIImage(named: "thumb12")!)
         }
     }
-    
-    func downloadCloudData(limitMedia : Int , scrolled : Bool)
-    {
-        if(imageDataSource.count <  (currentLimit +  limitMedia))
+    func downloadMediaFromGCS(){
+        for var i in 0 ..< imageDataSource.count
         {
-            limitMediaCount = currentLimit
-            currentLimit = currentLimit + (imageDataSource.count - currentLimit)
-           // isLimitReached = false
-        }
-        else if (imageDataSource.count > (currentLimit +  limitMedia))
-        {
-            limitMediaCount = currentLimit
-            let count = imageDataSource.count - currentLimit
-            if count > 15
-            {
-                currentLimit = currentLimit + 15
+            var imageForMedia : UIImage = UIImage()
+            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+            
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+            if fileExistFlag == true{
+                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                imageForMedia = mediaImageFromFile!
             }
             else{
-                currentLimit = currentLimit + count
-            }
-         //   isLimitReached = true
-        }
-        else if(imageDataSource.count == (currentLimit +  limitMedia))
-        {
-            currentLimit = imageDataSource.count
-        }
-      
-        else if(currentLimit == imageDataSource.count)
-        {
-         //   isLimitReached = false
-            return
-        }
-        
-     
-        
-        
-        if(!scrolled)
-        {
-            for var i = limitMediaCount; i <= currentLimit ; i += 1
-            {
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
+                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                if(mediaUrl != ""){
+                    let url: NSURL = convertStringtoURL(mediaUrl)
+                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                        if(result != UIImage()){
+                            imageForMedia = result
+                        }
+                        else{
+                            imageForMedia = UIImage()
+                        }
+                    })
                 }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            if(result != UIImage()){
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage()
-                            }
-                        })
-                    }
-                }
-                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
             }
-            if(self.dummy.count > 0)
-            {
-                self.dummy.sortInPlace({ p1, p2 in
-                    
-                    let time1 = p1[self.timestamp] as! String
-                    let time2 = p2[self.timestamp] as! String
-                    return time1 > time2
-                })
-            }
-            for element in self.dummy
-            {
-                self.dataSource.append(element)
-            }
-            self.dummy.removeAll()
-            removeOverlay()
+            self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 self.streamListCollectionView.reloadData()
             })
         }
-    
-        else
-        {
-            for var i = limitMediaCount+1; i <= currentLimit ; i += 1 {
-                if(i >= imageDataSource.count - 1)
-                {
-                    return
-                }
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            if(result != UIImage()){
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage()
-                            }
-                        })
-                    }
-                }
-                self.dummy.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
-            }
-            if(self.dummy.count > 0)
-            {
-                self.dummy.sortInPlace({ p1, p2 in
-                    
-                    let time1 = p1[self.timestamp] as! String
-                    let time2 = p2[self.timestamp] as! String
-                    return time1 > time2
-                })
-            }
-            for element in self.dummy
-            {
-                self.dataSource.append(element)
-            }
-            self.dummy.removeAll()
-            removeOverlay()
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                self.streamListCollectionView.reloadData()
-            })
-            
-        }
-        isLimitReached = true
-        
+//        self.dummy = self.dataSource
+//        self.dataSource.removeAll()
+//        if(self.dummy.count > 0)
+//        {
+//            self.dummy.sortInPlace({ p1, p2 in
+//                
+//                let time1 = p1[self.timestamp] as! String
+//                let time2 = p2[self.timestamp] as! String
+//                return time1 > time2
+//            })
+//        }
+//        for element in self.dummy
+//        {
+//            self.dataSource.append(element)
+//        }
+//        self.dummy.removeAll()
+//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//            
+//            self.streamListCollectionView.reloadData()
+//        })
+
+   
     }
-
-//}
-
+   
 func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
@@ -422,10 +332,8 @@ func showOverlay(){
     func pullToRefresh()
     {
         pullToRefreshActive = true
-        currentLimit = 0
-        limitMediaCount = 0
         getAllLiveStreams()
-     //   showOverlay()
+        
     }
     
     //PRAGMA MARK:- API Handlers
@@ -437,7 +345,9 @@ func showOverlay(){
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
-            showOverlay()
+            if(!pullToRefreshActive){
+                showOverlay()
+            }
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
@@ -447,7 +357,13 @@ func showOverlay(){
         }
         else
         {
-            removeOverlay()
+            if(!pullToRefreshActive){
+                removeOverlay()
+            }
+            else{
+                self.refreshControl.endRefreshing()
+                pullToRefreshActive = false
+            }
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -455,13 +371,15 @@ func showOverlay(){
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
         activityIndicator.hidden = true
-        self.refreshControl.endRefreshing()
-        pullToRefreshActive = false
+        if(pullToRefreshActive){
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+        }
+      
         self.dataSource.removeAll()
         dummy.removeAll()
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
             if (responseArrLive.count != 0)
             {
@@ -497,7 +415,12 @@ func showOverlay(){
                             }
                         })
                     }
-                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:"",self.channelNameKey:channelname])
+                    let dateFormatter = NSDateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    dateFormatter.timeZone = NSTimeZone(name: "UTC")
+                    let dateStr = dateFormatter.stringFromDate(NSDate())
+                    let currentDate = dateFormatter.dateFromString(dateStr)
+                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate!,self.channelNameKey:channelname])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     
@@ -506,7 +429,6 @@ func showOverlay(){
                 
             }
             initialise()
-            initialiseCloudData()
         }
         else
         {
@@ -516,10 +438,15 @@ func showOverlay(){
     
     func getAllStreamFailureHandler(error: NSError?, message: String)
     {
-        removeOverlay()
+        if(!pullToRefreshActive){
+            removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+        }
+        
         activityIndicator.hidden = true
-        self.refreshControl.endRefreshing()
-        pullToRefreshActive = false
         if !self.requestManager.validConnection() {
             loadStaticImagesOnly()
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -558,40 +485,6 @@ func showOverlay(){
     }
 }
 
-extension StreamsListViewController : UIScrollViewDelegate{
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let fullyScrolledContentOffset:CGFloat = streamListCollectionView.frame.size.width
-        
-        if (scrollView.contentOffset.x >= fullyScrolledContentOffset)
-        {
-            if(scrollView.contentOffset.x == fullyScrolledContentOffset)
-            {
-                
-            }
-        }
-        if offsetY > contentHeight - scrollView.frame.size.height {
-            
-            if(isLimitReached)
-            {
-                isLimitReached = false
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadCloudData(15, scrolled: true)
-                    
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        
-                    })
-                })
-                
-            }
-            
-        }
-    }
-}
-
 extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
@@ -615,7 +508,9 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
             if dataSource.count > indexPath.row
             {
                 let type = dataSource[indexPath.row][mediaTypeKey] as! String
-                let imageThumb = dataSource[indexPath.row][thumbImageKey] as? UIImage
+               if let imageThumb = dataSource[indexPath.row][thumbImageKey] as? UIImage
+               {
+                
                 if type == "video"
                 {
                     cell.liveStatusLabel.hidden = false
@@ -638,6 +533,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                     cell.liveNowIcon.image = UIImage(named: "Live_now")
                     cell.streamThumbnaleImageView.image = imageThumb
                 }
+            }
             }
         }
         return cell
