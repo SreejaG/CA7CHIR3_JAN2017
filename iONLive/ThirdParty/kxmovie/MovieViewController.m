@@ -367,7 +367,7 @@ static NSMutableDictionary * gHistory;
             mediaImage = [[UIImage alloc]initWithData:data];
         }
         else{
-            mediaImage = [UIImage imageNamed:@"photo3"];
+            mediaImage = [UIImage imageNamed:@"thumb12"];
         }
         [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
     }
