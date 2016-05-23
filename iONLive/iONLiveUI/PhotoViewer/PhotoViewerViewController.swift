@@ -83,6 +83,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaIdSelected : Int = 0
 
     
+    @IBOutlet var doneButton: UIButton!
     @IBOutlet var addToButton: UIButton!
     @IBOutlet var deletButton: UIButton!
     private var downloadTask: NSURLSessionDownloadTask?
@@ -95,6 +96,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        doneButton.setTitle("Done", forState: .Normal)
         initialise()
         getSignedURL()
         PhotoViewerInstance.controller = self
@@ -684,10 +686,25 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     @IBAction func donebuttonClicked(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        if(doneButton.titleLabel?.text == "Cancel"){
+            selectedArray.removeAll()
+            for i in 0 ..< dataSource.count
+            {
+                selectedArray.append(0)
+            }
+            photoThumpCollectionView.reloadData()
+            photoThumpCollectionView.layoutIfNeeded()
+            photoThumpCollectionView.scrollEnabled = true
+            doneButton.setTitle("Done", forState: .Normal)
+            deletButton.hidden = true
+            addToButton.hidden = true
+        }
+        else{
+            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+            self.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        }
     }
     
 }
@@ -725,8 +742,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 {
                     if selectedArray[i] == 1
                     {
-                        cell.layer.borderWidth = 5;
-                        cell.layer.borderColor = UIColor.blueColor().CGColor;
+                        cell.layer.borderWidth = 2;
+                        cell.layer.borderColor = UIColor(red: 44.0/255.0, green: 214.0/255.0, blue: 229.0/255.0, alpha: 0.7).CGColor
                     }
                     else{
                         cell.layer.borderWidth = 0;
@@ -804,6 +821,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
         photoThumpCollectionView.scrollEnabled = false
+        doneButton.setTitle("Cancel", forState: .Normal)
         for i in 0 ..< selectedArray.count
         {
             

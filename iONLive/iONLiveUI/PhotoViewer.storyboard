@@ -198,6 +198,7 @@
                         <outlet property="BottomView" destination="Ncu-eZ-Tvl" id="ngR-Fr-PqL"/>
                         <outlet property="addToButton" destination="6Fa-dd-16L" id="ItE-GW-gGh"/>
                         <outlet property="deletButton" destination="DAc-0e-fze" id="CSC-LG-zMg"/>
+                        <outlet property="doneButton" destination="E08-1q-r1T" id="xDa-6o-pd3"/>
                         <outlet property="fullScreenZoomView" destination="mJr-dY-xwO" id="Ozp-h4-Kcc"/>
                         <outlet property="fullScrenImageView" destination="y62-6N-UtC" id="5Hf-lc-vaB"/>
                         <outlet property="mediaTimeLabel" destination="tuh-W8-1lF" id="ZsN-OO-gdr"/>

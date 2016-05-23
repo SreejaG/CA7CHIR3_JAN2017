@@ -13,6 +13,7 @@ class ContactDetailsViewController: UIViewController {
     var selectedContacts : [[String:AnyObject]] = [[String:AnyObject]]()
     
     var contactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var contactDummy:[[String:AnyObject]] = [[String:AnyObject]]()
     var appContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[[String:AnyObject]]]?
     var indexTitles : NSArray = NSArray()
@@ -286,22 +287,50 @@ class ContactDetailsViewController: UIViewController {
     
     func setContactDetails()
     {
-        var index : Int = 0
-        if appContactsArr.count > 0 {
-            for element in appContactsArr{
-                let appNumber = element["mobile_no"] as! String
-                if let num : String = appNumber{
-                    index = 0
-                    for element in contactDataSource{
-                        let contactNumber = element["mobile_no"] as! String
-                        if contactNumber == num {
-                            contactDataSource.removeAtIndex(index)
-                        }
-                        index += 1
-                    }
+        
+        contactDummy.removeAll()
+        var Cflag : Bool = false
+        for i in 0 ..< contactDataSource.count
+        {
+            Cflag = false
+            let contactNumber = contactDataSource[i]["mobile_no"] as! String
+            for j in 0 ..< appContactsArr.count
+            {
+                let appNumber = appContactsArr[j]["mobile_no"] as! String
+                if(contactNumber == appNumber) {
+                    Cflag = true
+                    break
+                }
+                else{
+                    Cflag = false
                 }
             }
+            if(Cflag == false){
+                contactDummy.append(contactDataSource[i])
+            }
         }
+        
+        contactDataSource.removeAll()
+        contactDataSource = contactDummy
+        contactDummy.removeAll()
+        
+//        var index : Int = 0
+//        if appContactsArr.count > 0 {
+//            for element in appContactsArr{
+//                let appNumber = element["mobile_no"] as! String
+//                if let num : String = appNumber{
+//                    index = 0
+//                    for element in contactDataSource{
+//                        let contactNumber = element["mobile_no"] as! String
+//                        if contactNumber == num {
+//                            contactDataSource.removeAtIndex(index)
+//                        }
+//                        index += 1
+//                    }
+//                }
+//            }
+//        }
+
         
         dataSource = [appContactsArr,contactDataSource]
         
