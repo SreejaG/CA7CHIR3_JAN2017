@@ -92,7 +92,7 @@
                                                     <action selector="settingsbuttonClicked:" destination="ly1-be-vXc" eventType="touchUpInside" id="BTF-fq-RTh"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Snapcam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
+                                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iPhone" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MoJ-aw-347" userLabel="titlelabel">
                                                 <rect key="frame" x="0.0" y="30" width="600" height="30"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
@@ -193,6 +193,7 @@
                         <outlet property="iPhoneSnapCamImageView" destination="TVT-rz-qhg" id="24I-eZ-9hL"/>
                         <outlet property="snapCamButton" destination="cb8-gw-XJs" id="nrQ-PG-5bq"/>
                         <outlet property="snapCamSettingsTableView" destination="HDq-qv-DDE" id="jOR-Sr-Dkc"/>
+                        <outlet property="titleLabel" destination="MoJ-aw-347" id="sbO-se-3o8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9w2-KO-aGw" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -16,6 +16,7 @@ class SnapCamSelectViewController: UIViewController {
     var snapCamMode : SnapCamSelectionMode = .Photos
     var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
     
+    @IBOutlet var titleLabel: UILabel!
     var rowAfterAlertHit: Int!
     var cellAfterAlertHit : UITableViewCell = UITableViewCell()
     
@@ -49,10 +50,12 @@ class SnapCamSelectViewController: UIViewController {
         if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
         {
             dataSource[5] = "Switch to iPhone"
+            titleLabel.text = "Snapcam"
         }
         else
         {
             dataSource[5] = "Switch to SnapCam"
+            titleLabel.text = "iPhone"
         }
     }
     
@@ -105,14 +108,15 @@ extension SnapCamSelectViewController:UITableViewDelegate
         case 5:
             if  toggleSnapCamIPhoneMode == SnapCamSelectionMode.iPhone
             {
-                
+                titleLabel.text = "Snapcam"
                 loadCameraViewWithFadeInFadeOutAnimation()
             }
             else
             {
+                titleLabel.text = "iPhone"
                 let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
                 let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-                self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
+                self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
                 loadSnapCamViewWithFadeInFadeOutAnimation()
             }
             break
@@ -215,6 +219,7 @@ extension SnapCamSelectViewController
     {
         dataSource[5] = "Switch to SnapCam"
         toggleSnapCamIPhoneMode = SnapCamSelectionMode.SnapCam
+
         loadLiveStreamView()
     }
     
@@ -417,7 +422,7 @@ extension SnapCamSelectViewController
         
         let navController = UINavigationController(rootViewController: settingsVC)
         navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: true) { () -> Void in
+        self.presentViewController(navController, animated: false) { () -> Void in
         }
     }
     
@@ -425,8 +430,11 @@ extension SnapCamSelectViewController
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+        navController.navigationBarHidden = true
+        self.presentViewController(navController, animated: false) { () -> Void in
+        }
+
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
