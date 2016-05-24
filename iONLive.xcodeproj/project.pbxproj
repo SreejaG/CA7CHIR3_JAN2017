@@ -90,6 +90,7 @@
 		167512C61C3152CE007F5326 /* MyChannel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167512C51C3152CE007F5326 /* MyChannel.storyboard */; };
 		1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */; };
 		1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1677FEB81C48BFF900261F59 /* CoreLocation.framework */; };
+		1678D00E1CF4246B0021D805 /* SwiftAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678D00D1CF4246A0021D805 /* SwiftAlertView.swift */; };
 		167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */; };
 		167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0301BFDC1F6003CDF30 /* ViewController.swift */; };
 		167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167AF0321BFDC1F6003CDF30 /* Main.storyboard */; };
@@ -307,6 +308,7 @@
 		167512C51C3152CE007F5326 /* MyChannel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MyChannel.storyboard; sourceTree = "<group>"; };
 		1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamPickerTableViewCell.swift; sourceTree = "<group>"; };
 		1677FEB81C48BFF900261F59 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		1678D00D1CF4246A0021D805 /* SwiftAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftAlertView.swift; sourceTree = "<group>"; };
 		167AF02B1BFDC1F6003CDF30 /* CA7CH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CA7CH.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		167AF0301BFDC1F6003CDF30 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -719,6 +721,7 @@
 		1644B3D11C05698F004E3832 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				1678D00D1CF4246A0021D805 /* SwiftAlertView.swift */,
 				1644B3D21C05698F004E3832 /* ErrorManager.swift */,
 			);
 			path = Errors;
@@ -1757,6 +1760,7 @@
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
+				1678D00E1CF4246B0021D805 /* SwiftAlertView.swift in Sources */,
 				165E87451CAFB35F00CE03BD /* PhotoViewerInstance.swift in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,

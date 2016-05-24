@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class ErrorManager: NSObject, UIAlertViewDelegate {
+class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     let loginErrorTitle = "Login Error"
     let signUpErrorTitle = "SignUp Error"
@@ -240,7 +240,33 @@ class ErrorManager: NSObject, UIAlertViewDelegate {
         if message as String? == nil {
             message = "\nWe're sorry, but an error occurred. Please try again."
         }
-        UIAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: "OK").show()
+        let alertView = SwiftAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: nil)
+        alertView.appearType = SwiftAlertViewAppearType.FadeIn
+        alertView.disappearType = SwiftAlertViewDisappearType.FadeOut
+        alertView.appearTime = 0.2
+        alertView.disappearTime = 0.2
+        
+        alertView.show()
+        self.performSelector(#selector(ErrorManager.dismissAlert(_:)), withObject: alertView, afterDelay: 2)
+    }
+    
+    // MARK: SwiftAlertViewDelegate
+    
+    func alertView(alertView: SwiftAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        print("Button Clicked At Index \(buttonIndex)")
+    }
+    
+    func didPresentAlertView(alertView: SwiftAlertView) {
+        print("Did Present Alert View\n")
+    }
+    
+    func didDismissAlertView(alertView: SwiftAlertView) {
+        print("Did Dismiss Alert View\n")
+    }
+
+    
+    func dismissAlert(alert : SwiftAlertView){
+        alert.dismiss()
     }
     
     func channelAlreayExist()
