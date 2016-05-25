@@ -8,11 +8,10 @@
 
 import AddressBook
 import AddressBookUI
-import CoreLocation
 import UIKit
 
-class ContactListViewController: UIViewController,CLLocationManagerDelegate{
-    
+class ContactListViewController: UIViewController
+{
     private var addressBookRef: ABAddressBookRef?
     
     func setAddressBook(addressBook: ABAddressBookRef) {
@@ -21,14 +20,9 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     
     static let identifier = "ContactListViewController"
     
-    var locationManager:CLLocationManager = CLLocationManager()
-    
     var channelId:String!
     var totalMediaCount: Int = Int()
     var channelName:String!
-    var phoneCodeFromLocat : String = "nilValue"
-    
-    var callingFlag : Int = 0
     
     var loadingOverlay: UIView?
     
@@ -62,63 +56,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
         contactAuthorizationAlert()
-        initialise()
-    }
-    
-    func setUpLocationManager()
-    {
-        self.locationManager.requestWhenInUseAuthorization()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-    }
-    
-    func locationManager(manager: CLLocationManager,
-                         didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        var shouldIAllow = false
-        var locationStatus = ""
-        switch status {
-        case CLAuthorizationStatus.Restricted:
-            locationStatus = "Restricted Access to location"
-        case CLAuthorizationStatus.Denied:
-            locationStatus = "User denied access to location"
-        case CLAuthorizationStatus.NotDetermined:
-            locationStatus = "Status not determined"
-        default:
-            locationStatus = "Allowed to location Access"
-            shouldIAllow = true
-        }
-        
-        NSNotificationCenter.defaultCenter().postNotificationName("LabelHasbeenUpdated", object: nil)
-        if (shouldIAllow == true) {
-            showOverlay()
-            locationManager.startUpdatingLocation()
-            
-        } else {
-        }
-    }
-    
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        let location = locations.last! as CLLocation
-        let geocoder = CLGeocoder()
-        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, e) -> Void in
-            if let _ = e {
-                print("Error:  \(e!.localizedDescription)")
-            } else {
-                let placemark = placemarks!.last! as CLPlacemark
-                
-                let userInfo = [
-                    "city":     placemark.locality,
-                    "state":    placemark.administrativeArea,
-                    "country":  placemark.country,
-                    "code":placemark.ISOcountryCode
-                ]
-                self.callingFlag = self.callingFlag + 1
-                let phoneNumberUtil = NBPhoneNumberUtil.sharedInstance()
-                self.phoneCodeFromLocat = "+\(phoneNumberUtil.getCountryCodeForRegion(userInfo["code"]!))"
-                self.displayContacts()
-            }
-        })
     }
     
     override func didReceiveMemoryWarning() {
@@ -126,7 +63,6 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     }
     
     override func viewWillDisappear(animated: Bool) {
-        locationManager.stopUpdatingLocation()
         removeOverlay()
     }
     
@@ -226,6 +162,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         tapFlag = true
         doneButton.hidden = true
         contactPhoneNumbers.removeAll()
+        displayContacts()
     }
     
     func contactAuthorizationAlert()
@@ -237,7 +174,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             generateContactSynchronizeAlert()
         case .Authorized:
             print("Authorized")
-            setUpLocationManager()
+            self.initialise()
         case .NotDetermined:
             print("Not Determined")
             promptForAddressBookRequestAccess()
@@ -267,7 +204,7 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
                     self.generateContactSynchronizeAlert()
                 } else {
                     print("Just authorized")
-                    self.setUpLocationManager()
+                    self.initialise()
                 }
             }
         }
@@ -289,17 +226,16 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
     }
     
     func displayContacts(){
+        showOverlay()
         contactPhoneNumbers.removeAll()
-        self.locationManager.stopUpdatingLocation()
-        self.locationManager.stopUpdatingHeading()
-        self.locationManager.stopMonitoringVisits()
-        let phoneCode = phoneCodeFromLocat
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let phoneCode = defaults.valueForKey("countryCode") as! String
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
             var phoneNumber: String = String()
             var appendPlus : String = String()
-            for(var numberIndex : CFIndex = 0; numberIndex < ABMultiValueGetCount(phones); numberIndex += 1)
+            for numberIndex : CFIndex in 0 ..< ABMultiValueGetCount(phones)
             {
                 let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
                 let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
@@ -337,10 +273,10 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         }
         if contactPhoneNumbers.count > 0
         {
-            if callingFlag == 2
-            {
-                addContactDetails(self.contactPhoneNumbers)
-            }
+            addContactDetails(self.contactPhoneNumbers)
+        }
+        else{
+            removeOverlay()
         }
     }
     
@@ -444,6 +380,21 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
         
     }
     
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -454,28 +405,22 @@ class ContactListViewController: UIViewController,CLLocationManagerDelegate{
             var contactImage : UIImage = UIImage()
             for element in responseArr{
                 let userName = element["userName"] as! String
-//                if let imageName =  element["profile_image"]
-//                {
-//                    if let imageByteArray: NSArray = imageName!["data"] as? NSArray
-//                    {
-//                        var bytes:[UInt8] = []
-//                        for serverByte in imageByteArray {
-//                            bytes.append(UInt8(serverByte as! UInt))
-//                        }
-//                        
-//                        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-//                            let profileImageData = profileData as NSData?
-//                            contactImage = UIImage(data: profileImageData!)!
-//                        }
-//                    }
-//                    else{
-//                        contactImage = UIImage(named: "avatar")!
-//                    }
-//                }
-//                else{
-//                    contactImage = UIImage(named: "avatar")!
-//                }
-                contactImage = UIImage(named: "avatar")!
+                let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
+                let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
+                if(thumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        let imageDetailsData = (data as NSData?)!
+                        contactImage = UIImage(data: imageDetailsData)!
+                    }
+                    else{
+                        contactImage = UIImage(named: "dummyUser")!
+                    }
+                }
+                else{
+                    contactImage = UIImage(named: "dummyUser")!
+                }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage])
             }
             contactListTableView.reloadData()

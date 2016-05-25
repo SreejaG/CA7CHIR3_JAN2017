@@ -167,6 +167,14 @@ class MyChannelNotificationViewController: UIViewController {
         return ""
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -183,26 +191,25 @@ class MyChannelNotificationViewController: UIViewController {
                     let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
-                    if let mediaThumbUrl: String = element["thumbnail_name_SignedUrl"] as? String
+                    
+                    let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
+                    let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+                    if(mediaThumbUrl != "")
                     {
                         mediaImage = createMediaThumb(mediaThumbUrl)
                     }
                     else{
                         mediaImage = UIImage(named: "thumb12")
                     }
-                    
-                    if let profileImageName = element["profile_image"]
+                   
+                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
+                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
+                    if(profileImageName != "")
                     {
-                        if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
-                        {
-                            profileImage = createProfileImage(imageByteArray)
-                        }
-                        else{
-                            profileImage = UIImage(named: "avatar")
-                        }
+                         profileImage = createProfileImage(profileImageName)
                     }
                     else{
-                        profileImage = UIImage(named: "avatar")
+                        profileImage = UIImage(named: "dummyUser")
                     }
                     dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!, notificationTimeKey:notTime])
                 }
@@ -217,18 +224,14 @@ class MyChannelNotificationViewController: UIViewController {
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     
-                    if let profileImageName = element["profile_image"]
+                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
+                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
+                    if(profileImageName != "")
                     {
-                        if let imageByteArray: NSArray = profileImageName["data"] as? NSArray
-                        {
-                            profileImage = createProfileImage(imageByteArray)
-                        }
-                        else{
-                            profileImage = UIImage(named: "avatar")
-                        }
+                        profileImage = createProfileImage(profileImageName)
                     }
                     else{
-                        profileImage = UIImage(named: "avatar")
+                        profileImage = UIImage(named: "dummyUser")
                     }
                     dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:UIImage(),notificationTimeKey:notTime])
                 }
@@ -270,22 +273,18 @@ class MyChannelNotificationViewController: UIViewController {
         return mediaImage!
     }
     
-    func createProfileImage(profileName: NSArray) -> UIImage
+    func createProfileImage(profileName: String) -> UIImage
     {
-        var profileImage : UIImage?
-        var bytes:[UInt8] = []
-        for serverByte in profileName {
-            bytes.append(UInt8(serverByte as! UInt))
-        }
-        
-        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-            let profileImageData = profileData as NSData?
-            profileImage = UIImage(data: profileImageData!)
+        var profileImage : UIImage = UIImage()
+        let url: NSURL = convertStringtoURL(profileName)
+        if let data = NSData(contentsOfURL: url){
+            let imageDetailsData = (data as NSData?)!
+            profileImage = UIImage(data: imageDetailsData)!
         }
         else{
-            profileImage = UIImage(named: "avatar")
+            profileImage = UIImage(named: "dummyUser")!
         }
-        return profileImage!
+        return profileImage
     }
     
     func  getTimeDifference(dateStr:String) -> String {

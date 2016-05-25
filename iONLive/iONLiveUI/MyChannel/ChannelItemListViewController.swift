@@ -136,6 +136,14 @@ class ChannelItemListViewController: UIViewController {
         self.loadingOverlay?.removeFromSuperview()
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -145,9 +153,11 @@ class ChannelItemListViewController: UIViewController {
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
+                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
+                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
+                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
+                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }

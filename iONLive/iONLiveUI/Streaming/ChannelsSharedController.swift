@@ -25,7 +25,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     let timeStamp = "created_time_stamp"
     let lastUpdatedTimeStamp = "notificationTime"
     let usernameKey = "user_name"
-    let profileImageKey = "profile_image"
+    let profileImageKey = "profile_image_thumbnail"
     let liveStreamStatus = "liveChannel"
     let isWatched = "isWatched"
     let streamTockenKey = "wowza_stream_token"
@@ -145,6 +145,14 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         return searchURL
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -164,25 +172,26 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     let channelName = element[channelNameKey] as! String
                     let streamTocken = element[streamTockenKey] as! String
                     let mediaSharedCount = element[sharedMediaCount]?.stringValue
-                    
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
                     
-                    let profileImageName = element[profileImageKey]
-                    if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                    //signed url iprofile
+                    
+                    let thumbUrlBeforeNullChk =  element[profileImageKey]
+                    let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
+                    if(thumbUrl != "")
                     {
-                        var bytes:[UInt8] = []
-                        for serverByte in imageByteArray {
-                            bytes.append(UInt8(serverByte as! UInt))
+                        let url: NSURL = convertStringtoURL(thumbUrl)
+                        if let data = NSData(contentsOfURL: url){
+                            let imageDetailsData = (data as NSData?)!
+                            profileImage = UIImage(data: imageDetailsData)!
                         }
-                        
-                        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                            let profileImageData = profileData as NSData?
-                            profileImage = UIImage(data: profileImageData!)
+                        else{
+                            profileImage = UIImage(named: "dummyUser")!
                         }
                     }
                     else{
-                        profileImage = UIImage(named: "avatar")!
+                        profileImage = UIImage(named: "dummyUser")!
                     }
                     mediaImage = UIImage(named: "thumb12")
                     dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:"",usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
@@ -208,7 +217,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 let liveStream = "0"
                 if liveStream == "0"
                 {
-                    let mediaThumbUrl = element["thumbnail_Url"] as! String
+                    let mediaThumbUrlBeforeNullChk = element["thumbnail_Url"]
+                    let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
                     if(mediaThumbUrl != "")
                     {
                         let url: NSURL = convertStringtoURL(mediaThumbUrl)
@@ -230,22 +240,45 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     mediaImage = UIImage()
                 }
                 
-                let profileImageName = element[profileImageKey]
-                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                //     signedurl profile image
+                
+                let profileImageNameBeforeNullChk =  element[profileImageKey]
+                let thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
+                if(thumbUrl != "")
                 {
-                    var bytes:[UInt8] = []
-                    for serverByte in imageByteArray {
-                        bytes.append(UInt8(serverByte as! UInt))
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        let imageDetailsData = (data as NSData?)!
+                        profileImage = UIImage(data: imageDetailsData)!
                     }
-                    
-                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                        let profileImageData = profileData as NSData?
-                        profileImage = UIImage(data: profileImageData!)
+                    else{
+                        profileImage = UIImage(named: "dummyUser")!
                     }
                 }
                 else{
-                    profileImage = UIImage(named: "avatar")!
+                    profileImage = UIImage(named: "dummyUser")!
                 }
+                
+                //
+                //                let profileImageName = element[profileImageKey]
+                //                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
+                //                {
+                //                    var bytes:[UInt8] = []
+                //                    for serverByte in imageByteArray {
+                //                        bytes.append(UInt8(serverByte as! UInt))
+                //                    }
+                //
+                //                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
+                //                        let profileImageData = profileData as NSData?
+                //                        profileImage = UIImage(data: profileImageData!)
+                //                    }
+                //                }
+                //                else{
+                //                    profileImage = UIImage(named: "avatar")!
+                //                }
+                //
+                //                profileImage = UIImage(named: "dummyUser")!
+                
                 if( mediaShared.count > 0)
                 {
                     var flag: Bool = false

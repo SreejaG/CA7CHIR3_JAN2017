@@ -190,7 +190,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="58"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="boyFace" translatesAutoresizingMaskIntoConstraints="NO" id="fKx-gM-dvr">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dummyUser" translatesAutoresizingMaskIntoConstraints="NO" id="fKx-gM-dvr">
                                                     <rect key="frame" x="24" y="7" width="40" height="40"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="kL7-nc-kwW"/>
@@ -484,8 +484,8 @@
         <image name="Live_now" width="10" height="9"/>
         <image name="all_media" width="38" height="20"/>
         <image name="all_media_blue" width="38" height="20"/>
-        <image name="boyFace" width="28" height="28"/>
         <image name="channels_blue" width="22" height="22"/>
+        <image name="dummyUser" width="128" height="128"/>
         <image name="snapCamMode" width="25" height="25"/>
     </resources>
 </document>

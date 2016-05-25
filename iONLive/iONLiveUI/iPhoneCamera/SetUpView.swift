@@ -18,6 +18,7 @@ import UIKit
     var status: Int = Int()
     var userImages : [UIImage] = [UIImage]()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -56,35 +57,46 @@ import UIKit
         }
     }
     
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+
     func setChannelDetails()
     {
         userImages.removeAll()
-        let userThumbnailImage = channelDetails["sharedUserThumbnails"]
+        print(channelDetails)
+        
+        let userThumbnailImage = channelDetails["sharedUserThumbnails"] as! NSArray
         let cameraController = IPhoneCameraViewController()
         let sizeThumb = CGSizeMake(28,28)
-        if userThumbnailImage != nil
+        
+        for i in 0 ..< userThumbnailImage.count
         {
-            if userThumbnailImage?.count > 0
+            var image = UIImage()
+            let thumbUrl =  userThumbnailImage[i] as! String
+            if(thumbUrl != "")
             {
-                for var i = 0; i < userThumbnailImage?.count; i += 1
-                {
-                    var image = UIImage()
-                    if let imageByteArray: NSArray = userThumbnailImage![i]["data"] as? NSArray{
-                        var bytes:[UInt8] = []
-                        for serverByte in imageByteArray {
-                            bytes.append(UInt8(serverByte as! UInt))
-                        }
-                        let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                        if let datas = imageData as NSData? {
-                            image = UIImage(data: datas)!
-                            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(image, scaledToFillSize: sizeThumb)
-                            userImages.append(imageAfterConversionThumbnail)
-                        }
-                    }
+                let url: NSURL = convertStringtoURL(thumbUrl)
+                if let data = NSData(contentsOfURL: url){
+                    var convertImage : UIImage = UIImage()
+                    let imageDetailsData = (data as NSData?)!
+                    convertImage = UIImage(data: imageDetailsData)!
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFillSize: sizeThumb)
+                    image = imageAfterConversionThumbnail
+                }
+                else{
+                    image = UIImage(named: "dummyUser")!
                 }
             }
+            else{
+                image = UIImage(named: "dummyUser")!
+            }
+            userImages.append(image)
         }
-//        print(channelDetails)
+        
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }

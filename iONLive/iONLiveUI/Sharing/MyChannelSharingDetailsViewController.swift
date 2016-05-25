@@ -48,7 +48,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         self.refreshControlSecnd.addTarget(self, action: "pullToRefreshSecnd", forControlEvents: UIControlEvents.ValueChanged)
         self.contactTableView.addSubview(refreshControlSecnd)
         self.contactTableView.alwaysBounceVertical = true
-    
+        
         initialise()
     }
     
@@ -149,7 +149,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
         if(!pullToRefreshActiveSecnd){
-             showOverlay()
+            showOverlay()
         }
         channelManager.inviteContactList(userName, accessToken: accessToken, channelId: channelid, adduser: addUser, deleteUser: deleteUser, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
@@ -197,7 +197,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
         }
-
+        
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int
@@ -243,6 +243,21 @@ class MyChannelSharingDetailsViewController: UIViewController {
         
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         if(!pullToRefreshActiveSecnd){
@@ -258,30 +273,31 @@ class MyChannelSharingDetailsViewController: UIViewController {
             let responseArr = json["contactList"] as! [AnyObject]
             var channelSelected : String = String()
             var contactImage : UIImage = UIImage()
+            print(responseArr)
             for element in responseArr{
                 let userName = element["userName"] as! String
-//                if let imageName =  element["profile_image"]
-//                {
-//                    if let imageByteArray: NSArray = imageName!["data"] as? NSArray
-//                    {
-//                        var bytes:[UInt8] = []
-//                        for serverByte in imageByteArray {
-//                            bytes.append(UInt8(serverByte as! UInt))
-//                        }
-//                        
-//                        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-//                            let profileImageData = profileData as NSData?
-//                            contactImage = UIImage(data: profileImageData!)!
-//                        }
-//                    }
-//                    else{
-//                        contactImage = UIImage(named: "avatar")!
-//                    }
-//                }
-//                else{
-//                    contactImage = UIImage(named: "avatar")!
-//                }
-                contactImage = UIImage(named: "avatar")!
+                
+                //signed url iprofile
+                
+                let imageNameBeforeNullChk =  element["profile_image_thumbnail"]
+                let imageName =  nullToNil(imageNameBeforeNullChk) as! String
+                if(imageName != "")
+                {
+                    let url: NSURL = convertStringtoURL(imageName)
+                    if let data = NSData(contentsOfURL: url){
+                        let imageDetailsData = (data as NSData?)!
+                        contactImage = UIImage(data: imageDetailsData)!
+                    }
+                    else{
+                        contactImage = UIImage(named: "dummyUser")!
+                    }
+                }
+                else{
+                    contactImage = UIImage(named: "dummyUser")!
+                }
+              
+//                contactImage = UIImage(named: "dummyUser")!
+                
                 let subscriptionValue =  Int(element["sharedindicator"] as! Bool)
                 if(subscriptionValue == 1)
                 {
@@ -308,7 +324,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         else{
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
-        } 
+        }
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -392,7 +408,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
         }
-
+        
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int

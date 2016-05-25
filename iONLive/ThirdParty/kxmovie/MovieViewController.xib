@@ -239,7 +239,7 @@
                                                         <action selector="didTapHeartImage:" destination="-1" eventType="touchUpInside" id="d4G-nd-i2h"/>
                                                     </connections>
                                                 </button>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BMp-J9-C8j">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dummyUser" translatesAutoresizingMaskIntoConstraints="NO" id="BMp-J9-C8j">
                                                     <rect key="frame" x="10" y="10" width="40" height="40"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="KS9-IN-u7o"/>
@@ -432,6 +432,7 @@
         <image name="avatarCircleStroke" width="35" height="35"/>
         <image name="boyFace" width="28" height="28"/>
         <image name="close" width="25" height="25"/>
+        <image name="dummyUser" width="128" height="128"/>
         <image name="girlFace1" width="29" height="29"/>
         <image name="girlFace2" width="29" height="29"/>
         <image name="hearth" width="22" height="21"/>

@@ -90,13 +90,13 @@ public class SwiftAlertView: UIView {
     
     private let kSeparatorWidth = 0.5
     private let kDefaultWidth = 270.0
-    private let kDefaultHeight = 100.0
-    private let kDefaultTitleSizeMargin = 10.0
-    private let kDefaultMessageSizeMargin = 10.0
+    private let kDefaultHeight = 120.0
+    private let kDefaultTitleSizeMargin = 5.0
+    private let kDefaultMessageSizeMargin = 2.0
     private let kDefaultButtonHeight = 44.0
     private let kDefaultCornerRadius = 8.0
-    private let kDefaultTitleTopMargin = 20.0
-    private let kDefaultTitleToMessageSpacing = 5.0
+    private let kDefaultTitleTopMargin = 10.0
+    private let kDefaultTitleToMessageSpacing = 2.0
     private let kDefaultMessageBottomMargin = 10.0
     private let kDefaultDimAlpha = 0.4
     

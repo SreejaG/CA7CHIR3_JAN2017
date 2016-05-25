@@ -263,9 +263,11 @@ class SignUpVerifyPhoneViewController: UIViewController
     func generateVerificationCode(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String)
     {
         showOverlay()
+        let userCountryCode = self.countryCodeTextField.text
+
         let timeZoneOffsetInGMT : String = ltzAbbrev()
         let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, success: { (response) -> () in
+        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
@@ -362,6 +364,7 @@ class SignUpVerifyPhoneViewController: UIViewController
             status = json["status"] as! Int
             if(status >= 1)
             {
+                print(json)
                 verificationCode = ""
                 if let tocken = json["token"]
                 {
@@ -370,6 +373,10 @@ class SignUpVerifyPhoneViewController: UIViewController
                 if let bucketName = json["BucketName"]
                 {
                     defaults.setValue(bucketName, forKey: userBucketName)
+                }
+                if let code = json["countryCode"]
+                {
+                    defaults.setValue(code, forKey: "countryCode")
                 }
                 loadFindFriendsView()
             }

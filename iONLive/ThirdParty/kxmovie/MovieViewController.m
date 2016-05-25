@@ -265,8 +265,10 @@ static NSMutableDictionary * gHistory;
                   mediaId: (NSString *) mediaId
                 isProfile: (BOOL) isProfile
 {
+    
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
+    
         [self setUpDefaultValues];
         [self setUpViewForImageVideo];
         NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];

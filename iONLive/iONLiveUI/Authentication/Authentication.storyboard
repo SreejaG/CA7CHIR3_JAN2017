@@ -906,7 +906,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Day" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fLc-RX-jaP">
-                                                    <rect key="frame" x="70" y="19" width="60" height="22"/>
+                                                    <rect key="frame" x="80" y="19" width="60" height="22"/>
                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="18"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -922,11 +922,11 @@
                                                         <action selector="contactSelectionButtonClicked:" destination="wFm-Wz-HUC" eventType="touchUpInside" id="VYl-kq-PJe"/>
                                                     </connections>
                                                 </button>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="NPF-Sj-xq7">
-                                                    <rect key="frame" x="20" y="15" width="30" height="30"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dummyUser" translatesAutoresizingMaskIntoConstraints="NO" id="NPF-Sj-xq7">
+                                                    <rect key="frame" x="20" y="10" width="40" height="40"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="025-L2-kbq"/>
-                                                        <constraint firstAttribute="height" constant="30" id="I5x-5o-aT7"/>
+                                                        <constraint firstAttribute="width" constant="40" id="025-L2-kbq"/>
+                                                        <constraint firstAttribute="height" constant="40" id="I5x-5o-aT7"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -1122,7 +1122,7 @@
     </scenes>
     <resources>
         <image name="LoginIcon" width="79" height="79"/>
-        <image name="avatar" width="11" height="12"/>
+        <image name="dummyUser" width="128" height="128"/>
         <image name="red-circle" width="20" height="20"/>
     </resources>
 </document>

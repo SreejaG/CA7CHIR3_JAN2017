@@ -839,14 +839,14 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Grn-lP-Ucd">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dummyUser" translatesAutoresizingMaskIntoConstraints="NO" id="Grn-lP-Ucd">
                                                             <rect key="frame" x="8" y="0.0" width="40" height="40"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="40" id="cT8-Zj-DhJ"/>
                                                                 <constraint firstAttribute="width" constant="40" id="ru4-MS-4oL"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PiX-fg-0mB">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="PiX-fg-0mB">
                                                             <rect key="frame" x="549" y="4" width="35" height="35"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="35" id="5Um-gV-BYu"/>
@@ -924,11 +924,12 @@
         <image name="DoneButton" width="32" height="32"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
         <image name="Select thumbnails" width="34" height="31"/>
+        <image name="dummyUser" width="128" height="128"/>
         <image name="notif" width="29" height="25"/>
         <image name="plusChannel" width="65" height="65"/>
         <image name="snapCamMode" width="25" height="25"/>
         <image name="thumb11" width="124" height="125"/>
-        <image name="thumb12" width="124" height="125"/>
+        <image name="thumb12" width="128" height="128"/>
         <image name="triangleIcon" width="64" height="52"/>
         <image name="white_back" width="12" height="21"/>
     </resources>

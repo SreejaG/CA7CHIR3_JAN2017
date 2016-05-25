@@ -306,6 +306,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func setChannelDetails()
     {
         dataSource.removeAll()
@@ -315,7 +323,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let channelName = element["channel_name"] as! String
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
-            let thumbUrl = element["thumbnail_Url"] as! String
+            let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
+            let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
             let mediaDetailId = element["media_detail_id"]?.stringValue
             if mediaDetailId != nil
             {

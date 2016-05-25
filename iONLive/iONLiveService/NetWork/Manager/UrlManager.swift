@@ -9,8 +9,9 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://104.196.113.247:3000";
-//    let baseUrl = "http://192.168.16.58:3000";
+//    let baseUrl = "http://104.196.113.247:3000";
+    
+    let baseUrl = "http://192.168.16.49:3000";
     let iONLiveCamUrl = "http://192.168.42.1:8888"
     
     class var sharedInstance: UrlManager {
@@ -147,6 +148,13 @@ class UrlManager {
         return getProfileImageUploadAPI
     }
     
+    func getProfileUploadAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getProfileUploadAPI = profileImageAPIUrl() + "/" + userName + "/" + accessToken
+        print(getProfileUploadAPI)
+        return getProfileUploadAPI
+    }
+
     func getAllChannelsAPIUrl(userName: String, accessToken: String) -> String
     {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken

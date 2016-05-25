@@ -204,6 +204,14 @@ class ContactDetailsViewController: UIViewController {
         }
     }
     
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -213,32 +221,31 @@ class ContactDetailsViewController: UIViewController {
             let responseArr = json["contactListOfUser"] as! [AnyObject]
             var contactImage : UIImage = UIImage()
             for element in responseArr{
+                
                 let userName = element[nameKey] as! String
                 let selection = element[inviteKey] as! String
                 let mobNum = element[phoneKey] as! String
-//                if let imageName =  element[imageKey]
-//                {
-//                    if let imageByteArray: NSArray = imageName!["data"] as? NSArray
-//                    {
-//                        var bytes:[UInt8] = []
-//                        for serverByte in imageByteArray {
-//                            bytes.append(UInt8(serverByte as! UInt))
-//                        }
-//                        
-//                        if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-//                            let profileImageData = profileData as NSData?
-//                            contactImage = UIImage(data: profileImageData!)!
-//                        }
-//                    }
-//                    else{
-//                        contactImage = UIImage(named: "avatar")!
-//                    }
-//                }
-//                else{
-//                    contactImage = UIImage(named: "avatar")!
-//                }
                 
-                contactImage = UIImage(named: "avatar")!
+                //signed url iprofile
+               
+                let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
+                let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
+                if(thumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        let imageDetailsData = (data as NSData?)!
+                        contactImage = UIImage(data: imageDetailsData)!
+                    }
+                    else{
+                        contactImage = UIImage(named: "dummyUser")!
+                    }
+                }
+                else{
+                    contactImage = UIImage(named: "dummyUser")!
+                }
+
+//                contactImage = UIImage(named: "avatar")!
 
                 appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage,inviteKey:selection])
                
@@ -313,25 +320,7 @@ class ContactDetailsViewController: UIViewController {
         contactDataSource.removeAll()
         contactDataSource = contactDummy
         contactDummy.removeAll()
-        
-//        var index : Int = 0
-//        if appContactsArr.count > 0 {
-//            for element in appContactsArr{
-//                let appNumber = element["mobile_no"] as! String
-//                if let num : String = appNumber{
-//                    index = 0
-//                    for element in contactDataSource{
-//                        let contactNumber = element["mobile_no"] as! String
-//                        if contactNumber == num {
-//                            contactDataSource.removeAtIndex(index)
-//                        }
-//                        index += 1
-//                    }
-//                }
-//            }
-//        }
-
-        
+       
         dataSource = [appContactsArr,contactDataSource]
         
         for ele in appContactsArr{

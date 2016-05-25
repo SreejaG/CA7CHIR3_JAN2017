@@ -202,6 +202,7 @@ class LoginViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             clearStreamingUserDefaults(defaults)
+            print(json)
             print("success = \(json["status"]),\(json["token"]),\(json["user"])")
             if let tocken = json["token"]
             {
@@ -210,6 +211,10 @@ class LoginViewController: UIViewController {
             if let userId = json["user"]
             {
                 defaults.setValue(userId, forKey: userLoginIdKey)
+            }
+            if let code = json["countryCode"]
+            {
+                defaults.setValue(code, forKey: "countryCode")
             }
         }
         else

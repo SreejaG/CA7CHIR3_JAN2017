@@ -21,9 +21,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     let imagePicker = UIImagePickerController()
     var imageForProfile : UIImage = UIImage()
     
-    var signedURL : String = String()
-    var signedURLName : String = String()
+    var fullImageURL : String = String()
     var thumbURL : String = String()
+    
     var cellSection = Int()
     
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
@@ -185,6 +185,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         self.loadingOverlay?.removeFromSuperview()
     }
     
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
+    
     func setUserDetails()
     {
         imageForProfile = UIImage()
@@ -192,25 +199,34 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let userName = userDetails["user_name"] as! String
         let email = userDetails["email"] as! String
         let mobileNo = userDetails["mobile_no"] as! String
-        if let imageName =  userDetails["profile_image"]
+        
+        let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
+        if(thumbUrl != "")
         {
-            if let imageByteArray: NSArray = imageName["data"] as? NSArray{
-                var bytes:[UInt8] = []
-                for serverByte in imageByteArray {
-                    bytes.append(UInt8(serverByte as! UInt))
-                }
-                let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-                if let datas = imageData as NSData? {
-                    imageForProfile = UIImage(data: datas)!
-                }
+            let url: NSURL = convertStringtoURL(thumbUrl)
+            if let data = NSData(contentsOfURL: url){
+                let imageDetailsData = (data as NSData?)!
+                imageForProfile = UIImage(data: imageDetailsData)!
             }
             else{
-                imageForProfile = UIImage(named: "girlFace2")!
+                imageForProfile = UIImage(named: "dummyUser")!
             }
         }
         else{
-            imageForProfile = UIImage(named: "girlFace2")!
+            imageForProfile = UIImage(named: "dummyUser")!
         }
+        
+        
+        //        if let imageByteArray: NSArray = imageName["data"] as? NSArray{
+        //            var bytes:[UInt8] = []
+        //            for serverByte in imageByteArray {
+        //                bytes.append(UInt8(serverByte as! UInt))
+        //            }
+        //            let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
+        //            if let datas = imageData as NSData? {
+        //                imageForProfile = UIImage(data: datas)!
+        //            }
+        //        }
         
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
@@ -233,11 +249,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     func getSignedUrl()  {
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        imageUploadManger.getSignedURL(userId, accessToken: accessToken, mediaType: "image", success: { (response) in
+        profileManager.getUploadProfileImageURL(userId, accessToken: accessToken, success: { (response) in
             self.authenticationSuccessHandlerSignedUrl(response)
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
@@ -250,11 +265,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         if let json = response as? [String: AnyObject]
         {
-            if let fullUrl = json["UploadObjectUrl"]{
-                signedURL = fullUrl as! String
-            }
-            if let name = json["ObjectName"]{
-                signedURLName = name as! String
+            if let fullUrl = json["UploadActualImageUrl"]{
+                fullImageURL = fullUrl as! String
             }
             if let thumbUrl = json["UploadThumbnailUrl"]{
                 thumbURL = thumbUrl as! String
@@ -264,20 +276,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             let sizeThumb = CGSizeMake(70,70)
             let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
             let imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail, 0.5)
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            self.profileManager.uploadProfileImage(userId, accessToken: accessToken, profileImage:imageData!, actualImageUrl: self.signedURLName, success: { (response) in
-                
-                self.updateProfileDetails()
-                
-                }, failure: { (error, message) in
-                    self.authenticationFailureHandler(error, code: message)
-                    return
-            })
+            let imagethumbDetailsData = (imageData as NSData?)!
+            let thumbImageForProfile = UIImage(data:imagethumbDetailsData)
             
-            uploadImage(signedURL, imageToSave: imageForProfile, completion: { (result) in
+            uploadImage(fullImageURL, imageToSave: imageForProfile, completion: { (result) in
+                self.uploadImage(self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
+                })
             })
+            self.updateProfileDetails()
         }
     }
     
@@ -288,7 +294,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-       
         
         var email: String = String()
         var mobNo: String = String()
@@ -319,15 +324,15 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
         }
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
-                NSCharacterSet.decimalDigitCharacterSet().invertedSet)
+            NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-    
+        
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
-                self.removeOverlay()
-            }) { (error, message) in
-                self.authenticationFailureHandler(error, code: message)
-                return
-            }
+            self.removeOverlay()
+        }) { (error, message) in
+            self.authenticationFailureHandler(error, code: message)
+            return
+        }
     }
     
     func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: (result: String) -> Void)
