@@ -347,8 +347,15 @@ int cameraChangeFlag = 0;
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
     
     _snapCamMode = SnapCamSelectionModeiPhone;
-    _currentFlashMode = AVCaptureFlashModeOff;
     
+    _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
+   
+    if(_currentFlashMode == 0){
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
+    }
+    else if(_currentFlashMode == 1){
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
+    }
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     
@@ -1183,15 +1190,20 @@ int cameraChangeFlag = 0;
 
 - (IBAction)didTapFlashImage:(id)sender {
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     if (_currentFlashMode == AVCaptureFlashModeOn) {
         
         [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
         _currentFlashMode = AVCaptureFlashModeOff;
+        
+        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
     }
     else{
         
         [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal]; //Need to update the icon once available.
         _currentFlashMode = AVCaptureFlashModeOn;
+        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
     }
 }
 

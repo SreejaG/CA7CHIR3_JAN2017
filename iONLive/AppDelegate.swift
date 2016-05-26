@@ -84,6 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var controller : UIViewController = UIViewController()
         NSUserDefaults.standardUserDefaults().setObject(1, forKey: "shutterActionMode");
         
+        NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
+        
         //Auto login check
         if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
         {

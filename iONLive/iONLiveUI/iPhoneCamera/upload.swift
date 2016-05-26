@@ -78,7 +78,7 @@ protocol uploadProgressDelegate
     func readImage()
     {
         let cameraController = IPhoneCameraViewController()
-        print(shotDict.count)
+     //   print(shotDict.count)
         if shotDict.count > 0
         {
             let snapShotsKeys = shotDict.allKeys as NSArray
@@ -570,7 +570,7 @@ protocol uploadProgressDelegate
                 progressDictionary[i]["progress"] = progress
             }
         }
-        print(progressDictionary)
+   //     print(progressDictionary)
         
         defaults.setValue(progressDictionary, forKey: "ProgressDict")
         if PhotoViewerInstance.controller != nil
