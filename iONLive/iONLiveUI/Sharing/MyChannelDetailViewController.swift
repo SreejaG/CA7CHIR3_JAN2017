@@ -23,7 +23,7 @@ class MyChannelDetailViewController: UITabBarController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-        self.selectedIndex = 0
+        self.selectedIndex = 1
         let tabBarItems = self.tabBar.items
         if let items = tabBarItems
         {

@@ -124,6 +124,13 @@ int cameraChangeFlag = 0;
     [super viewWillDisappear:animated];
 //    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
 //    [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+        
+    }else {
+        [self.videoDeviceInput.device lockForConfiguration:nil];
+        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+        [self.videoDeviceInput.device unlockForConfiguration];
+    }
     [self removeObservers];
   
 }
@@ -136,9 +143,12 @@ int cameraChangeFlag = 0;
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     
+    NSLog(@"%lu",(unsigned long)userImages.count);
+    NSLog(@"%@",userImages);
     if(userImages.count > 0){
         for(int i=0;i<userImages.count;i++){
-            if(i==0){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if(i==0){
                 if(userImages[0] != nil){
                     [_firstButton setImage:userImages[0] forState:UIControlStateNormal];
                 }
@@ -154,14 +164,15 @@ int cameraChangeFlag = 0;
                     [_secondButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
                 }
             }
-            else if(i==3){
-                if(userImages[3] != nil){
-                    [_thirdButton setImage:userImages[3] forState:UIControlStateNormal];
+            else if(i==2){
+                if(userImages[2] != nil){
+                    [_thirdButton setImage:userImages[2] forState:UIControlStateNormal];
                 }
                 else{
                     [_thirdButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
                 }
             }
+            });
         }
     }
     _sharedUserCount.text = sharedUserCount;
@@ -678,7 +689,7 @@ int cameraChangeFlag = 0;
                     if ( ! success ) {
                         NSLog( @"Could not save movie to photo library: %@", error );
                     }
-                    // cleanup();
+                
                 }];
             }
             else {
@@ -752,11 +763,13 @@ int cameraChangeFlag = 0;
         if ( [device lockForConfiguration:&error] ) {
             device.flashMode = flashMode;
             [device unlockForConfiguration];
+          
         }
         else {
             NSLog( @"Could not lock device for configuration: %@", error );
         }
     }
+
 }
 
 + (AVCaptureDevice *)deviceWithMediaType:(NSString *)mediaType preferringPosition:(AVCaptureDevicePosition)position
@@ -797,6 +810,7 @@ int cameraChangeFlag = 0;
                     if ( status == PHAuthorizationStatusAuthorized ) {
                         dispatch_async( dispatch_get_main_queue(), ^{
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                             UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
                             [self saveImage:imageData];
                             [self loaduploadManagerForImage];
                             
@@ -843,13 +857,30 @@ int cameraChangeFlag = 0;
                 
                 self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
             }
+               dispatch_async( dispatch_get_main_queue(), ^{
+                    NSLog(@"%ld",(long)self.currentFlashMode);
+                    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateNormal];
+                   if(self.currentFlashMode == 1){
+                       if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                           if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                               [self.videoDeviceInput.device lockForConfiguration:nil];
+                               [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOn];
+                               [self.videoDeviceInput.device unlockForConfiguration];
+                               
+                           }
+                       }
+                   }
+                   
+                   [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
+                   
+               });
             
             // Update the orientation on the movie file output video connection before starting recording.
             AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
             AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
             connection.videoOrientation = previewLayer.connection.videoOrientation;
             
-            [IPhoneCameraViewController setFlashMode:AVCaptureFlashModeOn forDevice:self.videoDeviceInput.device];
+           
             
             // Start recording to a temporary file.
             NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
@@ -857,6 +888,19 @@ int cameraChangeFlag = 0;
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
         }
         else {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+
+                    }else {
+                        [self.videoDeviceInput.device lockForConfiguration:nil];
+                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                        [self.videoDeviceInput.device unlockForConfiguration];
+                    }
+                }
+                
+            });
             [self.movieFileOutput stopRecording];
         }
     } );
@@ -877,7 +921,8 @@ int cameraChangeFlag = 0;
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
     [imageData writeToFile:filePath atomically:YES];
     [self saveIphoneCameraSnapShots:dateString path:filePath];
-    
+
+//    UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
     ShotsDict = [[NSMutableDictionary alloc]init];
     [ShotsDict setValue:filePath forKey:dateString];
 }

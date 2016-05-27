@@ -404,7 +404,7 @@ class StreamsListViewController: UIViewController{
                     }
                     
                     var imageForMedia : UIImage = UIImage()
-                    let thumbUrlBeforeNullChk = element["signedUrl"]
+                    let thumbUrlBeforeNullChk = element["live_stream_signedUrl"]
                     let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
                     if(thumbUrl != ""){
                         let url: NSURL = convertStringtoURL(thumbUrl)

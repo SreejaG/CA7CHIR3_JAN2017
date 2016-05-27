@@ -13,7 +13,7 @@ class SnapCamSelectViewController: UIViewController {
     static let identifier = "SnapCamSelectViewController"
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
     var streamingDelegate:StreamingProtocol?
-    var snapCamMode : SnapCamSelectionMode = .Photos
+    var snapCamMode : SnapCamSelectionMode = SnapCamSelectionMode()
     var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
     
     @IBOutlet var titleLabel: UILabel!
@@ -47,6 +47,35 @@ class SnapCamSelectViewController: UIViewController {
     
     func updateDatabaseForSnapCamOrIPhone()
     {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let shutterMode = defaults.integerForKey("shutterActionMode")
+        switch(shutterMode)
+        {
+        case 0 :
+           snapCamMode = .LiveStream
+            break
+        case 1:
+            snapCamMode = .Photos
+            break
+        case 2:
+             snapCamMode = .Video
+            break
+        case 3:
+            snapCamMode = .CatchGif
+            break
+        case 4:
+           snapCamMode = .Timelapse
+            break
+        case 5:
+          snapCamMode = .iPhone
+            break
+        case 6:
+            snapCamMode = .TestAPI
+            break
+        default :
+            break
+        }
+
         if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
         {
             dataSource[5] = "Switch to iPhone"
