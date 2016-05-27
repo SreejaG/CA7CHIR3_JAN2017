@@ -53,9 +53,9 @@ import UIKit
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
               
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                //dispatch_async(dispatch_get_main_queue(), { () -> Void in
                       self.setChannelDetails()
-                })
+              //  })
             })
         }
         else
@@ -79,7 +79,7 @@ import UIKit
         let userThumbnailImage = channelDetails["sharedUserThumbnails"] as! NSArray
         let cameraController = IPhoneCameraViewController()
         let sizeThumb = CGSizeMake(28,28)
-        
+        print(userThumbnailImage)
         for i in 0 ..< userThumbnailImage.count
         {
             var image = UIImage()

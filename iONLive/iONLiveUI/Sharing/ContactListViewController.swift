@@ -423,7 +423,9 @@ class ContactListViewController: UIViewController
                 }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage])
             }
-            contactListTableView.reloadData()
+         //   dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.contactListTableView.reloadData()
+         //   })
         }
         else
         {
