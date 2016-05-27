@@ -308,9 +308,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 }
                 dataSource.append([userNameKey:userName, profileImageKey: contactImage, selectionKey:subscriptionValue])
             }
-          //  dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.contactTableView.reloadData()
-         //   })
+            })
             
         }
         else

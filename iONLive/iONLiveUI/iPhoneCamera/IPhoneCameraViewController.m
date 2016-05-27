@@ -797,7 +797,6 @@ int cameraChangeFlag = 0;
         // Update the orientation on the still image output video connection before capturing.
         connection.videoOrientation = previewLayer.connection.videoOrientation;
         
-        
         [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
         
         // Capture a still image.
