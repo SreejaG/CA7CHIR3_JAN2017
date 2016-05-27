@@ -76,10 +76,10 @@ class StreamsListViewController: UIViewController{
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = true
+//        self.navigationController?.navigationBarHidden = true
         activityIndicator.hidden = true
-        self.view.bringSubviewToFront(activityIndicator)
-        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+//        self.view.bringSubviewToFront(activityIndicator)
+//        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
     }
     
     override func didReceiveMemoryWarning() {

@@ -317,7 +317,6 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" id="mos-wk-eL0">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
                         <segue destination="gAD-jA-0co" kind="relationship" relationship="viewControllers" id="Dsa-jr-oOD"/>
