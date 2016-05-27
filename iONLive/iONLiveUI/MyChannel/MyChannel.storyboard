@@ -417,22 +417,25 @@
                                                         <imageView multipleTouchEnabled="YES" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="T7N-Ob-zkJ">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                         </imageView>
-                                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JrT-9P-d3y" userLabel="video view">
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JrT-9P-d3y" userLabel="video view">
                                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                             <subviews>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="jmg-ML-qEZ">
                                                                     <rect key="frame" x="2" y="88" width="10" height="10"/>
                                                                 </imageView>
                                                             </subviews>
-                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         </view>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
                                                 <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="JrT-9P-d3y" secondAttribute="bottom" id="0Km-fq-F5h"/>
+                                                    <constraint firstItem="JrT-9P-d3y" firstAttribute="leading" secondItem="OFq-GC-9j1" secondAttribute="leading" id="1wx-BP-n1Y"/>
                                                     <constraint firstItem="T7N-Ob-zkJ" firstAttribute="leading" secondItem="OFq-GC-9j1" secondAttribute="leading" id="29E-8d-dW3"/>
                                                     <constraint firstAttribute="trailing" secondItem="T7N-Ob-zkJ" secondAttribute="trailing" id="AQZ-EB-UJA"/>
+                                                    <constraint firstItem="JrT-9P-d3y" firstAttribute="top" secondItem="OFq-GC-9j1" secondAttribute="top" id="NkT-xp-pth"/>
                                                     <constraint firstAttribute="bottom" secondItem="T7N-Ob-zkJ" secondAttribute="bottom" id="Q5V-Jp-DhI"/>
+                                                    <constraint firstAttribute="trailing" secondItem="JrT-9P-d3y" secondAttribute="trailing" id="YWg-8r-YKq"/>
                                                     <constraint firstItem="T7N-Ob-zkJ" firstAttribute="top" secondItem="OFq-GC-9j1" secondAttribute="top" id="hOM-AZ-SEC"/>
                                                 </constraints>
                                                 <connections>

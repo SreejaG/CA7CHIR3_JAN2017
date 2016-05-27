@@ -1139,6 +1139,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             if(dataSource.count == 0)
             {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode("MEDIA003")
+            self.removeOverlay()
             }
         }
     }
