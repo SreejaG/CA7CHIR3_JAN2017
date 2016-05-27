@@ -358,7 +358,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func initialise()
     {
         selectedArray.removeAll()
-
         fullScreenZoomView.userInteractionEnabled = true
         fullScreenZoomView.hidden = true
         fullScrenImageView.userInteractionEnabled = true
@@ -399,9 +398,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func downloadVideo(index : Int)
     {
         videoDownloadIntex = index
-        let videoDownloadUrl = convertStringtoURL(self.imageDataSource[index][fullSignedUrlKey] as! String)
+        let videoDownloadUrl = convertStringtoURL(self.dataSource[index][fullSignedUrlKey] as! String)
         
-        let mediaIdForFilePath = "\(imageDataSource[index][mediaIdKey]!)"
+        let mediaIdForFilePath = "\(dataSource[index][mediaIdKey]!)"
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
         
@@ -418,14 +417,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             {
                 
                  dispatch_async(dispatch_get_main_queue(), { () -> Void in
-
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
                 self.view.userInteractionEnabled = false
                 player.view .removeFromSuperview()
                 player.shouldAutoplay = true
                 player.prepareToPlay()
                 player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
-                
                 player.view.sizeToFit()
                 player.scalingMode = MPMovieScalingMode.Fill
                 player.controlStyle = MPMovieControlStyle.None
@@ -475,7 +472,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
         let data = NSData(contentsOfURL: location)
         if let imageData = data as NSData? {
-            let mediaIdForFilePath = "\(imageDataSource[videoDownloadIntex][mediaIdKey]!)"
+            let mediaIdForFilePath = "\(dataSource[videoDownloadIntex][mediaIdKey]!)"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
