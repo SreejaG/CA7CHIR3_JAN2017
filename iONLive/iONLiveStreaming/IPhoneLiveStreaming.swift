@@ -295,8 +295,8 @@ class IPhoneLiveStreaming: NSObject {
         
         func removeStreaming()
         {
-            clearStreamingDefaults()
             stopStream()
+            clearStreamingDefaults()
             print("Live streaming stopped.......")
         }
     }

@@ -210,9 +210,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         switch(sdifferentString)
                         {
                             case "TODAY" :
-                                dateForDisplay = "TODAY"
+                                dateForDisplay = "  TODAY"
                                 break;
-                            case "1d" : dateForDisplay = "YESTERDAY"
+                            case "1d" : dateForDisplay = "  YESTERDAY"
                                     break;
                             default :
         
@@ -221,12 +221,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                                 let dateString = formatter.stringFromDate(currentDate!)
                                 let strSplit = dateString.characters.split("-").map(String.init)
                                 dateForDisplay = dateString
-                                dateForDisplay = strSplit[1] + " " + strSplit[0] + "," + strSplit[2] 
+                                dateForDisplay = "    " + strSplit[1] + " " + strSplit[0] + "," + strSplit[2]
                                 break;
                         }
                     }
                     else{
-                        dateForDisplay = "TODAY"
+                        dateForDisplay = "  TODAY"
                     }
         
                     mediaTimeLabel.text = dateForDisplay

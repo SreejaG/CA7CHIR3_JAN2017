@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class ChannelItemListViewController: UIViewController {
     
     var selectionFlag : Bool = false
@@ -225,6 +226,7 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
+        let savedURL : String
         for i in 0 ..< totalMediaCount
         {
             var imageForMedia : UIImage = UIImage()

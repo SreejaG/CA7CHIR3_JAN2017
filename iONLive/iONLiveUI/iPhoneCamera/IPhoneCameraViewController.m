@@ -143,8 +143,13 @@ int cameraChangeFlag = 0;
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     
+    NSLog(@"%@",sharedUserCount);
     NSLog(@"%lu",(unsigned long)userImages.count);
-    NSLog(@"%@",userImages);
+  
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _sharedUserCount.text = sharedUserCount;
+    });
+
     if(userImages.count > 0){
         for(int i=0;i<userImages.count;i++){
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -175,7 +180,6 @@ int cameraChangeFlag = 0;
             });
         }
     }
-    _sharedUserCount.text = sharedUserCount;
     
     dispatch_async(dispatch_get_global_queue(0,0), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
@@ -202,6 +206,7 @@ int cameraChangeFlag = 0;
                 {
                     self.playiIconView.hidden = false;
                 }
+                
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
             
@@ -660,19 +665,20 @@ int cameraChangeFlag = 0;
         [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
             if ( status == PHAuthorizationStatusAuthorized ) {
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSData *imageData = [[NSData alloc]init];
-                    imageData = [self getThumbNail:outputFileURL];
-                    self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
-                    [_playiIconView setHidden:NO];
-                    [self saveImage:imageData];
-                    [self moveVideoToDocumentDirectory:outputFileURL];
-                });
                 
                 // Save the movie file to the photo library and cleanup.
                 
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSData *imageData = [[NSData alloc]init];
+                        imageData = [self getThumbNail:outputFileURL];
+                        self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                        [_playiIconView setHidden:NO];
+                        [self saveImage:imageData];
+                        [self moveVideoToDocumentDirectory:outputFileURL];
+                    });
+
                     // In iOS 9 and later, it's possible to move the file into the photo library without duplicating the file data.
                     // This avoids using double the disk space during save, which can make a difference on devices with limited free disk space.
                     
@@ -1023,7 +1029,7 @@ int cameraChangeFlag = 0;
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
                 [liveStreaming stopStreamingClicked];
-                [_liveSteamSession endRtmpSession];
+         //       [_liveSteamSession endRtmpSession];
                 break;
         }
     }
@@ -1119,7 +1125,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
+       //     [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self settingsPageView];
@@ -1156,7 +1162,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
+         //   [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self loadSharingView];
@@ -1192,7 +1198,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
+        //    [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
              [self loadPhotoViewer];
@@ -1218,7 +1224,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
+         //   [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self loadStreamsGalleryView];

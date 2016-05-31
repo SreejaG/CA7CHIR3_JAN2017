@@ -154,10 +154,10 @@
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="StreamThumbImage">
-                                        <rect key="frame" x="507" y="40" width="45" height="45"/>
+                                        <rect key="frame" x="508" y="41" width="43" height="44"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="45" id="9XI-EL-yle"/>
-                                            <constraint firstAttribute="height" constant="45" id="jfd-4u-a5b"/>
+                                            <constraint firstAttribute="width" constant="43" id="9XI-EL-yle"/>
+                                            <constraint firstAttribute="height" constant="44" id="jfd-4u-a5b"/>
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpM-Fq-WiG" userLabel="cameraButton">
@@ -203,9 +203,9 @@
                                         </constraints>
                                         <color key="color" red="0.0" green="0.40000000000000002" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </activityIndicatorView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
+                                    <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
                                         <rect key="frame" x="507" y="40" width="45" height="45"/>
-                                        <color key="backgroundColor" red="0.20000000000000001" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="VAe-7E-Yus"/>
                                             <constraint firstAttribute="width" constant="45" id="gu6-sb-aii"/>
@@ -228,12 +228,12 @@
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerX" secondItem="JqH-kr-rKo" secondAttribute="centerX" id="KWd-YN-cYO"/>
                                     <constraint firstAttribute="height" constant="120" id="OdD-b2-11Z"/>
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="42" id="Sve-zp-5eE"/>
-                                    <constraint firstItem="VfF-28-FyM" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" constant="2" id="TQ5-30-GNe"/>
+                                    <constraint firstItem="VfF-28-FyM" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" constant="3" id="TQ5-30-GNe"/>
                                     <constraint firstItem="xzX-a8-zLm" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="WkX-hg-cCK"/>
                                     <constraint firstItem="mb8-jt-nr2" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="49" id="cYx-qs-Rbf"/>
                                     <constraint firstItem="vUo-cz-DcZ" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="78" id="cf9-MF-fDP"/>
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="l2E-me-gQ8"/>
-                                    <constraint firstAttribute="trailing" secondItem="VfF-28-FyM" secondAttribute="trailing" constant="48" id="nig-A3-SEs"/>
+                                    <constraint firstAttribute="trailing" secondItem="VfF-28-FyM" secondAttribute="trailing" constant="49" id="nig-A3-SEs"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="rsZ-Hs-EBD"/>
                                     <constraint firstItem="cEw-NK-Mzz" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="56" id="yQ0-GB-Jvz"/>
                                 </constraints>
