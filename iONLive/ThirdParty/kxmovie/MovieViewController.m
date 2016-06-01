@@ -430,6 +430,37 @@ static NSMutableDictionary * gHistory;
 -(void) playerDidFinish :(NSNotification *) notif
 {
     [_moviePlayer.view removeFromSuperview];
+    UIImageView *playIconView = [[UIImageView alloc]init];
+    playIconView.image = [UIImage imageNamed:@"Circled Play"];
+    playIconView.frame = CGRectMake(glView.frame.size.width/2, glView.frame.size.height/2, 30, 30);
+    [glView addSubview:playIconView];
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
+    singleTap.numberOfTapsRequired = 1;
+    [playIconView setUserInteractionEnabled:YES];
+    [playIconView addGestureRecognizer:singleTap];
+    
+}
+
+-(void) tapDetected{
+    NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString *parentPathStr = [parentPath absoluteString];
+    NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
+    NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+    videoProgressBar.hidden = true;
+    self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
+    MPMoviePlayerController *player = self.moviePlayer;
+    [player setShouldAutoplay:YES];
+    [player prepareToPlay];
+    player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height));
+    player.scalingMode = MPMovieScalingModeAspectFill;
+    player.movieSourceType = MPMovieSourceTypeFile;
+    player.controlStyle = MPMovieControlStyleNone;
+    player.repeatMode = MPMovieRepeatModeNone;
+    [glView addSubview:[player view]];
+    [player play];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerDidFinish:)
+                                                 name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
 }
 
 -(void) setUpViewForImageVideo
@@ -1145,12 +1176,12 @@ static NSMutableDictionary * gHistory;
 
 -(NSString*)getErrorMessage:(NSError *) error
 {
-    if (error) {
-        return @"Live stream Interrupted";
+    if ([error.description containsString:@"kxmovie"]) {
+        return @"Unable to fetch stream";
     }
     else
     {
-        return  @"Unable to fetch stream";
+        return @"Live stream Interrupted";
     }
     
     return @"NetworkError";

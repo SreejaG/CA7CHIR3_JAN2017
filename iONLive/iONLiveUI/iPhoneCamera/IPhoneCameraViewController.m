@@ -89,8 +89,7 @@ FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 
 - (void)viewDidLoad {
-     _startCameraActionButton.enabled = false;
-    
+ 
     _firstButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.masksToBounds = YES;
@@ -104,6 +103,10 @@ int cameraChangeFlag = 0;
     fileManager = [[FileManagerViewController alloc]init];
     [super viewDidLoad];
 
+    dispatch_async(dispatch_get_main_queue(), ^{
+       _startCameraActionButton.enabled = false;
+    });
+    
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     NSLog(@"%ld",(long)shutterActionMode);
     if (shutterActionMode != SnapCamSelectionModeLiveStream)
@@ -117,6 +120,85 @@ int cameraChangeFlag = 0;
     [_uploadActivityIndicator setHidden:YES];
     PhotoViewerInstance.iphoneCam = self;
     [_uploadProgressCameraView setHidden:YES];
+    
+    
+    
+    self.activitView.hidden = true;
+//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+    if (! [self isStreamStarted]) {
+        if (shutterActionMode == SnapCamSelectionModeLiveStream)
+        {
+            _flashButton.hidden = true;
+            _cameraButton.hidden = true;
+            self.previewView.session = nil;
+            self.previewView.hidden = true;
+            
+            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+            [_liveSteamSession.previewView removeFromSuperview];
+            AVCaptureVideoPreviewLayer  *ptr;
+            [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+            [self.view addSubview:_liveSteamSession.previewView];
+            _liveSteamSession.previewView.frame = self.view.bounds;
+            _liveSteamSession.delegate = self;
+            [self.view bringSubviewToFront:self.bottomView];
+            [self.view bringSubviewToFront:self.topView];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _startCameraActionButton.enabled = true;
+            });
+        }
+        else{
+            
+            [_liveSteamSession.previewView removeFromSuperview];
+            _liveSteamSession.delegate = nil;
+            [self removeObservers];
+            self.session = [[AVCaptureSession alloc] init];
+            self.previewView.hidden = false;
+            self.previewView.session = self.session;
+            [self configureCameraSettings];
+            
+            dispatch_async( self.sessionQueue, ^{
+                switch ( self.setupResult )
+                {
+                    case AVCamSetupResultSuccess:
+                    {
+                        [self addObservers];
+                        [self.session startRunning];
+                        
+                        self.sessionRunning = self.session.isRunning;
+                        break;
+                    }
+                    case AVCamSetupResultCameraNotAuthorized:
+                    {
+                        dispatch_async( dispatch_get_main_queue(), ^{
+                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                            [alertController addAction:cancelAction];
+                            
+                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                            }];
+                            [alertController addAction:settingsAction];
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        } );
+                        break;
+                    }
+                    case AVCamSetupResultSessionConfigurationFailed:
+                    {
+                        dispatch_async( dispatch_get_main_queue(), ^{
+                            NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                            [alertController addAction:cancelAction];
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        } );
+                        break;
+                    }
+                }
+            } );
+        }
+    }
+
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -131,6 +213,7 @@ int cameraChangeFlag = 0;
         [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
         [self.videoDeviceInput.device unlockForConfiguration];
     }
+ 
     [self removeObservers];
   
 }
@@ -251,84 +334,79 @@ int cameraChangeFlag = 0;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.activitView.hidden = true;
-    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-    if (! [self isStreamStarted]) {
-        if (shutterActionMode == SnapCamSelectionModeLiveStream)
-        {
-            _flashButton.hidden = true;
-            _cameraButton.hidden = true;
-            self.previewView.session = nil;
-            self.previewView.hidden = true;
-            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
-            AVCaptureVideoPreviewLayer  *ptr;
-            [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-            [self.view addSubview:_liveSteamSession.previewView];
-            _liveSteamSession.previewView.frame = self.view.bounds;
-            _liveSteamSession.delegate = self;
-            [self.view bringSubviewToFront:self.bottomView];
-            [self.view bringSubviewToFront:self.topView];
-        }
-        else{
-//            if (shutterActionMode == SnapCamSelectionModePhotos) {
-//                _flashButton.hidden = false;
-//                _cameraButton.hidden = false;
-//            }
-//            else if (shutterActionMode == SnapCamSelectionModeVideo)
-//            {
-//                _flashButton.hidden = true;
-//                _cameraButton.hidden = true;
-//            }
-            [_liveSteamSession.previewView removeFromSuperview];
-            _liveSteamSession.delegate = nil;
-            [self removeObservers];
-            self.session = [[AVCaptureSession alloc] init];
-            self.previewView.hidden = false;
-            self.previewView.session = self.session;
-            [self configureCameraSettings];
-            
-            dispatch_async( self.sessionQueue, ^{
-                switch ( self.setupResult )
-                {
-                    case AVCamSetupResultSuccess:
-                    {
-                        [self addObservers];
-                        [self.session startRunning];
-                        self.sessionRunning = self.session.isRunning;
-                        break;
-                    }
-                    case AVCamSetupResultCameraNotAuthorized:
-                    {
-                        dispatch_async( dispatch_get_main_queue(), ^{
-                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
-                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                            [alertController addAction:cancelAction];
-                            
-                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-                            }];
-                            [alertController addAction:settingsAction];
-                            [self presentViewController:alertController animated:YES completion:nil];
-                        } );
-                        break;
-                    }
-                    case AVCamSetupResultSessionConfigurationFailed:
-                    {
-                        dispatch_async( dispatch_get_main_queue(), ^{
-                            NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                            [alertController addAction:cancelAction];
-                            [self presentViewController:alertController animated:YES completion:nil];
-                        } );
-                        break;
-                    }
-                }
-            } );
-        }
-    }
-     _startCameraActionButton.enabled = true;
+//    self.activitView.hidden = true;
+//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+//    if (! [self isStreamStarted]) {
+//        if (shutterActionMode == SnapCamSelectionModeLiveStream)
+//        {
+//            _flashButton.hidden = true;
+//            _cameraButton.hidden = true;
+//            self.previewView.session = nil;
+//            self.previewView.hidden = true;
+//            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+//            AVCaptureVideoPreviewLayer  *ptr;
+//            [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+//            [self.view addSubview:_liveSteamSession.previewView];
+//            _liveSteamSession.previewView.frame = self.view.bounds;
+//            _liveSteamSession.delegate = self;
+//            [self.view bringSubviewToFront:self.bottomView];
+//            [self.view bringSubviewToFront:self.topView];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                _startCameraActionButton.enabled = true;
+//            });
+//        }
+//        else{
+//            
+//            [_liveSteamSession.previewView removeFromSuperview];
+//            _liveSteamSession.delegate = nil;
+//            [self removeObservers];
+//            self.session = [[AVCaptureSession alloc] init];
+//            self.previewView.hidden = false;
+//            self.previewView.session = self.session;
+//            [self configureCameraSettings];
+//            
+//            dispatch_async( self.sessionQueue, ^{
+//                switch ( self.setupResult )
+//                {
+//                    case AVCamSetupResultSuccess:
+//                    {
+//                        [self addObservers];
+//                        [self.session startRunning];
+//                        
+//                        self.sessionRunning = self.session.isRunning;
+//                        break;
+//                    }
+//                    case AVCamSetupResultCameraNotAuthorized:
+//                    {
+//                        dispatch_async( dispatch_get_main_queue(), ^{
+//                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+//                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+//                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+//                            [alertController addAction:cancelAction];
+//                            
+//                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+//                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+//                            }];
+//                            [alertController addAction:settingsAction];
+//                            [self presentViewController:alertController animated:YES completion:nil];
+//                        } );
+//                        break;
+//                    }
+//                    case AVCamSetupResultSessionConfigurationFailed:
+//                    {
+//                        dispatch_async( dispatch_get_main_queue(), ^{
+//                            NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
+//                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+//                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+//                            [alertController addAction:cancelAction];
+//                            [self presentViewController:alertController animated:YES completion:nil];
+//                        } );
+//                        break;
+//                    }
+//                }
+//            } );
+//        }
+//    }
 }
 
 -(void) uploadprogress :(float) progress
@@ -357,6 +435,7 @@ int cameraChangeFlag = 0;
     _noDataFound.hidden = true;
     _activityImageView.hidden = true;
     __activityIndicatorView.hidden = true;
+    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
     [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     [_playiIconView setHidden:YES];
     
@@ -814,7 +893,7 @@ int cameraChangeFlag = 0;
                 [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
                     if ( status == PHAuthorizationStatusAuthorized ) {
                         dispatch_async( dispatch_get_main_queue(), ^{
-                            self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                           self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                              UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
                             [self saveImage:imageData];
                             [self loaduploadManagerForImage];
@@ -988,6 +1067,9 @@ int cameraChangeFlag = 0;
 
 - (IBAction)didTapsCameraActionButton:(id)sender
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _startCameraActionButton.enabled = true;
+    });
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
    if (shutterActionMode != SnapCamSelectionModeLiveStream)
    {
@@ -1029,7 +1111,7 @@ int cameraChangeFlag = 0;
             default:
                 [UIApplication sharedApplication].idleTimerDisabled = NO;
                 [liveStreaming stopStreamingClicked];
-         //       [_liveSteamSession endRtmpSession];
+                [_liveSteamSession endRtmpSession];
                 break;
         }
     }
@@ -1125,7 +1207,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-       //     [_liveSteamSession endRtmpSession];
+            [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self settingsPageView];
@@ -1162,7 +1244,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-         //   [_liveSteamSession endRtmpSession];
+            [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self loadSharingView];
@@ -1198,7 +1280,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-        //    [_liveSteamSession endRtmpSession];
+            [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
              [self loadPhotoViewer];
@@ -1224,7 +1306,7 @@ int cameraChangeFlag = 0;
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
             [liveStreaming stopStreamingClicked];
-         //   [_liveSteamSession endRtmpSession];
+            [_liveSteamSession endRtmpSession];
             [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
             [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [self loadStreamsGalleryView];
@@ -1355,6 +1437,7 @@ int cameraChangeFlag = 0;
             NSLog(@"VCSessionStateError");
             break;
         default:
+            
             NSLog(@"Connect");
             break;
     }
@@ -1491,6 +1574,8 @@ int cameraChangeFlag = 0;
                 
                 AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
                 previewLayer.connection.videoOrientation = initialVideoOrientation;
+                
+                _startCameraActionButton.enabled = true;
             } );
         }
         else {

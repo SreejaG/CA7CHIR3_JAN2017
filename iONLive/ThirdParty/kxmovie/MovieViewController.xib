@@ -57,7 +57,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             <subviews>
                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KWR-bQ-XwK">
-                                    <rect key="frame" x="0.0" y="537" width="600" height="2"/>
+                                    <rect key="frame" x="0.0" y="548" width="600" height="2"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="2" id="LRl-zJ-Sh4"/>
                                     </constraints>
@@ -388,7 +388,7 @@
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="R2N-W9-00b"/>
                                 <constraint firstItem="8cA-HV-eex" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="WeN-QK-2BA"/>
                                 <constraint firstAttribute="trailing" secondItem="KWR-bQ-XwK" secondAttribute="trailing" id="WhH-yb-r9h"/>
-                                <constraint firstItem="8cA-HV-eex" firstAttribute="top" secondItem="KWR-bQ-XwK" secondAttribute="bottom" constant="-59" id="YFY-M3-3dy"/>
+                                <constraint firstItem="8cA-HV-eex" firstAttribute="top" secondItem="KWR-bQ-XwK" secondAttribute="bottom" constant="-70" id="YFY-M3-3dy"/>
                                 <constraint firstItem="5C7-am-vGG" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="aYF-V3-ubx"/>
                                 <constraint firstAttribute="trailing" secondItem="8cA-HV-eex" secondAttribute="trailing" id="amB-XE-fRV"/>
                                 <constraint firstAttribute="trailing" secondItem="BB9-od-AqJ" secondAttribute="trailing" id="hAG-r5-L4J"/>

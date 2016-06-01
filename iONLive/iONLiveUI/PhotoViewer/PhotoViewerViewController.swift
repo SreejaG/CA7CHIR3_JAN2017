@@ -378,20 +378,21 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
+        if(dataSource.count > 0){
+            if dataSource[selectedCollectionViewIndex][mediaTypeKey] != nil
+            {
+                let mediaType = dataSource[selectedCollectionViewIndex][mediaTypeKey] as! String
         
-        if dataSource[selectedCollectionViewIndex][mediaTypeKey] != nil
-        {
-        let mediaType = dataSource[selectedCollectionViewIndex][mediaTypeKey] as! String
-        
-        if mediaType == "video"
-        {
-            playIconInFullView.hidden = true
-            downloadVideo(selectedCollectionViewIndex)
-        }
-        else
-        {
-            fullScreenZoomView.hidden = false
-        }
+                if mediaType == "video"
+                {
+                    playIconInFullView.hidden = true
+                    downloadVideo(selectedCollectionViewIndex)
+                }
+                else
+                {
+                    fullScreenZoomView.hidden = false
+                }
+            }
         }
     }
     

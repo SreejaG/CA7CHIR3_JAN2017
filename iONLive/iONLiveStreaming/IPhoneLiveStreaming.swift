@@ -206,7 +206,9 @@ class IPhoneLiveStreaming: NSObject {
                 ErrorManager.sharedInstance.noNetworkConnection()
             }
             else if message.isEmpty == false {
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
+                if(message != "STREAM001"){
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
+                }
             }
             else{
                 ErrorManager.sharedInstance.streamingError()
