@@ -123,10 +123,21 @@ class LoginViewController: UIViewController {
         }
         else
         {
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            let gcmRegId = "ios".stringByAppendingString(deviceToken)
+            if let deviceToken = defaults.valueForKey("deviceToken")
+            {
+                let gcmRegId = "ios".stringByAppendingString(deviceToken as! String)
             
-            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
+                self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
+            }
+            else{
+                if !self.requestManager.validConnection() {
+                    ErrorManager.sharedInstance.noNetworkConnection()
+                }
+                else{
+                    ErrorManager.sharedInstance.installFailure()
+                }
+            
+            }
         }
     }
     
