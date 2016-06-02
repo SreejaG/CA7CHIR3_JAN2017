@@ -54,7 +54,6 @@ class CountryPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource 
     
     func countryNamesByCode() -> [Country] {
         var countries = [Country]()
-        
         for code in NSLocale.ISOCountryCodes() {
             let countryName = NSLocale.currentLocale().displayNameForKey(NSLocaleCountryCode, value: code)
             

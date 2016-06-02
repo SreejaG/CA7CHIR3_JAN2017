@@ -42,6 +42,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         countryCodeTextField.resignFirstResponder()
         mobileNumberTextField.resignFirstResponder()
         verificationCodeTextField.resignFirstResponder()
+        countryName = "United States"
+        self.countryTextField.text = "US" + " - " + "United States"
+        self.countryCodeTextField.text = "+1"
+        CountryPhoneCode = "+1"
     }
     
     @IBOutlet weak var topConstaintDescriptionLabel: NSLayoutConstraint!
@@ -51,6 +55,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     @IBOutlet weak var verificationCodeTextField: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
+        countryPicker.selectRow(230, inComponent: 0, animated: true)
         initialise()
     }
     

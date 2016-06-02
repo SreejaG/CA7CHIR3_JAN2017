@@ -223,7 +223,7 @@ class ContactDetailsViewController: UIViewController {
             for element in responseArr{
                 
                 let userName = element[nameKey] as! String
-                let selection = element[inviteKey] as! String
+                let selection = "0"
                 let mobNum = element[phoneKey] as! String
                 
                 //signed url iprofile
@@ -324,7 +324,7 @@ class ContactDetailsViewController: UIViewController {
         dataSource = [appContactsArr,contactDataSource]
         
         for ele in appContactsArr{
-            selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"1"])
+            selectedContacts.append([nameKey:ele[nameKey] as! String, phoneKey:ele[phoneKey] as! String, selectionKey:"0"])
         }
         
         for ele in contactDataSource{
