@@ -21,7 +21,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     
-    var tapCount : Int = 1
+    var tapCount : Int = 0
     let cameraController = IPhoneCameraViewController()
     
     var refreshControl:UIRefreshControl!
@@ -43,15 +43,15 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.viewDidLoad()
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.channelItemsCollectionView.addSubview(refreshControl)
-        self.channelItemsCollectionView.alwaysBounceVertical = true
+       
+//        self.channelItemsCollectionView.alwaysBounceVertical = true
   
         initialise()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         if let channelName = channelName
         {
@@ -61,24 +61,20 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        if(!pullToRefreshActive){
-            removeOverlay()
-        }
-        else{
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-        }
+        self.channelItemsCollectionView.alpha = 1.0
     }
     
     func pullToRefresh()
     {
         tapCount = tapCount + 1
-        if(tapCount == 1){
+        if(tapCount <= 1){
+            if(!pullToRefreshActive){
             pullToRefreshActive = true
             totalMediaCount = 0
             print(tapCount)
         
             initialise()
+        }
         }
         else{
             self.refreshControl.endRefreshing()
@@ -88,6 +84,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     @IBAction func backClicked(sender: AnyObject)
     {
+      
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
         sharingVC.navigationController?.navigationBarHidden = true
@@ -126,8 +123,9 @@ class MyChannelItemDetailsViewController: UIViewController {
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
-        if(!pullToRefreshActive){
-            showOverlay()
+        showOverlay()
+        if(pullToRefreshActive){
+            removeOverlay()
         }
         
         let startValue = "0"
@@ -176,7 +174,8 @@ class MyChannelItemDetailsViewController: UIViewController {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -185,10 +184,11 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        if(!pullToRefreshActive){
+       // if(!pullToRefreshActive){
             removeOverlay()
-        }
-        else{
+      //  }
+      //  else{
+        if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
         }
@@ -210,9 +210,11 @@ class MyChannelItemDetailsViewController: UIViewController {
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
+                        self.channelItemsCollectionView.addSubview(self.refreshControl)
                         self.tapCount = 0
-                        self.refreshControl.endRefreshing()
-                        self.pullToRefreshActive = false
+//                        self.refreshControl.endRefreshing()
+//                        self.pullToRefreshActive = false
                     })
                 })
             }
@@ -225,13 +227,15 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        if(!pullToRefreshActive){
+       
             removeOverlay()
-        }
-        else{
+       
+        if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
+            tapCount = 0
         }
+        
         print("message = \(code) andError = \(error?.localizedDescription) ")
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -272,8 +276,12 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
+        if(imageDataSource.count > 0){
         for i in 0 ..< totalMediaCount
         {
+            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+            print(mediaIdS)
+            if(mediaIdS != ""){
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
@@ -300,6 +308,8 @@ class MyChannelItemDetailsViewController: UIViewController {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.channelItemsCollectionView.reloadData()
             })
+        }
+            }
         }
     }
 }
@@ -357,13 +367,23 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        if(!pullToRefreshActive){
+        if(fullImageDataSource.count > 0){
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let vc = MovieViewController.movieViewControllerWithImageVideo(fullImageDataSource[indexPath.row][actualImageKey] as! String, channelName: channelName, userName: userId, mediaType: fullImageDataSource[indexPath.row][mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage, notifType: fullImageDataSource[indexPath.row][notificationKey] as! String,mediaId: fullImageDataSource[indexPath.row][mediaIdKey] as! String, isProfile: true) as! MovieViewController
+        self.showOverlay()
+        self.channelItemsCollectionView.alpha = 0.4
+        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+            let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
         
-        self.presentViewController(vc, animated: false) { () -> Void in
-            
+            self.presentViewController(vc, animated: false) { () -> Void in
+                self.removeOverlay()
+                self.channelItemsCollectionView.alpha = 1.0
+            }
+            })
         }
-        
+        }
     }
 }

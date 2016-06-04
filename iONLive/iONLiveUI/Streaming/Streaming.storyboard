@@ -353,14 +353,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="rg4-rS-1oU">
-                                <rect key="frame" x="290" y="290" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="Ftb-W5-mGy"/>
-                                    <constraint firstAttribute="height" constant="20" id="uUZ-Q6-mHl"/>
-                                </constraints>
-                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                            </activityIndicatorView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jUA-sK-Gz9">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                 <subviews>
@@ -381,7 +373,7 @@
                                         </constraints>
                                         <state key="normal" image="snapCamMode"/>
                                         <connections>
-                                            <action selector="customBackButtonClicked:" destination="K3I-ov-Eit" eventType="touchUpInside" id="hTs-t3-kNF"/>
+                                            <action selector="customBackButtonClicked:" destination="K3I-ov-Eit" eventType="touchUpInside" id="YRT-hm-J6c"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -395,7 +387,7 @@
                                     <constraint firstItem="9YU-44-tSW" firstAttribute="leading" secondItem="jUA-sK-Gz9" secondAttribute="leading" constant="15" id="ywF-hQ-7DB"/>
                                 </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="7lb-VM-ZVf">
+                            <collectionView clipsSubviews="YES" clearsContextBeforeDrawing="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="7lb-VM-ZVf">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="pDQ-XH-xRg">
@@ -445,15 +437,15 @@
                                             <constraint firstAttribute="bottom" secondItem="SUv-Gy-qBl" secondAttribute="bottom" id="rdL-tK-o9j"/>
                                         </constraints>
                                         <connections>
-                                            <outlet property="liveNowIcon" destination="4sY-s0-HVZ" id="Ba1-uK-hRQ"/>
-                                            <outlet property="liveStatusLabel" destination="1AY-Ze-EbX" id="FBb-VM-DqA"/>
-                                            <outlet property="streamThumbnaleImageView" destination="SUv-Gy-qBl" id="V4S-qP-Zz1"/>
+                                            <outlet property="liveNowIcon" destination="4sY-s0-HVZ" id="KTX-Pl-Blt"/>
+                                            <outlet property="liveStatusLabel" destination="1AY-Ze-EbX" id="Wox-ME-XKz"/>
+                                            <outlet property="streamThumbnaleImageView" destination="SUv-Gy-qBl" id="BOh-af-2XV"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>
-                                    <outlet property="dataSource" destination="K3I-ov-Eit" id="Vhn-d3-RIa"/>
-                                    <outlet property="delegate" destination="K3I-ov-Eit" id="jfv-Xd-PUw"/>
+                                    <outlet property="dataSource" destination="K3I-ov-Eit" id="rZw-Bl-KN0"/>
+                                    <outlet property="delegate" destination="K3I-ov-Eit" id="WjK-8p-iU2"/>
                                 </connections>
                             </collectionView>
                         </subviews>
@@ -464,9 +456,7 @@
                             <constraint firstItem="crS-UD-ZdI" firstAttribute="top" secondItem="7lb-VM-ZVf" secondAttribute="bottom" id="GnU-uA-bpv"/>
                             <constraint firstAttribute="trailing" secondItem="7lb-VM-ZVf" secondAttribute="trailing" id="QYb-K0-2hi"/>
                             <constraint firstItem="jUA-sK-Gz9" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="b9t-34-acG"/>
-                            <constraint firstItem="rg4-rS-1oU" firstAttribute="centerX" secondItem="Yyd-ok-wXI" secondAttribute="centerX" id="cT8-KO-8BF"/>
                             <constraint firstItem="7lb-VM-ZVf" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="jpb-Rd-42C"/>
-                            <constraint firstItem="rg4-rS-1oU" firstAttribute="centerY" secondItem="Yyd-ok-wXI" secondAttribute="centerY" id="my1-3N-q8Y"/>
                             <constraint firstAttribute="trailing" secondItem="jUA-sK-Gz9" secondAttribute="trailing" id="n4I-NZ-GM7"/>
                         </constraints>
                     </view>
@@ -477,8 +467,7 @@
                     </tabBarItem>
                     <navigationItem key="navigationItem" id="OIm-4M-Uc2"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="rg4-rS-1oU" id="Hu3-8z-xBR"/>
-                        <outlet property="streamListCollectionView" destination="7lb-VM-ZVf" id="O30-Cz-dtJ"/>
+                        <outlet property="streamListCollectionView" destination="7lb-VM-ZVf" id="g2B-Zh-f5E"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qw9-vn-BFR" userLabel="First Responder" sceneMemberID="firstResponder"/>

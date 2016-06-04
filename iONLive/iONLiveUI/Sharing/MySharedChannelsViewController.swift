@@ -53,12 +53,13 @@ class MySharedChannelsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         addKeyboardObservers()
+      
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        removeOverlay()
+//        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -211,7 +212,8 @@ class MySharedChannelsViewController: UIViewController {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func authenticationSuccessHandler(response:AnyObject?)

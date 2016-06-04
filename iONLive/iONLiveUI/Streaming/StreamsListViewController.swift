@@ -22,7 +22,6 @@ class StreamsListViewController: UIViewController{
     static let identifier = "StreamsListViewController"
     let imageUploadManger = ImageUpload.sharedInstance
     let profileManager = ProfileManager.sharedInstance
-    
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
@@ -46,14 +45,14 @@ class StreamsListViewController: UIViewController{
     let thumbImageKey = "thumbImage"
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     
-    var tapCount : Int = 1
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var tapCount : Int = 0
     
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
+    
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
+    
     var dataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var  dummy: [[String:AnyObject]] = [[String:AnyObject]]()
     
@@ -64,22 +63,16 @@ class StreamsListViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataSource.removeAll()
+        
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.streamListCollectionView.addSubview(refreshControl)
-        self.streamListCollectionView.alwaysBounceVertical = true
-        self.view.bringSubviewToFront(activityIndicator)
-        dataSource.removeAll()
+
         getAllLiveStreams()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-//        self.navigationController?.navigationBarHidden = true
-        activityIndicator.hidden = true
-//        self.view.bringSubviewToFront(activityIndicator)
-//        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
     }
     
     override func didReceiveMemoryWarning() {
@@ -88,7 +81,6 @@ class StreamsListViewController: UIViewController{
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        removeOverlay()
     }
     
     func initialise()
@@ -99,11 +91,11 @@ class StreamsListViewController: UIViewController{
             mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
         }
         
+        print(mediaShared)
         for i in 0 ..< mediaShared.count
         {
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
         }
-        imageDataSource.removeAll()
         initialiseCloudData()
         
     }
@@ -160,10 +152,10 @@ class StreamsListViewController: UIViewController{
             if(pullToRefreshActive){
                 self.refreshControl.endRefreshing()
                 pullToRefreshActive = false
+                
             }
-            else{
-                removeOverlay()
-            }
+            removeOverlay()
+
             let responseArr = json["objectJson"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
@@ -202,9 +194,9 @@ class StreamsListViewController: UIViewController{
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
+                        self.streamListCollectionView.addSubview(self.refreshControl)
                         self.tapCount = 0
-                        self.refreshControl.endRefreshing()
-                        self.pullToRefreshActive = false
                     })
                 })
             }
@@ -218,13 +210,14 @@ class StreamsListViewController: UIViewController{
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        if(!pullToRefreshActive){
-            removeOverlay()
-        }
-        else{
+        removeOverlay()
+    
+        if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
+            tapCount = 0
         }
+        
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -266,8 +259,13 @@ class StreamsListViewController: UIViewController{
     }
     
     func downloadMediaFromGCS(){
-        for var i in 0 ..< totalMediaCount
+        if imageDataSource.count > 0
         {
+        for var i in 0 ..< imageDataSource.count
+        {
+            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+            print(mediaIdS)
+            if(mediaIdS != ""){
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
@@ -297,6 +295,8 @@ class StreamsListViewController: UIViewController{
                 self.streamListCollectionView.reloadData()
             })
         }
+        }
+        }
     }
     
     func showOverlay(){
@@ -304,7 +304,8 @@ class StreamsListViewController: UIViewController{
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -322,10 +323,12 @@ class StreamsListViewController: UIViewController{
     func pullToRefresh()
     {
         tapCount = tapCount + 1
-        if(tapCount == 1){
-            pullToRefreshActive = true
-            totalMediaCount = 0
-            getAllLiveStreams()
+        if(tapCount <= 1){
+            if(!pullToRefreshActive){
+                pullToRefreshActive = true
+                dataSource.removeAll()
+                getAllLiveStreams()
+            }
         }
         else{
             self.refreshControl.endRefreshing()
@@ -339,11 +342,14 @@ class StreamsListViewController: UIViewController{
         let loginId = userDefault.objectForKey(userLoginIdKey)
         let accessTocken = userDefault.objectForKey(userAccessTockenKey)
         
+        showOverlay()
+        
+        if(pullToRefreshActive){
+            removeOverlay()
+        }
+        
         if let loginId = loginId, let accessTocken = accessTocken
         {
-            if(!pullToRefreshActive){
-                showOverlay()
-            }
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
@@ -352,10 +358,10 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-            if(!pullToRefreshActive){
-                removeOverlay()
-            }
-            else{
+      
+            removeOverlay()
+
+            if(pullToRefreshActive){
                 self.refreshControl.endRefreshing()
                 pullToRefreshActive = false
             }
@@ -373,7 +379,6 @@ class StreamsListViewController: UIViewController{
     
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
-        activityIndicator.hidden = true
         self.dataSource.removeAll()
         if let json = response as? [String: AnyObject]
         {
@@ -438,39 +443,7 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    func getAllStreamFailureHandler(error: NSError?, message: String)
-    {
-        if(!pullToRefreshActive){
-            removeOverlay()
-        }
-        else{
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-        }
-        activityIndicator.hidden = true
-        if !self.requestManager.validConnection() {
-            loadStaticImagesOnly()
-            ErrorManager.sharedInstance.noNetworkConnection()
-        }
-        else if message.isEmpty == false
-        {
-            if message == "WOWZA001"
-            {
-                loadStaticImagesOnly()
-            }
-            else
-            {
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
-            }
-        }
-        else{
-            ErrorManager.sharedInstance.liveStreamFetchingError()
-        }
-        
-        
-    }
-    
+
     func loadStaticImagesOnly()
     {
         self.streamListCollectionView.reloadData()
@@ -482,10 +455,6 @@ class StreamsListViewController: UIViewController{
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
-    }
-    
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent;
     }
 }
 
@@ -545,6 +514,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
+        if(!pullToRefreshActive){
         if  dataSource.count>0
         {
             if dataSource.count > indexPath.row
@@ -646,7 +616,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                             let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                             
                             self.presentViewController(vc, animated: false) { () -> Void in
-                                
+                                self.removeOverlay()
                             }
                         }
                         else
@@ -656,7 +626,7 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                     }
                     
                 }
-                
+            }
             }
         }
     }

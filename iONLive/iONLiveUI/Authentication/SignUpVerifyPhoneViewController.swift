@@ -67,7 +67,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        removeOverlay()
+//        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -406,7 +406,8 @@ class SignUpVerifyPhoneViewController: UIViewController
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){

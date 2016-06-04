@@ -81,7 +81,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelTableView.reloadData()
         myChannelSearchBar.resignFirstResponder()
         tableViewBottomConstraint.constant = 0
-        removeOverlay()
+//        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -180,7 +180,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+    //    self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){

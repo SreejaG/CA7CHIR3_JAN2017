@@ -67,13 +67,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        if(!pullToRefreshActiveSecnd){
-            removeOverlay()
-        }
-        else{
-            self.refreshControlSecnd.endRefreshing()
-            pullToRefreshActiveSecnd = false
-        }
     }
     
     func pullToRefreshSecnd()
@@ -92,6 +85,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     @IBAction func backClicked(sender: AnyObject)
     {
+       
         if tapFlag == false
         {
             tapFlag = true
@@ -231,8 +225,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func getChannelContactDetails(username: String, token: String, channelid: String)
     {
-        if(!pullToRefreshActiveSecnd){
-            showOverlay()
+        showOverlay()
+        if(pullToRefreshActiveSecnd){
+            removeOverlay()
         }
         channelManager.getChannelContactDetails(channelid, userName: username, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
@@ -260,10 +255,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        if(!pullToRefreshActiveSecnd){
+      
             removeOverlay()
-        }
-        else{
+        if(pullToRefreshActiveSecnd){
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
         }
@@ -321,10 +315,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        if(!pullToRefreshActiveSecnd){
+     
             removeOverlay()
-        }
-        else{
+       if(pullToRefreshActiveSecnd){
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
         }
@@ -371,7 +364,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){

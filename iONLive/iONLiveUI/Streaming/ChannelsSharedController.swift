@@ -32,12 +32,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     let mediaImageKey = "mediaImage"
     let thumbImageKey = "thumbImage"
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
     var loadingOverlay: UIView?
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
     @IBOutlet weak var ChannelSharedTableView: UITableView!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,16 +63,21 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        removeOverlay()
     }
     
     func pullToRefresh()
     {
+        if(!pullToRefreshActive){
+        
         mediaShared.removeAll()
         dummy.removeAll()
         dataSource.removeAll()
         pullToRefreshActive = true
         initialise()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+        }
     }
     
     func initialise(){
@@ -86,6 +90,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func getChannelSharedDetails(userName: String, token: String)
     {
+        showOverlay()
+        if(pullToRefreshActive){
+            removeOverlay()
+        }
         channelManager.getChannelShared(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
             
@@ -131,7 +139,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.navigationController?.view.addSubview(self.loadingOverlay!)
+        self.view .addSubview(self.loadingOverlay!)
+      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){

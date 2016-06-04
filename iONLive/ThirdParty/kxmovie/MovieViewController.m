@@ -18,6 +18,7 @@
 #import <CFNetwork/CFNetwork.h>
 #import "IPhoneCameraViewController.h"
 #import <SpriteKit/SpriteKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width

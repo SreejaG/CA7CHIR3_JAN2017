@@ -36,4 +36,8 @@ class MyChannelDetailViewController: UITabBarController {
         super.didReceiveMemoryWarning()
         
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        
+    }
 }

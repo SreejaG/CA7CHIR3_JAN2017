@@ -105,6 +105,7 @@ int cameraChangeFlag = 0;
 
     dispatch_async(dispatch_get_main_queue(), ^{
        _startCameraActionButton.enabled = false;
+        
     });
     
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
