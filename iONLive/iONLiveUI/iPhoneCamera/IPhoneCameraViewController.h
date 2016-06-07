@@ -25,4 +25,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *sharedUserCount;
 
 @property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
+
+- (UIImage *)imageRotatedByDegrees:(CGFloat)degrees;
 @end

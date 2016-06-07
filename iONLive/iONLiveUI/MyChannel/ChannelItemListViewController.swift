@@ -508,23 +508,21 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
+           
             self.showOverlay()
             self.channelItemCollectionView.alpha = 0.4
-       //     self.channelItemCollectionView.userInteractionEnabled = false
-            
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             
-            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(backgroundQueue, {
-               let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String,isProfile: true) as! MovieViewController
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+              
+                let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String,isProfile: true) as! MovieViewController
                 self.presentViewController(vc, animated: false) { () -> Void in
                     self.removeOverlay()
                     self.channelItemCollectionView.alpha = 1.0
                 }
             })
-        
+          
         }
     }
 }

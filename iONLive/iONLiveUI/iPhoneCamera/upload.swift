@@ -91,6 +91,7 @@ protocol uploadProgressDelegate
             let checkValidation = NSFileManager.defaultManager()
             for index in 0 ..< sortedSnapShotsKeys.count
             {
+                print(shotDict)
                 if let thumbNailImagePath = shotDict.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))

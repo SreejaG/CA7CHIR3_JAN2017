@@ -389,8 +389,6 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        collectionView.alpha = 0.4
-        
         if  fullImageDataSource.count>0
         {
             if fullImageDataSource.count > indexPath.row
@@ -400,21 +398,21 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 showOverlay()
                 channelItemsCollectionView.alpha = 0.4
                 
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
+                      dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 if type == "image"
                 {
                     let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
-                        
+                        self.removeOverlay()
+                        self.channelItemsCollectionView.alpha = 1.0
                     }
                 }else if type == "video"
                 {
                     let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: self.profileImage,videoImageUrl:self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
             
                     self.presentViewController(vc, animated: false) { () -> Void in
-                
+                        self.removeOverlay()
+                        self.channelItemsCollectionView.alpha = 1.0
                     }
                 }else
                 {
@@ -427,11 +425,14 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                         self.presentViewController(vc, animated: false) { () -> Void in
-                    
+                            self.removeOverlay()
+                            self.channelItemsCollectionView.alpha = 1.0
                         }
                     }
                     else
                     {
+                        self.removeOverlay()
+                        self.channelItemsCollectionView.alpha = 1.0
                         ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
                     }
                 }

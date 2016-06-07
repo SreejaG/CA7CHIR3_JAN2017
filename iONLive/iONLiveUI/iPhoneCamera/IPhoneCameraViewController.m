@@ -122,10 +122,7 @@ int cameraChangeFlag = 0;
     PhotoViewerInstance.iphoneCam = self;
     [_uploadProgressCameraView setHidden:YES];
     
-    
-    
     self.activitView.hidden = true;
-//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     if (! [self isStreamStarted]) {
         if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {

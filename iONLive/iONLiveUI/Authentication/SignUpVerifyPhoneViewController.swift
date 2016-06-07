@@ -320,7 +320,6 @@ class SignUpVerifyPhoneViewController: UIViewController
             status = json["status"] as! Int
             if(status >= 1)
             {
-                verificationCode = "1555HFH2"
                 checkVerificationCodeVisiblty()
             }
         }
@@ -338,7 +337,8 @@ class SignUpVerifyPhoneViewController: UIViewController
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
-        else if code.isEmpty == false {
+        else if code.isEmpty == false
+        {
             ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController()

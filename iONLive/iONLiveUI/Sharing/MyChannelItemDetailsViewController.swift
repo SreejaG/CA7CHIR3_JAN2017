@@ -43,9 +43,9 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.viewDidLoad()
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-       
-//        self.channelItemsCollectionView.alwaysBounceVertical = true
-  
+        
+        //        self.channelItemsCollectionView.alwaysBounceVertical = true
+        
         initialise()
     }
     
@@ -69,12 +69,12 @@ class MyChannelItemDetailsViewController: UIViewController {
         tapCount = tapCount + 1
         if(tapCount <= 1){
             if(!pullToRefreshActive){
-            pullToRefreshActive = true
-            totalMediaCount = 0
-            print(tapCount)
-        
-            initialise()
-        }
+                pullToRefreshActive = true
+                totalMediaCount = 0
+                print(tapCount)
+                
+                initialise()
+            }
         }
         else{
             self.refreshControl.endRefreshing()
@@ -84,7 +84,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     @IBAction func backClicked(sender: AnyObject)
     {
-      
+        
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
         sharingVC.navigationController?.navigationBarHidden = true
@@ -175,7 +175,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
+        //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -184,10 +184,10 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-       // if(!pullToRefreshActive){
-            removeOverlay()
-      //  }
-      //  else{
+        // if(!pullToRefreshActive){
+        removeOverlay()
+        //  }
+        //  else{
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
@@ -213,8 +213,8 @@ class MyChannelItemDetailsViewController: UIViewController {
                         self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
                         self.channelItemsCollectionView.addSubview(self.refreshControl)
                         self.tapCount = 0
-//                        self.refreshControl.endRefreshing()
-//                        self.pullToRefreshActive = false
+                        //                        self.refreshControl.endRefreshing()
+                        //                        self.pullToRefreshActive = false
                     })
                 })
             }
@@ -227,9 +227,9 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-       
-            removeOverlay()
-       
+        
+        removeOverlay()
+        
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
@@ -277,38 +277,38 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func downloadMediaFromGCS(){
         if(imageDataSource.count > 0){
-        for i in 0 ..< totalMediaCount
-        {
-            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-            print(mediaIdS)
-            if(mediaIdS != ""){
-            var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        if(result != UIImage()){
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            imageForMedia = result
+            for i in 0 ..< totalMediaCount
+            {
+                let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+                print(mediaIdS)
+                if(mediaIdS != ""){
+                    var imageForMedia : UIImage = UIImage()
+                    let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                    if fileExistFlag == true{
+                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                        imageForMedia = mediaImageFromFile!
+                    }
+                    else{
+                        let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                        if(mediaUrl != ""){
+                            let url: NSURL = convertStringtoURL(mediaUrl)
+                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                if(result != UIImage()){
+                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    imageForMedia = result
+                                }
+                            })
                         }
+                    }
+                    
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.channelItemsCollectionView.reloadData()
                     })
                 }
-            }
-            
-            self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.channelItemsCollectionView.reloadData()
-            })
-        }
             }
         }
     }
@@ -368,22 +368,22 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if(!pullToRefreshActive){
-        if(fullImageDataSource.count > 0){
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        self.showOverlay()
-        self.channelItemsCollectionView.alpha = 0.4
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
-            let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
-        
-            self.presentViewController(vc, animated: false) { () -> Void in
-                self.removeOverlay()
-                self.channelItemsCollectionView.alpha = 1.0
+            if(fullImageDataSource.count > 0){
+               
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                
+                self.showOverlay()
+                self.channelItemsCollectionView.alpha = 0.4
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: UIImage(), videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
+                    self.presentViewController(vc, animated: false) { () -> Void in
+                        self.removeOverlay()
+                        self.channelItemsCollectionView.alpha = 1.0
+                    }
+                })
             }
-            })
-        }
         }
     }
 }
