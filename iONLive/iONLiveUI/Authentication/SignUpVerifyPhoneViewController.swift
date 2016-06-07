@@ -99,6 +99,8 @@ class SignUpVerifyPhoneViewController: UIViewController
         countryPicker.countryPhoneCodeDelegate = self
         countryTextField.userInteractionEnabled = false
         countryCodeTextField.userInteractionEnabled = true
+        verificationCodeTextField.hidden = true
+        verificationCode = ""
         mobileNumberTextField.delegate = self
         countryCodeTextField.delegate = self
         self.countryPicker.hidden = true
@@ -194,6 +196,7 @@ class SignUpVerifyPhoneViewController: UIViewController
                    loadForgotPasswordView()
                 }
                 else{
+                    
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
                     let gcmRegId = "ios".stringByAppendingString(deviceToken)
                     validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
@@ -320,6 +323,7 @@ class SignUpVerifyPhoneViewController: UIViewController
             status = json["status"] as! Int
             if(status >= 1)
             {
+                verificationCode = "exist"
                 checkVerificationCodeVisiblty()
             }
         }
@@ -407,7 +411,6 @@ class SignUpVerifyPhoneViewController: UIViewController
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){

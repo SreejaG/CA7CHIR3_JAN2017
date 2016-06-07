@@ -91,7 +91,7 @@ protocol uploadProgressDelegate
             let checkValidation = NSFileManager.defaultManager()
             for index in 0 ..< sortedSnapShotsKeys.count
             {
-                print(shotDict)
+            //    print(shotDict)
                 if let thumbNailImagePath = shotDict.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
@@ -243,7 +243,7 @@ protocol uploadProgressDelegate
                 }
                 let sizeThumb = CGSizeMake(70,70)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                print(imageAfterConversionThumbnail)
+            //    print(imageAfterConversionThumbnail)
                 uploadMediaDict.append([mediaIdKey : mediaId!,mediaTypeKey : self.signedURLResponse.valueForKey("type") as! String,timeStampKey:"",thumbSignedUrlKey :signedURLResponse.valueForKey("UploadThumbnailUrl") as! String!,fullSignedUrlKey : signedURLResponse.valueForKey("UploadObjectUrl") as! String!,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionThumbnail])
                 let data = NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict)
                 defaults.setObject(data , forKey :"uploaObjectDict")
@@ -259,7 +259,7 @@ protocol uploadProgressDelegate
                             if result == "Success"
                             {
                                 
-                                print(self.dummyImagesDataSourceDatabase.count)
+                             //   print(self.dummyImagesDataSourceDatabase.count)
                                 self.dummyImagesDataSourceDatabase.removeAll()
                                 self.checksDataSourceDatabase.removeLast()
                                 // self.deleteCOreData()
@@ -420,7 +420,7 @@ protocol uploadProgressDelegate
             }
         }
         self.checkThumb = false
-        print(progressDictionary)
+  //      print(progressDictionary)
         defaults.setValue(progressDictionary, forKey: "ProgressDict")
         if PhotoViewerInstance.controller != nil
         {
@@ -548,7 +548,7 @@ protocol uploadProgressDelegate
         mediaId = String(signedURLResponse.valueForKey("mediaId")!)
         
         let uploadProgress:Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-        print(uploadProgress)
+   //     print(uploadProgress)
         updateProgressToDefault(uploadProgress)
         
     }
@@ -564,8 +564,8 @@ protocol uploadProgressDelegate
         }
         for(var i = 0 ; i < progressDictionary.count ; i++)
         {
-            print(String(progressDictionary[i][mediaIdKey]!))
-            print(String(signedURLResponse.valueForKey("mediaId")!))
+//            print(String(progressDictionary[i][mediaIdKey]!))
+//            print(String(signedURLResponse.valueForKey("mediaId")!))
             if String(progressDictionary[i][mediaIdKey]!) == mediaId
             {
                 progressDictionary[i]["progress"] = progress

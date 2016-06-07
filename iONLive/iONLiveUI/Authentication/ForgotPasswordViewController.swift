@@ -118,7 +118,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         }
         else{
             let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-            if((newPaswrd?.characters.count < 8) || (newPaswrd?.characters.count > 20) || (confirmPaswrd?.characters.count < 8) || (confirmPaswrd?.characters.count > 20))
+            if((newPaswrd?.characters.count < 8) || (newPaswrd?.characters.count > 40) || (confirmPaswrd?.characters.count < 8) || (confirmPaswrd?.characters.count > 40))
             {
                 ErrorManager.sharedInstance.InvalidPwdEnteredError()
                 return

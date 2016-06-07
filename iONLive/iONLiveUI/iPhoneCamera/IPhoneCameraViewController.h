@@ -17,13 +17,10 @@
 -(void) deleteIphoneCameraSnapShots;
 -(void) uploadprogress:(float) progress;
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages;
-@property (weak, nonatomic) IBOutlet UIImageView *latestSharedMediaImage;
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *uploadActivityIndicator;
-@property (weak, nonatomic) IBOutlet UIProgressView *uploadProgressCameraView;
+@property (weak, nonatomic) IBOutlet UIImageView *latestSharedMediaImage;
 @property (weak, nonatomic) IBOutlet UILabel *countLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sharedUserCount;
-
 @property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
 
 - (UIImage *)imageRotatedByDegrees:(CGFloat)degrees;

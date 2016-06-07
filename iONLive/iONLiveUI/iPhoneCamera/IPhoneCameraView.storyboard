@@ -178,12 +178,6 @@
                                             <constraint firstAttribute="width" constant="17" id="SC1-FE-E3u"/>
                                         </constraints>
                                     </imageView>
-                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vUo-cz-DcZ">
-                                        <rect key="frame" x="42" y="78" width="46" height="2"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="46" id="ecN-lC-fNT"/>
-                                        </constraints>
-                                    </progressView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YEH-gb-xIX" userLabel="cameraThumbButton">
                                         <rect key="frame" x="40" y="35" width="50" height="50"/>
                                         <constraints>
@@ -195,14 +189,6 @@
                                             <action selector="didTapPhotoViewer:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="uKL-Qf-rss"/>
                                         </connections>
                                     </button>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="mb8-jt-nr2">
-                                        <rect key="frame" x="55" y="49" width="20" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="lwd-mc-NWg"/>
-                                            <constraint firstAttribute="height" constant="20" id="p4F-l5-a6z"/>
-                                        </constraints>
-                                        <color key="color" red="0.0" green="0.40000000000000002" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    </activityIndicatorView>
                                     <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
                                         <rect key="frame" x="507" y="40" width="45" height="45"/>
                                         <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
@@ -218,11 +204,9 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="cEw-NK-Mzz" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="51" id="04B-DS-lLl"/>
-                                    <constraint firstItem="vUo-cz-DcZ" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="42" id="0ev-px-fCy"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="40" id="11j-r3-wO9"/>
                                     <constraint firstAttribute="trailing" secondItem="xzX-a8-zLm" secondAttribute="trailing" constant="40" id="7Qg-9X-lCu"/>
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="8QX-eo-r1A"/>
-                                    <constraint firstItem="mb8-jt-nr2" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="55" id="BBv-5I-z1M"/>
                                     <constraint firstAttribute="trailing" secondItem="2fe-SJ-fm1" secondAttribute="trailing" constant="48" id="DR2-0K-xhU"/>
                                     <constraint firstItem="2fe-SJ-fm1" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="40" id="I4k-BV-tZu"/>
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerX" secondItem="JqH-kr-rKo" secondAttribute="centerX" id="KWd-YN-cYO"/>
@@ -230,8 +214,6 @@
                                     <constraint firstItem="joa-mg-5MH" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="42" id="Sve-zp-5eE"/>
                                     <constraint firstItem="VfF-28-FyM" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" constant="3" id="TQ5-30-GNe"/>
                                     <constraint firstItem="xzX-a8-zLm" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="WkX-hg-cCK"/>
-                                    <constraint firstItem="mb8-jt-nr2" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="49" id="cYx-qs-Rbf"/>
-                                    <constraint firstItem="vUo-cz-DcZ" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="78" id="cf9-MF-fDP"/>
                                     <constraint firstItem="ZpM-Fq-WiG" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="l2E-me-gQ8"/>
                                     <constraint firstAttribute="trailing" secondItem="VfF-28-FyM" secondAttribute="trailing" constant="49" id="nig-A3-SEs"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="centerY" secondItem="JqH-kr-rKo" secondAttribute="centerY" id="rsZ-Hs-EBD"/>
@@ -308,8 +290,6 @@
                         <outlet property="thirdButton" destination="zxw-lQ-yPH" id="WDr-ha-RYa"/>
                         <outlet property="thumbnailImageView" destination="joa-mg-5MH" id="Dxt-ff-dxV"/>
                         <outlet property="topView" destination="ucJ-gA-nDs" id="wVm-dG-t3h"/>
-                        <outlet property="uploadActivityIndicator" destination="mb8-jt-nr2" id="JF6-Dd-V4n"/>
-                        <outlet property="uploadProgressCameraView" destination="vUo-cz-DcZ" id="8h3-zB-Gb5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eNM-F5-Mjs" userLabel="First Responder" sceneMemberID="firstResponder"/>

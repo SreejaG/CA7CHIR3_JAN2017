@@ -124,7 +124,7 @@ class SignUpViewController: UIViewController {
         {
             let text = passwdTextField.text
             let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-            if((text?.characters.count < 8) || (text?.characters.count > 20))
+            if((text?.characters.count < 8) || (text?.characters.count > 40))
             {
                 ErrorManager.sharedInstance.InvalidPwdEnteredError()
                 passwdTextField.text = ""

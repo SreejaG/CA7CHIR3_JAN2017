@@ -26,6 +26,7 @@ static void * SessionRunningContext = &SessionRunningContext;
 NSString* selectedFlashOption = @"selectedFlashOption";
 int thumbnailSize = 50;
 int deleteCount = 0;
+int flashFlag = 0;
 
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSuccess,
@@ -87,9 +88,66 @@ IPhoneLiveStreaming * liveStreaming;
 NSMutableDictionary *ShotsDict;
 FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
+NSInteger shutterActionMode;
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = true;
+    [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
+    [self deleteIphoneCameraSnapShots];
+}
 
 - (void)viewDidLoad {
- 
+    [super viewDidLoad];
+    [self loadingView];
+    [self initialise];
+}
+
+-(void) initialise{
+    shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+    [self setButtonCornerRadius];
+    [self checkCountForLabel];
+    [self setGUIBasedOnMode];
+    [self setGUIModifications];
+    fileManager = [[FileManagerViewController alloc]init];
+    liveStreaming = [[IPhoneLiveStreaming alloc]init];
+    PhotoViewerInstance.iphoneCam = self;
+    SetUpView *viewSet = [[SetUpView alloc]init];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+       [viewSet getValue];
+    });
+}
+
+-(void)loadingView
+{
+    dispatch_async( dispatch_get_main_queue(), ^{
+        self.activitView.hidden =false;
+        self.startCameraActionButton.enabled = false;
+        _activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
+        _activityImageView.hidden = false;
+        [__activityIndicatorView startAnimating];
+        __activityIndicatorView.hidden = false;
+        _noDataFound.text = @"Loading Camera...";
+        _noDataFound.hidden = false;
+    });
+}
+
+-(void)hidingView
+{
+    dispatch_async( dispatch_get_main_queue(), ^{
+        self.activitView.hidden = true;
+        self.startCameraActionButton.enabled = true;
+        _activityImageView.hidden = true;
+        [__activityIndicatorView stopAnimating];
+        __activityIndicatorView.hidden = true;
+        _noDataFound.text = @"";
+        _noDataFound.hidden = true;
+    });
+}
+
+
+-(void) setButtonCornerRadius{
     _firstButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.cornerRadius = _firstButton.frame.size.width/2;
     _firstButton.layer.masksToBounds = YES;
@@ -99,53 +157,179 @@ int cameraChangeFlag = 0;
     _thirdButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
     _thirdButton.layer.cornerRadius = _firstButton.frame.size.width/2;
     _thirdButton.layer.masksToBounds = YES;
-    
-    fileManager = [[FileManagerViewController alloc]init];
-    [super viewDidLoad];
+    _countLabel.layer.cornerRadius = 5;
+    _countLabel.layer.masksToBounds = true;
+}
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-       _startCameraActionButton.enabled = false;
-        
-    });
+-(void) setGUIModifications{
+    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     
-    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-    NSLog(@"%ld",(long)shutterActionMode);
-    if (shutterActionMode != SnapCamSelectionModeLiveStream)
-    {
-            SetUpView *viewSet = [[SetUpView alloc]init];
-            [viewSet getValue];
+    _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
+    if(_currentFlashMode == 0){
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
     }
- 
-    [self initialiseView];
+    else if(_currentFlashMode == 1){
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
+    }
+     _snapCamMode = SnapCamSelectionModeiPhone;
+    flashFlag = 0;
+    _activitView.hidden = YES;
+    _playiIconView.hidden = YES;
+}
+
+-(void) checkCountForLabel
+{
+    NSArray *mediaArray = [[NSUserDefaults standardUserDefaults] objectForKey:@"Shared"];
+    if([mediaArray count] <= 0)
+    {
+        [[NSUserDefaults standardUserDefaults] setObject:@"FirstEntry" forKey:@"First"];
+    }
+    NSInteger count = 0;
+    for (int i=0;i< mediaArray.count;i++)
+    {
+        count = count + [ mediaArray[i][@"total_no_media_shared"] integerValue];
+    }
+    if(count==0)
+    {
+        _countLabel.hidden= true;
+    }
+    else
+    {
+        _countLabel.hidden= false;
+        _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
+    }
+}
+
+-(BOOL) isStreamStarted
+{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"StartedStreaming"];
+}
+
+-(void)configureCameraSettings
+{
+    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
+    self.setupResult = AVCamSetupResultSuccess;
+    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
+    {
+        case AVAuthorizationStatusAuthorized:
+        {
+            break;
+        }
+        case AVAuthorizationStatusNotDetermined:
+        {
+            dispatch_suspend( self.sessionQueue);
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
+                if ( ! granted ) {
+                    self.setupResult = AVCamSetupResultCameraNotAuthorized;
+                }
+                dispatch_resume( self.sessionQueue );
+            }];
+            break;
+        }
+        default:
+        {
+            self.setupResult = AVCamSetupResultCameraNotAuthorized;
+            break;
+        }
+    }
     
-    [_uploadActivityIndicator setHidden:YES];
-    PhotoViewerInstance.iphoneCam = self;
-    [_uploadProgressCameraView setHidden:YES];
-    
-    self.activitView.hidden = true;
-    if (! [self isStreamStarted]) {
+    dispatch_async( self.sessionQueue, ^{
+        if ( self.setupResult != AVCamSetupResultSuccess ) {
+            return;
+        }
+        
+        self.backgroundRecordingID = UIBackgroundTaskInvalid;
+        NSError *error = nil;
+        
+        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionBack];
+        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+        
+        if ( ! videoDeviceInput ) {
+            NSLog( @"Could not create video device input: %@", error );
+        }
+        
+        [self.session beginConfiguration];
+        
+        
+        if ( [self.session canAddInput:videoDeviceInput] ) {
+            [self.session addInput:videoDeviceInput];
+            self.videoDeviceInput = videoDeviceInput;
+            
+            dispatch_async( dispatch_get_main_queue(), ^{
+                UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+                AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
+                if ( statusBarOrientation != UIInterfaceOrientationUnknown ) {
+                    initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
+                }
+                AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+                previewLayer.connection.videoOrientation = initialVideoOrientation;
+            } );
+        }
+        else {
+       //     NSLog( @"Could not add video device input to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+        AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+        
+        if ( ! audioDeviceInput ) {
+         //   NSLog( @"Could not create audio device input: %@", error );
+        }
+        
+        if ( [self.session canAddInput:audioDeviceInput] ) {
+            [self.session addInput:audioDeviceInput];
+        }
+        else {
+            NSLog( @"Could not add audio device input to the session" );
+        }
+        
+        AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+        if ( [self.session canAddOutput:movieFileOutput] ) {
+            [self.session addOutput:movieFileOutput];
+            AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+            if ( connection.isVideoStabilizationSupported ) {
+                connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+            }
+            self.movieFileOutput = movieFileOutput;
+        }
+        else {
+            NSLog( @"Could not add movie file output to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+        if ( [self.session canAddOutput:stillImageOutput] ) {
+            stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
+            [self.session addOutput:stillImageOutput];
+            self.stillImageOutput = stillImageOutput;
+        }
+        else {
+            NSLog( @"Could not add still image output to the session" );
+            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
+        }
+        
+        [self.session commitConfiguration];
+    } );
+}
+
+-(void) setGUIBasedOnMode{
+    if (![self isStreamStarted]) {
+       
         if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {
             _flashButton.hidden = true;
             _cameraButton.hidden = true;
-            self.previewView.session = nil;
-            self.previewView.hidden = true;
-            
             _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
             [_liveSteamSession.previewView removeFromSuperview];
             AVCaptureVideoPreviewLayer  *ptr;
             [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-            [self.view addSubview:_liveSteamSession.previewView];
             _liveSteamSession.previewView.frame = self.view.bounds;
             _liveSteamSession.delegate = self;
-            [self.view bringSubviewToFront:self.bottomView];
-            [self.view bringSubviewToFront:self.topView];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                _startCameraActionButton.enabled = true;
-            });
         }
         else{
-            
             [_liveSteamSession.previewView removeFromSuperview];
             _liveSteamSession.delegate = nil;
             [self removeObservers];
@@ -163,12 +347,13 @@ int cameraChangeFlag = 0;
                         [self.session startRunning];
                         
                         self.sessionRunning = self.session.isRunning;
+                        [self hidingView];
                         break;
                     }
                     case AVCamSetupResultCameraNotAuthorized:
                     {
                         dispatch_async( dispatch_get_main_queue(), ^{
-                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+                            NSString *message = NSLocalizedString( @"CA7CH doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera");
                             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
                             UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
                             [alertController addAction:cancelAction];
@@ -185,7 +370,7 @@ int cameraChangeFlag = 0;
                     {
                         dispatch_async( dispatch_get_main_queue(), ^{
                             NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"CA7CH" message:message preferredStyle:UIAlertControllerStyleAlert];
                             UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
                             [alertController addAction:cancelAction];
                             [self presentViewController:alertController animated:YES completion:nil];
@@ -193,17 +378,14 @@ int cameraChangeFlag = 0;
                         break;
                     }
                 }
-            } );
+            });
         }
     }
-
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-//    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-//    [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
         
     }else {
@@ -211,12 +393,10 @@ int cameraChangeFlag = 0;
         [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
         [self.videoDeviceInput.device unlockForConfiguration];
     }
- 
     [self removeObservers];
-  
 }
+
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
-    
     NSString * sharedUserCount = detailArray[@"sharedUserCount"];
     NSString * mediaSharedCount =  detailArray[@"mediaSharedCount"];
     NSString * latestSharedMediaThumbnail =   detailArray[@"latestSharedMediaThumbnail"];
@@ -224,43 +404,38 @@ int cameraChangeFlag = 0;
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     
-    NSLog(@"%@",sharedUserCount);
-    NSLog(@"%lu",(unsigned long)userImages.count);
-  
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
-    });
-
-    if(userImages.count > 0){
-        for(int i=0;i<userImages.count;i++){
-            dispatch_async(dispatch_get_main_queue(), ^{
+   
+        if(userImages.count > 0){
+            for(int i=0;i<userImages.count;i++){
                 if(i==0){
-                if(userImages[0] != nil){
-                    [_firstButton setImage:userImages[0] forState:UIControlStateNormal];
+                    if(userImages[0] != nil){
+                        [_firstButton setImage:userImages[0] forState:UIControlStateNormal];
+                    }
+                    else{
+                        [_firstButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
+                    }
                 }
-                else{
-                    [_firstButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
+                else if(i==1){
+                    if(userImages[1] != nil){
+                        [_secondButton setImage:userImages[1] forState:UIControlStateNormal];
+                    }
+                    else{
+                        [_secondButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
+                    }
+                }
+                else if(i==2){
+                    if(userImages[2] != nil){
+                        [_thirdButton setImage:userImages[2] forState:UIControlStateNormal];
+                    }
+                    else{
+                        [_thirdButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
+                    }
                 }
             }
-            else if(i==1){
-                if(userImages[1] != nil){
-                    [_secondButton setImage:userImages[1] forState:UIControlStateNormal];
-                }
-                else{
-                    [_secondButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
-                }
-            }
-            else if(i==2){
-                if(userImages[2] != nil){
-                    [_thirdButton setImage:userImages[2] forState:UIControlStateNormal];
-                }
-                else{
-                    [_thirdButton setImage:[UIImage imageNamed:@"dummyUser"] forState:UIControlStateNormal];
-                }
-            }
-            });
         }
-    }
+    });
     
     dispatch_async(dispatch_get_global_queue(0,0), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
@@ -273,7 +448,6 @@ int cameraChangeFlag = 0;
             }
             self.thumbnailImageView.image= [UIImage imageWithData: data];
         });
-        
     });
     
     if([mediaSharedCount  isEqual: @"0"])
@@ -287,14 +461,11 @@ int cameraChangeFlag = 0;
                 {
                     self.playiIconView.hidden = false;
                 }
-                
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
-            
         });
     }
     else{
-        
         NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:@"First"];
         if([status isEqualToString:@"FirstEntry"])
         {
@@ -323,171 +494,274 @@ int cameraChangeFlag = 0;
                     }
                     self.latestSharedMediaImage.image = [UIImage imageWithData: data];
                 });
-                
             });
         }
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
+#pragma mark button action
+
+- (IBAction)didTapChangeCamera:(id)sender
 {
-    [super viewWillAppear:animated];
-//    self.activitView.hidden = true;
-//    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-//    if (! [self isStreamStarted]) {
-//        if (shutterActionMode == SnapCamSelectionModeLiveStream)
-//        {
-//            _flashButton.hidden = true;
-//            _cameraButton.hidden = true;
-//            self.previewView.session = nil;
-//            self.previewView.hidden = true;
-//            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
-//            AVCaptureVideoPreviewLayer  *ptr;
-//            [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-//            [self.view addSubview:_liveSteamSession.previewView];
-//            _liveSteamSession.previewView.frame = self.view.bounds;
-//            _liveSteamSession.delegate = self;
-//            [self.view bringSubviewToFront:self.bottomView];
-//            [self.view bringSubviewToFront:self.topView];
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                _startCameraActionButton.enabled = true;
-//            });
-//        }
-//        else{
-//            
-//            [_liveSteamSession.previewView removeFromSuperview];
-//            _liveSteamSession.delegate = nil;
-//            [self removeObservers];
-//            self.session = [[AVCaptureSession alloc] init];
-//            self.previewView.hidden = false;
-//            self.previewView.session = self.session;
-//            [self configureCameraSettings];
-//            
-//            dispatch_async( self.sessionQueue, ^{
-//                switch ( self.setupResult )
-//                {
-//                    case AVCamSetupResultSuccess:
-//                    {
-//                        [self addObservers];
-//                        [self.session startRunning];
-//                        
-//                        self.sessionRunning = self.session.isRunning;
-//                        break;
-//                    }
-//                    case AVCamSetupResultCameraNotAuthorized:
-//                    {
-//                        dispatch_async( dispatch_get_main_queue(), ^{
-//                            NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
-//                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-//                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-//                            [alertController addAction:cancelAction];
-//                            
-//                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-//                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-//                            }];
-//                            [alertController addAction:settingsAction];
-//                            [self presentViewController:alertController animated:YES completion:nil];
-//                        } );
-//                        break;
-//                    }
-//                    case AVCamSetupResultSessionConfigurationFailed:
-//                    {
-//                        dispatch_async( dispatch_get_main_queue(), ^{
-//                            NSString *message = NSLocalizedString( @"Unable to capture media", @"Alert message when something goes wrong during capture session configuration" );
-//                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-//                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-//                            [alertController addAction:cancelAction];
-//                            [self presentViewController:alertController animated:YES completion:nil];
-//                        } );
-//                        break;
-//                    }
-//                }
-//            } );
-//        }
-//    }
+    [UIView transitionWithView:_previewView duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:nil completion:^(BOOL finished) {
+    }];
+    dispatch_async( self.sessionQueue, ^{
+        AVCaptureDevice *currentVideoDevice = self.videoDeviceInput.device;
+        AVCaptureDevicePosition preferredPosition = AVCaptureDevicePositionUnspecified;
+        AVCaptureDevicePosition currentPosition = currentVideoDevice.position;
+        
+        switch ( currentPosition )
+        {
+            case AVCaptureDevicePositionUnspecified:
+            case AVCaptureDevicePositionFront:
+                preferredPosition = AVCaptureDevicePositionBack;
+                [self showFlashImage:true];
+                break;
+            case AVCaptureDevicePositionBack:
+                preferredPosition = AVCaptureDevicePositionFront;
+                [self showFlashImage:false];
+                break;
+        }
+        
+        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:preferredPosition];
+        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:nil];
+        [self.session beginConfiguration];
+        [self.session removeInput:self.videoDeviceInput];
+        
+        if ( [self.session canAddInput:videoDeviceInput] ) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:AVCaptureDeviceSubjectAreaDidChangeNotification object:currentVideoDevice];
+            
+            [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:videoDevice];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:videoDevice];
+            
+            [self.session addInput:videoDeviceInput];
+            self.videoDeviceInput = videoDeviceInput;
+        }
+        else {
+            [self.session addInput:self.videoDeviceInput];
+        }
+        
+        AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+        if ( connection.isVideoStabilizationSupported ) {
+            connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+        }
+        [self.session commitConfiguration];
+    } );
+}
+
+-(void)showFlashImage:(BOOL)show
+{
+    if (show) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.flashButton.hidden = false;
+            flashFlag = 0;
+        });
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.flashButton.hidden = true;
+            flashFlag = 1;
+        });
+    }
+}
+
+- (IBAction)didTapFlashImage:(id)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (_currentFlashMode == AVCaptureFlashModeOn) {
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
+        _currentFlashMode = AVCaptureFlashModeOff;
+        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
+    }
+    else{
+        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
+        _currentFlashMode = AVCaptureFlashModeOn;
+        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
+    }
+}
+
+- (IBAction)didTapsCameraActionButton:(id)sender
+{
+    if (shutterActionMode == SnapCamSelectionModePhotos) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _cameraButton.hidden = false;
+            _playiIconView.hidden = true;
+            if(_flashButton.isHidden) {
+                _flashButton.hidden = true;
+            }
+            else{
+                _flashButton.hidden = false;
+            }
+        });
+        [self takePicture];
+    }
+    else if (shutterActionMode == SnapCamSelectionModeVideo)
+    {
+        [self startMovieRecording];
+    }
+    else if (shutterActionMode == SnapCamSelectionModeLiveStream)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _flashButton.hidden = true;
+            _cameraButton.hidden = true;
+        });
+        
+        switch(_liveSteamSession.rtmpSessionState) {
+            case VCSessionStateNone:
+            case VCSessionStatePreviewStarted:
+            case VCSessionStateEnded:
+            case VCSessionStateError:
+            {
+                [liveStreaming startLiveStreaming:_liveSteamSession];
+                [self showProgressBar];
+                break;
+            }
+            default:
+                [UIApplication sharedApplication].idleTimerDisabled = NO;
+                [liveStreaming stopStreamingClicked];
+                [_liveSteamSession endRtmpSession];
+                break;
+        }
+    }
+}
+
+
+#pragma mark take photo
+
+-(void)takePicture
+{
+    dispatch_async( self.sessionQueue, ^{
+        AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
+        AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+        connection.videoOrientation = previewLayer.connection.videoOrientation;
+        [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
+        [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:connection completionHandler:^( CMSampleBufferRef imageDataSampleBuffer, NSError *error ) {
+            if ( imageDataSampleBuffer ) {
+                NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+                [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
+                    if (status == PHAuthorizationStatusAuthorized ) {
+                        dispatch_async( dispatch_get_main_queue(), ^{
+                            self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                            UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
+                            [self saveImage:imageData];
+                            [self loaduploadManagerForImage];
+                        });
+                    }
+                }];
+            }
+            else {
+                NSLog( @"Could not capture still image: %@", error );
+            }
+        }];
+    });
+}
+
+#pragma mark save image to db
+
+-(void)saveImage:(NSData *)imageData
+{
+    NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
+    NSString *filePath=@"";
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
+    [imageData writeToFile:filePath atomically:YES];
+    
+    [self saveIphoneCameraSnapShots:dateString path:filePath];
+    
+    ShotsDict = [[NSMutableDictionary alloc]init];
+    [ShotsDict setValue:filePath forKey:dateString];
+}
+
+-(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
+    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = appDel.managedObjectContext;
+    NSManagedObject *newSnapShots =[NSEntityDescription insertNewObjectForEntityForName:@"SnapShots" inManagedObjectContext:context];
+    [newSnapShots setValue:imageName forKey:@"imageName"];
+    [newSnapShots setValue:path forKey:@"path"];
+    [context save:nil];
+}
+
+-(void) loaduploadManagerForImage
+{
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    upload *uploadManager =[[upload alloc]init];
+    uploadManager.snapShots = snapShotsDict;
+    uploadManager.shotDict = ShotsDict;
+    uploadManager.media = @"image";
+    [uploadManager uploadMedia];
+}
+
+#pragma mark video recording
+
+- (void)startMovieRecording
+{
+    dispatch_async( self.sessionQueue, ^{
+        if ( ! self.movieFileOutput.isRecording ) {
+            if ( [UIDevice currentDevice].isMultitaskingSupported ) {
+                self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+            }
+            dispatch_async( dispatch_get_main_queue(), ^{
+                _cameraButton.hidden = true;
+                _flashButton.hidden = true;
+                [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateNormal];
+                if(self.currentFlashMode == 1){
+                    if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                        if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                            [self.videoDeviceInput.device lockForConfiguration:nil];
+                            [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOn];
+                            [self.videoDeviceInput.device unlockForConfiguration];
+                        }
+                    }
+                }
+                [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
+            });
+            
+            // Update the orientation on the movie file output video connection before starting recording.
+            AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
+            AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+            connection.videoOrientation = previewLayer.connection.videoOrientation;
+            // Start recording to a temporary file.
+            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
+            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
+            [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
+        }
+        else {
+            
+            dispatch_async( dispatch_get_main_queue(), ^{  
+                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                    }else {
+                        [self.videoDeviceInput.device lockForConfiguration:nil];
+                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                        [self.videoDeviceInput.device unlockForConfiguration];
+                    }
+                }
+                _cameraButton.hidden = false;
+                if(flashFlag == 0){
+                    _flashButton.hidden = false;
+                }
+                else if(flashFlag == 1){
+                    _flashButton.hidden = true;
+                }
+                
+                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+            });
+            [self.movieFileOutput stopRecording];
+        }
+    } );
 }
 
 -(void) uploadprogress :(float) progress
 {
-    [ self.thumbnailImageView setAlpha:1.0];
-    if (!_playiIconView.hidden)
-    {
-        [_playiIconView setAlpha:1.0];
-    }
-    [_uploadProgressCameraView setHidden:YES];
-    if (progress == 1.0 || progress == 1)
-    {
-        [_uploadActivityIndicator stopAnimating];
-        [_uploadActivityIndicator setHidden:YES];
-        [_uploadProgressCameraView setHidden:YES];
-        
-    }
-}
-
-#pragma mark initialise View
-
--(void)initialiseView
-{
-    _countLabel.layer.cornerRadius = 5;
-    _countLabel.layer.masksToBounds = true;
-    _noDataFound.hidden = true;
-    _activityImageView.hidden = true;
-    __activityIndicatorView.hidden = true;
-    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-    [_playiIconView setHidden:YES];
-    
-    liveStreaming = [[IPhoneLiveStreaming alloc]init];
-    
-    _snapCamMode = SnapCamSelectionModeiPhone;
-    
-    _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
-   
-    if(_currentFlashMode == 0){
-        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
-    }
-    else if(_currentFlashMode == 1){
-        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
-    }
-    self.navigationController.navigationBarHidden = true;
-    [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
-    
-    [self deleteIphoneCameraSnapShots];
-    [self checkCountForLabel];
-    self.thumbnailImageView.image = [self readImageFromDataBase];
-    
-}
-
--(void) checkCountForLabel
-{
-    NSArray *mediaArray = [[NSUserDefaults standardUserDefaults] objectForKey:@"Shared"];
-    
-    if([mediaArray count] <= 0)
-    {
-        [[NSUserDefaults standardUserDefaults] setObject:@"FirstEntry" forKey:@"First"];
-        
-    }
-    NSInteger count = 0;
-    
-    for (int i=0;i< mediaArray.count;i++)
-    {
-        count = count + [ mediaArray[i][@"total_no_media_shared"] integerValue];
-    }
-    if(count==0)
-    {
-        _countLabel.hidden= true;
-    }
-    else
-    {
-        _countLabel.hidden= false;
-        _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
-    }
 }
 
 -(void)showProgressBar
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-        
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_off_mode"] forState:UIControlStateNormal];
         _flashButton.hidden = true;
         _cameraButton.hidden = true;
@@ -498,14 +772,51 @@ int cameraChangeFlag = 0;
         _noDataFound.text = @"Initializing Stream";
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
-    } );
+    });
     [self setUpInitialBlurView];
+}
+
+#pragma mark : VCSessionState Delegate
+
+- (void) connectionStatusChanged:(VCSessionState) state
+{
+    switch(state) {
+        case VCSessionStateStarting:
+            NSLog(@"Starting");
+            break;
+        case VCSessionStateStarted:
+            [self hideProgressBar];
+            NSLog(@"Started");
+            [self performSelector:@selector(screenCapture) withObject:nil afterDelay:2.0];
+            break;
+        case VCSessionStateEnded:
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            NSLog(@"End Stream");
+            break;
+        case VCSessionStateError:
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            [liveStreaming stopStreamingClicked];
+            NSLog(@"VCSessionStateError");
+            break;
+        default:
+            NSLog(@"Connect");
+            [self hidingView];
+            dispatch_async( dispatch_get_main_queue(), ^{
+                self.previewView.session = nil;
+                self.previewView.hidden = true;
+                [self.view addSubview:_liveSteamSession.previewView];
+                [self.view bringSubviewToFront:self.bottomView];
+                [self.view bringSubviewToFront:self.topView];
+            });
+            break;
+    }
 }
 
 -(void)hideProgressBar
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-
         [_iphoneCameraButton setImage:[UIImage imageNamed:@"Live_now_mode"] forState:UIControlStateNormal];
         _activityImageView.hidden = true;
         [__activityIndicatorView stopAnimating];
@@ -517,19 +828,7 @@ int cameraChangeFlag = 0;
     } );
 }
 
--(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
-    deleteCount = 0;
-    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
-    NSString *finalPath = [NSString stringWithFormat:@"%@LiveThumb",userName];
-    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
-}
-
--(void) deleteThumbnailImageLive{
-    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
-    NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-    NSString *finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,userName,@"LiveThumb"];
-    int deletFlag = [[FileManagerViewController sharedInstance] deleteImageFromFilePath:finalPath];
-}
+#pragma mark save livestream images
 
 -(void)screenCapture
 {
@@ -544,6 +843,13 @@ int cameraChangeFlag = 0;
     UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
     [self saveThumbnailImageLive:image1];
     [self uploadThumbToCloud:image1];
+}
+
+-(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
+    deleteCount = 0;
+    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
+    NSString *finalPath = [NSString stringWithFormat:@"%@LiveThumb",userName];
+    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
 }
 
 -(void) uploadThumbToCloud:(UIImage *)image
@@ -566,31 +872,39 @@ int cameraChangeFlag = 0;
     [dataTask resume];
 }
 
--(UIImage*)readImageFromDataBase
-{
-    snapShotsDict = [[NSMutableDictionary alloc]init];
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    UIImage * thumbNailImage = [[UIImage alloc]init];
-    if([snapShotsDict count] > 0){
-        NSMutableArray *dateArray=[[NSMutableArray alloc]init];
-        NSArray *snapShotKeys=[[NSArray alloc]init];
-        snapShotKeys = [snapShotsDict allKeys];
-        for(int i=0; i<[snapShotKeys count]; i++){
-            [dateFormat setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
-            NSDate *date = [dateFormat dateFromString:snapShotKeys[i]];
-            dateArray[i]=date;
-        }
-        NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
-        NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
-        
-        thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
-    }
-    else{
-        thumbNailImage = [UIImage imageNamed:@"thumb12"];
-    }
-    return thumbNailImage;
+-(void) deleteThumbnailImageLive{
+    NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
+    NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+    NSString *finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,userName,@"LiveThumb"];
+    int deletFlag = [[FileManagerViewController sharedInstance] deleteImageFromFilePath:finalPath];
 }
+
+
+//-(UIImage*)readImageFromDataBase
+//{
+//    snapShotsDict = [[NSMutableDictionary alloc]init];
+//    snapShotsDict = [self displayIphoneCameraSnapShots];
+//    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//    UIImage * thumbNailImage = [[UIImage alloc]init];
+//    if([snapShotsDict count] > 0){
+//        NSMutableArray *dateArray=[[NSMutableArray alloc]init];
+//        NSArray *snapShotKeys=[[NSArray alloc]init];
+//        snapShotKeys = [snapShotsDict allKeys];
+//        for(int i=0; i<[snapShotKeys count]; i++){
+//            [dateFormat setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+//            NSDate *date = [dateFormat dateFromString:snapShotKeys[i]];
+//            dateArray[i]=date;
+//        }
+//        NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+//        NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
+//        
+//        thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+//    }
+//    else{
+//        thumbNailImage = [UIImage imageNamed:@"thumb12"];
+//    }
+//    return thumbNailImage;
+//}
 
 #pragma mark KVO and Notifications
 
@@ -671,17 +985,11 @@ int cameraChangeFlag = 0;
 
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {
-    // In some scenarios we want to enable the user to resume the session running.
-    // For example, if music playback is initiated via control center while using AVCam,
-    // then the user can let AVCam resume the session running, which will stop music playback.
-    // Note that stopping music playback in control center will not automatically resume the session running.
-    // Also note that it is not always possible to resume, see -[resumeInterruptedSession:].
-    
     BOOL showResumeButton = NO;
     
     if ( &AVCaptureSessionInterruptionReasonKey ) {
         AVCaptureSessionInterruptionReason reason = [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue];
-        NSLog( @"Capture session was interrupted with reason %ld", (long)reason );
+     //   NSLog( @"Capture session was interrupted with reason %ld", (long)reason );
         
         if ( reason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
             reason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
@@ -708,28 +1016,15 @@ int cameraChangeFlag = 0;
     NSLog( @"Capture session interruption ended" );
 }
 
+
 #pragma mark File Output Recording Delegate
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections
 {
-    dispatch_async( dispatch_get_main_queue(), ^{
-        self.cameraButton.enabled = YES;
-        self.startCameraActionButton.enabled = YES;
-    });
 }
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
-    dispatch_async( dispatch_get_main_queue(), ^{
-        self.cameraButton.enabled = YES;
-        self.startCameraActionButton.enabled = YES;
-    } );
-    
-    // Note that currentBackgroundRecordingID is used to end the background task associated with this recording.
-    // This allows a new recording to be started, associated with a new UIBackgroundTaskIdentifier, once the movie file output's isRecording property
-    // is back to NO — which happens sometime after this method returns.
-    // Note: Since we use a unique file path for each recording, a new recording will not overwrite a recording currently being saved.
-    
     UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     BOOL success = YES;
@@ -741,12 +1036,7 @@ int cameraChangeFlag = 0;
     if ( success ) {
         [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
             if ( status == PHAuthorizationStatusAuthorized ) {
-                
-                
-                // Save the movie file to the photo library and cleanup.
-                
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                    
                     dispatch_async(dispatch_get_main_queue(), ^{
                         NSData *imageData = [[NSData alloc]init];
                         imageData = [self getThumbNail:outputFileURL];
@@ -755,10 +1045,6 @@ int cameraChangeFlag = 0;
                         [self saveImage:imageData];
                         [self moveVideoToDocumentDirectory:outputFileURL];
                     });
-
-                    // In iOS 9 and later, it's possible to move the file into the photo library without duplicating the file data.
-                    // This avoids using double the disk space during save, which can make a difference on devices with limited free disk space.
-                    
                     if ( [PHAssetResourceCreationOptions class] ) {
                         PHAssetResourceCreationOptions *options = [[PHAssetResourceCreationOptions alloc] init];
                         options.shouldMoveFile = YES;
@@ -772,7 +1058,6 @@ int cameraChangeFlag = 0;
                     if ( ! success ) {
                         NSLog( @"Could not save movie to photo library: %@", error );
                     }
-                
                 }];
             }
             else {
@@ -784,13 +1069,12 @@ int cameraChangeFlag = 0;
         // cleanup();
     }
     
-    // Enable the Camera and Record buttons to let the user switch camera and start another recording.
     dispatch_async( dispatch_get_main_queue(), ^{
-        // Only enable the ability to change camera if the device has more than one camera.
-        
         self.cameraButton.enabled = ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
     });
 }
+
+#pragma mark save video
 
 -(void) moveVideoToDocumentDirectory : (NSURL *) path
 {
@@ -804,14 +1088,22 @@ int cameraChangeFlag = 0;
 }
 
 - (NSURL*)grabFileURL:(NSString *)fileName {
-    
-    // find Documents directory
     NSURL *documentsURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    
-    // append a file name to it
     documentsURL = [documentsURL URLByAppendingPathComponent:fileName];
     return documentsURL;
 }
+
+-(void) loaduploadManager : (NSURL *)filePath
+{
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    upload *uploadManager =[[upload alloc]init];
+    uploadManager.snapShots = snapShotsDict;
+    uploadManager.shotDict = ShotsDict;
+    uploadManager.media = @"video";
+    uploadManager.videoPath =filePath;
+    [uploadManager uploadMedia];
+}
+
 #pragma mark Device Configuration
 
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
@@ -852,7 +1144,6 @@ int cameraChangeFlag = 0;
             NSLog( @"Could not lock device for configuration: %@", error );
         }
     }
-
 }
 
 + (AVCaptureDevice *)deviceWithMediaType:(NSString *)mediaType preferringPosition:(AVCaptureDevicePosition)position
@@ -866,46 +1157,9 @@ int cameraChangeFlag = 0;
             break;
         }
     }
-    
     return captureDevice;
 }
-#pragma mark take photo or record movie
 
--(void)takePicture
-{
-    dispatch_async( self.sessionQueue, ^{
-        AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
-        AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-        
-        // Update the orientation on the still image output video connection before capturing.
-        connection.videoOrientation = previewLayer.connection.videoOrientation;
-        
-        [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
-        
-        // Capture a still image.
-        [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:connection completionHandler:^( CMSampleBufferRef imageDataSampleBuffer, NSError *error ) {
-            if ( imageDataSampleBuffer ) {
-                
-                // The sample buffer is not retained. Create image data before saving the still image to the photo library asynchronously.
-                NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-                [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
-                    if ( status == PHAuthorizationStatusAuthorized ) {
-                        dispatch_async( dispatch_get_main_queue(), ^{
-                           self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
-                             UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
-                            [self saveImage:imageData];
-                            [self loaduploadManagerForImage];
-                            
-                        } );
-                    }
-                }];
-            }
-            else {
-                NSLog( @"Could not capture still image: %@", error );
-            }
-        }];
-    } );
-}
 
 -(UIImage*) drawImage:(UIImage*) fgImage
               inImage:(UIImage*) bgImage
@@ -919,106 +1173,7 @@ int cameraChangeFlag = 0;
     return result;
 }
 
-- (void)startMovieRecording
-{
-    // Disable the Camera button until recording finishes, and disable the Record button until recording starts or finishes. See the
-    // AVCaptureFileOutputRecordingDelegate methods.
-    
-    self.cameraButton.enabled = NO;
-    self.startCameraActionButton.enabled = NO;
-    
-    dispatch_async( self.sessionQueue, ^{
-        if ( ! self.movieFileOutput.isRecording ) {
-            if ( [UIDevice currentDevice].isMultitaskingSupported ) {
-                
-                // Setup background task. This is needed because the -[captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
-                // callback is not received until AVCam returns to the foreground unless you request background execution time.
-                // This also ensures that there will be time to write the file to the photo library when AVCam is backgrounded.
-                // To conclude this background execution, -endBackgroundTask is called in
-                // -[captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:] after the recorded file has been saved.
-                
-                self.backgroundRecordingID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
-            }
-               dispatch_async( dispatch_get_main_queue(), ^{
-                    NSLog(@"%ld",(long)self.currentFlashMode);
-                    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateNormal];
-                   if(self.currentFlashMode == 1){
-                       if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
-                           if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
-                               [self.videoDeviceInput.device lockForConfiguration:nil];
-                               [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOn];
-                               [self.videoDeviceInput.device unlockForConfiguration];
-                               
-                           }
-                       }
-                   }
-                   
-                   [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
-                   
-               });
-            
-            // Update the orientation on the movie file output video connection before starting recording.
-            AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-            connection.videoOrientation = previewLayer.connection.videoOrientation;
-            
-           
-            
-            // Start recording to a temporary file.
-            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
-            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
-            [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
-        }
-        else {
-            dispatch_async( dispatch_get_main_queue(), ^{
-                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
-                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
-
-                    }else {
-                        [self.videoDeviceInput.device lockForConfiguration:nil];
-                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
-                        [self.videoDeviceInput.device unlockForConfiguration];
-                    }
-                }
-                
-            });
-            [self.movieFileOutput stopRecording];
-        }
-    } );
-}
-
 #pragma mark save Image to DataBase
-
--(void)saveImage:(NSData *)imageData
-{
-    NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths firstObject];
-    NSString *filePath=@"";
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    
-    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
-    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
-    
-    filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
-    [imageData writeToFile:filePath atomically:YES];
-    [self saveIphoneCameraSnapShots:dateString path:filePath];
-
-//    UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
-    ShotsDict = [[NSMutableDictionary alloc]init];
-    [ShotsDict setValue:filePath forKey:dateString];
-}
-
--(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
-    
-    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
-    NSManagedObjectContext *context = appDel.managedObjectContext;
-    NSManagedObject *newSnapShots =[NSEntityDescription insertNewObjectForEntityForName:@"SnapShots" inManagedObjectContext:context];
-    
-    [newSnapShots setValue:imageName forKey:@"imageName"];
-    [newSnapShots setValue:path forKey:@"path"];
-    [context save:nil];
-}
 
 -(NSMutableDictionary *) displayIphoneCameraSnapShots {
     
@@ -1061,60 +1216,6 @@ int cameraChangeFlag = 0;
     [context save:nil];
 }
 
-#pragma mark Button Actions
-
-- (IBAction)didTapsCameraActionButton:(id)sender
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _startCameraActionButton.enabled = true;
-    });
-    NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
-   if (shutterActionMode != SnapCamSelectionModeLiveStream)
-   {
-       if(_cameraButton.isHidden) {
-           dispatch_async(dispatch_get_main_queue(), ^{
-               _flashButton.hidden = false;
-               _cameraButton.hidden = false;
-           });
-       }
-   }
-  
-    if (shutterActionMode == SnapCamSelectionModePhotos) {
-        _flashButton.hidden = false;
-        _cameraButton.hidden = false;
-        [_playiIconView setHidden:YES];
-        [self takePicture];
-    }
-    else if (shutterActionMode == SnapCamSelectionModeVideo)
-    {
-        [self startMovieRecording];
-            _flashButton.hidden = true;
-            _cameraButton.hidden = true;
-    }
-    else if (shutterActionMode == SnapCamSelectionModeLiveStream)
-    {
-            _flashButton.hidden = true;
-            _cameraButton.hidden = true;
-        
-        switch(_liveSteamSession.rtmpSessionState) {
-            case VCSessionStateNone:
-            case VCSessionStatePreviewStarted:
-            case VCSessionStateEnded:
-            case VCSessionStateError:
-            {
-                [liveStreaming startLiveStreaming:_liveSteamSession];
-                [self showProgressBar];
-                break;
-            }
-            default:
-                [UIApplication sharedApplication].idleTimerDisabled = NO;
-                [liveStreaming stopStreamingClicked];
-                [_liveSteamSession endRtmpSession];
-                break;
-        }
-    }
-}
-
 -(void)setUpInitialBlurView
 {
     UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
@@ -1127,71 +1228,6 @@ int cameraChangeFlag = 0;
     [self.bottomView setUserInteractionEnabled:NO];
 }
 
-
-- (IBAction)didTapChangeCamera:(id)sender
-{
-   
-    self.cameraButton.enabled = NO;
-    
-    // flip camera view
-    [UIView transitionWithView:_previewView duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:nil completion:^(BOOL finished) {
-    }];
-    
-    dispatch_async( self.sessionQueue, ^{
-        
-        AVCaptureDevice *currentVideoDevice = self.videoDeviceInput.device;
-        AVCaptureDevicePosition preferredPosition = AVCaptureDevicePositionUnspecified;
-        AVCaptureDevicePosition currentPosition = currentVideoDevice.position;
-        
-        switch ( currentPosition )
-        {
-            case AVCaptureDevicePositionUnspecified:
-            case AVCaptureDevicePositionFront:
-                
-                preferredPosition = AVCaptureDevicePositionBack;
-                [self showFlashImage:true];
-                break;
-                
-            case AVCaptureDevicePositionBack:
-                
-                preferredPosition = AVCaptureDevicePositionFront;
-                [self showFlashImage:false];
-                break;
-        }
-        
-        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:preferredPosition];
-        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:nil];
-        
-        [self.session beginConfiguration];
-        
-        // Remove the existing device input first, since using the front and back camera simultaneously is not supported.
-        [self.session removeInput:self.videoDeviceInput];
-        
-        if ( [self.session canAddInput:videoDeviceInput] ) {
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:AVCaptureDeviceSubjectAreaDidChangeNotification object:currentVideoDevice];
-            
-            [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:videoDevice];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:videoDevice];
-            
-            [self.session addInput:videoDeviceInput];
-            self.videoDeviceInput = videoDeviceInput;
-        }
-        else {
-            [self.session addInput:self.videoDeviceInput];
-        }
-        
-        AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-        if ( connection.isVideoStabilizationSupported ) {
-            connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-        }
-        
-        [self.session commitConfiguration];
-        
-        dispatch_async( dispatch_get_main_queue(), ^{
-            self.cameraButton.enabled = YES;
-        } );
-    } );
-}
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
@@ -1217,6 +1253,8 @@ int cameraChangeFlag = 0;
         [self settingsPageView];
     }
 }
+
+#pragma mark Load views
 
 -(void) settingsPageView{
     
@@ -1289,7 +1327,24 @@ int cameraChangeFlag = 0;
     else{
        [self loadPhotoViewer];
     }
+}
 
+-(void) loadPhotoViewer
+{
+    snapShotsDict = [self displayIphoneCameraSnapShots];
+    
+    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
+    
+    PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
+    photoViewerViewController.snapShots = snapShotsDict;
+    photoViewerViewController.ShotsDictionary =ShotsDict;
+    
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
+    navController.navigationBarHidden = true;
+    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:navController animated:true completion:^{
+        
+    }];
 }
 
 - (IBAction)didTapStreamThumb:(id)sender {
@@ -1315,130 +1370,14 @@ int cameraChangeFlag = 0;
     else{
         [self loadStreamsGalleryView];
     }
-    
 }
 
-- (IBAction)didTapFlashImage:(id)sender {
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    if (_currentFlashMode == AVCaptureFlashModeOn) {
-        
-        [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
-        _currentFlashMode = AVCaptureFlashModeOff;
-        
-        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
-    }
-    else{
-        
-        [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal]; //Need to update the icon once available.
-        _currentFlashMode = AVCaptureFlashModeOn;
-        [defaults setInteger:_currentFlashMode forKey:@"flashMode"];
-    }
-}
-
-#pragma mark Load views
-
--(void) loadPhotoViewer
-{
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    
-    UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
-    
-    PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
-    photoViewerViewController.snapShots = snapShotsDict;
-    photoViewerViewController.ShotsDictionary =ShotsDict;
-    
-    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
-    navController.navigationBarHidden = true;
-    navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentViewController:navController animated:true completion:^{
-        
-    }];
-}
-
--(void) loaduploadManager : (NSURL *)filePath
-{
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    upload *uploadManager =[[upload alloc]init];
-    uploadManager.snapShots = snapShotsDict;
-    uploadManager.shotDict = ShotsDict;
-    uploadManager.media = @"video";
-    uploadManager.videoPath =filePath;
-    [uploadManager uploadMedia];
-}
-
--(void) loaduploadManagerForImage
-{
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    upload *uploadManager =[[upload alloc]init];
-    uploadManager.snapShots = snapShotsDict;
-    uploadManager.shotDict = ShotsDict;
-    uploadManager.media = @"image";
-    [uploadManager uploadMedia];
-}
 
 -(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
     StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
     [self.navigationController pushViewController:streamsGalleryViewController animated:false];
-}
-
--(void)showFlashImage:(BOOL)show
-{
-    if (show) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.flashButton.hidden = false;
-        });
-    }
-    else
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.flashButton.hidden = true;
-        });
-    }
-}
-
--(BOOL) isStreamStarted
-{
-   
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    return  [defaults boolForKey:@"StartedStreaming"];//defaults.boolForKey("StartedStreaming")
-}
-
-#pragma mark : VCSessionState Delegate
-- (void) connectionStatusChanged:(VCSessionState) state
-{
-    switch(state) {
-        case VCSessionStateStarting:
-            NSLog(@"Connecting");
-            break;
-        case VCSessionStateStarted:
-            [self hideProgressBar];
-            NSLog(@"Disconnect");
-            [self performSelector:@selector(screenCapture) withObject:nil afterDelay:2.0];
-            break;
-        case VCSessionStateEnded:
-            NSLog(@"%d",deleteCount);
-          
-            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-            NSLog(@"End Stream");
-            break;
-        case VCSessionStateError:
-     
-            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            //   [[ErrorManager sharedInstance] alert:@"Error" message:@"Send Invalid Request"];
-            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-            [liveStreaming stopStreamingClicked];
-            NSLog(@"VCSessionStateError");
-            break;
-        default:
-            
-            NSLog(@"Connect");
-            break;
-    }
 }
 
 #pragma mark :- StreamingProtocol delegates
@@ -1488,140 +1427,6 @@ int cameraChangeFlag = 0;
         }
     }
     
-}
-
--(void)configureCameraSettings
-{
-    // Communicate with the session and other session objects on this queue.
-    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
-    
-    self.setupResult = AVCamSetupResultSuccess;
-    
-    // Check video authorization status. Video access is required and audio access is optional.
-    // If audio access is denied, audio is not recorded during movie recording.
-    switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
-    {
-        case AVAuthorizationStatusAuthorized:
-        {
-            // The user has previously granted access to the camera.
-            break;
-        }
-        case AVAuthorizationStatusNotDetermined:
-        {
-            // The user has not yet been presented with the option to grant video access.
-            // We suspend the session queue to delay session setup until the access request has completed to avoid
-            // asking the user for audio access if video access is denied.
-            // Note that audio access will be implicitly requested when we create an AVCaptureDeviceInput for audio during session setup.
-            dispatch_suspend( self.sessionQueue );
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
-                if ( ! granted ) {
-                    self.setupResult = AVCamSetupResultCameraNotAuthorized;
-                }
-                dispatch_resume( self.sessionQueue );
-            }];
-            break;
-        }
-        default:
-        {
-            // The user has previously denied access.
-            self.setupResult = AVCamSetupResultCameraNotAuthorized;
-            break;
-        }
-    }
-    
-    // Setup the capture session.
-    // In general it is not safe to mutate an AVCaptureSession or any of its inputs, outputs, or connections from multiple threads at the same time.
-    // Why not do all of this on the main queue?
-    // Because -[AVCaptureSession startRunning] is a blocking call which can take a long time. We dispatch session setup to the sessionQueue
-    // so that the main queue isn't blocked, which keeps the UI responsive.
-    dispatch_async( self.sessionQueue, ^{
-        if ( self.setupResult != AVCamSetupResultSuccess ) {
-            return;
-        }
-        
-        self.backgroundRecordingID = UIBackgroundTaskInvalid;
-        NSError *error = nil;
-        
-        AVCaptureDevice *videoDevice = [IPhoneCameraViewController deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionBack];
-        AVCaptureDeviceInput *videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-        
-        if ( ! videoDeviceInput ) {
-            NSLog( @"Could not create video device input: %@", error );
-        }
-        
-        [self.session beginConfiguration];
-        
-        if ( [self.session canAddInput:videoDeviceInput] ) {
-            [self.session addInput:videoDeviceInput];
-            self.videoDeviceInput = videoDeviceInput;
-            
-            dispatch_async( dispatch_get_main_queue(), ^{
-                // Why are we dispatching this to the main queue?
-                // Because AVCaptureVideoPreviewLayer is the backing layer for AAPLPreviewView and UIView
-                // can only be manipulated on the main thread.
-                // Note: As an exception to the above rule, it is not necessary to serialize video orientation changes
-                // on the AVCaptureVideoPreviewLayer’s connection with other session manipulation.
-                
-                // Use the status bar orientation as the initial video orientation. Subsequent orientation changes are handled by
-                // -[viewWillTransitionToSize:withTransitionCoordinator:].
-                UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-                AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
-                if ( statusBarOrientation != UIInterfaceOrientationUnknown ) {
-                    initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
-                }
-                
-                AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
-                previewLayer.connection.videoOrientation = initialVideoOrientation;
-                
-                _startCameraActionButton.enabled = true;
-            } );
-        }
-        else {
-            NSLog( @"Could not add video device input to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-        AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-        
-        if ( ! audioDeviceInput ) {
-            NSLog( @"Could not create audio device input: %@", error );
-        }
-        
-        if ( [self.session canAddInput:audioDeviceInput] ) {
-            [self.session addInput:audioDeviceInput];
-        }
-        else {
-            NSLog( @"Could not add audio device input to the session" );
-        }
-        
-        AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-        if ( [self.session canAddOutput:movieFileOutput] ) {
-            [self.session addOutput:movieFileOutput];
-            AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
-            if ( connection.isVideoStabilizationSupported ) {
-                connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
-            }
-            self.movieFileOutput = movieFileOutput;
-        }
-        else {
-            NSLog( @"Could not add movie file output to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
-        if ( [self.session canAddOutput:stillImageOutput] ) {
-            stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
-            [self.session addOutput:stillImageOutput];
-            self.stillImageOutput = stillImageOutput;
-        }
-        else {
-            NSLog( @"Could not add still image output to the session" );
-            self.setupResult = AVCamSetupResultSessionConfigurationFailed;
-        }
-        
-        [self.session commitConfiguration];
-    } );
 }
 
 - (void)subjectAreaDidChange:(NSNotification *)notification

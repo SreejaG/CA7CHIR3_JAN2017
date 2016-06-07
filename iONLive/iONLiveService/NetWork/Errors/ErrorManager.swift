@@ -125,7 +125,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     func InvalidPwdEnteredError()
     {
-        alert("Invalid Password", message: "Password must contain atleast 8 characters and atmost 20 characters")
+        alert("Invalid Password", message: "Password must contain atleast 8 characters and atmost 40 characters")
     }
     
     func noNumberInPassword()

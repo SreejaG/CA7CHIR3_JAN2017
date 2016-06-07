@@ -107,6 +107,7 @@ class StreamsListViewController: UIViewController{
         
         let startValue = "0"
         let endValue = String(totalMediaCount)
+       print(totalMediaCount)
         imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
