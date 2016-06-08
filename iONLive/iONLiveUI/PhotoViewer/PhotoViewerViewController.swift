@@ -206,7 +206,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let dateStr = dateFormatter.stringFromDate(NSDate())
                         let currentDate = dateFormatter.dateFromString(dateStr)
                         let sdifferentString =  offsetFrom(fromdate!, todate: currentDate!)
-                        print("\(sdifferentString)   \(currentDate!)    \(fromdate)")
+                  //      print("\(sdifferentString)   \(currentDate!)    \(fromdate)")
                         switch(sdifferentString)
                         {
                             case "TODAY" :
@@ -722,7 +722,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                               //  fullScrenImageView.userInteractionEnabled = false
                                 
                                 cell.progressView.progress = progressDict[i]["progress"]!.floatValue
-                                print(progressDict[i]["progress"]!.floatValue)
+                        //        print(progressDict[i]["progress"]!.floatValue)
                                 
                                 if(progressDict[i]["progress"]!.floatValue == 1.0 || progressDict[i]["progress"]!.floatValue == 1)
                                 {

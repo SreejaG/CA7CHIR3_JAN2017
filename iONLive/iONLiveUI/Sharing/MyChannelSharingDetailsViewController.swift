@@ -267,7 +267,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             let responseArr = json["contactList"] as! [AnyObject]
             var channelSelected : String = String()
             var contactImage : UIImage = UIImage()
-            print(responseArr)
+       //     print(responseArr)
             for element in responseArr{
                 let userName = element["userName"] as! String
                 

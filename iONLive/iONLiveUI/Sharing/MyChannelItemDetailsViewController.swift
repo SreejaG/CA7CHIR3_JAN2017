@@ -71,7 +71,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             if(!pullToRefreshActive){
                 pullToRefreshActive = true
                 totalMediaCount = 0
-                print(tapCount)
+        //        print(tapCount)
                 
                 initialise()
             }
@@ -280,7 +280,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             for i in 0 ..< totalMediaCount
             {
                 let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-                print(mediaIdS)
+           //    print(mediaIdS)
                 if(mediaIdS != ""){
                     var imageForMedia : UIImage = UIImage()
                     let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"

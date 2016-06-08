@@ -253,15 +253,15 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     // MARK: SwiftAlertViewDelegate
     
     func alertView(alertView: SwiftAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        print("Button Clicked At Index \(buttonIndex)")
+     //   print("Button Clicked At Index \(buttonIndex)")
     }
     
     func didPresentAlertView(alertView: SwiftAlertView) {
-        print("Did Present Alert View\n")
+      //  print("Did Present Alert View\n")
     }
     
     func didDismissAlertView(alertView: SwiftAlertView) {
-        print("Did Dismiss Alert View\n")
+     //   print("Did Dismiss Alert View\n")
     }
 
     

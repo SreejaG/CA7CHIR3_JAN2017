@@ -80,13 +80,13 @@ class iONLiveCameraStatusViewController: UIViewController {
             if let catalog = json["catalog"]
             {
                 self.catalogDataSource = catalog as? [String]
-                print("value[0]\(catalogDataSource![0])")
+           //     print("value[0]\(catalogDataSource![0])")
                 catalogTableView.reloadData()
             }
             if let video = json["video"]
             {
                 self.videoDataSource = video as? [String]
-                print("value[0]\(videoDataSource![0])")
+           //     print("value[0]\(videoDataSource![0])")
                 videoTableView.reloadData()
             }
         }

@@ -26,7 +26,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
   
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(verificationCode)
+     //   print(verificationCode)
         initialise()
     }
     
@@ -52,7 +52,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         newPwdText.delegate = self
         reEnterPwdText.secureTextEntry = true
         reEnterPwdText.delegate = self
-        print("\(mobileNumber)      \(verificationCode)")       
+  //      print("\(mobileNumber)      \(verificationCode)")
     }
     
     func addObserver()

@@ -121,7 +121,7 @@ class IPhoneLiveStreaming: NSObject {
         {
             let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
             let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
-             print(streamTocken)
+        //     print(streamTocken)
                  cleanStreamingToken()
            
             if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
@@ -135,7 +135,7 @@ class IPhoneLiveStreaming: NSObject {
                         defaults.setValue(url, forKey: "liveStreamURL")
                         
                         let streamToken:String = json["streamToken"] as! String
-                         print(streamTocken)
+                     //    print(streamTocken)
                         NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
                         self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
                         

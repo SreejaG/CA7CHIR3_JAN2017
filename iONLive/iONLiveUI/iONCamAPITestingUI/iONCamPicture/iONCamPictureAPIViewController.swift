@@ -220,7 +220,7 @@ class iONCamPictureAPIViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             ErrorManager.sharedInstance.alert("Success", message: "Successfully deleted picture")
-            print("success = \(json["burstID"]))")
+         //   print("success = \(json["burstID"]))")
         }
         else
         {
@@ -234,7 +234,7 @@ class iONCamPictureAPIViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             ErrorManager.sharedInstance.alert("Success", message: "Cancel all ongoing image capture bursts")
-            print("success = \(json["burstID"]))")
+        //    print("success = \(json["burstID"]))")
         }
         else
         {

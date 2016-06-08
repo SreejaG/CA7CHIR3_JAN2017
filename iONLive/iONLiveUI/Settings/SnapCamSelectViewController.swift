@@ -335,7 +335,7 @@ extension SnapCamSelectViewController
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
-            print(rowAfterAlertHit)
+      //      print(rowAfterAlertHit)
             updateSnapCamSelection(rowAfterAlertHit)
             changeSnapCamModeForCell(cellAfterAlertHit)
             self.snapCamSettingsTableView.reloadData()

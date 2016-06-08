@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else{
             let createGCSParentPath =  FileManagerViewController.sharedInstance.createParentDirectory()
-            print(createGCSParentPath)
+        //    print(createGCSParentPath)
         }
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(nil, forKey: "uploaObjectDict")
@@ -217,7 +217,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let deviceTokenString: String = ( deviceToken.description as NSString )
             .stringByTrimmingCharactersInSet( characterSet )
             .stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
-        print(deviceTokenString)
+      //  print(deviceTokenString)
         
         if(deviceTokenString != ""){
             let defaults = NSUserDefaults .standardUserDefaults()
@@ -230,7 +230,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        print(userInfo)
+     //   print(userInfo)
         if(application.applicationState == .Inactive || application.applicationState == .Background)
         {
             loadNotificationView()

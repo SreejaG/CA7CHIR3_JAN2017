@@ -91,7 +91,7 @@ class StreamsListViewController: UIViewController{
             mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
         }
         
-        print(mediaShared)
+    //    print(mediaShared)
         for i in 0 ..< mediaShared.count
         {
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
@@ -107,7 +107,7 @@ class StreamsListViewController: UIViewController{
         
         let startValue = "0"
         let endValue = String(totalMediaCount)
-       print(totalMediaCount)
+    //   print(totalMediaCount)
         imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
@@ -265,7 +265,7 @@ class StreamsListViewController: UIViewController{
         for var i in 0 ..< imageDataSource.count
         {
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-            print(mediaIdS)
+   //         print(mediaIdS)
             if(mediaIdS != ""){
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"

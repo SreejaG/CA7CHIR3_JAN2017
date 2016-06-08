@@ -201,7 +201,7 @@ class iONLiveCamVideoViewController: UIViewController {
                 self.startVideoWithSegments(numSeg)
             }
             print("Done !!")
-            print("Item : \(self.tField.text)")
+       //     print("Item : \(self.tField.text)")
         }))
         self.presentViewController(alert, animated: true, completion: {
             print("completion block")
