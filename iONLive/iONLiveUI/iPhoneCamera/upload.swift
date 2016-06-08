@@ -27,7 +27,7 @@ protocol uploadProgressDelegate
     let signedURLResponse: NSMutableDictionary = NSMutableDictionary()
     var delegate : uploadProgressDelegate?
     var progressDictionary : [[String:AnyObject]]  = [[String:AnyObject]]()
-    var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
+ //   var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
     var checkThumb : Bool = false
     var taskIndex :  Int = 0
     var media : NSString = ""
@@ -78,7 +78,7 @@ protocol uploadProgressDelegate
     func readImage()
     {
         let cameraController = IPhoneCameraViewController()
-     //   print(shotDict.count)
+    
         if shotDict.count > 0
         {
             let snapShotsKeys = shotDict.allKeys as NSArray
@@ -100,25 +100,25 @@ protocol uploadProgressDelegate
                         
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
                         let sizeThumb = CGSizeMake(70,70)
-                        let sizeFull = CGSizeMake(screenWidth*4,screenHeight*3)
+                      //  let sizeFull = CGSizeMake(screenWidth,screenHeight)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                        let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                     //   let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
                         if media == "video"
                         {
                             let sizeFull = CGSizeMake(140,140)
                             
-                            let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
+                            let imageAfterConversionThumb = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
                             
-                            dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionFullscreen,fullImageKey:imageAfterConversionFullscreen!])
+                            dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumb,fullImageKey:imageToConvert!])
                         }
                         else
                         {
-                            dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionFullscreen!])
+                            dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageToConvert!])
                         }
                     }
                 }
             }
-            checksDataSourceDatabase = dummyImagesDataSourceDatabase
+         //   checksDataSourceDatabase = dummyImagesDataSourceDatabase
         }
     }
     func  loadInitialViewController(){
@@ -182,7 +182,7 @@ protocol uploadProgressDelegate
                 
                 signedURLResponse.setValue(name, forKey: "mediaId")
             }
-            if checksDataSourceDatabase.count > 0
+            if dummyImagesDataSourceDatabase.count > 0
             {
                 var dict = dummyImagesDataSourceDatabase[rowIndex]
                 let  uploadImageFull = dict[fullImageKey]
@@ -229,22 +229,23 @@ protocol uploadProgressDelegate
                 }
                 let type = self.signedURLResponse.valueForKey("type")
                 let cameraController = IPhoneCameraViewController()
-                var imageToConvert : UIImage = UIImage()
-
+                var imageToConvertFull : UIImage = UIImage()
+                 var imageToConvert : UIImage = UIImage()
                 if( String(type!) == "video")
                 {
                     var dict = dummyImagesDataSourceDatabase[rowIndex]
                     let  uploadImageThumb = dict[thumbImageKey]
                     imageToConvert = uploadImageThumb!
+                    let  uploadImageFull = dict[fullImageKey]
+                    imageToConvertFull = uploadImageFull!
                 }
                 else
                 {
-                    imageToConvert = UIImage(data:imageData)!
+                    imageToConvertFull = UIImage(data:imageData)!
                 }
                 let sizeThumb = CGSizeMake(70,70)
-                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-            //    print(imageAfterConversionThumbnail)
-                uploadMediaDict.append([mediaIdKey : mediaId!,mediaTypeKey : self.signedURLResponse.valueForKey("type") as! String,timeStampKey:"",thumbSignedUrlKey :signedURLResponse.valueForKey("UploadThumbnailUrl") as! String!,fullSignedUrlKey : signedURLResponse.valueForKey("UploadObjectUrl") as! String!,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageAfterConversionThumbnail])
+                let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvertFull, scaledToFillSize: sizeThumb)
+                uploadMediaDict.append([mediaIdKey : mediaId!,mediaTypeKey : self.signedURLResponse.valueForKey("type") as! String,timeStampKey:"",thumbSignedUrlKey :signedURLResponse.valueForKey("UploadThumbnailUrl") as! String!,fullSignedUrlKey : signedURLResponse.valueForKey("UploadObjectUrl") as! String!,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageToConvertFull])
                 let data = NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict)
                 defaults.setObject(data , forKey :"uploaObjectDict")
                 if PhotoViewerInstance.controller != nil
@@ -261,7 +262,7 @@ protocol uploadProgressDelegate
                                 
                              //   print(self.dummyImagesDataSourceDatabase.count)
                                 self.dummyImagesDataSourceDatabase.removeAll()
-                                self.checksDataSourceDatabase.removeLast()
+                            //    self.checksDataSourceDatabase.removeLast()
                                 // self.deleteCOreData()
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -302,7 +303,7 @@ protocol uploadProgressDelegate
             {
                 let path = mediaCachemanager.getDocumentsURL().URLByAppendingPathComponent((self.signedURLResponse.valueForKey("mediaId")?.stringValue)!)
                 mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][thumbImageKey]!, path: String(String(path)+"thumb"))
-                mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][fullImageKey]!, path: String(String(path)+"full"))
+//                mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][fullImageKey]!, path: String(String(path)+"full"))
             }
         }
     }

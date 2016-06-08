@@ -635,6 +635,9 @@ NSInteger shutterActionMode;
         AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
         AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
         connection.videoOrientation = previewLayer.connection.videoOrientation;
+//        if ([connection isVideoOrientationSupported]){
+//            connection.videoOrientation   = UIImageOrientationRight;
+//        }
         [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
         [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:connection completionHandler:^( CMSampleBufferRef imageDataSampleBuffer, NSError *error ) {
             if ( imageDataSampleBuffer ) {
