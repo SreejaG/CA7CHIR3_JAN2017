@@ -254,8 +254,8 @@ class ChannelItemListViewController: UIViewController {
                 }
             }
         
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
                self.channelItemCollectionView.reloadData()
            })
         }
@@ -315,12 +315,12 @@ class ChannelItemListViewController: UIViewController {
         var channelIds : [Int] = [Int]()
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)
-            
+    
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             showOverlay()
-            
+            selectionButton.hidden = true
             imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: selected, channelId: channelIds, success: { (response) -> () in
                 self.authenticationSuccessHandlerDelete(response)
                 }, failure: { (error, message) -> () in
@@ -357,6 +357,7 @@ class ChannelItemListViewController: UIViewController {
     func authenticationFailureHandlerDelete(error: NSError?, code: String)
     {
         self.removeOverlay()
+        selectionButton.hidden = false
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {

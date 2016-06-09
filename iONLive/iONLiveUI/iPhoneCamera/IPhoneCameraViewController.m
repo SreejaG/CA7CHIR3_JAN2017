@@ -81,6 +81,8 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 @end
 
+int orientationFlag = 0;
+
 @implementation IPhoneCameraViewController
 
 NSMutableDictionary * snapShotsDict;
@@ -90,12 +92,52 @@ FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
 
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    //device orientation
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self selector:@selector(orientationChanged:)
+     name:UIDeviceOrientationDidChangeNotification
+     object:[UIDevice currentDevice]];
+    //end
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     [self deleteIphoneCameraSnapShots];
+}
+
+- (void) orientationChanged:(NSNotification *)note
+{
+    UIDevice *device = note.object;
+    switch(device.orientation)
+    {
+        case UIDeviceOrientationPortrait:
+            orientationFlag = 1;
+            NSLog(@"Portrait,flag: %d",orientationFlag);
+            break;
+            
+        case UIDeviceOrientationPortraitUpsideDown:
+            orientationFlag = 2;
+            NSLog(@"PortraitUpsideDown,flag: %d",orientationFlag);
+            break;
+            
+        case UIDeviceOrientationLandscapeLeft:
+            orientationFlag = 3;
+            NSLog(@"LandscapeLeft,flag: %d",orientationFlag);
+            break;
+            
+        case UIDeviceOrientationLandscapeRight:
+            orientationFlag = 4;
+            NSLog(@"LandscapeRight,flag: %d",orientationFlag);
+            break;
+            
+        default:
+            orientationFlag = 0;
+            NSLog(@"Device Orientation Unknown,flag: %d",orientationFlag);
+            break;
+    }
 }
 
 - (void)viewDidLoad {
@@ -114,9 +156,9 @@ NSInteger shutterActionMode;
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
     PhotoViewerInstance.iphoneCam = self;
     SetUpView *viewSet = [[SetUpView alloc]init];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+ //   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
        [viewSet getValue];
-    });
+ //   });
 }
 
 -(void)loadingView
@@ -162,8 +204,11 @@ NSInteger shutterActionMode;
 }
 
 -(void) setGUIModifications{
-    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-    [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    dispatch_async( dispatch_get_main_queue(), ^{
+
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    });
     
     _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
     if(_currentFlashMode == 0){
@@ -635,9 +680,41 @@ NSInteger shutterActionMode;
         AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
         AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
         connection.videoOrientation = previewLayer.connection.videoOrientation;
-//        if ([connection isVideoOrientationSupported]){
-//            connection.videoOrientation   = UIImageOrientationRight;
-//        }
+        
+        UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        
+        NSLog(@"Status bar Orientation value: %ld",(long)orientation);
+        
+        NSLog(@"Device Orientation flag: %d",orientationFlag);
+        
+        if(orientationFlag == 1) //Default Orientation (portrait mode)
+        {
+            if(orientation ==1) //Checking device orientation as per status bar position
+            {
+                //Just a fail safe method
+                NSLog(@"Portrait mode");
+            }
+        }
+        else
+        {
+            if(orientationFlag == 3) //Device Orientation LandscapeLeft
+            {
+                NSLog(@"Device Orientation flag: %d",orientationFlag);
+                connection.videoOrientation = UIImageOrientationRight;
+            }
+            if(orientationFlag == 4) //Device Orientation LandscapeRight
+            {
+                NSLog(@"Device Orientation: LandscapeRight, flag: %d",orientationFlag);
+                connection.videoOrientation = UIImageOrientationUpMirrored;
+            }
+            if (orientationFlag == 2) //Device Orientation Portrait upside down
+            {
+                NSLog(@"Device Orientation: PortraitUpsideDown, flag: %d",orientationFlag);
+                connection.videoOrientation = UIImageOrientationUpMirrored;
+                connection.videoOrientation = UIImageOrientationLeft;
+            }
+        }
+        
         [IPhoneCameraViewController setFlashMode:self.currentFlashMode forDevice:self.videoDeviceInput.device];
         [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:connection completionHandler:^( CMSampleBufferRef imageDataSampleBuffer, NSError *error ) {
             if ( imageDataSampleBuffer ) {

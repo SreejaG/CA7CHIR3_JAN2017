@@ -25,6 +25,7 @@ class MyChannelNotificationViewController: UIViewController {
     var mediaDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var channelDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var fulldataSource : [[String:AnyObject]] = [[String:AnyObject]]()
     
     let usernameKey = "userName"
     let profileImageKey = "profileImage"
@@ -50,7 +51,6 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-//        removeOverlay()
     }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
@@ -64,7 +64,7 @@ class MyChannelNotificationViewController: UIViewController {
         NotificationTableView.layer.cornerRadius=10
         channelDataSource.removeAll()
         mediaDataSource.removeAll()
-        
+        fulldataSource.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue("0", forKey: "notificationFlag")
         
@@ -181,9 +181,6 @@ class MyChannelNotificationViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            var mediaImage : UIImage?
-            var profileImage : UIImage?
-            
             let mediaResponseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
             if mediaResponseArr.count > 0
             {
@@ -195,24 +192,24 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
                     let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
-                    if(mediaThumbUrl != "")
-                    {
-                        mediaImage = createMediaThumb(mediaThumbUrl)
-                    }
-                    else{
-                        mediaImage = UIImage(named: "thumb12")
-                    }
-                   
+//                    if(mediaThumbUrl != "")
+//                    {
+//                        mediaImage = createMediaThumb(mediaThumbUrl)
+//                    }
+//                    else{
+//                        mediaImage = UIImage(named: "thumb12")
+//                    }
+//                   
                     let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-                    if(profileImageName != "")
-                    {
-                         profileImage = createProfileImage(profileImageName)
-                    }
-                    else{
-                        profileImage = UIImage(named: "dummyUser")
-                    }
-                    dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:mediaImage!, notificationTimeKey:notTime])
+//                    if(profileImageName != "")
+//                    {
+//                         profileImage = createProfileImage(profileImageName)
+//                    }
+//                    else{
+//                        profileImage = UIImage(named: "dummyUser")
+//                    }
+                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime])
                 }
             }
             
@@ -227,14 +224,14 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-                    if(profileImageName != "")
-                    {
-                        profileImage = createProfileImage(profileImageName)
-                    }
-                    else{
-                        profileImage = UIImage(named: "dummyUser")
-                    }
-                    dataSource.append([messageKey:message,profileImageKey:profileImage!,mediaImageKey:UIImage(),notificationTimeKey:notTime])
+//                    if(profileImageName != "")
+//                    {
+//                        profileImage = createProfileImage(profileImageName)
+//                    }
+//                    else{
+//                        profileImage = UIImage(named: "dummyUser")
+//                    }
+                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:"nomedia",notificationTimeKey:notTime])
                 }
                 
             }
@@ -245,12 +242,57 @@ class MyChannelNotificationViewController: UIViewController {
                     let time2 = p2[notificationTimeKey] as! String
                     return time1 > time2
                 })
+                if(dataSource.count > 0){
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        self.downloadMediaFromGCS()
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        })
+                    })
+                }
             }
-            NotificationTableView.reloadData()
         }
         else
         {
             ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func downloadMediaFromGCS(){
+        fulldataSource.removeAll()
+        for i in 0 ..< dataSource.count
+        {
+            var mediaImage : UIImage?
+            var profileImage : UIImage?
+            
+            let profileImageName = dataSource[i][profileImageKey] as! String
+            if(profileImageName != "")
+            {
+                profileImage = createProfileImage(profileImageName)
+            }
+            else{
+                profileImage = UIImage(named: "dummyUser")
+            }
+            
+            let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
+            if(mediaThumbUrl != "nomedia"){
+                if(mediaThumbUrl != "")
+                {
+                    mediaImage = createMediaThumb(mediaThumbUrl)
+                }
+                else{
+                    mediaImage = UIImage()
+                }
+            }
+            else{
+                mediaImage = UIImage()
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.fulldataSource.append([self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!])
+                self.NotificationTableView.reloadData()
+            })
         }
     }
     
@@ -339,9 +381,9 @@ extension MyChannelNotificationViewController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if dataSource.count > 0
+        if fulldataSource.count > 0
         {
-            return dataSource.count
+            return fulldataSource.count
         }
         else
         {
@@ -351,13 +393,13 @@ extension MyChannelNotificationViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if dataSource.count > indexPath.row
+        if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
             
-            cell.notificationText.text = dataSource[indexPath.row][messageKey] as? String
-            cell.NotificationSenderImageView.image = dataSource[indexPath.row][profileImageKey] as? UIImage
-            cell.NotificationImage.image = dataSource[indexPath.row][mediaImageKey] as? UIImage
+            cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
+            cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
+            cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
             cell.selectionStyle = .None
             return cell
         }
