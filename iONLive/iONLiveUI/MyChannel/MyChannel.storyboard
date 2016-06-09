@@ -510,9 +510,9 @@
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="COg-YH-ujK">
-                                                <rect key="frame" x="544" y="28" width="41" height="32"/>
+                                                <rect key="frame" x="539" y="28" width="46" height="32"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
-                                                <state key="normal" title="Done">
+                                                <state key="normal" title="Share">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
@@ -541,14 +541,15 @@
                                         </subviews>
                                         <color key="backgroundColor" red="0.29691815376281738" green="0.86275398731231689" blue="0.92347675561904907" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="COg-YH-ujK" secondAttribute="bottom" constant="4" id="2Nl-zi-Jbo"/>
                                             <constraint firstAttribute="height" constant="64" id="F58-Or-KKo"/>
-                                            <constraint firstAttribute="trailing" secondItem="COg-YH-ujK" secondAttribute="trailing" constant="15" id="I3I-ML-jUq"/>
                                             <constraint firstItem="Oi0-06-VMv" firstAttribute="leading" secondItem="hBB-3n-l9M" secondAttribute="leading" constant="15" id="IaK-Kv-hpH"/>
+                                            <constraint firstItem="COg-YH-ujK" firstAttribute="top" secondItem="hBB-3n-l9M" secondAttribute="top" constant="28" id="KGh-FY-W4S"/>
                                             <constraint firstItem="jzp-H8-NEg" firstAttribute="top" secondItem="hBB-3n-l9M" secondAttribute="top" constant="28" id="SIC-f0-eo7"/>
+                                            <constraint firstAttribute="trailing" secondItem="COg-YH-ujK" secondAttribute="trailing" constant="15" id="VZt-mR-28f"/>
                                             <constraint firstAttribute="trailing" secondItem="jzp-H8-NEg" secondAttribute="trailing" id="kSg-BR-BJt"/>
                                             <constraint firstItem="Oi0-06-VMv" firstAttribute="top" secondItem="hBB-3n-l9M" secondAttribute="top" constant="28" id="kZA-ng-KSE"/>
                                             <constraint firstItem="jzp-H8-NEg" firstAttribute="leading" secondItem="hBB-3n-l9M" secondAttribute="leading" id="kjW-je-nYT"/>
-                                            <constraint firstItem="COg-YH-ujK" firstAttribute="top" secondItem="hBB-3n-l9M" secondAttribute="top" constant="28" id="ley-a4-a1f"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GoL-4J-G1Y" userLabel="AddChannelView">

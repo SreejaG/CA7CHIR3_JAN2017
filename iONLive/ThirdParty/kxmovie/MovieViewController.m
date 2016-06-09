@@ -1088,6 +1088,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)updateViewFinderMessageForNoConnectionFound
 {
+    
     [self showNoDataFoundText];
     if(_liveVideo == true)
     {
@@ -1106,6 +1107,7 @@ static NSMutableDictionary * gHistory;
 
 -(void)showMessageForNoStreamOrLiveDataFound
 {
+    if (_snapCamMode == SnapCamSelectionModeLiveStream ){
     [self showNoDataFoundText];
     if(_liveVideo == true)
     {
@@ -1113,6 +1115,7 @@ static NSMutableDictionary * gHistory;
     }
     else{
         noDataFound.text = @"Unable to fetch stream!";
+    }
     }
 }
 

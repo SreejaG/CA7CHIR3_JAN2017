@@ -67,7 +67,6 @@ class StreamsListViewController: UIViewController{
         
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-
         getAllLiveStreams()
     }
     
@@ -90,8 +89,6 @@ class StreamsListViewController: UIViewController{
         {
             mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
         }
-        
-    //    print(mediaShared)
         for i in 0 ..< mediaShared.count
         {
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
@@ -104,10 +101,8 @@ class StreamsListViewController: UIViewController{
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         let startValue = "0"
         let endValue = String(totalMediaCount)
-    //   print(totalMediaCount)
         imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
@@ -225,9 +220,20 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+          
+            if((code == "MEDIA003") || (code == "MEDIA002")){
+                if(dataSource.count > 0){
+                    
+                }
+                else{
+                     ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                }
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                    loadInitialViewController()
+                }
             }
         }
         else{

@@ -80,11 +80,14 @@ class SnapCamSelectViewController: UIViewController {
         {
             dataSource[5] = "Switch to iPhone"
             titleLabel.text = "Snapcam"
+            snapCamButton.setImage(UIImage(named: "snapCamMode"), forState: .Normal)
+            
         }
         else
         {
             dataSource[5] = "Switch to SnapCam"
             titleLabel.text = "iPhone"
+            snapCamButton.setImage(UIImage(named: "iphone"), forState: .Normal)
         }
     }
     
