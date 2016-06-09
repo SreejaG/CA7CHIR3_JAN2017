@@ -85,11 +85,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
-            self.getChannelSharedDetails(userId, token: accessToken)
-        })
+//        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+//        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+//        dispatch_async(backgroundQueue, {
+        getChannelSharedDetails(userId, token: accessToken)
+//        })
     }
     
     func getChannelSharedDetails(userName: String, token: String)
