@@ -110,36 +110,42 @@ class StreamsListViewController: UIViewController{
         }
     }
     
-    func  loadInitialViewController(){
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        
-        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-        {
-            let fileManager = NSFileManager.defaultManager()
-            do {
-                try fileManager.removeItemAtPath(documentsPath)
-            }
-            catch let error as NSError {
-                print("Ooops! Something went wrong: \(error)")
-            }
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        else{
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let deviceToken = defaults.valueForKey("deviceToken") as! String
-        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-        defaults.setValue(deviceToken, forKey: "deviceToken")
-        defaults.setObject(1, forKey: "shutterActionMode");
-        
-        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-        channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
-    }
     
+    func  loadInitialViewController(code: String){
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+            
+            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            {
+                let fileManager = NSFileManager.defaultManager()
+                do {
+                    try fileManager.removeItemAtPath(documentsPath)
+                }
+                catch let error as NSError {
+                    print("Ooops! Something went wrong: \(error)")
+                }
+                FileManagerViewController.sharedInstance.createParentDirectory()
+            }
+            else{
+                FileManagerViewController.sharedInstance.createParentDirectory()
+            }
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            defaults.setValue(deviceToken, forKey: "deviceToken")
+            defaults.setObject(1, forKey: "shutterActionMode");
+            
+            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        })
+    }
+
     func authenticationSuccessHandler(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
@@ -230,9 +236,12 @@ class StreamsListViewController: UIViewController{
                 }
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+               
                 if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                    loadInitialViewController()
+                    loadInitialViewController(code)
+                }
+                else{
+                     ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 }
             }
         }
@@ -361,7 +370,8 @@ class StreamsListViewController: UIViewController{
             livestreamingManager.getAllLiveStreams(loginId:loginId as! String , accesstocken:accessTocken as! String ,success: { (response) -> () in
                 self.getAllStreamSuccessHandler(response)
                 }, failure: { (error, message) -> () in
-                    self.initialise()
+                    self.authenticationFailureHandlerForLiveStream(error, code: message)
+                    return
             })
         }
         else
@@ -375,6 +385,29 @@ class StreamsListViewController: UIViewController{
             }
             ErrorManager.sharedInstance.authenticationIssue()
         }
+    }
+    
+    func authenticationFailureHandlerForLiveStream(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController(code)
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        }
+        else{
+          self.initialise()
+        }
+        
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {

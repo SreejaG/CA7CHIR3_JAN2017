@@ -121,33 +121,47 @@ protocol uploadProgressDelegate
          //   checksDataSourceDatabase = dummyImagesDataSourceDatabase
         }
     }
-    func  loadInitialViewController(){
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        
-        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-        {
-            let fileManager = NSFileManager.defaultManager()
-            do {
-                try fileManager.removeItemAtPath(documentsPath)
+    
+    func  loadInitialViewController(code: String){
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+            
+            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            {
+                let fileManager = NSFileManager.defaultManager()
+                do {
+                    try fileManager.removeItemAtPath(documentsPath)
+                }
+                catch let error as NSError {
+                    print("Ooops! Something went wrong: \(error)")
+                }
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            catch let error as NSError {
-                print("Ooops! Something went wrong: \(error)")
+            else{
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        else{
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let deviceToken = defaults.valueForKey("deviceToken") as! String
-        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-        defaults.setValue(deviceToken, forKey: "deviceToken")
-        defaults.setObject(1, forKey: "shutterActionMode");
-        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-        channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            defaults.setValue(deviceToken, forKey: "deviceToken")
+            defaults.setObject(1, forKey: "shutterActionMode");
+            
+            let top = UIApplication.sharedApplication().keyWindow?.rootViewController
+            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            top?.presentViewController(channelItemListVC, animated: false, completion: {
+                self.showAlert(code)
+            })
+        })
     }
+
+    func showAlert(code: String){
+         ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+    }
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         print("message = \(code) andError = \(error?.localizedDescription) ")
@@ -156,9 +170,12 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+           
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+              //  loadInitialViewController(code)
+            }
+            else{
+                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -341,9 +358,12 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+         
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+            //    loadInitialViewController(code)
+            }
+            else{
+                   ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -359,9 +379,12 @@ protocol uploadProgressDelegate
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+           
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+            //    loadInitialViewController(code)
+            }
+            else{
+                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -515,12 +538,11 @@ protocol uploadProgressDelegate
             let  uploadImageFull = dict[fullImageKey]
             let imageData = UIImageJPEGRepresentation(uploadImageFull!, 0.5)
             let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            if(imageData == nil )  {
-            }
-            else
-            {
+            if let userId = defaults.valueForKey(userLoginIdKey) {
+                if(imageData == nil )  {
+                }
+                else
+                {
                 let defaults = NSUserDefaults .standardUserDefaults()
                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -533,7 +555,10 @@ protocol uploadProgressDelegate
                         completion(result: "Failed")
                         self.authenticationFailureHandlerSignedURL(error, code: message)
                 })
-                
+                }
+            }
+            else{
+           //     loadInitialViewController("USER004")
             }
         }
     }

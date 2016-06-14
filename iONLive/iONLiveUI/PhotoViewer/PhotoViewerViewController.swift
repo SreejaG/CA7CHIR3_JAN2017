@@ -79,8 +79,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var uploadMediaDict : [[String:AnyObject]]  = [[String:AnyObject]]()
     var upCount: Int = Int()
     var mediaIdSelected : Int = 0
-    
-    
+   
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var addToButton: UIButton!
     @IBOutlet var deletButton: UIButton!
@@ -117,9 +116,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
-    @IBAction func deleteButtonAction(sender: AnyObject) {
+    override func viewWillAppear(animated: Bool) {
+        print("h")
+    }
     
-       
+    @IBAction func deleteButtonAction(sender: AnyObject) {
+      
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
@@ -169,36 +171,40 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
     }
     
-    func  loadInitialViewController(){
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        
-        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-        {
-            let fileManager = NSFileManager.defaultManager()
-            do {
-                try fileManager.removeItemAtPath(documentsPath)
+    func  loadInitialViewController(code: String){
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+            
+            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            {
+                let fileManager = NSFileManager.defaultManager()
+                do {
+                    try fileManager.removeItemAtPath(documentsPath)
+                }
+                catch let error as NSError {
+                    print("Ooops! Something went wrong: \(error)")
+                }
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            catch let error as NSError {
-                print("Ooops! Something went wrong: \(error)")
+            else{
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        else{
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let deviceToken = defaults.valueForKey("deviceToken") as! String
-        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-        defaults.setValue(deviceToken, forKey: "deviceToken")
-        defaults.setObject(1, forKey: "shutterActionMode");
-        
-        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-        channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            defaults.setValue(deviceToken, forKey: "deviceToken")
+            defaults.setObject(1, forKey: "shutterActionMode");
+            
+            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        })
     }
-    
     
     func setLabelValue(index: NSInteger)
     {
@@ -216,7 +222,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 switch(sdifferentString)
                 {
                 case "TODAY" :
-                    dateForDisplay = "  TODAY"
+                    dateForDisplay = "   TODAY"
                     break;
                 case "1d" : dateForDisplay = "  YESTERDAY"
                 break;
@@ -226,13 +232,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     formatter.dateStyle = NSDateFormatterStyle.MediumStyle
                     let dateString = formatter.stringFromDate(currentDate!)
                     let strSplit = dateString.characters.split("-").map(String.init)
-                    dateForDisplay = dateString
-                    dateForDisplay = "    " + strSplit[1] + " " + strSplit[0] + "," + strSplit[2]
+                    print(strSplit)
+                    dateForDisplay = "     \(strSplit[0])"
                     break;
                 }
             }
             else{
-                dateForDisplay = "  TODAY"
+                dateForDisplay = "   TODAY"
             }
             
             mediaTimeLabel.text = dateForDisplay
@@ -267,9 +273,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+           
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -278,7 +287,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     func  uploadProgress ( progressDictionary :  [[String:AnyObject]])
     {
-        
         progressDict = progressDictionary
         var count: Int = Int()
         count = 0
@@ -346,20 +354,27 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if let channelIdfrom = defaults.valueForKey("channelIdFromLocal")
         {
             mediaSharedCount = defaults.valueForKey("mediaSharedCountFromLocal") as! String
+            
             channelIdfromLocal = channelIdfrom as! NSNumber
             if channelIdfromLocal != ""
             {
-                imageDataSource.removeAll()
-//                self.deletButton.hidden = true
-//                self.addToButton.hidden = true
-                BottomView.alpha = 0.3
-                mediaIdSelected = 0
-                update()
-                channelDict["Archive"] = channelIdfromLocal
-                if(mediaSharedCount != "0")
+                if((mediaSharedCount == "0") || (mediaSharedCount == ""))
                 {
-                    getMediaFromCloud()
+                    let userId = defaults.valueForKey(userLoginIdKey) as! String
+                    let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                    getChannelDetails(userId, token: accessToken)
                 }
+                else{
+                    imageDataSource.removeAll()
+                    mediaIdSelected = 0
+                    update()
+                    channelDict["Archive"] = channelIdfromLocal
+                    if(mediaSharedCount != "0")
+                    {
+                        getMediaFromCloud()
+                    }
+                }
+                
             }
         }
         else{
@@ -397,11 +412,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
-        deletButton.hidden = true
-        addToButton.hidden = true
-        BottomView.alpha = 0.3
+        deletButton.enabled = false
+        addToButton.enabled = false
+        BottomView.alpha = 0.5
         mediaIdSelected = 0
-        
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
@@ -607,12 +621,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             for element in dummyImages
             {
                 var flag : Bool = false
+                if(dataSource.count > 0){
                 for(var i = 0 ;i < dataSource.count ; i++)
                 {
                     if dataSource[i][mediaIdKey]?.stringValue == element[mediaIdKey]?.stringValue
                     {
                         flag = true
                     }
+                }
                 }
                 if(!flag)
                 {
@@ -852,9 +868,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         self.fullScrenImageView.alpha = 1.0
         self.showOverlay()
         dispatch_async(backgroundQueue, {
-            self.mediaIdSelected = self.dataSource[indexPath.row][self.mediaIdKey] as! Int
-            let dict = self.dataSource[indexPath.row]
-            self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath)
+            if self.dataSource.count > indexPath.row
+            {
+                self.mediaIdSelected = self.dataSource[indexPath.row][self.mediaIdKey] as! Int
+                let dict = self.dataSource[indexPath.row]
+                self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath)
+            }
         })
         
         
@@ -885,7 +904,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
 //        self.deletButton.hidden = true
 //        self.addToButton.hidden = true
-        BottomView.alpha = 0.3
+//        BottomView.alpha = 0.3
         mediaIdSelected = 0
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandlerList(response)
@@ -922,9 +941,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+          
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -960,10 +982,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.photoThumpCollectionView.reloadData()
-                    self.addToButton.hidden = false
-                    self.deletButton.hidden = false
+                    self.addToButton.enabled = true
+                    self.deletButton.enabled = true
                     self.BottomView.alpha = 1.0
-                    
                 })
             })
         }
@@ -1085,8 +1106,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+            else if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController(code)
             }
         }
         else{
@@ -1104,9 +1125,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+          
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                  loadInitialViewController(code)
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -1127,9 +1151,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{

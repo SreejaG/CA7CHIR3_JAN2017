@@ -149,9 +149,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+          
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -297,9 +300,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+         
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                   ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -459,9 +465,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+           
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController()
+                loadInitialViewController(code)
+            }
+            else{
+                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -476,35 +485,39 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         return searchURL
     }
     
-    
-    func  loadInitialViewController(){
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        
-        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-        {
-            let fileManager = NSFileManager.defaultManager()
-            do {
-                try fileManager.removeItemAtPath(documentsPath)
+    func  loadInitialViewController(code: String){
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+            
+            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            {
+                let fileManager = NSFileManager.defaultManager()
+                do {
+                    try fileManager.removeItemAtPath(documentsPath)
+                }
+                catch let error as NSError {
+                    print("Ooops! Something went wrong: \(error)")
+                }
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            catch let error as NSError {
-                print("Ooops! Something went wrong: \(error)")
+            else{
+                FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        else{
-            FileManagerViewController.sharedInstance.createParentDirectory()
-        }
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let deviceToken = defaults.valueForKey("deviceToken") as! String
-        defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-        defaults.setValue(deviceToken, forKey: "deviceToken")
-        defaults.setObject(1, forKey: "shutterActionMode");
-        
-        let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-        let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-        channelItemListVC.navigationController?.navigationBarHidden = true
-        self.navigationController?.presentViewController(channelItemListVC, animated: true, completion: nil)
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            defaults.setValue(deviceToken, forKey: "deviceToken")
+            defaults.setObject(1, forKey: "shutterActionMode");
+            
+            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        })
     }
     
     func handleTap(gestureRecognizer: UIGestureRecognizer) {
