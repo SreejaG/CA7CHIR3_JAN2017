@@ -1,11 +1,4 @@
 
-//
-//  PhotoViewerViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/3/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 import MediaPlayer
@@ -116,10 +109,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
-        print("h")
-    }
-    
     @IBAction func deleteButtonAction(sender: AnyObject) {
       
         if(downloadTask?.state == .Running)
@@ -150,9 +139,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let defaults = NSUserDefaults .standardUserDefaults()
                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-           //     self.fullScrenImageView.alpha = 0.4
                 self.showOverlay()
-                
                 self.imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: self.mediaSelected, channelId: channelIds, success: { (response) -> () in
                     self.authenticationSuccessHandlerDelete(response)
                     }, failure: { (error, message) -> () in
@@ -227,13 +214,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 case "1d" : dateForDisplay = "  YESTERDAY"
                 break;
                 default :
-                    
-                    let formatter = NSDateFormatter()
-                    formatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                    let dateString = formatter.stringFromDate(currentDate!)
-                    let strSplit = dateString.characters.split("-").map(String.init)
-                    print(strSplit)
-                    dateForDisplay = "     \(strSplit[0])"
+                    let dateFormatterDisplay = NSDateFormatter()
+                    dateFormatterDisplay.dateFormat = "MMM d, yyyy"
+                    let dateString = dateFormatterDisplay.stringFromDate(fromdate!)
+                    dateForDisplay = "  \(dateString)"
                     break;
                 }
             }
@@ -247,7 +231,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
-//        self.removeOverlay()
         self.fullScrenImageView.alpha = 1.0
         if let json = response as? [String: AnyObject]
         {
@@ -265,8 +248,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         self.removeOverlay()
         self.fullScrenImageView.alpha = 1.0
-//        self.deletButton.hidden = false
-//        self.addToButton.hidden = false
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -335,10 +316,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.fullScrenImageView.image = imageForMedia
                 self.fullScreenZoomView.image = imageForMedia
-                
             })
             
         }
@@ -346,43 +325,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     func getSignedURL()
     {
-       
         selectedArray.removeAll()
-        
         let defaults = NSUserDefaults .standardUserDefaults()
-       
-        if let channelIdfrom = defaults.valueForKey("channelIdFromLocal")
-        {
-            mediaSharedCount = defaults.valueForKey("mediaSharedCountFromLocal") as! String
-            
-            channelIdfromLocal = channelIdfrom as! NSNumber
-            if channelIdfromLocal != ""
-            {
-                if((mediaSharedCount == "0") || (mediaSharedCount == ""))
-                {
-                    let userId = defaults.valueForKey(userLoginIdKey) as! String
-                    let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                    getChannelDetails(userId, token: accessToken)
-                }
-                else{
-                    imageDataSource.removeAll()
-                    mediaIdSelected = 0
-                    update()
-                    channelDict["Archive"] = channelIdfromLocal
-                    if(mediaSharedCount != "0")
-                    {
-                        getMediaFromCloud()
-                    }
-                }
-                
-            }
-        }
-        else{
-            
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            getChannelDetails(userId, token: accessToken)
-        }
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        getChannelDetails(userId, token: accessToken)
     }
     
     func showOverlay(){
@@ -795,21 +742,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                             if(upCount == 1)
                             {
                                 cell.cloudIcon.hidden = true
-                                //  fullScrenImageView.userInteractionEnabled = false
                                 cell.progressView.progress = progressDict[i]["progress"]!.floatValue
                             }
                             if mediaId == String(dataSource[indexPath.row][mediaIdKey]!)
                             {
-                                //  fullScrenImageView.userInteractionEnabled = false
-                                
                                 cell.progressView.progress = progressDict[i]["progress"]!.floatValue
-                                //        print(progressDict[i]["progress"]!.floatValue)
-                                
+                              
                                 if(progressDict[i]["progress"]!.floatValue == 1.0 || progressDict[i]["progress"]!.floatValue == 1)
                                 {
                                     cell.progressView.hidden = true
                                     cell.cloudIcon.hidden = false
-                                    // fullScrenImageView.userInteractionEnabled = true
                                 }
                                 else{
                                     cell.cloudIcon.hidden = false
@@ -902,9 +844,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func getChannelDetails(userName: String, token: String)
     {
-//        self.deletButton.hidden = true
-//        self.addToButton.hidden = true
-//        BottomView.alpha = 0.3
         mediaIdSelected = 0
         channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandlerList(response)
@@ -913,12 +852,13 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             return
         }
     }
+    
     //PRAGMA MARK:- Authentication Handler
+    
     func authenticationSuccessHandlerList(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
         {
-            
             channelDetails = json["channels"] as! NSMutableArray
             setChannelDetails()
         }
@@ -956,7 +896,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     }
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
-        // checkData()
          self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -1177,17 +1116,13 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             
             if channelName == "Archive"
             {
-                let defaults = NSUserDefaults .standardUserDefaults()
-                defaults.setValue(channelId as! NSNumber, forKey: "channelIdFromLocal")
-                mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
-                defaults.setValue(mediaSharedCount, forKey: "mediaSharedCountFromLocal")
+               mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
             }
             channelDict[channelName] = channelId
         }
         update()
         if(mediaSharedCount != "0")
         {
-            
             getMediaFromCloud()
         }
         else

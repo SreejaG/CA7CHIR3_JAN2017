@@ -1,10 +1,4 @@
-//
-//  SetUpView.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 4/27/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 
@@ -40,7 +34,6 @@ import UIKit
         channelManager.getLoggedInDetails(userName, accessToken: token, success: { (response) in
             self.authenticationSuccessHandlerList(response)
         }) { (error, code) in
-          //  ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     
@@ -52,10 +45,7 @@ import UIKit
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
-              
-                //dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                      self.setChannelDetails()
-              //  })
+                self.setChannelDetails()
             })
         }
         else
@@ -74,12 +64,9 @@ import UIKit
     func setChannelDetails()
     {
         userImages.removeAll()
-      //  print(channelDetails)
-        
         let userThumbnailImage = channelDetails["sharedUserThumbnails"] as! NSArray
         let cameraController = IPhoneCameraViewController()
         let sizeThumb = CGSizeMake(28,28)
-   //     print(userThumbnailImage)
         for i in 0 ..< userThumbnailImage.count
         {
             var image = UIImage()

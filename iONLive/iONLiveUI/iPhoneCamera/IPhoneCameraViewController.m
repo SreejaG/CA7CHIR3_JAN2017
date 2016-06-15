@@ -96,6 +96,7 @@ NSInteger shutterActionMode;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     //device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter]
@@ -103,6 +104,7 @@ NSInteger shutterActionMode;
      name:UIDeviceOrientationDidChangeNotification
      object:[UIDevice currentDevice]];
     //end
+    
     self.navigationController.navigationBarHidden = true;
     [self.topView setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.4]];
     [self deleteIphoneCameraSnapShots];
@@ -156,9 +158,7 @@ NSInteger shutterActionMode;
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
     PhotoViewerInstance.iphoneCam = self;
     SetUpView *viewSet = [[SetUpView alloc]init];
- //   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-       [viewSet getValue];
- //   });
+    [viewSet getValue];
 }
 
 -(void)loadingView
@@ -187,7 +187,6 @@ NSInteger shutterActionMode;
         _noDataFound.hidden = true;
     });
 }
-
 
 -(void) setButtonCornerRadius{
     _firstButton.imageView.layer.cornerRadius = _firstButton.frame.size.width/2;
@@ -313,7 +312,6 @@ NSInteger shutterActionMode;
             } );
         }
         else {
-       //     NSLog( @"Could not add video device input to the session" );
             self.setupResult = AVCamSetupResultSessionConfigurationFailed;
         }
         
@@ -321,7 +319,6 @@ NSInteger shutterActionMode;
         AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
         
         if ( ! audioDeviceInput ) {
-         //   NSLog( @"Could not create audio device input: %@", error );
         }
         
         if ( [self.session canAddInput:audioDeviceInput] ) {
@@ -683,33 +680,25 @@ NSInteger shutterActionMode;
         
         UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
         
-        NSLog(@"Status bar Orientation value: %ld",(long)orientation);
-        
-        NSLog(@"Device Orientation flag: %d",orientationFlag);
-        
         if(orientationFlag == 1) //Default Orientation (portrait mode)
         {
             if(orientation ==1) //Checking device orientation as per status bar position
             {
-                //Just a fail safe method
-                NSLog(@"Portrait mode");
+        
             }
         }
         else
         {
             if(orientationFlag == 3) //Device Orientation LandscapeLeft
             {
-                NSLog(@"Device Orientation flag: %d",orientationFlag);
                 connection.videoOrientation = UIImageOrientationRight;
             }
             if(orientationFlag == 4) //Device Orientation LandscapeRight
             {
-                NSLog(@"Device Orientation: LandscapeRight, flag: %d",orientationFlag);
                 connection.videoOrientation = UIImageOrientationUpMirrored;
             }
             if (orientationFlag == 2) //Device Orientation Portrait upside down
             {
-                NSLog(@"Device Orientation: PortraitUpsideDown, flag: %d",orientationFlag);
                 connection.videoOrientation = UIImageOrientationUpMirrored;
                 connection.videoOrientation = UIImageOrientationLeft;
             }
@@ -731,7 +720,7 @@ NSInteger shutterActionMode;
                 }];
             }
             else {
-                NSLog( @"Could not capture still image: %@", error );
+               
             }
         }];
     });
@@ -749,9 +738,7 @@ NSInteger shutterActionMode;
     NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
     [imageData writeToFile:filePath atomically:YES];
-    
     [self saveIphoneCameraSnapShots:dateString path:filePath];
-    
     ShotsDict = [[NSMutableDictionary alloc]init];
     [ShotsDict setValue:filePath forKey:dateString];
 }
@@ -959,33 +946,6 @@ NSInteger shutterActionMode;
     int deletFlag = [[FileManagerViewController sharedInstance] deleteImageFromFilePath:finalPath];
 }
 
-
-//-(UIImage*)readImageFromDataBase
-//{
-//    snapShotsDict = [[NSMutableDictionary alloc]init];
-//    snapShotsDict = [self displayIphoneCameraSnapShots];
-//    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-//    UIImage * thumbNailImage = [[UIImage alloc]init];
-//    if([snapShotsDict count] > 0){
-//        NSMutableArray *dateArray=[[NSMutableArray alloc]init];
-//        NSArray *snapShotKeys=[[NSArray alloc]init];
-//        snapShotKeys = [snapShotsDict allKeys];
-//        for(int i=0; i<[snapShotKeys count]; i++){
-//            [dateFormat setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
-//            NSDate *date = [dateFormat dateFromString:snapShotKeys[i]];
-//            dateArray[i]=date;
-//        }
-//        NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
-//        NSArray *dateArray1 = [dateArray sortedArrayUsingDescriptors:@[sd]];
-//        
-//        thumbNailImage = [self thumbnaleImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:[snapShotsDict valueForKey:[NSString stringWithFormat:@"%@",[dateFormat stringFromDate:dateArray1[0]]]]] ] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
-//    }
-//    else{
-//        thumbNailImage = [UIImage imageNamed:@"thumb12"];
-//    }
-//    return thumbNailImage;
-//}
-
 #pragma mark KVO and Notifications
 
 - (void)addObservers
@@ -1069,8 +1029,6 @@ NSInteger shutterActionMode;
     
     if ( &AVCaptureSessionInterruptionReasonKey ) {
         AVCaptureSessionInterruptionReason reason = [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue];
-     //   NSLog( @"Capture session was interrupted with reason %ld", (long)reason );
-        
         if ( reason == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient ||
             reason == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient ) {
             showResumeButton = YES;
@@ -1081,7 +1039,6 @@ NSInteger shutterActionMode;
         }
     }
     else {
-        NSLog( @"Capture session was interrupted" );
         showResumeButton = ( [UIApplication sharedApplication].applicationState == UIApplicationStateInactive );
     }
     
@@ -1093,7 +1050,6 @@ NSInteger shutterActionMode;
 
 - (void)sessionInterruptionEnded:(NSNotification *)notification
 {
-    NSLog( @"Capture session interruption ended" );
 }
 
 
@@ -1110,7 +1066,6 @@ NSInteger shutterActionMode;
     BOOL success = YES;
     
     if ( error ) {
-        NSLog( @"Movie file finishing error: %@", error );
         success = [error.userInfo[AVErrorRecordingSuccessfullyFinishedKey] boolValue];
     }
     if ( success ) {
@@ -1136,7 +1091,6 @@ NSInteger shutterActionMode;
                     }
                 } completionHandler:^( BOOL success, NSError *error ) {
                     if ( ! success ) {
-                        NSLog( @"Could not save movie to photo library: %@", error );
                     }
                 }];
             }
@@ -1221,7 +1175,6 @@ NSInteger shutterActionMode;
           
         }
         else {
-            NSLog( @"Could not lock device for configuration: %@", error );
         }
     }
 }
@@ -1307,7 +1260,6 @@ NSInteger shutterActionMode;
     self.activitView.hidden =false;
     [self.bottomView setUserInteractionEnabled:NO];
 }
-
 
 - (IBAction)didTapCamSelectionButton:(id)sender
 {
@@ -1452,7 +1404,6 @@ NSInteger shutterActionMode;
     }
 }
 
-
 -(void) loadStreamsGalleryView
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
@@ -1477,14 +1428,6 @@ NSInteger shutterActionMode;
 -(void)startLiveStreaming
 {
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    
-    /*
-     rtmp://stream.ioncameras.com:1935/live/stream?ionlive&ion#Ca7hDec11%Live;
-     rtmp://stream.ioncameras.com:1935/live?ionlive&ion#Ca7hDec11%Live/stream
-     rtmp://stream.ioncameras.com:1935/live/stream?username=ionlive&password=ion#Ca7hDec11%Live
-     rtmp://stream.ioncameras.com:1935/live?username=ionlive&password=ion#Ca7hDec11%Live/stream
-     */
-    
     NSString * url  = @"rtsp://192.168.16.33:1935/live";
     [_liveSteamSession startRtmpSessionWithURL:url andStreamKey:@"iPhoneliveStreaming"];
 }
@@ -1506,7 +1449,6 @@ NSInteger shutterActionMode;
                 break;
         }
     }
-    
 }
 
 - (void)subjectAreaDidChange:(NSNotification *)notification

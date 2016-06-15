@@ -1,10 +1,3 @@
-//
-//  upload.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 3/30/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -27,7 +20,6 @@ protocol uploadProgressDelegate
     let signedURLResponse: NSMutableDictionary = NSMutableDictionary()
     var delegate : uploadProgressDelegate?
     var progressDictionary : [[String:AnyObject]]  = [[String:AnyObject]]()
- //   var checksDataSourceDatabase :[[String:UIImage]]  = [[String:UIImage]]()
     var checkThumb : Bool = false
     var taskIndex :  Int = 0
     var media : NSString = ""
@@ -78,7 +70,6 @@ protocol uploadProgressDelegate
     func readImage()
     {
         let cameraController = IPhoneCameraViewController()
-    
         if shotDict.count > 0
         {
             let snapShotsKeys = shotDict.allKeys as NSArray
@@ -91,18 +82,14 @@ protocol uploadProgressDelegate
             let checkValidation = NSFileManager.defaultManager()
             for index in 0 ..< sortedSnapShotsKeys.count
             {
-            //    print(shotDict)
                 if let thumbNailImagePath = shotDict.valueForKey(sortedSnapShotsKeys[index] as! String)
                 {
                     if (checkValidation.fileExistsAtPath(thumbNailImagePath as! String))
                     {
                         thumbnailpath = thumbNailImagePath as! NSString
-                        
                         let imageToConvert = UIImage(data: NSData(contentsOfFile: thumbNailImagePath as! String)!)
                         let sizeThumb = CGSizeMake(70,70)
-                      //  let sizeFull = CGSizeMake(screenWidth,screenHeight)
                         let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
-                     //   let imageAfterConversionFullscreen = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeFull)
                         if media == "video"
                         {
                             let sizeFull = CGSizeMake(140,140)
@@ -118,7 +105,6 @@ protocol uploadProgressDelegate
                     }
                 }
             }
-         //   checksDataSourceDatabase = dummyImagesDataSourceDatabase
         }
     }
     
@@ -211,17 +197,14 @@ protocol uploadProgressDelegate
                     {
                         if let imageDatadup = NSData(contentsOfURL: videoPath){
                             imageData = imageDatadup
-                            
-                         //   if let imageData = data as NSData? {
-                                let mediaIdForFilePath = "\(self.signedURLResponse.valueForKey("mediaId")!)"
-                                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-                                let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
-                                let url = NSURL(fileURLWithPath: savingPath)
-                                let writeFlag = imageData.writeToURL(url, atomically: true)
-                                if(writeFlag){
+                            let mediaIdForFilePath = "\(self.signedURLResponse.valueForKey("mediaId")!)"
+                            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                            let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
+                            let url = NSURL(fileURLWithPath: savingPath)
+                            let writeFlag = imageData.writeToURL(url, atomically: true)
+                            if(writeFlag){
                                     
-                                }
-                            
+                            }
                         }
                         else{
                             return
@@ -276,11 +259,7 @@ protocol uploadProgressDelegate
                         self.uploadThumbImage(rowIndex, completion: { (result) -> Void in
                             if result == "Success"
                             {
-                                
-                             //   print(self.dummyImagesDataSourceDatabase.count)
                                 self.dummyImagesDataSourceDatabase.removeAll()
-                            //    self.checksDataSourceDatabase.removeLast()
-                                // self.deleteCOreData()
                                 let defaults = NSUserDefaults .standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -320,7 +299,6 @@ protocol uploadProgressDelegate
             {
                 let path = mediaCachemanager.getDocumentsURL().URLByAppendingPathComponent((self.signedURLResponse.valueForKey("mediaId")?.stringValue)!)
                 mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][thumbImageKey]!, path: String(String(path)+"thumb"))
-//                mediaCachemanager.saveImage(dummyImagesDataSourceDatabase[i][fullImageKey]!, path: String(String(path)+"full"))
             }
         }
     }
@@ -395,11 +373,9 @@ protocol uploadProgressDelegate
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         if defaults.objectForKey("ProgressDict") != nil{
-            //  let data  =  defaults.objectForKey("ProgressDict")!
             progressDictionary = NSUserDefaults .standardUserDefaults().valueForKey("ProgressDict") as! NSArray as! [[String : AnyObject]]
         }
         progressDictionary.append([mediaIdKey:(signedURLResponse.valueForKey("mediaId")?.stringValue)!,"progress": value])
-        //  let data = NSKeyedArchiver.archivedDataWithRootObject(progressDictionary)
         defaults.setValue(progressDictionary , forKey :"ProgressDict")
     }
     
@@ -433,7 +409,6 @@ protocol uploadProgressDelegate
         let value : Float = 1.0
         let defaults = NSUserDefaults .standardUserDefaults()
         if defaults.objectForKey("ProgressDict") != nil{
-            //  let data  =  defaults.objectForKey("ProgressDict") as! NSData
             progressDictionary =  NSUserDefaults .standardUserDefaults().valueForKey("ProgressDict") as! NSArray as![[String : AnyObject]]
         }
         for(var i = 0 ; i < progressDictionary.count ; i++)
@@ -444,7 +419,6 @@ protocol uploadProgressDelegate
             }
         }
         self.checkThumb = false
-  //      print(progressDictionary)
         defaults.setValue(progressDictionary, forKey: "ProgressDict")
         if PhotoViewerInstance.controller != nil
         {
@@ -456,7 +430,6 @@ protocol uploadProgressDelegate
             let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
             controller.uploadprogress(2.0)
         }
-        
     }
     func deletePathContent()
     {
@@ -557,9 +530,6 @@ protocol uploadProgressDelegate
                 })
                 }
             }
-            else{
-           //     loadInitialViewController("USER004")
-            }
         }
     }
     
@@ -572,33 +542,23 @@ protocol uploadProgressDelegate
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64)
     {
         mediaId = String(signedURLResponse.valueForKey("mediaId")!)
-        
         let uploadProgress:Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-   //     print(uploadProgress)
         updateProgressToDefault(uploadProgress)
         
     }
     func updateProgressToDefault(progress:Float)
     {
-        //if(checkThumb)
-        //  {
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         if defaults.objectForKey("ProgressDict") != nil{
-            //  let data  =  defaults.objectForKey("ProgressDict")!
             progressDictionary = NSUserDefaults .standardUserDefaults().valueForKey("ProgressDict") as! NSArray as! [[String : AnyObject]]
         }
         for(var i = 0 ; i < progressDictionary.count ; i++)
         {
-//            print(String(progressDictionary[i][mediaIdKey]!))
-//            print(String(signedURLResponse.valueForKey("mediaId")!))
             if String(progressDictionary[i][mediaIdKey]!) == mediaId
             {
                 progressDictionary[i]["progress"] = progress
             }
         }
-   //     print(progressDictionary)
-        
         defaults.setValue(progressDictionary, forKey: "ProgressDict")
         if PhotoViewerInstance.controller != nil
         {
@@ -612,7 +572,6 @@ protocol uploadProgressDelegate
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)
     {
-        print("Completed")
     }
     
 }
