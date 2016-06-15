@@ -42,6 +42,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var selectedArray:[Int] = [Int]()
     var channelIdfromLocal : NSNumber = NSNumber()
     
+    
+    @IBOutlet var TopView: UIView!
     @IBOutlet var BottomView: UIView!
     @IBOutlet weak var mediaTimeLabel: UILabel!
     @IBOutlet var progressView: UIProgressView!
@@ -379,6 +381,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 else
                 {
                     fullScreenZoomView.hidden = false
+                    fullScrenImageView.alpha = 0.0
+                    TopView.hidden = true
+                    BottomView.hidden = true
+                    photoThumpCollectionView.hidden = true
+                    playIconInFullView.hidden = true
                 }
             }
         }
@@ -496,8 +503,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
     }
-    func shrinkImageView(Recognizer:UITapGestureRecognizer){
+    func shrinkImageView(Recognizer:UITapGestureRecognizer)
+    {
         fullScreenZoomView.hidden = true
+        fullScrenImageView.alpha = 1.0
+        TopView.hidden = false
+        BottomView.hidden = false
+        photoThumpCollectionView.hidden = false
     }
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
         mediaSelected.removeAllObjects()

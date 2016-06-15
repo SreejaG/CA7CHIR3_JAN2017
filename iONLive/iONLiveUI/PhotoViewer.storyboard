@@ -163,7 +163,7 @@
                                     <outlet property="delegate" destination="Ayi-XJ-Ys0" id="JIW-G9-LFn"/>
                                 </connections>
                             </collectionView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mJr-dY-xwO">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mJr-dY-xwO">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
                         </subviews>
@@ -192,6 +192,7 @@
                     </view>
                     <connections>
                         <outlet property="BottomView" destination="Ncu-eZ-Tvl" id="ngR-Fr-PqL"/>
+                        <outlet property="TopView" destination="e64-wp-j2s" id="d0e-K9-XeX"/>
                         <outlet property="addToButton" destination="6Fa-dd-16L" id="ItE-GW-gGh"/>
                         <outlet property="deletButton" destination="DAc-0e-fze" id="CSC-LG-zMg"/>
                         <outlet property="doneButton" destination="E08-1q-r1T" id="xDa-6o-pd3"/>
