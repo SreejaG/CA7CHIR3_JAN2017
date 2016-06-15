@@ -325,6 +325,7 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <connections>
                         <outlet property="editProfTableView" destination="8yW-hu-EA2" id="7HD-nC-3jD"/>
+                        <outlet property="saveButton" destination="6iJ-c1-0fH" id="drI-4u-PNv"/>
                         <outlet property="tableViewBottomConstaint" destination="4rU-lb-qaq" id="XSs-sr-WT5"/>
                     </connections>
                 </viewController>

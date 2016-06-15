@@ -273,8 +273,21 @@ class SignUpVerifyPhoneViewController: UIViewController
         showOverlay()
         let userCountryCode = self.countryCodeTextField.text
 
-        let timeZoneOffsetInGMT : String = ltzAbbrev()
-        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+//        let timeZoneOffsetInGMT : String = ltzAbbrev()
+//        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+        
+        let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
+        let timeOffsetStr = String(timeOffset)
+        var timeZoneOffsetInUTC : String = String()
+        if timeOffsetStr.hasPrefix("-")
+        {
+            timeZoneOffsetInUTC = timeOffsetStr
+        }
+        else
+        {
+            timeZoneOffsetInUTC = "+\(timeOffsetStr)"
+        }
+        print(timeZoneOffsetInUTC)
         authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in

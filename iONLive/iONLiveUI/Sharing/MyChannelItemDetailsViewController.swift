@@ -44,7 +44,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         
-        //        self.channelItemsCollectionView.alwaysBounceVertical = true
+         self.channelItemsCollectionView.alwaysBounceVertical = true
         
         initialise()
     }

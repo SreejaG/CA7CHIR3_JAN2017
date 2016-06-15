@@ -28,6 +28,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
+    @IBOutlet weak var saveButton: UIButton!
     
     let userNameKey = "userNameKey"
     let displayNameKey = "displayNameKey"
@@ -74,6 +75,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func initialise()
     {
+        saveButton.hidden = true
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -225,18 +227,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             imageForProfile = UIImage(named: "dummyUser")!
         }
         
-        
-        //        if let imageByteArray: NSArray = imageName["data"] as? NSArray{
-        //            var bytes:[UInt8] = []
-        //            for serverByte in imageByteArray {
-        //                bytes.append(UInt8(serverByte as! UInt))
-        //            }
-        //            let imageData:NSData = NSData(bytes: bytes, length: bytes.count)
-        //            if let datas = imageData as NSData? {
-        //                imageForProfile = UIImage(data: datas)!
-        //            }
-        //        }
-        
         profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
         privateInfoOptions = [[privateInfoKey:email],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
@@ -246,6 +236,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     @IBAction func saveClicked(sender: AnyObject) {
+        saveButton.hidden = true
         showOverlay()
         getSignedUrl()
     }
@@ -565,6 +556,9 @@ extension EditProfileViewController:UITableViewDataSource
         return UITableViewCell()
     }
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        saveButton.hidden = false
+    }
     func textFieldDidEndEditing(textField: UITextField) {
         
         if(textField.tag == 0)
@@ -617,6 +611,7 @@ extension EditProfileViewController:UITableViewDataSource
             
         })
         imageForProfile = image
+        saveButton.hidden = false
         editProfTableView.reloadData()
     }
     

@@ -1,10 +1,3 @@
-//
-//  StreamsListViewController.swift
-//  iON_Live
-//
-//  Created by Gadgeon on 11/18/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -25,6 +18,8 @@ class StreamsListViewController: UIViewController{
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
+    
+    var firstTap : Int = 0
     
     var offset: String = "0"
     var offsetToInt : Int = Int()
@@ -63,10 +58,11 @@ class StreamsListViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        firstTap = 0
         dataSource.removeAll()
-        
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.streamListCollectionView.alwaysBounceVertical = true
         getAllLiveStreams()
     }
     
@@ -85,6 +81,7 @@ class StreamsListViewController: UIViewController{
     func initialise()
     {
         totalMediaCount = 0
+        firstTap = firstTap + 1
         if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
         {
             mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
@@ -94,7 +91,6 @@ class StreamsListViewController: UIViewController{
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
         }
         initialiseCloudData()
-        
     }
     
     func initialiseCloudData(){
@@ -103,14 +99,14 @@ class StreamsListViewController: UIViewController{
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         let startValue = "0"
         let endValue = String(totalMediaCount)
+        print(endValue)
         imageUploadManger.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
         }
     }
-    
-    
+   
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             
@@ -154,7 +150,6 @@ class StreamsListViewController: UIViewController{
             if(pullToRefreshActive){
                 self.refreshControl.endRefreshing()
                 pullToRefreshActive = false
-                
             }
             removeOverlay()
 
@@ -202,7 +197,6 @@ class StreamsListViewController: UIViewController{
                     })
                 })
             }
-            
         }
         else
         {
@@ -212,40 +206,52 @@ class StreamsListViewController: UIViewController{
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        removeOverlay()
-    
-        if(pullToRefreshActive){
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-            tapCount = 0
-        }
-        
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
+            removeOverlay()
+            if(pullToRefreshActive){
+                self.refreshControl.endRefreshing()
+                pullToRefreshActive = false
+                tapCount = 0
+            }
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
-            if((code == "MEDIA003") || (code == "MEDIA002")){
-                if(dataSource.count > 0){
-                    
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                removeOverlay()
+                if(pullToRefreshActive){
+                    self.refreshControl.endRefreshing()
+                    pullToRefreshActive = false
+                    tapCount = 0
                 }
-                else{
-                     ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-                }
+                loadInitialViewController(code)
             }
             else{
-               
-                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                    loadInitialViewController(code)
-                }
-                else{
-                     ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                if((code == "MEDIA003") || (code == "MEDIA002")){
+                    if(firstTap == 1){
+                        self.initialise()
+                    }
+                    else{
+                        removeOverlay()
+                        if(pullToRefreshActive){
+                            self.refreshControl.endRefreshing()
+                            pullToRefreshActive = false
+                            tapCount = 0
+                        }
+                        
+                        ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                    }
                 }
             }
         }
         else{
+            removeOverlay()
+            if(pullToRefreshActive){
+                self.refreshControl.endRefreshing()
+                pullToRefreshActive = false
+                tapCount = 0
+            }
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
@@ -277,42 +283,37 @@ class StreamsListViewController: UIViewController{
     func downloadMediaFromGCS(){
         if imageDataSource.count > 0
         {
-        for var i in 0 ..< imageDataSource.count
-        {
-            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-   //         print(mediaIdS)
-            if(mediaIdS != ""){
-            var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        if(result != UIImage()){
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            imageForMedia = result
+            for var i in 0 ..< imageDataSource.count
+            {
+                let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+                if(mediaIdS != ""){
+                    var imageForMedia : UIImage = UIImage()
+                    let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                    if fileExistFlag == true{
+                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                        imageForMedia = mediaImageFromFile!
+                    }
+                    else{
+                        let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                        if(mediaUrl != ""){
+                            let url: NSURL = convertStringtoURL(mediaUrl)
+                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                if(result != UIImage()){
+                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    imageForMedia = result
+                                }
+                            })
                         }
+                    }
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+                        self.streamListCollectionView.reloadData()
                     })
                 }
             }
-            
-                
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
-
-                self.streamListCollectionView.reloadData()
-            })
-        }
-        }
         }
     }
     
@@ -322,7 +323,6 @@ class StreamsListViewController: UIViewController{
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -333,7 +333,6 @@ class StreamsListViewController: UIViewController{
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
-            
         }
     }
     
@@ -376,7 +375,6 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-      
             removeOverlay()
 
             if(pullToRefreshActive){
@@ -401,13 +399,12 @@ class StreamsListViewController: UIViewController{
                 loadInitialViewController(code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                 self.initialise()
             }
         }
         else{
           self.initialise()
         }
-        
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {
@@ -472,10 +469,8 @@ class StreamsListViewController: UIViewController{
                     self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate!,self.channelNameKey:channelname])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
-                    self.streamListCollectionView.reloadData()
+                     self.streamListCollectionView.reloadData()
                 })
-                
             }
             initialise()
         }
@@ -601,9 +596,6 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                         collectionView.alpha = 1.0
                         profileImage = UIImage(named: "dummyUser")!
                     }
-                    
-                    //                    profileImage = UIImage(named: "dummyUser")!
-                    
                     if type ==  "image"
                     {
                         let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController

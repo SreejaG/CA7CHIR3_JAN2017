@@ -218,7 +218,6 @@ class MySharedChannelsViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func authenticationSuccessHandler(response:AnyObject?)

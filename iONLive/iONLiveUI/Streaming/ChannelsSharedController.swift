@@ -1,16 +1,10 @@
-//
-//  ChannelsSharedController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 4/11/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var fulldataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     
@@ -36,17 +30,14 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
     @IBOutlet weak var ChannelSharedTableView: UITableView!
+   
+    var tapCountChannelShared : Int = 0
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.ChannelSharedTableView.addSubview(refreshControl)
         self.ChannelSharedTableView.alwaysBounceVertical = true
-        
         initialise()
     }
     
@@ -67,13 +58,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func pullToRefresh()
     {
-        if(!pullToRefreshActive){
-        
-        mediaShared.removeAll()
-        dummy.removeAll()
-        dataSource.removeAll()
-        pullToRefreshActive = true
-        initialise()
+        tapCountChannelShared = tapCountChannelShared + 1
+        if(tapCountChannelShared <= 1){
+            if(!pullToRefreshActive){
+                pullToRefreshActive = true
+                dataSource.removeAll()
+                initialise()
+            }
         }
         else{
             self.refreshControl.endRefreshing()
@@ -85,11 +76,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-//        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//        dispatch_async(backgroundQueue, {
         getChannelSharedDetails(userId, token: accessToken)
-//        })
     }
     
     func getChannelSharedDetails(userName: String, token: String)
@@ -148,7 +135,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -170,20 +156,54 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
     }
     
+    func createMediaThumb(mediaName: String) -> UIImage
+    {
+        var mediaImage : UIImage?
+        if(mediaName != "")
+        {
+            let url: NSURL = convertStringtoURL(mediaName)
+            if let mediaData = NSData(contentsOfURL: url){
+                let mediaImageData = (mediaData as NSData?)!
+                mediaImage = UIImage(data: mediaImageData)
+            }
+            else{
+                mediaImage = UIImage()
+            }
+        }
+        else{
+            mediaImage = UIImage()
+        }
+        return mediaImage!
+    }
+    
+    func createProfileImage(profileName: String) -> UIImage
+    {
+        var profileImage : UIImage = UIImage()
+        let url: NSURL = convertStringtoURL(profileName)
+        if let data = NSData(contentsOfURL: url){
+            let imageDetailsData = (data as NSData?)!
+            profileImage = UIImage(data: imageDetailsData)!
+        }
+        else{
+            profileImage = UIImage(named: "dummyUser")!
+        }
+        return profileImage
+    }
+
     func authenticationSuccessHandler(response:AnyObject?)
     {
+        if(pullToRefreshActive){
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+            
+        }
         removeOverlay()
-        self.refreshControl.endRefreshing()
-        pullToRefreshActive = false
         if let json = response as? [String: AnyObject]
         {
             dummy.removeAll()
-            
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
             if (responseArrLive.count != 0)
             {
-                var mediaImage : UIImage?
-                var profileImage : UIImage?
                 for element in responseArrLive{
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
@@ -192,172 +212,102 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
                     
-                    //signed url iprofile
-                    
                     let thumbUrlBeforeNullChk =  element[profileImageKey]
                     let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
-                    if(thumbUrl != "")
-                    {
-                        let url: NSURL = convertStringtoURL(thumbUrl)
-                        if let data = NSData(contentsOfURL: url){
-                            let imageDetailsData = (data as NSData?)!
-                            profileImage = UIImage(data: imageDetailsData)!
-                        }
-                        else{
-                            profileImage = UIImage(named: "dummyUser")!
-                        }
-                    }
-                    else{
-                        profileImage = UIImage(named: "dummyUser")!
-                    }
-                    mediaImage = UIImage(named: "thumb12")
-                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:"",usernameKey:username,liveStreamStatus:liveStream, profileImageKey:profileImage!,mediaImageKey:mediaImage!])
+                    let mediaUrl =  "noimage"
+                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:"",usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
             }
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
-            if (responseArr.count == 0)
-            {
-                ErrorManager.sharedInstance.subscriptionEmpty()
-            }
             if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
             {
                 mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
             }
-            for element in responseArr{
-                var mediaImage : UIImage?
-                var profileImage : UIImage?
-                let channelId = element[channelIdkey]?.stringValue
-                let channelName = element[channelNameKey] as! String
-                let mediaSharedCount = element[sharedMediaCount]?.stringValue
-                let time = element[lastUpdatedTimeStamp] as! String
-                let username = element[usernameKey] as! String
-                let liveStream = "0"
-                if liveStream == "0"
-                {
-                    let mediaThumbUrlBeforeNullChk = element["thumbnail_Url"]
-                    let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
-                    if(mediaThumbUrl != "")
+            if (responseArr.count != 0)
+            {
+                for element in responseArr{
+                    let channelId = element[channelIdkey]?.stringValue
+                    let channelName = element[channelNameKey] as! String
+                    let mediaSharedCount = element[sharedMediaCount]?.stringValue
+                    let time = element[lastUpdatedTimeStamp] as! String
+                    let username = element[usernameKey] as! String
+                    let liveStream = "0"
+                    var mediaThumbUrl : String = String()
+                    if liveStream == "0"
                     {
-                        let url: NSURL = convertStringtoURL(mediaThumbUrl)
-                        if let mediaData = NSData(contentsOfURL: url){
-                            let mediaImageData = (mediaData as NSData?)!
-                            mediaImage = UIImage(data: mediaImageData)
-                        }
-                        else
+                        let mediaThumbUrlBeforeNullChk = element["thumbnail_Url"]
+                        mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+                    }
+                    else
+                    {
+                        mediaThumbUrl = "noimage"
+                    }
+                    
+                    let profileImageNameBeforeNullChk =  element[profileImageKey]
+                    let thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
+                    if( mediaShared.count > 0)
+                    {
+                        var flag: Bool = false
+                        for i in 0  ..< mediaShared.count
                         {
-                            mediaImage = UIImage()
-                        }
-                    }
-                    else{
-                        mediaImage = UIImage()
-                    }
-                }
-                else
-                {
-                    mediaImage = UIImage()
-                }
-                
-                //     signedurl profile image
-                
-                let profileImageNameBeforeNullChk =  element[profileImageKey]
-                let thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
-                if(thumbUrl != "")
-                {
-                    let url: NSURL = convertStringtoURL(thumbUrl)
-                    if let data = NSData(contentsOfURL: url){
-                        let imageDetailsData = (data as NSData?)!
-                        profileImage = UIImage(data: imageDetailsData)!
-                    }
-                    else{
-                        profileImage = UIImage(named: "dummyUser")!
-                    }
-                }
-                else{
-                    profileImage = UIImage(named: "dummyUser")!
-                }
-                
-                //
-                //                let profileImageName = element[profileImageKey]
-                //                if let imageByteArray: NSArray = profileImageName!["data"] as? NSArray
-                //                {
-                //                    var bytes:[UInt8] = []
-                //                    for serverByte in imageByteArray {
-                //                        bytes.append(UInt8(serverByte as! UInt))
-                //                    }
-                //
-                //                    if let profileData:NSData = NSData(bytes: bytes, length: bytes.count){
-                //                        let profileImageData = profileData as NSData?
-                //                        profileImage = UIImage(data: profileImageData!)
-                //                    }
-                //                }
-                //                else{
-                //                    profileImage = UIImage(named: "avatar")!
-                //                }
-                //
-                //                profileImage = UIImage(named: "dummyUser")!
-                
-                if( mediaShared.count > 0)
-                {
-                    var flag: Bool = false
-                    for i in 0  ..< mediaShared.count
-                    {
-                        if let val = mediaShared[i][channelIdkey] {
-                            if((val as! String) == channelId)
-                            {
-                                flag = true
-                                if mediaShared[i][isWatched] as! String == "1"
+                            if let val = mediaShared[i][channelIdkey] {
+                                if((val as! String) == channelId)
                                 {
-                                    if((mediaShared[i][totalNoShared] as! String) == mediaSharedCount)
+                                    flag = true
+                                    if mediaShared[i][isWatched] as! String == "1"
                                     {
-                                        let count:Int? = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
-                                        let countString = String(                                      callAbsolute(count!))
-                                        mediaShared[i][sharedMediaCount] = countString
-                                        mediaShared[i][totalNoShared] = mediaSharedCount
-                                        mediaShared[i][isWatched] = "0"
-                                    }
-                                    else
-                                    {
-                                        let count:Int? = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
-                                        mediaShared[i][sharedMediaCount] = String(callAbsolute(count!))
-                                        mediaShared[i][totalNoShared] = mediaSharedCount
-                                    }
-                                }
-                                else
-                                {
-                                    if(mediaShared[i][totalNoShared] as? String != mediaSharedCount)
-                                    {
-                                        let count = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
-                                        let p = mediaShared[i][sharedMediaCount] as! String
-                                        let countString:Int
-                                        if( Int(p) == nil)
+                                        if((mediaShared[i][totalNoShared] as! String) == mediaSharedCount)
                                         {
-                                            countString = 0 + Int(callAbsolute(count))
+                                            let count:Int? = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
+                                            let countString = String(                                      callAbsolute(count!))
+                                            mediaShared[i][sharedMediaCount] = countString
+                                            mediaShared[i][totalNoShared] = mediaSharedCount
+                                            mediaShared[i][isWatched] = "0"
                                         }
                                         else
                                         {
-                                            countString = Int((mediaShared[i][sharedMediaCount] as! String))! + Int(callAbsolute(count))
+                                            let count:Int? = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
+                                            mediaShared[i][sharedMediaCount] = String(callAbsolute(count!))
+                                            mediaShared[i][totalNoShared] = mediaSharedCount
                                         }
-                                        
-                                        
-                                        mediaShared[i][sharedMediaCount] = String(countString)
-                                        mediaShared[i][totalNoShared] = mediaSharedCount
-                                        mediaShared[i][isWatched] = "0"
+                                    }
+                                    else
+                                    {
+                                        if(mediaShared[i][totalNoShared] as? String != mediaSharedCount)
+                                        {
+                                            let count = Int(mediaSharedCount!)! - Int(mediaShared[i][totalNoShared] as! String)!
+                                            let p = mediaShared[i][sharedMediaCount] as! String
+                                            let countString:Int
+                                            if( Int(p) == nil)
+                                            {
+                                                countString = 0 + Int(callAbsolute(count))
+                                            }
+                                            else
+                                            {
+                                                countString = Int((mediaShared[i][sharedMediaCount] as! String))! + Int(callAbsolute(count))
+                                            }
+                                            
+                                            
+                                            mediaShared[i][sharedMediaCount] = String(countString)
+                                            mediaShared[i][totalNoShared] = mediaSharedCount
+                                            mediaShared[i][isWatched] = "0"
+                                        }
                                     }
                                 }
+                                
                             }
-                            
+                        }
+                        if(!flag)
+                        {
+                            mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
                         }
                     }
-                    if(!flag)
+                    else
                     {
                         mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
                     }
+                    dummy.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
                 }
-                else
-                {
-                    mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
-                }
-                dummy.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:profileImage!,mediaImageKey:mediaImage!])
             }
             if(dummy.count > 0)
             {
@@ -397,8 +347,20 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 }
                 index += 1
             }
+            
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
-            ChannelSharedTableView.reloadData()
+            if(dataSource.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
+                        self.ChannelSharedTableView.addSubview(self.refreshControl)
+                         self.tapCountChannelShared = 0
+                    })
+                })
+            }
         }
         else
         {
@@ -406,23 +368,65 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
     }
     
+    
+    func downloadMediaFromGCS(){
+        fulldataSource.removeAll()
+        for i in 0 ..< dataSource.count
+        {
+            var mediaImage : UIImage?
+            var profileImage : UIImage?
+            
+            let profileImageName = dataSource[i][profileImageKey] as! String
+            if(profileImageName != "")
+            {
+                profileImage = createProfileImage(profileImageName)
+            }
+            else{
+                profileImage = UIImage(named: "dummyUser")
+            }
+            
+            let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
+            if(mediaThumbUrl != "noimage"){
+                if(mediaThumbUrl != "")
+                {
+                    mediaImage = createMediaThumb(mediaThumbUrl)
+                }
+                else{
+                    mediaImage = UIImage()
+                }
+            }
+            else{
+                mediaImage = UIImage()
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.fulldataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!])
+                self.ChannelSharedTableView.reloadData()
+            })
+        }
+    }
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        self.removeOverlay()
-        self.refreshControl.endRefreshing()
-        pullToRefreshActive = false
+        removeOverlay()
+        
+        if(pullToRefreshActive){
+            self.refreshControl.endRefreshing()
+            pullToRefreshActive = false
+            tapCountChannelShared = 0
+        }
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
             else{
-                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            //    ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -445,9 +449,9 @@ extension ChannelsSharedController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if dataSource.count > 0
+        if fulldataSource.count > 0
         {
-            return dataSource.count
+            return fulldataSource.count
         }
         else
         {
@@ -457,17 +461,17 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if dataSource.count > indexPath.row
+        if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(ChannelSharedCell.identifier, forIndexPath:indexPath) as! ChannelSharedCell
-            cell.channelProfileImage.image = dataSource[indexPath.row][profileImageKey] as? UIImage
-            cell.channelNameLabel.text =   dataSource[indexPath.row][channelNameKey] as? String
+            cell.channelProfileImage.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
+            cell.channelNameLabel.text =   fulldataSource[indexPath.row][channelNameKey] as? String
             cell.countLabel.hidden = true
-            if(dataSource[indexPath.row][liveStreamStatus] as! String == "1")
+            if(fulldataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
                 cell.currentUpdationImage.hidden = false
                 cell.latestImage.hidden = true
-                let text = "@" + (dataSource[indexPath.row][usernameKey] as! String) + " Live"
+                let text = "@" + (fulldataSource[indexPath.row][usernameKey] as! String) + " Live"
                 cell.currentUpdationImage.image  = UIImage(named: "Live_camera")
                 let linkTextWithColor = "Live"
                 let range = (text as NSString).rangeOfString(linkTextWithColor)
@@ -486,23 +490,23 @@ extension ChannelsSharedController:UITableViewDataSource
                 cell.currentUpdationImage.hidden = true
                 for i in 0  ..< mediaShared.count
                 {
-                    if(mediaShared[i][channelIdkey]?.intValue ==  dataSource[indexPath.row][channelIdkey]?.intValue)
+                    if(mediaShared[i][channelIdkey]?.intValue ==  fulldataSource[indexPath.row][channelIdkey]?.intValue)
                     {
                         let dateFormatter = NSDateFormatter()
                         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                         dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                        let date = dateFormatter.dateFromString(dataSource[indexPath.row][timeStamp] as! String)
+                        let date = dateFormatter.dateFromString(fulldataSource[indexPath.row][timeStamp] as! String)
                         let fromdateStr = dateFormatter.stringFromDate(NSDate())
                         let fromdate = dateFormatter.dateFromString(fromdateStr)
                         let sdifferentString =  offsetFrom(date!, todate: fromdate!)
                         let count = (mediaShared[i][sharedMediaCount]?.intValue)!
-                        let text = dataSource[indexPath.row][usernameKey] as! String
+                        let text = fulldataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {
                             cell.latestImage.hidden = false
                             
                             cell.countLabel.hidden = true
-                            cell.latestImage.image  = dataSource[indexPath.row][mediaImageKey] as? UIImage
+                            cell.latestImage.image  = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
                             cell.detailLabel.text = "@" + text + " " + sdifferentString
                         }
                         else
@@ -527,11 +531,11 @@ extension ChannelsSharedController:UITableViewDataSource
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
         let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
         
-        channelItemListVC.channelId = dataSource[indexPath.row][channelIdkey] as! String
-        channelItemListVC.channelName = dataSource[indexPath.row][channelNameKey] as! String
-        channelItemListVC.totalMediaCount = Int(dataSource[indexPath.row][sharedMediaCount]! as! String)!
-        channelItemListVC.userName = dataSource[indexPath.row][usernameKey] as! String
-        channelItemListVC.profileImage = dataSource[indexPath.row][profileImageKey] as! UIImage
+        channelItemListVC.channelId = fulldataSource[indexPath.row][channelIdkey] as! String
+        channelItemListVC.channelName = fulldataSource[indexPath.row][channelNameKey] as! String
+        channelItemListVC.totalMediaCount = Int(fulldataSource[indexPath.row][sharedMediaCount]! as! String)!
+        channelItemListVC.userName = fulldataSource[indexPath.row][usernameKey] as! String
+        channelItemListVC.profileImage = fulldataSource[indexPath.row][profileImageKey] as! UIImage
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
         

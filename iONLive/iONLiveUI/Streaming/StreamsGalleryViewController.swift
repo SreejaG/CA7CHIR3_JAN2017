@@ -30,6 +30,7 @@ class StreamsGalleryViewController: UITabBarController {
     }
     
     override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
+        
     }
     
     override func didReceiveMemoryWarning() {

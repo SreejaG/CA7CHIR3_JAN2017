@@ -145,6 +145,11 @@ NSInteger shutterActionMode;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self loadingView];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    });
     [self initialise];
 }
 
@@ -203,11 +208,7 @@ NSInteger shutterActionMode;
 }
 
 -(void) setGUIModifications{
-    dispatch_async( dispatch_get_main_queue(), ^{
-
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-    });
+   
     
     _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
     if(_currentFlashMode == 0){
@@ -446,9 +447,11 @@ NSInteger shutterActionMode;
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     
+    [[NSUserDefaults standardUserDefaults] setObject:mediaSharedCount forKey:@"mediaSharedCount"] ;
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
-   
+        NSLog(@"%@",userImages);
         if(userImages.count > 0){
             for(int i=0;i<userImages.count;i++){
                 if(i==0){
