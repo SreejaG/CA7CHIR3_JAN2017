@@ -53,14 +53,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        initialise()
-        hideView(0)
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
         let defaults = NSUserDefaults .standardUserDefaults()
-        if let notifFlag = defaults.valueForKey("notificationFlag")
+        if let notifFlag = defaults.valueForKey("notificationArrived")
         {
             if notifFlag as! String == "0"
             {
@@ -72,6 +66,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let image = UIImage(named: "notif") as UIImage?
             notifImage.setImage(image, forState: .Normal)
         }
+        initialise()
+        hideView(0)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
         addKeyboardObservers()
     }
     

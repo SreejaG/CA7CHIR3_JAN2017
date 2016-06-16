@@ -39,6 +39,20 @@ class MyChannelNotificationViewController: UIViewController {
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        let defaults = NSUserDefaults .standardUserDefaults()
+        if let notifFlag = defaults.valueForKey("notificationArrived")
+        {
+            if notifFlag as! String == "0"
+            {
+                let image = UIImage(named: "noNotif") as UIImage?
+                notifImage.setImage(image, forState: .Normal)
+            }
+        }
+        else{
+            let image = UIImage(named: "notif") as UIImage?
+            notifImage.setImage(image, forState: .Normal)
+        }
+        defaults.setValue("0", forKey: "notificationArrived")
         initialise()
     }
     

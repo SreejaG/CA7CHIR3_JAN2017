@@ -38,9 +38,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.backgroundColor = UIColor.whiteColor()
         
         if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? NSDictionary {
+            let defaults = NSUserDefaults .standardUserDefaults()
+            defaults.setValue("1", forKey: "notificationArrived")
             loadNotificationView()
         }
         else{
+            let defaults = NSUserDefaults .standardUserDefaults()
+            defaults.setValue("0", forKey: "notificationArrived")
             initialViewController()
             
         }
@@ -231,6 +235,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
      //   print(userInfo)
+        let defaults = NSUserDefaults .standardUserDefaults()
+        defaults.setValue("1", forKey: "notificationArrived")
         if(application.applicationState == .Inactive || application.applicationState == .Background)
         {
             loadNotificationView()
