@@ -309,9 +309,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                      
                         if(result != UIImage()){
+                            let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                            let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                            let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                            let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                            if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                print("not same")
+                            }
+                            else{
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                            }
                             imageForMedia = result
+                        }
+                        else{
+                            imageForMedia = UIImage(named: "thumb12")!
                         }
                     })
                 }
@@ -647,7 +660,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     imageForMedia = dataSource[indexpaths.row][fullImageKey] as! UIImage
                 }
                 else{
-                    let mediaIdForFilePath = "\(dataSource[indexpaths.row][mediaIdKey]?.stringValue)thumb"
+                    let mediaIdForFilePath = "\(dataSource[indexpaths.row][mediaIdKey]?.stringValue)full"
                     let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                     let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
                     let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -661,8 +674,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             let url: NSURL = convertStringtoURL(mediaUrl)
                             downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                                 if(result != UIImage()){
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        print("not same")
+                                    }
+                                    else{
+                                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    }
                                     imageForMedia = result
+                                }
+                                else{
+                                    imageForMedia = UIImage(named: "thumb12")!
                                 }
                             })
                         }
@@ -971,12 +996,22 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     if(mediaUrl != ""){
                         let url: NSURL = convertStringtoURL(mediaUrl)
                         downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                           
                             if(result != UIImage()){
+                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    print("not same")
+                                }
+                                else{
+                                     FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                }
                                 imageForMedia = result
                             }
                             else{
-                                imageForMedia = UIImage()
+                                imageForMedia = UIImage(named: "thumb12")!
                             }
                         })
                     }
@@ -1014,9 +1049,22 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             if(mediaUrl != ""){
                 let url: NSURL = convertStringtoURL(mediaUrl)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                    
                     if(result != UIImage()){
+                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                            print("not same")
+                        }
+                        else{
+                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                        }
                         imageForMedia = result
+                    }
+                    else{
+                        imageForMedia = UIImage(named: "thumb12")!
                     }
                 })
             }

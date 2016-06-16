@@ -255,9 +255,21 @@ class ChannelItemListViewController: UIViewController {
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                        if(result != UIImage()){
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                            imageForMedia = result
+                            if(result != UIImage()){
+                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    print("not same")
+                                }
+                                else{
+                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                }
+                                imageForMedia = result
+                            }
+                            else{
+                                imageForMedia =  UIImage(named: "thumb12")!
                         }
                     })
                 }
