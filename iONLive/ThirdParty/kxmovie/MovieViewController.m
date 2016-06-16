@@ -308,7 +308,7 @@ static NSMutableDictionary * gHistory;
             imageVideoView.hidden = true;
             imageView.hidden = true;
             videoProgressBar.hidden = false;
-            backgroundImage = [[UIImageView alloc] initWithFrame:glView.frame];
+            backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,( (self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height))];
             backgroundImage.image = VideoImageUrl;
             topView.hidden = false;
             [glView addSubview:backgroundImage];
@@ -322,16 +322,26 @@ static NSMutableDictionary * gHistory;
             
             if(fileExistFlag == true){
                 videoProgressBar.hidden = true;
+                
                 self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
                 MPMoviePlayerController *player = self.moviePlayer;
                 [player setShouldAutoplay:YES];
                 [player prepareToPlay];
-                player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height + 30));
+                
+                player.view.frame = CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,( (self.view.bounds.size.height+67) - heartBottomDescView.bounds.size.height));
+                
+                topView.hidden = false;
+                cameraSelectionButton.hidden = true;
+                liveView.hidden = true;
+                numberOfSharedChannels.hidden = true;
+                topView.backgroundColor = [UIColor clearColor];
+    
                 player.scalingMode = MPMovieScalingModeAspectFill;
                 player.movieSourceType = MPMovieSourceTypeFile;
                 player.controlStyle = MPMovieControlStyleNone;
                 player.repeatMode = MPMovieRepeatModeNone;
                 [glView addSubview:[player view]];
+                [glView bringSubviewToFront:topView];
                 [player play];
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(playerDidFinish:)
@@ -423,6 +433,14 @@ static NSMutableDictionary * gHistory;
             player.controlStyle = MPMovieControlStyleNone;
             player.repeatMode = MPMovieRepeatModeNone;
             [glView addSubview:[player view]];
+            
+            topView.hidden = false;
+            cameraSelectionButton.hidden = true;
+            liveView.hidden = true;
+            numberOfSharedChannels.hidden = true;
+            topView.backgroundColor = [UIColor clearColor];
+            [glView bringSubviewToFront:topView];
+            
             [player play];
         }
     }
@@ -452,12 +470,20 @@ static NSMutableDictionary * gHistory;
     MPMoviePlayerController *player = self.moviePlayer;
     [player setShouldAutoplay:YES];
     [player prepareToPlay];
-    player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height));
+    player.view.frame =  CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - (heartBottomDescView.frame.size.height));
     player.scalingMode = MPMovieScalingModeAspectFill;
     player.movieSourceType = MPMovieSourceTypeFile;
     player.controlStyle = MPMovieControlStyleNone;
     player.repeatMode = MPMovieRepeatModeNone;
     [glView addSubview:[player view]];
+    
+    topView.hidden = false;
+    cameraSelectionButton.hidden = true;
+    liveView.hidden = true;
+    numberOfSharedChannels.hidden = true;
+    topView.backgroundColor = [UIColor clearColor];
+    [glView bringSubviewToFront:topView];
+
     [player play];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(playerDidFinish:)
@@ -1654,8 +1680,10 @@ static NSMutableDictionary * gHistory;
     if(downloadTask.state == 0)
     {
         [downloadTask cancel];
+        
     }
-    
+    [_moviePlayer stop];
+    _moviePlayer = nil;
     [self dismissViewControllerAnimated:true
                              completion:^{
                                  

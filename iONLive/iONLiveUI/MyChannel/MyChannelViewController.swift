@@ -278,7 +278,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+       
         
         if let json = response as? [String: AnyObject]
         {
@@ -326,6 +326,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         dataSource.removeAll()
         fullDataSource.removeAll()
+        
         var imageDetails : UIImage?
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
@@ -344,10 +345,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let time2 = p2[channelCreatedTimeKey] as! String
             return time1 > time2
         })
+        self.removeOverlay()
         if(dataSource.count > 0){
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
+                
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 })
