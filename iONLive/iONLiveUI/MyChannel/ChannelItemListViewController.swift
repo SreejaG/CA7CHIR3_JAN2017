@@ -78,8 +78,7 @@ class ChannelItemListViewController: UIViewController {
         fullImageDataSource.removeAll()
         selectedArray.removeAll()
         selected.removeAllObjects()
-
-        selectionButton.hidden = true
+       selectionButton.hidden = true
         
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -172,6 +171,9 @@ class ChannelItemListViewController: UIViewController {
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
             if(imageDataSource.count > 0){
+                
+                
+                
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {
@@ -362,7 +364,6 @@ class ChannelItemListViewController: UIViewController {
             selected.removeAllObjects()
             
             selectionFlag = false
-            
             initialise()
             
             channelTitleLabel.text = channelName.uppercaseString
