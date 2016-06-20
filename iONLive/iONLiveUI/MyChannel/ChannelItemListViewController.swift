@@ -274,7 +274,6 @@ class ChannelItemListViewController: UIViewController {
             }
             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-           
                 self.channelItemCollectionView.reloadData()
             })
         }
@@ -297,6 +296,7 @@ class ChannelItemListViewController: UIViewController {
         let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
         addChannelVC.mediaDetailSelected = selected
+        addChannelVC.selectedChannelId = channelId
         addChannelVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(addChannelVC, animated: false)
     }

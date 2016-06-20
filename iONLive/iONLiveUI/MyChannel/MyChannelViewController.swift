@@ -374,7 +374,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
 
     func downloadMediaFromGCS(){
-        for i in 0 ..< dataSource.count
+        for var i = 0; i < dataSource.count; i++
         {
             var imageForMedia : UIImage = UIImage()
             let mediaUrl = dataSource[i][channelHeadImageNameKey] as! String
@@ -386,8 +386,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                     }
                 })
             }
+            self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
                 self.myChannelTableView.reloadData()
             })
         }

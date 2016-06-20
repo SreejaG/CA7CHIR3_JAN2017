@@ -36,9 +36,11 @@ class AddChannelViewController: UIViewController {
     let channelHeadImageNameKey = "channelHeadImageName"
     let channelIdKey = "channelId"
     let channelCreatedTimeKey = "channelCreatedTime"
+    var selectedChannelId:String!
     
     var channelSelected: NSMutableArray = NSMutableArray()
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var fulldataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     var mediaDetailSelected : NSMutableArray = NSMutableArray()
     var selectedArray:[Int] = [Int]()
@@ -267,23 +269,28 @@ class AddChannelViewController: UIViewController {
         for element in channelDetailsDict{
             
             let channelId = element["channel_detail_id"]?.stringValue
-            let channelName = element["channel_name"] as! String
-            let mediaSharedCount = element["total_no_media_shared"]?.stringValue
-            let createdTime = element["last_updated_time_stamp"] as! String
-            let thumbUrl = element["thumbnail_Url"] as! String
-            
-            if(thumbUrl != "")
+            if(channelId != selectedChannelId)
             {
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                let data = NSData(contentsOfURL: url)
-                if let imageData = data as NSData? {
-                    imageDetails = UIImage(data: imageData)
-                }
+                let channelName = element["channel_name"] as! String
+                let mediaSharedCount = element["total_no_media_shared"]?.stringValue
+                let createdTime = element["last_updated_time_stamp"] as! String
+                let thumbUrl = element["thumbnail_Url"] as! String
+                
+                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
             }
-            else{
-                imageDetails = UIImage(named: "thumb12")
-            }
-            dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:imageDetails!])
+            
+//            if(thumbUrl != "")
+//            {
+//                let url: NSURL = convertStringtoURL(thumbUrl)
+//                let data = NSData(contentsOfURL: url)
+//                if let imageData = data as NSData? {
+//                    imageDetails = UIImage(data: imageData)
+//                }
+//            }
+//            else{
+//                imageDetails = UIImage(named: "thumb12")
+//            }
+           
         }
         
         dataSource.sortInPlace({ p1, p2 in
@@ -291,10 +298,54 @@ class AddChannelViewController: UIViewController {
             let time2 = p2[channelCreatedTimeKey] as! String
             return time1 > time2
         })
-        addChannelTableView.reloadData()
         
+        if(dataSource.count > 0){
+            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+            dispatch_async(backgroundQueue, {
+                
+                self.downloadMediaFromGCS()
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                })
+            })
+        }
     }
-    
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    {
+        var mediaImage : UIImage = UIImage()
+        let data = NSData(contentsOfURL: downloadURL)
+        if let imageData = data as NSData? {
+            if let mediaImage1 = UIImage(data: imageData)
+            {
+                mediaImage = mediaImage1
+            }
+            completion(result: mediaImage)
+        }
+        else
+        {
+            completion(result:UIImage(named: "thumb12")!)
+        }
+    }
+    func downloadMediaFromGCS(){
+        for var i = 0; i < dataSource.count; i++
+        {
+            var imageForMedia : UIImage = UIImage()
+            let mediaUrl = dataSource[i][channelHeadImageNameKey] as! String
+            if(mediaUrl != ""){
+                let url: NSURL = convertStringtoURL(mediaUrl)
+                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                    if(result != UIImage()){
+                        imageForMedia = result
+                    }
+                })
+            }
+            self.fulldataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+              self.addChannelTableView.reloadData()
+            })
+        }
+    }
+
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -334,7 +385,11 @@ class AddChannelViewController: UIViewController {
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
-        
+        for(var i = 0; i < selectedArray.count; i++){
+            let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey]
+            print(channelSelectedId)
+            channelSelected.addObject(channelSelectedId!)
+        }
         if channelSelected.count > 0
         {
             addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
@@ -390,9 +445,9 @@ extension AddChannelViewController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if dataSource.count > 0
+        if fulldataSource.count > 0
         {
-            return dataSource.count
+            return fulldataSource.count
         }
         else
         {
@@ -402,56 +457,63 @@ extension AddChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if dataSource.count > indexPath.row
+        if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
             
-            if(selectedArray.count != dataSource.count){
-                selectedArray.append(0)
-            }
-            if(selectedArray.count <= 0)
-            {
-                cell.accessoryType = .None
-            }
+//            if(selectedArray.count != dataSource.count){
+//                selectedArray.append(0)
+//            }
+//            if(selectedArray.count <= 0)
+//            {
+//                cell.accessoryType = .None
+//            }
             
-            cell.addChannelTextLabel.text = dataSource[indexPath.row][channelNameKey] as? String
-            cell.addChannelCountLabel.text = dataSource[indexPath.row][channelItemCountKey] as? String
-            if let imageData =  dataSource[indexPath.row][channelHeadImageNameKey]
+            cell.addChannelTextLabel.text = fulldataSource[indexPath.row][channelNameKey] as? String
+            cell.addChannelCountLabel.text = fulldataSource[indexPath.row][channelItemCountKey] as? String
+            if let imageData =  fulldataSource[indexPath.row][channelHeadImageNameKey]
             {
                 cell.addChannelImageView.image = imageData as? UIImage
             }
-            if(dataSource[indexPath.row][channelItemCountKey] as! String == "0"){
+            if(fulldataSource[indexPath.row][channelItemCountKey] as! String == "0"){
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
             
-            for i in 0 ..< selectedArray.count
-            {
-                let selectedValue: String = dataSource[i][channelIdKey] as! String
-                if indexPath.row == i
-                {
-                    if selectedArray[i] == 1
-                    {
-                        cell.accessoryType = .Checkmark
-                        if(channelSelected.containsObject(Int(selectedValue)!)){
-                            
-                        }
-                        else{
-                            channelSelected.addObject(Int(selectedValue)!)
-                        }
-                    }
-                    else{
-                        cell.accessoryType = .None
-                        if(channelSelected.containsObject(Int(selectedValue)!)){
-                            
-                            channelSelected.removeObject(Int(selectedValue)!)
-                        }
-                        else{
-                            
-                        }
-                        
-                    }
-                }
+            if(selectedArray.contains(indexPath.row)){
+                cell.accessoryType = .Checkmark
             }
+            else{
+                 cell.accessoryType = .None
+            }
+            
+//            for i in 0 ..< selectedArray.count
+//            {
+//                let selectedValue: String = dataSource[i][channelIdKey] as! String
+//                if indexPath.row == i
+//                {
+//                    if selectedArray[i] == 1
+//                    {
+//                        cell.accessoryType = .Checkmark
+//                        if(channelSelected.containsObject(Int(selectedValue)!)){
+//                            
+//                        }
+//                        else{
+//                            channelSelected.addObject(Int(selectedValue)!)
+//                        }
+//                    }
+//                    else{
+//                        cell.accessoryType = .None
+//                        if(channelSelected.containsObject(Int(selectedValue)!)){
+//                            
+//                            channelSelected.removeObject(Int(selectedValue)!)
+//                        }
+//                        else{
+//                            
+//                        }
+//                        
+//                    }
+//                }
+//            }
             cell.selectionStyle = .None
             return cell
         }
@@ -464,19 +526,29 @@ extension AddChannelViewController:UITableViewDataSource
         addChannelView.userInteractionEnabled = false
         addChannelView.alpha = 0.3
         doneButton.hidden = false
-        for i in 0 ..< selectedArray.count
-        {
-            if i == indexPath.row
-            {
-                if selectedArray[i] == 0
-                {
-                    selectedArray[i] = 1
-                    
-                }else{
-                    selectedArray[i] = 0
-                }
-            }
+//        for i in 0 ..< selectedArray.count
+//        {
+//            if i == indexPath.row
+//            {
+//                if selectedArray[i] == 0
+//                {
+//                    selectedArray[i] = 1
+//                    
+//                }else{
+//                    selectedArray[i] = 0
+//                }
+//            }
+//        }
+        
+        if(selectedArray.contains(indexPath.row)){
+            let elementIndex = selectedArray.indexOf(indexPath.row)
+            selectedArray.removeAtIndex(elementIndex!)
         }
+        else{
+            selectedArray.append(indexPath.row)
+        }
+        
+
         tableView.reloadData()
     }
     

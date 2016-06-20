@@ -530,6 +530,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
             let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
             addChannelVC.mediaDetailSelected = mediaSelected
+            addChannelVC.selectedChannelId = channelDict["Archive"]?.stringValue
             addChannelVC.navigationController?.navigationBarHidden = true
             self.navigationController?.pushViewController(addChannelVC, animated: false)
         }
