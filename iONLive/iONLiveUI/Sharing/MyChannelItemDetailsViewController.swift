@@ -264,7 +264,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
-    
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -281,7 +280,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             completion(result:UIImage(named: "thumb12")!)
         }
     }
-    
+
     func downloadMediaFromGCS(){
         if(imageDataSource.count > 0){
             for i in 0 ..< totalMediaCount

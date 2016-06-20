@@ -82,7 +82,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelTableView.reloadData()
         myChannelSearchBar.resignFirstResponder()
         tableViewBottomConstraint.constant = 0
-        //        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -185,7 +184,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-        //    self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -358,6 +356,23 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    {
+        var mediaImage : UIImage = UIImage()
+        let data = NSData(contentsOfURL: downloadURL)
+        if let imageData = data as NSData? {
+            if let mediaImage1 = UIImage(data: imageData)
+            {
+                mediaImage = mediaImage1
+            }
+            completion(result: mediaImage)
+        }
+        else
+        {
+            completion(result:UIImage(named: "thumb12")!)
+        }
+    }
+
     func downloadMediaFromGCS(){
         for i in 0 ..< dataSource.count
         {
@@ -378,22 +393,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
-    {
-        var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
-            }
-            completion(result: mediaImage)
-        }
-        else
-        {
-            completion(result:UIImage(named: "thumb12")!)
-        }
-    }
     
     func addKeyboardObservers()
     {
@@ -419,7 +418,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
-    func generateWaytoSendAlert(channelId: String)
+    func generateWaytoSendAlert(channelId: String, indexPath: Int)
     {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -428,35 +427,34 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the channel", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.deleteChannelDetails(userId, token: accessToken, channelId: channelId)
+            self.deleteChannelDetails(userId, token: accessToken, channelId: channelId, index: indexPath)
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func deleteChannelDetails(userName: String, token: String, channelId:String)
+    func deleteChannelDetails(userName: String, token: String, channelId:String, index: Int)
     {
         showOverlay()
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
-            self.authenticationSuccessHandlerDelete(response)
+            self.authenticationSuccessHandlerDelete(response,index: index)
         }) { (error, message) -> () in
             self.authenticationFailureHandlerDelete(error, code: message)
             return
         }
     }
     
-    func authenticationSuccessHandlerDelete(response:AnyObject?)
+    func authenticationSuccessHandlerDelete(response:AnyObject?, index:Int)
     {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             let status = json["status"] as! Int
             if(status == 1){
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                getChannelDetails(userId, token: accessToken)
+                dataSource.removeAtIndex(index)
+                fullDataSource.removeAtIndex(index)
+                myChannelTableView.reloadData()
             }
             
         }
@@ -638,7 +636,7 @@ extension MyChannelViewController:UITableViewDataSource
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
             let deletedChannelId = self.fullDataSource[indexPath.row][self.channelIdKey]! as! String
-            generateWaytoSendAlert(deletedChannelId)
+            generateWaytoSendAlert(deletedChannelId, indexPath: indexPath.row)
         }
     }
     

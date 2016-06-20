@@ -61,7 +61,6 @@ class AddChannelViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
-     //   removeOverlay()
     }
     
     func initialise()
