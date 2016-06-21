@@ -16,29 +16,9 @@ class ContactListTableViewCell: UITableViewCell {
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
     
-    let userNameKey = "userName"
-    let selectionKey = "selected"
-
-    var cellDataSource:[String:AnyObject]?
-    
-    var selectedArray: NSMutableArray = NSMutableArray()
-    var deselectedArray: NSMutableArray = NSMutableArray()
-    
     @IBAction func contactSharingButtonClicked(sender: AnyObject) {
-        if cellDataSource != nil{
-            let selectedValue: String = cellDataSource![userNameKey] as! String
-            if(selectedArray.containsObject(selectedValue)){
-                selectedArray.removeObject(selectedValue)
-                deselectedArray.addObject(selectedValue)
-                subscriptionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-            }
-            else{
-                selectedArray.addObject(selectedValue)
-                deselectedArray.removeObject(selectedValue)
-                subscriptionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-            }
-            
-        }
+            let tag = sender.tag
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshContactListTableView", object:tag)
     }
     
     override func awakeFromNib() {

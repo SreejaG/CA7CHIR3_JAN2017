@@ -33,6 +33,7 @@ class ContactListViewController: UIViewController
     let contactManagers = contactManager.sharedInstance
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let userNameKey = "userName"
@@ -41,9 +42,9 @@ class ContactListViewController: UIViewController
     let selectionKey = "selected"
     
     var searchActive: Bool = false
-    var tapFlag : Bool = true
     
-    var selectedContacts : [[String:AnyObject]] = [[String:AnyObject]]()
+    var selectedContacts : [Int] = [Int]()
+    var failedSelectedContacts : [Int] = [Int]()
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
     
@@ -53,6 +54,8 @@ class ContactListViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
+        
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
         contactAuthorizationAlert()
@@ -63,11 +66,9 @@ class ContactListViewController: UIViewController
     }
      
     @IBAction func didTapBackButton(sender: AnyObject) {
-        if tapFlag == false
-        {
-            tapFlag = true
+        if(doneButton.hidden == false){
             doneButton.hidden = true
-            selectedContacts.removeAll()
+            selectedContacts = failedSelectedContacts
             contactListTableView.reloadData()
         }
         else{
@@ -84,17 +85,18 @@ class ContactListViewController: UIViewController
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
+        doneButton.hidden = true
         contactListTableView.reloadData()
         contactListTableView.layoutIfNeeded()
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
-        for element in selectedContacts
+        
+        for var i = 0; i < selectedContacts.count; i++
         {
-            if element["selected"] as! String == "1"
-            {
-                addUserArray.addObject(element["userName"] as! String)
-            }
+            let userId = dataSource[selectedContacts[i]][userNameKey] as! String
+            addUserArray.addObject(userId)
         }
+        
         deleteUserArray = []
         
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -155,12 +157,14 @@ class ContactListViewController: UIViewController
     {
         searchDataSource.removeAll()
         dataSource.removeAll()
+        fullDataSource.removeAll()
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         selectedContacts.removeAll()
+        failedSelectedContacts.removeAll()
         searchActive = false
-        tapFlag = true
         doneButton.hidden = true
+        
         contactPhoneNumbers.removeAll()
         displayContacts()
     }
@@ -337,15 +341,7 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        if tapFlag == false
-        {
-            tapFlag = true
-            doneButton.hidden = true
-            selectedContacts.removeAll()
-            contactListTableView.reloadData()
-        }
     }
-    
     
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
@@ -353,6 +349,7 @@ class ContactListViewController: UIViewController
         {
             let status = json["status"] as! Int
             if(status == 1){
+                failedSelectedContacts = selectedContacts
                 loadMychannelDetailController()
             }
             
@@ -377,7 +374,6 @@ class ContactListViewController: UIViewController
             self.authenticationFailureHandler(error, code: message)
             return
         }
-        
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -401,31 +397,24 @@ class ContactListViewController: UIViewController
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
+            fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             var contactImage : UIImage = UIImage()
             for element in responseArr{
                 let userName = element["userName"] as! String
                 let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
                 let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
-                if(thumbUrl != "")
-                {
-                    let url: NSURL = convertStringtoURL(thumbUrl)
-                    if let data = NSData(contentsOfURL: url){
-                        let imageDetailsData = (data as NSData?)!
-                        contactImage = UIImage(data: imageDetailsData)!
-                    }
-                    else{
-                        contactImage = UIImage(named: "dummyUser")!
-                    }
-                }
-                else{
-                    contactImage = UIImage(named: "dummyUser")!
-                }
-                dataSource.append([userNameKey:userName, profileImageKey: contactImage])
+                dataSource.append([userNameKey:userName, profileImageKey: thumbUrl])
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.contactListTableView.reloadData()
-            })
+            if(dataSource.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    })
+                })
+            }
         }
         else
         {
@@ -433,6 +422,39 @@ class ContactListViewController: UIViewController
         }
     }
     
+    func createProfileImage(profileName: String) -> UIImage
+    {
+        var profileImage : UIImage = UIImage()
+        let url: NSURL = convertStringtoURL(profileName)
+        if let data = NSData(contentsOfURL: url){
+            let imageDetailsData = (data as NSData?)!
+            profileImage = UIImage(data: imageDetailsData)!
+        }
+        else{
+            profileImage = UIImage(named: "dummyUser")!
+        }
+        return profileImage
+    }
+    
+    func downloadMediaFromGCS(){
+        for var i = 0; i < dataSource.count; i++
+        {
+            var profileImage : UIImage?
+            let profileImageName = dataSource[i][profileImageKey] as! String
+            if(profileImageName != "")
+            {
+                profileImage = createProfileImage(profileImageName)
+            }
+            else{
+                profileImage = UIImage(named: "dummyUser")
+            }
+            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!])
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.contactListTableView.reloadData()
+            })
+        }
+    }
+
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
@@ -454,13 +476,23 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        if tapFlag == false
-        {
-            tapFlag = true
-            doneButton.hidden = true
-            selectedContacts.removeAll()
-            contactListTableView.reloadData()
+        selectedContacts = failedSelectedContacts
+        contactListTableView.reloadData()
+    }
+    
+    func callRefreshContactListTableView(notif:NSNotification){
+        if(doneButton.hidden == true){
+            doneButton.hidden = false
         }
+        let indexpath = notif.object as! Int
+        if(selectedContacts.contains(indexpath)){
+            let elementIndex = selectedContacts.indexOf(indexpath)
+            selectedContacts.removeAtIndex(elementIndex!)
+        }
+        else{
+            selectedContacts.append(indexpath)
+        }
+        contactListTableView.reloadData()
     }
     
     func showOverlay(){
@@ -469,22 +501,10 @@ class ContactListViewController: UIViewController
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
-    }
-    
-    func handleTap() {
-        tapFlag = false
-        if tapFlag == true
-        {
-            doneButton.hidden = true
-        }
-        else{
-            doneButton.hidden = false
-        }
     }
 }
 
@@ -518,7 +538,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
         else{
-            return dataSource.count > 0 ? (dataSource.count) : 0
+            return fullDataSource.count > 0 ? (fullDataSource.count) : 0
         }
     }
     
@@ -528,19 +548,11 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
         
         let cell = tableView.dequeueReusableCellWithIdentifier(ContactListTableViewCell.identifier, forIndexPath:indexPath) as! ContactListTableViewCell
         
-        if selectedContacts.count != dataSource.count{
-            for element in dataSource
-            {
-                let userName = element["userName"] as! String
-                selectedContacts.append([userNameKey:userName, selectionKey:"0"])
-            }
-        }
-        
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
         else{
-            dataSourceTmp = dataSource
+            dataSourceTmp = fullDataSource
         }
         
         if dataSourceTmp?.count > 0
@@ -548,56 +560,13 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             cell.contactUserName.text = dataSourceTmp![indexPath.row][userNameKey] as? String
             let imageName =  dataSourceTmp![indexPath.row][profileImageKey]
             cell.contactProfileImage.image = imageName as? UIImage
-            
-            if tapFlag == true
-            {
-                cell.subscriptionButton.addTarget(self, action: "handleTap", forControlEvents: UIControlEvents.TouchUpInside)
-                cell.deselectedArray.removeAllObjects()
-                cell.selectedArray.removeAllObjects()
+            cell.subscriptionButton.tag = indexPath.row
+            if(selectedContacts.contains(indexPath.row)){
+                cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
             }
             else{
-                tapFlag = false
+                cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
-            
-            if(cell.deselectedArray.count > 0){
-                
-                for i in 0 ..< selectedContacts.count
-                {
-                    let selectedValue: String = selectedContacts[i][userNameKey] as! String
-                    if cell.deselectedArray.containsObject(selectedValue){
-                        selectedContacts[i][selectionKey] = "0"
-                    }
-                }
-            }
-            
-            if(cell.selectedArray.count > 0){
-                
-                for i in 0 ..< selectedContacts.count
-                {
-                    let selectedValue: String = selectedContacts[i][userNameKey] as! String
-                    if cell.selectedArray.containsObject(selectedValue){
-                        selectedContacts[i][selectionKey] = "1"
-                    }
-                }
-            }
-            
-            if selectedContacts.count > 0
-            {
-                for i in 0 ..< selectedContacts.count
-                {
-                    if selectedContacts[i][userNameKey] as! String == dataSourceTmp![indexPath.row][userNameKey] as! String{
-                        if selectedContacts[i][selectionKey] as! String == "0"
-                        {
-                            cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
-                        }
-                        else{
-                            cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
-                        }
-                    }
-                }
-            }
-            cell.cellDataSource = dataSourceTmp![indexPath.row]
-            
             cell.selectionStyle = .None
             return cell
         }
@@ -644,9 +613,9 @@ extension ContactListViewController: UISearchBarDelegate{
         if contactListSearchBar.text == "" {
             contactListSearchBar.resignFirstResponder()
         }
-        if dataSource.count > 0
+        if fullDataSource.count > 0
         {
-            for element in dataSource{
+            for element in fullDataSource{
                 let tmp: String = (element[userNameKey]?.lowercaseString)!
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {

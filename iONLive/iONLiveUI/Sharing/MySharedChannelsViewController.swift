@@ -31,6 +31,7 @@ class MySharedChannelsViewController: UIViewController {
     var searchActive : Bool = false
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var selectedArray : [Int] = [Int]()
+    var failureArray : [Int] = [Int]()
     var addChannelArray : NSMutableArray = NSMutableArray()
     var deleteChannelArray : NSMutableArray = NSMutableArray()
     
@@ -38,17 +39,20 @@ class MySharedChannelsViewController: UIViewController {
     
     var loadingOverlay: UIView?
     
-    var tapFlag : Bool = true
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("CallRefreshMySharedChannelTableView:"), name: "refreshMySharedChannelTableView", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(_:)), name: "refreshMySharedChannelTableView", object: nil)
+        
+        doneButton.hidden = true
+        
         channelDetailsDict.removeAll()
         dataSource.removeAll()
         fullDataSource.removeAll()
         selectedArray.removeAll()
+        failureArray.removeAll()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
+        
         sharedChannelsSearchBar.delegate = self
         createChannelDataSource()
     }
@@ -69,10 +73,17 @@ class MySharedChannelsViewController: UIViewController {
     
     @IBAction func backButtonClicked(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        if(doneButton.hidden == false){
+            doneButton.hidden = true
+            selectedArray = failureArray
+            sharedChannelsTableView.reloadData()
+        }
+        else{
+            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+            self.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        }
     }
     
     func addKeyboardObservers()
@@ -108,6 +119,7 @@ class MySharedChannelsViewController: UIViewController {
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
+        doneButton.hidden = true
         self.sharedChannelsTableView.reloadData()
         sharedChannelsTableView.layoutIfNeeded()
         addChannelArray.removeAllObjects()
@@ -182,7 +194,8 @@ class MySharedChannelsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                 sharedChannelsTableView.reloadData()
+                failureArray = selectedArray
+                sharedChannelsTableView.reloadData()
             }
         }
         else
@@ -193,8 +206,6 @@ class MySharedChannelsViewController: UIViewController {
     
     func createChannelDataSource()
     {
-        tapFlag = true
-        doneButton.hidden = true
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -260,7 +271,7 @@ class MySharedChannelsViewController: UIViewController {
                 let mediaSharedCount = element["total_no_media_shared"]?.stringValue
                 let createdTime = element["last_updated_time_stamp"] as! String
                 let thumbUrl = element["thumbnail_Url"] as! String
-                let mediaDetailId = element["media_detail_id"]?.stringValue
+              
                 dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl, channelSelectionKey:sharedBool])
             }
         }
@@ -310,10 +321,11 @@ class MySharedChannelsViewController: UIViewController {
                     }
                 })
             }
-            self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia,self.channelSelectionKey: self.dataSource[i][self.channelSelectionKey]!])
+            self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
             let channelSharedBool = self.dataSource[i][self.channelSelectionKey] as! Int
             if(channelSharedBool == 1){
                 selectedArray.append(i)
+                failureArray.append(i)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.sharedChannelsTableView.reloadData()
@@ -341,28 +353,14 @@ class MySharedChannelsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        if tapFlag == true
-        {
-            doneButton.hidden = true
-        }
-        else{
-            doneButton.hidden = false
-        }
+        failureArray = selectedArray
         self.sharedChannelsTableView.reloadData()
     }
     
-    func handleTap() {
-        tapFlag = false
-        if tapFlag == true
-        {
-            doneButton.hidden = true
-        }
-        else{
+    func CallRefreshMySharedChannelTableView(notif:NSNotification){
+        if(doneButton.hidden == true){
             doneButton.hidden = false
         }
-    }
-    
-    func CallRefreshMySharedChannelTableView(notif:NSNotification){
         let indexpath = notif.object as! Int
         if(selectedArray.contains(indexpath)){
             let elementIndex = selectedArray.indexOf(indexpath)
@@ -445,14 +443,6 @@ extension MySharedChannelsViewController:UITableViewDataSource
                 cell.channelSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
                 cell.sharedCountLabel.hidden = true
                 cell.avatarIconImageView.hidden = true
-            }
-            
-            if tapFlag == true
-            {
-                cell.channelSelectionButton.addTarget(self, action: "handleTap", forControlEvents: UIControlEvents.TouchUpInside)
-            }
-            else{
-                tapFlag = false
             }
             cell.selectionStyle = .None
             return cell
