@@ -393,7 +393,7 @@ class ContactListViewController: UIViewController
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -414,6 +414,9 @@ class ContactListViewController: UIViewController
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     })
                 })
+            }
+            else{
+                removeOverlay()
             }
         }
         else
@@ -450,6 +453,7 @@ class ContactListViewController: UIViewController
             }
             self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.contactListTableView.reloadData()
             })
         }

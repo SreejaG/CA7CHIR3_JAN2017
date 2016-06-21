@@ -279,7 +279,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     func downloadMediaFromGCS(){
         fulldataSource.removeAll()
-        for i in 0 ..< dataSource.count
+        for var i = 0; i < dataSource.count; i++
         {
             var mediaImage : UIImage?
             var profileImage : UIImage?
@@ -306,9 +306,9 @@ class MyChannelNotificationViewController: UIViewController {
             else{
                 mediaImage = UIImage()
             }
-            
+            self.fulldataSource.append([self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fulldataSource.append([self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!])
+                self.removeOverlay()
                 self.NotificationTableView.reloadData()
             })
         }

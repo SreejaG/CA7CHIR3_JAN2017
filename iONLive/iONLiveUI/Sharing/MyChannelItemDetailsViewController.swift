@@ -178,7 +178,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+//        removeOverlay()
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
@@ -206,6 +206,9 @@ class MyChannelItemDetailsViewController: UIViewController {
                         self.tapCount = 0
                     })
                 })
+            }
+            else{
+                removeOverlay()
             }
         }
         else
@@ -305,7 +308,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                 }
                 self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                 
+                    self.removeOverlay()
                     self.channelItemsCollectionView.reloadData()
                 })
             }

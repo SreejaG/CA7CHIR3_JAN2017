@@ -233,7 +233,7 @@ class MySharedChannelsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+//        removeOverlay()
         channelDetailsDict.removeAll()
         if let json = response as? [String: AnyObject]
         {
@@ -289,6 +289,9 @@ class MySharedChannelsViewController: UIViewController {
                 })
             })
         }
+        else{
+            removeOverlay()
+        }
     }
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
@@ -328,6 +331,7 @@ class MySharedChannelsViewController: UIViewController {
                 failureArray.append(i)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.sharedChannelsTableView.reloadData()
             })
         }

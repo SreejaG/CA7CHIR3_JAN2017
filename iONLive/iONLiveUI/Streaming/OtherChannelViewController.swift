@@ -184,7 +184,7 @@ class OtherChannelViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+//        removeOverlay()
         isWatchedTrue()
         if let json = response as? [String: AnyObject]
         {
@@ -274,7 +274,7 @@ class OtherChannelViewController: UIViewController {
         return searchURL
     }
     func downloadMediaFromGCS(){
-        for var i in 0 ..< imageDataSource.count
+        for var i = 0; i < imageDataSource.count; i++
         {
             
             var imageForMedia : UIImage = UIImage()
@@ -312,9 +312,9 @@ class OtherChannelViewController: UIViewController {
                     
                 }
             }
-           
+            self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+               self.removeOverlay()
                 self.channelItemsCollectionView.reloadData()
             })
             

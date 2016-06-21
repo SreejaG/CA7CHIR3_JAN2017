@@ -233,7 +233,7 @@ class AddChannelViewController: UIViewController {
     
     func authenticationSuccessHandlerList(response:AnyObject?)
     {
-        removeOverlay()
+       
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
         if(shareFlag == false){
@@ -297,6 +297,9 @@ class AddChannelViewController: UIViewController {
                 })
             })
         }
+        else{
+             removeOverlay()
+        }
     }
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
@@ -329,6 +332,7 @@ class AddChannelViewController: UIViewController {
             }
             self.fulldataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
               self.addChannelTableView.reloadData()
             })
         }

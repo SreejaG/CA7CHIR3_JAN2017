@@ -149,7 +149,7 @@ class ChannelItemListViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+       
         imageDataSource.removeAll()
         fullImageDataSource.removeAll()
         if let json = response as? [String: AnyObject]
@@ -176,6 +176,7 @@ class ChannelItemListViewController: UIViewController {
                 })
             }
             else{
+                
                 selectionButton.hidden = true
             }
         }
@@ -270,6 +271,7 @@ class ChannelItemListViewController: UIViewController {
             }
             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.channelItemCollectionView.reloadData()
             })
         }

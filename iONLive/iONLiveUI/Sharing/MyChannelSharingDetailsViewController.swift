@@ -276,7 +276,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+//        removeOverlay()
         if(pullToRefreshActiveSecnd){
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
@@ -305,6 +305,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
                         self.tapCountContactShare = 0
                     })
                 })
+            }
+            else
+            {
+                removeOverlay()
             }
         }
         else
@@ -346,6 +350,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 failureContactsArray.append(i)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.contactTableView.reloadData()
             })
         }

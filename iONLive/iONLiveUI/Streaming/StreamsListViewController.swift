@@ -151,7 +151,7 @@ class StreamsListViewController: UIViewController{
                 self.refreshControl.endRefreshing()
                 pullToRefreshActive = false
             }
-            removeOverlay()
+//            removeOverlay()
 
             let responseArr = json["objectJson"] as! [AnyObject]
             for index in 0 ..< responseArr.count
@@ -196,6 +196,9 @@ class StreamsListViewController: UIViewController{
                         self.tapCount = 0
                     })
                 })
+            }
+            else{
+                removeOverlay()
             }
         }
         else
@@ -281,10 +284,8 @@ class StreamsListViewController: UIViewController{
     }
     
     func downloadMediaFromGCS(){
-        if imageDataSource.count > 0
+        for var i = 0; i < imageDataSource.count; i++
         {
-            for var i in 0 ..< imageDataSource.count
-            {
                 let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
                 if(mediaIdS != ""){
                     var imageForMedia : UIImage = UIImage()
@@ -320,13 +321,13 @@ class StreamsListViewController: UIViewController{
                             })
                         }
                     }
+                    self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
-                        self.streamListCollectionView.reloadData()
+                        self.removeOverlay()
+                       self.streamListCollectionView.reloadData()
                     })
                 }
             }
-        }
     }
     
     func showOverlay(){
@@ -484,6 +485,7 @@ class StreamsListViewController: UIViewController{
                      self.streamListCollectionView.reloadData()
                 })
             }
+          
             initialise()
         }
         else

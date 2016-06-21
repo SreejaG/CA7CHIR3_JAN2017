@@ -179,7 +179,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.view .addSubview(self.loadingOverlay!)
+        self.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -341,6 +341,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 })
             })
         }
+        else{
+            self.removeOverlay()
+        }
     }
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
@@ -375,6 +378,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             }
              self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.myChannelTableView.reloadData()
             })
         }

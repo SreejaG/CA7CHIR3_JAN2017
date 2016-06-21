@@ -197,7 +197,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             pullToRefreshActive = false
             
         }
-        removeOverlay()
+//        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             dummy.removeAll()
@@ -371,7 +371,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func downloadMediaFromGCS(){
         fulldataSource.removeAll()
-        for i in 0 ..< dataSource.count
+        for var i = 0; i < dataSource.count; i++
         {
             var mediaImage : UIImage?
             var profileImage : UIImage?
@@ -398,9 +398,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             else{
                 mediaImage = UIImage()
             }
-            
+             self.fulldataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.fulldataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!])
+               self.removeOverlay()
                 self.ChannelSharedTableView.reloadData()
             })
         }
