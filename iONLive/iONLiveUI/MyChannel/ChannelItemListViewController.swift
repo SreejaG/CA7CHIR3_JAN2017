@@ -48,7 +48,6 @@ class ChannelItemListViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
         deleteButton.hidden = true
         addButton.hidden = true
         cancelButton.hidden = true
@@ -93,7 +92,6 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             
@@ -135,7 +133,6 @@ class ChannelItemListViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-        //   self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -153,6 +150,8 @@ class ChannelItemListViewController: UIViewController {
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
+        imageDataSource.removeAll()
+        fullImageDataSource.removeAll()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
@@ -168,9 +167,6 @@ class ChannelItemListViewController: UIViewController {
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType])
             }
             if(imageDataSource.count > 0){
-                
-                
-                
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {

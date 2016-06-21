@@ -265,6 +265,7 @@ class AddChannelViewController: UIViewController {
     func setChannelDetails()
     {
         dataSource.removeAll()
+        fulldataSource.removeAll()
         var imageDetails  = UIImage?()
         for element in channelDetailsDict{
             
@@ -278,19 +279,6 @@ class AddChannelViewController: UIViewController {
                 
                 dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
             }
-            
-//            if(thumbUrl != "")
-//            {
-//                let url: NSURL = convertStringtoURL(thumbUrl)
-//                let data = NSData(contentsOfURL: url)
-//                if let imageData = data as NSData? {
-//                    imageDetails = UIImage(data: imageData)
-//                }
-//            }
-//            else{
-//                imageDetails = UIImage(named: "thumb12")
-//            }
-           
         }
         
         dataSource.sortInPlace({ p1, p2 in
@@ -352,7 +340,6 @@ class AddChannelViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-      //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -461,14 +448,6 @@ extension AddChannelViewController:UITableViewDataSource
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
             
-//            if(selectedArray.count != dataSource.count){
-//                selectedArray.append(0)
-//            }
-//            if(selectedArray.count <= 0)
-//            {
-//                cell.accessoryType = .None
-//            }
-            
             cell.addChannelTextLabel.text = fulldataSource[indexPath.row][channelNameKey] as? String
             cell.addChannelCountLabel.text = fulldataSource[indexPath.row][channelItemCountKey] as? String
             if let imageData =  fulldataSource[indexPath.row][channelHeadImageNameKey]
@@ -486,34 +465,6 @@ extension AddChannelViewController:UITableViewDataSource
                  cell.accessoryType = .None
             }
             
-//            for i in 0 ..< selectedArray.count
-//            {
-//                let selectedValue: String = dataSource[i][channelIdKey] as! String
-//                if indexPath.row == i
-//                {
-//                    if selectedArray[i] == 1
-//                    {
-//                        cell.accessoryType = .Checkmark
-//                        if(channelSelected.containsObject(Int(selectedValue)!)){
-//                            
-//                        }
-//                        else{
-//                            channelSelected.addObject(Int(selectedValue)!)
-//                        }
-//                    }
-//                    else{
-//                        cell.accessoryType = .None
-//                        if(channelSelected.containsObject(Int(selectedValue)!)){
-//                            
-//                            channelSelected.removeObject(Int(selectedValue)!)
-//                        }
-//                        else{
-//                            
-//                        }
-//                        
-//                    }
-//                }
-//            }
             cell.selectionStyle = .None
             return cell
         }
@@ -526,20 +477,6 @@ extension AddChannelViewController:UITableViewDataSource
         addChannelView.userInteractionEnabled = false
         addChannelView.alpha = 0.3
         doneButton.hidden = false
-//        for i in 0 ..< selectedArray.count
-//        {
-//            if i == indexPath.row
-//            {
-//                if selectedArray[i] == 0
-//                {
-//                    selectedArray[i] = 1
-//                    
-//                }else{
-//                    selectedArray[i] = 0
-//                }
-//            }
-//        }
-        
         if(selectedArray.contains(indexPath.row)){
             let elementIndex = selectedArray.indexOf(indexPath.row)
             selectedArray.removeAtIndex(elementIndex!)
@@ -547,8 +484,6 @@ extension AddChannelViewController:UITableViewDataSource
         else{
             selectedArray.append(indexPath.row)
         }
-        
-
         tableView.reloadData()
     }
     

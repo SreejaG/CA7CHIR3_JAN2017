@@ -27,14 +27,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     let requestManager = RequestManager.sharedInstance
     @IBOutlet var SearchBarBottomConstraint: NSLayoutConstraint!
     let channelManager = ChannelManager.sharedInstance
-    
     @IBOutlet var tableviewBottomConstraint: NSLayoutConstraint!
     var gestureRecognizer = UIGestureRecognizer()
-    
-    var notificationFlag : Bool?
-    
-    var sortedDataSource: NSArray = NSArray()
-    
+  
     var loadingOverlay: UIView?
     
     let channelNameKey = "channelName"
@@ -102,7 +97,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         let channelname: String = channelTextField.text!
-        channelTextField.text = ""
         channelTextField.resignFirstResponder()
         channelCreateButton.hidden = true
         addChannelViewTopConstraint.constant = 0
@@ -125,14 +119,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     func authenticationSuccessHandlerAddChannel(response:AnyObject?)
-    {     let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+    {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
-            getChannelDetails(userId, token: accessToken)
+            let image = UIImage(named: "thumb12")
+            let channelId = json["channelId"]?.stringValue
+            let channelName = json["channelName"] as! String
+            self.fullDataSource.insert([self.channelIdKey:channelId!,self.channelNameKey:channelName,self.channelItemCountKey:"0",self.channelCreatedTimeKey:self.dataSource[0][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:image!], atIndex: 0)
+            myChannelTableView.reloadData()
         }
         else
         {
@@ -218,7 +214,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         addChannelViewTopConstraint.constant = -40
         myChannelSearchBar.hidden = true
         myChannelTableViewTopConstraint.constant = 0
-        
     }
     
     func hideView(constraintConstant: CGFloat)
@@ -230,17 +225,11 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     func initialise()
     {
-        if((notificationFlag) != nil){
-            if(notificationFlag == true){
-                
-            }
-        }
         channelDetailsDict.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         myChannelSearchBar.delegate = self
-        
         gestureRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
         myChannelTableView.addGestureRecognizer(gestureRecognizer)
         channelCreateButton.hidden = true
@@ -260,7 +249,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 channelCreateButton.hidden = true
             }
         }
-        
     }
     
     func getChannelDetails(userName: String, token: String)
@@ -276,9 +264,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-       
-        
-        if let json = response as? [String: AnyObject]
+       if let json = response as? [String: AnyObject]
         {
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
@@ -324,13 +310,13 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         dataSource.removeAll()
         fullDataSource.removeAll()
-        
         var imageDetails : UIImage?
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             let channelName = element["channel_name"] as! String
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
+            print("\(createdTime)   \(channelName)")
             let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
             let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
             let mediaDetailId = element["media_detail_id"]?.stringValue
@@ -343,12 +329,13 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let time2 = p2[channelCreatedTimeKey] as! String
             return time1 > time2
         })
+        
         self.removeOverlay()
+        
         if(dataSource.count > 0){
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
-                
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 })
@@ -386,13 +373,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                     }
                 })
             }
-            self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
+             self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.myChannelTableView.reloadData()
             })
         }
     }
-    
     
     func addKeyboardObservers()
     {
@@ -456,7 +442,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 fullDataSource.removeAtIndex(index)
                 myChannelTableView.reloadData()
             }
-            
         }
         else
         {
@@ -549,12 +534,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                     channelItemListVC.totalMediaCount = Int(searchDataSource[swipedIndexPath.row][channelItemCountKey]! as! String)!
                 }
             }
-            
             channelItemListVC.navigationController?.navigationBarHidden = true
             self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
-    
 }
 
 extension MyChannelViewController: UITableViewDelegate
@@ -569,7 +552,6 @@ extension MyChannelViewController: UITableViewDelegate
         return 0.01
     }
 }
-
 
 extension MyChannelViewController:UITableViewDataSource
 {
@@ -614,7 +596,6 @@ extension MyChannelViewController:UITableViewDataSource
         else{
             return UITableViewCell()
         }
-        
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
@@ -691,7 +672,6 @@ extension MyChannelViewController:UITableViewDataSource
                     
                 }
             }
-            
         }
         
         if(searchDataSource.count == 0){

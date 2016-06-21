@@ -43,9 +43,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.viewDidLoad()
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        
-         self.channelItemsCollectionView.alwaysBounceVertical = true
-        
+        self.channelItemsCollectionView.alwaysBounceVertical = true
         initialise()
     }
     
@@ -71,20 +69,16 @@ class MyChannelItemDetailsViewController: UIViewController {
             if(!pullToRefreshActive){
                 pullToRefreshActive = true
                 totalMediaCount = 0
-        //        print(tapCount)
-                
                 initialise()
             }
         }
         else{
             self.refreshControl.endRefreshing()
-            
         }
     }
     
     @IBAction func backClicked(sender: AnyObject)
     {
-        
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
         sharingVC.navigationController?.navigationBarHidden = true
@@ -110,15 +104,12 @@ class MyChannelItemDetailsViewController: UIViewController {
         channelId = (self.tabBarController as! MyChannelDetailViewController).channelId
         channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
         totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
-        
         imageDataSource.removeAll()
         fullImageDataSource.removeAll()
-        
         initialiseCloudData()
     }
     
     func initialiseCloudData(){
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -179,7 +170,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-        //  self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -188,10 +178,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        // if(!pullToRefreshActive){
         removeOverlay()
-        //  }
-        //  else{
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
@@ -217,8 +204,6 @@ class MyChannelItemDetailsViewController: UIViewController {
                         self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
                         self.channelItemsCollectionView.addSubview(self.refreshControl)
                         self.tapCount = 0
-                        //                        self.refreshControl.endRefreshing()
-                        //                        self.pullToRefreshActive = false
                     })
                 })
             }
@@ -231,9 +216,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        
         removeOverlay()
-        
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false
@@ -264,6 +247,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
+    
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
@@ -282,51 +266,47 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
 
     func downloadMediaFromGCS(){
-        if(imageDataSource.count > 0){
-            for i in 0 ..< totalMediaCount
-            {
-                let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-           //    print(mediaIdS)
-                if(mediaIdS != ""){
-                    var imageForMedia : UIImage = UIImage()
-                    let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                    if fileExistFlag == true{
-                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                        imageForMedia = mediaImageFromFile!
-                    }
-                    else{
-                        let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                        if(mediaUrl != ""){
-                            let url: NSURL = convertStringtoURL(mediaUrl)
-                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                                if(result != UIImage()){
-                                    let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+        for var i = 0; i < imageDataSource.count; i++
+        {
+            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+            if(mediaIdS != ""){
+                var imageForMedia : UIImage = UIImage()
+                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
+                }
+                else{
+                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                            if(result != UIImage()){
+                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
                                         print("not same")
-                                    }
-                                    else{
-                                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                    }
-                                    imageForMedia = result
                                 }
                                 else{
-                                    imageForMedia = UIImage(named: "thumb12")!
+                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                                 }
-                            })
-                        }
+                                imageForMedia = result
+                            }
+                            else{
+                                imageForMedia = UIImage(named: "thumb12")!
+                            }
+                        })
                     }
-                 
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
-                        self.channelItemsCollectionView.reloadData()
-                    })
                 }
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!])
+                    self.channelItemsCollectionView.reloadData()
+                })
             }
         }
     }

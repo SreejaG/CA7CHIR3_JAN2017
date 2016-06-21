@@ -173,6 +173,7 @@ protocol uploadProgressDelegate
         if let json = response as? [String: AnyObject]
         {
             if let name = json["UploadObjectUrl"]{
+                print(name)
                 signedURLResponse.setValue(name, forKey: "UploadObjectUrl")
             }
             if let name = json["ObjectName"]{

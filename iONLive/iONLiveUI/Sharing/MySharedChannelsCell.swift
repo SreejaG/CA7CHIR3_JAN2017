@@ -21,8 +21,8 @@ class MySharedChannelsCell: UITableViewCell {
     @IBOutlet weak var sharedCountLabel: UILabel!
     @IBOutlet weak var channelSelectionButton: UIButton!
     
+    var index: Int = Int()
     var cellDataSource:[String:AnyObject]?
-    
     var selectedArray: NSMutableArray = NSMutableArray()
     var deselectedArray: NSMutableArray = NSMutableArray()
     
@@ -36,24 +36,27 @@ class MySharedChannelsCell: UITableViewCell {
     
     @IBAction func channelSelectionClicked(sender: AnyObject)
     {
+        let tag = sender.tag
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshMySharedChannelTableView", object:tag)
         
-        if cellDataSource != nil{
-            let selectedValue: String = cellDataSource![channelIdKey] as! String
-            if(selectedArray.containsObject(selectedValue)){
-                channelSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-                selectedArray.removeObject(selectedValue)
-                deselectedArray.addObject(selectedValue)
-                sharedCountLabel.hidden = true
-                avatarIconImageView.hidden = true
-            }
-            else{
-                channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-                selectedArray.addObject(selectedValue)
-                deselectedArray.removeObject(selectedValue)
-                sharedCountLabel.hidden = false
-                avatarIconImageView.hidden = false
-            }
-            
-        }
+        
+//        if cellDataSource != nil{
+//            let selectedValue: String = cellDataSource![channelIdKey] as! String
+//            if(selectedArray.containsObject(selectedValue)){
+//                channelSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
+//                selectedArray.removeObject(selectedValue)
+//                deselectedArray.addObject(selectedValue)
+//                sharedCountLabel.hidden = true
+//                avatarIconImageView.hidden = true
+//            }
+//            else{
+//                channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
+//                selectedArray.addObject(selectedValue)
+//                deselectedArray.removeObject(selectedValue)
+//                sharedCountLabel.hidden = false
+//                avatarIconImageView.hidden = false
+//            }
+//            
+//        }
     }
 }
