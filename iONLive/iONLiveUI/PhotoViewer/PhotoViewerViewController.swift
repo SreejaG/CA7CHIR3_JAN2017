@@ -367,14 +367,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScreenZoomView.hidden = true
         fullScrenImageView.userInteractionEnabled = true
         playIconInFullView.hidden = true;
-        
-        let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
-        enlargeImageViewRecognizer.numberOfTapsRequired = 1
-        fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
-        
-        let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
-        shrinkImageViewRecognizer.numberOfTapsRequired = 1
-        fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
+        addToButton.hidden = true
+        deletButton.hidden = true
         mediaIdSelected = 0
     }
     
@@ -906,6 +900,17 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
 //        self.removeOverlay()
         if(imageDataSource.count > 0){
+            let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
+            enlargeImageViewRecognizer.numberOfTapsRequired = 1
+            fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
+            
+            let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
+            shrinkImageViewRecognizer.numberOfTapsRequired = 1
+            fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
+            
+            addToButton.hidden = false
+            deletButton.hidden = false
+            
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
