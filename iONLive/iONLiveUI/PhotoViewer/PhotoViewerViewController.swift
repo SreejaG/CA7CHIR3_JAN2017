@@ -87,6 +87,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad() {
         super.viewDidLoad()
         showOverlay()
+        let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
+        enlargeImageViewRecognizer.numberOfTapsRequired = 1
+        fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
+        
+        let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
+        shrinkImageViewRecognizer.numberOfTapsRequired = 1
+        fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
         initialise()
         getSignedURL()
         PhotoViewerInstance.controller = self
@@ -900,13 +907,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
 //        self.removeOverlay()
         if(imageDataSource.count > 0){
-            let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
-            enlargeImageViewRecognizer.numberOfTapsRequired = 1
-            fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
             
-            let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
-            shrinkImageViewRecognizer.numberOfTapsRequired = 1
-            fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
             
             addToButton.hidden = false
             deletButton.hidden = false
@@ -991,6 +992,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            //    print(self.dataSource)
                 self.removeOverlay()
                 self.photoThumpCollectionView.reloadData()
                 self.photoThumpCollectionView.layoutIfNeeded()

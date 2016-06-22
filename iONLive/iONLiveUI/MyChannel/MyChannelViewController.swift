@@ -646,11 +646,12 @@ extension MyChannelViewController:UITableViewDataSource
         }
         else{
             searchActive = false
+            searchDataSource.removeAll()
         }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        searchActive = false;
+        searchActive = false
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -663,12 +664,13 @@ extension MyChannelViewController:UITableViewDataSource
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         searchDataSource.removeAll()
-        if myChannelSearchBar.text == "" {
-            myChannelSearchBar.resignFirstResponder()
-        }
-        if fullDataSource.count > 0
-        {
-            for element in fullDataSource{
+
+            if myChannelSearchBar.text == "" {
+                myChannelSearchBar.resignFirstResponder()
+            }
+            if fullDataSource.count > 0
+            {
+                for element in fullDataSource{
                 let tmp: String = (element[channelNameKey]?.lowercaseString)!
                 if(tmp.hasPrefix(searchText.lowercaseString))
                 {
