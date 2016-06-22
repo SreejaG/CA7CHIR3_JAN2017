@@ -12,7 +12,7 @@ import UIKit
 class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     let loginErrorTitle = "Login Error"
-    let signUpErrorTitle = "SignUp Error"
+    let signUpErrorTitle = "Sign Up Error"
     let StreamingErrortitle = "Streaming Error"
     let ContactErrortitle = "Contact Error"
     

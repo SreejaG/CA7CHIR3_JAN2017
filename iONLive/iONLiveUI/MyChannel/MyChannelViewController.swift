@@ -638,7 +638,7 @@ extension MyChannelViewController:UITableViewDataSource
             {
                 for element in dataSource{
                     let tmp: String = (element[channelNameKey]?.lowercaseString)!
-                    if(tmp.hasPrefix(searchText.lowercaseString))
+                    if(tmp.containsString(searchText.lowercaseString))
                     {
                         searchDataSource.append(element)
                     }
