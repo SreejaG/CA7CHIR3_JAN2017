@@ -41,9 +41,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     var searchActive : Bool = false
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
     override func viewDidLoad() {
@@ -631,7 +629,7 @@ extension MyChannelViewController:UITableViewDataSource
         searchDataSource.removeAll()
         if myChannelSearchBar.text!.isEmpty
         {
-            searchDataSource = fullDataSource
+            searchDataSource = dataSource
             myChannelSearchBar.resignFirstResponder()
             self.myChannelTableView.reloadData()
         }
@@ -649,14 +647,6 @@ extension MyChannelViewController:UITableViewDataSource
                 self.myChannelTableView.reloadData()
             }
         }
-        
-//        
-//        if(searchDataSource.count == 0){
-//            searchActive = false;
-//        } else {
-//            searchActive = true;
-//        }
-       
     }
 }
 
