@@ -29,6 +29,7 @@
 #import <CoreData/CoreData.h>
 #import "screencap.h"
 
+#import "UIImageView+WebCache.h"
 
 
 

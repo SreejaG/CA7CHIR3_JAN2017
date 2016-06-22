@@ -102,6 +102,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         addChannelViewTopConstraint.constant = 0
         myChannelTableViewTopConstraint.constant = 0
         hideView(0)
+        myChannelSearchBar.text = ""
+        myChannelSearchBar.resignFirstResponder()
         myChannelSearchBar.delegate = self
         addChannelDetails(userId, token: accessToken, channelName: channelname)
         
@@ -127,7 +129,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let image = UIImage(named: "thumb12")
             let channelId = json["channelId"]?.stringValue
             let channelName = json["channelName"] as! String
-            self.fullDataSource.insert([self.channelIdKey:channelId!,self.channelNameKey:channelName,self.channelItemCountKey:"0",self.channelCreatedTimeKey:self.dataSource[0][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:image!], atIndex: 0)
+            self.dataSource.insert([self.channelIdKey:channelId!,self.channelNameKey:channelName,self.channelItemCountKey:"0",self.channelCreatedTimeKey:self.dataSource[0][self.channelCreatedTimeKey]!], atIndex: 0)
             myChannelTableView.reloadData()
         }
         else
@@ -309,7 +311,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func setChannelDetails()
     {
         dataSource.removeAll()
-        fullDataSource.removeAll()
         var imageDetails : UIImage?
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
@@ -318,7 +319,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let createdTime = element["last_updated_time_stamp"] as! String
             print("\(createdTime)   \(channelName)")
             let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
-            let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
+            let url = nullToNil(thumbUrlBeforeNullChk) as! String
+            let thumbUrl: NSURL = convertStringtoURL(url)
             let mediaDetailId = element["media_detail_id"]?.stringValue
             
             dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
@@ -331,19 +333,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         })
         
         self.removeOverlay()
-        
-        if(dataSource.count > 0){
-            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(backgroundQueue, {
-                self.downloadMediaFromGCS()
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                })
-            })
-        }
-        else{
-            self.removeOverlay()
-        }
+        myChannelTableView.reloadData()
     }
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
@@ -360,27 +350,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         else
         {
             completion(result:UIImage(named: "thumb12")!)
-        }
-    }
-
-    func downloadMediaFromGCS(){
-        for var i = 0; i < dataSource.count; i++
-        {
-            var imageForMedia : UIImage = UIImage()
-            let mediaUrl = dataSource[i][channelHeadImageNameKey] as! String
-            if(mediaUrl != ""){
-                let url: NSURL = convertStringtoURL(mediaUrl)
-                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    if(result != UIImage()){
-                        imageForMedia = result
-                    }
-                })
-            }
-             self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.myChannelTableView.reloadData()
-            })
         }
     }
     
@@ -443,7 +412,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let status = json["status"] as! Int
             if(status == 1){
                 dataSource.removeAtIndex(index)
-                fullDataSource.removeAtIndex(index)
                 myChannelTableView.reloadData()
             }
         }
@@ -565,7 +533,7 @@ extension MyChannelViewController:UITableViewDataSource
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
         else{
-            return fullDataSource.count > 0 ? (fullDataSource.count) : 0
+            return dataSource.count > 0 ? (dataSource.count) : 0
         }
     }
     
@@ -577,7 +545,7 @@ extension MyChannelViewController:UITableViewDataSource
             dataSourceTmp = searchDataSource
         }
         else{
-            dataSourceTmp = fullDataSource
+            dataSourceTmp = dataSource
         }
         
         if dataSourceTmp!.count > indexPath.row
@@ -586,13 +554,14 @@ extension MyChannelViewController:UITableViewDataSource
             
             cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
             cell.channelItemCount.text = dataSourceTmp![indexPath.row][channelItemCountKey] as? String
-            if let imageData =  dataSourceTmp![indexPath.row][channelHeadImageNameKey]
+            if let thumbUrl = dataSourceTmp![indexPath.row][channelHeadImageNameKey]
             {
-                cell.channelHeadImageView.image = imageData as? UIImage
+                cell.channelHeadImageView.sd_setImageWithURL(thumbUrl as! NSURL,placeholderImage: UIImage(named: "thumb12"))
             }
-            if(dataSourceTmp![indexPath.row][channelItemCountKey] as! String == "0"){
+            else{
                 cell.channelHeadImageView.image = UIImage(named: "thumb12")
             }
+           
             cell.selectionStyle = .None
             
             return cell
@@ -607,7 +576,7 @@ extension MyChannelViewController:UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        let channelName = fullDataSource[indexPath.row][channelNameKey]
+        let channelName = dataSource[indexPath.row][channelNameKey]
         if ((channelName as! String == "My Day") || (channelName as! String == "Archive"))
         {
             return false
@@ -620,7 +589,7 @@ extension MyChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            let deletedChannelId = self.fullDataSource[indexPath.row][self.channelIdKey]! as! String
+            let deletedChannelId = self.dataSource[indexPath.row][self.channelIdKey]! as! String
             generateWaytoSendAlert(deletedChannelId, indexPath: indexPath.row)
         }
     }
@@ -633,20 +602,16 @@ extension MyChannelViewController:UITableViewDataSource
             addChannelView.hidden = true
             myChannelTableViewTopConstraint.constant = -90
         }
-        if(searchActive)
-        {
-            searchActive = false
-        }
     }
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        if searchBar.text != ""
+        if searchBar.text!.isEmpty
         {
-            searchActive = true
-        }
-        else{
             searchActive = false
             searchDataSource.removeAll()
+        }
+        else{
+            searchActive = true
         }
     }
     
@@ -664,28 +629,34 @@ extension MyChannelViewController:UITableViewDataSource
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         searchDataSource.removeAll()
-
-            if myChannelSearchBar.text == "" {
-                myChannelSearchBar.resignFirstResponder()
-            }
-            if fullDataSource.count > 0
+        if myChannelSearchBar.text!.isEmpty
+        {
+            searchDataSource = fullDataSource
+            myChannelSearchBar.resignFirstResponder()
+            self.myChannelTableView.reloadData()
+        }
+        else{
+            if dataSource.count > 0
             {
-                for element in fullDataSource{
-                let tmp: String = (element[channelNameKey]?.lowercaseString)!
-                if(tmp.hasPrefix(searchText.lowercaseString))
-                {
-                    searchDataSource.append(element)
-                    
+                for element in dataSource{
+                    let tmp: String = (element[channelNameKey]?.lowercaseString)!
+                    if(tmp.hasPrefix(searchText.lowercaseString))
+                    {
+                        searchDataSource.append(element)
+                    }
                 }
+                searchActive = true
+                self.myChannelTableView.reloadData()
             }
         }
         
-        if(searchDataSource.count == 0){
-            searchActive = false;
-        } else {
-            searchActive = true;
-        }
-        self.myChannelTableView.reloadData()
+//        
+//        if(searchDataSource.count == 0){
+//            searchActive = false;
+//        } else {
+//            searchActive = true;
+//        }
+       
     }
 }
 

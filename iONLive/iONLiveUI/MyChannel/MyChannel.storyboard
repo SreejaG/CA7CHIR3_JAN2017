@@ -169,7 +169,6 @@
                                         <connections>
                                             <outlet property="dataSource" destination="HHn-oS-sje" id="bM8-sF-m4h"/>
                                             <outlet property="delegate" destination="HHn-oS-sje" id="kCS-tl-gdu"/>
-                                            <outletCollection property="gestureRecognizers" destination="BGl-QS-24z" appends="YES" id="aby-XV-wGN"/>
                                         </connections>
                                     </tableView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4y-o6-8l1" userLabel="AddChannelView">
@@ -243,18 +242,19 @@
                                     <constraint firstItem="XKO-cD-U5I" firstAttribute="leading" secondItem="RZn-ba-xkt" secondAttribute="leading" id="xrr-Uv-tpw"/>
                                     <constraint firstAttribute="trailing" secondItem="XKO-cD-U5I" secondAttribute="trailing" id="zGA-ek-Gl3"/>
                                 </constraints>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="BGl-QS-24z" appends="YES" id="Od8-MZ-fZ4"/>
-                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="RZn-ba-xkt" firstAttribute="leading" secondItem="6C1-6R-Fzg" secondAttribute="leading" id="EWl-x5-hYX"/>
                             <constraint firstItem="UON-fT-Bj3" firstAttribute="top" secondItem="RZn-ba-xkt" secondAttribute="bottom" id="QHa-Cf-KIh"/>
                             <constraint firstItem="RZn-ba-xkt" firstAttribute="top" secondItem="6C1-6R-Fzg" secondAttribute="top" id="jb5-yi-9vr"/>
                             <constraint firstAttribute="trailing" secondItem="RZn-ba-xkt" secondAttribute="trailing" id="ohj-9z-RUu"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="BGl-QS-24z" appends="YES" id="MGA-Eq-HGN"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="SearchBarBottomConstraint" destination="KQe-hI-32S" id="w2A-3O-xgR"/>
