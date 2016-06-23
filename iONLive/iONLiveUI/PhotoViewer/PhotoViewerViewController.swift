@@ -158,7 +158,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: {
             (action:UIAlertAction!) in print("you have pressed the Cancel button")
                 self.fullScrenImageView.alpha = 1.0
-             //   self.playIconInFullView.hidden = false
         }))
         self.presentViewController(alert, animated: true, completion: nil)
     }
@@ -589,6 +588,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             {
                 var flag : Bool = false
                 if(dataSource.count > 0){
+                  
                 for(var i = 0 ;i < dataSource.count ; i++)
                 {
                     if dataSource[i][mediaIdKey]?.stringValue == element[mediaIdKey]?.stringValue
@@ -905,22 +905,14 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 imageDataSource.append([thumbSignedUrlKey:thumb!,fullSignedUrlKey: fullImage! ,mediaIdKey:mediaId!,mediaTypeKey:mediaType!,timeStampKey :timeStamp!])
             }
         }
-//        self.removeOverlay()
         if(imageDataSource.count > 0){
-            
-            
-            addToButton.hidden = false
-            deletButton.hidden = false
-            
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.photoThumpCollectionView.reloadData()
-                    self.addToButton.enabled = true
-                    self.deletButton.enabled = true
-                    self.BottomView.alpha = 1.0
+//                    self.BottomView.alpha = 1.0
                 });
             })
         }
@@ -992,7 +984,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 }
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            //    print(self.dataSource)
                 self.removeOverlay()
                 self.photoThumpCollectionView.reloadData()
                 self.photoThumpCollectionView.layoutIfNeeded()
@@ -1131,6 +1122,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
             channelDict[channelName] = channelId
         }
+        addToButton.hidden = false
+        deletButton.hidden = false
         update()
         if(mediaSharedCount != "0")
         {
