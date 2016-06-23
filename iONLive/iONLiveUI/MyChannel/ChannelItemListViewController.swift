@@ -256,7 +256,7 @@ class ChannelItemListViewController: UIViewController {
                             let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                             let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                             if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                print("not same")
+                              
                             }
                             else{
                                 FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -288,7 +288,6 @@ class ChannelItemListViewController: UIViewController {
     @IBAction func didTapAddtoButton(sender: AnyObject) {
         for(var i = 0; i < selectedArray.count; i++){
             let mediaSelectedId = fullImageDataSource[selectedArray[i]][mediaIdKey]
-            print(mediaSelectedId)
             selected.addObject(mediaSelectedId!)
         }
         let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -338,13 +337,10 @@ class ChannelItemListViewController: UIViewController {
         
         for(var i = 0; i < selectedArray.count; i++){
             let mediaSelectedId = fullImageDataSource[selectedArray[i]][mediaIdKey]
-            print(mediaSelectedId)
             selected.addObject(mediaSelectedId!)
         }
-        print("selected \(selectedArray)")
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)
-            
             let defaults = NSUserDefaults .standardUserDefaults()
             let userId = defaults.valueForKey(userLoginIdKey) as! String
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -365,6 +361,7 @@ class ChannelItemListViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             totalMediaCount = totalMediaCount - selected.count
+            selectedArray = selectedArray.sort()
             for(var i = 0; i < selectedArray.count; i++){
                 var selectedIndex = selectedArray[i]
                 selectedIndex = selectedIndex - i
