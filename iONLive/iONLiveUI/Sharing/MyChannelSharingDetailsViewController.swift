@@ -22,9 +22,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
-//    var selectedContactsArray : [Int] = [Int]()
-//    var failureContactsArray : [Int] = [Int]()
-    
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
     
@@ -146,14 +143,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 deleteUserArray.addObject(userId)
             }
         }
-            
-//            if(selectedContactsArray.contains(i)){
-//
-//            }
-//            else{
-//
-//            }
-//        }
         
         if((addUserArray.count > 0) || (deleteUserArray.count > 0))
         {
@@ -229,7 +218,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
                     fullDataSource[i]["orgSelected"] = selectionValue
                 }
-//                failureContactsArray = selectedContactsArray
                 contactTableView.reloadData()
             }
         }
@@ -292,7 +280,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-//        removeOverlay()
         if(pullToRefreshActiveSecnd){
             self.refreshControlSecnd.endRefreshing()
             pullToRefreshActiveSecnd = false
@@ -399,8 +386,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
             fullDataSource[i]["tempSelected"] = selectionValue
         }
-
-      //  selectedContactsArray = failureContactsArray
         contactTableView.reloadData()
     }
   
@@ -473,11 +458,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             if(status == 1){
                 fullDataSource.removeAtIndex(index)
                 dataSource.removeAtIndex(index)
-//                if(selectedContactsArray.contains(index)){
-//                    let elementIndex = selectedContactsArray.indexOf(index)
-//                    selectedContactsArray.removeAtIndex(elementIndex!)
-//                }
-//                failureContactsArray = selectedContactsArray
             }
             contactTableView.reloadData()
         }
@@ -616,5 +596,6 @@ extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
                 searchActive = true
                 self.contactTableView.reloadData()
             }
-        }    }
+        }
+    }
 }

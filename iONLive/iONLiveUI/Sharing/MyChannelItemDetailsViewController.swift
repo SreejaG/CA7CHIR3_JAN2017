@@ -178,7 +178,6 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-//        removeOverlay()
         if(pullToRefreshActive){
             self.refreshControl.endRefreshing()
             pullToRefreshActive = false

@@ -466,7 +466,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             }
         }
         else{
-         //   channelItemImageView.image = UIImage(named: "thumb12")
         }
         return cell
     }

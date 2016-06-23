@@ -140,7 +140,6 @@ class MyChannelNotificationViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-    //    self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -210,24 +209,10 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
                     let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
-//                    if(mediaThumbUrl != "")
-//                    {
-//                        mediaImage = createMediaThumb(mediaThumbUrl)
-//                    }
-//                    else{
-//                        mediaImage = UIImage(named: "thumb12")
-//                    }
-//                   
                     let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-//                    if(profileImageName != "")
-//                    {
-//                         profileImage = createProfileImage(profileImageName)
-//                    }
-//                    else{
-//                        profileImage = UIImage(named: "dummyUser")
-//                    }
-                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime])
+                   
+                     dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime])
                 }
             }
             
@@ -242,13 +227,6 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-//                    if(profileImageName != "")
-//                    {
-//                        profileImage = createProfileImage(profileImageName)
-//                    }
-//                    else{
-//                        profileImage = UIImage(named: "dummyUser")
-//                    }
                     dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:"nomedia",notificationTimeKey:notTime])
                 }
                 
