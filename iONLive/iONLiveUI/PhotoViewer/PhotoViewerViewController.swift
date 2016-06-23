@@ -605,6 +605,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let dict = self.dataSource[0]
             downloadFullImageWhenTapThumb(dict, indexpaths: 0)
             self.photoThumpCollectionView.reloadData()
+            if(dataSource.count > 0){
+                addToButton.hidden = false
+                deletButton.hidden = false
+            }
         }
     }
     
@@ -912,7 +916,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.photoThumpCollectionView.reloadData()
-//                    self.BottomView.alpha = 1.0
                 });
             })
         }
@@ -983,8 +986,13 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     downloadFullImageWhenTapThumb(dict, indexpaths: 0)
                 }
             }
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
+                if(self.addToButton.hidden){
+                    self.addToButton.hidden = false
+                    self.deletButton.hidden = false
+                }
                 self.photoThumpCollectionView.reloadData()
                 self.photoThumpCollectionView.layoutIfNeeded()
             })
@@ -1122,8 +1130,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
             channelDict[channelName] = channelId
         }
-        addToButton.hidden = false
-        deletButton.hidden = false
+        
         update()
         if(mediaSharedCount != "0")
         {

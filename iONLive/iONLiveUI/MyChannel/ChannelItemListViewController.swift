@@ -247,6 +247,7 @@ class ChannelItemListViewController: UIViewController {
             }
             else{
                 let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
