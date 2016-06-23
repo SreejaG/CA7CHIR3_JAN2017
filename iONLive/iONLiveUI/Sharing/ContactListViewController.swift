@@ -43,8 +43,6 @@ class ContactListViewController: UIViewController
     
     var searchActive: Bool = false
     
-    var selectedContacts : [Int] = [Int]()
-    var failedSelectedContacts : [Int] = [Int]()
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
     
@@ -68,7 +66,11 @@ class ContactListViewController: UIViewController
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            selectedContacts = failedSelectedContacts
+            for var i = 0; i < fullDataSource.count; i++
+            {
+                let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
+                fullDataSource[i]["tempSelected"] = selectionValue
+            }
             contactListTableView.reloadData()
         }
         else{
@@ -91,10 +93,13 @@ class ContactListViewController: UIViewController
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         
-        for var i = 0; i < selectedContacts.count; i++
+        for var i = 0; i < fullDataSource.count; i++
         {
-            let userId = dataSource[selectedContacts[i]][userNameKey] as! String
-            addUserArray.addObject(userId)
+            let userId = fullDataSource[i][userNameKey] as! String
+            let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
+            if(selectionValue == 1){
+               addUserArray.addObject(userId)
+            }
         }
         
         deleteUserArray = []
@@ -160,8 +165,6 @@ class ContactListViewController: UIViewController
         fullDataSource.removeAll()
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
-        selectedContacts.removeAll()
-        failedSelectedContacts.removeAll()
         searchActive = false
         doneButton.hidden = true
         
@@ -349,7 +352,11 @@ class ContactListViewController: UIViewController
         {
             let status = json["status"] as! Int
             if(status == 1){
-                failedSelectedContacts = selectedContacts
+                for var i = 0; i < fullDataSource.count; i++
+                {
+                    let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
+                    fullDataSource[i]["orgSelected"] = selectionValue
+                }
                 loadMychannelDetailController()
             }
             
@@ -451,7 +458,7 @@ class ContactListViewController: UIViewController
             else{
                 profileImage = UIImage(named: "dummyUser")
             }
-            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!])
+            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!,"tempSelected": 0, "orgSelected" : 0])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.contactListTableView.reloadData()
@@ -480,7 +487,11 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        selectedContacts = failedSelectedContacts
+        for var i = 0; i < fullDataSource.count; i++
+        {
+            let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
+            fullDataSource[i]["tempSelected"] = selectionValue
+        }
         contactListTableView.reloadData()
     }
     
@@ -489,13 +500,14 @@ class ContactListViewController: UIViewController
             doneButton.hidden = false
         }
         let indexpath = notif.object as! Int
-        if(selectedContacts.contains(indexpath)){
-            let elementIndex = selectedContacts.indexOf(indexpath)
-            selectedContacts.removeAtIndex(elementIndex!)
+        let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+        if(selectedValue == 1){
+            fullDataSource[indexpath]["tempSelected"] = 0
         }
         else{
-            selectedContacts.append(indexpath)
+            fullDataSource[indexpath]["tempSelected"] = 1
         }
+   
         contactListTableView.reloadData()
     }
     
@@ -565,12 +577,15 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             let imageName =  dataSourceTmp![indexPath.row][profileImageKey]
             cell.contactProfileImage.image = imageName as? UIImage
             cell.subscriptionButton.tag = indexPath.row
-            if(selectedContacts.contains(indexPath.row)){
+            
+            let selectionValue : Int = dataSourceTmp![indexPath.row]["tempSelected"] as! Int
+            if(selectionValue == 1){
                 cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
             }
             else{
                 cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
+
             cell.selectionStyle = .None
             return cell
         }
@@ -612,29 +627,29 @@ extension ContactListViewController: UISearchBarDelegate{
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
         searchDataSource.removeAll()
-        if contactListSearchBar.text == "" {
-            contactListSearchBar.resignFirstResponder()
-        }
-        if fullDataSource.count > 0
+        
+        if contactListSearchBar.text!.isEmpty
         {
-            for element in fullDataSource{
-                let tmp: String = (element[userNameKey]?.lowercaseString)!
-                if(tmp.hasPrefix(searchText.lowercaseString))
-                {
-                    searchDataSource.append(element)
-                    
+            searchDataSource = fullDataSource
+            contactListSearchBar.resignFirstResponder()
+            self.contactListTableView.reloadData()
+        }
+        else{
+            if fullDataSource.count > 0
+            {
+                for element in fullDataSource{
+                    let tmp: String = (element[userNameKey]?.lowercaseString)!
+                    if(tmp.containsString(searchText.lowercaseString))
+                    {
+                        searchDataSource.append(element)
+                    }
                 }
+                
+                searchActive = true
+                self.contactListTableView.reloadData()
             }
         }
-        
-        if(searchDataSource.count == 0){
-            searchActive = false;
-        } else {
-            searchActive = true;
-        }
-        self.contactListTableView.reloadData()
     }
 }
 

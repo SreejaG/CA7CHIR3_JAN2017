@@ -29,8 +29,6 @@ class MySharedChannelsViewController: UIViewController {
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     var searchActive : Bool = false
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var selectedArray : [Int] = [Int]()
-    var failureArray : [Int] = [Int]()
     var addChannelArray : NSMutableArray = NSMutableArray()
     var deleteChannelArray : NSMutableArray = NSMutableArray()
     
@@ -46,8 +44,6 @@ class MySharedChannelsViewController: UIViewController {
         
         channelDetailsDict.removeAll()
         dataSource.removeAll()
-        selectedArray.removeAll()
-        failureArray.removeAll()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
         
@@ -73,8 +69,12 @@ class MySharedChannelsViewController: UIViewController {
     {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            selectedArray = failureArray
-            sharedChannelsTableView.reloadData()
+            for var i = 0; i < dataSource.count; i++
+            {
+                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                dataSource[i]["tempSelected"] = selectionValue
+            }
+            self.sharedChannelsTableView.reloadData()
         }
         else{
             let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -125,11 +125,12 @@ class MySharedChannelsViewController: UIViewController {
         for var i = 0; i < dataSource.count; i++
         {
             let channelid = dataSource[i][channelIdKey] as! String
-            if(selectedArray.contains(i)){
-               addChannelArray.addObject(channelid)
+            let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+            if(selectionValue == 1){
+                addChannelArray.addObject(channelid)
             }
             else{
-                deleteChannelArray.addObject(channelid)
+                 deleteChannelArray.addObject(channelid)
             }
         }
         if((addChannelArray.count > 0) || (deleteChannelArray.count > 0)){
@@ -192,13 +193,24 @@ class MySharedChannelsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                failureArray = selectedArray
+                for var i = 0; i < dataSource.count; i++
+                {
+                    let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+                    dataSource[i]["orgSelected"] = selectionValue
+                }
                 sharedChannelsTableView.reloadData()
             }
         }
         else
         {
+            for var i = 0; i < dataSource.count; i++
+            {
+                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                dataSource[i]["tempSelected"] = selectionValue
+            }
+            
             ErrorManager.sharedInstance.inValidResponseError()
+            sharedChannelsTableView.reloadData()
         }
     }
     
@@ -257,7 +269,6 @@ class MySharedChannelsViewController: UIViewController {
     func setChannelDetails()
     {
         dataSource.removeAll()
-        var i = 0
         for element in channelDetailsDict{
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
             let channelId = element["channel_detail_id"]?.stringValue
@@ -268,8 +279,7 @@ class MySharedChannelsViewController: UIViewController {
                 let createdTime = element["last_updated_time_stamp"] as! String
                 let Url = element["thumbnail_Url"] as! String
                 let thumbUrl : NSURL = convertStringtoURL(Url)
-                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl,channelSelectionKey:sharedBool])
-                i = i + 1
+                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl,"orgSelected":sharedBool,"tempSelected":sharedBool])
             }
         }
         dataSource.sortInPlace({ p1, p2 in
@@ -277,15 +287,6 @@ class MySharedChannelsViewController: UIViewController {
             let time2 = p2[channelCreatedTimeKey] as! String
             return time1 > time2
         })
-        for var i = 0; i < dataSource.count; i++
-        {
-            let channelSharedBool = dataSource[i][channelSelectionKey] as! Int
-            if(channelSharedBool == 1){
-                selectedArray.append(i)
-                failureArray.append(i)
-            }
-
-        }
         removeOverlay()
         sharedChannelsTableView.reloadData()
     }
@@ -306,32 +307,6 @@ class MySharedChannelsViewController: UIViewController {
             completion(result:UIImage(named: "thumb12")!)
         }
     }
-    
-//    func downloadMediaFromGCS(){
-//        for var i = 0; i < dataSource.count; i++
-//        {
-//            var imageForMedia : UIImage = UIImage()
-//            let mediaUrl = dataSource[i][channelHeadImageNameKey] as! String
-//            if(mediaUrl != ""){
-//                let url: NSURL = convertStringtoURL(mediaUrl)
-//                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-//                    if(result != UIImage()){
-//                        imageForMedia = result
-//                    }
-//                })
-//            }
-//            self.fullDataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
-//            let channelSharedBool = self.dataSource[i][self.channelSelectionKey] as! Int
-//            if(channelSharedBool == 1){
-//                selectedArray.append(i)
-//                failureArray.append(i)
-//            }
-//            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                self.removeOverlay()
-//                self.sharedChannelsTableView.reloadData()
-//            })
-//        }
-//    }
 
     func authenticationFailureHandler(error: NSError?, code: String)
     {
@@ -353,7 +328,11 @@ class MySharedChannelsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        failureArray = selectedArray
+        for var i = 0; i < dataSource.count; i++
+        {
+            let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+            dataSource[i]["tempSelected"] = selectionValue
+        }
         self.sharedChannelsTableView.reloadData()
     }
     
@@ -362,13 +341,14 @@ class MySharedChannelsViewController: UIViewController {
             doneButton.hidden = false
         }
         let indexpath = notif.object as! Int
-        if(selectedArray.contains(indexpath)){
-            let elementIndex = selectedArray.indexOf(indexpath)
-            selectedArray.removeAtIndex(elementIndex!)
+        let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
+        if(selectedValue == 1){
+            dataSource[indexpath]["tempSelected"] = 0
         }
         else{
-            selectedArray.append(indexpath)
+             dataSource[indexpath]["tempSelected"] = 1
         }
+
         sharedChannelsTableView.reloadData()
     }
 }
@@ -427,11 +407,6 @@ extension MySharedChannelsViewController:UITableViewDataSource
             cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
             cell.sharedCountLabel.text = dataSourceTmp![indexPath.row][channelItemCountKey] as? String
             
-//            if let imageData =  dataSourceTmp![indexPath.row][channelHeadImageNameKey]
-//            {
-//                cell.userImage.image = imageData as? UIImage
-//            }
-            
             if let thumbUrl = dataSourceTmp![indexPath.row][channelHeadImageNameKey]
             {
                 cell.userImage.sd_setImageWithURL(thumbUrl as! NSURL,placeholderImage: UIImage(named: "thumb12"))
@@ -442,9 +417,10 @@ extension MySharedChannelsViewController:UITableViewDataSource
             if(dataSourceTmp![indexPath.row][channelItemCountKey] as! String == "0"){
                 cell.userImage.image = UIImage(named: "thumb12")
             }
-            
             cell.channelSelectionButton.tag = indexPath.row
-            if(selectedArray.contains(indexPath.row)){
+            
+            let selectionValue : Int = dataSourceTmp![indexPath.row]["tempSelected"] as! Int
+            if(selectionValue == 1){
                 cell.channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
                 cell.sharedCountLabel.hidden = false
                 cell.avatarIconImageView.hidden = false

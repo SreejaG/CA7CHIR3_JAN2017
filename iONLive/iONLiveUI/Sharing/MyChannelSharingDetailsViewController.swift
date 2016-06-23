@@ -22,8 +22,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
     var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
-    var selectedContactsArray : [Int] = [Int]()
-    var failureContactsArray : [Int] = [Int]()
+//    var selectedContactsArray : [Int] = [Int]()
+//    var failureContactsArray : [Int] = [Int]()
     
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
@@ -100,7 +100,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if(doneButton.hidden == false){
             inviteButton.hidden = false
             doneButton.hidden = true
-            selectedContactsArray = failureContactsArray
+            for var i = 0; i < fullDataSource.count; i++
+            {
+                let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
+                fullDataSource[i]["tempSelected"] = selectionValue
+            }
             contactTableView.reloadData()
         }
         else{
@@ -134,13 +138,22 @@ class MyChannelSharingDetailsViewController: UIViewController {
         for var i = 0; i < fullDataSource.count; i++
         {
             let userId = fullDataSource[i][userNameKey] as! String
-            if(selectedContactsArray.contains(i)){
+            let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
+            if(selectionValue == 1){
                 addUserArray.addObject(userId)
             }
             else{
                 deleteUserArray.addObject(userId)
             }
         }
+            
+//            if(selectedContactsArray.contains(i)){
+//
+//            }
+//            else{
+//
+//            }
+//        }
         
         if((addUserArray.count > 0) || (deleteUserArray.count > 0))
         {
@@ -211,7 +224,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                failureContactsArray = selectedContactsArray
+                for var i = 0; i < fullDataSource.count; i++
+                {
+                    let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
+                    fullDataSource[i]["orgSelected"] = selectionValue
+                }
+//                failureContactsArray = selectedContactsArray
                 contactTableView.reloadData()
             }
         }
@@ -222,8 +240,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         searchDataSource.removeAll()
         fullDataSource.removeAll()
         dataSource.removeAll()
-        selectedContactsArray.removeAll()
-        failureContactsArray.removeAll()
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         
@@ -343,12 +359,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
             else{
                 profileImage = UIImage(named: "dummyUser")
             }
-            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!])
+            
             let channelSharedBool = self.dataSource[i][self.selectionKey] as! Int
-            if(channelSharedBool == 1){
-                selectedContactsArray.append(i)
-                failureContactsArray.append(i)
-            }
+            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!,"tempSelected": channelSharedBool, "orgSelected": channelSharedBool])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.contactTableView.reloadData()
@@ -381,7 +394,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        selectedContactsArray = failureContactsArray
+        for var i = 0; i < fullDataSource.count; i++
+        {
+            let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
+            fullDataSource[i]["tempSelected"] = selectionValue
+        }
+
+      //  selectedContactsArray = failureContactsArray
         contactTableView.reloadData()
     }
   
@@ -391,12 +410,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
             inviteButton.hidden = true
         }
         let indexpath = notif.object as! Int
-        if(selectedContactsArray.contains(indexpath)){
-            let elementIndex = selectedContactsArray.indexOf(indexpath)
-            selectedContactsArray.removeAtIndex(elementIndex!)
+        let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+        if(selectedValue == 1){
+            fullDataSource[indexpath]["tempSelected"] = 0
         }
         else{
-            selectedContactsArray.append(indexpath)
+            fullDataSource[indexpath]["tempSelected"] = 1
         }
         contactTableView.reloadData()
     }
@@ -454,11 +473,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
             if(status == 1){
                 fullDataSource.removeAtIndex(index)
                 dataSource.removeAtIndex(index)
-                if(selectedContactsArray.contains(index)){
-                    let elementIndex = selectedContactsArray.indexOf(index)
-                    selectedContactsArray.removeAtIndex(elementIndex!)
-                }
-                failureContactsArray = selectedContactsArray
+//                if(selectedContactsArray.contains(index)){
+//                    let elementIndex = selectedContactsArray.indexOf(index)
+//                    selectedContactsArray.removeAtIndex(elementIndex!)
+//                }
+//                failureContactsArray = selectedContactsArray
             }
             contactTableView.reloadData()
         }
@@ -519,12 +538,15 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             let imageName =  dataSourceTmp![indexPath.row][profileImageKey]
             cell.contactProfileImage.image = imageName as? UIImage
             cell.subscriptionButton.tag = indexPath.row
-            if(selectedContactsArray.contains(indexPath.row)){
+            
+            let selectionValue : Int = dataSourceTmp![indexPath.row]["tempSelected"] as! Int
+            if(selectionValue == 1){
                 cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
             }
             else{
                 cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
+            
             cell.selectionStyle = .None
             return cell
         }
@@ -572,28 +594,27 @@ extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
         searchDataSource.removeAll()
-        if contactSearchBar.text == "" {
-            contactSearchBar.resignFirstResponder()
-        }
-        if fullDataSource.count > 0
-        {
-            for element in fullDataSource{
-                let tmp: String = (element[userNameKey]?.lowercaseString)!
-                if(tmp.hasPrefix(searchText.lowercaseString))
-                {
-                    searchDataSource.append(element)
-                    
-                }
-            }
-        }
         
-        if(searchDataSource.count == 0){
-            searchActive = false;
-        } else {
-            searchActive = true;
+        if contactSearchBar.text!.isEmpty
+        {
+            searchDataSource = fullDataSource
+            contactSearchBar.resignFirstResponder()
+            self.contactTableView.reloadData()
         }
-        self.contactTableView.reloadData()
-    }
+        else{
+            if fullDataSource.count > 0
+            {
+                for element in fullDataSource{
+                    let tmp: String = (element[userNameKey]?.lowercaseString)!
+                    if(tmp.containsString(searchText.lowercaseString))
+                    {
+                        searchDataSource.append(element)
+                    }
+                }
+                
+                searchActive = true
+                self.contactTableView.reloadData()
+            }
+        }    }
 }

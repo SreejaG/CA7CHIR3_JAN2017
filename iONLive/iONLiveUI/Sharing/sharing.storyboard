@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -68,7 +68,7 @@
                                             <constraint firstAttribute="trailing" secondItem="kcr-Kl-Wyw" secondAttribute="trailing" id="fZ1-Uk-0wy"/>
                                         </constraints>
                                         <connections>
-                                            <outletCollection property="gestureRecognizers" destination="D1d-0H-EmB" appends="YES" id="Ao5-0X-kuC"/>
+                                            <outletCollection property="gestureRecognizers" destination="D1d-0H-EmB" appends="YES" id="Gmr-fD-Gz7"/>
                                         </connections>
                                     </view>
                                     <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Quk-sk-5ha">
@@ -83,9 +83,6 @@
                                                 <color key="value" red="0.22545920383582896" green="0.28787563835692032" blue="0.84853766025641031" alpha="1" colorSpace="calibratedRGB"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="D1d-0H-EmB" appends="YES" id="kui-SH-evB"/>
-                                        </connections>
                                     </searchBar>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="xfL-SM-yys">
                                         <rect key="frame" x="0.0" y="108" width="600" height="492"/>
@@ -186,7 +183,6 @@
                                                 <gestureRecognizers/>
                                                 <connections>
                                                     <outlet property="headerTitleLabel" destination="dpk-zV-1lX" id="Gjn-hg-5WP"/>
-                                                    <outletCollection property="gestureRecognizers" destination="D1d-0H-EmB" appends="YES" id="AbX-l2-Rpy"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
@@ -224,21 +220,12 @@
                     </view>
                     <connections>
                         <outlet property="doneButton" destination="dlN-kE-H0d" id="By3-yz-mgY"/>
-                        <outlet property="searchDisplayController" destination="3wx-v3-HyW" id="g2H-3F-BHL"/>
                         <outlet property="sharedChannelsSearchBar" destination="Quk-sk-5ha" id="AYx-Sk-Zsu"/>
                         <outlet property="sharedChannelsTableView" destination="xfL-SM-yys" id="NSX-t4-MKi"/>
                         <outlet property="tableViewBottomConstaint" destination="hqz-Ki-qwI" id="N65-5u-QFI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yuz-vO-Uf6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="3wx-v3-HyW">
-                    <connections>
-                        <outlet property="delegate" destination="wVT-d0-fn5" id="xCo-S6-ci5"/>
-                        <outlet property="searchContentsController" destination="wVT-d0-fn5" id="qX4-yT-p3P"/>
-                        <outlet property="searchResultsDataSource" destination="wVT-d0-fn5" id="p0B-nu-ucq"/>
-                        <outlet property="searchResultsDelegate" destination="wVT-d0-fn5" id="vdm-Yw-E3h"/>
-                    </connections>
-                </searchDisplayController>
                 <tapGestureRecognizer id="D1d-0H-EmB">
                     <connections>
                         <action selector="gestureTapped:" destination="wVT-d0-fn5" id="ZKz-Lw-sAp"/>
@@ -440,18 +427,19 @@
                                     <constraint firstAttribute="trailing" secondItem="6Bl-lb-Srn" secondAttribute="trailing" id="nAe-rc-Vo8"/>
                                     <constraint firstItem="yEb-BQ-5Pf" firstAttribute="top" secondItem="pdU-J6-mSa" secondAttribute="bottom" id="xZ0-EX-TyG"/>
                                 </constraints>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="Vlp-zH-l6A" appends="YES" id="ib9-Ug-knb"/>
-                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="OL6-an-da0" secondAttribute="trailing" id="2MA-iO-syc"/>
                             <constraint firstItem="OL6-an-da0" firstAttribute="leading" secondItem="ezh-J6-pgj" secondAttribute="leading" id="dfY-dF-WhJ"/>
                             <constraint firstAttribute="bottom" secondItem="OL6-an-da0" secondAttribute="bottom" id="iIm-DT-ixX"/>
                             <constraint firstItem="OL6-an-da0" firstAttribute="top" secondItem="ezh-J6-pgj" secondAttribute="top" id="id4-Zp-Maz"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Vlp-zH-l6A" appends="YES" id="TY8-1h-KFS"/>
+                        </connections>
                     </view>
                     <tabBarItem key="tabBarItem" tag="1" title="Sharing with" image="friend_avatar" selectedImage="friend_avatar_blue" id="aSX-xL-iNd"/>
                     <connections>

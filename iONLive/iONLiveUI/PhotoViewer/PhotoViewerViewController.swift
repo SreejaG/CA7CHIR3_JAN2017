@@ -242,7 +242,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             mediaIdSelected = 0
             mediaSelected.removeAllObjects()
             print("selectedItem = \(selectedItem)")
-            imageDataSource.removeAtIndex(selectedItem)
+            print(imageDataSource.count)
+            print(dataSource.count)
+            if(imageDataSource.count > 0){
+                imageDataSource.removeAtIndex(selectedItem)
+            }
             dataSource.removeAtIndex(selectedItem)
             if(selectedItem - 1 <= 0){
                 selectedItem = 0
@@ -250,10 +254,19 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             else{
                 selectedItem = selectedItem - 1
             }
-          
-            let dict = self.dataSource[selectedItem]
-            downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
-            photoThumpCollectionView.reloadData()
+            if(dataSource.count > 0){
+                deletButton.hidden = false
+                addToButton.hidden = false
+                let dict = self.dataSource[selectedItem]
+                downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
+            }
+            else{
+                fullScrenImageView.image = UIImage()
+                fullScreenZoomView.image = UIImage()
+                deletButton.hidden = true
+                addToButton.hidden = true
+            }
+             photoThumpCollectionView.reloadData()
         }
     }
     
