@@ -176,7 +176,8 @@ class ChannelItemListViewController: UIViewController {
                 })
             }
             else{
-                
+                ErrorManager.sharedInstance.emptyMedia()
+                removeOverlay()
                 selectionButton.hidden = true
             }
         }
@@ -375,10 +376,15 @@ class ChannelItemListViewController: UIViewController {
             selected.removeAllObjects()
             channelTitleLabel.text = channelName.uppercaseString
             cancelButton.hidden = true
-            selectionButton.hidden = false
             deleteButton.hidden = true
             addButton.hidden = true
             backButton.hidden = false
+            if(fullImageDataSource.count > 0){
+                selectionButton.hidden = false
+            }
+            else{
+                selectionButton.hidden = true
+            }
             channelItemCollectionView.reloadData()
         }
     }
