@@ -395,12 +395,38 @@ class MyChannelSharingDetailsViewController: UIViewController {
             inviteButton.hidden = true
         }
         let indexpath = notif.object as! Int
-        let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
-        if(selectedValue == 1){
-            fullDataSource[indexpath]["tempSelected"] = 0
+       
+        if(searchActive)
+        {
+            let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
+            if(selectedValue == 1)
+            {
+                searchDataSource[indexpath]["tempSelected"] = 0
+            }
+            else
+            {
+                searchDataSource[indexpath]["tempSelected"] = 1
+            }
+            
+            let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
+            for (var i = 0; i < fullDataSource.count; i++)
+            {
+                let dataSourceUserId = fullDataSource[i][userNameKey] as! String
+                if(selecteduserId == dataSourceUserId)
+                {
+                    fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                }
+            }
         }
-        else{
-            fullDataSource[indexpath]["tempSelected"] = 1
+        else
+        {
+            let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+            if(selectedValue == 1){
+                fullDataSource[indexpath]["tempSelected"] = 0
+            }
+            else{
+                fullDataSource[indexpath]["tempSelected"] = 1
+            }
         }
         contactTableView.reloadData()
     }

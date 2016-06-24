@@ -409,7 +409,19 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                dataSource.removeAtIndex(index)
+                if(searchActive){
+                    let channelId = searchDataSource[index][channelIdKey] as! String
+                    searchDataSource.removeAtIndex(index)
+                    for(var i = 0; i < dataSource.count; i++){
+                        let orgChannel = dataSource[i][channelIdKey] as! String
+                        if(orgChannel == channelId){
+                            dataSource.removeAtIndex(i)
+                        }
+                    }
+                }
+                else{
+                   dataSource.removeAtIndex(index)
+                }
                 myChannelTableView.reloadData()
             }
         }
@@ -574,8 +586,15 @@ extension MyChannelViewController:UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        let channelName = dataSource[indexPath.row][channelNameKey]
-        if ((channelName as! String == "My Day") || (channelName as! String == "Archive"))
+        var channelName : String = String()
+        if(searchActive){
+            channelName = searchDataSource[indexPath.row][channelNameKey] as! String
+        }
+        else{
+            channelName = dataSource[indexPath.row][channelNameKey] as! String
+        }
+       
+        if ((channelName == "My Day") || (channelName == "Archive"))
         {
             return false
         }

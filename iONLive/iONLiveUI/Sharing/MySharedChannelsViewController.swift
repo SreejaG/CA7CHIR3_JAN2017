@@ -341,14 +341,39 @@ class MySharedChannelsViewController: UIViewController {
             doneButton.hidden = false
         }
         let indexpath = notif.object as! Int
-        let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
-        if(selectedValue == 1){
-            dataSource[indexpath]["tempSelected"] = 0
+        if(searchActive)
+        {
+            let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
+            if(selectedValue == 1)
+            {
+                searchDataSource[indexpath]["tempSelected"] = 0
+            }
+            else
+            {
+                searchDataSource[indexpath]["tempSelected"] = 1
+            }
+            
+            let selectedChannelId =  searchDataSource[indexpath][channelIdKey] as! String
+            for (var i = 0; i < dataSource.count; i++)
+            {
+                let dataSourceChannelId = dataSource[i][channelIdKey] as! String
+                if(selectedChannelId == dataSourceChannelId)
+                {
+                    dataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                }
+            }
         }
-        else{
-             dataSource[indexpath]["tempSelected"] = 1
+        else
+        {
+            
+            let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
+            if(selectedValue == 1){
+                dataSource[indexpath]["tempSelected"] = 0
+            }
+            else{
+                dataSource[indexpath]["tempSelected"] = 1
+            }
         }
-
         sharedChannelsTableView.reloadData()
     }
 }

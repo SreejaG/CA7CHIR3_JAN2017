@@ -820,7 +820,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        photoThumpCollectionView.alpha = 0.4
+//        photoThumpCollectionView.alpha = 0.4
         self.fullScrenImageView.alpha = 1.0
         self.showOverlay()
         dispatch_async(backgroundQueue, {
