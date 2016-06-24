@@ -484,8 +484,21 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                fullDataSource.removeAtIndex(index)
-                dataSource.removeAtIndex(index)
+                if(searchActive){
+                    let channelId = searchDataSource[index][userNameKey] as! String
+                    searchDataSource.removeAtIndex(index)
+                    for(var i = 0; i < fullDataSource.count; i++){
+                        let orgChannel = fullDataSource[i][userNameKey] as! String
+                        if(orgChannel == channelId){
+                            dataSource.removeAtIndex(i)
+                            fullDataSource.removeAtIndex(i)
+                        }
+                    }
+                }
+                else{
+                    fullDataSource.removeAtIndex(index)
+                    dataSource.removeAtIndex(index)
+                }
             }
             contactTableView.reloadData()
         }
@@ -572,7 +585,13 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            let deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
+            var deletedUserId : String = String()
+            if(searchActive){
+                deletedUserId = self.searchDataSource[indexPath.row][self.userNameKey]! as! String
+            }
+            else{
+                deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
+            }
             generateWaytoSendAlert(deletedUserId, indexpath: indexPath.row)
         }
     }
