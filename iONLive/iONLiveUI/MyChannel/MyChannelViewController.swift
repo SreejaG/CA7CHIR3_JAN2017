@@ -320,7 +320,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let url = nullToNil(thumbUrlBeforeNullChk) as! String
             let thumbUrl: NSURL = convertStringtoURL(url)
             let mediaDetailId = element["media_detail_id"]?.stringValue
-            
+           
             dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
         }
         
@@ -394,6 +394,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func deleteChannelDetails(userName: String, token: String, channelId:String, index: Int)
     {
         showOverlay()
+      
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
             self.authenticationSuccessHandlerDelete(response,index: index)
         }) { (error, message) -> () in
@@ -606,7 +607,13 @@ extension MyChannelViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            let deletedChannelId = self.dataSource[indexPath.row][self.channelIdKey]! as! String
+            var deletedChannelId : String = String()
+            if(searchActive){
+                deletedChannelId = self.searchDataSource[indexPath.row][self.channelIdKey]! as! String
+            }
+            else{
+                deletedChannelId = self.dataSource[indexPath.row][self.channelIdKey]! as! String
+            }
             generateWaytoSendAlert(deletedChannelId, indexPath: indexPath.row)
         }
     }
