@@ -420,12 +420,14 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }
         else
         {
-            let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
-            if(selectedValue == 1){
-                fullDataSource[indexpath]["tempSelected"] = 0
-            }
-            else{
-                fullDataSource[indexpath]["tempSelected"] = 1
+            if(indexpath < fullDataSource.count){
+                let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+                if(selectedValue == 1){
+                    fullDataSource[indexpath]["tempSelected"] = 0
+                }
+                else{
+                    fullDataSource[indexpath]["tempSelected"] = 1
+                }
             }
         }
         contactTableView.reloadData()
