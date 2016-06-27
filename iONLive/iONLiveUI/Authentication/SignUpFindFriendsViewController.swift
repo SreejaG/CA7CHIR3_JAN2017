@@ -161,7 +161,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 let currentContactName = ABRecordCopyCompositeName(record).takeRetainedValue() as String
                 print(currentContactName)
                 
-                self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, inviteKey:"0"])
+                self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, "orgSelected":0, "tempSelected":0])
             }
         }
         addContactDetails(contactPhoneNumbers)

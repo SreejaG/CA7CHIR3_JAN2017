@@ -14,30 +14,12 @@ class contactTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileName: UILabel!
     @IBOutlet var contactSelectionButton: UIButton!
     
-    let nameKey = "user_name"
-    let selectionKey = "selection"
-    
-    var cellDataSource:[String:AnyObject]?
-    
-    var selectedArray: NSMutableArray = NSMutableArray()
-    var deselectedArray: NSMutableArray = NSMutableArray()
+    var section : Int = Int()
     
     @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-        
-        if cellDataSource != nil{
-            let selectedValue: String = cellDataSource![nameKey] as! String
-            if(selectedArray.containsObject(selectedValue)){
-                selectedArray.removeObject(selectedValue)
-                deselectedArray.addObject(selectedValue)
-                contactSelectionButton.setImage(UIImage(named:"red-circle"), forState: .Normal)
-            }
-            else{
-                selectedArray.addObject(selectedValue)
-                deselectedArray.removeObject(selectedValue)
-                contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState: .Normal)
-            }
-            
-        }
+        let tag = sender.tag
+        let dict = ["sectionKey": section,"rowKey":tag]
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshSignUpContactListTableView", object:dict)
     }
     
     override func awakeFromNib() {
