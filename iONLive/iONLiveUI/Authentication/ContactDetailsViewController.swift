@@ -50,7 +50,7 @@ class ContactDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        doneButton.hidden = true
+     //   doneButton.hidden = true
          NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactDetailsViewController.callSignUpRefreshContactListTableView(_:)), name: "refreshSignUpContactListTableView", object: nil)
         initialise()
     }
@@ -88,16 +88,20 @@ class ContactDetailsViewController: UIViewController {
                 }
             }
         }
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        showOverlay()
-        contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
-            self.authenticationSuccessHandlerInvite(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandlerInvite(error, code: message)
-            return
+        if(contactsArray.count > 0){
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            showOverlay()
+            contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
+                    self.authenticationSuccessHandlerInvite(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandlerInvite(error, code: message)
+                return
+            }
+        }
+        else{
+            loadIphoneCameraController()
         }
     }
     
