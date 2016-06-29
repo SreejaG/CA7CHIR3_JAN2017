@@ -450,6 +450,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
                     self.view.userInteractionEnabled = false
+//                    self.fullScrenImageView.userInteractionEnabled = true
                     player.view .removeFromSuperview()
                     player.shouldAutoplay = true
                     player.prepareToPlay()
@@ -461,6 +462,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
                     player.play()
+                    self.moviePlayer.setFullscreen(false, animated: false)
+//                    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.movieEventFullscreenHandler(_:)), name: MPMoviePlayerDidEnterFullscreenNotification, object: nil)
                 })
             }
         }
@@ -482,6 +485,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             downloadTask!.resume()
         }
     }
+//    
+//    func movieEventFullscreenHandler(notif:NSNotification)
+//    {
+//        self.moviePlayer = notif.object as! MPMoviePlayerController
+//        self.moviePlayer.setFullscreen(false, animated: false)
+//        self.moviePlayer.controlStyle = MPMovieControlStyle.Embedded
+//    }
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
@@ -515,6 +525,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         
                         self.view.userInteractionEnabled = false
+//                        self.fullScrenImageView.userInteractionEnabled = true
                         player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
                         player.view.sizeToFit()
                         player.scalingMode = MPMovieScalingMode.Fill
@@ -1283,46 +1294,54 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
-        
+        self.removeOverlay()
         if let swipeGesture = gesture as? UISwipeGestureRecognizer
         {
             switch swipeGesture.direction
             {
             case UISwipeGestureRecognizerDirection.Left:
-                print("Swiped Left!")
-                
-                print("SelectedItem:\(selectedItem)")
-                print("DataSourceCount: \(dataSource.count)")
-                
                 if(selectedItem < dataSource.count-1)
                 {
-                    selectedItem = selectedItem+1
-                    let dict = self.dataSource[selectedItem]
-                    downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
-                    
-                    photoThumpCollectionView.reloadData()
-                    
+                    self.showOverlay()
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        self.selectedItem = self.selectedItem+1
+                        let dict = self.dataSource[self.selectedItem]
+                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem)
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.removeOverlay()
+                            self.setLabelValue(self.selectedItem)
+                            self.photoThumpCollectionView.reloadData()
+                        })
+                    })
                 }
-                
-                
+                else if(selectedItem == dataSource.count-1)
+                {
+                    self.removeOverlay()
+                }
             case UISwipeGestureRecognizerDirection.Right:
-                print("Swiped Right!")
-                
-                print("SelectedItem:\(selectedItem)")
-                print("DataSourceCount: \(dataSource.count)")
-                
                 if(selectedItem != 0)
                 {
-                    selectedItem = selectedItem-1
-                    let dict = self.dataSource[selectedItem]
-                    downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
-                    
-                    photoThumpCollectionView.reloadData()
-                    
+                    self.showOverlay()
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        self.selectedItem = self.selectedItem - 1
+                        let dict = self.dataSource[self.selectedItem]
+                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem)
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.removeOverlay()
+                            self.setLabelValue(self.selectedItem)
+                            self.photoThumpCollectionView.reloadData()
+                        })
+                    })
                 }
-                
+                else if(selectedItem == 0)
+                {
+                    self.removeOverlay()
+                }
             default:
-                print("Swipe Gesture Not Recognised!")
                 break
             }
         }
