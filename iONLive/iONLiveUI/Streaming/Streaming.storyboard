@@ -297,11 +297,7 @@
                             <constraint firstItem="0wa-ln-xlm" firstAttribute="top" secondItem="4Ox-e4-QXc" secondAttribute="bottom" id="x1l-hG-tar"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Channels" image="channels_blue" id="mbG-bZ-Yrn">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="image" keyPath="selectedImage" value="channels_blue"/>
-                        </userDefinedRuntimeAttributes>
-                    </tabBarItem>
+                    <tabBarItem key="tabBarItem" title="Channels" image="channels" selectedImage="channels_blue" id="mbG-bZ-Yrn"/>
                     <connections>
                         <outlet property="ChannelSharedTableView" destination="0wa-ln-xlm" id="8uV-Ul-yYW"/>
                     </connections>
@@ -460,11 +456,7 @@
                             <constraint firstAttribute="trailing" secondItem="jUA-sK-Gz9" secondAttribute="trailing" id="n4I-NZ-GM7"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Stream" image="all_media" selectedImage="all_media_blue" id="8WK-e4-zG1">
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="image" keyPath="selectedImage" value="all_media_blue"/>
-                        </userDefinedRuntimeAttributes>
-                    </tabBarItem>
+                    <tabBarItem key="tabBarItem" title="Stream" image="all_media" selectedImage="all_media_blue" id="8WK-e4-zG1"/>
                     <navigationItem key="navigationItem" id="OIm-4M-Uc2"/>
                     <connections>
                         <outlet property="streamListCollectionView" destination="7lb-VM-ZVf" id="g2B-Zh-f5E"/>
@@ -480,6 +472,7 @@
         <image name="Live_now" width="10" height="9"/>
         <image name="all_media" width="38" height="20"/>
         <image name="all_media_blue" width="38" height="20"/>
+        <image name="channels" width="22" height="22"/>
         <image name="channels_blue" width="22" height="22"/>
         <image name="dummyUser" width="128" height="128"/>
         <image name="snapCamMode" width="25" height="25"/>

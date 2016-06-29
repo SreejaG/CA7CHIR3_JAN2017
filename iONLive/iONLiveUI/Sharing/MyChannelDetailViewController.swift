@@ -27,7 +27,7 @@ class MyChannelDetailViewController: UITabBarController {
         let tabBarItems = self.tabBar.items
         if let items = tabBarItems
         {
-                items[1].image = UIImage(named:"friend_avatar")?.imageWithRenderingMode(.AlwaysOriginal)
+            items[1].image = UIImage(named:"friend_avatar")?.imageWithRenderingMode(.AlwaysOriginal)
             items[1].setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.darkGrayColor()], forState: .Normal)
         }
     }
