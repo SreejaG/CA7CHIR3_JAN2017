@@ -340,7 +340,7 @@
                                                     <constraint firstAttribute="width" constant="34" id="YIy-Ed-wP5"/>
                                                     <constraint firstAttribute="height" constant="31" id="ndK-hf-OPT"/>
                                                 </constraints>
-                                                <state key="normal" image="Select thumbnails"/>
+                                                <state key="normal" image="Select_Thumbnails"/>
                                                 <connections>
                                                     <action selector="didTapSelectionButton:" destination="mkf-lJ-34S" eventType="touchUpInside" id="94y-VQ-bTK"/>
                                                 </connections>
@@ -929,7 +929,7 @@
         <image name="Add" width="21" height="21"/>
         <image name="DoneButton" width="32" height="32"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
-        <image name="Select thumbnails" width="34" height="31"/>
+        <image name="Select_Thumbnails" width="34" height="31"/>
         <image name="dummyUser" width="128" height="128"/>
         <image name="notif" width="29" height="25"/>
         <image name="plusChannel" width="65" height="65"/>
