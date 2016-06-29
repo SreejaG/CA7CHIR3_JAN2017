@@ -136,10 +136,10 @@ class ChannelManager: NSObject {
         })
     }
     
-    func getMediaInteractionDetails(userName: String, accessToken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getMediaInteractionDetails(userName: String, accessToken: String,limit:String,offset:String,success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getMediaInteractionNotifications(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().GET(UrlManager.sharedInstance.getMediaInteractionNotifications(userName, accessToken: accessToken, limit: limit, offset: offset), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -165,10 +165,10 @@ class ChannelManager: NSObject {
         })
     }
     
-    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: Int, channelId: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.MediaInteractionUrl(), parameters: ["userName":userName, "access_token":accessToken, "notificationType":notifType,"mediaDetailId":mediaDetailId], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.MediaInteractionUrl(), parameters: ["userName":userName, "access_token":accessToken, "notificationType":notifType,"mediaDetailId":mediaDetailId,"channelId":channelId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -367,4 +367,35 @@ class ChannelManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
+    
+    func getMediaLikeCountDetails(userName: String, accessToken: String, mediaId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().GET(UrlManager.sharedInstance.getMedialikeCountAPI(userName, accessToken: accessToken, mediaId: mediaId), parameters: nil, success: { (operation, response) -> Void in
+            
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+            }
+            
+            }, failure: { (operation, error) -> Void in
+                
+                var failureErrorCode:String = ""
+                //get the error code from API if any
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorCode = errorCode
+                }
+                //The credentials were wrong or the network call failed
+                failure?(error: error, code:failureErrorCode)
+        })
+    }
+
+    
 }

@@ -258,7 +258,7 @@
                                                     <constraint firstAttribute="height" constant="40" id="ZSx-tL-jQ4"/>
                                                     <constraint firstAttribute="width" constant="40" id="tRl-Pb-B9a"/>
                                                 </constraints>
-                                                <state key="normal" image="Add friends"/>
+                                                <state key="normal" image="addfriends"/>
                                                 <connections>
                                                     <action selector="inviteContacts:" destination="dw1-rz-646" eventType="touchUpInside" id="POq-MO-enm"/>
                                                     <action selector="inviteContacts:" destination="nhN-Vw-th3" eventType="touchUpInside" id="QUt-ia-CgN"/>
@@ -497,7 +497,7 @@
                                                     <constraint firstAttribute="height" constant="40" id="6R7-Je-I0U"/>
                                                     <constraint firstAttribute="width" constant="40" id="iuv-tL-87j"/>
                                                 </constraints>
-                                                <state key="normal" image="Add friends"/>
+                                                <state key="normal" image="addfriends"/>
                                                 <connections>
                                                     <action selector="inviteContacts:" destination="nhN-Vw-th3" eventType="touchUpInside" id="dug-pO-Y3L"/>
                                                 </connections>
@@ -833,8 +833,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Add friends" width="32" height="25"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
+        <image name="addfriends" width="32" height="25"/>
         <image name="all_media" width="38" height="20"/>
         <image name="all_media_blue" width="38" height="20"/>
         <image name="avatar" width="11" height="12"/>

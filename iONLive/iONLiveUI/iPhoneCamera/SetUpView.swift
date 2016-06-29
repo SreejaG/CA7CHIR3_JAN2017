@@ -95,24 +95,37 @@ import UIKit
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
     
-    func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String)
+    func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String, channelId: String, objects: MovieViewController)
     {
-        channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, success: { (response) in
-            self.authenticationSuccessHandlerSetMedia(response)
-        }) { (error, message) in
+       
+        channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, channelId: Int(channelId)!, success: { (response) in
+            self.authenticationSuccessHandlerSetMedia(response,obj: objects)
             
+        }) { (error, message) in
+            let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String
+            objects.successFromSetUpView(count)
         }
     }
     
-    func authenticationSuccessHandlerSetMedia(response:AnyObject?)
+    func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {
-        if let json = response as? [String: AnyObject]
+      
+        let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String
+               if let json = response as? [String: AnyObject]
         {
             status = json["status"] as! Int
+            var countint : Int = Int(count)!
+            countint = countint + 1
+            print(countint)
+            NSUserDefaults.standardUserDefaults().setValue("\(countint)", forKey: "likeCountFlag")
+            obj.successFromSetUpView("\(countint)")
         }
         else
         {
             ErrorManager.sharedInstance.inValidResponseError()
+            obj.successFromSetUpView(count)
         }
     }
+
 }
+

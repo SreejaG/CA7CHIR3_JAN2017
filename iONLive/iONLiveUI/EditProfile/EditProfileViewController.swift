@@ -329,6 +329,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
             self.removeOverlay()
+            let savingPath = "\(userId)Profile"
+            FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
             return

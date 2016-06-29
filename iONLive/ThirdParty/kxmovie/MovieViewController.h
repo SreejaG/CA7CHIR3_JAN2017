@@ -22,14 +22,17 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 
 + (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
                                 channelName: (NSString *) channelName
+                                channelId: (NSString *) channelId
                                 userName: (NSString *) userName
                                 mediaType: (NSString *) mediaType
                                 profileImage: (UIImage *) profileImage
                                 VideoImageUrl: (UIImage *) VideoImageUrl
                                 notifType: (NSString *) notifType
-                                mediaId: (NSString *) mediaId
-                               isProfile: (BOOL) isProfile;
+                                 mediaId: (NSString *) mediaId
+                                timeDiff: (NSString *) timeDiff
+                               likeCountStr: (NSString *) likeCountStr;
 
+-(void) successFromSetUpView:( NSString *) count;
 
 @property (readonly) BOOL playing;
 

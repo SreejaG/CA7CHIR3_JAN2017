@@ -15,6 +15,7 @@ class StreamsListViewController: UIViewController{
     static let identifier = "StreamsListViewController"
     let imageUploadManger = ImageUpload.sharedInstance
     let profileManager = ProfileManager.sharedInstance
+    let channelManager = ChannelManager.sharedInstance
     var totalMediaCount: Int = Int()
     var channelId:String!
     var channelName:String!
@@ -154,6 +155,7 @@ class StreamsListViewController: UIViewController{
 //            removeOverlay()
 
             let responseArr = json["objectJson"] as! [AnyObject]
+            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -161,6 +163,7 @@ class StreamsListViewController: UIViewController{
                 let userid = responseArr[index].valueForKey(userIdKey) as! String
                 let time = responseArr[index].valueForKey("last_updated_time_stamp") as! String
                 let channelName =  responseArr[index].valueForKey("channel_name") as! String
+                let channelIdSelected =  responseArr[index].valueForKey("ch_detail_id")?.stringValue
                 var notificationType : String = String()
                 if let notifType =  responseArr[index].valueForKey("notification_type") as? String
                 {
@@ -182,7 +185,7 @@ class StreamsListViewController: UIViewController{
                 let mediaUrlBeforeNullChk =  responseArr[index].valueForKey("thumbnail_name_SignedUrl")
                 let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName])
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName, channelIdkey:channelIdSelected!,"createdTime":time])
             }
             
             if(imageDataSource.count > 0){
@@ -321,7 +324,7 @@ class StreamsListViewController: UIViewController{
                             })
                         }
                     }
-                    self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!])
+                    self.dataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.removeOverlay()
                        self.streamListCollectionView.reloadData()
@@ -344,7 +347,7 @@ class StreamsListViewController: UIViewController{
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
         }
     }
@@ -434,12 +437,14 @@ class StreamsListViewController: UIViewController{
         if let json = response as? [String: AnyObject]
         {
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
+            print(responseArrLive)
             if (responseArrLive.count != 0)
             {
                 for element in responseArrLive{
                     
                     let stremTockn = element[streamTockenKey] as! String
                     let userId = element[userIdKey] as! String
+                    let channelIdSelected = element["ch_detail_id"]?.stringValue
                     let channelname = element[channelNameKey] as! String
                     let mediaId = element["live_stream_detail_id"]?.stringValue
                     
@@ -479,7 +484,7 @@ class StreamsListViewController: UIViewController{
                     dateFormatter.timeZone = NSTimeZone(name: "UTC")
                     let dateStr = dateFormatter.stringFromDate(NSDate())
                     let currentDate = dateFormatter.dateFromString(dateStr)
-                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate!,self.channelNameKey:channelname])
+                    self.dataSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate!,self.channelNameKey:channelname, self.channelIdkey: channelIdSelected!])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                      self.streamListCollectionView.reloadData()
@@ -506,6 +511,131 @@ class StreamsListViewController: UIViewController{
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
+    
+    
+    func  didSelectExtension(indexPathRow: Int)
+    {
+       getProfileImageSelectedIndex(indexPathRow)
+    }
+    
+    func getProfileImageSelectedIndex(indexpathRow: Int)
+    {
+        let subUserName = dataSource[indexpathRow][userIdKey] as! String
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+                self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
+            }, failure: { (error, message) -> () in
+                self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
+                return
+        })
+    }
+    
+    var profileImageUserForSelectedIndex : UIImage = UIImage()
+    
+    func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
+            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
+            if(profileImageName != "")
+            {
+                let url: NSURL = self.convertStringtoURL(profileImageName)
+                if let data = NSData(contentsOfURL: url){
+                    let imageDetailsData = (data as NSData?)!
+                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
+                }
+                else{
+                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+                }
+            }
+            else{
+                profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+            }
+            
+        }
+        else{
+            profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+        }
+        getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
+    }
+    
+    func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int)
+    {
+        profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+        getLikeCountForSelectedIndex(indexPathRow,profile: profileImageUserForSelectedIndex)
+    }
+
+    func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage)  {
+        let mediaId = dataSource[indexpathRow][mediaIdKey] as! String
+        getLikeCount(mediaId, indexpathRow: indexpathRow, profile: profile)
+    }
+    
+    func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
+        var likeCount: String = "0"
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId,
+        success: { (response) in
+            self.successHandlerForMediaCount(response,indexpathRow:indexpathRow,profile: profile)
+            }, failure: { (error, message) -> () in
+            self.failureHandlerForMediaCount(error, code: message,indexPathRow:indexpathRow,profile: profile)
+            return
+        })
+    }
+    
+    var likeCountSelectedIndex : String = "0"
+    func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int,profile:UIImage)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            likeCountSelectedIndex = json["likeCount"] as! String
+        }
+        loadmovieViewController(indexpathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
+    }
+    
+    func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int,profile:UIImage)
+    {
+        likeCountSelectedIndex = "0"
+        loadmovieViewController(indexPathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
+    }
+
+    func loadmovieViewController(indexPathRow:Int,profileImage:UIImage,likeCount:String) {
+        
+        self.removeOverlay()
+        streamListCollectionView.alpha = 1.0
+
+        let type = dataSource[indexPathRow][mediaTypeKey] as! String
+        if((type ==  "image") || (type == "video"))
+        {
+            let dateString = self.dataSource[indexPathRow]["createdTime"] as! String
+            let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
+            
+            let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPathRow][self.actualImageKey] as! String, channelName: self.dataSource[indexPathRow][self.channelNameKey] as! String,channelId: self.dataSource[indexPathRow][self.channelIdkey] as! String, userName: self.dataSource[indexPathRow][self.userIdKey] as! String, mediaType: self.dataSource[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPathRow][self.notificationKey] as! String, mediaId: self.dataSource[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount) as! MovieViewController
+            self.presentViewController(vc, animated: false) { () -> Void in
+            }
+        }
+        else
+        {
+            let streamTocken = self.dataSource[indexPathRow][self.streamTockenKey] as! String
+            if streamTocken != ""
+            {
+                let parameters : NSDictionary = ["channelName":self.dataSource[indexPathRow][self.channelNameKey] as! String, "userName":self.dataSource[indexPathRow][self.userIdKey] as! String, "mediaType":self.dataSource[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPathRow][self.notificationKey] as! String, "mediaId": self.dataSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.dataSource[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount as! String]
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                
+                self.presentViewController(vc, animated: false) { () -> Void in
+                }
+            }
+            else
+            {
+                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+            }
+        }
+    }
+
 }
 
 extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
@@ -565,118 +695,18 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
         if(!pullToRefreshActive){
-        if  dataSource.count>0
-        {
-            if dataSource.count > indexPath.row
+            if  dataSource.count>0
             {
-                let type = dataSource[indexPath.row][mediaTypeKey] as! String
-                
-                let subUserName = dataSource[indexPath.row][userIdKey] as! String
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                var profileImage = UIImage()
-                
-                collectionView.alpha = 0.4
-                showOverlay()
-                
-                profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
-                    
-                    if let json = response as? [String: AnyObject]
-                    {
-                        self.removeOverlay()
-                        collectionView.alpha = 1.0
-                        
-                        let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
-                        let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
-                        if(profileImageName != "")
-                        {
-                            let url: NSURL = self.convertStringtoURL(profileImageName)
-                            if let data = NSData(contentsOfURL: url){
-                                let imageDetailsData = (data as NSData?)!
-                                profileImage = UIImage(data: imageDetailsData)!
-                            }
-                            else{
-                                profileImage = UIImage(named: "dummyUser")!
-                            }
-                        }
-                        else{
-                            profileImage = UIImage(named: "dummyUser")!
-                        }
-                        
-                    }
-                    else{
-                        self.removeOverlay()
-                        collectionView.alpha = 1.0
-                        profileImage = UIImage(named: "dummyUser")!
-                    }
-                    if type ==  "image"
-                    {
-                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
-                        self.presentViewController(vc, animated: false) { () -> Void in
-                        }
-                    }
-                    else if type == "video"
-                    {
-                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage:profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
-                        self.presentViewController(vc, animated: false) { () -> Void in
-                        }
-                    }
-                    else
-                    {
-                        let streamTocken = self.dataSource[indexPath.row][self.streamTockenKey] as! String
-                        if streamTocken != ""
-                        {
-                            let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][self.channelNameKey] as! String, "userName":self.dataSource[indexPath.row][self.userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPath.row][self.notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][self.mediaIdKey] as! String, "isProfile":true]
-                            let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
-                            
-                            self.presentViewController(vc, animated: false) { () -> Void in
-                                
-                            }
-                        }
-                        else
-                        {
-                            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
-                        }
-                    }
-                    
-                }) { (error, message) in
-                    profileImage = UIImage(named: "dummyUser")!
-                    if type ==  "image"
-                    {
-                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
-                        self.presentViewController(vc, animated: false) { () -> Void in
-                        }
-                    }
-                    else if type == "video"
-                    {
-                        let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.dataSource[indexPath.row][self.channelNameKey] as! String, userName: self.dataSource[indexPath.row][self.userIdKey] as! String, mediaType: self.dataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage:profileImage, videoImageUrl: self.dataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPath.row][self.notificationKey] as! String, mediaId: self.dataSource[indexPath.row][self.mediaIdKey] as! String, isProfile: true) as! MovieViewController
-                        self.presentViewController(vc, animated: false) { () -> Void in
-                        }
-                    }
-                    else
-                    {
-                        let streamTocken = self.dataSource[indexPath.row][self.streamTockenKey] as! String
-                        if streamTocken != ""
-                        {
-                            let parameters : NSDictionary = ["channelName":self.dataSource[indexPath.row][self.channelNameKey] as! String, "userName":self.dataSource[indexPath.row][self.userIdKey] as! String, "mediaType":self.dataSource[indexPath.row][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPath.row][self.notificationKey] as! String, "mediaId": self.dataSource[indexPath.row][self.mediaIdKey] as! String, "isProfile":true]
-                            let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
-                            
-                            self.presentViewController(vc, animated: false) { () -> Void in
-                                self.removeOverlay()
-                            }
-                        }
-                        else
-                        {
-                            ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
-                        }
-                    }
-                    
+                if dataSource.count > indexPath.row
+                {
+                    collectionView.alpha = 0.4
+                    showOverlay()
+                    didSelectExtension(indexPath.row)
                 }
-            }
             }
         }
     }
+   
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)

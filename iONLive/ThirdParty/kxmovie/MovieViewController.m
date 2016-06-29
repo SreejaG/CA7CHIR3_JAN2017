@@ -114,7 +114,8 @@ static NSMutableDictionary * gHistory;
     
     IBOutlet UIProgressView *videoProgressBar;
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
-    int likeFlag;
+    NSString *likeFlag;
+    BOOL likeTapFlag;
     
     IBOutlet UIImageView *profilePicture;
     
@@ -122,6 +123,11 @@ static NSMutableDictionary * gHistory;
     IBOutlet UILabel *userName;
     
     IBOutlet UILabel *channelName;
+    
+    __weak IBOutlet UIImageView *avatarImage;
+    
+    __weak IBOutlet UILabel *likeCount;
+    
     
     BOOL                _interrupted;
     NSURLSessionDownloadTask *downloadTask;
@@ -159,7 +165,7 @@ static NSMutableDictionary * gHistory;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
     
-    NSString *userId,*accessToken,*mediaDetailId,*notificationType;
+    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected;
     UIImageView *backgroundImage;
 }
 
@@ -170,9 +176,12 @@ static NSMutableDictionary * gHistory;
 @property (nonatomic) Connectivity *internetReachability;
 @property(nonatomic,strong) MPMoviePlayerController *moviePlayer;
 
+
+
 @end
 
-@implementation MovieViewController
+@implementation MovieViewController 
+MovieViewController *obj1;
 
 + (void)initialize
 {
@@ -186,21 +195,26 @@ static NSMutableDictionary * gHistory;
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL)live
 {
-    return [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
+    obj1 =  [[MovieViewController alloc] initWithContentPath: path parameters: parameters liveVideo:live];
+    return obj1;
 }
 
 + (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
                              channelName: (NSString *) channelname
+                            channelId: (NSString *) channelId
                                 userName: (NSString *) username
                                mediaType: (NSString *) mediaType
                             profileImage: (UIImage *) profileImage
                            VideoImageUrl: (UIImage *) VideoImageUrl
                                notifType: (NSString *) notifType
                                  mediaId: (NSString *) mediaId
-                               isProfile: (BOOL) isProfile
+                                timeDiff: (NSString *) timeDiff
+                            likeCountStr: (NSString *) likeCountStr
 {
-    return [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId isProfile:isProfile];
+    obj1 = [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname channelId: channelId userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr];
+    return obj1;
 }
+
 
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
@@ -225,27 +239,30 @@ static NSMutableDictionary * gHistory;
             NSString *user = [parameters valueForKey:@"userName"];
             UIImage *image = [parameters valueForKey:@"profileImage"];
             NSString *notif = [parameters valueForKey:@"notifType"];
+            NSString *channelId = [parameters valueForKey:@"channelId"];
             profilePicture.image = image;
             channelName.text = channel;
+            typeMedia.textColor = [UIColor redColor];
             typeMedia.text = @"Live";
-            userName.text = user;
-            if([notif isEqual: @"likes"])
-            {
-                likeFlag = 0;
-            }
-            else{
-                likeFlag = 1;
-            }
-            
+            userName.text = [NSString stringWithFormat:@"@%@",user];
+          
+            channelIdSelected = channelId;
             NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
             userId = [standardDefaults valueForKey:@"userLoginIdKey"];
             accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
             notificationType = @"LIKE";
             mediaDetailId = [parameters valueForKey:@"mediaId"];
+            likeCount.text = [parameters valueForKey:@"likeCount"];
+            [standardDefaults setValue:[parameters valueForKey:@"likeCount"] forKey:@"likeCountFlag"];
             if([userId isEqualToString:user]){
                 heartTapButton.hidden = YES;
                 typeMedia.text = @"";
-                userName.text = @"";
+                likeCount.hidden = true;
+                avatarImage.hidden = true;
+            }
+            else{
+                likeCount.hidden = false;
+                avatarImage.hidden = false;
             }
             closeButton.hidden = false;
             _parameters = nil;
@@ -258,13 +275,15 @@ static NSMutableDictionary * gHistory;
 
 - (id) initWithImageVideo: (NSString *) mediaUrl
               channelName: (NSString *) channelname
+                channelId: (NSString *) channelId
                  userName: (NSString *) username
                 mediaType: (NSString *) mediaType
              profileImage: (UIImage *) profileImage
             VideoImageUrl: (UIImage *) VideoImageUrl
                 notifType: (NSString *) notifType
                   mediaId: (NSString *) mediaId
-                isProfile: (BOOL) isProfile
+                 timeDiff: (NSString *) timeDiff
+                 likeCountStr: (NSString *) likeCountStr
 {
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
@@ -275,34 +294,41 @@ static NSMutableDictionary * gHistory;
         NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
         userId = [standardDefaults valueForKey:@"userLoginIdKey"];
         accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
-        if(isProfile == true){
-            profilePicture.image = profileImage;
-        }
+        profilePicture.image = profileImage;
         channelName.text = channelname;
+        likeCount.text = likeCountStr;
         if([mediaType  isEqual: @"live"]){
+            typeMedia.textColor = [UIColor redColor];
             typeMedia.text = mediaType;
         }
         else{
-            typeMedia.text = @"";
+            typeMedia.textColor = [UIColor blackColor];
+            typeMedia.text = timeDiff;
         }
-        userName.text = username;
-        if([notifType isEqual: @"likes"])
-        {
-            likeFlag = 0;
-        }
-        else{
-            likeFlag = 1;
-        }
+        userName.text = [NSString stringWithFormat:@"@%@",username];
+        [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
+        
+//        if([notifType isEqual: @"likes"])
+//        {
+//            likeFlag = 0;
+//        }
+//        else{
+//            likeFlag = 1;
+//        }
         
         notificationType = @"LIKE";
         mediaDetailId = mediaId;
-        
+        channelIdSelected = channelId;
         if([userId isEqualToString:username]){
-            heartTapButton.hidden = YES;
-            typeMedia.text = @"";
-            userName.text = @"";
+            heartTapButton.hidden = true;
+            likeCount.hidden = true;
+            avatarImage.hidden = true;
         }
-        
+        else{
+            heartTapButton.hidden = false;
+            likeCount.hidden = false;
+            avatarImage.hidden = false;
+        }
         if([mediaType  isEqual: @"video"])
         {
             imageVideoView.hidden = true;
@@ -492,6 +518,7 @@ static NSMutableDictionary * gHistory;
 
 -(void) setUpViewForImageVideo
 {
+    
     heart2Button.hidden = true;
     heart3Button.hidden = true;
     heart4Button.hidden = true;
@@ -547,6 +574,7 @@ static NSMutableDictionary * gHistory;
     profilePicture.layer.masksToBounds = YES;
     [self setUpView];
     [self setUpThumbailImage];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -1805,11 +1833,17 @@ static NSMutableDictionary * gHistory;
 - (IBAction)didTapHeartImage:(id)sender
 {
     [self addHeart];
-    if(likeFlag == 1){
-        SetUpView *setUpObj = [[SetUpView alloc]init];
-        [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId];
-        likeFlag = 0;
+    NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+    likeFlag = [standardDefaults valueForKey:@"likeCountFlag"];
+    if([likeFlag  isEqual: @"0"]){
+        if(likeTapFlag == false){
+            likeTapFlag = true;
+            SetUpView *setUpObj = [[SetUpView alloc]init];
+            [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId channelId:channelIdSelected objects:obj1];
+        }
     }
+    
+   
     
     //    if (heartButtomBottomConstraint.constant == 111.0)
     //    {
@@ -1824,6 +1858,12 @@ static NSMutableDictionary * gHistory;
     //        heartButtomBottomConstraint.constant = 111.0;
     //    }
     
+}
+
+-(void) successFromSetUpView:(NSString *) count
+{
+    [likeCount setText:count];
+    likeFlag = count;
 }
 
 - (IBAction)didTapSharingListIcon:(id)sender

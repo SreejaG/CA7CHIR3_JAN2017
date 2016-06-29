@@ -110,4 +110,49 @@ class FileManagerViewController: UIViewController {
         return mediaDeleteFlag
     }
     
+    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
+    }
+    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Month, fromDate: date, toDate: todate, options: []).month
+    }
+    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    }
+    func daysFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Day, fromDate: date, toDate: todate, options: []).day
+    }
+    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    }
+    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    }
+    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
+        return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
+    }
+    func offsetFrom(date:NSDate,todate:NSDate) -> String {
+        if yearsFrom(date,todate:todate)   > 0 { return "\(yearsFrom(date,todate:todate))year ago"   }
+        if monthsFrom(date,todate:todate)  > 0 { return "\(monthsFrom(date,todate:todate))month ago"  }
+        if weeksFrom(date,todate:todate)   > 0 { return "\(weeksFrom(date,todate:todate))week ago"   }
+        if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))day ago"    }
+        if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))hour ago"   }
+        if minutesFrom(date,todate:todate) > 0 { return "\(minutesFrom(date,todate:todate))min ago" }
+        if secondsFrom(date,todate:todate) > 0 { return "\(secondsFrom(date,todate:todate))sec ago" }
+        return ""
+    }
+    func  getTimeDifference(dateStr:String) -> String {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        
+        let cloudDate = dateFormatter.dateFromString(dateStr)
+        
+        let localDateStr = dateFormatter.stringFromDate(NSDate())
+        let localDate = dateFormatter.dateFromString(localDateStr)
+        
+        let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
+        return differenceString
+    }
+    
 }

@@ -84,9 +84,23 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         return Singleton.instance
     }
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         showOverlay()
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        
+        self.view .addGestureRecognizer(swipeRight)
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        
+        self.view .addGestureRecognizer(swipeLeft)
+        
         let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
         fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
@@ -1267,6 +1281,52 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         return ""
     }
     
+    func handleSwipe(gesture: UIGestureRecognizer)
+    {
+        
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer
+        {
+            switch swipeGesture.direction
+            {
+            case UISwipeGestureRecognizerDirection.Left:
+                print("Swiped Left!")
+                
+                print("SelectedItem:\(selectedItem)")
+                print("DataSourceCount: \(dataSource.count)")
+                
+                if(selectedItem < dataSource.count-1)
+                {
+                    selectedItem = selectedItem+1
+                    let dict = self.dataSource[selectedItem]
+                    downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
+                    
+                    photoThumpCollectionView.reloadData()
+                    
+                }
+                
+                
+            case UISwipeGestureRecognizerDirection.Right:
+                print("Swiped Right!")
+                
+                print("SelectedItem:\(selectedItem)")
+                print("DataSourceCount: \(dataSource.count)")
+                
+                if(selectedItem != 0)
+                {
+                    selectedItem = selectedItem-1
+                    let dict = self.dataSource[selectedItem]
+                    downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
+                    
+                    photoThumpCollectionView.reloadData()
+                    
+                }
+                
+            default:
+                print("Swipe Gesture Not Recognised!")
+                break
+            }
+        }
+    }
 }
 
 

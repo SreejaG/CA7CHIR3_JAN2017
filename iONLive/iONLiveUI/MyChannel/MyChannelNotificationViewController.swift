@@ -90,7 +90,7 @@ class MyChannelNotificationViewController: UIViewController {
     func getNotificationDetails(userName: String, token: String)
     {
         showOverlay()
-        channelManager.getMediaInteractionDetails(userName, accessToken: token, success: { (response) -> () in
+        channelManager.getMediaInteractionDetails(userName, accessToken: token, limit: "350", offset: "0", success: { (response) in
             self.authenticationSuccessHandler(response)
             
         }) { (error, message) -> () in
@@ -198,39 +198,60 @@ class MyChannelNotificationViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let mediaResponseArr = json["notification Details"]!["mediaDetails"] as! [[String:AnyObject]]
+            let mediaResponseArr = json["notification Details"] as! [[String:AnyObject]]
+            print(mediaResponseArr)
+            var mediaId : String = String()
+            var mediaThumbUrl : String = String()
             if mediaResponseArr.count > 0
             {
                 for element in mediaResponseArr{
+                    let liveStreamId =  element["live_stream_detail_id"] as! NSNumber
+                    if liveStreamId != 0
+                    {
+                        mediaId = "\(liveStreamId)"
+                    }
+                    else
+                    {
+                        mediaId = "\(element["media_detail_id"]  as! NSNumber)"
+                    }
+                    
+                    let notifType = element["notification_type"] as! String
+                    if(notifType.lowercaseString == "likes"){
+                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
+                        mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+                    }
+                    else{
+                        mediaThumbUrl = "nomedia"
+                    }
+                    
+                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
+                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
+                    
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     
-                    let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
-                    let mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
-                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
-                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-                   
-                     dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime])
+                    dataSource.append(["mediaIdKey":mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercaseString])
                 }
             }
             
-            let channelResponseArr = json["notification Details"]!["channelDetails"] as! [[String:AnyObject]]
-            if channelResponseArr.count > 0
-            {
-                for element in channelResponseArr{
-                    let notTime = element["created_time_stamp"] as! String
-                    let timeDiff = getTimeDifference(notTime)
-                    let messageFromCloud = element["message"] as! String
-                    let message = "\(messageFromCloud)  \(timeDiff)"
-                    
-                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
-                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:"nomedia",notificationTimeKey:notTime])
-                }
-                
-            }
+        
+//            let channelResponseArr = json["notification Details"]!["channelDetails"] as! [[String:AnyObject]]
+//            if channelResponseArr.count > 0
+//            {
+//                for element in channelResponseArr{
+//                    let notTime = element["created_time_stamp"] as! String
+//                    let timeDiff = getTimeDifference(notTime)
+//                    let messageFromCloud = element["message"] as! String
+//                    let message = "\(messageFromCloud)  \(timeDiff)"
+//                    
+//                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
+//                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
+//                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:"nomedia",notificationTimeKey:notTime])
+//                }
+//                
+//            }
             if(dataSource.count > 0)
             {
                 dataSource.sortInPlace({ p1, p2 in
@@ -238,6 +259,7 @@ class MyChannelNotificationViewController: UIViewController {
                     let time2 = p2[notificationTimeKey] as! String
                     return time1 > time2
                 })
+                
                 if(dataSource.count > 0){
                     let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                     let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -284,7 +306,8 @@ class MyChannelNotificationViewController: UIViewController {
             else{
                 mediaImage = UIImage()
             }
-            self.fulldataSource.append([self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!])
+            
+            self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.NotificationTableView.reloadData()
