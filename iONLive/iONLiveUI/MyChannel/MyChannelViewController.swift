@@ -268,6 +268,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         {
             channelDetailsDict.removeAll()
             channelDetailsDict = json["channels"] as! [[String:AnyObject]]
+            print(channelDetailsDict)
             setChannelDetails()
         }
         else

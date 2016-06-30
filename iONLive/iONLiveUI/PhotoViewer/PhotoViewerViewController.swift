@@ -120,8 +120,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         let defaults = NSUserDefaults.standardUserDefaults()
+        progressDict.removeAll()
         defaults.setObject(nil, forKey: "uploaObjectDict")
-        
+        defaults.setObject(nil, forKey: "ProgressDict")
         timerUpload.invalidate()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
@@ -760,6 +761,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if dataSource.count > indexPath.row
         {
             if(indexPath.row == selectedItem){
+                photoThumpCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: false)
                 cell.layer.borderWidth = 2;
                 cell.layer.borderColor = UIColor(red: 44.0/255.0, green: 214.0/255.0, blue: 229.0/255.0, alpha: 0.7).CGColor
             }

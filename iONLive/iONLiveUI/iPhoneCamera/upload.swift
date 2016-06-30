@@ -51,7 +51,7 @@ protocol uploadProgressDelegate
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
                 self.uploadData( i,completion: { (result) -> Void in
-                })
+            })
             })
         }
     }
@@ -101,6 +101,8 @@ protocol uploadProgressDelegate
                         else
                         {
                             dummyImagesDataSourceDatabase.append([thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageToConvert!])
+//                            imageToConvert = nil
+//                            imageAfterConversionThumbnail = nil
                         }
                     }
                 }
@@ -247,8 +249,10 @@ protocol uploadProgressDelegate
                 let sizeThumb = CGSizeMake(70,70)
                 let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvertFull, scaledToFillSize: sizeThumb)
                 uploadMediaDict.append([mediaIdKey : mediaId!,mediaTypeKey : self.signedURLResponse.valueForKey("type") as! String,timeStampKey:"",thumbSignedUrlKey :signedURLResponse.valueForKey("UploadThumbnailUrl") as! String!,fullSignedUrlKey : signedURLResponse.valueForKey("UploadObjectUrl") as! String!,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageToConvertFull])
-                let data = NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict)
-                defaults.setObject(data , forKey :"uploaObjectDict")
+           //     var data = NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict)
+               
+                defaults.setObject(NSKeyedArchiver.archivedDataWithRootObject(uploadMediaDict) , forKey :"uploaObjectDict")
+                
                 if PhotoViewerInstance.controller != nil
                 {
                     let controller = PhotoViewerInstance.controller as! PhotoViewerViewController
@@ -261,7 +265,7 @@ protocol uploadProgressDelegate
                             if result == "Success"
                             {
                                 self.dummyImagesDataSourceDatabase.removeAll()
-                                let defaults = NSUserDefaults .standardUserDefaults()
+                                let defaults = NSUserDefaults.standardUserDefaults()
                                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                                 let mediaId = self.signedURLResponse.valueForKey("mediaId")?.stringValue
@@ -414,7 +418,10 @@ protocol uploadProgressDelegate
         }
         for(var i = 0 ; i < progressDictionary.count ; i++)
         {
-            if progressDictionary[i][self.mediaIdKey]?.stringValue == mediaId
+            let mediaIdOrg = mediaId as! String
+            let mediaidTemp = progressDictionary[i][mediaIdKey] as! String
+            //if progressDictionary[i][self.mediaIdKey]?.stringValue == mediaId
+            if mediaIdOrg == mediaidTemp
             {
                 progressDictionary[i]["progress"] = value
             }

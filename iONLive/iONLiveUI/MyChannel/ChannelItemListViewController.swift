@@ -319,7 +319,9 @@ class ChannelItemListViewController: UIViewController {
         backButton.hidden = true
         deleteButton.enabled = false
         addButton.enabled = false
-        addButton.setTitle("Share", forState: .Normal)
+        deleteButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
+        addButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
+     //   addButton.setTitle("Add to", forState: .Normal)
         channelItemCollectionView.reloadData()
     }
     
@@ -502,7 +504,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             deleteButton.enabled = true
             addButton.enabled = true
             addButton.setTitle("Add to", forState: .Normal)
-            
+            addButton.setTitleColor(UIColor.blueColor(), forState: UIControlState.Normal)
             if(selectedArray.contains(indexPath.row)){
                 let elementIndex = selectedArray.indexOf(indexPath.row)
                 selectedArray.removeAtIndex(elementIndex!)
@@ -510,7 +512,12 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             else{
                 selectedArray.append(indexPath.row)
             }
-            
+            if(selectedArray.count <= 0){
+                deleteButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
+                addButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
+                deleteButton.enabled = false
+                addButton.enabled = false
+            }
             collectionView.reloadData()
         }
         else{
