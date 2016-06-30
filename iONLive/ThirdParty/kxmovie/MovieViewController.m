@@ -165,7 +165,7 @@ static NSMutableDictionary * gHistory;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
     
-    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected;
+    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected;
     UIImageView *backgroundImage;
 }
 
@@ -245,13 +245,15 @@ MovieViewController *obj1;
             typeMedia.textColor = [UIColor redColor];
             typeMedia.text = @"Live";
             userName.text = [NSString stringWithFormat:@"@%@",user];
-          
-            channelIdSelected = channelId;
             NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
             userId = [standardDefaults valueForKey:@"userLoginIdKey"];
             accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
             notificationType = @"LIKE";
+            
             mediaDetailId = [parameters valueForKey:@"mediaId"];
+            channelIdSelected = channelId;
+            mediaTypeSelected = @"live";
+            
             likeCount.text = [parameters valueForKey:@"likeCount"];
             [standardDefaults setValue:[parameters valueForKey:@"likeCount"] forKey:@"likeCountFlag"];
             if([userId isEqualToString:user]){
@@ -317,8 +319,11 @@ MovieViewController *obj1;
 //        }
         
         notificationType = @"LIKE";
+        
         mediaDetailId = mediaId;
         channelIdSelected = channelId;
+        mediaTypeSelected = mediaType;
+        
         if([userId isEqualToString:username]){
             heartTapButton.hidden = true;
             likeCount.hidden = true;
@@ -1838,8 +1843,16 @@ MovieViewController *obj1;
     if([likeFlag  isEqual: @"0"]){
         if(likeTapFlag == false){
             likeTapFlag = true;
+            NSString *type;
+            if([mediaTypeSelected  isEqual: @"live"])
+            {
+                type = @"liveStreamId";
+            }
+            else{
+                type = @"mediaDetailId";
+            }
             SetUpView *setUpObj = [[SetUpView alloc]init];
-            [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId channelId:channelIdSelected objects:obj1];
+            [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId channelId:channelIdSelected objects:obj1 typeMedia:type];
         }
     }
     

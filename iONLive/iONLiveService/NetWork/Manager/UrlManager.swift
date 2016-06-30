@@ -195,9 +195,9 @@ class UrlManager {
         return mediaInteractionNotification
     }
     
-    func getMedialikeCountAPI(userName: String, accessToken: String, mediaId: String) -> String
+    func getMedialikeCountAPI(userName: String, accessToken: String) -> String
     {
-        let mediaInteractionNotification = MediaInteractionUrl() + "/" + mediaId + "/" + userName + "/" + accessToken
+        let mediaInteractionNotification = MediaInteractionUrl() + "/" + userName + "/" + accessToken
         return mediaInteractionNotification
     }
     

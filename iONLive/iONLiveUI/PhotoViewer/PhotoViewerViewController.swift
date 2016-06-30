@@ -226,24 +226,25 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let sdifferentString =  offsetFrom(fromdate!, todate: currentDate!)
                 switch(sdifferentString)
                 {
-                case "TODAY" :
-                    dateForDisplay = "   TODAY"
-                    break;
-                case "1d" : dateForDisplay = "  YESTERDAY"
-                break;
-                default :
-                    let dateFormatterDisplay = NSDateFormatter()
-                    dateFormatterDisplay.dateFormat = "MMM d, yyyy"
-                    let dateString = dateFormatterDisplay.stringFromDate(fromdate!)
-                    dateForDisplay = "  \(dateString)"
-                    break;
+                    case "TODAY" :
+                        dateForDisplay = "   TODAY"
+                        break;
+                    case "1d" : dateForDisplay = "  YESTERDAY"
+                        break;
+                    default :
+                        let dateFormatterDisplay = NSDateFormatter()
+                        dateFormatterDisplay.dateFormat = "MMM d, yyyy"
+                        let dateString = dateFormatterDisplay.stringFromDate(fromdate!)
+                        dateForDisplay = "  \(dateString)"
+                        break;
                 }
             }
             else{
                 dateForDisplay = "   TODAY"
             }
-            
-            mediaTimeLabel.text = dateForDisplay
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.mediaTimeLabel.text = dateForDisplay
+            })
         }
     }
     

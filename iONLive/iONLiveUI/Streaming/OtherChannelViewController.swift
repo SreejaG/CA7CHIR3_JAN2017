@@ -357,9 +357,10 @@ class OtherChannelViewController: UIViewController {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId,
-                                                success: { (response) in
-                                                    self.successHandlerForMediaCount(response,indexpathRow:indexpathRow)
+        let mediaTypeSelected : String = fullImageDataSource[indexpathRow][mediaTypeKey] as! String
+        print(mediaTypeSelected)
+        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
+                self.successHandlerForMediaCount(response,indexpathRow:indexpathRow)
             }, failure: { (error, message) -> () in
                 self.failureHandlerForMediaCount(error, code: message,indexPathRow:indexpathRow)
                 return

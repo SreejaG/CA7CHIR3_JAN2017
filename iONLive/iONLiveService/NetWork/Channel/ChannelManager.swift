@@ -165,10 +165,10 @@ class ChannelManager: NSObject {
         })
     }
     
-    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: Int, channelId: Int, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func postMediaInteractionDetails(userName: String, accessToken: String, notifType: String, mediaDetailId: Int, channelId: Int, type: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.MediaInteractionUrl(), parameters: ["userName":userName, "access_token":accessToken, "notificationType":notifType,"mediaDetailId":mediaDetailId,"channelId":channelId], success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.MediaInteractionUrl(), parameters: ["userName":userName, "access_token":accessToken, "notificationType":notifType, type:mediaDetailId,"channelId":channelId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -368,10 +368,10 @@ class ChannelManager: NSObject {
         })
     }
     
-    func getMediaLikeCountDetails(userName: String, accessToken: String, mediaId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getMediaLikeCountDetails(userName: String, accessToken: String, mediaId: String, mediaType: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getMedialikeCountAPI(userName, accessToken: accessToken, mediaId: mediaId), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().GET(UrlManager.sharedInstance.getMedialikeCountAPI(userName, accessToken: accessToken), parameters: ["id":mediaId, "type": mediaType], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

@@ -574,12 +574,13 @@ class StreamsListViewController: UIViewController{
     }
     
     func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
+        let mediaTypeSelected : String = dataSource[indexpathRow][mediaTypeKey] as! String
+        print(mediaTypeSelected)
         var likeCount: String = "0"
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId,
-        success: { (response) in
+        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
             self.successHandlerForMediaCount(response,indexpathRow:indexpathRow,profile: profile)
             }, failure: { (error, message) -> () in
             self.failureHandlerForMediaCount(error, code: message,indexPathRow:indexpathRow,profile: profile)
