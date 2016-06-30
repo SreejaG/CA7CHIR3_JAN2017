@@ -287,7 +287,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         {
             timeZoneOffsetInUTC = "+\(timeOffsetStr)"
         }
-        print(timeZoneOffsetInUTC)
+        
         authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in

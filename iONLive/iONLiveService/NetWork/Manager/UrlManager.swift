@@ -117,6 +117,7 @@ class UrlManager {
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
+        print(getUserRelatedDataAPI)
         return getUserRelatedDataAPI
     }
     

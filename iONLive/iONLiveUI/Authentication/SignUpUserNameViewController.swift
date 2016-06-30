@@ -51,6 +51,7 @@ class SignUpUserNameViewController: UIViewController {
                                                                      attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         userNameTextfield.delegate = self
+        userNameTextfield.keyboardType = .NamePhonePad
         userNameTextfield.becomeFirstResponder()
         addObserver()
     }
