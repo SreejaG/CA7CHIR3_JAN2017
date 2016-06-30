@@ -587,7 +587,7 @@ extension ContactDetailsViewController: UISearchBarDelegate{
                 for element in dataSource![1]{
                     var tmp: String =  ""
                     tmp = (element["user_name"]?.lowercaseString)!
-                    if(tmp.hasPrefix(searchText.lowercaseString))
+                    if(tmp.containsString(searchText.lowercaseString))
                     {
                         searchContactDataSource.append(element)
                     }
