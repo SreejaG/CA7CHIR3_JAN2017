@@ -46,7 +46,6 @@
 		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
 		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
 		164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164AEE541CD09DE8006ACAE0 /* SetUpView.swift */; };
-		165041241CABF6CC00F1166E /* upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165041231CABF6CC00F1166E /* upload.swift */; };
 		1656E4F61C10595700F62D12 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
@@ -68,7 +67,6 @@
 		16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */; };
 		1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */; };
 		1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */; };
-		16670BAF1CD46CE700F982C8 /* MediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16670BAE1CD46CE700F982C8 /* MediaCache.swift */; };
 		166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */; };
 		166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */; };
 		166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */; };
@@ -214,6 +212,8 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
+		B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */; };
+		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -280,7 +280,6 @@
 		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
 		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
 		164AEE541CD09DE8006ACAE0 /* SetUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpView.swift; sourceTree = "<group>"; };
-		165041231CABF6CC00F1166E /* upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = upload.swift; sourceTree = "<group>"; };
 		1656E4F51C10595700F62D12 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
@@ -302,7 +301,6 @@
 		16652B451C92865000125BB8 /* MyChannelNotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelNotificationViewController.swift; sourceTree = "<group>"; };
 		1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamsGalleryViewController.swift; sourceTree = "<group>"; };
 		1666D4821C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamListCollectionViewCell.swift; sourceTree = "<group>"; };
-		16670BAE1CD46CE700F982C8 /* MediaCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCache.swift; sourceTree = "<group>"; };
 		166796AA1C30FF8300543D7A /* ConnectAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountViewController.swift; sourceTree = "<group>"; };
 		166796AC1C30FFA600543D7A /* ConnectAccountOptionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsCell.swift; sourceTree = "<group>"; };
 		166796AE1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectAccountOptionsHeaderCell.swift; sourceTree = "<group>"; };
@@ -605,6 +603,8 @@
 		59BC3F581BFF848600710905 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
+		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -698,10 +698,10 @@
 				162F97421CC9F0C7009F68F8 /* IPhoneCameraView.storyboard */,
 				160B1F5D1C4CDF9E0022B711 /* IPhoneCameraViewController.h */,
 				160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */,
-				165041231CABF6CC00F1166E /* upload.swift */,
 				165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */,
 				164AEE541CD09DE8006ACAE0 /* SetUpView.swift */,
-				16670BAE1CD46CE700F982C8 /* MediaCache.swift */,
+				B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */,
+				B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */,
 			);
 			path = iPhoneCamera;
 			sourceTree = "<group>";
@@ -1765,7 +1765,6 @@
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
-				16670BAF1CD46CE700F982C8 /* MediaCache.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
@@ -1778,7 +1777,6 @@
 				160903FA1C6C7ED1004E381D /* EditProfPersonalInfoCell.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
-				165041241CABF6CC00F1166E /* upload.swift in Sources */,
 				16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */,
 				1633D2391C5F21FD00937FAD /* Entity.swift in Sources */,
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
@@ -1808,6 +1806,7 @@
 				165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */,
 				164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
+				B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */,
 				16DA06E91C7ED8A8004759D5 /* NBMetadataCoreMapper.m in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
 				166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */,
@@ -1891,6 +1890,7 @@
 				167512C41C3152BE007F5326 /* ChannelItemListViewController.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
+				B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */,
 				165B77E11C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift in Sources */,
 				16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,

@@ -85,13 +85,10 @@ int orientationFlag = 0;
 
 @implementation IPhoneCameraViewController
 
-NSMutableDictionary * snapShotsDict;
 IPhoneLiveStreaming * liveStreaming;
-NSMutableDictionary *ShotsDict;
 FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
-
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -451,7 +448,7 @@ NSInteger shutterActionMode;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
-        NSLog(@"%@",userImages);
+    //    NSLog(@"%@",userImages);
         if(userImages.count > 0){
             for(int i=0;i<userImages.count;i++){
                 if(i==0){
@@ -742,8 +739,6 @@ NSInteger shutterActionMode;
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
     [imageData writeToFile:filePath atomically:YES];
     [self saveIphoneCameraSnapShots:dateString path:filePath];
-    ShotsDict = [[NSMutableDictionary alloc]init];
-    [ShotsDict setValue:filePath forKey:dateString];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
@@ -757,13 +752,34 @@ NSInteger shutterActionMode;
 
 -(void) loaduploadManagerForImage
 {
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    upload *uploadManager =[[upload alloc]init];
-    uploadManager.snapShots = snapShotsDict;
-    uploadManager.shotDict = ShotsDict;
-    uploadManager.media = @"image";
-    [uploadManager uploadMedia];
+    NSString *path = [self readIphoneCameraSnapShotsFromDB];
+    uploadMediaToGCS *obj = [[uploadMediaToGCS alloc]init];
+    obj.path = path;
+    obj.media = @"image";
+    [obj initialise];
 }
+
+-(NSString *) readIphoneCameraSnapShotsFromDB {
+    
+    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    NSManagedObjectContext *context = appDel.managedObjectContext;
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
+    request.returnsObjectsAsFaults=false;
+    
+    NSArray *snapShotsArray = [[NSArray alloc]init];
+    NSString *snapImagePath;
+    snapShotsArray = [context executeFetchRequest:request error:nil];
+    
+    if([snapShotsArray count] > 0){
+        for(NSString *snapShotValue in snapShotsArray)
+        {
+            snapImagePath = [snapShotValue valueForKey:@"path"];
+        }
+    }
+    return snapImagePath;
+}
+
 
 #pragma mark video recording
 
@@ -823,10 +839,6 @@ NSInteger shutterActionMode;
             [self.movieFileOutput stopRecording];
         }
     } );
-}
-
--(void) uploadprogress :(float) progress
-{
 }
 
 -(void)showProgressBar
@@ -1115,30 +1127,18 @@ NSInteger shutterActionMode;
 
 -(void) moveVideoToDocumentDirectory : (NSURL *) path
 {
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
-    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
-    NSURL *fileURL = [self grabFileURL:[NSString stringWithFormat:@"%@%@",dateString,@".mov"]];
-    NSData *movieData = [NSData dataWithContentsOfURL:path];
     [self loaduploadManager : path ];
     UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
 }
 
-- (NSURL*)grabFileURL:(NSString *)fileName {
-    NSURL *documentsURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    documentsURL = [documentsURL URLByAppendingPathComponent:fileName];
-    return documentsURL;
-}
-
 -(void) loaduploadManager : (NSURL *)filePath
 {
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    upload *uploadManager =[[upload alloc]init];
-    uploadManager.snapShots = snapShotsDict;
-    uploadManager.shotDict = ShotsDict;
-    uploadManager.media = @"video";
-    uploadManager.videoPath =filePath;
-    [uploadManager uploadMedia];
+    NSString *path = [self readIphoneCameraSnapShotsFromDB];
+    uploadMediaToGCS *obj = [[uploadMediaToGCS alloc]init];
+    obj.path = path;
+    obj.media = @"video";
+    obj.videoSavedURL = filePath;
+    [obj initialise];
 }
 
 #pragma mark Device Configuration
@@ -1210,30 +1210,6 @@ NSInteger shutterActionMode;
 }
 
 #pragma mark save Image to DataBase
-
--(NSMutableDictionary *) displayIphoneCameraSnapShots {
-    
-    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
-    NSManagedObjectContext *context = appDel.managedObjectContext;
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
-    request.returnsObjectsAsFaults=false;
-    
-    NSMutableDictionary *snapShotsDict = [[NSMutableDictionary alloc]init];
-    NSArray *snapShotsArray = [[NSArray alloc]init];
-    snapShotsArray = [context executeFetchRequest:request error:nil];
-    
-    if([snapShotsArray count] > 0){
-        
-        for(NSString *snapShotValue in snapShotsArray)
-        {
-            NSString *snapImageName =[snapShotValue valueForKey:@"imageName"];
-            NSString *snapImagePath = [snapShotValue valueForKey:@"path"];
-            [snapShotsDict setValue:snapImagePath forKey:snapImageName];
-        }
-    }
-    return snapShotsDict;
-}
 
 -(void) deleteIphoneCameraSnapShots{
     AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
@@ -1366,14 +1342,9 @@ NSInteger shutterActionMode;
 
 -(void) loadPhotoViewer
 {
-    snapShotsDict = [self displayIphoneCameraSnapShots];
-    
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
     
     PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
-    photoViewerViewController.snapShots = snapShotsDict;
-    photoViewerViewController.ShotsDictionary =ShotsDict;
-    
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

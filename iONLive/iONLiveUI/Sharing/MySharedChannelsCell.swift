@@ -28,7 +28,7 @@ class MySharedChannelsCell: UITableViewCell {
     
     @IBAction func channelSelectionClicked(sender: AnyObject)
     {
-            let tag = sender.tag
+        let tag = sender.tag
         NSNotificationCenter.defaultCenter().postNotificationName("refreshMySharedChannelTableView", object:tag)
     }
 }

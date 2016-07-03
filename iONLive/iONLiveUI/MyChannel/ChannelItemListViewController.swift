@@ -375,6 +375,25 @@ class ChannelItemListViewController: UIViewController {
                 imageDataSource.removeAtIndex(selectedIndex)
                 fullImageDataSource.removeAtIndex(selectedIndex)
             }
+            if(channelName == "Archive"){
+                let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+                
+                if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+                {
+                    let fileManager = NSFileManager.defaultManager()
+                    do {
+                        try fileManager.removeItemAtPath(documentsPath)
+                    }
+                    catch let error as NSError {
+                        print("Ooops! Something went wrong: \(error)")
+                    }
+                    FileManagerViewController.sharedInstance.createParentDirectory()
+                }
+                else{
+                    FileManagerViewController.sharedInstance.createParentDirectory()
+                }
+
+            }
             selectionFlag = false
             selectedArray.removeAll()
             selected.removeAllObjects()

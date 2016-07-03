@@ -478,15 +478,23 @@ extension AddChannelViewController:UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         shareFlag = false
-        addChannelView.userInteractionEnabled = false
-        addChannelView.alpha = 0.3
-        doneButton.hidden = false
+       
         if(selectedArray.contains(indexPath.row)){
             let elementIndex = selectedArray.indexOf(indexPath.row)
             selectedArray.removeAtIndex(elementIndex!)
         }
         else{
             selectedArray.append(indexPath.row)
+        }
+        if(selectedArray.count <= 0){
+            addChannelView.userInteractionEnabled = true
+            addChannelView.alpha = 1.0
+            doneButton.hidden = true
+        }
+        else{
+            addChannelView.userInteractionEnabled = false
+            addChannelView.alpha = 0.4
+            doneButton.hidden = false
         }
         tableView.reloadData()
     }

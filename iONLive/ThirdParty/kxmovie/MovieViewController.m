@@ -396,6 +396,7 @@ MovieViewController *obj1;
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
     NSString *mediaNamePath = [NSString stringWithFormat:@"%@full",mediaDetailId];
+    NSLog(@"%@",mediaNamePath);
     NSString *savingPath = [NSString stringWithFormat:@"%@/%@full",parentPathStr,mediaDetailId];
     UIImage *mediaImage;
     bool fileExistFlag = [[FileManagerViewController sharedInstance] fileExist:savingPath];
@@ -730,7 +731,7 @@ MovieViewController *obj1;
 {
     IPhoneCameraViewController *iphoneCameraViewController = [[IPhoneCameraViewController alloc]init];
     [iphoneCameraViewController deleteIphoneCameraSnapShots];
-    snapShotsDict = iphoneCameraViewController.displayIphoneCameraSnapShots;
+//    snapShotsDict = iphoneCameraViewController.displayIphoneCameraSnapShots;
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     if([snapShotsDict count] > 0){
         NSMutableArray *dateArray=[[NSMutableArray alloc]init];
