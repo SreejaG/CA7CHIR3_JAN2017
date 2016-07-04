@@ -139,6 +139,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func authenticationFailureHandlerAddChannel(error: NSError?, code: String)
     {
         self.removeOverlay()
+        channelTextField.text = ""
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {

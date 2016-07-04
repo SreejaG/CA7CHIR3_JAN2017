@@ -56,7 +56,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Invalid Email", message:"Please provide a valid image")
     }
-    
+        
     func loginInvalidEmail()
     {
         alert("Invalid Email", message: "Please provide a valid email address.")

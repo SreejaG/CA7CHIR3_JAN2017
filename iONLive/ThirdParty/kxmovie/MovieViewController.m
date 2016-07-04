@@ -342,37 +342,36 @@ MovieViewController *obj1;
             backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,( (self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height))];
             backgroundImage.image = VideoImageUrl;
             topView.hidden = false;
+            
             [glView addSubview:backgroundImage];
             [glView sendSubviewToBack:backgroundImage];
-            
+
             NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
             NSString *parentPathStr = [parentPath absoluteString];
-            NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaId];
+            NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
             NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
             BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
-            
+
             if(fileExistFlag == true){
                 videoProgressBar.hidden = true;
-                
                 self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-                MPMoviePlayerController *player = self.moviePlayer;
-                [player setShouldAutoplay:YES];
-                [player prepareToPlay];
-                
-                player.view.frame = CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,( (self.view.bounds.size.height+67) - heartBottomDescView.bounds.size.height));
+                MPMoviePlayerController *player = _moviePlayer;
+                player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - heartBottomDescView.frame.size.height);
+                [player.view sizeToFit];
+                player.scalingMode = MPMovieScalingModeFill;
+                player.movieSourceType = MPMovieSourceTypeFile;
+                player.controlStyle = MPMovieControlStyleNone;
+                player.repeatMode = MPMovieRepeatModeNone;
+                [glView addSubview:[player view]];
                 
                 topView.hidden = false;
                 cameraSelectionButton.hidden = true;
                 liveView.hidden = true;
                 numberOfSharedChannels.hidden = true;
                 topView.backgroundColor = [UIColor clearColor];
-    
-                player.scalingMode = MPMovieScalingModeAspectFill;
-                player.movieSourceType = MPMovieSourceTypeFile;
-                player.controlStyle = MPMovieControlStyleNone;
-                player.repeatMode = MPMovieRepeatModeNone;
-                [glView addSubview:[player view]];
+                [glView bringSubviewToFront:heartView];
                 [glView bringSubviewToFront:topView];
+             
                 [player play];
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(playerDidFinish:)
@@ -474,6 +473,7 @@ MovieViewController *obj1;
             [glView bringSubviewToFront:topView];
             
             [player play];
+            
         }
     }
 }
@@ -493,6 +493,7 @@ MovieViewController *obj1;
 }
 
 -(void) tapDetected{
+    
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
     NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];

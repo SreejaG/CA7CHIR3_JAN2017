@@ -339,6 +339,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         dataSource = MediaBeforeUploadComplete.sharedInstance.getDataSource()
         print(dataSource)
         if(dataSource.count > 0){
+            dataSource.sortInPlace({ p1, p2 in
+                let time1 = p1[timeStampKey] as! String
+                let time2 = p2[timeStampKey] as! String
+                return time1 > time2
+            })
             addToButton.hidden = false
             deletButton.hidden = false
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -788,6 +793,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
         }
         if(imageDataSource.count > 0){
+            imageDataSource.sortInPlace({ p1, p2 in
+                let time1 = p1[timeStampKey] as! String
+                let time2 = p2[timeStampKey] as! String
+                return time1 > time2
+            })
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {

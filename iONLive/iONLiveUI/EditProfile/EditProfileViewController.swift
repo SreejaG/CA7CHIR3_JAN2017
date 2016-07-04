@@ -241,8 +241,33 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         getSignedUrl()
     }
     
+    func generateWaytoSendAlert()
+    {
+        let alert = UIAlertController(title: "Not Saved", message: "Do you want to save the details", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.saveButton.hidden = true
+            self.showOverlay()
+            self.getSignedUrl()
+        }))
+        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: {
+            (action) -> Void in
+            self.redirect()
+        }))
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+
+    func redirect() {
+         self.navigationController?.popViewControllerAnimated(false)
+    }
+    
     @IBAction func backClicked(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(true)
+        if(saveButton.hidden == false){
+                generateWaytoSendAlert()
+        }
+        else{
+            self.navigationController?.popViewControllerAnimated(false)
+        }
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
