@@ -43,6 +43,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     var swipeFlag : Bool = false
     
+    var playHandleflag:NSInteger = NSInteger()
+    
     @IBOutlet var TopView: UIView!
     @IBOutlet var BottomView: UIView!
     @IBOutlet weak var mediaTimeLabel: UILabel!
@@ -93,6 +95,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         super.viewDidLoad()
         
+        progressLabelDownload = UILabel()
+        
+        progressViewDownload?.hidden = true
+        progressLabelDownload?.hidden = true
+        
+        playHandleflag = 0
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
         showOverlay()
         
@@ -116,6 +124,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    override func viewWillAppear(animated: Bool)
+    {
+        print("TestingViewWillappear!!")
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -390,6 +405,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
         if fileExistFlag == true
         {
+            progressViewDownload?.hidden = true
+            progressLabelDownload?.hidden = true
+            
             let url = NSURL(fileURLWithPath: savingPath)
             self.moviePlayer = nil
             self.moviePlayer = MPMoviePlayerController.init(contentURL: url)
@@ -398,21 +416,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
-                    self.view.userInteractionEnabled = false
-//                    self.fullScrenImageView.userInteractionEnabled = true
+                    self.view.userInteractionEnabled = true
+                    self.fullScrenImageView.userInteractionEnabled = true
                     player.view .removeFromSuperview()
                     player.shouldAutoplay = true
                     player.prepareToPlay()
                     player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
                     player.scalingMode = MPMovieScalingMode.Fill
-                    player.controlStyle = MPMovieControlStyle.None
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
                     player.play()
-                    self.moviePlayer.setFullscreen(false, animated: false)
                 })
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playbackStateChange(_:)), name: MPMoviePlayerPlaybackStateDidChangeNotification, object: self.moviePlayer)
             }
         }
         else{
@@ -420,18 +437,72 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
             
             downloadTask = session.downloadTaskWithRequest(downloadRequest)
+            progressViewDownload?.hidden = false
+            progressLabelDownload?.hidden = false
+            
             progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
             progressViewDownload?.center = fullScrenImageView.center
             
             view.addSubview(progressViewDownload!)
-            
-            progressLabelDownload = UILabel()
+
             let frame = CGRectMake(fullScrenImageView.center.x - 100, fullScrenImageView.center.y - 100, 200, 50)
             progressLabelDownload?.frame = frame
             view.addSubview(progressLabelDownload!)
             fullScrenImageView.alpha = 0.2
             downloadTask!.resume()
         }
+    }
+    
+    func playbackStateChange(notif:NSNotification)
+    {
+        
+        print("Entered the Function!!!")
+        
+        print(notif)
+        
+        let moviePlayerController = notif.object as! MPMoviePlayerController
+        
+        print(moviePlayerController)
+        
+        var playbackState: String = "Unknown"
+        print("PlayBackStateDetected:\(playbackState)")
+        
+        switch moviePlayerController.playbackState {
+        case .Stopped:
+            playbackState = "Stopped"
+        case .Playing:
+            playbackState = "Playing"
+            playHandleflag = 1
+        case .Paused:
+            playbackState = "Paused"
+            playHandleflag = 1
+        case .Interrupted:
+            playbackState = "Interrupted"
+        case .SeekingForward:
+            playbackState = "Seeking Forward"
+        case .SeekingBackward:
+            playbackState = "Seeking Backward"
+        }
+        
+        print("Playback State:\(playbackState)")
+    }
+    
+    func doneButtonClickedToExit(notif2:NSNotification)
+    {
+        print("Entered doneButtonClickedToExit")
+        print(notif2)
+        let fullScreenController = notif2.object as! MPMoviePlayerController
+        print(fullScreenController)
+        
+        fullScreenController.shouldAutoplay = true
+        fullScreenController.prepareToPlay()
+        
+        fullScreenController.scalingMode = MPMovieScalingMode.AspectFill
+        
+        fullScreenController.play()
+        
+        print("Applied SizeToFit!!!")
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: fullScreenController)
     }
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
@@ -465,12 +536,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if let player = self.moviePlayer {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         
-                        self.view.userInteractionEnabled = false
-//                        self.fullScrenImageView.userInteractionEnabled = true
+                        self.view.userInteractionEnabled = true
+                        self.fullScrenImageView.userInteractionEnabled = true
                         player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
                         player.view.sizeToFit()
                         player.scalingMode = MPMovieScalingMode.Fill
-                        player.controlStyle = MPMovieControlStyle.None
+//                        player.controlStyle = MPMovieControlStyle.None
                         player.movieSourceType = MPMovieSourceType.File
                         player.repeatMode = MPMovieRepeatMode.None
                         self.view.addSubview(player.view)
@@ -674,18 +745,26 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
         swipeFlag = false
-        print(indexPath.row)
+        
+        if (playHandleflag == 1)
+        {
+            playHandleflag = 0
+            self.moviePlayer.view.removeFromSuperview()
+        }
         selectedItem = indexPath.row
         self.photoThumpCollectionView.reloadData()
         
         if dataSource.count > indexPath.row
         {
-            if(downloadTask?.state == .Running)
-            {
-                downloadTask?.cancel()
-            }
-            progressViewDownload?.hidden = true
-            progressLabelDownload?.hidden = true
+                if(downloadTask?.state == .Running)
+                {
+                    downloadTask?.cancel()
+                    fullScrenImageView.alpha = 1.0
+                    progressLabelDownload?.removeFromSuperview()
+                    progressViewDownload?.removeFromSuperview()
+                    
+                }
+        
             setLabelValue(indexPath.row)
         }
         
@@ -1081,7 +1160,25 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func handleSwipe(gesture: UIGestureRecognizer)
     {
         swipeFlag = true
+        
         self.removeOverlay()
+        
+        if (playHandleflag == 1)
+        {
+            playHandleflag = 0
+            self.moviePlayer.view.removeFromSuperview()
+            playIconInFullView.hidden = false
+            self.view.userInteractionEnabled = true
+        }
+        if(downloadTask?.state == .Running)
+        {
+            downloadTask?.cancel()
+            fullScrenImageView.alpha = 1.0
+            progressLabelDownload?.removeFromSuperview()
+            progressViewDownload?.removeFromSuperview()
+
+        }
+        
         if let swipeGesture = gesture as? UISwipeGestureRecognizer
         {
             switch swipeGesture.direction
