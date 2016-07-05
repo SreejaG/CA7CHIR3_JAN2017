@@ -154,6 +154,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
+       
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -346,7 +347,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         
         for(var i = 0; i < dataSource?.count; i += 1)
         {
@@ -626,7 +626,7 @@ extension EditProfileViewController:UITableViewDataSource
             var bkgndRect:CGRect = (activeField.superview?.frame)!
             bkgndRect.size.height += kbSize.height
             activeField.superview?.frame = bkgndRect
-            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 100), animated: true)
+            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 70), animated: true)
         }
     }
     
