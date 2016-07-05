@@ -151,6 +151,8 @@ bool takePictureFlag = false;
     [self initialise];
 }
 
+
+
 -(void) initialise{
     shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     [self setButtonCornerRadius];

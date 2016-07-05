@@ -54,6 +54,7 @@ class ChannelItemListViewController: UIViewController {
         cancelButton.hidden = true
         selectionFlag = false
         self.channelItemCollectionView.alwaysBounceVertical = true
+        
         initialise()
     }
     
@@ -71,6 +72,7 @@ class ChannelItemListViewController: UIViewController {
         self.channelItemCollectionView.alpha = 1.0
         channelItemCollectionView.userInteractionEnabled = true
     }
+    
     
     func initialise(){
         imageDataSource.removeAll()
