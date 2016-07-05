@@ -13,13 +13,25 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
     
+    var fullNames : String = String()
+    var userName : String = String()
+    var emails : String = String()
+    var mobileNo : String = String()
+    
+    var email: String = String()
+    var mobNo: String = String()
+    var fullName: String = String()
+    
     let requestManager = RequestManager.sharedInstance
     let profileManager = ProfileManager.sharedInstance
     let imageUploadManger = ImageUpload.sharedInstance
     
+    var activeField: UITextField = UITextField()
+    
     var loadingOverlay: UIView?
     let imagePicker = UIImagePickerController()
     var imageForProfile : UIImage = UIImage()
+    var imageForProfileOld : UIImage = UIImage()
     
     var fullImageURL : String = String()
     var thumbURL : String = String()
@@ -52,8 +64,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         initialise()
+        
+        NSNotificationCenter .defaultCenter() .addObserver(self, selector: "keyBoardWasShown:", name: UIKeyboardDidShowNotification, object: nil)
     }
     
     @IBAction func tapGestureRecognizer(sender: AnyObject) {
@@ -165,6 +179,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
+        
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -182,6 +197,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
+        dataSource![0][0][displayNameKey] = fullNames
+        dataSource![1][0][privateInfoKey] = emails
+        dataSource![1][1][privateInfoKey] = mobileNo
+        editProfTableView.reloadData()
     }
     
     func showOverlay(){
@@ -207,10 +226,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     func setUserDetails()
     {
         imageForProfile = UIImage()
-        let fullName = userDetails["full_name"] as! String
-        let userName = userDetails["user_name"] as! String
-        let email = userDetails["email"] as! String
-        let mobileNo = userDetails["mobile_no"] as! String
+        fullNames = userDetails["full_name"] as! String
+        userName = userDetails["user_name"] as! String
+        emails = userDetails["email"] as! String
+        mobileNo = userDetails["mobile_no"] as! String
         
         let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
         if(thumbUrl != "")
@@ -227,10 +246,11 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             imageForProfile = UIImage(named: "dummyUser")!
         }
+        imageForProfileOld = imageForProfile
         
-        profileInfoOptions = [[displayNameKey:fullName, userNameKey:userName]]
+        profileInfoOptions = [[displayNameKey:fullNames, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
-        privateInfoOptions = [[privateInfoKey:email],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
+        privateInfoOptions = [[privateInfoKey:emails],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
         
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
         editProfTableView.reloadData()
@@ -307,6 +327,12 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             
             uploadImage(fullImageURL, imageToSave: imageForProfile, completion: { (result) in
                 self.uploadImage(self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
+                    if(result == "Success"){
+                        self.imageForProfileOld = self.imageForProfile
+                    }
+                    else{
+                        self.imageForProfile = self.imageForProfileOld
+                    }
                 })
             })
             self.updateProfileDetails()
@@ -321,9 +347,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
-        var email: String = String()
-        var mobNo: String = String()
-        var fullName: String = String()
         
         for(var i = 0; i < dataSource?.count; i += 1)
         {
@@ -357,6 +380,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             self.removeOverlay()
             let savingPath = "\(userId)Profile"
             FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
+            self.fullNames = self.fullName
+            self.mobileNo = self.mobNo
+            self.emails = self.email
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
             return
@@ -523,8 +549,8 @@ extension EditProfileViewController:UITableViewDataSource
                     }
                     let cameraController = IPhoneCameraViewController()
                     let sizeThumb = CGSizeMake(70,70)
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
-                    imageForProfile = imageAfterConversionThumbnail
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfileOld, scaledToFillSize: sizeThumb)
+                    imageForProfileOld = imageAfterConversionThumbnail
                     cell.userImage.image = imageForProfile
                     
                     cell.userNameTextField.text = cellDataSource[userNameKey]
@@ -586,9 +612,27 @@ extension EditProfileViewController:UITableViewDataSource
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
+        activeField = textField
         saveButton.hidden = false
     }
+    
+    func keyBoardWasShown(notif:NSNotification)
+    {
+        if(activeField.tag >= 100)
+        {
+            var info: NSDictionary = NSDictionary()
+            info = notif .userInfo!
+            let kbSize : CGSize = info.objectForKey(UIKeyboardFrameBeginUserInfoKey)!.CGRectValue.size
+            var bkgndRect:CGRect = (activeField.superview?.frame)!
+            bkgndRect.size.height += kbSize.height
+            activeField.superview?.frame = bkgndRect
+            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 100), animated: true)
+        }
+    }
+    
     func textFieldDidEndEditing(textField: UITextField) {
+        
+        activeField = UITextField()
         
         if(textField.tag == 0)
         {

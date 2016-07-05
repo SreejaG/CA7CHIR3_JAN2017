@@ -143,7 +143,10 @@ bool takePictureFlag = false;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+  
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
+    
     [self loadingView];
     dispatch_async( dispatch_get_main_queue(), ^{
         
@@ -153,6 +156,9 @@ bool takePictureFlag = false;
     [self initialise];
 }
 
+-(void) backgroundEnter{
+    NSLog(@"Hi");
+}
 -(void) loadInitialView
 {
       dispatch_async( dispatch_get_main_queue(), ^{
@@ -454,6 +460,9 @@ bool takePictureFlag = false;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backgroundEnter) name: UIApplicationWillResignActiveNotification object:nil];
+    
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
         
     }else {

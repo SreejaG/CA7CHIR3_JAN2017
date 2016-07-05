@@ -289,6 +289,7 @@ MovieViewController *obj1;
 {
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
+    
     if (self) {
     
         [self setUpDefaultValues];
@@ -580,7 +581,7 @@ MovieViewController *obj1;
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backgroundEnter) name:@"enterBackground" object:nil];
+   
     
 //    NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
     
