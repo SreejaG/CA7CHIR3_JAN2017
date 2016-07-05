@@ -22,6 +22,7 @@ class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate {
         super.awakeFromNib()
         userNameTextField.delegate = self
         displayNameTextField.delegate = self
+        displayNameTextField.autocorrectionType = .No
         userImage.layer.cornerRadius = userImage.frame.size.width/2
         userImage.layer.masksToBounds = true
     }

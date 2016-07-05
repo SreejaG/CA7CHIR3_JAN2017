@@ -89,6 +89,7 @@ IPhoneLiveStreaming * liveStreaming;
 FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
+bool takePictureFlag = false;
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -479,18 +480,20 @@ NSInteger shutterActionMode;
         }
     });
     
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
-        if ( data == nil )
-            return;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if([latestCapturedMediaType  isEqual: @"video"])
-            {
-                self.playiIconView.hidden = false;
-            }
-            self.thumbnailImageView.image= [UIImage imageWithData: data];
+    if(takePictureFlag == false){
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
+            if ( data == nil )
+                return;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if([latestCapturedMediaType  isEqual: @"video"])
+                {
+                    self.playiIconView.hidden = false;
+                }
+                self.thumbnailImageView.image= [UIImage imageWithData: data];
+            });
         });
-    });
+    }
     
     if([mediaSharedCount  isEqual: @"0"])
     {
@@ -712,6 +715,7 @@ NSInteger shutterActionMode;
                     if (status == PHAuthorizationStatusAuthorized ) {
                         dispatch_async( dispatch_get_main_queue(), ^{
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                            takePictureFlag = true;
                             UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
                             [self saveImage:imageData];
                             [self loaduploadManagerForImage];

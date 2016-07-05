@@ -52,6 +52,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         initialise()
     }
     
@@ -502,7 +503,7 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        
+      
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
@@ -511,6 +512,7 @@ extension EditProfileViewController:UITableViewDataSource
                 switch indexPath.section
                 {
                 case 0:
+                  
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
                     cell.editProfileImageButton.addTarget(self, action: "editProfileTapped:", forControlEvents: UIControlEvents.TouchUpInside)
                     
@@ -657,6 +659,7 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+        
     }
 }
 

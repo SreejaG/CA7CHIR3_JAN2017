@@ -579,9 +579,18 @@ MovieViewController *obj1;
     [super viewDidLoad];
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backgroundEnter) name:@"enterBackground" object:nil];
+    
+//    NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
+    
     [self setUpView];
     [self setUpThumbailImage];
     
+}
+
+-(void) backgroundEnter{
+    NSLog(@"hai");
 }
 
 -(void)viewWillAppear:(BOOL)animated

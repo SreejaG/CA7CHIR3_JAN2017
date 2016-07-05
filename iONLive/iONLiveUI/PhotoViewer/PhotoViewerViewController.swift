@@ -41,6 +41,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var channelIdfromLocal : NSNumber = NSNumber()
     var selectedItem : Int = Int()
     
+    var channelIdForArchive : String = String()
     var swipeFlag : Bool = false
     
     var playHandleflag:NSInteger = NSInteger()
@@ -102,7 +103,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         playHandleflag = 0
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
-        showOverlay()
+      
+        getSignedURL()
+        initialise()
+      
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
@@ -118,8 +122,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         shrinkImageViewRecognizer.numberOfTapsRequired = 1
         fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
         
-        initialise()
-        getSignedURL()
+        
+     
      }
     
     override func didReceiveMemoryWarning() {
@@ -169,18 +173,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(self.mediaSelected.count > 0)
             {
                 var channelIds : [Int] = [Int]()
+                print(self.channelIdForArchive)
+                if(self.channelIdForArchive != ""){
+                channelIds.append(Int(self.channelIdForArchive)!)
                 
-                channelIds.append(self.channelDict["Archive"] as! Int)
-                
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-                self.showOverlay()
-                self.imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: self.mediaSelected, channelId: channelIds, success: { (response) -> () in
+                    let defaults = NSUserDefaults .standardUserDefaults()
+                    let userId = defaults.valueForKey(userLoginIdKey) as! String
+                    let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                    self.showOverlay()
+                    self.imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: self.mediaSelected, channelId: channelIds, success: { (response) -> () in
                     self.authenticationSuccessHandlerDelete(response)
                     }, failure: { (error, message) -> () in
                         self.authenticationFailureHandlerDelete(error, code: message)
-                })
+                    })
+                }
             }
         }))
         
@@ -272,7 +278,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             mediaIdSelected = 0
             mediaSelected.removeAllObjects()
     
-            if(imageDataSource.count > 0){
+            print(selectedItem)
+            if((imageDataSource.count > selectedItem)&&(imageDataSource.count > 0)){
                 imageDataSource.removeAtIndex(selectedItem)
             }
             dataSource.removeAtIndex(selectedItem)
@@ -289,6 +296,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
             }
             else{
+                showOverlay()
                 fullScrenImageView.image = UIImage()
                 fullScreenZoomView.image = UIImage()
                 deletButton.hidden = true
@@ -351,8 +359,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         deletButton.hidden = true
         mediaIdSelected = 0
         
+        if let chanel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
+        {
+            channelIdForArchive = chanel.stringValue
+        }
+        
         dataSource = MediaBeforeUploadComplete.sharedInstance.getDataSource()
-        print(dataSource)
+    
         if(dataSource.count > 0){
             dataSource.sortInPlace({ p1, p2 in
                 let time1 = p1[timeStampKey] as! String
@@ -365,8 +378,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let dict = self.dataSource[0]
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: 0)
                 self.photoThumpCollectionView.reloadData()
+                
             })
         }
+        else{
+            showOverlay()
+        }
+        
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
@@ -697,7 +715,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
-        if dataSource.count > indexPath.row
+        if((dataSource.count > indexPath.row) && (dataSource.count > 0))
         {
             if(indexPath.row == selectedItem){
                 if(swipeFlag){
@@ -751,8 +769,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             playHandleflag = 0
             self.moviePlayer.view.removeFromSuperview()
         }
-        selectedItem = indexPath.row
-        self.photoThumpCollectionView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+
+            self.selectedItem = indexPath.row
+            self.photoThumpCollectionView.reloadData()
+            })
         
         if dataSource.count > indexPath.row
         {
@@ -855,7 +876,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     }
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
-        
+       
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
@@ -880,6 +901,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
+               
                 self.downloadMediaFromGCS()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.photoThumpCollectionView.reloadData()
@@ -1045,14 +1067,16 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
             let channelId = channelDetails[index].valueForKey("channel_detail_id")
+            NSUserDefaults.standardUserDefaults().setValue(channelId, forKey: "channelSelectedId")
             
             if channelName == "Archive"
             {
                mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
             }
             channelDict[channelName] = channelId
+            channelIdForArchive = channelId!.stringValue
         }
-       
+        
         if(mediaSharedCount != "0")
         {
             getMediaFromCloud()
