@@ -20,6 +20,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "screencap.h"
 
+
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
 
@@ -142,6 +143,7 @@ bool takePictureFlag = false;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
     [self loadingView];
     dispatch_async( dispatch_get_main_queue(), ^{
         
@@ -151,7 +153,30 @@ bool takePictureFlag = false;
     [self initialise];
 }
 
-
+-(void) loadInitialView
+{
+      dispatch_async( dispatch_get_main_queue(), ^{
+          NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+          NSString *path = documentsPath.absoluteString;
+          
+          if([[NSFileManager defaultManager] fileExistsAtPath:path]){
+              [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+          }
+          [[FileManagerViewController sharedInstance] createParentDirectory];
+          NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+          NSString *accessToken = [defaults valueForKey:@"deviceToken"];
+          NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
+          [defaults removePersistentDomainForName:iden];
+          [defaults setValue:accessToken forKey:@"deviceToken"];
+          [defaults setInteger:1 forKey:@"shutterActionMode"];
+          UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
+          UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateNavigationController"];
+          authenticate.navigationController.navigationBarHidden = true;
+          [[self navigationController] presentViewController:authenticate animated:false completion:^{
+              [[ErrorManager sharedInstance] tockenExpired];
+          }];
+      });
+}
 
 -(void) initialise{
     shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];

@@ -209,7 +209,7 @@ class IPhoneLiveStreaming: NSObject {
                 if(message != "STREAM001"){
                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
                     if((message == "USER004") || (message == "USER005") || (message == "USER006")){
-                       // loadInitialViewController(message)
+                      NSNotificationCenter.defaultCenter().postNotificationName("refreshLogin", object:self)
                     }
                 }
                
@@ -218,46 +218,6 @@ class IPhoneLiveStreaming: NSObject {
                 ErrorManager.sharedInstance.streamingError()
             }
         }
-        
-        func  loadInitialViewController(code: String){
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-                
-                if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-                {
-                    let fileManager = NSFileManager.defaultManager()
-                    do {
-                        try fileManager.removeItemAtPath(documentsPath)
-                    }
-                    catch let error as NSError {
-                        print("Ooops! Something went wrong: \(error)")
-                    }
-                    FileManagerViewController.sharedInstance.createParentDirectory()
-                }
-                else{
-                    FileManagerViewController.sharedInstance.createParentDirectory()
-                }
-                
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let deviceToken = defaults.valueForKey("deviceToken") as! String
-                defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-                defaults.setValue(deviceToken, forKey: "deviceToken")
-                defaults.setObject(1, forKey: "shutterActionMode");
-                
-                
-                let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-                let navigationController = UIApplication.sharedApplication().keyWindow?.rootViewController as! UINavigationController
-                let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-                navigationController.navigationBarHidden = true
-                navigationController.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                        ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-                }
-                
-            })
-        }
-        
-
         
         //PRAGMA MARK:- Start iPhone Camera Streaming
         func updateDefaultsAndStartStreamWithToken(streamToken:String , AndUserName userName:String)
