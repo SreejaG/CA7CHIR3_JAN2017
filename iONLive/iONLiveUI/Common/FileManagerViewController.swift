@@ -73,6 +73,7 @@ class FileManagerViewController: UIViewController {
         {
             let image = UIImageJPEGRepresentation(mediaImage, 0.5)
          //   if(fileExist(savingPath)){
+            print(savingPath)
                 let result = image?.writeToFile(savingPath, atomically: true)
                 mediaSaveFlag = result!
 //            }

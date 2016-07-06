@@ -75,6 +75,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alert(loginErrorTitle, message: "Please enter your username")
     }
     
+    func loginNoFullnameEnteredError()
+    {
+        alert(loginErrorTitle, message: "Please enter your full name")
+    }
+    
     func loginNoPasswordEnteredError()
     {
         alert(loginErrorTitle, message: "Please enter your password")

@@ -7,6 +7,7 @@
 //
 @import AVFoundation;
 @import Photos;
+@class AppDelegate;
 
 #import <UIKit/UIKit.h>
 #import "IPhoneCameraViewController.h"
@@ -96,6 +97,8 @@ bool takePictureFlag = false;
 {
     [super viewWillAppear:animated];
     
+    [self addApplicationObserversInIphone];
+    
     //device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter]
@@ -143,10 +146,9 @@ bool takePictureFlag = false;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-  
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
-    
+       
     [self loadingView];
     dispatch_async( dispatch_get_main_queue(), ^{
         
@@ -156,9 +158,60 @@ bool takePictureFlag = false;
     [self initialise];
 }
 
--(void) backgroundEnter{
-    NSLog(@"Hi");
+-(void)addApplicationObserversInIphone
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidEnterBackgrounds:)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidEnterBackgrounds:)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
 }
+
+-(void)applicationDidEnterBackgrounds: (NSNotification *)notification
+{
+    if (shutterActionMode == SnapCamSelectionModeVideo)
+    {
+   //     if (self.movieFileOutput.isRecording ) {
+        dispatch_async( dispatch_get_main_queue(), ^{
+//            [self loadingView];
+//            [self initialise];
+                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                    }else {
+                        [self.videoDeviceInput.device lockForConfiguration:nil];
+                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                        [self.videoDeviceInput.device unlockForConfiguration];
+                    }
+                }
+                _cameraButton.hidden = false;
+                if(flashFlag == 0){
+                    _flashButton.hidden = false;
+                }
+                else if(flashFlag == 1){
+                    _flashButton.hidden = true;
+                }
+                
+                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        });
+        [self.movieFileOutput stopRecording];
+    //    }
+    }
+    
+//    dispatch_async( dispatch_get_main_queue(), ^{
+//        
+//        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+//        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+//    });
+  
+}
+
 -(void) loadInitialView
 {
       dispatch_async( dispatch_get_main_queue(), ^{
@@ -460,8 +513,6 @@ bool takePictureFlag = false;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backgroundEnter) name: UIApplicationWillResignActiveNotification object:nil];
     
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
         

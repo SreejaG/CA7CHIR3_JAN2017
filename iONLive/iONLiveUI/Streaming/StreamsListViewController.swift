@@ -614,7 +614,7 @@ class StreamsListViewController: UIViewController{
         {
             let dateString = self.dataSource[indexPathRow]["createdTime"] as! String
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            
+            print(self.dataSource[indexPathRow][self.notificationKey] as! String)
             let vc = MovieViewController.movieViewControllerWithImageVideo(self.dataSource[indexPathRow][self.actualImageKey] as! String, channelName: self.dataSource[indexPathRow][self.channelNameKey] as! String,channelId: self.dataSource[indexPathRow][self.channelIdkey] as! String, userName: self.dataSource[indexPathRow][self.userIdKey] as! String, mediaType: self.dataSource[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl: self.dataSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: self.dataSource[indexPathRow][self.notificationKey] as! String, mediaId: self.dataSource[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }

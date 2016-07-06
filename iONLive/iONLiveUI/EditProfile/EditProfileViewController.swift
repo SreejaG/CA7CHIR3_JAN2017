@@ -232,6 +232,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         emails = userDetails["email"] as! String
         mobileNo = userDetails["mobile_no"] as! String
         
+        print(fullNames)
         let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
         if(thumbUrl != "")
         {
@@ -372,6 +373,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 }
             }
         }
+        
+        print(fullName)
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
@@ -612,6 +615,7 @@ extension EditProfileViewController:UITableViewDataSource
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
+    
         activeField = textField
         saveButton.hidden = false
     }
@@ -636,7 +640,12 @@ extension EditProfileViewController:UITableViewDataSource
         
         if(textField.tag == 0)
         {
-            dataSource![textField.tag][0][displayNameKey] = textField.text
+            if((textField.text?.isEmpty) != nil){
+                dataSource![textField.tag][0][displayNameKey] = ""
+            }
+            else{
+                dataSource![textField.tag][0][displayNameKey] = textField.text
+            }
         }
         else if(textField.tag == 100){
             let isEmailValid = isEmail(textField.text!) as Bool!

@@ -175,7 +175,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 var channelIds : [Int] = [Int]()
                 print(self.channelIdForArchive)
                 if(self.channelIdForArchive != ""){
-                channelIds.append(Int(self.channelIdForArchive)!)
+                    channelIds.append(Int(self.channelIdForArchive)!)
                 
                     let defaults = NSUserDefaults .standardUserDefaults()
                     let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -1063,6 +1063,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func setChannelDetails()
     {
         imageDataSource.removeAll()
+     
         for index in 0 ..< channelDetails.count
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
@@ -1072,9 +1073,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             if channelName == "Archive"
             {
                mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
+                channelIdForArchive = channelId!.stringValue
             }
             channelDict[channelName] = channelId
-            channelIdForArchive = channelId!.stringValue
+           
         }
         
         if(mediaSharedCount != "0")

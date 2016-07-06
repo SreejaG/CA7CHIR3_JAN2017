@@ -165,7 +165,7 @@ static NSMutableDictionary * gHistory;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
     
-    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected;
+    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected,*notificationTypes,*mediaUrlForReplay;
     UIImageView *backgroundImage;
 }
 
@@ -249,6 +249,7 @@ MovieViewController *obj1;
             userId = [standardDefaults valueForKey:@"userLoginIdKey"];
             accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
             notificationType = @"LIKE";
+            notificationTypes = notif;
             
             mediaDetailId = [parameters valueForKey:@"mediaId"];
             channelIdSelected = channelId;
@@ -311,6 +312,12 @@ MovieViewController *obj1;
         userName.text = [NSString stringWithFormat:@"@%@",username];
         [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
         
+        mediaUrlForReplay = mediaUrl;
+        
+        notificationTypes = notifType;
+        NSLog(@"%@  %@",notifType,notificationTypes);
+        
+        
 //        if([notifType isEqual: @"likes"])
 //        {
 //            likeFlag = 0;
@@ -357,8 +364,8 @@ MovieViewController *obj1;
                 videoProgressBar.hidden = true;
                 self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
                 MPMoviePlayerController *player = _moviePlayer;
-                player.view.frame = CGRectMake(glView.frame.origin.x, glView.frame.origin.y, glView.frame.size.width, glView.frame.size.height - heartBottomDescView.frame.size.height);
-                [player.view sizeToFit];
+                player.view.frame = CGRectMake(glView.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,((self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height));
+                //[player.view sizeToFit];
                 player.scalingMode = MPMovieScalingModeFill;
                 player.movieSourceType = MPMovieSourceTypeFile;
                 player.controlStyle = MPMovieControlStyleNone;
@@ -426,8 +433,8 @@ MovieViewController *obj1;
     downloadTask = [session downloadTaskWithRequest:downloadReq];
     videoProgressBar.hidden = false;
     videoProgressBar.progressViewStyle = UIProgressViewStyleDefault;
-    videoProgressBar.center = glView.center;
-    videoProgressBar.transform = CGAffineTransformScale(videoProgressBar.transform, 1, 4);
+    videoProgressBar.progress = 0.0;
+    [videoProgressBar setTransform:CGAffineTransformMakeScale(1.0, 3.0)];
     [downloadTask resume];
 }
 
@@ -580,10 +587,6 @@ MovieViewController *obj1;
     [super viewDidLoad];
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
-    
-   
-    
-//    NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
     
     [self setUpView];
     [self setUpThumbailImage];
@@ -972,10 +975,44 @@ MovieViewController *obj1;
             [self reInitialiseDecoder];
         }
     }
+    if([mediaTypeSelected isEqual:@"video"]){
+        NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+        NSString *parentPathStr = [parentPath absoluteString];
+        NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
+        NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+        BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
+        
+        if(fileExistFlag == false){
+            videoProgressBar.hidden = true;
+             NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
+            [self downloadVideo:url];
+        }
+        else{
+            
+            UIImageView *playIconView = [[UIImageView alloc]init];
+            playIconView.image = [UIImage imageNamed:@"Circled Play"];
+            playIconView.frame = CGRectMake(glView.frame.size.width/2, glView.frame.size.height/2, 30, 30);
+            [playIconView removeFromSuperview];
+            [glView addSubview:playIconView];
+            UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
+            singleTap.numberOfTapsRequired = 1;
+            [playIconView setUserInteractionEnabled:YES];
+            [playIconView addGestureRecognizer:singleTap];
+        }
+    }
 }
 
 -(void)applicationDidEnterBackground: (NSNotification *)notification
 {
+    if([mediaTypeSelected  isEqual: @"video"]){
+        [_moviePlayer.view removeFromSuperview];
+        _moviePlayer = nil;
+        [downloadTask cancel];
+        downloadTask = nil;
+        videoProgressBar.hidden = true;
+        videoProgressBar.progress = 0.0;
+    }
+    
     _backGround =  true;
     [self close];
 }
@@ -1852,7 +1889,11 @@ MovieViewController *obj1;
     [self addHeart];
     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     likeFlag = [standardDefaults valueForKey:@"likeCountFlag"];
-    if([likeFlag  isEqual: @"0"]){
+    if([notificationTypes isEqual: @"likes"])
+    {
+        likeTapFlag = true;
+    }
+    else{
         if(likeTapFlag == false){
             likeTapFlag = true;
             NSString *type;
