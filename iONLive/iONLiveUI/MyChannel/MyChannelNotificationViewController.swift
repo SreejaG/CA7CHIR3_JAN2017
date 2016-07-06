@@ -180,8 +180,21 @@ class MyChannelNotificationViewController: UIViewController {
         if weeksFrom(date,todate:todate)   > 0 { return "\(weeksFrom(date,todate:todate))w"   }
         if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))d"    }
         if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))h"   }
-        if minutesFrom(date,todate:todate) > 0 { return "\(minutesFrom(date,todate:todate))min" }
-        if secondsFrom(date,todate:todate) > 0 { return "\(secondsFrom(date,todate:todate))sec" }
+        if minutesFrom(date,todate:todate) > 0 {
+           return "\(minutesFrom(date,todate:todate))min"
+        }
+        if secondsFrom(date,todate:todate) > 0 {
+//            var timeStr = String()
+//            if(minutesFrom(date,todate:todate) <= 60){
+//                timeStr = "Just now"
+//            }
+//            else{
+//                timeStr = "\(minutesFrom(date,todate:todate))min"
+//            }
+//            return timeStr
+ //           return "\(secondsFrom(date,todate:todate))sec"
+            return "Just now"
+        }
         return ""
     }
     
@@ -228,7 +241,7 @@ class MyChannelNotificationViewController: UIViewController {
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
                     
                     let notTime = element["created_time_stamp"] as! String
-                    let timeDiff = getTimeDifference(notTime)
+                    var timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     

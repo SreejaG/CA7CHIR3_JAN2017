@@ -169,7 +169,7 @@ bool takePictureFlag = false;
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationDidEnterBackgrounds:)
+                                             selector:@selector(applicationDidActives:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
 }
@@ -178,38 +178,38 @@ bool takePictureFlag = false;
 {
     if (shutterActionMode == SnapCamSelectionModeVideo)
     {
-   //     if (self.movieFileOutput.isRecording ) {
         dispatch_async( dispatch_get_main_queue(), ^{
-//            [self loadingView];
-//            [self initialise];
-                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
-                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
-                    }else {
-                        [self.videoDeviceInput.device lockForConfiguration:nil];
-                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
-                        [self.videoDeviceInput.device unlockForConfiguration];
-                    }
+            if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                }else {
+                    [self.videoDeviceInput.device lockForConfiguration:nil];
+                    [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                    [self.videoDeviceInput.device unlockForConfiguration];
                 }
-                _cameraButton.hidden = false;
-                if(flashFlag == 0){
-                    _flashButton.hidden = false;
-                }
-                else if(flashFlag == 1){
-                    _flashButton.hidden = true;
-                }
+            }
+            _cameraButton.hidden = false;
+            if(flashFlag == 0){
+                _flashButton.hidden = false;
+            }
+            else if(flashFlag == 1){
+                _flashButton.hidden = true;
+            }
                 
-                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+            [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
         });
         [self.movieFileOutput stopRecording];
-    //    }
     }
-    
-//    dispatch_async( dispatch_get_main_queue(), ^{
-//        
-//        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-//        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-//    });
-  
+}
+
+-(void)applicationDidActives: (NSNotification *)notification
+{
+    [self loadingView];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    });
+    [self initialise];
 }
 
 -(void) loadInitialView
@@ -521,7 +521,7 @@ bool takePictureFlag = false;
         [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
         [self.videoDeviceInput.device unlockForConfiguration];
     }
-    [self removeObservers];
+//    [self removeObservers];
 }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
