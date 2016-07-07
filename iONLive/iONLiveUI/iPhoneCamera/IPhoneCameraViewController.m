@@ -196,6 +196,10 @@ bool takePictureFlag = false;
             }
                 
             [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+            
+            [self loadingView];
+            [self.previewView.session stopRunning];
+            
         });
         [self.movieFileOutput stopRecording];
     }
@@ -203,13 +207,7 @@ bool takePictureFlag = false;
 
 -(void)applicationDidActives: (NSNotification *)notification
 {
-    [self loadingView];
-    dispatch_async( dispatch_get_main_queue(), ^{
-        
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-    });
-    [self initialise];
+    [self setGUIBasedOnMode];
 }
 
 -(void) loadInitialView
@@ -1067,7 +1065,7 @@ bool takePictureFlag = false;
 
 - (void)removeObservers
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+   // [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
     [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
