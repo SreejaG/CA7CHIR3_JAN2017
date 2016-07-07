@@ -227,6 +227,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             if (responseArr.count != 0)
             {
                 for element in responseArr{
+                    print(element)
+                    
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
                     let mediaSharedCount = element[sharedMediaCount]?.stringValue
