@@ -219,7 +219,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 }
             }
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
-            print(responseArr)
+         
             if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
             {
                 mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
@@ -227,7 +227,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             if (responseArr.count != 0)
             {
                 for element in responseArr{
-                    print(element)
+                   
                     
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
