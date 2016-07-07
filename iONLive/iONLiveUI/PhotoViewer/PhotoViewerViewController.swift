@@ -44,6 +44,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var channelIdForArchive : String = String()
     var swipeFlag : Bool = false
     
+    var isDeleted : Bool = false
+    
     var playHandleflag:NSInteger = NSInteger()
     
     @IBOutlet var TopView: UIView!
@@ -141,10 +143,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
+        if(playHandleflag == 1){
+            self.moviePlayer.stop()
+        }
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
         }
+        
+        
     }
     
     @IBAction func deleteButtonAction(sender: AnyObject) {
@@ -296,13 +303,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
             }
             else{
-                showOverlay()
+                if(selectedItem == 0){
+                    removeOverlay()
+                    ErrorManager.sharedInstance.emptyMedia()
+                }
+                else{
+                    showOverlay()
+                }
                 fullScrenImageView.image = UIImage()
                 fullScreenZoomView.image = UIImage()
                 deletButton.hidden = true
                 addToButton.hidden = true
             }
-             photoThumpCollectionView.reloadData()
+            isDeleted = true
+            photoThumpCollectionView.reloadData()
         }
     }
     
@@ -715,6 +729,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
+      //  if(dataSource.count == indexPath.row - 1){
+                //   }
+        
         if((dataSource.count > indexPath.row) && (dataSource.count > 0))
         {
             if(indexPath.row == selectedItem){
@@ -757,6 +774,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             }
             
         }
+        isDeleted = false
+
         return cell
     }
     
@@ -981,8 +1000,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     self.addToButton.hidden = false
                     self.deletButton.hidden = false
                 }
-                self.photoThumpCollectionView.reloadData()
-                self.photoThumpCollectionView.layoutIfNeeded()
+                if(self.isDeleted == false){
+                    self.photoThumpCollectionView.reloadData()
+                    self.photoThumpCollectionView.layoutIfNeeded()
+                }
             })
         }
         

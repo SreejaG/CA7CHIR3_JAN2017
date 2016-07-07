@@ -114,9 +114,12 @@ import UIKit
                if let json = response as? [String: AnyObject]
         {
             status = json["status"] as! Int
+            let IsLikeSuccess = json["userLikeCountIndicator"] as! String
+            print(IsLikeSuccess)
             var countint : Int = Int(count)!
-            countint = countint + 1
-            print(countint)
+            if(IsLikeSuccess == "TRUE"){
+                countint = countint + 1
+            }
             NSUserDefaults.standardUserDefaults().setValue("\(countint)", forKey: "likeCountFlag")
             obj.successFromSetUpView("\(countint)")
         }

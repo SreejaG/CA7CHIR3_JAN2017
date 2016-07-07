@@ -124,7 +124,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //save image to local cache
     func saveImageToLocalCache(){
-
+        
             let filePathToSaveThumb = "\(mediaId)thumb"
             FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
             let filePathToSaveFull = "\(mediaId)full"

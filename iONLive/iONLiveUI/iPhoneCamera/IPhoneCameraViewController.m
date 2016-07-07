@@ -176,6 +176,7 @@ bool takePictureFlag = false;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
+    [self loadingView];
     if (shutterActionMode == SnapCamSelectionModeVideo)
     {
         dispatch_async( dispatch_get_main_queue(), ^{
@@ -197,7 +198,7 @@ bool takePictureFlag = false;
                 
             [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
             
-            [self loadingView];
+          
             [self.previewView.session stopRunning];
             
         });
@@ -208,6 +209,12 @@ bool takePictureFlag = false;
 -(void)applicationDidActives: (NSNotification *)notification
 {
     [self setGUIBasedOnMode];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+    });
+    
 }
 
 -(void) loadInitialView
@@ -1181,8 +1188,10 @@ bool takePictureFlag = false;
                         imageData = [self getThumbNail:outputFileURL];
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                         [_playiIconView setHidden:NO];
-                        [self saveImage:imageData];
-                        [self moveVideoToDocumentDirectory:outputFileURL];
+                        if(imageData != nil){
+                            [self saveImage:imageData];
+                            [self moveVideoToDocumentDirectory:outputFileURL];
+                        }
                     });
                     if ( [PHAssetResourceCreationOptions class] ) {
                         PHAssetResourceCreationOptions *options = [[PHAssetResourceCreationOptions alloc] init];

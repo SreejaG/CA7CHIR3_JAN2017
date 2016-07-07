@@ -91,7 +91,7 @@ class StreamsListViewController: UIViewController{
         {
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
         }
-        print(totalMediaCount)
+        
         initialiseCloudData()
     }
     
