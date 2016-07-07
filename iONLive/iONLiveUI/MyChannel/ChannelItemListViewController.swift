@@ -13,6 +13,7 @@ class ChannelItemListViewController: UIViewController {
     
     var selectionFlag : Bool = false
     var selected: NSMutableArray = NSMutableArray()
+    var isDeleteFlag : Bool = false
     
     static let identifier = "ChannelItemListViewController"
     @IBOutlet weak var channelTitleLabel: UILabel!
@@ -278,7 +279,9 @@ class ChannelItemListViewController: UIViewController {
             self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"]!])
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
+                if(self.isDeleteFlag == false){
                 self.channelItemCollectionView.reloadData()
+                }
             })
         }
     }
@@ -410,12 +413,14 @@ class ChannelItemListViewController: UIViewController {
             else{
                 selectionButton.hidden = true
             }
+            isDeleteFlag = true
             channelItemCollectionView.reloadData()
         }
     }
     
     func authenticationFailureHandlerDelete(error: NSError?, code: String)
     {
+        isDeleteFlag = false
         self.removeOverlay()
         selectionButton.hidden = false
         print("message = \(code) andError = \(error?.localizedDescription) ")
@@ -498,6 +503,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         }
         else{
         }
+        
+        isDeleteFlag = false
         return cell
     }
     

@@ -322,6 +322,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func authenticationFailureHandlerDelete(error: NSError?, code: String)
     {
+        isDeleted = false
         self.removeOverlay()
         self.fullScrenImageView.alpha = 1.0
         print("message = \(code) andError = \(error?.localizedDescription) ")
