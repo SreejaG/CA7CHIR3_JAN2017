@@ -786,6 +786,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if (playHandleflag == 1)
         {
             playHandleflag = 0
+            self.moviePlayer.stop()
             self.moviePlayer.view.removeFromSuperview()
         }
         dispatch_async(dispatch_get_main_queue(), { () -> Void in

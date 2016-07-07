@@ -176,44 +176,67 @@ bool takePictureFlag = false;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
-    [self loadingView];
-    if (shutterActionMode == SnapCamSelectionModeVideo)
+    UIViewController *viewContr = self.navigationController.visibleViewController;
+    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        dispatch_async( dispatch_get_main_queue(), ^{
-            if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
-                if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
-                }else {
-                    [self.videoDeviceInput.device lockForConfiguration:nil];
-                    [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
-                    [self.videoDeviceInput.device unlockForConfiguration];
+    
+        [self loadingView];
+        if (shutterActionMode == SnapCamSelectionModeVideo)
+        {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                    }else {
+                        [self.videoDeviceInput.device lockForConfiguration:nil];
+                        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                        [self.videoDeviceInput.device unlockForConfiguration];
+                    }
                 }
-            }
-            _cameraButton.hidden = false;
-            if(flashFlag == 0){
-                _flashButton.hidden = false;
-            }
-            else if(flashFlag == 1){
-                _flashButton.hidden = true;
-            }
+                _cameraButton.hidden = false;
+                if(flashFlag == 0){
+                    _flashButton.hidden = false;
+                }
+                else if(flashFlag == 1){
+                    _flashButton.hidden = true;
+                }
                 
-            [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
             
           
-            [self.previewView.session stopRunning];
+                [self.previewView.session stopRunning];
             
-        });
-        [self.movieFileOutput stopRecording];
+            });
+            [self.movieFileOutput stopRecording];
+        }
+        else if(shutterActionMode == SnapCamSelectionModeLiveStream){
+            [liveStreaming stopStreamingClicked];
+            [_liveSteamSession.previewView removeFromSuperview];
+            _liveSteamSession.delegate = nil;
+            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
+            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            
+        }
     }
 }
 
 -(void)applicationDidActives: (NSNotification *)notification
 {
-    [self setGUIBasedOnMode];
-    dispatch_async( dispatch_get_main_queue(), ^{
+    UIViewController *viewContr = self.navigationController.visibleViewController;
+    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+    {
+        [self setGUIBasedOnMode];
+        dispatch_async( dispatch_get_main_queue(), ^{
         
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-        [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-    });
+            [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+            [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+        });
+        if(shutterActionMode == SnapCamSelectionModeLiveStream){
+//         
+//                        [_liveSteamSession.previewView removeFromSuperview];
+//                        _liveSteamSession.delegate = nil;
+            
+        }
+    }
     
 }
 

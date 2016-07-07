@@ -386,7 +386,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func authenticationSuccessHandlerVerification(response:AnyObject?)
     {
-        removeOverlay()
+      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             var status: Int!
@@ -412,6 +412,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
         else
         {
+            removeOverlay()
             ErrorManager.sharedInstance.loginError()
         }
     }

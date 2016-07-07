@@ -8,7 +8,7 @@
         <!--iPhone Camera View Controller-->
         <scene sceneID="nWK-5Y-jY9">
             <objects>
-                <viewController storyboardIdentifier="IPhoneCameraViewController" id="2uu-F2-Ybp" customClass="IPhoneCameraViewController" sceneMemberID="viewController">
+                <viewController restorationIdentifier="IPhoneCameraViewController" storyboardIdentifier="IPhoneCameraViewController" id="2uu-F2-Ybp" customClass="IPhoneCameraViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Z9f-wr-dol"/>
                         <viewControllerLayoutGuide type="bottom" id="elk-Yj-JGw"/>
