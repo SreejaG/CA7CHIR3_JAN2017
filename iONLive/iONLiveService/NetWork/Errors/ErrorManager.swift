@@ -326,7 +326,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     func invalidMobileNo()
     {
-        alert("Invalid mobile Numer", message: "Mobile number invalid/already registerd")
+        alert("Invalid mobile Numer", message: "Mobile number invalid/already registered")
     }
     
     func unregisteredContact()
