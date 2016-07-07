@@ -105,6 +105,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         countryCodeTextField.delegate = self
         self.countryPicker.hidden = true
         addObserver()
+        countryTextField.autocorrectionType = .No
+        mobileNumberTextField.autocorrectionType = .No
+        countryCodeTextField.autocorrectionType = .No
+        verificationCodeTextField.autocorrectionType = .No
         
     }
     
@@ -140,6 +144,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func keyboardDidShow(notification: NSNotification)
     {
+        
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         self.view.layoutIfNeeded()
@@ -172,6 +177,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     @IBAction func verifyPhoneContinueButtonClicked(sender: AnyObject)
     {
+//        view.endEditing(true)
         if countryTextField.text!.isEmpty
         {
             ErrorManager.sharedInstance.emptyCountryError()
