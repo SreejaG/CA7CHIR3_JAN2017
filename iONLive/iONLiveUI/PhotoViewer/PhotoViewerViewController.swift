@@ -41,6 +41,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var channelIdfromLocal : NSNumber = NSNumber()
     var selectedItem : Int = Int()
     
+    var willEnterFlag:NSInteger = NSInteger()
+    
     var channelIdForArchive : String = String()
     var swipeFlag : Bool = false
     
@@ -134,25 +136,30 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func viewWillAppear(animated: Bool)
     {
-        print("TestingViewWillappear!!")
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.Trial), name: MPMoviePlayerWillEnterFullscreenNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        
-        if(playHandleflag == 1){
-            self.moviePlayer.stop()
+        if ((playHandleflag == 1) && (willEnterFlag == 1))
+        {
+            
         }
+        else if (playHandleflag == 1)
+        {
+            playHandleflag = 0
+            self.moviePlayer .stop()
+            
+            NSNotificationCenter.defaultCenter().removeObserver(self)
+        }
+        
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
         }
-        
-        
-    }
+   }
     
     @IBAction func deleteButtonAction(sender: AnyObject) {
       
@@ -180,10 +187,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(self.mediaSelected.count > 0)
             {
                 var channelIds : [Int] = [Int]()
-                print(self.channelIdForArchive)
-                if(self.channelIdForArchive != ""){
-                    channelIds.append(Int(self.channelIdForArchive)!)
-                
+                if let channel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
+                {
+                    let channelIdForApi = Int(channel as! String)
+                    channelIds.append(channelIdForApi!)
+
                     let defaults = NSUserDefaults .standardUserDefaults()
                     let userId = defaults.valueForKey(userLoginIdKey) as! String
                     let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -285,7 +293,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             mediaIdSelected = 0
             mediaSelected.removeAllObjects()
     
-            print(selectedItem)
             if((imageDataSource.count > selectedItem)&&(imageDataSource.count > 0)){
                 imageDataSource.removeAtIndex(selectedItem)
             }
@@ -374,10 +381,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         deletButton.hidden = true
         mediaIdSelected = 0
         
-        if let chanel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
-        {
-            channelIdForArchive = chanel.stringValue
-        }
+//        if let chanel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
+//        {
+//            channelIdForArchive = chanel.stringValue
+//        }
         
         dataSource = MediaBeforeUploadComplete.sharedInstance.getDataSource()
     
@@ -488,18 +495,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func playbackStateChange(notif:NSNotification)
     {
-        
-        print("Entered the Function!!!")
-        
-        print(notif)
-        
         let moviePlayerController = notif.object as! MPMoviePlayerController
-        
-        print(moviePlayerController)
-        
         var playbackState: String = "Unknown"
-        print("PlayBackStateDetected:\(playbackState)")
-        
+ 
         switch moviePlayerController.playbackState {
         case .Stopped:
             playbackState = "Stopped"
@@ -516,26 +514,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         case .SeekingBackward:
             playbackState = "Seeking Backward"
         }
-        
-        print("Playback State:\(playbackState)")
     }
     
     func doneButtonClickedToExit(notif2:NSNotification)
     {
-        print("Entered doneButtonClickedToExit")
-        print(notif2)
+        willEnterFlag = 0
         let fullScreenController = notif2.object as! MPMoviePlayerController
-        print(fullScreenController)
-        
-        fullScreenController.shouldAutoplay = true
-        fullScreenController.prepareToPlay()
-        
         fullScreenController.scalingMode = MPMovieScalingMode.AspectFill
-        
         fullScreenController.play()
-        
-        print("Applied SizeToFit!!!")
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: fullScreenController)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: fullScreenController)
+    }
+    
+    func Trial()
+    {
+        willEnterFlag = 1
     }
     
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
@@ -690,7 +682,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                        print("not same")
+                                    
                                 }
                                 else{
                                     FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -968,7 +960,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                    print("not same")
+                                  
                                 }
                                 else{
                                      FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -1091,12 +1083,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         {
             let channelName = channelDetails[index].valueForKey("channel_name") as! String
             let channelId = channelDetails[index].valueForKey("channel_detail_id")
-            NSUserDefaults.standardUserDefaults().setValue(channelId, forKey: "channelSelectedId")
             
             if channelName == "Archive"
             {
                mediaSharedCount = (channelDetails[index].valueForKey("total_no_media_shared")?.stringValue)!
                 channelIdForArchive = channelId!.stringValue
+                NSUserDefaults.standardUserDefaults().setValue(channelIdForArchive, forKey: "channelSelectedId")
             }
             channelDict[channelName] = channelId
            

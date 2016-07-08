@@ -59,7 +59,7 @@ class IPhoneLiveStreaming: NSObject {
         
         func getHost() ->String
         {
-            return "130.211.135.170"
+            return "104.154.69.174"
         }
         
         func getPort() ->String

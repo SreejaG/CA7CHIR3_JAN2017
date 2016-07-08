@@ -404,7 +404,7 @@ class OtherChannelViewController: UIViewController {
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":self.fullImageDataSource[indexPathRow][self.notificationKey] as! String, "mediaId": self.fullImageDataSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }

@@ -106,6 +106,7 @@ class SignUpFindFriendsViewController: UIViewController{
         }
     }
     func displayContacts(){
+        showOverlay()
         contactPhoneNumbers.removeAll()
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
@@ -232,7 +233,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        removeOverlay()
+      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             var status: Int!
@@ -265,6 +266,7 @@ class SignUpFindFriendsViewController: UIViewController{
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 if code == "CONTACT001"{
+                    
                     contactExist = false
                     loadContactViewController()
                 }
@@ -293,7 +295,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live", parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live", parameters: nil , liveVideo: true) as! UIViewController
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
@@ -309,6 +311,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadContactViewController()
     {
+        removeOverlay()
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
         let contactDetailsViewController = storyboard.instantiateViewControllerWithIdentifier("ContactDetailsViewController") as! ContactDetailsViewController
         contactDetailsViewController.contactDataSource = dataSource

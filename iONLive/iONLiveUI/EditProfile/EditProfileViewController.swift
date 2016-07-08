@@ -232,7 +232,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         emails = userDetails["email"] as! String
         mobileNo = userDetails["mobile_no"] as! String
         
-        print(fullNames)
+//        print(fullNames)
         let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
         if(thumbUrl != "")
         {
@@ -374,7 +374,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
         }
         
-        print(fullName)
+//        print(fullName)
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
@@ -547,7 +547,7 @@ extension EditProfileViewController:UITableViewDataSource
                     
                     if cellDataSource[displayNameKey] == ""
                     {
-                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Full Name",
+                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Name",
                                                                                              attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
                     }
                     let cameraController = IPhoneCameraViewController()
@@ -640,12 +640,15 @@ extension EditProfileViewController:UITableViewDataSource
         
         if(textField.tag == 0)
         {
-            if((textField.text?.isEmpty) != nil){
+            if((textField.text?.isEmpty) == nil){
+               
                 dataSource![textField.tag][0][displayNameKey] = ""
             }
             else{
                 dataSource![textField.tag][0][displayNameKey] = textField.text
             }
+            textField.attributedPlaceholder = NSAttributedString(string: "Name",
+                                                                 attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         }
         else if(textField.tag == 100){
             let isEmailValid = isEmail(textField.text!) as Bool!

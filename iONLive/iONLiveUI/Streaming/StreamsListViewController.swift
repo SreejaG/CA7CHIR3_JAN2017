@@ -348,7 +348,7 @@ class StreamsListViewController: UIViewController{
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
         }
     }
@@ -626,7 +626,7 @@ class StreamsListViewController: UIViewController{
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName":self.dataSource[indexPathRow][self.channelNameKey] as! String, "userName":self.dataSource[indexPathRow][self.userIdKey] as! String, "mediaType":self.dataSource[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":self.dataSource[indexPathRow][self.notificationKey] as! String, "mediaId": self.dataSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.dataSource[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }

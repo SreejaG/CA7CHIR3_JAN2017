@@ -154,7 +154,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         
         let currentTimeStamp : String = getCurrentTimeStamp()
         
-        dataRowFromLocal = [thumbSignedUrlKey:uploadThumbImageURLGCS,fullSignedUrlKey:uploadFullImageOrVideoURLGCS,mediaIdKey:Int(mediaId)!,mediaTypeKey:media,timeStampKey:currentTimeStamp,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageFromDB,progressKey:0.0]
+        dataRowFromLocal = [thumbSignedUrlKey:uploadThumbImageURLGCS,fullSignedUrlKey:uploadFullImageOrVideoURLGCS,mediaIdKey:Int(mediaId)!,mediaTypeKey:media,timeStampKey:currentTimeStamp,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageFromDB,progressKey:0.02]
    
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
