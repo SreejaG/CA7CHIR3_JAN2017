@@ -274,6 +274,12 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alert.dismiss()
     }
     
+    func NoArchiveId()
+    {
+        alert("Failed", message: "Failed to get channel details")
+    }
+
+    
     func channelAlreayExist()
     {
         alert("Channel Exist", message: "Channel name already exists")

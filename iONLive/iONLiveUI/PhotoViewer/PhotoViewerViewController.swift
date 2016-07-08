@@ -202,6 +202,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         self.authenticationFailureHandlerDelete(error, code: message)
                     })
                 }
+                else{
+                    ErrorManager.sharedInstance.NoArchiveId()
+                }
             }
         }))
         
@@ -600,14 +603,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         mediaSelected.addObject(mediaIdSelected)
         mediaIdSelected = 0
-        if(mediaSelected.count > 0)
+        if let channel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
         {
-            let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-            let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
-            addChannelVC.mediaDetailSelected = mediaSelected
-            addChannelVC.selectedChannelId = channelDict["Archive"]?.stringValue
-            addChannelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(addChannelVC, animated: false)
+            if(mediaSelected.count > 0)
+            {
+                let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
+                let addChannelVC = channelStoryboard.instantiateViewControllerWithIdentifier(AddChannelViewController.identifier) as! AddChannelViewController
+                addChannelVC.mediaDetailSelected = mediaSelected
+                addChannelVC.selectedChannelId = channel as! String
+                addChannelVC.navigationController?.navigationBarHidden = true
+                self.navigationController?.pushViewController(addChannelVC, animated: false)
+            }
+        }
+        else{
+            ErrorManager.sharedInstance.NoArchiveId()
         }
     }
     

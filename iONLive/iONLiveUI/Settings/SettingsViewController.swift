@@ -169,10 +169,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             {
             case 2:
                 // time lapse
-                loadTimeLapseOptionsView()
+             //   loadTimeLapseOptionsView()
                 break
             case 5:
-                loadProgramCameraButtonView()
+            //    loadProgramCameraButtonView()
                 break
             default:
                 break
@@ -184,10 +184,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 loadEditProfileView()
                 break
             case 1:
-                loadDeleteMediaOptionsView()
+              //  loadDeleteMediaOptionsView()
                 break
             case 2:
-                loadConnectAccountView()
+             //   loadConnectAccountView()
                 break
             default:
                 break

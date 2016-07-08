@@ -89,6 +89,7 @@ class UrlManager {
     
     func MediaInteractionUrl() -> String{
         let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"
+        print(mediaInteractionAPI)
         return mediaInteractionAPI
     }
     

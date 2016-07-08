@@ -1894,6 +1894,7 @@ MovieViewController *obj1;
         likeTapFlag = true;
     }
     else{
+        NSLog(@"%@   %@",channelIdSelected,mediaDetailId);
         if(likeTapFlag == false){
             likeTapFlag = true;
             NSString *type;
