@@ -168,14 +168,32 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             downloadTask?.cancel()
         }
         
-        progressViewDownload?.hidden = true
-        progressLabelDownload?.hidden = true
+        if (playHandleflag == 1)
+        {
+            playHandleflag = 0
+            self.moviePlayer.stop()
+            self.moviePlayer.view.removeFromSuperview()
+        }
+        
+        progressLabelDownload?.removeFromSuperview()
+        progressViewDownload?.removeFromSuperview()
+        progressLabelDownload?.text = " "
+        
+//        progressViewDownload?.hidden = true
+//        progressLabelDownload?.hidden = true
       
         let alert = UIAlertController(title: "", message: "Are you sure you want to permanently delete this picture from all your channels?", preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: {(
             
             action:UIAlertAction!) in
             
+            
+            if(self.dataSource[self.selectedItem][self.mediaTypeKey] as! String == "video"){
+                self.playIconInFullView.hidden = false
+            }
+            else{
+                self.playIconInFullView.hidden = true
+            }
             self.mediaSelected.removeAllObjects()
             
             if self.mediaIdSelected == 0
@@ -211,6 +229,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: {
             (action:UIAlertAction!) in print("you have pressed the Cancel button")
                 self.fullScrenImageView.alpha = 1.0
+            
+            if(self.dataSource[self.selectedItem][self.mediaTypeKey] as! String == "video"){
+                self.playIconInFullView.hidden = false
+            }
+            else{
+                self.playIconInFullView.hidden = true
+            }
+               self.progressLabelDownload?.text = " "
         }))
         self.presentViewController(alert, animated: true, completion: nil)
     }
@@ -596,6 +622,21 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         photoThumpCollectionView.hidden = false
     }
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
+        if(downloadTask?.state == .Running)
+        {
+            downloadTask?.cancel()
+        }
+        
+        if (playHandleflag == 1)
+        {
+            playHandleflag = 0
+            self.moviePlayer.stop()
+            self.moviePlayer.view.removeFromSuperview()
+        }
+        
+        progressLabelDownload?.removeFromSuperview()
+        progressViewDownload?.removeFromSuperview()
+        
         mediaSelected.removeAllObjects()
         if mediaIdSelected == 0
         {
@@ -805,6 +846,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     fullScrenImageView.alpha = 1.0
                     progressLabelDownload?.removeFromSuperview()
                     progressViewDownload?.removeFromSuperview()
+                    progressLabelDownload?.text = " "
                     
                 }
         
