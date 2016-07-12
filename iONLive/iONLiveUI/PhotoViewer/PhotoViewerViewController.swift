@@ -100,6 +100,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         super.viewDidLoad()
         
+      
+        
         progressLabelDownload = UILabel()
         
         progressViewDownload?.hidden = true
@@ -410,10 +412,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         deletButton.hidden = true
         mediaIdSelected = 0
         
-//        if let chanel = NSUserDefaults.standardUserDefaults().valueForKey("channelSelectedId")
-//        {
-//            channelIdForArchive = chanel.stringValue
-//        }
         
         dataSource = MediaBeforeUploadComplete.sharedInstance.getDataSource()
     
@@ -425,11 +423,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             })
             addToButton.hidden = false
             deletButton.hidden = false
+            let dict = self.dataSource[0]
+         
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                let dict = self.dataSource[0]
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: 0)
                 self.photoThumpCollectionView.reloadData()
-                
             })
         }
         else{
@@ -672,8 +670,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(mediaIdFromData == dictMediaId){
                 dataSource[i][progressKey] = dictProgress
             }
-            photoThumpCollectionView.reloadData()
-            photoThumpCollectionView.layoutIfNeeded()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.photoThumpCollectionView.reloadData()
+            })
         }
     }
     
@@ -772,8 +771,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
-      //  if(dataSource.count == indexPath.row - 1){
-                //   }
         
         if((dataSource.count > indexPath.row) && (dataSource.count > 0))
         {
@@ -822,6 +819,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         return cell
     }
     
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
         swipeFlag = false
@@ -832,11 +830,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.moviePlayer.stop()
             self.moviePlayer.view.removeFromSuperview()
         }
+        
+        self.selectedItem = indexPath.row
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-
-            self.selectedItem = indexPath.row
             self.photoThumpCollectionView.reloadData()
-            })
+        })
         
         if dataSource.count > indexPath.row
         {

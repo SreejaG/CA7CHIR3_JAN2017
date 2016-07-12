@@ -147,6 +147,7 @@ bool takePictureFlag = false;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    takePictureFlag = false;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
        
     [self loadingView];
@@ -549,6 +550,7 @@ bool takePictureFlag = false;
         [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
         [self.videoDeviceInput.device unlockForConfiguration];
     }
+    takePictureFlag = false;
 //    [self removeObservers];
 }
 

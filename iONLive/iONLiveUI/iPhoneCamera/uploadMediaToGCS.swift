@@ -179,7 +179,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                         if(result == "Success"){
                             self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
                             self.deleteDataFromDB()
-                            self.mapMediaToDefaultChannels()
+//                            self.mapMediaToDefaultChannels()
                         }
                         else{
                         }
@@ -189,7 +189,11 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 else{
                 }
             })
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+               self.mapMediaToDefaultChannels()
+            })
         })
+        
     }
     
     //full image upload to cloud
