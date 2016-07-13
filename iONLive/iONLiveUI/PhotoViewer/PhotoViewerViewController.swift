@@ -145,6 +145,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+       
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
             
@@ -972,6 +973,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
     }
     func downloadMediaFromGCS(){
+        if(self.isDeleted == false){
         for(var i = 0; i < imageDataSource.count; i++)
         {
             var imageForMedia : UIImage = UIImage()
@@ -1022,6 +1024,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                         })
                     }
                 }
+//                print("hiiii datasource \(imageDataSource)")
+//                print("i value  \(i)")
+//                print("Selected item \(selectedItem)")
+                
                 dataSource.append([self.thumbSignedUrlKey:self.imageDataSource[i][self.thumbSignedUrlKey]!,self.fullSignedUrlKey: self.imageDataSource[i][self.fullSignedUrlKey]! ,self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.timeStampKey :self.imageDataSource[i][self.timeStampKey]!,self.thumbImageKey:imageForMedia,self.fullImageKey:imageForMedia,self.progressKey:0.0])
                 
             }
@@ -1043,11 +1049,12 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     self.addToButton.hidden = false
                     self.deletButton.hidden = false
                 }
-                if(self.isDeleted == false){
+//                if(self.isDeleted == false){
                     self.photoThumpCollectionView.reloadData()
                     self.photoThumpCollectionView.layoutIfNeeded()
-                }
+//                }
             })
+        }
         }
         
     }

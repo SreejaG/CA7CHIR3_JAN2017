@@ -102,7 +102,7 @@ bool takePictureFlag = false;
     //device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter]
-     addObserver:self selector:@selector(orientationChanged:)
+     addObserver:self selector:@selector(orientationChanged2:)
      name:UIDeviceOrientationDidChangeNotification
      object:[UIDevice currentDevice]];
     //end
@@ -112,8 +112,11 @@ bool takePictureFlag = false;
     [self deleteIphoneCameraSnapShots];
 }
 
-- (void) orientationChanged:(NSNotification *)note
+- (void) orientationChanged2:(NSNotification *)note
 {
+    UIViewController *viewContr = self.navigationController.visibleViewController;
+    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+    {
     UIDevice *device = note.object;
     switch(device.orientation)
     {
@@ -141,6 +144,7 @@ bool takePictureFlag = false;
             orientationFlag = 0;
             NSLog(@"Device Orientation Unknown,flag: %d",orientationFlag);
             break;
+    }
     }
 }
 
