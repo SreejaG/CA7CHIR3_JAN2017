@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "ALAssetsLibrary+CustomPhotoAlbum.h"
+#import <Photos/Photos.h>
+
 
 @interface IPhoneCameraViewController : UIViewController
 

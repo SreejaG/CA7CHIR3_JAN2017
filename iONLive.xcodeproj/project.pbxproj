@@ -212,6 +212,7 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
+		B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */; };
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
@@ -603,6 +604,8 @@
 		59BC3F581BFF848600710905 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		B222EA551D38C363002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
+		B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
 		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
 		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
@@ -698,6 +701,8 @@
 				162F97421CC9F0C7009F68F8 /* IPhoneCameraView.storyboard */,
 				160B1F5D1C4CDF9E0022B711 /* IPhoneCameraViewController.h */,
 				160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */,
+				B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */,
+				B222EA551D38C363002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.h */,
 				165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */,
 				164AEE541CD09DE8006ACAE0 /* SetUpView.swift */,
 				B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */,
@@ -1774,6 +1779,7 @@
 				165B77E31C4D099800BDB02F /* iONCamPictureAPIViewController.swift in Sources */,
 				16DA06F21C7ED8A8004759D5 /* NBPhoneNumberDesc.m in Sources */,
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
+				B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				160903FA1C6C7ED1004E381D /* EditProfPersonalInfoCell.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,

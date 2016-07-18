@@ -21,6 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "screencap.h"
 
+#import "ALAssetsLibrary+CustomPhotoAlbum.h"
 
 static void * CapturingStillImageContext = &CapturingStillImageContext;
 static void * SessionRunningContext = &SessionRunningContext;
@@ -42,6 +43,9 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     SnapCamSelectionMode _snapCamMode;
     
 }
+
+//For CA7CH specific album in phone
+@property (strong,nonatomic) ALAssetsLibrary *assetsLibrary;
 
 //Video Core Session
 @property (nonatomic, retain) VCSimpleSession* liveSteamSession;
@@ -151,6 +155,8 @@ bool takePictureFlag = false;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _assetsLibrary = [[ALAssetsLibrary alloc]init];
+    
     takePictureFlag = false;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
        
@@ -161,6 +167,14 @@ bool takePictureFlag = false;
         [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     });
     [self initialise];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    
+    // Dispose of any resources that can be recreated.
+    self.assetsLibrary = nil;
 }
 
 -(void)addApplicationObserversInIphone
@@ -837,7 +851,17 @@ bool takePictureFlag = false;
                         dispatch_async( dispatch_get_main_queue(), ^{
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             takePictureFlag = true;
-                            UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
+                            //UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
+                            //Save images to CA7CH specific album in iphone
+                            [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
+                            {
+                                
+                            } failure:^(NSError *error)
+                            {
+                                
+                            }];
+                            
+                            
                             [self saveImage:imageData];
                             [self loaduploadManagerForImage];
                         });
@@ -1219,7 +1243,19 @@ bool takePictureFlag = false;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
                             [self saveImage:imageData];
-                            [self moveVideoToDocumentDirectory:outputFileURL];
+                            //[self moveVideoToDocumentDirectory:outputFileURL];
+                            
+                            //Save Captured videos to the CA7CH specific album in phone
+                            [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
+                            {
+                                
+                            } failure:^(NSError *error)
+                            {
+                                
+                            }];
+                            
+                            
+                            
                         }
                     });
                     if ( [PHAssetResourceCreationOptions class] ) {
@@ -1255,7 +1291,7 @@ bool takePictureFlag = false;
 -(void) moveVideoToDocumentDirectory : (NSURL *) path
 {
     [self loaduploadManager : path ];
-    UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil);
+    //UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil); // Save video to the CA7CH specific album. No need to double save the same video
 }
 
 -(void) loaduploadManager : (NSURL *)filePath
@@ -1371,21 +1407,7 @@ bool takePictureFlag = false;
 {
     if ([self isStreamStarted])
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-            
-            [UIApplication sharedApplication].idleTimerDisabled = NO;
-            [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
-            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-            [self settingsPageView];
-        }];
-        [alertController addAction:OkAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self generateStreamAlert:@"settingsPageView"];
     }
     else{
         [self settingsPageView];
@@ -1409,24 +1431,12 @@ bool takePictureFlag = false;
 - (IBAction)didTapSharingListIcon:(id)sender
 {
     if ([self isStreamStarted])
+        {
+            [self generateStreamAlert:@"loadSharingView"];
+        }
+    
+    else
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-            
-            [UIApplication sharedApplication].idleTimerDisabled = NO;
-            [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
-            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-            [self loadSharingView];
-        }];
-        [alertController addAction:OkAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
-    else{
         [self loadSharingView];
     }
 }
@@ -1446,23 +1456,10 @@ bool takePictureFlag = false;
 - (IBAction)didTapPhotoViewer:(id)sender {
     if ([self isStreamStarted])
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-            
-            [UIApplication sharedApplication].idleTimerDisabled = NO;
-            [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
-            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-             [self loadPhotoViewer];
-        }];
-        [alertController addAction:OkAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self generateStreamAlert:@"loadPhotoViewer"];
     }
-    else{
+    else
+    {
        [self loadPhotoViewer];
     }
 }
@@ -1484,21 +1481,7 @@ bool takePictureFlag = false;
     
     if ([self isStreamStarted])
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-            
-            [UIApplication sharedApplication].idleTimerDisabled = NO;
-            [liveStreaming stopStreamingClicked];
-            [_liveSteamSession endRtmpSession];
-            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-            [self loadStreamsGalleryView];
-        }];
-        [alertController addAction:OkAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self generateStreamAlert:@"loadStreamsGalleryView"];
     }
     else{
         [self loadStreamsGalleryView];
@@ -1612,6 +1595,51 @@ bool takePictureFlag = false;
     NSData *imageData = [[NSData alloc] init];
     imageData = UIImageJPEGRepresentation(result,1.0);
     return imageData;
+}
+
+-(void)generateStreamAlert:(NSString*)generateStream
+{
+    NSLog(@"GenerateStream: %@",generateStream);
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+    [alertController addAction:cancelAction];
+    
+    UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+        
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+        [liveStreaming stopStreamingClicked];
+        [_liveSteamSession endRtmpSession];
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+        [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+        
+        
+        if ([generateStream isEqualToString:@"settingsPageView"])
+        {
+            NSLog(@"GenereateStream: %@",generateStream);
+            [self settingsPageView];
+            
+        }
+        else if ([generateStream isEqualToString:@"loadSharingView"])
+        {
+            NSLog(@"GenereateStream: %@",generateStream);
+            [self loadSharingView];
+        }
+        else if ([generateStream isEqualToString:@"loadPhotoViewer"])
+        {
+            NSLog(@"GenereateStream: %@",generateStream);
+            
+            [self loadPhotoViewer];
+        }
+        else if ([generateStream isEqualToString:@"loadStreamsGalleryView"])
+        {
+            NSLog(@"GenereateStream: %@",generateStream);
+            [self loadStreamsGalleryView];
+        }
+        
+    }];
+    [alertController addAction:OkAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 @end
