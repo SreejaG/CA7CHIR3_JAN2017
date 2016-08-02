@@ -549,7 +549,7 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: false) { () -> Void in
             

@@ -31,17 +31,24 @@ class AddChannelViewController: UIViewController {
     var shareFlag : Bool = true
     var loadingOverlay: UIView?
     
-    let channelNameKey = "channelName"
-    let channelItemCountKey = "channelItemCount"
-    let channelHeadImageNameKey = "channelHeadImageName"
-    let channelIdKey = "channelId"
-    let channelCreatedTimeKey = "channelCreatedTime"
+    let channelDetailIdKey = "channel_detail_id"
+    let mediaDetailIdKey = "media_detail_id"
+    let channelNameKey = "channel_name"
+    let totalMediaCountKey = "total_media_count"
+    let createdTimeStampKey = "created_timeStamp"
+    let sharedIndicatorOriginalKey = "orgSelected"
+    let sharedIndicatorTemporaryKey = "tempSelected"
+    let thumbImageKey = "thumbImage"
+    let thumbImageURLKey = "thumbImage_URL"
+
     var selectedChannelId:String!
     
     var channelSelected: NSMutableArray = NSMutableArray()
-    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var fulldataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
+    
+    var localMediaDict : [[String:AnyObject]] = [[String:AnyObject]]()
+    var localChannelDict : [[String:AnyObject]] = [[String:AnyObject]]()
+
     var mediaDetailSelected : NSMutableArray = NSMutableArray()
     var selectedArray:[Int] = [Int]()
     
@@ -65,22 +72,63 @@ class AddChannelViewController: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableViewBottomConstraint.constant == 0
+        {
+            self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableViewBottomConstraint.constant != 0
+        {
+            self.tableViewBottomConstraint.constant = 0
+        }
+    }
+    
     func initialise()
     {
-        channelDetailsDict.removeAll()
         channelSelected.removeAllObjects()
         selectedArray.removeAll()
+        
         doneButton.hidden = true
         shareFlag = true
+        channelCreateButton.hidden = true
+        channelTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        
         addChannelView.userInteractionEnabled = true
         addChannelView.alpha = 1
         addToChannelTitleLabel.text = "ADD TO CHANNEL"
+        
         let defaults = NSUserDefaults.standardUserDefaults()
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        getChannelDetails(userId, token: accessToken)
-        channelCreateButton.hidden = true
-        channelTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        
+        setChannelDetailsDummy()
+   }
+    
+    func setChannelDetailsDummy()
+    {
+        fulldataSource.removeAll()
+        for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource{
+            
+            let channelId = element[channelDetailIdKey] as! String
+            if(channelId != selectedChannelId)
+            {
+                fulldataSource.append(element)
+            }
+            addChannelTableView.reloadData()
+        }
     }
     
     func textFieldDidChange(textField: UITextField)
@@ -128,17 +176,6 @@ class AddChannelViewController: UIViewController {
         addChannelDetails(userId, token: accessToken, channelName: channelname)
     }
     
-    func getChannelDetails(userName: String, token: String)
-    {
-        showOverlay()
-        channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandlerList(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
-            return
-        }
-    }
-    
     func addChannelDetails(userName: String, token: String, channelName: String)
     {
         showOverlay()
@@ -156,13 +193,116 @@ class AddChannelViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
-            getChannelDetails(userId, token: accessToken)
+            
+            let channelId = json["channelId"]?.stringValue
+            let channelName = json["channelName"] as! String
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            dateFormatter.timeZone = NSTimeZone(name: "UTC")
+            let localDateStr = dateFormatter.stringFromDate(NSDate())
+            
+            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            
+            fulldataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            
+            addChannelTableView.reloadData()
         }
         else
         {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
+    @IBAction func didTapDoneButton(sender: AnyObject) {
+        localChannelDict.removeAll()
+        for(var i = 0; i < selectedArray.count; i++){
+            let channelSelectedId = fulldataSource[selectedArray[i]][channelDetailIdKey]
+            localChannelDict.append(fulldataSource[selectedArray[i]])
+            channelSelected.addObject(channelSelectedId!)
+        }
+        if channelSelected.count > 0
+        {
+            addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
+        }
+    }
+    
+    func addMediaToChannels(channelIds:NSArray, mediaIds:NSArray){
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        showOverlay()
+        imageUploadManger.addMediaToChannel(userId, accessToken: accessToken, mediaIds: mediaIds, channelId: channelIds, success: { (response) -> () in
+            self.authenticationSuccessHandlerAdd(response,channelIds: channelIds,mediaIds: mediaIds)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
+        }
+    }
+    
+    func authenticationSuccessHandlerAdd(response : AnyObject?, channelIds:NSArray, mediaIds:NSArray)
+    {
+        
+        GlobalChannelToImageMapping.sharedInstance.addMediaToChannel(localChannelDict, mediaDetailOfSelectedChannel: localMediaDict)
+       
+        removeOverlay()
+        if let json = response as? [String: AnyObject]
+        {
+            channelTextField.text = ""
+            let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
+            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
+            channelVC.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(channelVC, animated: false)
+        }
+        else
+        {
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+    }
+    
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        self.removeOverlay()
+        
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                loadInitialViewController(code)
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+        if(shareFlag == false){
+            shareFlag = true
+            addChannelView.userInteractionEnabled = true
+            addChannelView.alpha = 1
+            doneButton.hidden = true
+            addToChannelTitleLabel.text = "ADD TO CHANNEL"
+            selectedArray.removeAll()
+            addChannelTableView.reloadData()
+        }
+    }
+    
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.view .addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
+    }
+
     
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -198,225 +338,6 @@ class AddChannelViewController: UIViewController {
             }
         })
     }
-
-    func authenticationFailureHandler(error: NSError?, code: String)
-    {
-        self.removeOverlay()
-        
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
-        if !self.requestManager.validConnection() {
-            ErrorManager.sharedInstance.noNetworkConnection()
-        }
-        else if code.isEmpty == false {
-           
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
-            }
-            else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            }
-        }
-        else{
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-        if(shareFlag == false){
-            shareFlag = true
-            addChannelView.userInteractionEnabled = true
-            addChannelView.alpha = 1
-            doneButton.hidden = true
-            addToChannelTitleLabel.text = "ADD TO CHANNEL"
-            selectedArray.removeAll()
-            addChannelTableView.reloadData()
-        }
-    }
-    
-    func authenticationSuccessHandlerList(response:AnyObject?)
-    {
-       
-        channelSelected.removeAllObjects()
-        selectedArray.removeAll()
-        if(shareFlag == false){
-            shareFlag = true
-            addChannelView.userInteractionEnabled = true
-            addChannelView.alpha = 1
-            doneButton.hidden = true
-            addToChannelTitleLabel.text = "ADD TO CHANNEL"
-        }
-        if let json = response as? [String: AnyObject]
-        {
-            channelDetailsDict.removeAll()
-            channelDetailsDict = json["channels"] as! [[String:AnyObject]]
-            setChannelDetails()
-        }
-        else
-        {
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-    }
-    
-    func convertStringtoURL(url : String) -> NSURL
-    {
-        let url : NSString = url
-        let searchURL : NSURL = NSURL(string: url as String)!
-        return searchURL
-    }
-    
-    func setChannelDetails()
-    {
-        dataSource.removeAll()
-        fulldataSource.removeAll()
-        var imageDetails  = UIImage?()
-        for element in channelDetailsDict{
-            
-            let channelId = element["channel_detail_id"]?.stringValue
-            if(channelId != selectedChannelId)
-            {
-                let channelName = element["channel_name"] as! String
-                let mediaSharedCount = element["total_no_media_shared"]?.stringValue
-                let createdTime = element["last_updated_time_stamp"] as! String
-                let thumbUrl = element["thumbnail_Url"] as! String
-                
-                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl])
-            }
-        }
-        
-        dataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[channelCreatedTimeKey] as! String
-            let time2 = p2[channelCreatedTimeKey] as! String
-            return time1 > time2
-        })
-        
-        if(dataSource.count > 0){
-            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(backgroundQueue, {
-                
-                self.downloadMediaFromGCS()
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                })
-            })
-        }
-        else{
-             removeOverlay()
-        }
-    }
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
-    {
-        var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
-            }
-            completion(result: mediaImage)
-        }
-        else
-        {
-            completion(result:UIImage(named: "thumb12")!)
-        }
-    }
-    func downloadMediaFromGCS(){
-        for var i = 0; i < dataSource.count; i++
-        {
-            var imageForMedia : UIImage = UIImage()
-            let mediaUrl = dataSource[i][channelHeadImageNameKey] as! String
-            if(mediaUrl != ""){
-                let url: NSURL = convertStringtoURL(mediaUrl)
-                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    if(result != UIImage()){
-                        imageForMedia = result
-                    }
-                })
-            }
-            self.fulldataSource.append([self.channelIdKey:self.dataSource[i][self.channelIdKey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.channelItemCountKey:self.dataSource[i][self.channelItemCountKey]!,self.channelCreatedTimeKey:self.dataSource[i][self.channelCreatedTimeKey]!,self.channelHeadImageNameKey:imageForMedia])
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-              self.addChannelTableView.reloadData()
-            })
-        }
-    }
-
-    func showOverlay(){
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
-        loadingOverlayController.startLoading()
-        self.loadingOverlay = loadingOverlayController.view
-        self.view .addSubview(self.loadingOverlay!)
-    }
-    
-    func removeOverlay(){
-        self.loadingOverlay?.removeFromSuperview()
-    }
-    
-    
-    func addKeyboardObservers()
-    {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
-    }
-    
-    func keyboardDidShow(notification:NSNotification)
-    {
-        let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        if tableViewBottomConstraint.constant == 0
-        {
-            self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
-        }
-    }
-    
-    func keyboardDidHide()
-    {
-        if tableViewBottomConstraint.constant != 0
-        {
-            self.tableViewBottomConstraint.constant = 0
-        }
-    }
-    
-    @IBAction func didTapDoneButton(sender: AnyObject) {
-        for(var i = 0; i < selectedArray.count; i++){
-            let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey]
-            print(channelSelectedId)
-            channelSelected.addObject(channelSelectedId!)
-        }
-        if channelSelected.count > 0
-        {
-            addMediaToChannels(channelSelected, mediaIds: mediaDetailSelected)
-        }
-    }
-    
-    func addMediaToChannels(channelIds:NSArray, mediaIds:NSArray){
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        showOverlay()
-        imageUploadManger.addMediaToChannel(userId, accessToken: accessToken, mediaIds: mediaIds, channelId: channelIds, success: { (response) -> () in
-            self.authenticationSuccessHandlerAdd(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
-            return
-        }
-    }
-    
-    func authenticationSuccessHandlerAdd(response:AnyObject?)
-    {
-        removeOverlay()
-        if let json = response as? [String: AnyObject]
-        {
-            channelTextField.text = ""
-            let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
-            let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
-            channelVC.navigationController?.navigationBarHidden = true
-            self.navigationController?.pushViewController(channelVC, animated: false)
-        }
-        else
-        {
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-    }
-    
 }
 
 extension AddChannelViewController: UITableViewDelegate
@@ -453,12 +374,18 @@ extension AddChannelViewController:UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
             
             cell.addChannelTextLabel.text = fulldataSource[indexPath.row][channelNameKey] as? String
-            cell.addChannelCountLabel.text = fulldataSource[indexPath.row][channelItemCountKey] as? String
-            if let imageData =  fulldataSource[indexPath.row][channelHeadImageNameKey]
+            cell.addChannelCountLabel.text = fulldataSource[indexPath.row][totalMediaCountKey] as? String
+            
+            if let latestImage = fulldataSource[indexPath.row][thumbImageKey]
             {
-                cell.addChannelImageView.image = imageData as? UIImage
+                cell.addChannelImageView.image = latestImage as! UIImage
             }
-            if(fulldataSource[indexPath.row][channelItemCountKey] as! String == "0"){
+            else
+            {
+                cell.addChannelImageView.image = UIImage(named: "thumb12")
+            }
+            
+            if(fulldataSource[indexPath.row][totalMediaCountKey] as! String == "0"){
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
             
@@ -498,7 +425,6 @@ extension AddChannelViewController:UITableViewDataSource
         }
         tableView.reloadData()
     }
-    
 }
 
 

@@ -1,10 +1,3 @@
-//
-//  MyChannelSharingDetailsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -43,6 +36,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+     
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MyChannelSharingDetailsViewController.callRefreshContactSharingTableView(_:)), name: "refreshContactSharingTableView", object: nil)
         
         self.refreshControlSecnd = UIRefreshControl()
@@ -58,6 +53,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "tabToAppear")
         self.tabBarItem.selectedImage = UIImage(named:"friend_avatar_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         if let channelName = channelName
         {

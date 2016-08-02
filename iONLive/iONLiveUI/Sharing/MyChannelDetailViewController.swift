@@ -19,11 +19,16 @@ class MyChannelDetailViewController: UITabBarController {
     var allItemTitleText = ""
     override func viewDidLoad() {
         super.viewDidLoad()
+        let index =  NSUserDefaults.standardUserDefaults().valueForKey("tabToAppear")
+        print(index)
+        self.selectedIndex = index as! Int
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-        self.selectedIndex = 1
+//        let index =  NSUserDefaults.standardUserDefaults().valueForKey("tabToAppear")
+//        print(index)
+//        self.selectedIndex = index as! Int
  
     }
     

@@ -135,7 +135,7 @@ class SignUpFindFriendsViewController: UIViewController{
                     phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
                 }
                 
-                if phoneNumberWithCode.hasPrefix("+")
+                if !phoneNumberWithCode.hasPrefix("+")
                 {
                     appendPlus = "+"
                 }
@@ -295,7 +295,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.154.69.174:1935/live", parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live", parameters: nil , liveVideo: true) as! UIViewController
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)

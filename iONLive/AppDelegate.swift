@@ -211,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let deviceTokenString: String = ( deviceToken.description as NSString )
             .stringByTrimmingCharactersInSet( characterSet )
             .stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
-      //  print(deviceTokenString)
+        print(deviceTokenString)
         
         if(deviceTokenString != ""){
             let defaults = NSUserDefaults .standardUserDefaults()

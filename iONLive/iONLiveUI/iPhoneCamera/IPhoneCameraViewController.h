@@ -15,10 +15,10 @@
 
 @interface IPhoneCameraViewController : UIViewController
 
--(NSMutableDictionary *) displayIphoneCameraSnapShots ;
+//-(NSMutableDictionary *) displayIphoneCameraSnapShots ;
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
 -(void) deleteIphoneCameraSnapShots;
--(void) uploadprogress:(float) progress;
+//-(void) uploadprogress:(float) progress;
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages;
 
 @property (weak, nonatomic) IBOutlet UIImageView *latestSharedMediaImage;
@@ -26,5 +26,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *sharedUserCount;
 @property (strong, nonatomic) IBOutlet UIImageView *playiIconView;
 
-- (UIImage *)imageRotatedByDegrees:(CGFloat)degrees;
+//- (UIImage *)imageRotatedByDegrees:(CGFloat)degrees;
 @end

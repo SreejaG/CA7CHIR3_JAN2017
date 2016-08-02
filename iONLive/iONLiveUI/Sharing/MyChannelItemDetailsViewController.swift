@@ -1,55 +1,55 @@
-//
-//  MyChannelItemDetailsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class MyChannelItemDetailsViewController: UIViewController {
     
+    let mediaDetailIdKey = "media_detail_id"
+    let thumbImageURLKey = "thumbImage_URL"
+    let fullImageURLKey = "fullImage_URL"
+    let thumbImageKey = "thumbImage"
+    let notificationTypeKey = "notification_type"
+    let createdTimeStampKey = "created_timeStamp"
+    let mediaTypeKey = "media_type"
+    let channelMediaDetailIdKey = "channel_media_detail_id"
+    let uploadProgressKey = "upload_progress"
+
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
-    
-    var totalMediaCount: Int = Int()
-    var channelId:String!
-    var channelName:String!
-    
-    var loadingOverlay: UIView?
-    var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    
-    var tapCount : Int = 0
-    let cameraController = IPhoneCameraViewController()
-    
-    var refreshControl:UIRefreshControl!
-    var pullToRefreshActive = false
-    
-    let mediaUrlKey = "mediaUrl"
-    let mediaIdKey = "mediaId"
-    let mediaTypeKey = "mediaType"
-    let actualImageKey = "actualImage"
-    let notificationKey = "notification"
     
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
     
-    var dataSource:[String]?
+    let cameraController = IPhoneCameraViewController()
+    
+    var loadingOverlay: UIView?
+    
+    var lastContentOffset: CGPoint = CGPoint()
+    
+    var refreshControl:UIRefreshControl!
+    
+    var totalMediaCount: Int = Int()
+    var tapCount : Int = 0
+    var totalCount : Int = 0
+    
+    var channelId:String!
+    var channelName:String!
+    
+    var downloadingFlag : Bool = false
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+      
         self.channelItemsCollectionView.alwaysBounceVertical = true
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        
         initialise()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-        
+        NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "tabToAppear")
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
         if let channelName = channelName
         {
@@ -60,21 +60,6 @@ class MyChannelItemDetailsViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         self.channelItemsCollectionView.alpha = 1.0
-    }
-    
-    func pullToRefresh()
-    {
-        tapCount = tapCount + 1
-        if(tapCount <= 1){
-            if(!pullToRefreshActive){
-                pullToRefreshActive = true
-                totalMediaCount = 0
-                initialise()
-            }
-        }
-        else{
-            self.refreshControl.endRefreshing()
-        }
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -104,29 +89,121 @@ class MyChannelItemDetailsViewController: UIViewController {
         channelId = (self.tabBarController as! MyChannelDetailViewController).channelId
         channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
         totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
-        imageDataSource.removeAll()
-        fullImageDataSource.removeAll()
-        initialiseCloudData()
-    }
-    
-    func initialiseCloudData(){
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         showOverlay()
-        if(pullToRefreshActive){
+        
+        if totalMediaCount == 0
+        {
             removeOverlay()
+            ErrorManager.sharedInstance.emptyMedia()
         }
-        
-        let startValue = "0"
-        let endValue = String(totalMediaCount)
-        
-        imageUploadManger.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit:endValue, offset: startValue, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+        else
+        {
+            if (GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0)
+            {
+                let channelKeys = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
+                if(channelKeys.contains(channelId)){
+                    let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+                    totalCount = filteredData.count
+                }
+                if totalCount > 0
+                {
+                    removeOverlay()
+                    self.channelItemsCollectionView.reloadData()
+                }
+                else{
+                    let start = 0
+                    var end = 0
+                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 20
+                    {
+                        end = 20
+                    }
+                    else{
+                        end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
+                    }
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end)
+                    })
+                }
+//                }
+            }
+            
         }
+    }
+    
+    func thumbExists (item: [String : AnyObject]) -> Bool {
+        return item[thumbImageKey] != nil
+    }
+    
+    func downloadImagesFromGlobalChannelImageMapping()  {
+        let start = totalCount
+        var end = 0
+        if((totalCount + 10) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+            end = 10
+        }
+        else{
+            end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
+        }
+        totalCount = totalCount + end
+        end = start + end
+        
+        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(channelId, start: start, end: end)
+    }
+
+    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+        self.lastContentOffset = scrollView.contentOffset
+    }
+
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
+            if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
+            {
+                if self.downloadingFlag == false
+                {
+                    self.downloadingFlag = true
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        self.downloadImagesFromGlobalChannelImageMapping()
+                    })
+                }
+            }
+        }
+    }
+    
+    func removeActivityIndicator(notif : NSNotification){
+        if totalCount <= 20
+        {
+            let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+            totalCount = filteredData.count
+        }
+        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
+            let time1 = p1[createdTimeStampKey] as! String
+            let time2 = p2[createdTimeStampKey] as! String
+            return time1 > time2
+        })
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+            self.channelItemsCollectionView.reloadData()
+        })
+        if downloadingFlag == true
+        {
+            downloadingFlag = false
+        }
+    }
+
+    func showOverlay(){
+        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
+        loadingOverlayController.startLoading()
+        self.loadingOverlay = loadingOverlayController.view
+        self.view .addSubview(self.loadingOverlay!)
+    }
+    
+    func removeOverlay(){
+        self.loadingOverlay?.removeFromSuperview()
     }
     
     func  loadInitialViewController(code: String){
@@ -163,183 +240,27 @@ class MyChannelItemDetailsViewController: UIViewController {
             }
         })
     }
-
-    func showOverlay(){
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
-        loadingOverlayController.startLoading()
-        self.loadingOverlay = loadingOverlayController.view
-        self.view .addSubview(self.loadingOverlay!)
-    }
-    
-    func removeOverlay(){
-        self.loadingOverlay?.removeFromSuperview()
-    }
-    
-    func authenticationSuccessHandler(response:AnyObject?)
-    {
-        if(pullToRefreshActive){
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-        }
-        if let json = response as? [String: AnyObject]
-        {
-            let responseArr = json["MediaDetail"] as! [AnyObject]
-            for index in 0 ..< responseArr.count
-            {
-                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
-                let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
-                let notificationType : String = "likes"
-                let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,"createdTime": time])
-            }
-            if(imageDataSource.count > 0){
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadMediaFromGCS()
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.refreshControl.addTarget(self, action: "pullToRefresh", forControlEvents: UIControlEvents.ValueChanged)
-                        self.channelItemsCollectionView.addSubview(self.refreshControl)
-                        self.tapCount = 0
-                    })
-                })
-            }
-            else{
-                removeOverlay()
-            }
-        }
-        else
-        {
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-    }
-    
-    func authenticationFailureHandler(error: NSError?, code: String)
-    {
-        removeOverlay()
-        if(pullToRefreshActive){
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-            tapCount = 0
-        }
-        
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        if !self.requestManager.validConnection() {
-            ErrorManager.sharedInstance.noNetworkConnection()
-        }
-        else if code.isEmpty == false {
-          
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
-            }
-            else{
-                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            }
-        }
-        else{
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-    }
-    
-    func convertStringtoURL(url : String) -> NSURL
-    {
-        let url : NSString = url
-        let searchURL : NSURL = NSURL(string: url as String)!
-        return searchURL
-    }
-    
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
-    {
-        var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
-            }
-            completion(result: mediaImage)
-        }
-        else
-        {
-            completion(result:UIImage(named: "thumb12")!)
-        }
-    }
-
-    func downloadMediaFromGCS(){
-        for var i = 0; i < imageDataSource.count; i++
-        {
-            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-            if(mediaIdS != ""){
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            if(result != UIImage()){
-                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                        print("not same")
-                                }
-                                else{
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                }
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage(named: "thumb12")!
-                            }
-                        })
-                    }
-                }
-                self.fullImageDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.removeOverlay()
-                    self.channelItemsCollectionView.reloadData()
-                })
-            }
-        }
-    }
 }
 
 extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if fullImageDataSource.count > 0
-        {
-            return fullImageDataSource.count
-        }
-        else
-        {
-            return 0
-        }
+       return totalCount
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MyChannelItemCell.identifier, forIndexPath: indexPath) as! MyChannelItemCell
-        
-        if fullImageDataSource.count > 0
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0
         {
-            let mediaType = fullImageDataSource[indexPath.row][mediaTypeKey] as! String
+            let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaTypeKey] as! String
             let channelImageView = cell.viewWithTag(100) as! UIImageView
-            let imageData =  fullImageDataSource[indexPath.row][mediaUrlKey] as! UIImage
+            let imageData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey] as! UIImage
             channelImageView.image = imageData
+            
             if mediaType == "video"
             {
                 cell.videoPlayIcon.hidden = false
@@ -369,8 +290,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if(!pullToRefreshActive){
-            if(fullImageDataSource.count > 0){
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0){
                
                 let defaults = NSUserDefaults .standardUserDefaults()
                 let userId = defaults.valueForKey(userLoginIdKey) as! String
@@ -388,10 +308,10 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 else{
                     imageForProfile =  UIImage(named: "dummyUser")!
                 }
-                let dateString = self.fullImageDataSource[indexPath.row]["createdTime"] as! String
+                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeStampKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.fullImageDataSource[indexPath.row][self.actualImageKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: self.fullImageDataSource[indexPath.row][self.mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: self.fullImageDataSource[indexPath.row][self.mediaUrlKey] as! UIImage, notifType: self.fullImageDataSource[indexPath.row][self.notificationKey] as! String,mediaId: self.fullImageDataSource[indexPath.row][self.mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.fullImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.thumbImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.notificationTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaDetailIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemsCollectionView.alpha = 1.0
@@ -399,5 +319,4 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 })
             }
         }
-    }
 }

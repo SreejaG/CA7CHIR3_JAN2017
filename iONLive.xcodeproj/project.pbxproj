@@ -14,7 +14,6 @@
 		160903F91C6C7ED1004E381D /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903F31C6C7ED1004E381D /* EditProfileViewController.swift */; };
 		160903FA1C6C7ED1004E381D /* EditProfPersonalInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */; };
 		160903FB1C6C7ED1004E381D /* EditProfPrivateInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903F51C6C7ED1004E381D /* EditProfPrivateInfoCell.swift */; };
-		160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903FD1C6C7F31004E381D /* IPhoneLiveStreaming.swift */; };
 		160904011C6C7F31004E381D /* rtsp_relay.m in Sources */ = {isa = PBXBuildFile; fileRef = 160903FF1C6C7F31004E381D /* rtsp_relay.m */; };
 		160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F501C4CCEB40022B711 /* AAPLPreviewView.m */; };
 		160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 160B1F5E1C4CDF9E0022B711 /* IPhoneCameraViewController.m */; };
@@ -212,7 +211,16 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
+		B20B8BBA1D45F39800323599 /* GlobalStreamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BB91D45F39800323599 /* GlobalStreamList.swift */; };
+		B20B8BBC1D45F3A300323599 /* GlobalSubscribedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */; };
+		B20B8BBE1D45F3CC00323599 /* LiveStreamingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */; };
+		B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */; };
+		B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */; };
+		B20B8BC81D45F98900323599 /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */; };
 		B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
+		B23F26641D409D5600A320BF /* GlobalDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */; };
+		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
+		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
 		B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */; };
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
@@ -246,7 +254,6 @@
 		160903F31C6C7ED1004E381D /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfPersonalInfoCell.swift; sourceTree = "<group>"; };
 		160903F51C6C7ED1004E381D /* EditProfPrivateInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfPrivateInfoCell.swift; sourceTree = "<group>"; };
-		160903FD1C6C7F31004E381D /* IPhoneLiveStreaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPhoneLiveStreaming.swift; sourceTree = "<group>"; };
 		160903FE1C6C7F31004E381D /* rtsp_relay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtsp_relay.h; sourceTree = "<group>"; };
 		160903FF1C6C7F31004E381D /* rtsp_relay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rtsp_relay.m; sourceTree = "<group>"; };
 		160B1F4F1C4CCEB40022B711 /* AAPLPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLPreviewView.h; sourceTree = "<group>"; };
@@ -604,8 +611,18 @@
 		59BC3F581BFF848600710905 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		B20B8BB91D45F39800323599 /* GlobalStreamList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalStreamList.swift; sourceTree = "<group>"; };
+		B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSubscribedList.swift; sourceTree = "<group>"; };
+		B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingHelpers.swift; sourceTree = "<group>"; };
+		B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPhoneLiveStreaming.swift; sourceTree = "<group>"; };
+		B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomInfiniteIndicator.swift; path = scroll/CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
+		B20B8BC61D45F98500323599 /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+InfiniteScroll.h"; path = "scroll/UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
+		B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "scroll/UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
 		B222EA551D38C363002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
 		B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
+		B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataRetriever.swift; sourceTree = "<group>"; };
+		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
+		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
 		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
 		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
@@ -684,7 +701,8 @@
 			isa = PBXGroup;
 			children = (
 				1683B8E91C0EC1D700CBB6FE /* UploadStream.swift */,
-				160903FD1C6C7F31004E381D /* IPhoneLiveStreaming.swift */,
+				B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */,
+				B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */,
 				160903FE1C6C7F31004E381D /* rtsp_relay.h */,
 				160903FF1C6C7F31004E381D /* rtsp_relay.m */,
 				16BBA8841CD8902B00742142 /* screencap.h */,
@@ -722,9 +740,14 @@
 		160F47AF1BFEEF5100599AA7 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */,
 				160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */,
 				16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */,
 				16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */,
+				B20B8BB91D45F39800323599 /* GlobalStreamList.swift */,
+				B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */,
+				B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */,
+				B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1013,6 +1036,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
+				B20B8BC31D45F95F00323599 /* Scroll */,
 				163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */,
 				165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */,
 				160B1F4E1C4CCEB40022B711 /* iPhoneCamera */,
@@ -1552,6 +1576,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B20B8BC31D45F95F00323599 /* Scroll */ = {
+			isa = PBXGroup;
+			children = (
+				B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */,
+				B20B8BC61D45F98500323599 /* UIScrollView+InfiniteScroll.h */,
+				B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */,
+			);
+			name = Scroll;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1770,8 +1804,10 @@
 				160EAE401C032A5B00020D31 /* LiveStreamingManager.swift in Sources */,
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
+				B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
+				B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */,
 				1674A9131C29077D00D547D7 /* MySharedChannelsViewController.swift in Sources */,
 				166456051C2A8F9B00D09FAE /* TimeLapseHeaderCell.swift in Sources */,
 				1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */,
@@ -1781,6 +1817,7 @@
 				166796AB1C30FF8300543D7A /* ConnectAccountViewController.swift in Sources */,
 				B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				160903FA1C6C7ED1004E381D /* EditProfPersonalInfoCell.swift in Sources */,
+				B20B8BBE1D45F3CC00323599 /* LiveStreamingHelpers.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
 				16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */,
@@ -1799,6 +1836,7 @@
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				16BFCA621D1A6DE700761C94 /* SDImageCache.m in Sources */,
+				B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */,
 				16BFCA691D1A6DE700761C94 /* UIButton+WebCache.m in Sources */,
 				1632825B1C7F098000D03F51 /* ProfileManager.swift in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
@@ -1809,6 +1847,7 @@
 				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
 				16BFCA681D1A6DE700761C94 /* SDWebImagePrefetcher.m in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
+				B20B8BBA1D45F39800323599 /* GlobalStreamList.swift in Sources */,
 				165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */,
 				164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
@@ -1829,6 +1868,7 @@
 				167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */,
 				160903F91C6C7ED1004E381D /* EditProfileViewController.swift in Sources */,
 				16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */,
+				B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */,
 				16AED00E1CBE1B3D00D72C0F /* ContactListViewController.swift in Sources */,
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */,
@@ -1840,6 +1880,7 @@
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,
 				16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */,
+				B20B8BC81D45F98900323599 /* UIScrollView+InfiniteScroll.m in Sources */,
 				16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
 				1644B3D71C05698F004E3832 /* AuthenticationManager.swift in Sources */,
@@ -1880,7 +1921,6 @@
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
 				16BFCA651D1A6DE700761C94 /* SDWebImageDownloader.m in Sources */,
 				16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */,
-				160904001C6C7F31004E381D /* IPhoneLiveStreaming.swift in Sources */,
 				16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */,
 				16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */,
 				16EC54A91CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift in Sources */,
@@ -1903,9 +1943,11 @@
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */,
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
+				B23F26641D409D5600A320BF /* GlobalDataRetriever.swift in Sources */,
 				16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */,
 				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
+				B20B8BBC1D45F3A300323599 /* GlobalSubscribedList.swift in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
@@ -2079,7 +2121,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = CA7CH;
-				PROVISIONING_PROFILE = "156aded1-c4eb-407c-9280-947160e46d9e";
+				PROVISIONING_PROFILE = "9dc399ba-a592-4353-a882-013be46eabf5";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2112,7 +2154,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gadgeon.iONLive;
 				PRODUCT_NAME = CA7CH;
-				PROVISIONING_PROFILE = "156aded1-c4eb-407c-9280-947160e46d9e";
+				PROVISIONING_PROFILE = "9dc399ba-a592-4353-a882-013be46eabf5";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 			};
 			name = Release;

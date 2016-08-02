@@ -232,6 +232,23 @@ class LoginViewController: UIViewController {
             {
                 defaults.setValue(code, forKey: "countryCode")
             }
+            if let code = json["archiveId"]
+            {
+                defaults.setValue(code, forKey: archiveId)
+                
+            }
+            if let code = json["totalMediaInArchive"]
+            {
+                print(code)
+                defaults.setValue(code, forKey:ArchiveCount)
+                
+            }
+           if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
+           {
+                NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
+                GlobalDataRetriever.sharedInstance.initialise()
+                GlobalDataChannelList.sharedInstance.initialise()
+            }
         }
         else
         {

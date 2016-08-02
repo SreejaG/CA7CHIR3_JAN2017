@@ -11,10 +11,12 @@ class UrlManager {
     
     //    let baseUrl = "http://104.196.113.247:3000";
     
-    let baseUrl = "http://104.196.113.247:3000";
+    let baseUrl = "http://104.197.92.137:3000";
+    
+//    let baseUrl = "http://192.168.18.101:3000"; // Local ip
 
     
-    let iONLiveCamUrl = "http://192.168.42.1:8888"
+    let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
         struct Singleton {
@@ -55,6 +57,12 @@ class UrlManager {
     func mediaUploadUrl() -> String{
         let mediaUrl="https://abdulmanafcjbucket.commondatastorage.googleapis.com/shamly.png?GoogleAccessId=signedurl@ion-live-1120.iam.gserviceaccount.com&Expires=1458125385&Signature=d6bx5yAPd5c6TWNV4qQoniyIsoaCfSX8ppJamP8dlIz6NSLSYJf81lUjgDDZJPUp63MKhXVCC3A01eveVxGG6KwTWV0z9dFeHBZjLXYlVKT3%2F8FliNCBckvmCP7e8YC8ITKfY44r41xO6Qk2EBdT0PeEty0pgRDxnluTKnTCBkgxo6h4Q8qUTNLHFPw274QtYrDpXnrSBaj7%2FsdhvnrPhRaQ1gRYFBQhREGfQuVMhjSeXbDBWj5b8VtYohqe1ObhnOiIpP8ci4Kn2z6NmwPyYxVcTLHQ2H5YoiB3d3Do91s6K8UZKHj5vtPp23lhO8Gifo9a8jiekpbW1eKz30CHOQ%3D%3D";
         return mediaUrl
+    }
+    
+    func getChannelMediaDetailsDuringScrollingAPI() -> String
+    {
+        let getChannelMediaDetailsDuringScrollingAPIValue = baseUrl+"/api/v1/media"
+        return getChannelMediaDetailsDuringScrollingAPIValue
     }
     
     func getChannelMediaDetails(channelId : String, userName: String, accessToken: String , limit : String , offset : String) -> String
@@ -332,6 +340,20 @@ class UrlManager {
     {
         let getVideoUrl = iONLiveCamUrl+"/video/\(hlsId).m3u8"
         return getVideoUrl
+    }
+    func getUpdatedMediaDetails(userName: String, accessToken: String, timeStamp: String)->String
+    {
+        let getUpdatedMediaUrl = SubscribedChannelMediaUrl() + "/" + userName + "/" + accessToken + "/" + timeStamp
+        print(getUpdatedMediaUrl)
+        return getUpdatedMediaUrl
+    }
+    
+    func getOffsetDetails(userName: String, accessToken: String) -> String
+        
+    {
+        let getUpdatedMediaUrl = SubscribedChannelMediaUrl() + "/" + userName + "/" + accessToken
+        print(getUpdatedMediaUrl)
+        return getUpdatedMediaUrl
     }
     
 }

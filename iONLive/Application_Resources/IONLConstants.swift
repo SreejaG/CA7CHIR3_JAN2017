@@ -10,9 +10,11 @@ import Foundation
 let userLoginIdKey = "userLoginIdKey"
 let userAccessTockenKey = "userAccessTockenKey"
 let userBucketName = "userBucketName"
-
+let archiveId = "archiveId"
+let ArchiveCount =  "archiveMediaCount"
 let apiErrorMessageKey = "errorMessage"
 let apiErrorCodeKey = "errorCode"
+let pullTorefreshKey = "channel_media_detail_id"
 
 let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"

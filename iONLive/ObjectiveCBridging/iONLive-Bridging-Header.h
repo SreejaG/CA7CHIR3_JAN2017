@@ -6,6 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "UIScrollView+InfiniteScroll.h"
 
 #import "AFNetworking.h"
 #import "AFHTTPRequestOperation.h"

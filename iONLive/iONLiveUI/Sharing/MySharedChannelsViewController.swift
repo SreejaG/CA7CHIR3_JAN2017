@@ -11,6 +11,7 @@ import UIKit
 class MySharedChannelsViewController: UIViewController {
     
     static let identifier = "MySharedChannelsViewController"
+    
     @IBOutlet weak var sharedChannelsTableView: UITableView!
     @IBOutlet weak var sharedChannelsSearchBar: UISearchBar!
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
@@ -18,15 +19,18 @@ class MySharedChannelsViewController: UIViewController {
     let channelManager = ChannelManager.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
-    let channelNameKey = "channelName"
-    let channelItemCountKey = "channelItemCount"
-    let channelHeadImageNameKey = "channelHeadImageName"
-    let channelIdKey = "channelId"
-    let channelCreatedTimeKey = "channelCreatedTime"
-    let channelSelectionKey = "channelSelection"
+    let channelDetailIdKey = "channel_detail_id"
+    let mediaDetailIdKey = "media_detail_id"
+    let channelNameKey = "channel_name"
+    let totalMediaCountKey = "total_media_count"
+    let createdTimeStampKey = "created_timeStamp"
+    let sharedIndicatorOriginalKey = "orgSelected"
+    let sharedIndicatorTemporaryKey = "tempSelected"
+    let thumbImageKey = "thumbImage"
+    let thumbImageURLKey = "thumbImage_URL"
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
+    
     var searchActive : Bool = false
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var addChannelArray : NSMutableArray = NSMutableArray()
@@ -41,14 +45,22 @@ class MySharedChannelsViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(_:)), name: "refreshMySharedChannelTableView", object: nil)
         
         doneButton.hidden = true
-        
-        channelDetailsDict.removeAll()
+    
         dataSource.removeAll()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
         
         sharedChannelsSearchBar.delegate = self
-        createChannelDataSource()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannelList", object: nil)
+        
+        showOverlay()
+        if (GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0)
+        {
+            removeOverlay()
+            dataSource.removeAll()
+            createChannelDataSource()
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -63,6 +75,14 @@ class MySharedChannelsViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func removeActivityIndicator(notif : NSNotification){
+        dataSource.removeAll()
+        self.createChannelDataSource()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+        })
     }
     
     @IBAction func backButtonClicked(sender: AnyObject)
@@ -124,8 +144,8 @@ class MySharedChannelsViewController: UIViewController {
         deleteChannelArray.removeAllObjects()
         for var i = 0; i < dataSource.count; i++
         {
-            let channelid = dataSource[i][channelIdKey] as! String
-            let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+            let channelid = dataSource[i][channelDetailIdKey] as! String
+            let selectionValue : Int = dataSource[i][sharedIndicatorTemporaryKey] as! Int
             if(selectionValue == 1){
                 addChannelArray.addObject(channelid)
             }
@@ -195,18 +215,19 @@ class MySharedChannelsViewController: UIViewController {
             if(status == 1){
                 for var i = 0; i < dataSource.count; i++
                 {
-                    let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
-                    dataSource[i]["orgSelected"] = selectionValue
+                    let selectionValue : Int = dataSource[i][sharedIndicatorTemporaryKey] as! Int
+                    dataSource[i][sharedIndicatorOriginalKey] = selectionValue
                 }
                 sharedChannelsTableView.reloadData()
+                GlobalDataChannelList.sharedInstance.enableDisableChannelList(dataSource)
             }
         }
         else
         {
             for var i = 0; i < dataSource.count; i++
             {
-                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                dataSource[i]["tempSelected"] = selectionValue
+                let selectionValue : Int = dataSource[i][sharedIndicatorOriginalKey] as! Int
+                dataSource[i][sharedIndicatorTemporaryKey] = selectionValue
             }
             
             ErrorManager.sharedInstance.inValidResponseError()
@@ -216,20 +237,16 @@ class MySharedChannelsViewController: UIViewController {
     
     func createChannelDataSource()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        getChannelDetails(userId, token: accessToken)
-    }
-    
-    func getChannelDetails(userName: String, token: String)
-    {
-        showOverlay()
-        channelManager.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
-            return
+        for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource
+        {
+            let chanelName = element[channelNameKey] as! String
+            if chanelName != "Archive"
+            {
+                dataSource.append(element)
+            }
+        }
+        if dataSource.count > 0{
+            sharedChannelsTableView.reloadData()
         }
     }
     
@@ -240,21 +257,7 @@ class MySharedChannelsViewController: UIViewController {
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
     }
-    
-    func authenticationSuccessHandler(response:AnyObject?)
-    {
-        channelDetailsDict.removeAll()
-        if let json = response as? [String: AnyObject]
-        {
-            channelDetailsDict = json["channels"] as! [[String:AnyObject]]
-            setChannelDetails()
-        }
-        else
-        {
-            ErrorManager.sharedInstance.inValidResponseError()
-        }
-    }
-    
+        
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
@@ -264,31 +267,6 @@ class MySharedChannelsViewController: UIViewController {
         let url : NSString = url
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
-    }
-    
-    func setChannelDetails()
-    {
-        dataSource.removeAll()
-        for element in channelDetailsDict{
-            let sharedBool = Int(element["channel_shared_ind"] as! Bool)
-            let channelId = element["channel_detail_id"]?.stringValue
-            let channelName = element["channel_name"] as! String
-            if channelName != "Archive"
-            {
-                let mediaSharedCount = element["total_no_media_shared"]?.stringValue
-                let createdTime = element["last_updated_time_stamp"] as! String
-                let Url = element["thumbnail_Url"] as! String
-                let thumbUrl : NSURL = convertStringtoURL(Url)
-                dataSource.append([channelIdKey:channelId!, channelNameKey:channelName, channelItemCountKey:    mediaSharedCount!, channelCreatedTimeKey: createdTime, channelHeadImageNameKey:thumbUrl,"orgSelected":sharedBool,"tempSelected":sharedBool])
-            }
-        }
-        dataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[channelCreatedTimeKey] as! String
-            let time2 = p2[channelCreatedTimeKey] as! String
-            return time1 > time2
-        })
-        removeOverlay()
-        sharedChannelsTableView.reloadData()
     }
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
@@ -310,7 +288,7 @@ class MySharedChannelsViewController: UIViewController {
 
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        removeOverlay()
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
@@ -343,35 +321,35 @@ class MySharedChannelsViewController: UIViewController {
         let indexpath = notif.object as! Int
         if(searchActive)
         {
-            let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
+            let selectedValue =  searchDataSource[indexpath][sharedIndicatorTemporaryKey] as! Int
             if(selectedValue == 1)
             {
-                searchDataSource[indexpath]["tempSelected"] = 0
+                searchDataSource[indexpath][sharedIndicatorTemporaryKey] = 0
             }
             else
             {
-                searchDataSource[indexpath]["tempSelected"] = 1
+                searchDataSource[indexpath][sharedIndicatorTemporaryKey] = 1
             }
             
-            let selectedChannelId =  searchDataSource[indexpath][channelIdKey] as! String
+            let selectedChannelId =  searchDataSource[indexpath][channelDetailIdKey] as! String
             for (var i = 0; i < dataSource.count; i++)
             {
-                let dataSourceChannelId = dataSource[i][channelIdKey] as! String
+                let dataSourceChannelId = dataSource[i][channelDetailIdKey] as! String
                 if(selectedChannelId == dataSourceChannelId)
                 {
-                    dataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                    dataSource[i][sharedIndicatorTemporaryKey] = searchDataSource[indexpath][sharedIndicatorTemporaryKey]
                 }
             }
         }
         else
         {
             
-            let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
+            let selectedValue =  dataSource[indexpath][sharedIndicatorTemporaryKey] as! Int
             if(selectedValue == 1){
-                dataSource[indexpath]["tempSelected"] = 0
+                dataSource[indexpath][sharedIndicatorTemporaryKey] = 0
             }
             else{
-                dataSource[indexpath]["tempSelected"] = 1
+                dataSource[indexpath][sharedIndicatorTemporaryKey] = 1
             }
         }
         sharedChannelsTableView.reloadData()
@@ -430,21 +408,20 @@ extension MySharedChannelsViewController:UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsCell.identifier, forIndexPath:indexPath) as! MySharedChannelsCell
             
             cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
-            cell.sharedCountLabel.text = dataSourceTmp![indexPath.row][channelItemCountKey] as? String
+            cell.sharedCountLabel.text = dataSourceTmp![indexPath.row][totalMediaCountKey] as? String
             
-            if let thumbUrl = dataSourceTmp![indexPath.row][channelHeadImageNameKey]
+            if let latestImage = dataSourceTmp![indexPath.row][thumbImageKey]
             {
-                cell.userImage.sd_setImageWithURL(thumbUrl as! NSURL,placeholderImage: UIImage(named: "thumb12"))
+                cell.userImage.image = latestImage as? UIImage
             }
-            else{
+            else
+            {
                 cell.userImage.image = UIImage(named: "thumb12")
             }
-            if(dataSourceTmp![indexPath.row][channelItemCountKey] as! String == "0"){
-                cell.userImage.image = UIImage(named: "thumb12")
-            }
+
             cell.channelSelectionButton.tag = indexPath.row
             
-            let selectionValue : Int = dataSourceTmp![indexPath.row]["tempSelected"] as! Int
+            let selectionValue : Int = dataSourceTmp![indexPath.row][sharedIndicatorTemporaryKey] as! Int
             if(selectionValue == 1){
                 cell.channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
                 cell.sharedCountLabel.hidden = false
@@ -465,22 +442,23 @@ extension MySharedChannelsViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "tabToAppear")
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier) as! UITabBarController
         if(!searchActive){
             if dataSource.count > indexPath.row
             {
-                (channelDetailVC as! MyChannelDetailViewController).channelId = dataSource[indexPath.row][channelIdKey] as! String
+                (channelDetailVC as! MyChannelDetailViewController).channelId = dataSource[indexPath.row][channelDetailIdKey] as! String
                 (channelDetailVC as! MyChannelDetailViewController).channelName = dataSource[indexPath.row][channelNameKey] as! String
-                (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(dataSource[indexPath.row][channelItemCountKey]! as! String)!
+                (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(dataSource[indexPath.row][totalMediaCountKey]! as! String)!
             }
         }
         else{
             if searchDataSource.count > indexPath.row
             {
-                (channelDetailVC as! MyChannelDetailViewController).channelId = searchDataSource[indexPath.row][channelIdKey] as! String
+                (channelDetailVC as! MyChannelDetailViewController).channelId = searchDataSource[indexPath.row][channelDetailIdKey] as! String
                 (channelDetailVC as! MyChannelDetailViewController).channelName = searchDataSource[indexPath.row][channelNameKey] as! String
-                (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(searchDataSource[indexPath.row][channelItemCountKey]! as! String)!
+                (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(searchDataSource[indexPath.row][totalMediaCountKey]! as! String)!
             }
         }
         channelDetailVC.navigationController?.navigationBarHidden = true

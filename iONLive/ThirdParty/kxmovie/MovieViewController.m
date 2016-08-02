@@ -2098,7 +2098,6 @@ MovieViewController *obj1;
 {
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"PhotoViewer" bundle:nil];
     PhotoViewerViewController *photoViewerViewController =( PhotoViewerViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"PhotoViewerViewController"];
-    photoViewerViewController.snapShots = snapShotsDict;
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
     navController.navigationBarHidden = true;
     navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

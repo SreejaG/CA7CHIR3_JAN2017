@@ -89,6 +89,8 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 int orientationFlag = 0;
 
+
+
 @implementation IPhoneCameraViewController
 
 IPhoneLiveStreaming * liveStreaming;
@@ -97,11 +99,17 @@ int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
 bool takePictureFlag = false;
 
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
     [self addApplicationObserversInIphone];
+    
+    GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+    NSLog(@"inside viewWillAppear of IphoneCamera");
+    NSLog(@"%lu", (unsigned long)gb.globalDataSource.count);
+
     
     //device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -154,6 +162,37 @@ bool takePictureFlag = false;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if([[NSUserDefaults standardUserDefaults] valueForKey:@"first"] != nil)
+    {
+        NSString *first = [[NSUserDefaults standardUserDefaults] valueForKey:@"first"];
+        if([first isEqualToString:@"firstTime"])
+        {
+            
+        }
+        else{
+            GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+            if (gb.globalDataSource.count == 0) {
+                [gb initialise];
+            }
+            GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+            if (gbData.globalChannelDataSource.count == 0) {
+                [gbData initialise];
+            }
+        }
+    }
+    else{
+        GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+        if (gb.globalDataSource.count == 0) {
+            [gb initialise];
+        }
+        GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+        if (gbData.globalChannelDataSource.count == 0) {
+            [gbData initialise];
+        }
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setValue:@"SecndTime" forKey:@"first"];
     
     _assetsLibrary = [[ALAssetsLibrary alloc]init];
     
@@ -617,7 +656,12 @@ bool takePictureFlag = false;
     
     if(takePictureFlag == false){
         dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSLog(@"Global Data Count : ");
+            NSLog(@ "%lu", (unsigned long)GlobalDataRetriever.sharedInstance.globalDataSource.count);
+            
+            // Prijesh : Load cached image from global dictionary
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
+            
             if ( data == nil )
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1093,10 +1137,13 @@ bool takePictureFlag = false;
     request.HTTPBody = imageData;
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        if(error != nil){
+        if(error != nil)
+        {
             
         }
         else{
+            
+            
             [self deleteThumbnailImageLive];
         }
     }];
@@ -1243,7 +1290,7 @@ bool takePictureFlag = false;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
                             [self saveImage:imageData];
-                            //[self moveVideoToDocumentDirectory:outputFileURL];
+                            [self moveVideoToDocumentDirectory:outputFileURL];
                             
                             //Save Captured videos to the CA7CH specific album in phone
                             [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)

@@ -1,10 +1,3 @@
-//
-//  upload1.swift
-//  iONLive
-//
-//  Created by Sreeja on 01/07/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -36,14 +29,16 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     var dataRowFromLocal : [String:AnyObject] = [String:AnyObject]()
     
+    let mediaDetailIdKey = "media_detail_id"
+    let thumbImageURLKey = "thumbImage_URL"
+    let fullImageURLKey = "fullImage_URL"
     let thumbImageKey = "thumbImage"
-    let fullImageKey = "fullImageKey"
-    let thumbSignedUrlKey = "thumbnail_name_SignedUrl"
-    let fullSignedUrlKey = "gcs_object_name_SignedUrl"
-    let mediaIdKey = "media_detail_id"
-    let mediaTypeKey = "gcs_object_type"
-    let timeStampKey = "created_time_stamp"
-    let progressKey = "progress"
+    let notificationTypeKey = "notification_type"
+    let createdTimeStampKey = "created_timeStamp"
+    let mediaTypeKey = "media_type"
+    let uploadProgressKey = "upload_progress"
+    let channelMediaDetailIdKey = "channel_media_detail_id"
+    let channelDetailIdKey = "channel_detail_id"
     
     var progressDictionary : [[String:AnyObject]]  = [[String:AnyObject]]()
     
@@ -154,8 +149,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         
         let currentTimeStamp : String = getCurrentTimeStamp()
         
-        dataRowFromLocal = [thumbSignedUrlKey:uploadThumbImageURLGCS,fullSignedUrlKey:uploadFullImageOrVideoURLGCS,mediaIdKey:Int(mediaId)!,mediaTypeKey:media,timeStampKey:currentTimeStamp,thumbImageKey:imageAfterConversionThumbnail,fullImageKey:imageFromDB,progressKey:0.02]
-   
+        dataRowFromLocal = [self.mediaDetailIdKey:mediaId,self.thumbImageURLKey:uploadThumbImageURLGCS,self.fullImageURLKey:uploadFullImageOrVideoURLGCS,self.mediaTypeKey:media,self.notificationTypeKey:"likes", self.createdTimeStampKey:currentTimeStamp,self.thumbImageKey:imageAfterConversionThumbnail,self.uploadProgressKey: 0.02]
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
     
@@ -179,7 +173,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                         if(result == "Success"){
                             self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
                             self.deleteDataFromDB()
-//                            self.mapMediaToDefaultChannels()
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                self.mapMediaToDefaultChannels()
+                            })
                         }
                         else{
                         }
@@ -189,9 +185,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 else{
                 }
             })
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-               self.mapMediaToDefaultChannels()
-            })
+           
         })
         
     }
@@ -284,11 +278,71 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //after uploading map media to channels
     func mapMediaToDefaultChannels(){
+         print(self.mediaId)
         imageUploadManager.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
-            
+                self.authenticationSuccessHandlerAfterMapping(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         })
+    }
+    
+    func authenticationSuccessHandlerAfterMapping(response:AnyObject?)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            let mediaId = json["mediaId"] as! String
+            let channelWithScrollingIds = json["channelMediaDetails"] as! [[String:AnyObject]]
+            addScrollingIdsToChannels(channelWithScrollingIds, mediaId: mediaId)
+        }
+    }
+    
+    func addScrollingIdsToChannels(channelScrollsDict: [[String:AnyObject]], mediaId: String)
+    {
+        //all channelIds from global channel image mapping data source to a channelids array
+        let channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
+        
+        var channelMediaDataSource : [[String:AnyObject]] = [[String:AnyObject]]()
+        
+        var index = 0
+        var chkFlag = false
+        
+        for var i = 0 ;i < channelScrollsDict.count; i++
+        {
+            var chanelIdChk : String = String(channelScrollsDict[i][channelDetailIdKey]!)
+            var chanelMediaId : String = String(channelScrollsDict[i][channelMediaDetailIdKey]!)
+            
+            if channelIds.contains(chanelIdChk)
+            {
+                channelMediaDataSource = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]!
+                
+                //loop through the media array
+                for var j = 0; j < channelMediaDataSource.count; j++
+                {
+                    index = j
+                    let mediaIdChk = channelMediaDataSource[j][mediaDetailIdKey] as! String
+                    
+                    //check media exist in the media array
+                    if mediaId == mediaIdChk
+                    {
+                        chkFlag = true
+                        break
+                    }
+                }
+                
+                //save the media array index to another array for removing
+                if chkFlag == true
+                {
+                    channelMediaDataSource[index][channelMediaDetailIdKey] = chanelMediaId
+                }
+                
+                GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanelIdChk)
+                
+                channelMediaDataSource.removeAll()
+                chkFlag = false
+                chanelIdChk = ""
+                chanelMediaId = ""
+            }
+        }
     }
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
@@ -309,7 +363,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     func updateProgressToDefault(progress:Float, mediaIds: String)
     {
-        let dict = [mediaIdKey: mediaIds, "progress": progress]
+        let dict = [mediaDetailIdKey: mediaIds, uploadProgressKey: progress]
         NSNotificationCenter.defaultCenter().postNotificationName("upload", object:dict)
     }
 }
