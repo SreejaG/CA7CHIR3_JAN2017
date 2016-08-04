@@ -151,8 +151,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     @IBAction func didtapBackButton(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        let cameraViewStoryboard = UIStoryboard(name:"PhotoViewer" , bundle: nil)
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("PhotoViewerViewController") as! PhotoViewerViewController
         self.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
