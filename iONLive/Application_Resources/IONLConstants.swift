@@ -15,11 +15,11 @@ let ArchiveCount =  "archiveMediaCount"
 let apiErrorMessageKey = "errorMessage"
 let apiErrorCodeKey = "errorCode"
 let pullTorefreshKey = "channel_media_detail_id"
-
+let infiniteScrollIdKey = "channel_media_detail_id"
 let startedStreaming = "StartedStreaming"
 let streamingToken = "StreamingToken"
 let initializingStream = "InitializingStream"
-
+let subChannelIdKey = "channel_sub_detail_id"
 let apiDeveloperFailureMessage = "developerMsg"
 
 @objc enum SnapCamSelectionMode : Int {

@@ -61,6 +61,8 @@ class GlobalChannelToImageMapping: NSObject {
             }
             else if dataSourceCount == dummy.count - 1
             {
+                NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: nil)
+
                 NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
             }
         }
@@ -484,6 +486,7 @@ class GlobalChannelToImageMapping: NSObject {
         
         //All medias in the selected channel to a media array
         channelMediaDataSource = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!
+        
    
         //loop through the channel list array to update total count and latest thumbnail after deletion complete
         for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
@@ -567,13 +570,11 @@ class GlobalChannelToImageMapping: NSObject {
             
                 if selectedIndex.count > 0
                 {
+                    selectedIndex = selectedIndex.sort()
                     for var i = 0;i < selectedIndex.count; i++
                     {
                         let indexToDelete = selectedIndex[i] - i
-                        if indexToDelete > -1
-                        {
-                            channelMediaDataSource.removeAtIndex(indexToDelete)
-                        }
+                        channelMediaDataSource.removeAtIndex(indexToDelete)
                     }
                 
                     //sort

@@ -171,7 +171,7 @@
                                             <action selector="didTapsCameraActionButton:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="nIC-tq-Ujx"/>
                                         </connections>
                                     </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="cEw-NK-Mzz">
+                                    <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="cEw-NK-Mzz">
                                         <rect key="frame" x="56" y="51" width="17" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="17" id="Irq-qE-DBL"/>
@@ -189,7 +189,7 @@
                                             <action selector="didTapPhotoViewer:" destination="2uu-F2-Ybp" eventType="touchUpInside" id="uKL-Qf-rss"/>
                                         </connections>
                                     </button>
-                                    <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
+                                    <label hidden="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
                                         <rect key="frame" x="507" y="40" width="45" height="45"/>
                                         <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
@@ -224,16 +224,16 @@
                                 <rect key="frame" x="200" y="250" width="200" height="100"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vGm-sF-zny">
-                                        <rect key="frame" x="76" y="41" width="49" height="20"/>
+                                        <rect key="frame" x="76" y="23" width="49" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="49" id="35v-eE-JT0"/>
                                             <constraint firstAttribute="height" constant="20" id="J2b-wc-5Cj"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BIV-8z-Rim">
-                                        <rect key="frame" x="15" y="69" width="170" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BIV-8z-Rim">
+                                        <rect key="frame" x="15" y="44" width="170" height="26"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="21" id="wnY-OX-ycu"/>
+                                            <constraint firstAttribute="height" constant="26" id="wnY-OX-ycu"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -242,7 +242,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="BIV-8z-Rim" firstAttribute="top" secondItem="vGm-sF-zny" secondAttribute="bottom" constant="8" id="2EJ-MI-IoB"/>
+                                    <constraint firstItem="BIV-8z-Rim" firstAttribute="top" secondItem="vGm-sF-zny" secondAttribute="bottom" constant="1" id="2EJ-MI-IoB"/>
                                     <constraint firstAttribute="height" constant="100" id="7Zn-9w-yos"/>
                                     <constraint firstItem="BIV-8z-Rim" firstAttribute="leading" secondItem="Sw1-iw-Cte" secondAttribute="leading" constant="15" id="9Dw-nm-9n0"/>
                                     <constraint firstItem="vGm-sF-zny" firstAttribute="centerX" secondItem="Sw1-iw-Cte" secondAttribute="centerX" id="IKR-F6-dVi"/>
@@ -250,7 +250,7 @@
                                     <constraint firstAttribute="trailing" secondItem="BIV-8z-Rim" secondAttribute="trailing" constant="15" id="XPa-wP-lCX"/>
                                     <constraint firstAttribute="width" constant="200" id="d6U-Zb-Z4z"/>
                                     <constraint firstItem="vGm-sF-zny" firstAttribute="centerX" secondItem="Sw1-iw-Cte" secondAttribute="centerX" id="rRX-kM-y9c"/>
-                                    <constraint firstItem="vGm-sF-zny" firstAttribute="centerY" secondItem="Sw1-iw-Cte" secondAttribute="centerY" constant="1" id="uPv-wJ-dhW"/>
+                                    <constraint firstItem="vGm-sF-zny" firstAttribute="centerY" secondItem="Sw1-iw-Cte" secondAttribute="centerY" constant="-17" id="uPv-wJ-dhW"/>
                                 </constraints>
                             </view>
                         </subviews>

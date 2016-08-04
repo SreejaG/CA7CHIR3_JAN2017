@@ -23,7 +23,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     @IBOutlet var playIconInFullView: UIImageView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
     @IBOutlet var fullScreenZoomView: UIImageView!
-    
+    @IBOutlet weak var fullScreenScrollView: UIScrollView!
     @IBOutlet weak var mediaTimeLabel: UILabel!
     
     @IBOutlet var progressView: UIProgressView!
@@ -129,9 +129,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 })
             
                 let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
-                self.downloadFullImageWhenTapThumb(dict, indexpaths: 0)
+                self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             }
             else{
+                var start = 0
+                var end = 0
+                if GlobalDataRetriever.sharedInstance.globalDataSource.count > 10
+                {
+                    end = 10
+                }
+                else{
+                    end = GlobalDataRetriever.sharedInstance.globalDataSource.count
+                }
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end)
+                })
+
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
@@ -139,19 +154,37 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
          }
         
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        fullScreenScrollView.delegate = self
+        fullScreenScrollView.minimumZoomScale = 1.0
+        fullScreenScrollView.maximumZoomScale = 10.0
+        fullScreenScrollView.zoomScale = 1.0
+        view.addSubview(fullScreenScrollView)
+  
+        fullScreenScrollView.delaysContentTouches = false;
+        
+        
+        self.view.bringSubviewToFront(photoThumpCollectionView)
+     
+        self.view.bringSubviewToFront(playIconInFullView)
+        self.view.bringSubviewToFront(TopView)
+        self.view.bringSubviewToFront(BottomView)
+        
+  
+        
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        self.view.addGestureRecognizer(doubleTap)
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
         self.view .addGestureRecognizer(swipeRight)
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
         self.view .addGestureRecognizer(swipeLeft)
+        
         let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
         fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
-        
-        let shrinkImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.shrinkImageView(_:)))
-        shrinkImageViewRecognizer.numberOfTapsRequired = 1
-        fullScreenZoomView.addGestureRecognizer(shrinkImageViewRecognizer)
       }
     
     override func didReceiveMemoryWarning() {
@@ -185,6 +218,99 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return self.fullScreenZoomView
+    }
+    
+    
+    func handleDoubleTap(recognizer: UITapGestureRecognizer) {
+        
+        
+        let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
+        
+        if mediaType != "video"
+        {
+            if (fullScreenScrollView.zoomScale > fullScreenScrollView.minimumZoomScale) {
+                fullScreenScrollView.setZoomScale(fullScreenScrollView.minimumZoomScale, animated: true)
+            } else {
+                let zoomRect = self.zoomRectForScale(fullScreenScrollView.minimumZoomScale+1, center: recognizer.locationInView(recognizer.view))
+                self.fullScreenScrollView.zoomToRect(zoomRect, animated: true);
+                
+            }
+            
+        }
+        
+    }
+    
+    func zoomRectForScale(scale : CGFloat, center : CGPoint) -> CGRect {
+        var zoomRect = CGRectZero
+        if let imageV = self.fullScreenScrollView {
+            zoomRect.size.height = imageV.frame.size.height / scale;
+            zoomRect.size.width  = imageV.frame.size.width  / scale;
+            let newCenter = imageV.convertPoint(center, fromView: self.fullScreenScrollView)
+            zoomRect.origin.x = newCenter.x - ((zoomRect.size.width / 2.0));
+            zoomRect.origin.y = newCenter.y - ((zoomRect.size.height / 2.0));
+        }
+        return zoomRect;
+    }
+    
+    
+    func scrollViewWillBeginZooming(scrollView: UIScrollView, withView views: UIView?) {
+        
+        if(fullScreenZoomView.hidden==true)
+        {
+            fullScreenZoomView.hidden = false
+            fullScrenImageView.alpha = 0.0
+            TopView.hidden = true
+            BottomView.hidden = true
+            photoThumpCollectionView.hidden = true
+            playIconInFullView.hidden = true
+            scrollView.scrollEnabled=true;
+            
+            self.view.bringSubviewToFront(photoThumpCollectionView)
+            self.view.bringSubviewToFront(playIconInFullView)
+            self.view.bringSubviewToFront(TopView)
+            self.view.bringSubviewToFront(BottomView)
+        }
+    }
+    
+    func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
+        
+        if(scale<=1.0)
+        {
+            
+            
+            fullScreenZoomView.hidden = true
+            fullScrenImageView.alpha = 1.0
+            TopView.hidden = false
+            BottomView.hidden = false
+            photoThumpCollectionView.hidden = false
+            fullScreenScrollView.scrollEnabled=false;
+            self.photoThumpCollectionView.reloadData()
+            fullScreenScrollView.bounds = fullScrenImageView.bounds
+            
+        }
+        
+    }
+    
+    
+    func enlargeImageView(Recognizer:UITapGestureRecognizer){
+        if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
+            if GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] != nil
+            {
+                let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
+                
+                if mediaType == "video"
+                {
+                    playIconInFullView.hidden = true
+                    downloadVideo(selectedItem)
+                }
+            }
+        }
+    }
+    
+
+    
     func removeActivityIndicator(notif : NSNotification)
     {
         if(totalCount <= 10)
@@ -201,10 +327,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 return time1 > time2
             })
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.addToButton.hidden = false
+                self.deletButton.hidden = false
                 self.photoThumpCollectionView.reloadData()
             })
             let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
-            self.downloadFullImageWhenTapThumb(dict, indexpaths: 0)
+            self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             if downloadingFlag == true
             {
                 downloadingFlag = false
@@ -275,60 +403,39 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
    
-    func enlargeImageView(Recognizer:UITapGestureRecognizer){
-        if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
-            if GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] != nil
-            {
-                let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
-                
-                if mediaType == "video"
-                {
-                    playIconInFullView.hidden = true
-                    downloadVideo(selectedItem)
-                }
-                else
-                {
-                    fullScreenZoomView.hidden = false
-                    fullScrenImageView.alpha = 0.0
-                    TopView.hidden = true
-                    BottomView.hidden = true
-                    photoThumpCollectionView.hidden = true
-                    playIconInFullView.hidden = true
-                }
-            }
-        }
-    }
+   
     
-    func shrinkImageView(Recognizer:UITapGestureRecognizer)
-    {
-        fullScreenZoomView.hidden = true
-        fullScrenImageView.alpha = 1.0
-        TopView.hidden = false
-        BottomView.hidden = false
-        photoThumpCollectionView.hidden = false
-    }
+
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
         swipeFlag = true
         self.removeOverlay()
         
+        
+
+        
         if (playHandleflag == 1)
         {
             playHandleflag = 0
+                self.moviePlayer.stop()
             self.moviePlayer.view.removeFromSuperview()
             playIconInFullView.hidden = false
             self.view.userInteractionEnabled = true
+           // self.moviePlayer.view.hidden=true
         }
         
-        if(downloadTask?.state == .Running)
-        {
-            downloadTask?.cancel()
-            fullScrenImageView.alpha = 1.0
-            progressLabelDownload?.removeFromSuperview()
-            progressViewDownload?.removeFromSuperview()
-            
-        }
+        
+        
+
+        downloadTask?.cancel()
+        fullScrenImageView.alpha = 1.0
+        progressLabelDownload?.removeFromSuperview()
+        progressViewDownload?.removeFromSuperview()
+        progressLabelDownload?.text=" ";
+        progressViewDownload?.hidden=true;
+        progressLabelDownload?.hidden=true;
+
         
         if let swipeGesture = gesture as? UISwipeGestureRecognizer
         {
@@ -343,7 +450,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     dispatch_async(backgroundQueue, {
                         self.selectedItem = self.selectedItem+1
                         let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
-                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem)
+                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.removeOverlay()
                             self.setLabelValue(self.selectedItem)
@@ -365,7 +472,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     dispatch_async(backgroundQueue, {
                         self.selectedItem = self.selectedItem - 1
                         let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
-                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem)
+                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.removeOverlay()
                             self.setLabelValue(self.selectedItem)
@@ -521,7 +628,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 deletButton.hidden = false
                 addToButton.hidden = false
                 let dict = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem]
-                downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem)
+                downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
             }
             else{
                 if(selectedItem == 0){
@@ -882,7 +989,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
     
-    func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int) {
+    func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
         var imageForMedia : UIImage = UIImage()
         if let fullImage = imageDict[thumbImageKey]
         {
@@ -892,12 +999,28 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.photoThumpCollectionView.alpha = 1.0
                     self.removeOverlay()
                     self.playIconInFullView.hidden = false;
+                    if(gestureIdentifier==1||gestureIdentifier==2)
+                    {
+                        let animation = CATransition()
+                        animation.duration = 0.4;
+                        animation.type = kCATransitionMoveIn;
+                        if(gestureIdentifier==1)
+                        {
+                            animation.subtype = kCATransitionFromRight;
+                        }else{
+                            animation.subtype = kCATransitionFromLeft;
+                            
+                        }
+                        
+                        self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
+                        self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
+                    }
+                    
+                    
                     self.fullScrenImageView.image = (fullImage as! UIImage)
                     self.fullScreenZoomView.image = (fullImage as! UIImage)
+                    self.fullScreenScrollView.hidden=true;
                     
-                    self.addToButton.hidden = false
-                    self.deletButton.hidden = false
-//                    self.photoThumpCollectionView.reloadData()
                 })
             }
             else
@@ -939,16 +1062,37 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.photoThumpCollectionView.alpha = 1.0
                     self.removeOverlay()
-                    self.fullScrenImageView.image = imageForMedia as UIImage
+                    if(gestureIdentifier==1||gestureIdentifier==2)
+                    {
+                        let animation = CATransition()
+                        animation.duration = 0.4;
+                        animation.type = kCATransitionMoveIn;
+                        if(gestureIdentifier==1)
+                        {
+                            animation.subtype = kCATransitionFromRight;
+                        }else{
+                            animation.subtype = kCATransitionFromLeft;
+                            
+                        }
+                        
+                        self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
+                        self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
+                    }
+                     self.removeOverlay()
+                    self.fullScrenImageView.image = imageForMedia as UIImage;
                     self.fullScreenZoomView.image = imageForMedia as UIImage
                     self.playIconInFullView.hidden = true;
+                    self.fullScreenScrollView.hidden=false;
                     
-                    self.addToButton.hidden = false
-                    self.deletButton.hidden = false
-//                    self.photoThumpCollectionView.reloadData()
                 })
             }
         }
+        
+        self.view.bringSubviewToFront(photoThumpCollectionView)
+
+        self.view.bringSubviewToFront(playIconInFullView)
+        self.view.bringSubviewToFront(TopView)
+         self.view.bringSubviewToFront(BottomView)
     }
     
     
@@ -1085,7 +1229,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.mediaIdSelected = Int(GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][self.mediaDetailIdKey] as! String)!
             let dict = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row]
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath.row)
+                self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath.row ,gestureIdentifier:0)
             })
         }
     }

@@ -76,11 +76,27 @@ class UrlManager {
         let getchannelSubscribedMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + userName + "/" + accessToken + "/" + limit + "/" + offset
         return getchannelSubscribedMediaDetailsAPI
     }
-    
+    func infiniteScrollMediaDetails() ->String
+    {
+        let infiniteScrollMediaDetailsAPI = baseUrl+"/api/v1/media"
+        return infiniteScrollMediaDetailsAPI
+        
+    }
+    func pullToRefreshMediaDetails(channelId : String) ->String
+    {
+        let pullToRefreshMediaDetailsAPI = baseUrl+"/api/v1/media/" + channelId
+        return pullToRefreshMediaDetailsAPI
+        
+    }
     func defaultCHannelMediaMapping(objectName: String) -> String
     {
         let defaultCHannelMediaMapping = baseUrl+"/api/v1/media" + "/" + objectName
         return defaultCHannelMediaMapping
+    }
+    func getChannelSharedDetailsPullToRefresh(userName: String, accessToken: String , channelSubId :String) -> String
+    {
+        let channelSharedAPI = SubscribedChannelUrl() + "/" + userName + "/" + accessToken + "/" + channelSubId
+        return channelSharedAPI
     }
     
     func gesMediaObjectCreationUrl() -> String

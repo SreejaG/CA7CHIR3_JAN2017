@@ -203,6 +203,13 @@ class ContactDetailsViewController: UIViewController {
     }
     
     func loadIphoneCameraController(){
+        if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
+        {
+            NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
+            GlobalDataRetriever.sharedInstance.initialise()
+            GlobalDataChannelList.sharedInstance.initialise()
+            
+        }
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -328,7 +335,7 @@ class ContactDetailsViewController: UIViewController {
     
     func setContactDetails()
     {
-        
+        print(contactDataSource)
         contactDummy.removeAll()
         var Cflag : Bool = false
         for i in 0 ..< contactDataSource.count
@@ -356,7 +363,7 @@ class ContactDetailsViewController: UIViewController {
         contactDummy.removeAll()
        
         dataSource = [appContactsArr,contactDataSource]
-        
+        print(appContactsArr)
         contactTableView.reloadData()
     }
     

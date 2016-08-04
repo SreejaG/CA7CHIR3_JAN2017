@@ -1,10 +1,4 @@
-//
-//  IPhoneCameraViewController.m
-//  iONLive
-//
-//  Created by Vinitha on 1/18/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 @import AVFoundation;
 @import Photos;
 @class AppDelegate;
@@ -98,6 +92,7 @@ FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
 bool takePictureFlag = false;
+bool loadingCameraFlag = false;
 
 
 - (void)viewWillAppear:(BOOL)animated
@@ -163,14 +158,32 @@ bool takePictureFlag = false;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _noDataFound.lineBreakMode = NSLineBreakByWordWrapping;
+    _noDataFound.numberOfLines = 0;
+    
+    [self loadingView];
+
     if([[NSUserDefaults standardUserDefaults] valueForKey:@"first"] != nil)
     {
+        
         NSString *first = [[NSUserDefaults standardUserDefaults] valueForKey:@"first"];
         if([first isEqualToString:@"firstTime"])
         {
-            
+            loadingCameraFlag = true;
+            _noDataFound.text = @"   Syncing...";
         }
         else{
+            NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"loadingView"];
+            NSLog(@"%@",loading);
+            if([loading  isEqual: @"camera"]){
+                loadingCameraFlag = true;
+                _noDataFound.text =  @"   Syncing...";
+            }
+            else{
+                loadingCameraFlag = false;
+                _noDataFound.text = @"Loading camera...";
+            }
+            
             GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
             if (gb.globalDataSource.count == 0) {
                 [gb initialise];
@@ -182,6 +195,9 @@ bool takePictureFlag = false;
         }
     }
     else{
+        loadingCameraFlag = true;
+        _noDataFound.text = @"   Syncing...";
+        
         GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
         if (gb.globalDataSource.count == 0) {
             [gb initialise];
@@ -193,7 +209,7 @@ bool takePictureFlag = false;
     }
     
     [[NSUserDefaults standardUserDefaults] setValue:@"SecndTime" forKey:@"first"];
-    
+    [[NSUserDefaults standardUserDefaults] setValue:@"login" forKey:@"loadingView"];
     _assetsLibrary = [[ALAssetsLibrary alloc]init];
     
     takePictureFlag = false;
@@ -205,7 +221,9 @@ bool takePictureFlag = false;
         [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
         [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     });
-    [self initialise];
+    if(loadingCameraFlag == false){
+        [self initialise];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -230,6 +248,7 @@ bool takePictureFlag = false;
                                              selector:@selector(applicationDidActives:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation) name:@"stopInitialising" object:nil];
 }
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
@@ -237,8 +256,15 @@ bool takePictureFlag = false;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-    
+        if(loadingCameraFlag == false){
+            _noDataFound.text = @"Loading camera...";
+        }
+        else{
+            _noDataFound.text = @"   Syncing...";
+        }
+        
         [self loadingView];
+        
         if (shutterActionMode == SnapCamSelectionModeVideo)
         {
             dispatch_async( dispatch_get_main_queue(), ^{
@@ -282,9 +308,18 @@ bool takePictureFlag = false;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        [self setGUIBasedOnMode];
+        if(loadingCameraFlag == false)
+        {
+            [self setGUIBasedOnMode];
+        }
         dispatch_async( dispatch_get_main_queue(), ^{
-        
+            _cameraButton.hidden = false;
+            if(flashFlag == 0){
+                _flashButton.hidden = false;
+            }
+            else if(flashFlag == 1){
+                _flashButton.hidden = true;
+            }
             [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
             [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
         });
@@ -336,6 +371,24 @@ bool takePictureFlag = false;
     [viewSet getValue];
 }
 
+-(void)enabelOrDisableButtons: (BOOL *)value
+{
+    dispatch_async( dispatch_get_main_queue(), ^{
+        self.topView.userInteractionEnabled = value;
+        self.bottomView.userInteractionEnabled = value;
+    });
+    
+}
+
+-(void)stopInitialisation
+{
+    loadingCameraFlag = false;
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [self hidingView];
+    });
+    [self initialise];
+}
+
 -(void)loadingView
 {
     dispatch_async( dispatch_get_main_queue(), ^{
@@ -345,9 +398,11 @@ bool takePictureFlag = false;
         _activityImageView.hidden = false;
         [__activityIndicatorView startAnimating];
         __activityIndicatorView.hidden = false;
-        _noDataFound.text = @"Loading Camera...";
+        //        _noDataFound.text = @"Initialising will take a few minutes";
         _noDataFound.hidden = false;
     });
+    
+    [self enabelOrDisableButtons:false];
 }
 
 -(void)hidingView
@@ -361,6 +416,7 @@ bool takePictureFlag = false;
         _noDataFound.text = @"";
         _noDataFound.hidden = true;
     });
+    [self enabelOrDisableButtons:true];
 }
 
 -(void) setButtonCornerRadius{
@@ -571,10 +627,10 @@ bool takePictureFlag = false;
                             UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
                             [alertController addAction:cancelAction];
                             
-//                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-//                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-//                            }];
-//                            [alertController addAction:settingsAction];
+                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                            }];
+                            [alertController addAction:settingsAction];
                             [self presentViewController:alertController animated:YES completion:nil];
                         } );
                         break;
@@ -1537,6 +1593,7 @@ bool takePictureFlag = false;
 
 -(void) loadStreamsGalleryView
 {
+    [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"SelectedTab"];
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
     StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
     [self.navigationController pushViewController:streamsGalleryViewController animated:false];

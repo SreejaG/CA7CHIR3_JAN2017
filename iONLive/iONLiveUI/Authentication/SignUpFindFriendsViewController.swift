@@ -135,17 +135,20 @@ class SignUpFindFriendsViewController: UIViewController{
                     phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
                 }
                 
-                if !phoneNumberWithCode.hasPrefix("+")
+                if phoneNumberWithCode.hasPrefix("+")
                 {
                     appendPlus = "+"
                 }
                 else{
-                    appendPlus = ""
+                    appendPlus = "nil"
                 }
                 
                 let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
                     NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-                phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                if appendPlus == "+"
+                {
+                    phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                }
                 contactPhoneNumbers.append(phoneNumber)
             }
             var currentContactImage : UIImage = UIImage()
@@ -157,6 +160,7 @@ class SignUpFindFriendsViewController: UIViewController{
             else{
                 currentContactImage = UIImage(named: "avatar")!
             }
+            print(phoneNumber)
             if(phoneNumber != ""){
                 contactPhoneNumbers.append(phoneNumber)
                 let currentContactName = ABRecordCopyCompositeName(record).takeRetainedValue() as String

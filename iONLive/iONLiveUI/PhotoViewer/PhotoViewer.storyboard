@@ -128,10 +128,13 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="txC-iS-gZe">
                                                     <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
                                                     <rect key="frame" x="3" y="28" width="10" height="10"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="10" id="yIv-Bx-L8A"/>
+                                                    </constraints>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="CloudIcon" translatesAutoresizingMaskIntoConstraints="NO" id="6HG-oF-4JZ">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CloudIcon" translatesAutoresizingMaskIntoConstraints="NO" id="6HG-oF-4JZ">
                                                     <rect key="frame" x="2" y="2" width="12" height="12"/>
                                                 </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
@@ -142,13 +145,20 @@
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="bottomMargin" secondItem="tfd-dS-C7Z" secondAttribute="bottom" constant="-8" id="2fc-zl-QYI"/>
+                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-5" id="3w7-V9-ZN0"/>
                                             <constraint firstAttribute="bottom" secondItem="txC-iS-gZe" secondAttribute="bottom" id="8ss-U5-cge"/>
                                             <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="txC-iS-gZe" secondAttribute="bottom" constant="-2" id="9SL-cT-7BJ"/>
+                                            <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="m5T-pj-pPH" secondAttribute="bottom" constant="3" id="9wg-XJ-Qdx"/>
                                             <constraint firstAttribute="trailing" secondItem="txC-iS-gZe" secondAttribute="trailing" id="B5m-C5-YKu"/>
                                             <constraint firstItem="tfd-dS-C7Z" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-8" id="BQp-tg-J7q"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leading" id="D5g-s7-n6b"/>
+                                            <constraint firstItem="6HG-oF-4JZ" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-6" id="JnK-yf-xo3"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="top" id="amQ-Ca-65u"/>
+                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="top" secondItem="6HG-oF-4JZ" secondAttribute="bottom" constant="14" id="bWm-tN-79X"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
+                                            <constraint firstItem="6HG-oF-4JZ" firstAttribute="centerX" secondItem="m5T-pj-pPH" secondAttribute="centerX" id="iSg-97-Qhv"/>
+                                            <constraint firstItem="6HG-oF-4JZ" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="topMargin" constant="-6" id="szB-Ee-QCG"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="6HG-oF-4JZ" secondAttribute="trailing" constant="21" id="z0E-28-Mz6"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="cloudIcon" destination="6HG-oF-4JZ" id="wlA-QI-5DP"/>
@@ -163,29 +173,44 @@
                                     <outlet property="delegate" destination="Ayi-XJ-Ys0" id="JIW-G9-LFn"/>
                                 </connections>
                             </collectionView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mJr-dY-xwO">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6H3-Qn-BdG">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="626"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WP3-pB-t6i">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="600" id="0nh-6u-q2c"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="WP3-pB-t6i" firstAttribute="top" secondItem="6H3-Qn-BdG" secondAttribute="top" id="AH2-wE-gFQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="WP3-pB-t6i" secondAttribute="trailing" id="G9h-jd-o5t"/>
+                                    <constraint firstAttribute="bottom" secondItem="WP3-pB-t6i" secondAttribute="bottom" id="UKz-jn-w2V"/>
+                                    <constraint firstItem="WP3-pB-t6i" firstAttribute="centerX" secondItem="6H3-Qn-BdG" secondAttribute="centerX" id="mdS-BS-2B6"/>
+                                    <constraint firstItem="WP3-pB-t6i" firstAttribute="leading" secondItem="6H3-Qn-BdG" secondAttribute="leading" id="wt7-vT-F5N"/>
+                                </constraints>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="bjf-zC-TWq" firstAttribute="centerY" secondItem="GmU-4f-pJO" secondAttribute="centerY" id="1cP-nB-Mrz"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="bottom" id="1us-Ly-ZrQ"/>
-                            <constraint firstItem="mJr-dY-xwO" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="2XX-KU-J6s"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="6H3-Qn-BdG" secondAttribute="trailing" constant="-20" id="6zA-4W-jlN"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="Deu-dI-uIV"/>
                             <constraint firstItem="e64-wp-j2s" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="E4l-ug-KYa"/>
-                            <constraint firstAttribute="trailing" secondItem="mJr-dY-xwO" secondAttribute="trailing" id="EZW-LP-Sg3"/>
                             <constraint firstItem="QIE-GV-Vdt" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="QFl-Pe-xRO"/>
                             <constraint firstItem="y62-6N-UtC" firstAttribute="top" secondItem="e64-wp-j2s" secondAttribute="bottom" id="Sjd-4D-0gQ"/>
                             <constraint firstItem="y62-6N-UtC" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="SpC-gb-gmy"/>
                             <constraint firstAttribute="trailing" secondItem="y62-6N-UtC" secondAttribute="trailing" id="ToB-fP-PyN"/>
+                            <constraint firstItem="6H3-Qn-BdG" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leadingMargin" constant="-20" id="UAv-fP-gWz"/>
                             <constraint firstItem="QIE-GV-Vdt" firstAttribute="top" secondItem="y62-6N-UtC" secondAttribute="bottom" id="XIb-Er-jR9"/>
                             <constraint firstItem="e64-wp-j2s" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="XSy-xg-gCY"/>
                             <constraint firstAttribute="trailing" secondItem="Ncu-eZ-Tvl" secondAttribute="trailing" id="fiG-UJ-HXX"/>
-                            <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="mJr-dY-xwO" secondAttribute="bottom" id="gDP-hU-RMA"/>
+                            <constraint firstItem="6H3-Qn-BdG" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="topMargin" id="hFC-ta-0Z8"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" id="jxM-DN-VGY"/>
                             <constraint firstItem="bjf-zC-TWq" firstAttribute="centerX" secondItem="GmU-4f-pJO" secondAttribute="centerX" id="lBs-rc-E9E"/>
-                            <constraint firstItem="mJr-dY-xwO" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="pwu-ed-IjF"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="6H3-Qn-BdG" secondAttribute="bottom" constant="-26" id="uD7-TG-Xzt"/>
                             <constraint firstAttribute="trailing" secondItem="e64-wp-j2s" secondAttribute="trailing" id="yAj-ac-Bre"/>
                             <constraint firstAttribute="trailing" secondItem="QIE-GV-Vdt" secondAttribute="trailing" id="zAB-Ah-fB3"/>
                         </constraints>
@@ -196,7 +221,8 @@
                         <outlet property="addToButton" destination="6Fa-dd-16L" id="ItE-GW-gGh"/>
                         <outlet property="deletButton" destination="DAc-0e-fze" id="CSC-LG-zMg"/>
                         <outlet property="doneButton" destination="E08-1q-r1T" id="xDa-6o-pd3"/>
-                        <outlet property="fullScreenZoomView" destination="mJr-dY-xwO" id="Ozp-h4-Kcc"/>
+                        <outlet property="fullScreenScrollView" destination="6H3-Qn-BdG" id="C5c-y6-m7s"/>
+                        <outlet property="fullScreenZoomView" destination="WP3-pB-t6i" id="Aep-fb-m3p"/>
                         <outlet property="fullScrenImageView" destination="y62-6N-UtC" id="5Hf-lc-vaB"/>
                         <outlet property="mediaTimeLabel" destination="tuh-W8-1lF" id="ZsN-OO-gdr"/>
                         <outlet property="photoThumpCollectionView" destination="QIE-GV-Vdt" id="NRF-PJ-s44"/>

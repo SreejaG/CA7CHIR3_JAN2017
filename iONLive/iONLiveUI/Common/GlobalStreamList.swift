@@ -33,12 +33,16 @@ class GlobalStreamList: NSObject {
         struct Singleton
         {
             static let instance = GlobalStreamList()
-            private init() {}
-            //This prevents others from using the default '()' initializer for this class.
+            private init() {
+             
+
+            }
+                         //This prevents others from using the default '()' initializer for this class.
         }
         return Singleton.instance
     }
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
+    
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -47,7 +51,7 @@ class GlobalStreamList: NSObject {
         ImageUpload.sharedInstance.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValueCount, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
-//            self.authenticationFailureHandler(error, code: message)
+          self.authenticationFailureHandlerStream(error, code: message)
         }
     }
     
@@ -60,6 +64,8 @@ class GlobalStreamList: NSObject {
             print(responseArr)
             for index in 0 ..< responseArr.count
             {
+                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
+
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let userid = responseArr[index].valueForKey(userIdKey) as! String
@@ -99,6 +105,7 @@ class GlobalStreamList: NSObject {
                 })
             }
             else{
+                NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
             }
         }
         else
@@ -113,10 +120,10 @@ class GlobalStreamList: NSObject {
             return value
         }
     }
-    func authenticationFailureHandler(error: NSError?, code: String)
+    func authenticationFailureHandlerStream(error: NSError?, code: String)
     {
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
-
+ NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "MEDIA")
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !RequestManager.sharedInstance.validConnection() {
@@ -228,7 +235,7 @@ class GlobalStreamList: NSObject {
 
 
     }
-    func getUpdateData()
+    func getPullToRefreshData()
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
@@ -237,18 +244,18 @@ class GlobalStreamList: NSObject {
             self.authenticationSuccessHandler(response)
             
         }) { (error, message) in
-//            self.authenticationFailureHandler(error, code: message)
+           self.authenticationFailureHandlerStream(error, code: message)
         }
     }
     func getMediaByOffset()
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[0][pullTorefreshKey] as! String
+        let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
         ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : "\(createdTimeStamp)",success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
-//            self.authenticationFailureHandler(error, code: message)
+           self.authenticationFailureHandlerStream(error, code: message)
         }
 
     }

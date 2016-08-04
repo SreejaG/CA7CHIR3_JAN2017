@@ -803,6 +803,10 @@ MovieViewController *obj1;
                                              selector:@selector(applicationDidEnterBackground:)
                                                  name:UIApplicationDidEnterBackgroundNotification
                                                object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(addHeartPushNotification:)
+                                                 name:@"pushNotificationLike"
+                                               object:nil];
 }
 
 -(void)checkWifiReachability
@@ -829,6 +833,14 @@ MovieViewController *obj1;
         NSLog(@"Wifi Connected");
     }
 }
+
+
+
+- (void) addHeartPushNotification:(NSNotification *) notification
+{
+    [self addHeart];
+}
+
 
 -(void)setUpInitialGLView
 {
@@ -1889,6 +1901,7 @@ MovieViewController *obj1;
     [self addHeart];
     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     likeFlag = [standardDefaults valueForKey:@"likeCountFlag"];
+    NSLog(@"%@",notificationTypes);
     if([notificationTypes isEqual: @"likes"])
     {
         likeTapFlag = true;

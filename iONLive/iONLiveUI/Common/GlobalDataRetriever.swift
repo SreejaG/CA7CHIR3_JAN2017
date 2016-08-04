@@ -84,21 +84,21 @@ class GlobalDataRetriever: NSObject
                 return time1 > time2
             })
             
-            let start = 0
-            var end = 0
-            if globalDataSource.count > 10
-            {
-                end = 10
-            }
-            else{
-                end = globalDataSource.count
-            }
-            
-            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(backgroundQueue, {
-                self.downloadMediaFromGCS(start,end: end)
-            })
+//            let start = 0
+//            var end = 0
+//            if globalDataSource.count > 10
+//            {
+//                end = 10
+//            }
+//            else{
+//                end = globalDataSource.count
+//            }
+//            
+//            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+//            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+//            dispatch_async(backgroundQueue, {
+//                self.downloadMediaFromGCS(start,end: end)
+//            })
         }
     }
     

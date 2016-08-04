@@ -211,8 +211,6 @@
 		59BC3F681BFF848600710905 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F551BFF848600710905 /* UIProgressView+AFNetworking.m */; };
 		59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F571BFF848600710905 /* UIRefreshControl+AFNetworking.m */; };
 		59BC3F6A1BFF848600710905 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */; };
-		B20B8BBA1D45F39800323599 /* GlobalStreamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BB91D45F39800323599 /* GlobalStreamList.swift */; };
-		B20B8BBC1D45F3A300323599 /* GlobalSubscribedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */; };
 		B20B8BBE1D45F3CC00323599 /* LiveStreamingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */; };
 		B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */; };
 		B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */; };
@@ -221,6 +219,9 @@
 		B23F26641D409D5600A320BF /* GlobalDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */; };
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
+		B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */; };
+		B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */; };
+		B2AFC6B21D50DB4000EFA78C /* GlobalStreamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */; };
 		B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */; };
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
@@ -611,8 +612,6 @@
 		59BC3F581BFF848600710905 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		59BC3F591BFF848600710905 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		B20B8BB91D45F39800323599 /* GlobalStreamList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalStreamList.swift; sourceTree = "<group>"; };
-		B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSubscribedList.swift; sourceTree = "<group>"; };
 		B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingHelpers.swift; sourceTree = "<group>"; };
 		B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPhoneLiveStreaming.swift; sourceTree = "<group>"; };
 		B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomInfiniteIndicator.swift; path = scroll/CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
@@ -623,6 +622,9 @@
 		B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataRetriever.swift; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
+		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
+		B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedChannelDetailsAPI.swift; sourceTree = "<group>"; };
+		B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalStreamList.swift; sourceTree = "<group>"; };
 		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
 		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
@@ -740,12 +742,11 @@
 		160F47AF1BFEEF5100599AA7 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */,
 				B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */,
 				160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */,
 				16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */,
 				16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */,
-				B20B8BB91D45F39800323599 /* GlobalStreamList.swift */,
-				B20B8BBB1D45F3A300323599 /* GlobalSubscribedList.swift */,
 				B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */,
 				B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */,
 			);
@@ -1075,6 +1076,8 @@
 		167AF05F1BFDC2C1003CDF30 /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
+				B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */,
+				B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */,
 				162F97401CC9EB14009F68F8 /* Streaming.storyboard */,
 				167AF06A1BFDC32E003CDF30 /* StreamsListViewController.swift */,
 				1666D4801C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift */,
@@ -1788,6 +1791,7 @@
 				16BFCA641D1A6DE700761C94 /* SDWebImageDecoder.m in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */,
+				B2AFC6B21D50DB4000EFA78C /* GlobalStreamList.swift in Sources */,
 				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
 				16BFCA6C1D1A6DE700761C94 /* UIImage+WebP.m in Sources */,
 				16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */,
@@ -1834,6 +1838,7 @@
 				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
+				B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
 				16BFCA621D1A6DE700761C94 /* SDImageCache.m in Sources */,
 				B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */,
@@ -1847,7 +1852,6 @@
 				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
 				16BFCA681D1A6DE700761C94 /* SDWebImagePrefetcher.m in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
-				B20B8BBA1D45F39800323599 /* GlobalStreamList.swift in Sources */,
 				165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */,
 				164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */,
 				1666D4811C0ED00A00A4D1E7 /* StreamsGalleryViewController.swift in Sources */,
@@ -1905,6 +1909,7 @@
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				160903F81C6C7ED1004E381D /* EditProfileHeaderCell.swift in Sources */,
 				160903EE1C6C7E66004E381D /* Connectivity.m in Sources */,
+				B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
@@ -1947,7 +1952,6 @@
 				16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */,
 				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
-				B20B8BBC1D45F3A300323599 /* GlobalSubscribedList.swift in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,

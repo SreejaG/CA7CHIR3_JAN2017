@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
-    
+        application.applicationIconBadgeNumber = 0;
     }
     
     func applicationWillTerminate(application: UIApplication) {
@@ -84,6 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Auto login check
         if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
         {
+            let defaults = NSUserDefaults .standardUserDefaults()
+            defaults.setValue("login", forKey: "loadingView")
             let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
             controller = authenticationStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController")
             self.window!.rootViewController = controller
@@ -103,6 +105,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func loadCameraViewController()
     {
+        let defaults = NSUserDefaults .standardUserDefaults()
+        defaults.setValue("camera", forKey: "loadingView")
+        print(defaults.valueForKey("loadingView")!)
         var navigationController:UINavigationController?
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
@@ -224,13 +229,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-     //   print(userInfo)
+        
+        print(userInfo)
+        let dict = userInfo["aps"]
+        let deleteDict = dict!["alert"]
         let defaults = NSUserDefaults .standardUserDefaults()
+        let result = convertStringToDictionary(deleteDict as! String)
+        
+        
+        
+        if(result!["type"] as! String == "delete")
+        {
+            print(result!["channelId"] as! Int)
+            
+            NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
+        }
+        else if ( (result!["type"] as! String == "share") || (result!["type"] as! String == "channel") || (result!["type"] as! String == "liveStream" )){
+            
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result) // used while added  a media
+            
+            
+        }else if(result!["type"] as! String == "like")
+        {
+            
+             NSNotificationCenter.defaultCenter().postNotificationName("pushNotificationLike", object: result)
+        }
         defaults.setValue("1", forKey: "notificationArrived")
         if(application.applicationState == .Inactive || application.applicationState == .Background)
         {
             loadNotificationView()
+            application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound,.Alert], categories: nil
+                
+                ))
+            application.applicationIconBadgeNumber = application.applicationIconBadgeNumber+1
         }
+    }
+    
+    func convertStringToDictionary(text: String) -> [String:AnyObject]? {
+        if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
+            do {
+                return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+        return nil
     }
     
     //Called if unable to register for APNS.

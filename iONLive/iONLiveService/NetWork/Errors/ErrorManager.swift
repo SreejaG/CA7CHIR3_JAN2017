@@ -359,7 +359,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")
     }
-    
+    func noShared()
+    {
+        alert("No Shared Media", message: "No Shared Images available")
+        
+    }
     func installFailure()
     {
         alert("Install Failed", message: "Ooops, The CA7CH is not installed properly, please reinstall the application once again...")

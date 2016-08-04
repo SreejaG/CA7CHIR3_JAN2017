@@ -2,7 +2,7 @@
 import UIKit
 
 class MyChannelViewController: UIViewController,UISearchBarDelegate {
-  
+    
     @IBOutlet weak var myChannelSearchBar: UISearchBar!
     @IBOutlet weak var myChannelTableView: UITableView!
     
@@ -18,7 +18,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     @IBOutlet var addChannelView: UIView!
     
     @IBOutlet var channelTextField: UITextField!
-
+    
     static let identifier = "MyChannelViewController"
     
     let channelDetailIdKey = "channel_detail_id"
@@ -30,12 +30,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     let sharedIndicatorTemporaryKey = "tempSelected"
     let thumbImageKey = "thumbImage"
     let thumbImageURLKey = "thumbImage_URL"
-
+    
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
-
+    
     var gestureRecognizer = UIGestureRecognizer()
-  
+    
     var loadingOverlay: UIView?
     
     var searchActive : Bool = false
@@ -44,7 +44,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-            
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         if let notifFlag = defaults.valueForKey("notificationArrived")
         {
@@ -62,12 +62,13 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannelList", object: nil)
         
         showOverlay()
+        
         if(GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0)
         {
             removeOverlay()
             myChannelTableView.reloadData()
         }
-       
+        
         initialise()
         
         hideView(0)
@@ -103,14 +104,13 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         myChannelSearchBar.delegate = self
         gestureRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
         myChannelTableView.addGestureRecognizer(gestureRecognizer)
-       
         channelCreateButton.hidden = true
     }
-
+    
     func removeActivityIndicator(notif : NSNotification){
-       dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.myChannelTableView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+            self.myChannelTableView.reloadData()
         })
     }
     
@@ -216,8 +216,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
             GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr, sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
-            
-            myChannelTableView.reloadData()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.myChannelTableView.reloadData()
+            })
         }
         else
         {
@@ -251,7 +252,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func deleteChannelDetails(userName: String, token: String, channelId:String, index: Int)
     {
         showOverlay()
-        print("\(channelId)")
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
             self.authenticationSuccessHandlerDelete(response,index: index)
         }) { (error, message) -> () in
@@ -280,7 +280,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 else{
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource.removeAtIndex(index)
                 }
-                myChannelTableView.reloadData()
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.myChannelTableView.reloadData()
+                })
             }
         }
         else
@@ -361,6 +364,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
     }
     
+    @IBAction func tapGestureRecognizer(sender: AnyObject) {
+        view.endEditing(true)
+        self.myChannelSearchBar.text = ""
+        self.myChannelSearchBar.resignFirstResponder()
+        searchActive = false
+        self.myChannelTableView.reloadData()
+    }
+    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -373,14 +384,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         self.loadingOverlay?.removeFromSuperview()
     }
     
-    @IBAction func tapGestureRecognizer(sender: AnyObject) {
-        view.endEditing(true)
-        self.myChannelSearchBar.text = ""
-        self.myChannelSearchBar.resignFirstResponder()
-        searchActive = false
-        self.myChannelTableView.reloadData()
-    }
-   
     func textFieldDidChange(textField: UITextField)
     {
         if let text = textField.text where !text.isEmpty
@@ -395,7 +398,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             }
         }
     }
-   
+    
     func addKeyboardObservers()
     {
         [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
@@ -488,7 +491,7 @@ extension MyChannelViewController:UITableViewDataSource
             {
                 cell.channelHeadImageView.image = UIImage(named: "thumb12")
             }
-           
+            
             cell.selectionStyle = .None
             
             return cell
@@ -510,7 +513,7 @@ extension MyChannelViewController:UITableViewDataSource
         else{
             channelName = GlobalDataChannelList.sharedInstance.globalChannelDataSource[indexPath.row][channelNameKey] as! String
         }
-       
+        
         if ((channelName == "My Day") || (channelName == "Archive"))
         {
             return false

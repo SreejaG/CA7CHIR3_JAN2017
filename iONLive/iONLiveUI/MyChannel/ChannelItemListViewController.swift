@@ -71,6 +71,7 @@ class ChannelItemListViewController: UIViewController {
         
         if totalMediaCount == 0
         {
+            selectionButton.hidden = true
             removeOverlay()
             ErrorManager.sharedInstance.emptyMedia()
         }
@@ -341,25 +342,25 @@ class ChannelItemListViewController: UIViewController {
                        
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: deletedMediaArray)
             
-            if(channelName == "Archive"){
-                let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-                
-                if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-                {
-                    let fileManager = NSFileManager.defaultManager()
-                    do {
-                        try fileManager.removeItemAtPath(documentsPath)
-                    }
-                    catch let error as NSError {
-                        print("Ooops! Something went wrong: \(error)")
-                    }
-                    FileManagerViewController.sharedInstance.createParentDirectory()
-                }
-                else{
-                    FileManagerViewController.sharedInstance.createParentDirectory()
-                }
-
-            }
+//            if(channelName == "Archive"){
+//                let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+//                
+//                if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+//                {
+//                    let fileManager = NSFileManager.defaultManager()
+//                    do {
+//                        try fileManager.removeItemAtPath(documentsPath)
+//                    }
+//                    catch let error as NSError {
+//                        print("Ooops! Something went wrong: \(error)")
+//                    }
+//                    FileManagerViewController.sharedInstance.createParentDirectory()
+//                }
+//                else{
+//                    FileManagerViewController.sharedInstance.createParentDirectory()
+//                }
+//
+//            }
             
             selectionFlag = false
             selectedArray.removeAll()
@@ -426,8 +427,13 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0
         {
             let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaTypeKey] as! String
-            let imageData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey] as! UIImage
-            channelItemImageView.image = imageData
+            if let imageData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey]
+            {
+                channelItemImageView.image = imageData as? UIImage
+            }
+            else{
+                channelItemImageView.image = UIImage(named: "thumb12")
+            }
             
           
             if mediaType == "video"

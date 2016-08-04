@@ -285,21 +285,32 @@
                                     <constraint firstItem="eVB-1H-dqa" firstAttribute="top" secondItem="4Ox-e4-QXc" secondAttribute="top" constant="29" id="Zud-SX-bFl"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have some notifications" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="udn-dU-JMK">
+                                <rect key="frame" x="0.0" y="64" width="600" height="21"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="0wa-ln-xlm" secondAttribute="trailing" id="6Tj-EA-k8C"/>
+                            <constraint firstItem="udn-dU-JMK" firstAttribute="top" secondItem="4Ox-e4-QXc" secondAttribute="bottom" id="BBG-sO-f0o"/>
                             <constraint firstAttribute="trailing" secondItem="4Ox-e4-QXc" secondAttribute="trailing" id="BVd-fT-NMy"/>
                             <constraint firstItem="0wa-ln-xlm" firstAttribute="leading" secondItem="hs5-jD-7Wg" secondAttribute="leading" id="I2v-pi-ECV"/>
                             <constraint firstItem="4Ox-e4-QXc" firstAttribute="leading" secondItem="hs5-jD-7Wg" secondAttribute="leading" id="Rjv-iu-tf7"/>
+                            <constraint firstAttribute="trailing" secondItem="udn-dU-JMK" secondAttribute="trailing" id="Spi-gj-efl"/>
                             <constraint firstItem="YC5-04-P5h" firstAttribute="top" secondItem="0wa-ln-xlm" secondAttribute="bottom" id="Tw3-0g-Y0e"/>
                             <constraint firstItem="4Ox-e4-QXc" firstAttribute="top" secondItem="hs5-jD-7Wg" secondAttribute="top" id="Zvq-PC-yoy"/>
+                            <constraint firstItem="udn-dU-JMK" firstAttribute="leading" secondItem="hs5-jD-7Wg" secondAttribute="leading" id="iHw-vP-Jdt"/>
                             <constraint firstItem="0wa-ln-xlm" firstAttribute="top" secondItem="4Ox-e4-QXc" secondAttribute="bottom" id="x1l-hG-tar"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Channels" image="channels" selectedImage="channels_blue" id="mbG-bZ-Yrn"/>
                     <connections>
                         <outlet property="ChannelSharedTableView" destination="0wa-ln-xlm" id="8uV-Ul-yYW"/>
+                        <outlet property="newShareAvailabellabel" destination="udn-dU-JMK" id="HYb-fq-F8Z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q0b-fz-3sm" userLabel="First Responder" sceneMemberID="firstResponder"/>

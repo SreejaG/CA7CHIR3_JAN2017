@@ -95,6 +95,7 @@ class SignUpVerifyPhoneViewController: UIViewController
                                                                         attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         verificationCodeTextField.attributedPlaceholder = NSAttributedString(string: "Verification Code",
                                                                              attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+        verificationCodeTextField.keyboardType = .DecimalPad
         
         countryPicker.countryPhoneCodeDelegate = self
         countryTextField.userInteractionEnabled = false
@@ -423,13 +424,13 @@ class SignUpVerifyPhoneViewController: UIViewController
                     defaults.setValue(code, forKey:ArchiveCount)
                     
                 }
-                if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
-                {
-                    NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
-                    GlobalDataRetriever.sharedInstance.initialise()
-                    GlobalDataChannelList.sharedInstance.initialise()
-
-                }
+//                if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
+//                {
+//                    NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
+//                    GlobalDataRetriever.sharedInstance.initialise()
+//                    GlobalDataChannelList.sharedInstance.initialise()
+//
+//                }
                 loadFindFriendsView()
             }
         }
