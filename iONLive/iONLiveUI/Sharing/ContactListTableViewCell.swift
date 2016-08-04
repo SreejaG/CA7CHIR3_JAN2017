@@ -1,10 +1,3 @@
-//
-//  ContactListTableViewCell.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 13/04/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -17,7 +10,7 @@ class ContactListTableViewCell: UITableViewCell {
     @IBOutlet var subscriptionButton: UIButton!
     
     @IBAction func contactSharingButtonClicked(sender: AnyObject) {
-            let tag = sender.tag
+        let tag = sender.tag
         NSNotificationCenter.defaultCenter().postNotificationName("refreshContactListTableView", object:tag)
     }
     

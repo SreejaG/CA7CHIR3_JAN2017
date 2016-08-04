@@ -1,10 +1,3 @@
-//
-//  contactSharingDetailTableViewCell.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 12/04/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 

@@ -1,10 +1,3 @@
-//
-//  MySharedChannelsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/22/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -45,7 +38,7 @@ class MySharedChannelsViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(_:)), name: "refreshMySharedChannelTableView", object: nil)
         
         doneButton.hidden = true
-    
+        
         dataSource.removeAll()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
@@ -55,10 +48,10 @@ class MySharedChannelsViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannelList", object: nil)
         
         showOverlay()
+        
         if (GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0)
         {
             removeOverlay()
-            dataSource.removeAll()
             createChannelDataSource()
         }
     }
@@ -83,6 +76,21 @@ class MySharedChannelsViewController: UIViewController {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeOverlay()
         })
+    }
+    
+    func createChannelDataSource()
+    {
+        for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource
+        {
+            let chanelName = element[channelNameKey] as! String
+            if chanelName != "Archive"
+            {
+                dataSource.append(element)
+            }
+        }
+        if dataSource.count > 0{
+            sharedChannelsTableView.reloadData()
+        }
     }
     
     @IBAction func backButtonClicked(sender: AnyObject)
@@ -150,7 +158,7 @@ class MySharedChannelsViewController: UIViewController {
                 addChannelArray.addObject(channelid)
             }
             else{
-                 deleteChannelArray.addObject(channelid)
+                deleteChannelArray.addObject(channelid)
             }
         }
         if((addChannelArray.count > 0) || (deleteChannelArray.count > 0)){
@@ -235,21 +243,6 @@ class MySharedChannelsViewController: UIViewController {
         }
     }
     
-    func createChannelDataSource()
-    {
-        for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource
-        {
-            let chanelName = element[channelNameKey] as! String
-            if chanelName != "Archive"
-            {
-                dataSource.append(element)
-            }
-        }
-        if dataSource.count > 0{
-            sharedChannelsTableView.reloadData()
-        }
-    }
-    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -257,7 +250,7 @@ class MySharedChannelsViewController: UIViewController {
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
     }
-        
+    
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
@@ -285,7 +278,7 @@ class MySharedChannelsViewController: UIViewController {
             completion(result:UIImage(named: "thumb12")!)
         }
     }
-
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
@@ -418,7 +411,7 @@ extension MySharedChannelsViewController:UITableViewDataSource
             {
                 cell.userImage.image = UIImage(named: "thumb12")
             }
-
+            
             cell.channelSelectionButton.tag = indexPath.row
             
             let selectionValue : Int = dataSourceTmp![indexPath.row][sharedIndicatorTemporaryKey] as! Int
@@ -508,7 +501,7 @@ extension MySharedChannelsViewController : UISearchBarDelegate,UISearchDisplayDe
                         searchDataSource.append(element)
                     }
                 }
-               
+                
                 searchActive = true
                 self.sharedChannelsTableView.reloadData()
             }

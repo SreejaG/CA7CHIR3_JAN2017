@@ -36,7 +36,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-     
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MyChannelSharingDetailsViewController.callRefreshContactSharingTableView(_:)), name: "refreshContactSharingTableView", object: nil)
         
@@ -117,7 +116,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         inviteContactsVC.totalMediaCount = totalMediaCount
         inviteContactsVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(inviteContactsVC, animated: false)
-        
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
@@ -160,6 +158,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             return
         }
     }
+    
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             
@@ -241,7 +240,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         getChannelContactDetails(userId, token: accessToken, channelid: channelId)
-        
     }
     
     func getChannelContactDetails(username: String, token: String, channelid: String)
@@ -256,7 +254,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             self.authenticationFailureHandler(error, code: message)
             return
         }
-        
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {
@@ -366,12 +363,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
             else{
-                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -384,14 +381,14 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }
         contactTableView.reloadData()
     }
-  
+    
     func callRefreshContactSharingTableView(notif:NSNotification){
         if(doneButton.hidden == true){
             doneButton.hidden = false
             inviteButton.hidden = true
         }
         let indexpath = notif.object as! Int
-       
+        
         if(searchActive)
         {
             let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
@@ -440,6 +437,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
+    
     func generateWaytoSendAlert(ContactId: String, indexpath: Int)
     {
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -499,7 +497,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             contactTableView.reloadData()
         }
     }
-    
 }
 
 extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewDataSource
@@ -541,7 +538,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
         var dataSourceTmp : [[String:AnyObject]]?
         
         let cell = tableView.dequeueReusableCellWithIdentifier(contactSharingDetailTableViewCell.identifier, forIndexPath:indexPath) as! contactSharingDetailTableViewCell
-       
+        
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
@@ -576,7 +573,6 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
-        
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -635,7 +631,6 @@ extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
                         searchDataSource.append(element)
                     }
                 }
-                
                 searchActive = true
                 self.contactTableView.reloadData()
             }

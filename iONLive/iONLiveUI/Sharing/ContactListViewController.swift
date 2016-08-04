@@ -1,10 +1,3 @@
-//
-//  ContactListViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 13/04/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import AddressBook
 import AddressBookUI
@@ -52,7 +45,7 @@ class ContactListViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
         
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
@@ -62,7 +55,7 @@ class ContactListViewController: UIViewController
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-     
+    
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
@@ -98,7 +91,7 @@ class ContactListViewController: UIViewController
             let userId = fullDataSource[i][userNameKey] as! String
             let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
             if(selectionValue == 1){
-               addUserArray.addObject(userId)
+                addUserArray.addObject(userId)
             }
         }
         
@@ -177,16 +170,12 @@ class ContactListViewController: UIViewController
         let authorizationStatus = ABAddressBookGetAuthorizationStatus()
         switch authorizationStatus {
         case .Denied, .Restricted:
-            print("Denied")
             generateContactSynchronizeAlert()
         case .Authorized:
-            print("Authorized")
             self.initialise()
         case .NotDetermined:
-            print("Not Determined")
             promptForAddressBookRequestAccess()
         }
-        
     }
     
     func generateContactSynchronizeAlert()
@@ -207,10 +196,8 @@ class ContactListViewController: UIViewController
             (granted: Bool, error: CFError!) in
             dispatch_async(dispatch_get_main_queue()) {
                 if !granted {
-                    print("Just denied")
                     self.generateContactSynchronizeAlert()
                 } else {
-                    print("Just authorized")
                     self.initialise()
                 }
             }
@@ -274,7 +261,10 @@ class ContactListViewController: UIViewController
                 
                 let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
                     NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-                phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                if appendPlus == "+"
+                {
+                    phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                }
                 contactPhoneNumbers.append(phoneNumber)
             }
         }
@@ -359,7 +349,6 @@ class ContactListViewController: UIViewController
                 }
                 loadMychannelDetailController()
             }
-            
         }
     }
     
@@ -400,7 +389,6 @@ class ContactListViewController: UIViewController
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -465,7 +453,7 @@ class ContactListViewController: UIViewController
             })
         }
     }
-
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
@@ -475,7 +463,7 @@ class ContactListViewController: UIViewController
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-           
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
@@ -532,7 +520,7 @@ class ContactListViewController: UIViewController
                 fullDataSource[indexpath]["tempSelected"] = 1
             }
         }
-   
+        
         contactListTableView.reloadData()
     }
     
@@ -610,7 +598,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             else{
                 cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
-
+            
             cell.selectionStyle = .None
             return cell
         }
@@ -623,9 +611,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
-        
     }
-    
 }
 
 extension ContactListViewController: UISearchBarDelegate{
