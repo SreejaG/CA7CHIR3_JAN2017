@@ -2,7 +2,7 @@
 import UIKit
 
 class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
-
+    
     let cameraController = IPhoneCameraViewController()
     let imageUploadManager = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
@@ -44,9 +44,8 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -76,7 +75,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     //get signed url from cloud
     func getSignedURLFromCloud(){
         self.imageUploadManager.getSignedURL(userId, accessToken: accessToken, mediaType: media, success: { (response) -> () in
-                self.authenticationSuccessHandlerSignedURL(response)
+            self.authenticationSuccessHandlerSignedURL(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         })
@@ -92,7 +91,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             mediaId = "\(mediaDetailId!)"
             uploadImageNameForGCS = json["ObjectName"] as! String
             self.saveImageToLocalCache()
-       
+            
             startUploadingToGCS()
         }
     }
@@ -106,7 +105,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-               
+                
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
@@ -120,15 +119,15 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     //save image to local cache
     func saveImageToLocalCache(){
         
-            let filePathToSaveThumb = "\(mediaId)thumb"
-            FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
-            let filePathToSaveFull = "\(mediaId)full"
-            FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveFull, mediaImage: imageFromDB)
-            if (media == "video"){
-                saveVideoToCahce()
-            }
+        let filePathToSaveThumb = "\(mediaId)thumb"
+        FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
+        let filePathToSaveFull = "\(mediaId)full"
+        FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveFull, mediaImage: imageFromDB)
+        if (media == "video"){
+            saveVideoToCahce()
+        }
         
-            updateDataToLocalDataSource()
+        updateDataToLocalDataSource()
     }
     
     func  saveVideoToCahce()  {
@@ -168,7 +167,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         dispatch_async(backgroundQueue, {
             self.uploadFullImageOrVideoToGCS({(result) -> Void in
                 if(result == "Success"){
-            
+                    
                     self.uploadThumbImageToGCS({(result) -> Void in
                         if(result == "Success"){
                             self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
@@ -180,14 +179,13 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                         else{
                         }
                     })
-                
+                    
                 }
                 else{
                 }
             })
-           
+            
         })
-        
     }
     
     //full image upload to cloud
@@ -278,9 +276,8 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //after uploading map media to channels
     func mapMediaToDefaultChannels(){
-         print(self.mediaId)
         imageUploadManager.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
-                self.authenticationSuccessHandlerAfterMapping(response)
+            self.authenticationSuccessHandlerAfterMapping(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         })

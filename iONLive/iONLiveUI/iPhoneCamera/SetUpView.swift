@@ -60,7 +60,7 @@ import UIKit
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
-
+    
     func setChannelDetails()
     {
         userImages.removeAll()
@@ -97,8 +97,6 @@ import UIKit
     
     func setMediaLikes(userName: String, accessToken: String, notifType: String, mediaDetailId: String, channelId: String, objects: MovieViewController, typeMedia: String)
     {
-      
-        
         channelManager.postMediaInteractionDetails(userName, accessToken: accessToken, notifType: notifType, mediaDetailId: Int(mediaDetailId)!, channelId: Int(channelId)!, type: typeMedia, success: { (response) in
             self.authenticationSuccessHandlerSetMedia(response,obj: objects)
             
@@ -110,13 +108,11 @@ import UIKit
     
     func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {
-      
         let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String
-               if let json = response as? [String: AnyObject]
+        if let json = response as? [String: AnyObject]
         {
             status = json["status"] as! Int
             let IsLikeSuccess = json["userLikeCountIndicator"] as! String
-            print(IsLikeSuccess)
             var countint : Int = Int(count)!
             if(IsLikeSuccess == "TRUE"){
                 countint = countint + 1
@@ -130,6 +126,6 @@ import UIKit
             obj.successFromSetUpView(count)
         }
     }
-
+    
 }
 

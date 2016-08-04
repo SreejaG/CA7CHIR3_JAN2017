@@ -15,12 +15,10 @@ class MediaBeforeUploadComplete: NSObject {
     let createdTimeStampKey = "created_timeStamp"
     
     var dataSourceFromLocal : [[String:AnyObject]] =  [[String:AnyObject]]()
-
+    
     func updateDataSource(dataSourceRow: [String:AnyObject]) {
         dataSourceFromLocal.append(dataSourceRow)
-      //  if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
-            NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
-      //  }
+        NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
         GlobalDataRetriever.sharedInstance.globalDataSource.append(dataSourceRow)
         GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
             let time1 = p1[createdTimeStampKey] as! String
@@ -34,7 +32,7 @@ class MediaBeforeUploadComplete: NSObject {
         for var i = 0; i <  GlobalDataRetriever.sharedInstance.globalDataSource.count; i++
         {
             let mediaDetailId =  GlobalDataRetriever.sharedInstance.globalDataSource[i][mediaIdKey] as! String
-
+            
             if(mediaDetailId == mediaId)
             {
                 GlobalDataRetriever.sharedInstance.globalDataSource[i][uploadProgressKey] = 1.0

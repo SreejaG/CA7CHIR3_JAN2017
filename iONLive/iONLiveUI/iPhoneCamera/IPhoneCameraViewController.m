@@ -83,8 +83,6 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 
 int orientationFlag = 0;
 
-
-
 @implementation IPhoneCameraViewController
 
 IPhoneLiveStreaming * liveStreaming;
@@ -94,17 +92,11 @@ NSInteger shutterActionMode;
 bool takePictureFlag = false;
 bool loadingCameraFlag = false;
 
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
     [self addApplicationObserversInIphone];
-    
-    GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
-    NSLog(@"inside viewWillAppear of IphoneCamera");
-    NSLog(@"%lu", (unsigned long)gb.globalDataSource.count);
-
     
     //device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -124,34 +116,29 @@ bool loadingCameraFlag = false;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-    UIDevice *device = note.object;
-    switch(device.orientation)
-    {
-        case UIDeviceOrientationPortrait:
-            orientationFlag = 1;
-            NSLog(@"Portrait,flag: %d",orientationFlag);
-            break;
-            
-        case UIDeviceOrientationPortraitUpsideDown:
-            orientationFlag = 2;
-            NSLog(@"PortraitUpsideDown,flag: %d",orientationFlag);
-            break;
-            
-        case UIDeviceOrientationLandscapeLeft:
-            orientationFlag = 3;
-            NSLog(@"LandscapeLeft,flag: %d",orientationFlag);
-            break;
-            
-        case UIDeviceOrientationLandscapeRight:
-            orientationFlag = 4;
-            NSLog(@"LandscapeRight,flag: %d",orientationFlag);
-            break;
-            
-        default:
-            orientationFlag = 0;
-            NSLog(@"Device Orientation Unknown,flag: %d",orientationFlag);
-            break;
-    }
+        UIDevice *device = note.object;
+        switch(device.orientation)
+        {
+            case UIDeviceOrientationPortrait:
+                orientationFlag = 1;
+                break;
+                
+            case UIDeviceOrientationPortraitUpsideDown:
+                orientationFlag = 2;
+                break;
+                
+            case UIDeviceOrientationLandscapeLeft:
+                orientationFlag = 3;
+                break;
+                
+            case UIDeviceOrientationLandscapeRight:
+                orientationFlag = 4;
+                break;
+                
+            default:
+                orientationFlag = 0;
+                break;
+        }
     }
 }
 
@@ -162,10 +149,9 @@ bool loadingCameraFlag = false;
     _noDataFound.numberOfLines = 0;
     
     [self loadingView];
-
+    
     if([[NSUserDefaults standardUserDefaults] valueForKey:@"first"] != nil)
     {
-        
         NSString *first = [[NSUserDefaults standardUserDefaults] valueForKey:@"first"];
         if([first isEqualToString:@"firstTime"])
         {
@@ -174,7 +160,6 @@ bool loadingCameraFlag = false;
         }
         else{
             NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"loadingView"];
-            NSLog(@"%@",loading);
             if([loading  isEqual: @"camera"]){
                 loadingCameraFlag = true;
                 _noDataFound.text =  @"   Syncing...";
@@ -211,26 +196,25 @@ bool loadingCameraFlag = false;
     [[NSUserDefaults standardUserDefaults] setValue:@"SecndTime" forKey:@"first"];
     [[NSUserDefaults standardUserDefaults] setValue:@"login" forKey:@"loadingView"];
     _assetsLibrary = [[ALAssetsLibrary alloc]init];
-    
     takePictureFlag = false;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
-       
+    
     [self loadingView];
+    
     dispatch_async( dispatch_get_main_queue(), ^{
-        
         [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
         [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+        if(loadingCameraFlag == false){
+            [self initialise];
+        }
     });
-    if(loadingCameraFlag == false){
-        [self initialise];
-    }
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     
-    // Dispose of any resources that can be recreated.
     self.assetsLibrary = nil;
 }
 
@@ -283,12 +267,8 @@ bool loadingCameraFlag = false;
                 else if(flashFlag == 1){
                     _flashButton.hidden = true;
                 }
-                
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-            
-          
                 [self.previewView.session stopRunning];
-            
             });
             [self.movieFileOutput stopRecording];
         }
@@ -298,7 +278,6 @@ bool loadingCameraFlag = false;
             _liveSteamSession.delegate = nil;
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-            
         }
     }
 }
@@ -323,39 +302,32 @@ bool loadingCameraFlag = false;
             [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
             [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
         });
-        if(shutterActionMode == SnapCamSelectionModeLiveStream){
-//         
-//                        [_liveSteamSession.previewView removeFromSuperview];
-//                        _liveSteamSession.delegate = nil;
-            
-        }
     }
-    
 }
 
 -(void) loadInitialView
 {
-      dispatch_async( dispatch_get_main_queue(), ^{
-          NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-          NSString *path = documentsPath.absoluteString;
-          
-          if([[NSFileManager defaultManager] fileExistsAtPath:path]){
-              [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
-          }
-          [[FileManagerViewController sharedInstance] createParentDirectory];
-          NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-          NSString *accessToken = [defaults valueForKey:@"deviceToken"];
-          NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
-          [defaults removePersistentDomainForName:iden];
-          [defaults setValue:accessToken forKey:@"deviceToken"];
-          [defaults setInteger:1 forKey:@"shutterActionMode"];
-          UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
-          UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateNavigationController"];
-          authenticate.navigationController.navigationBarHidden = true;
-          [[self navigationController] presentViewController:authenticate animated:false completion:^{
-              [[ErrorManager sharedInstance] tockenExpired];
-          }];
-      });
+    dispatch_async( dispatch_get_main_queue(), ^{
+        NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+        NSString *path = documentsPath.absoluteString;
+        
+        if([[NSFileManager defaultManager] fileExistsAtPath:path]){
+            [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+        }
+        [[FileManagerViewController sharedInstance] createParentDirectory];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *accessToken = [defaults valueForKey:@"deviceToken"];
+        NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
+        [defaults removePersistentDomainForName:iden];
+        [defaults setValue:accessToken forKey:@"deviceToken"];
+        [defaults setInteger:1 forKey:@"shutterActionMode"];
+        UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
+        UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateNavigationController"];
+        authenticate.navigationController.navigationBarHidden = true;
+        [[self navigationController] presentViewController:authenticate animated:false completion:^{
+            [[ErrorManager sharedInstance] tockenExpired];
+        }];
+    });
 }
 
 -(void) initialise{
@@ -377,16 +349,15 @@ bool loadingCameraFlag = false;
         self.topView.userInteractionEnabled = value;
         self.bottomView.userInteractionEnabled = value;
     });
-    
 }
 
 -(void)stopInitialisation
 {
     loadingCameraFlag = false;
+    [self hidingView];
     dispatch_async( dispatch_get_main_queue(), ^{
-        [self hidingView];
+        [self initialise];
     });
-    [self initialise];
 }
 
 -(void)loadingView
@@ -398,10 +369,8 @@ bool loadingCameraFlag = false;
         _activityImageView.hidden = false;
         [__activityIndicatorView startAnimating];
         __activityIndicatorView.hidden = false;
-        //        _noDataFound.text = @"Initialising will take a few minutes";
         _noDataFound.hidden = false;
     });
-    
     [self enabelOrDisableButtons:false];
 }
 
@@ -434,8 +403,6 @@ bool loadingCameraFlag = false;
 }
 
 -(void) setGUIModifications{
-   
-    
     _currentFlashMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"flashMode"];
     if(_currentFlashMode == 0){
         [self.flashButton setImage:[UIImage imageNamed:@"flash_off"] forState:UIControlStateNormal];
@@ -443,7 +410,7 @@ bool loadingCameraFlag = false;
     else if(_currentFlashMode == 1){
         [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
     }
-     _snapCamMode = SnapCamSelectionModeiPhone;
+    _snapCamMode = SnapCamSelectionModeiPhone;
     flashFlag = 0;
     _activitView.hidden = YES;
     _playiIconView.hidden = YES;
@@ -510,7 +477,6 @@ bool loadingCameraFlag = false;
         if ( self.setupResult != AVCamSetupResultSuccess ) {
             return;
         }
-        
         self.backgroundRecordingID = UIBackgroundTaskInvalid;
         NSError *error = nil;
         
@@ -522,7 +488,6 @@ bool loadingCameraFlag = false;
         }
         
         [self.session beginConfiguration];
-        
         
         if ( [self.session canAddInput:videoDeviceInput] ) {
             [self.session addInput:videoDeviceInput];
@@ -579,14 +544,12 @@ bool loadingCameraFlag = false;
             NSLog( @"Could not add still image output to the session" );
             self.setupResult = AVCamSetupResultSessionConfigurationFailed;
         }
-        
         [self.session commitConfiguration];
     } );
 }
 
 -(void) setGUIBasedOnMode{
     if (![self isStreamStarted]) {
-       
         if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {
             _flashButton.hidden = true;
@@ -664,7 +627,6 @@ bool loadingCameraFlag = false;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
-//    [self removeObservers];
 }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
@@ -679,7 +641,6 @@ bool loadingCameraFlag = false;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
-    //    NSLog(@"%@",userImages);
         if(userImages.count > 0){
             for(int i=0;i<userImages.count;i++){
                 if(i==0){
@@ -712,10 +673,6 @@ bool loadingCameraFlag = false;
     
     if(takePictureFlag == false){
         dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSLog(@"Global Data Count : ");
-            NSLog(@ "%lu", (unsigned long)GlobalDataRetriever.sharedInstance.globalDataSource.count);
-            
-            // Prijesh : Load cached image from global dictionary
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
             
             if ( data == nil )
@@ -761,7 +718,7 @@ bool loadingCameraFlag = false;
         }
         if(count==0)
         {
-             _countLabel.hidden= true;
+            _countLabel.hidden= true;
             [self.view bringSubviewToFront:self.latestSharedMediaImage];
             dispatch_async(dispatch_get_global_queue(0,0), ^{
                 NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
@@ -906,7 +863,6 @@ bool loadingCameraFlag = false;
     }
 }
 
-
 #pragma mark take photo
 
 -(void)takePicture
@@ -922,7 +878,7 @@ bool loadingCameraFlag = false;
         {
             if(orientation ==1) //Checking device orientation as per status bar position
             {
-        
+                
             }
         }
         else
@@ -951,17 +907,15 @@ bool loadingCameraFlag = false;
                         dispatch_async( dispatch_get_main_queue(), ^{
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             takePictureFlag = true;
-                            //UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData], nil, nil, nil);
+                            
                             //Save images to CA7CH specific album in iphone
                             [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
-                            {
-                                
-                            } failure:^(NSError *error)
-                            {
-                                
-                            }];
-                            
-                            
+                             {
+                                 
+                             } failure:^(NSError *error)
+                             {
+                                 
+                             }];
                             [self saveImage:imageData];
                             [self loaduploadManagerForImage];
                         });
@@ -969,7 +923,7 @@ bool loadingCameraFlag = false;
                 }];
             }
             else {
-               
+                
             }
         }];
     });
@@ -1066,7 +1020,7 @@ bool loadingCameraFlag = false;
         }
         else {
             
-            dispatch_async( dispatch_get_main_queue(), ^{  
+            dispatch_async( dispatch_get_main_queue(), ^{
                 if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
                     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
                     }else {
@@ -1113,26 +1067,21 @@ bool loadingCameraFlag = false;
 {
     switch(state) {
         case VCSessionStateStarting:
-            NSLog(@"Starting");
             break;
         case VCSessionStateStarted:
             [self hideProgressBar];
-            NSLog(@"Started");
             [self performSelector:@selector(screenCapture) withObject:nil afterDelay:2.0];
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-            NSLog(@"End Stream");
             break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
             [liveStreaming stopStreamingClicked];
-            NSLog(@"VCSessionStateError");
             break;
         default:
-            NSLog(@"Connect");
             [self hidingView];
             dispatch_async( dispatch_get_main_queue(), ^{
                 self.previewView.session = nil;
@@ -1198,8 +1147,6 @@ bool loadingCameraFlag = false;
             
         }
         else{
-            
-            
             [self deleteThumbnailImageLive];
         }
     }];
@@ -1228,8 +1175,6 @@ bool loadingCameraFlag = false;
 
 - (void)removeObservers
 {
-   // [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
     [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
 }
@@ -1350,15 +1295,12 @@ bool loadingCameraFlag = false;
                             
                             //Save Captured videos to the CA7CH specific album in phone
                             [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
-                            {
-                                
-                            } failure:^(NSError *error)
-                            {
-                                
-                            }];
-                            
-                            
-                            
+                             {
+                                 
+                             } failure:^(NSError *error)
+                             {
+                                 
+                             }];
                         }
                     });
                     if ( [PHAssetResourceCreationOptions class] ) {
@@ -1376,12 +1318,12 @@ bool loadingCameraFlag = false;
                 }];
             }
             else {
-                //  cleanup();
+                
             }
         }];
     }
     else {
-        // cleanup();
+        
     }
     
     dispatch_async( dispatch_get_main_queue(), ^{
@@ -1394,7 +1336,6 @@ bool loadingCameraFlag = false;
 -(void) moveVideoToDocumentDirectory : (NSURL *) path
 {
     [self loaduploadManager : path ];
-    //UISaveVideoAtPathToSavedPhotosAlbum([path path], nil, nil, nil); // Save video to the CA7CH specific album. No need to double save the same video
 }
 
 -(void) loaduploadManager : (NSURL *)filePath
@@ -1441,7 +1382,6 @@ bool loadingCameraFlag = false;
         if ( [device lockForConfiguration:&error] ) {
             device.flashMode = flashMode;
             [device unlockForConfiguration];
-          
         }
         else {
         }
@@ -1528,15 +1468,15 @@ bool loadingCameraFlag = false;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
     snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeiPhone;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
-
+    
 }
 
 - (IBAction)didTapSharingListIcon:(id)sender
 {
     if ([self isStreamStarted])
-        {
-            [self generateStreamAlert:@"loadSharingView"];
-        }
+    {
+        [self generateStreamAlert:@"loadSharingView"];
+    }
     
     else
     {
@@ -1563,7 +1503,7 @@ bool loadingCameraFlag = false;
     }
     else
     {
-       [self loadPhotoViewer];
+        [self loadPhotoViewer];
     }
 }
 
@@ -1703,8 +1643,6 @@ bool loadingCameraFlag = false;
 
 -(void)generateStreamAlert:(NSString*)generateStream
 {
-    NSLog(@"GenerateStream: %@",generateStream);
-    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Streaming In Progress" message:@"Do you want to stop streaming?" preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
     [alertController addAction:cancelAction];
@@ -1720,24 +1658,18 @@ bool loadingCameraFlag = false;
         
         if ([generateStream isEqualToString:@"settingsPageView"])
         {
-            NSLog(@"GenereateStream: %@",generateStream);
             [self settingsPageView];
-            
         }
         else if ([generateStream isEqualToString:@"loadSharingView"])
         {
-            NSLog(@"GenereateStream: %@",generateStream);
             [self loadSharingView];
         }
         else if ([generateStream isEqualToString:@"loadPhotoViewer"])
         {
-            NSLog(@"GenereateStream: %@",generateStream);
-            
             [self loadPhotoViewer];
         }
         else if ([generateStream isEqualToString:@"loadStreamsGalleryView"])
         {
-            NSLog(@"GenereateStream: %@",generateStream);
             [self loadStreamsGalleryView];
         }
         
