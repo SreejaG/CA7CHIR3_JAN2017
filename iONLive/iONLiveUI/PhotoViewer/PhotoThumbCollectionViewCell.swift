@@ -10,10 +10,12 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     @IBOutlet var progressView: UIProgressView!
     
     @IBOutlet weak var cloudIcon: UIImageView!
+    
     func ProgresviewUpdate (value : Float)
     {
         progressView.progress = value
     }
+    
     func toggleSelected (cell :UICollectionViewCell)
     {
         if (selected){
@@ -24,9 +26,9 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
 
        }
     }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         progressView.transform = CGAffineTransformScale(progressView.transform, 1,3)
     }
-  
 }

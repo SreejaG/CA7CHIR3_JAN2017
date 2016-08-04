@@ -66,7 +66,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         if(GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0)
         {
             removeOverlay()
-            myChannelTableView.reloadData()
+            self.myChannelTableView.reloadData()
         }
         
         initialise()
@@ -110,8 +110,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func removeActivityIndicator(notif : NSNotification){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeOverlay()
-            self.myChannelTableView.reloadData()
         })
+        self.myChannelTableView.reloadData()
     }
     
     func handleTap(gestureRecognizer: UIGestureRecognizer) {

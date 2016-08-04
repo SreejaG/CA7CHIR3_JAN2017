@@ -4,7 +4,6 @@ import UIKit
 import MediaPlayer
 import Foundation
 
-
 protocol progressviewDelegate
 {
     func ProgresviewUpdate (value : Float)
@@ -16,14 +15,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     var lastContentOffset: CGPoint = CGPoint()
     
-    
     @IBOutlet var TopView: UIView!
     @IBOutlet var BottomView: UIView!
     
     @IBOutlet var playIconInFullView: UIImageView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
     @IBOutlet var fullScreenZoomView: UIImageView!
+    
     @IBOutlet weak var fullScreenScrollView: UIScrollView!
+    
     @IBOutlet weak var mediaTimeLabel: UILabel!
     
     @IBOutlet var progressView: UIProgressView!
@@ -52,9 +52,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     var moviePlayer : MPMoviePlayerController!
     let defaults = NSUserDefaults .standardUserDefaults()
-  
+    
     private var downloadTask: NSURLSessionDownloadTask?
-  
+    
     var progressViewDownload: UIProgressView?
     var progressLabelDownload: UILabel?
     
@@ -80,7 +80,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var deletedMediaId : String = String()
     
     var dictProgress : Float = Float()
-   
+    
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
             static let instance = PhotoViewerViewController()
@@ -91,14 +91,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad()
     {
         super.viewDidLoad()
-       
+        
         self.photoThumpCollectionView.alwaysBounceHorizontal = true
         
         progressLabelDownload = UILabel()
         
         progressViewDownload?.hidden = true
         progressLabelDownload?.hidden = true
-               
+        
         self.fullScrenImageView.image = UIImage()
         self.fullScreenZoomView.image = UIImage()
         
@@ -127,7 +127,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.deletButton.hidden = false
                     self.photoThumpCollectionView.reloadData()
                 })
-            
+                
                 let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             }
@@ -146,30 +146,26 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 dispatch_async(backgroundQueue, {
                     GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end)
                 })
-
+                
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
                 })
             }
-         }
+        }
         
         fullScreenScrollView.delegate = self
         fullScreenScrollView.minimumZoomScale = 1.0
         fullScreenScrollView.maximumZoomScale = 10.0
         fullScreenScrollView.zoomScale = 1.0
         view.addSubview(fullScreenScrollView)
-  
+        
         fullScreenScrollView.delaysContentTouches = false;
         
-        
         self.view.bringSubviewToFront(photoThumpCollectionView)
-     
         self.view.bringSubviewToFront(playIconInFullView)
         self.view.bringSubviewToFront(TopView)
         self.view.bringSubviewToFront(BottomView)
-        
-  
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
@@ -185,7 +181,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
         fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
-      }
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -200,7 +196,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-       
+        
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
         }
@@ -211,7 +207,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             
             NSNotificationCenter.defaultCenter().removeObserver(self)
         }
-        
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
@@ -222,10 +217,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         return self.fullScreenZoomView
     }
     
-    
     func handleDoubleTap(recognizer: UITapGestureRecognizer) {
-        
-        
         let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
         
         if mediaType != "video"
@@ -237,9 +229,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.fullScreenScrollView.zoomToRect(zoomRect, animated: true);
                 
             }
-            
         }
-        
     }
     
     func zoomRectForScale(scale : CGFloat, center : CGPoint) -> CGRect {
@@ -254,9 +244,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         return zoomRect;
     }
     
-    
     func scrollViewWillBeginZooming(scrollView: UIScrollView, withView views: UIView?) {
-        
         if(fullScreenZoomView.hidden==true)
         {
             fullScreenZoomView.hidden = false
@@ -278,8 +266,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         if(scale<=1.0)
         {
-            
-            
             fullScreenZoomView.hidden = true
             fullScrenImageView.alpha = 1.0
             TopView.hidden = false
@@ -288,11 +274,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             fullScreenScrollView.scrollEnabled=false;
             self.photoThumpCollectionView.reloadData()
             fullScreenScrollView.bounds = fullScrenImageView.bounds
-            
         }
-        
     }
-    
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
@@ -308,8 +291,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
         }
     }
-    
-
     
     func removeActivityIndicator(notif : NSNotification)
     {
@@ -402,32 +383,21 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             completion(result:UIImage(named: "thumb12")!)
         }
     }
-   
-   
-    
-
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
         swipeFlag = true
         self.removeOverlay()
         
-        
-
-        
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-                self.moviePlayer.stop()
+            self.moviePlayer.stop()
             self.moviePlayer.view.removeFromSuperview()
             playIconInFullView.hidden = false
             self.view.userInteractionEnabled = true
-           // self.moviePlayer.view.hidden=true
         }
         
-        
-        
-
         downloadTask?.cancel()
         fullScrenImageView.alpha = 1.0
         progressLabelDownload?.removeFromSuperview()
@@ -435,7 +405,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         progressLabelDownload?.text=" ";
         progressViewDownload?.hidden=true;
         progressLabelDownload?.hidden=true;
-
         
         if let swipeGesture = gesture as? UISwipeGestureRecognizer
         {
@@ -518,7 +487,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         archiveMediaCount = defaults.valueForKey(ArchiveCount) as! Int
     }
-
+    
     @IBAction func deleteButtonAction(sender: AnyObject) {
         
         if(downloadTask?.state == .Running)
@@ -554,7 +523,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.deletedMediaId = GlobalDataRetriever.sharedInstance.globalDataSource[0][self.mediaDetailIdKey] as! String
             }
             else{
-              self.deletedMediaId = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaDetailIdKey] as! String
+                self.deletedMediaId = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaDetailIdKey] as! String
             }
             self.mediaSelected.addObject(self.mediaIdSelected)
             
@@ -571,10 +540,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                     self.showOverlay()
                     
-                    print("\(userId)   \(accessToken)   \(self.mediaSelected)   \(channelIds)")
-                    
                     self.imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: self.mediaSelected, channelId: channelIds, success: { (response) -> () in
-                            self.authenticationSuccessHandlerDelete(response)
+                        self.authenticationSuccessHandlerDelete(response)
                         }, failure: { (error, message) -> () in
                             self.authenticationFailureHandlerDelete(error, code: message)
                     })
@@ -612,6 +579,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if((GlobalDataRetriever.sharedInstance.globalDataSource.count > selectedItem)&&(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0)){
                 GlobalDataRetriever.sharedInstance.globalDataSource.removeAtIndex(selectedItem)
             }
+            
             totalCount = totalCount - 1
             
             GlobalDataRetriever.sharedInstance.deleteMediasOnGlobalMyMediaDeletionAction(deletedMediaId)
@@ -624,6 +592,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             else{
                 selectedItem = selectedItem - 1
             }
+            
             if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
@@ -765,7 +734,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         return ""
     }
-
+    
     func downloadVideo(index : Int)
     {
         videoDownloadIntex = index
@@ -910,7 +879,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let dict = notif.object as! [String:AnyObject]
         dictMediaId = dict[mediaDetailIdKey] as! String
         dictProgress = dict[uploadProgressKey] as! Float
-     
+        
         for var i = 0; i < GlobalDataRetriever.sharedInstance.globalDataSource.count; i++
         {
             let mediaIdFromData = GlobalDataRetriever.sharedInstance.globalDataSource[i][mediaDetailIdKey] as! String
@@ -1078,7 +1047,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
                         self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
                     }
-                     self.removeOverlay()
                     self.fullScrenImageView.image = imageForMedia as UIImage;
                     self.fullScreenZoomView.image = imageForMedia as UIImage
                     self.playIconInFullView.hidden = true;
@@ -1089,12 +1057,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
         self.view.bringSubviewToFront(photoThumpCollectionView)
-
         self.view.bringSubviewToFront(playIconInFullView)
         self.view.bringSubviewToFront(TopView)
-         self.view.bringSubviewToFront(BottomView)
+        self.view.bringSubviewToFront(BottomView)
     }
-    
     
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -1130,18 +1096,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
         })
     }
- }
+}
 
 //PRAGMA MARK:- Collection View Delegates
-    
+
 extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout
 {
-        
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return totalCount
     }
-        
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
@@ -1163,7 +1129,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 cell.layer.borderColor = UIColor.clearColor().CGColor;
             }
             var dict = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row]
-                
+            
             if let thumpImage = dict[thumbImageKey]
             {
                 if GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][mediaTypeKey] as! String == "video"
@@ -1175,9 +1141,9 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                     cell.playIcon.hidden = true
                 }
                 cell.progressView.hidden = true
-                    
+                
                 cell.thumbImageView.image = (thumpImage as! UIImage)
-                    
+                
                 let progress = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][uploadProgressKey] as! Float
                 if((progress == 1.0) || (progress == 0.0))
                 {
@@ -1196,7 +1162,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
         swipeFlag = false
-            
+        
         if (playHandleflag == 1)
         {
             playHandleflag = 0
@@ -1204,7 +1170,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.moviePlayer.view.removeFromSuperview()
         }
         self.selectedItem = indexPath.row
-       
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.photoThumpCollectionView.reloadData()
         })
@@ -1233,19 +1199,19 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             })
         }
     }
-        
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 1, 1)
     }
-        
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
-        
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
-        
+    
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
         if cell?.selected == false{
