@@ -1,10 +1,4 @@
-//
-//  AddChannelViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 04/03/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 
@@ -40,7 +34,7 @@ class AddChannelViewController: UIViewController {
     let sharedIndicatorTemporaryKey = "tempSelected"
     let thumbImageKey = "thumbImage"
     let thumbImageURLKey = "thumbImage_URL"
-
+    
     var selectedChannelId:String!
     
     var channelSelected: NSMutableArray = NSMutableArray()
@@ -48,7 +42,7 @@ class AddChannelViewController: UIViewController {
     
     var localMediaDict : [[String:AnyObject]] = [[String:AnyObject]]()
     var localChannelDict : [[String:AnyObject]] = [[String:AnyObject]]()
-
+    
     var mediaDetailSelected : NSMutableArray = NSMutableArray()
     var selectedArray:[Int] = [Int]()
     
@@ -115,7 +109,7 @@ class AddChannelViewController: UIViewController {
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         setChannelDetailsDummy()
-   }
+    }
     
     func setChannelDetailsDummy()
     {
@@ -243,7 +237,7 @@ class AddChannelViewController: UIViewController {
     {
         
         GlobalChannelToImageMapping.sharedInstance.addMediaToChannel(localChannelDict, mediaDetailOfSelectedChannel: localMediaDict)
-       
+        
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -302,7 +296,7 @@ class AddChannelViewController: UIViewController {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-
+    
     
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -393,7 +387,7 @@ extension AddChannelViewController:UITableViewDataSource
                 cell.accessoryType = .Checkmark
             }
             else{
-                 cell.accessoryType = .None
+                cell.accessoryType = .None
             }
             
             cell.selectionStyle = .None
@@ -405,7 +399,7 @@ extension AddChannelViewController:UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         shareFlag = false
-       
+        
         if(selectedArray.contains(indexPath.row)){
             let elementIndex = selectedArray.indexOf(indexPath.row)
             selectedArray.removeAtIndex(elementIndex!)

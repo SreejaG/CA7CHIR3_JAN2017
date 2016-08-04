@@ -1,13 +1,6 @@
-//
-//  MyChannelNotificationViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 3/11/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
-
 
 class MyChannelNotificationViewController: UIViewController {
     
@@ -36,7 +29,7 @@ class MyChannelNotificationViewController: UIViewController {
     let notificationTimeKey = "notifTime"
     
     @IBOutlet var notifImage: UIButton!
-   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -95,7 +88,6 @@ class MyChannelNotificationViewController: UIViewController {
             
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
-            
         }
     }
     
@@ -181,18 +173,9 @@ class MyChannelNotificationViewController: UIViewController {
         if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))d"    }
         if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))h"   }
         if minutesFrom(date,todate:todate) > 0 {
-           return "\(minutesFrom(date,todate:todate))min"
+            return "\(minutesFrom(date,todate:todate))min"
         }
         if secondsFrom(date,todate:todate) > 0 {
-//            var timeStr = String()
-//            if(minutesFrom(date,todate:todate) <= 60){
-//                timeStr = "Just now"
-//            }
-//            else{
-//                timeStr = "\(minutesFrom(date,todate:todate))min"
-//            }
-//            return timeStr
- //           return "\(secondsFrom(date,todate:todate))sec"
             return "Just now"
         }
         return ""
@@ -212,7 +195,6 @@ class MyChannelNotificationViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             let mediaResponseArr = json["notification Details"] as! [[String:AnyObject]]
-            print(mediaResponseArr)
             var mediaId : String = String()
             var mediaThumbUrl : String = String()
             if mediaResponseArr.count > 0
@@ -249,22 +231,6 @@ class MyChannelNotificationViewController: UIViewController {
                 }
             }
             
-        
-//            let channelResponseArr = json["notification Details"]!["channelDetails"] as! [[String:AnyObject]]
-//            if channelResponseArr.count > 0
-//            {
-//                for element in channelResponseArr{
-//                    let notTime = element["created_time_stamp"] as! String
-//                    let timeDiff = getTimeDifference(notTime)
-//                    let messageFromCloud = element["message"] as! String
-//                    let message = "\(messageFromCloud)  \(timeDiff)"
-//                    
-//                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
-//                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
-//                    dataSource.append([messageKey:message,profileImageKey:profileImageName,mediaImageKey:"nomedia",notificationTimeKey:notTime])
-//                }
-//                
-//            }
             if(dataSource.count > 0)
             {
                 dataSource.sortInPlace({ p1, p2 in
@@ -385,12 +351,12 @@ class MyChannelNotificationViewController: UIViewController {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-           
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
             else{
-                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
