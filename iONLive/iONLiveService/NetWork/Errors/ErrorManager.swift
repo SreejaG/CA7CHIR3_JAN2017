@@ -354,7 +354,9 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("No Contacts", message: "Contact List Empty")
     }
-    
+    func streamAvailable() {
+        alert("Live Stream", message: "Someone shared a stream")
+    }
     func emptyMedia()
     {
         alert("No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")

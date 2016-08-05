@@ -61,8 +61,11 @@ class ChannelSharedListAPI: NSObject {
             dummy.removeAll()
             dataSource.removeAll()
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
+           
             if (responseArrLive.count != 0)
             {
+                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
+
                 for element in responseArrLive{
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
@@ -70,11 +73,18 @@ class ChannelSharedListAPI: NSObject {
                     let mediaSharedCount = element[sharedMediaCount]?.stringValue
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
-                    
+                    let channelSubId = element[subChannelIdKey]?.stringValue
                     let thumbUrlBeforeNullChk =  element[profileImageKey]
                     let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
                     let mediaUrl =  "noimage"
-                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:"",usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
+                    let dateFormatter = NSDateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    dateFormatter.timeZone = NSTimeZone(name: "UTC")
+                    
+                    //  let cloudDate = dateFormatter.dateFromString(dateStr)
+                    
+                    let localDateStr = dateFormatter.stringFromDate(NSDate())
+                    dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,subChannelIdKey : channelSubId!,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
             }
             
@@ -84,8 +94,15 @@ class ChannelSharedListAPI: NSObject {
             {
                 mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
             }
+            
+            if(responseArr.count == 0)
+            {
+                NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
+            }
             if (responseArr.count != 0)
             {
+                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyShare")
+
                 for element in responseArr{
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
@@ -93,8 +110,6 @@ class ChannelSharedListAPI: NSObject {
                     let time = element[lastUpdatedTimeStamp] as! String
                     let username = element[usernameKey] as! String
                     let channelSubId = element[subChannelIdKey]?.stringValue
-                    
-                    print(username)
                     let liveStream = "0"
                     var mediaThumbUrl : String = String()
                     if liveStream == "0"
@@ -135,7 +150,6 @@ class ChannelSharedListAPI: NSObject {
                     dummy.append([channelIdkey:channelId!, subChannelIdKey : channelSubId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
                 }
             }
-            print(mediaShared.count)
             if(dummy.count > 0)
             {
                 dummy.sortInPlace({ p1, p2 in
@@ -187,8 +201,6 @@ class ChannelSharedListAPI: NSObject {
                 
                 for(var globalChannelListIndex  = 0 ; globalChannelListIndex  < ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count ; globalChannelListIndex++ )
                 {
-                    print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[globalChannelListIndex][channelIdkey] as! String)
-                    print( mediaSharedSource[i][channelIdkey])
                     let channelId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[globalChannelListIndex][channelIdkey] as! String
                     let mediaSharedCount = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[globalChannelListIndex][sharedMediaCount] as! String
                     if let val = mediaSharedSource[i][channelIdkey] {
@@ -320,7 +332,6 @@ class ChannelSharedListAPI: NSObject {
             }
             
         }
-        print(SharedChannelListDataSource)
         // if data available while pull to refresh no need to add data to global here
         // access datasource from calling view and insert respected rows to table view and update global source there in main view
         if(pullTorefresh)
@@ -344,13 +355,6 @@ class ChannelSharedListAPI: NSObject {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        //        removeOverlay()
-        //
-        //        if(pullToRefreshActive){
-        //            self.refreshControl.endRefreshing()
-        //            pullToRefreshActive = false
-        //            tapCountChannelShared = 0
-        //        }
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !RequestManager.sharedInstance.validConnection() {

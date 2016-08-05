@@ -95,9 +95,9 @@ class ChannelItemListViewController: UIViewController {
                     selectionButton.hidden = true
                     let start = 0
                     var end = 0
-                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 20
+                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 21
                     {
-                        end = 20
+                        end = 21
                     }
                     else{
                         end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
@@ -113,15 +113,15 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func removeActivityIndicator(notif : NSNotification){
-        if totalCount <= 20
+        if totalCount <= 21
         {
             let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
             totalCount = filteredData.count
         }
        
         GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeStampKey] as! String
-            let time2 = p2[createdTimeStampKey] as! String
+            let time1 = p1[mediaDetailIdKey] as! String
+            let time2 = p2[mediaDetailIdKey] as! String
             return time1 > time2
         })
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -164,6 +164,8 @@ class ChannelItemListViewController: UIViewController {
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         if (self.lastContentOffset.y > scrollView.contentOffset.y) {
+            if totalCount > 0
+            {
             if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
             {
                 if self.downloadingFlag == false
@@ -176,14 +178,15 @@ class ChannelItemListViewController: UIViewController {
                     })
                 }
             }
+            }
         }
     }
     
     func downloadImagesFromGlobalChannelImageMapping()  {
         let start = totalCount
         var end = 0
-        if((totalCount + 10) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-            end = 10
+        if((totalCount + 12) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+            end = 12
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount

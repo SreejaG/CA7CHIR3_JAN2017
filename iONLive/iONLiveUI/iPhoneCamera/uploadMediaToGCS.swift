@@ -68,7 +68,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             sizeThumb = CGSizeMake(140, 140)
         }
         imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageFromDB, scaledToFillSize: sizeThumb)
-        
+        print(imageAfterConversionThumbnail)
         getSignedURLFromCloud()
     }
     

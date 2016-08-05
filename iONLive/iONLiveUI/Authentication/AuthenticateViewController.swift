@@ -1,10 +1,4 @@
-//
-//  AuthenticateViewController.swift
-//  iON_Live
-//
-//  Created by Gadgeon on 11/16/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 

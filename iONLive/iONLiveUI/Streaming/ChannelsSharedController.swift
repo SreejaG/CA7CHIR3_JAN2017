@@ -40,6 +40,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     
     override func viewWillAppear(animated: Bool) {
+      
+            self.removeOverlay()
+        
         super.viewWillAppear(true)
     }
     
@@ -55,6 +58,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pushNotificationUpdate), name: "PushNotification", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.mediaDeletePushNotificationSharing), name: "MediaDelete", object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.deletedMediaFromArchieve), name: "StreamToChannelMedia", object:nil)
+        
         self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
         self.ChannelSharedTableView.addSubview(self.refreshControl)
         newShareAvailabellabel.hidden = true
@@ -64,17 +69,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
             let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
             ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
+            
         }
-        //   var timer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "pushNotificationUpdate", userInfo: nil, repeats: true)
     }
     
     func channelDeletionPushNotification(info:  [String : AnyObject])
     {
-        print ("inside notification ---->")
-        //  let info = notif.object as! [String : AnyObject]
-        print(info)
         let channelId = info["channelId"]!
-        // let mediaArrayData  = info["mediaId"] as! NSArray
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
@@ -96,17 +97,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 self.deleteChannelFromSpecificRow("\(channelId)")
                 
             }
-            
         })
-        
     }
-    func mediaDeletePushNotificationSharing(notif: NSNotification)
+    func deleteFromGlobal(channelId : Int , mediaArrayData : NSArray)
     {
-        print ("inside notification ---->",  notif.object as! [String : AnyObject])
-        let info = notif.object as! [String : AnyObject]
-        print(info)
-        let channelId = info["channelId"] as! Int
-        let mediaArrayData  = info["mediaId"] as! NSArray
+        
         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
         dispatch_async(backgroundQueue, {
@@ -128,11 +123,29 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             {
                 self.reloadSpecificRowMediaDeleted("\(channelId)", deletedMediaCount: mediaArrayData.count)
             }
-            
         })
-        
     }
-    
+    func mediaDeletePushNotificationSharing(notif: NSNotification)
+    {
+        let info = notif.object as! [String : AnyObject]
+        let type =  info["type"] as! String
+        if(type != "media")
+        {
+            let channelId = info["channelId"] as! Int
+            let mediaArrayData  = info["mediaId"] as! NSArray
+            deleteFromGlobal(channelId , mediaArrayData: mediaArrayData)
+        }
+    }
+    func deletedMediaFromArchieve(notif : NSNotification)
+    {
+        let responseArrData = notif.object as! NSDictionary
+        let keys = responseArrData.allKeys
+        for( var channelIdIndex = 0 ; channelIdIndex < keys.count ; channelIdIndex += 1 )
+        {
+            let  deletedMediaCount : Int = responseArrData.valueForKey(keys[channelIdIndex] as! String) as! Int
+            reloadSpecificRowMediaDeleted(keys[channelIdIndex] as! String,deletedMediaCount: Int(deletedMediaCount))
+        }
+    }
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
         // let info = notif.object as! [String : AnyObject]
@@ -159,12 +172,16 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.liveStreamStatus] = "1"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "1"
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.ChannelSharedTableView.beginUpdates()
                 var pathArray :[NSIndexPath] = [NSIndexPath]()
                 let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
+                //if(self.isVisibleCell(index))
+                //  {
+                self.ChannelSharedTableView.beginUpdates()
                 pathArray.append(indexPath)
                 self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
                 self.ChannelSharedTableView.endUpdates()
+                //  }
+                
             })
         }
         else{
@@ -173,6 +190,17 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             
         }
         
+    }
+    func isVisibleCell( index : Int ) -> Bool
+    {
+        if let indices = ChannelSharedTableView.indexPathsForVisibleRows {
+            for index in indices {
+                if index.row == index {
+                    return true
+                }
+            }
+        }
+        return false
     }
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
@@ -183,12 +211,16 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.liveStreamStatus] = "0"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "0"
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                //  if(self.isVisibleCell(index))
+                //  {
                 self.ChannelSharedTableView.beginUpdates()
                 var pathArray :[NSIndexPath] = [NSIndexPath]()
                 let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
                 pathArray.append(indexPath)
                 self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
                 self.ChannelSharedTableView.endUpdates()
+                //  }
             })
         }
         //        else{
@@ -202,8 +234,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     func pushNotificationUpdate(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
-        print(info)
-        
         if (info["type"] as! String == "share"){
             
             let channelId = info["channelId"] as! Int
@@ -213,6 +243,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             newShareAvailabellabel.hidden = false
             if(self.downloadCompleteFlag == "end")
             {
+                
             }
             else
             {
@@ -228,14 +259,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         else if (info["type"] as! String == "liveStream")
         {
             channelPushNotificationLiveStarted(info)
-            
         }
-        
-        
     }
     func getUpdateIndexChannel(channelId : String , isCountArray : Bool) -> Int
     {
-        
         var selectedArray : NSArray = NSArray()
         var indexOfRow : Int = Int()
         if(isCountArray)
@@ -251,14 +278,12 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         else{
             selectedArray = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         }
-        print(selectedArray)
         var  checkFlag : Bool = false
         for (index, element) in selectedArray.enumerate() {
             // do something with index
             if element[channelIdkey] as? String == channelId
             {
                 indexOfRow = index
-                print(indexOfRow)
                 checkFlag = true
             }
         }
@@ -266,7 +291,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             indexOfRow = -1
         }
-        print("\(indexOfRow)index--------->"  )
         return indexOfRow
     }
     func deleteChannelFromSpecificRow(channelId : String)
@@ -279,19 +303,20 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
             {
-                
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(rowIndex)
+                    //    if(self.isVisibleCell(rowIndex))
+                    //   {
                     self.ChannelSharedTableView.beginUpdates()
                     var pathArray :[NSIndexPath] = [NSIndexPath]()
                     let indexPath: NSIndexPath = NSIndexPath(forRow: rowIndex, inSection: 0)
                     pathArray.append(indexPath)
                     self.ChannelSharedTableView.deleteRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
                     self.ChannelSharedTableView.endUpdates()
+                    //  }
                 })
             }
         }
-        
     }
     func  reloadSpecificRowMediaDeleted(channelId : String ,  deletedMediaCount : Int)
     {
@@ -305,7 +330,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let totalNoLatest : Int = Int(totalNo)! - deletedMediaCount
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
             mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
-            print(mediaShared)
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
@@ -336,7 +360,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let totalNoLatest : Int = Int(totalNo)! + 1
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
             mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
-            print(mediaShared)
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
@@ -353,20 +376,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             }
         }
         pushNotificationFlag = false
-        
     }
-    
-    //    func reloadGlobalSource()
-    //    {
-    //        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-    //        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-    //        ChannelSharedListAPI.sharedInstance.dataSource.removeAll()
-    //        ChannelSharedListAPI.sharedInstance.dummy.removeAll()
-    //        ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAll()
-    //        ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
-    //        downloadCompleteFlag = "start"
-    //    }
-    
     func updateChannelList(notif : NSNotification)
     {
         if(self.downloadCompleteFlag == "start")
@@ -376,11 +386,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.newShareAvailabellabel.hidden = true
             self.removeOverlay()
+            if(self.pullToRefreshActive){
+                self.refreshControl.endRefreshing()
+                self.pullToRefreshActive = false
+            }
         })
-        if(pullToRefreshActive){
-            self.refreshControl.endRefreshing()
-            pullToRefreshActive = false
-        }
         let success =  notif.object as! String
         if(success == "success")
         {
@@ -409,14 +419,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         
         for(var i = 0 ; i < sortList.count ; i++)
         {
-            subIdArray.append(Int(sortList[i]["channel_sub_detail_id"] as! String)!)
-            
-            //subIdArray[i] =            // subIdArray.arrayByAddingObject()
-            
+            let subId = sortList[i][subChannelIdKey] as! String
+            subIdArray.append(Int(subId)!)
         }
-        print( subIdArray.maxElement())
-        
+        if(subIdArray.count > 0)
+        {
         let subid = subIdArray.maxElement()!
+      
         if(!pushNotificationFlag)
         {
             if(pullToRefreshActive){
@@ -435,34 +444,36 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             self.refreshControl.endRefreshing()
             self.pullToRefreshActive = false
         }
+        }
     }
     
     func pullToRefreshUpdate(notif : NSNotification)
     {
-        self.refreshControl.endRefreshing()
-        self.pullToRefreshActive = false
-        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.refreshControl.endRefreshing()
+            self.pullToRefreshActive = false
+        })
         let success =  notif.object as! String
         if(success == "success")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 for (var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex-- )
                 {
-                    print(dataSourceIndex)
                     ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex] , atIndex: 0)
+                    //     if(self.isVisibleCell(0))
+                    //   {
                     self.ChannelSharedTableView.beginUpdates()
                     self.ChannelSharedTableView.insertRowsAtIndexPaths([
                         NSIndexPath(forRow: 0 , inSection: 0)
                         ], withRowAnimation: .Automatic)
                     self.ChannelSharedTableView.endUpdates()
                 }
+                //  }
             })
-            
         }
         else{
             self.refreshControl.endRefreshing()
             self.pullToRefreshActive = false
-            
         }
     }
     func  loadInitialViewController(code: String){
@@ -582,8 +593,6 @@ extension ChannelsSharedController:UITableViewDataSource
                             cell.latestImage.hidden = true
                             cell.countLabel.hidden = false
                             cell.countLabel.text = String(count)
-                            
-                            print(count)
                             cell.detailLabel.text = "@" + text + " " + sdifferentString
                         }
                     }
@@ -610,7 +619,6 @@ extension ChannelsSharedController:UITableViewDataSource
             channelItemListVC.userName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
             channelItemListVC.profileImage = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as! UIImage
             channelItemListVC.navigationController?.navigationBarHidden = true
-            print(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count)
             SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
                 , selectedChannelName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String, selectedChannelUserName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String)
             self.navigationController?.pushViewController(channelItemListVC, animated: false)

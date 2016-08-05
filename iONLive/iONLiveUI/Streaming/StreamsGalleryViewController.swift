@@ -19,13 +19,7 @@ class StreamsGalleryViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsGalleryViewController.callNextDownload), name: "stream", object:nil)
-         
-        if GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0
-        {
-            limit = 20
-            count = 0
-            GlobalStreamList.sharedInstance.initialiseCloudData(count ,endValueLimit: limit)
-        }
+     
         
     }
     func  callNextDownload()

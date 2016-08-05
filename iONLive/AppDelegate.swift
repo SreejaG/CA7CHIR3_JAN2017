@@ -17,7 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let requestManager = RequestManager.sharedInstance
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
+        NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
+        NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
+
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
@@ -235,36 +237,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let deleteDict = dict!["alert"]
         let defaults = NSUserDefaults .standardUserDefaults()
         let result = convertStringToDictionary(deleteDict as! String)
-        
-        
-        
-        if(result!["type"] as! String == "delete")
+        if(result!["type"] as! String == "delete" || result!["type"] as! String == "media" )
         {
-            print(result!["channelId"] as! Int)
-            
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
         }
         else if ( (result!["type"] as! String == "share") || (result!["type"] as! String == "channel") || (result!["type"] as! String == "liveStream" )){
-            
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result) // used while added  a media
-            
-            
-        }else if(result!["type"] as! String == "like")
-        {
-            
-             NSNotificationCenter.defaultCenter().postNotificationName("pushNotificationLike", object: result)
         }
         defaults.setValue("1", forKey: "notificationArrived")
         if(application.applicationState == .Inactive || application.applicationState == .Background)
         {
             loadNotificationView()
-            application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound,.Alert], categories: nil
-                
-                ))
-            application.applicationIconBadgeNumber = application.applicationIconBadgeNumber+1
         }
     }
-    
     func convertStringToDictionary(text: String) -> [String:AnyObject]? {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {

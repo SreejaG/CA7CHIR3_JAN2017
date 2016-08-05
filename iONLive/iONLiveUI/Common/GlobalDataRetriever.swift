@@ -79,26 +79,10 @@ class GlobalDataRetriever: NSObject
         if(globalDataSource.count > 0)
         {
             globalDataSource.sortInPlace({ p1, p2 in
-                let time1 = p1[createdTimeStampKey] as! String
-                let time2 = p2[createdTimeStampKey] as! String
+                let time1 = p1[mediaDetailIdKey] as! String
+                let time2 = p2[mediaDetailIdKey] as! String
                 return time1 > time2
             })
-            
-//            let start = 0
-//            var end = 0
-//            if globalDataSource.count > 10
-//            {
-//                end = 10
-//            }
-//            else{
-//                end = globalDataSource.count
-//            }
-//            
-//            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//            dispatch_async(backgroundQueue, {
-//                self.downloadMediaFromGCS(start,end: end)
-//            })
         }
     }
     
@@ -115,8 +99,9 @@ class GlobalDataRetriever: NSObject
         for(var i = start; i < end; i++)
         {
             var imageForMedia : UIImage = UIImage()
-            let id = String(globalDataSource[i][mediaDetailIdKey]!)
-            let mediaIdForFilePath = "\(id))thumb"
+            let mediaId = String(globalDataSource[i][mediaDetailIdKey]!)
+            print(mediaId)
+            let mediaIdForFilePath = "\(mediaId)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -225,8 +210,8 @@ class GlobalDataRetriever: NSObject
             
             //sort
             channelMediaDataSource.sortInPlace({ p1, p2 in
-                let time1 = p1[createdTimeStampKey] as! String
-                let time2 = p2[createdTimeStampKey] as! String
+                let time1 = p1[mediaDetailIdKey] as! String
+                let time2 = p2[mediaDetailIdKey] as! String
                 return time1 > time2
             })
                     

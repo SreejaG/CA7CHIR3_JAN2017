@@ -10,8 +10,10 @@ import UIKit
 
 class contactManager: NSObject {
     
-    class var sharedInstance: contactManager {
-        struct Singleton {
+    class var sharedInstance: contactManager
+    {
+        struct Singleton
+        {
             static let instance = contactManager()
         }
         return Singleton.instance

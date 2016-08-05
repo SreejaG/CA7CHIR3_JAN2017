@@ -4,7 +4,7 @@ import UIKit
 class GlobalDataChannelList: NSObject {
     
     var globalChannelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var channelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+//    var channelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
     let channelDetailIdKey = "channel_detail_id"
@@ -82,7 +82,6 @@ class GlobalDataChannelList: NSObject {
     func setChannelDetails()
     {
         globalChannelDataSource.removeAll()
-        channelDataSource.removeAll()
         
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
@@ -102,9 +101,13 @@ class GlobalDataChannelList: NSObject {
             let createdTime = element["last_updated_time_stamp"] as! String
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
             
-            channelDataSource.append([channelDetailIdKey:channelId!, mediaDetailIdKey: mediaId, channelNameKey:channelName, totalMediaCountKey:mediaSharedCount!, createdTimeStampKey: createdTime,sharedIndicatorOriginalKey:sharedBool, sharedIndicatorTemporaryKey:sharedBool,thumbImageURLKey:url])
+            self.globalChannelDataSource.append([channelDetailIdKey: channelId!,channelNameKey: channelName,mediaDetailIdKey: mediaId,totalMediaCountKey: mediaSharedCount!,createdTimeStampKey: createdTime,self.sharedIndicatorOriginalKey: sharedBool,sharedIndicatorTemporaryKey: sharedBool, thumbImageURLKey: url])
+            
+//            channelDataSource.append([channelDetailIdKey:channelId!, mediaDetailIdKey: mediaId, channelNameKey:channelName, totalMediaCountKey:mediaSharedCount!, createdTimeStampKey: createdTime,sharedIndicatorOriginalKey:sharedBool, sharedIndicatorTemporaryKey:sharedBool,thumbImageURLKey:url])
         }
-        if(channelDataSource.count > 0){
+        if(self.globalChannelDataSource.count > 0){
+            sortChannelList()
+            
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
@@ -116,13 +119,12 @@ class GlobalDataChannelList: NSObject {
     }
     
     func downloadMediaFromGCS(){
-        globalChannelDataSource.removeAll()
         var url: NSURL = NSURL()
         
-        for var i = 0; i < channelDataSource.count; i++
+        for var i = 0; i < globalChannelDataSource.count; i++
         {
             var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(channelDataSource[i][mediaDetailIdKey] as! String)thumb"
+            let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaDetailIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -131,7 +133,7 @@ class GlobalDataChannelList: NSObject {
                 imageForMedia = mediaImageFromFile!
             }
             else{
-                if let mediaUrl = channelDataSource[i][thumbImageURLKey]
+                if let mediaUrl = globalChannelDataSource[i][thumbImageURLKey]
                 {
                     url = convertStringtoURL(mediaUrl as! String)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -157,9 +159,11 @@ class GlobalDataChannelList: NSObject {
                      imageForMedia =  UIImage(named: "thumb12")!
                 }
             }
-            self.globalChannelDataSource.append([self.channelDetailIdKey: self.channelDataSource[i][channelDetailIdKey]!,self.channelNameKey: self.channelDataSource[i][self.channelNameKey]!,self.totalMediaCountKey: self.channelDataSource[i][self.totalMediaCountKey]!,createdTimeStampKey: channelDataSource[i][createdTimeStampKey]!,self.sharedIndicatorOriginalKey: self.channelDataSource[i][sharedIndicatorOriginalKey]!,self.sharedIndicatorTemporaryKey: self.channelDataSource[i][sharedIndicatorTemporaryKey]!,self.thumbImageKey: imageForMedia, self.thumbImageURLKey: self.channelDataSource[i][thumbImageURLKey]!])
+            self.globalChannelDataSource[i][thumbImageKey] = imageForMedia
+            
+//            self.globalChannelDataSource.append([self.channelDetailIdKey: self.channelDataSource[i][channelDetailIdKey]!,self.channelNameKey: self.channelDataSource[i][self.channelNameKey]!,self.totalMediaCountKey: self.channelDataSource[i][self.totalMediaCountKey]!,createdTimeStampKey: channelDataSource[i][createdTimeStampKey]!,self.sharedIndicatorOriginalKey: self.channelDataSource[i][sharedIndicatorOriginalKey]!,self.sharedIndicatorTemporaryKey: self.channelDataSource[i][sharedIndicatorTemporaryKey]!,self.thumbImageKey: imageForMedia, self.thumbImageURLKey: self.channelDataSource[i][thumbImageURLKey]!])
         }
-        sortChannelList()
+//        sortChannelList()
     }
 
     
@@ -186,7 +190,8 @@ class GlobalDataChannelList: NSObject {
             let time2 = p2[createdTimeStampKey] as! String
             return time1 > time2
         })
-        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+    NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        
         autoDownloadChannelDetails()
     }
     

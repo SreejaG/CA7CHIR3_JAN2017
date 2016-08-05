@@ -163,7 +163,14 @@ class SignUpFindFriendsViewController: UIViewController{
             print(phoneNumber)
             if(phoneNumber != ""){
                 contactPhoneNumbers.append(phoneNumber)
-                let currentContactName = ABRecordCopyCompositeName(record).takeRetainedValue() as String
+                var currentContactName = String()
+                if ABRecordCopyCompositeName(record) != nil
+                {
+                    currentContactName = (ABRecordCopyCompositeName(record).takeRetainedValue() as? String)!
+                }
+                else{
+                    currentContactName = "No Name"
+                }
                 print(currentContactName)
                 
                 self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, "orgSelected":0, "tempSelected":0])

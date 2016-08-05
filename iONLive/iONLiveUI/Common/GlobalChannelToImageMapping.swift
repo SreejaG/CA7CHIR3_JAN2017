@@ -172,6 +172,7 @@ class GlobalChannelToImageMapping: NSObject {
                     })
                 }
             }
+            print("i value=======>\(i)")
             GlobalChannelImageDict[id]![i][thumbImageKey] = imageForMedia
         }
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
@@ -649,7 +650,7 @@ class GlobalChannelToImageMapping: NSObject {
         }
         
         //loop through the indexes and remove the media from globa data retriever data source
-        
+        selectedIndexForArchive = selectedIndexForArchive.sort()
         for var i = 0;i < selectedIndexForArchive.count; i++
         {
             let indexToDelete = selectedIndexForArchive[i] - i

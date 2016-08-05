@@ -148,6 +148,8 @@ bool loadingCameraFlag = false;
     _noDataFound.lineBreakMode = NSLineBreakByWordWrapping;
     _noDataFound.numberOfLines = 0;
     
+    shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+    
     [self loadingView];
     
     if([[NSUserDefaults standardUserDefaults] valueForKey:@"first"] != nil)
@@ -163,19 +165,19 @@ bool loadingCameraFlag = false;
             if([loading  isEqual: @"camera"]){
                 loadingCameraFlag = true;
                 _noDataFound.text =  @"   Syncing...";
+                GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+                if (gbData.globalChannelDataSource.count == 0) {
+                    [gbData initialise];
+                }
+                
+                GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+                if (gb.globalDataSource.count == 0) {
+                    [gb initialise];
+                }
             }
             else{
                 loadingCameraFlag = false;
                 _noDataFound.text = @"Loading camera...";
-            }
-            
-            GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
-            if (gb.globalDataSource.count == 0) {
-                [gb initialise];
-            }
-            GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
-            if (gbData.globalChannelDataSource.count == 0) {
-                [gbData initialise];
             }
         }
     }
@@ -183,15 +185,19 @@ bool loadingCameraFlag = false;
         loadingCameraFlag = true;
         _noDataFound.text = @"   Syncing...";
         
-        GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
-        if (gb.globalDataSource.count == 0) {
-            [gb initialise];
-        }
         GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
         if (gbData.globalChannelDataSource.count == 0) {
             [gbData initialise];
         }
+        
+        GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+        if (gb.globalDataSource.count == 0) {
+            [gb initialise];
+        }
+       
     }
+    
+    [self setGUIBasedOnMode];
     
     [[NSUserDefaults standardUserDefaults] setValue:@"SecndTime" forKey:@"first"];
     [[NSUserDefaults standardUserDefaults] setValue:@"login" forKey:@"loadingView"];
@@ -200,14 +206,10 @@ bool loadingCameraFlag = false;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
     
-    [self loadingView];
     
     dispatch_async( dispatch_get_main_queue(), ^{
         [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
         [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-        if(loadingCameraFlag == false){
-            [self initialise];
-        }
     });
 }
 
@@ -289,7 +291,7 @@ bool loadingCameraFlag = false;
     {
         if(loadingCameraFlag == false)
         {
-            [self setGUIBasedOnMode];
+            [self hidingView];
         }
         dispatch_async( dispatch_get_main_queue(), ^{
             _cameraButton.hidden = false;
@@ -331,10 +333,9 @@ bool loadingCameraFlag = false;
 }
 
 -(void) initialise{
-    shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
+  
     [self setButtonCornerRadius];
     [self checkCountForLabel];
-    [self setGUIBasedOnMode];
     [self setGUIModifications];
     fileManager = [[FileManagerViewController alloc]init];
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
@@ -355,9 +356,6 @@ bool loadingCameraFlag = false;
 {
     loadingCameraFlag = false;
     [self hidingView];
-    dispatch_async( dispatch_get_main_queue(), ^{
-        [self initialise];
-    });
 }
 
 -(void)loadingView
@@ -384,6 +382,7 @@ bool loadingCameraFlag = false;
         __activityIndicatorView.hidden = true;
         _noDataFound.text = @"";
         _noDataFound.hidden = true;
+        [self initialise];
     });
     [self enabelOrDisableButtons:true];
 }
@@ -564,7 +563,14 @@ bool loadingCameraFlag = false;
         else{
             [_liveSteamSession.previewView removeFromSuperview];
             _liveSteamSession.delegate = nil;
-            [self removeObservers];
+//            [self removeObservers];
+            _cameraButton.hidden = false;
+            if(flashFlag == 0){
+                _flashButton.hidden = false;
+            }
+            else if(flashFlag == 1){
+                _flashButton.hidden = true;
+            }
             self.session = [[AVCaptureSession alloc] init];
             self.previewView.hidden = false;
             self.previewView.session = self.session;
@@ -579,7 +585,9 @@ bool loadingCameraFlag = false;
                         [self.session startRunning];
                         
                         self.sessionRunning = self.session.isRunning;
-                        [self hidingView];
+                        if(loadingCameraFlag == false){
+                            [self hidingView];
+                        }
                         break;
                     }
                     case AVCamSetupResultCameraNotAuthorized:
@@ -627,6 +635,8 @@ bool loadingCameraFlag = false;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
+    
+    
 }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
@@ -675,14 +685,19 @@ bool loadingCameraFlag = false;
         dispatch_async(dispatch_get_global_queue(0,0), ^{
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
             
-            if ( data == nil )
+            if ( data == nil ){
+                NSLog(@"%lu",(unsigned long)[[[GlobalDataRetriever sharedInstance] globalDataSource] count]);
+                if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
+                    self.thumbnailImageView.image = self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
+                }
                 return;
+            }
             dispatch_async(dispatch_get_main_queue(), ^{
                 if([latestCapturedMediaType  isEqual: @"video"])
                 {
                     self.playiIconView.hidden = false;
                 }
-                self.thumbnailImageView.image= [UIImage imageWithData: data];
+                self.thumbnailImageView.image = [UIImage imageWithData: data];
             });
         });
     }
@@ -1175,7 +1190,7 @@ bool loadingCameraFlag = false;
 
 - (void)removeObservers
 {
-    [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
+//    [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
     [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
 }
 

@@ -10,7 +10,7 @@ import UIKit
 
 class GlobalStreamList: NSObject {
     let actualImageKey = "actualImage"
-
+    
     let userIdKey = "user_name"
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
@@ -34,15 +34,15 @@ class GlobalStreamList: NSObject {
         {
             static let instance = GlobalStreamList()
             private init() {
-             
-
+                
+                
             }
-                         //This prevents others from using the default '()' initializer for this class.
+            //This prevents others from using the default '()' initializer for this class.
         }
         return Singleton.instance
     }
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
-    
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -51,21 +51,24 @@ class GlobalStreamList: NSObject {
         ImageUpload.sharedInstance.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValueCount, offset: startValue, success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
-          self.authenticationFailureHandlerStream(error, code: message)
+            self.authenticationFailureHandlerStream(error, code: message)
         }
     }
     
-      func authenticationSuccessHandler(response:AnyObject?)
+    func authenticationSuccessHandler(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
         {
             
             let responseArr = json["objectJson"] as! [AnyObject]
             print(responseArr)
+            if(responseArr.count == 0)
+            {
+                NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
+            }
             for index in 0 ..< responseArr.count
             {
-                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
-
+                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyMedia")
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let userid = responseArr[index].valueForKey(userIdKey) as! String
@@ -105,6 +108,7 @@ class GlobalStreamList: NSObject {
                 })
             }
             else{
+                
                 NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
             }
         }
@@ -123,18 +127,17 @@ class GlobalStreamList: NSObject {
     func authenticationFailureHandlerStream(error: NSError?, code: String)
     {
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
- NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "MEDIA")
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !RequestManager.sharedInstance.validConnection() {
-                      ErrorManager.sharedInstance.noNetworkConnection()
+            ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 
             }
             else{
-              
+                
             }
         }
         else{
@@ -220,7 +223,7 @@ class GlobalStreamList: NSObject {
                 //                       self.streamListCollectionView.reloadData()
                 //                    })
             }
-
+            
         }
         print(GlobalStreamDataSource.count)
         if(GlobalStreamDataSource.count > 0){
@@ -232,8 +235,8 @@ class GlobalStreamList: NSObject {
         }
         print(GlobalStreamDataSource[0][timestamp])
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "success")
-
-
+        
+        
     }
     func getPullToRefreshData()
     {
@@ -244,19 +247,22 @@ class GlobalStreamList: NSObject {
             self.authenticationSuccessHandler(response)
             
         }) { (error, message) in
-           self.authenticationFailureHandlerStream(error, code: message)
+            self.authenticationFailureHandlerStream(error, code: message)
         }
     }
-    func getMediaByOffset()
+    func getMediaByOffset(subId : String)
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
         let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
-        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : "\(createdTimeStamp)",success: { (response) in
+        
+        print("count",  GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
+        print("data", GlobalStreamList.sharedInstance.GlobalStreamDataSource)
+        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
-           self.authenticationFailureHandlerStream(error, code: message)
+            self.authenticationFailureHandlerStream(error, code: message)
         }
-
+        
     }
 }
