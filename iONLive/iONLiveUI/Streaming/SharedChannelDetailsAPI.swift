@@ -18,6 +18,7 @@ class SharedChannelDetailsAPI: NSObject {
         }
         return Singleton.instance
     }
+    var operationQueue = NSOperationQueue()
     
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var selectedSharedChannelMediaSource: [[String:AnyObject]] = [[String:AnyObject]]()
@@ -32,22 +33,57 @@ class SharedChannelDetailsAPI: NSObject {
     let thumbImageKey = "thumbImage"
     let actualImageKey = "actualImage"
     var userName:String!
-    var channelName :String!
+    var channelName :String = String()
     
-    
-    func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String )
+    func cancelOpratn()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        channelName = selectedChannelName
-        userName = selectedChannelUserName
-        ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "20", offset: "0", success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
-        }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
-        }
+        // operationQueue.cancelAllOperations()
+        //  imageDataSource.removeAll()
+        //  selectedSharedChannelMediaSource.removeAll()
+    }
+    func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , sharedCount : String)
+    {
         
+        if(!channelName.isEmpty)
+        {
+            if channelName == selectedChannelName
+            {
+                if(sharedCount == "0")
+                {
+                    NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
+                }
+                else{
+                    selectedSharedChannelMediaSource.removeAll()
+                    imageDataSource.removeAll()
+                    let defaults = NSUserDefaults .standardUserDefaults()
+                    let userId = defaults.valueForKey(userLoginIdKey) as! String
+                    let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                    channelName = selectedChannelName
+                    userName = selectedChannelUserName
+                    ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+                        self.authenticationSuccessHandler(response)
+                    }) { (error, message) -> () in
+                        self.authenticationFailureHandler(error, code: message)
+                    }
+                    
+                }
+                
+            }
+        }
+        else{
+            selectedSharedChannelMediaSource.removeAll()
+            imageDataSource.removeAll()
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            channelName = selectedChannelName
+            userName = selectedChannelUserName
+            ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+                self.authenticationSuccessHandler(response)
+            }) { (error, message) -> () in
+                self.authenticationFailureHandler(error, code: message)
+            }
+        }
     }
     
     func infiniteScroll(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , channelMediaId : String)
@@ -163,12 +199,22 @@ class SharedChannelDetailsAPI: NSObject {
                         self.selectedSharedChannelMediaSource.removeAtIndex(0)
                     }
                 }
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadMediaFromGCS()
+                
+                
+                let operation1 : NSBlockOperation = NSBlockOperation (block: {
+                    //  self.doCalculations()
                     
+                    let operation2 : NSBlockOperation = NSBlockOperation (block: {
+                        self.downloadMediaFromGCS()
+                    })
+                    self.operationQueue.addOperation(operation2)
                 })
+                operationQueue.addOperation(operation1)
+                //  let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                //  let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                //   dispatch_async(backgroundQueue, {
+                
+                //   })
             }
             else{
                 if self.selectedSharedChannelMediaSource.count > 0
@@ -269,17 +315,22 @@ class SharedChannelDetailsAPI: NSObject {
                     
                 }
             }
-            self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
-            
-            
-            
+            if(imageDataSource.count > 0 )
+            {
+                self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                
+                
+            }
         }
-        if(selectedSharedChannelMediaSource.count > 0){
-            selectedSharedChannelMediaSource.sortInPlace({ p1, p2 in
-                let time1 = p1["createdTime"] as! String
-                let time2 = p2["createdTime"] as! String
-                return time1 > time2
-            })
+        if(imageDataSource.count > 0 )
+        {
+            if(selectedSharedChannelMediaSource.count > 0){
+                selectedSharedChannelMediaSource.sortInPlace({ p1, p2 in
+                    let time1 = p1["createdTime"] as! String
+                    let time2 = p2["createdTime"] as! String
+                    return time1 > time2
+                })
+            }
         }
         NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
         

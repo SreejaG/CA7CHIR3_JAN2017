@@ -238,7 +238,6 @@ class GlobalStreamList: NSObject {
         
         
     }
-    
     func getPullToRefreshData()
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
@@ -269,13 +268,16 @@ class GlobalStreamList: NSObject {
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-
-        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : "\(subId)" ,success: { (response) in
+        // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
+        
+        print("count",  GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
+        print("data", GlobalStreamList.sharedInstance.GlobalStreamDataSource)
+        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
             self.authenticationFailureHandlerStream(error, code: message)
         }
-        }
-        
-
+    }
+    
+    // }
 }

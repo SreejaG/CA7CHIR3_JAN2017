@@ -49,6 +49,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+        if(self.pullToRefreshActive)
+        {
+            self.refreshControl.endRefreshing()
+        }
     }
     func initialise()
     {
@@ -60,7 +64,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.mediaDeletePushNotificationSharing), name: "MediaDelete", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.deletedMediaFromArchieve), name: "StreamToChannelMedia", object:nil)
-     
+        //        self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
+        //        self.ChannelSharedTableView.addSubview(self.refreshControl)
         newShareAvailabellabel.hidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
@@ -313,15 +318,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(rowIndex)
-                    //    if(self.isVisibleCell(rowIndex))
-                    //   {
-                    self.ChannelSharedTableView.beginUpdates()
-                    var pathArray :[NSIndexPath] = [NSIndexPath]()
-                    let indexPath: NSIndexPath = NSIndexPath(forRow: rowIndex, inSection: 0)
-                    pathArray.append(indexPath)
-                    self.ChannelSharedTableView.deleteRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
-                    self.ChannelSharedTableView.endUpdates()
-                    //  }
+                    
+                    self.ChannelSharedTableView.reloadData()
+                    //                    var pathArray :[NSIndexPath] = [NSIndexPath]()
+                    //                    let indexPath: NSIndexPath = NSIndexPath(forRow: rowIndex, inSection: 0)
+                    //                    pathArray.append(indexPath)
+                    //                    self.ChannelSharedTableView.deleteRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
+                    //                    self.ChannelSharedTableView.endUpdates()
                 })
             }
         }
@@ -333,11 +336,12 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             let sharedCount = mediaShared[index][sharedMediaCount] as! String
             let totalNo = mediaShared[index][totalNoShared] as! String
-            
-            let  latestCount : Int = Int(sharedCount)! - deletedMediaCount
-            //    let totalNoLatest : Int = Int(totalNo)! - deletedMediaCount
-            mediaShared[index][sharedMediaCount]  = "\(latestCount)"
-            //  mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
+            let totalNoLatest : Int = Int(totalNo)! - deletedMediaCount
+            if(totalNoLatest == 0)
+            {
+                mediaShared[index][sharedMediaCount]  = "0"
+            }
+            mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
@@ -373,6 +377,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
             mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
+            print(mediaShared)
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
@@ -410,9 +415,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             if !pushNotificationFlag
             {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.removeOverlay()
                     self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
                     self.ChannelSharedTableView.addSubview(self.refreshControl)
+                    self.removeOverlay()
                     self.ChannelSharedTableView.reloadData()
                 })
             }
@@ -581,6 +586,7 @@ extension ChannelsSharedController:UITableViewDataSource
             cell.channelProfileImage.image = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as? UIImage
             cell.channelNameLabel.text =   ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as? String
             cell.countLabel.hidden = true
+            
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
                 cell.currentUpdationImage.hidden = false
@@ -617,11 +623,20 @@ extension ChannelsSharedController:UITableViewDataSource
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {
-                            cell.latestImage.hidden = false
-                            
-                            cell.countLabel.hidden = true
-                            cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][mediaImageKey] as? UIImage
-                            cell.detailLabel.text = "@" + text + " " + sdifferentString
+                            let totalCount = (mediaShared[i][totalNoShared]?.intValue)!
+                            if(totalCount == 0)
+                            {
+                                cell.countLabel.hidden = true
+                                cell.currentUpdationImage.hidden = true
+                                cell.detailLabel.text = "@" + text + " " + sdifferentString
+                                
+                            }
+                            else{
+                                cell.latestImage.hidden = false
+                                cell.countLabel.hidden = true
+                                cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][mediaImageKey] as? UIImage
+                                cell.detailLabel.text = "@" + text + " " + sdifferentString
+                            }
                         }
                         else
                         {
@@ -644,22 +659,29 @@ extension ChannelsSharedController:UITableViewDataSource
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
         let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
-        SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
-        SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
-        if(Int(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][sharedMediaCount]! as! String)! != 0)
+        //  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
+        //   SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
+        let chId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
+        let index  = getUpdateIndexChannel(chId, isCountArray: true)
+        if(index != -1)
         {
-            channelItemListVC.channelId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
-            channelItemListVC.channelName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String
-            channelItemListVC.totalMediaCount = Int(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][sharedMediaCount]! as! String)!
-            channelItemListVC.userName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
-            channelItemListVC.profileImage = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as! UIImage
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
-                , selectedChannelName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String, selectedChannelUserName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String)
-            self.navigationController?.pushViewController(channelItemListVC, animated: false)
-        }
-        else{
-            ErrorManager.sharedInstance.noShared()
+            let totalCount = mediaShared[index][totalNoShared] as! String
+            let sharedCount = mediaShared[index][sharedMediaCount] as! String
+            if(totalCount != "0")
+            {
+                channelItemListVC.channelId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
+                channelItemListVC.channelName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String
+                channelItemListVC.totalMediaCount = Int(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][sharedMediaCount]! as! String)!
+                channelItemListVC.userName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
+                channelItemListVC.profileImage = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as! UIImage
+                channelItemListVC.navigationController?.navigationBarHidden = true
+                SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
+                    , selectedChannelName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String, selectedChannelUserName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String , sharedCount: sharedCount)
+                self.navigationController?.pushViewController(channelItemListVC, animated: false)
+            }
+            else{
+                ErrorManager.sharedInstance.noShared()
+            }
         }
         
     }

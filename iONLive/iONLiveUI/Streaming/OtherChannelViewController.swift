@@ -30,7 +30,7 @@ class OtherChannelViewController: UIViewController {
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     let cameraController = IPhoneCameraViewController()
     let streamTockenKey = "wowza_stream_token"
-    var refreshControl:UIRefreshControl!
+    var refreshControl:UIRefreshControl = UIRefreshControl()
     let mediaUrlKey = "mediaUrl"
     let mediaIdKey = "mediaId"
     let mediaTypeKey = "mediaType"
@@ -49,18 +49,20 @@ class OtherChannelViewController: UIViewController {
     
     override func viewDidLoad()
     {
+        super.viewDidLoad()
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectInserted), name: "AddedOneObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
-        
-        super.viewDidLoad()
-        showOverlay()
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
-            UIControlEvents.ValueChanged)
-        self.channelItemsCollectionView.addSubview(self.refreshControl)
-        isWatchedTrue()
+        //self.refreshControl = UIRefreshControl()
+        if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+        {
+            self.removeOverlay()
+        }
+        else{
+            showOverlay()
+            isWatchedTrue()
+        }
         //ChannelSharedListAPI.sharedInstance.updateMediaSharedInChannelList()
     }
     
@@ -75,6 +77,9 @@ class OtherChannelViewController: UIViewController {
     }
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+        
+        // SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
+        //  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
         //        removeOverlay()
         channelItemsCollectionView.alpha = 1.0
     }
@@ -158,6 +163,11 @@ class OtherChannelViewController: UIViewController {
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
+                self.refreshControl.removeFromSuperview()
+                self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+                self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
+                    UIControlEvents.ValueChanged)
+                self.channelItemsCollectionView.addSubview(self.refreshControl)
                 self.channelItemsCollectionView.reloadData()
                 self.isWatchedTrue()
             })
@@ -175,6 +185,7 @@ class OtherChannelViewController: UIViewController {
     }
     @IBAction func backClicked(sender: AnyObject)
     {
+        SharedChannelDetailsAPI.sharedInstance.cancelOpratn()
         NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "SelectedTab")
         let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
