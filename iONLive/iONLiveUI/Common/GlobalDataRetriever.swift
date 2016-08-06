@@ -45,7 +45,7 @@ class GlobalDataRetriever: NSObject
     {
         let channelId = defaults.valueForKey(archiveId) as! Int
         let archiveMeidaCount = defaults.valueForKey(ArchiveCount) as! Int
-    
+        
         ImageUpload.sharedInstance.getChannelMediaDetails("\(channelId)" , userName: userName, accessToken: accessToken, limit: "\(archiveMeidaCount)", offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
         }) { (error, message) -> () in
@@ -75,12 +75,12 @@ class GlobalDataRetriever: NSObject
                 globalDataSource.append([mediaDetailIdKey:mediaId!,channelMediaDetailIdKey:channelMediaDetailId!, thumbImageURLKey:mediaUrl,fullImageURLKey:actualUrl,mediaTypeKey:mediaType, notificationTypeKey:notificationType, createdTimeStampKey:time, uploadProgressKey:0.0])
             }
         }
-   
+        
         if(globalDataSource.count > 0)
         {
             globalDataSource.sortInPlace({ p1, p2 in
-                let time1 = p1[mediaDetailIdKey] as! String
-                let time2 = p2[mediaDetailIdKey] as! String
+                let time1 = Int(p1[mediaDetailIdKey] as! String)
+                let time2 = Int(p2[mediaDetailIdKey] as! String)
                 return time1 > time2
             })
         }
@@ -100,7 +100,6 @@ class GlobalDataRetriever: NSObject
         {
             var imageForMedia : UIImage = UIImage()
             let mediaId = String(globalDataSource[i][mediaDetailIdKey]!)
-            print(mediaId)
             let mediaIdForFilePath = "\(mediaId)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
@@ -172,12 +171,13 @@ class GlobalDataRetriever: NSObject
         var channelMediaDataSource : [[String:AnyObject]] = [[String:AnyObject]]()
         var index = 0
         var selectedIndex : Int = -1
-        var chkFlag = false
         
         //loop through the channelIds array
         for var mainIndex = 0; mainIndex < channelIds.count; mainIndex++
         {
             let chanID = channelIds[mainIndex]
+            
+            var chkFlag = false
             
             //store the medias of a particular channel to a media array
             channelMediaDataSource = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanID]!
@@ -187,7 +187,7 @@ class GlobalDataRetriever: NSObject
             {
                 index = j
                 let mediaIdChk = channelMediaDataSource[j][mediaDetailIdKey] as! String
-                        
+                
                 //check media exist in the media array
                 if mediaId == mediaIdChk
                 {
@@ -200,46 +200,44 @@ class GlobalDataRetriever: NSObject
             if chkFlag == true
             {
                 selectedIndex = index
-            }
-                
-            //loop through the indexes and remove the media from media array
-            if selectedIndex != -1
-            {
-                channelMediaDataSource.removeAtIndex(selectedIndex)
-            }
-            
-            //sort
-            channelMediaDataSource.sortInPlace({ p1, p2 in
-                let time1 = p1[mediaDetailIdKey] as! String
-                let time2 = p2[mediaDetailIdKey] as! String
-                return time1 > time2
-            })
-                    
-            //update the global image datasource with medias and channel id
-            GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanID)
-
-            //loop through the channel list array to update total count and latest thumbnail after deletion complete
-            
-            for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
-            {
-                let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelDetailIdKey] as! String
-                
-                //check channel id exists
-                if chanIdChk == chanID
+                if selectedIndex != -1
                 {
-                    let totalNumOfMedias = channelMediaDataSource.count
-                    if channelMediaDataSource.count > 0
+                    channelMediaDataSource.removeAtIndex(selectedIndex)
+                }
+                
+                //sort
+                channelMediaDataSource.sortInPlace({ p1, p2 in
+                    let time1 = Int(p1[mediaDetailIdKey] as! String)
+                    let time2 = Int(p2[mediaDetailIdKey] as! String)
+                    return time1 > time2
+                })
+                
+                //update the global image datasource with medias and channel id
+                GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanID)
+                
+                //loop through the channel list array to update total count and latest thumbnail after deletion complete
+                
+                for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
+                {
+                    let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelDetailIdKey] as! String
+                    
+                    //check channel id exists
+                    if chanIdChk == chanID
                     {
-                        let mediaIdForFilePath = "\(channelMediaDataSource[0][mediaDetailIdKey] as! String)thumb"
-                        let thumbUrl = channelMediaDataSource[0][thumbImageURLKey] as! String
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageURLKey] = thumbUrl
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] = downloadLatestMedia(mediaIdForFilePath,thumbURL: thumbUrl)
+                        let totalNumOfMedias = channelMediaDataSource.count
+                        if channelMediaDataSource.count > 0
+                        {
+                            let mediaIdForFilePath = "\(channelMediaDataSource[0][mediaDetailIdKey] as! String)thumb"
+                            let thumbUrl = channelMediaDataSource[0][thumbImageURLKey] as! String
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageURLKey] = thumbUrl
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] = downloadLatestMedia(mediaIdForFilePath,thumbURL: thumbUrl)
+                        }
+                        else{
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k] [thumbImageURLKey] = "empty"
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] =  UIImage(named: "thumb12")
+                        }
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaCountKey] = "\(totalNumOfMedias)"
                     }
-                    else{
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageURLKey] = "empty"
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] =  UIImage(named: "thumb12")
-                    }
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaCountKey] = "\(totalNumOfMedias)"
                 }
             }
             channelMediaDataSource.removeAll()
@@ -247,7 +245,7 @@ class GlobalDataRetriever: NSObject
             chkFlag = false
             index = 0
         }
-     }
+    }
     
     func downloadLatestMedia(mediaIdForFilePath: String, thumbURL : String) -> UIImage
     {

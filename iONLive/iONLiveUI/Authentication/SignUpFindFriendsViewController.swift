@@ -306,7 +306,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live", parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live", parameters: nil , liveVideo: true) as! UIViewController
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)

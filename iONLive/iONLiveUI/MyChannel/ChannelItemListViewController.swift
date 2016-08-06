@@ -113,19 +113,27 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func removeActivityIndicator(notif : NSNotification){
+        
         if totalCount <= 21
         {
             let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
             totalCount = filteredData.count
         }
-       
-        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
-            let time1 = p1[mediaDetailIdKey] as! String
-            let time2 = p2[mediaDetailIdKey] as! String
-            return time1 > time2
-        })
+        
+        //        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
+        //            let time1 = Int(p1[mediaDetailIdKey] as! String)
+        //            let time2 = Int(p2[mediaDetailIdKey] as! String)
+        //            return time1 > time2
+        //        })
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.selectionButton.hidden = false
+            if self.selectionFlag == false {
+                self.selectionButton.hidden = false
+            }
+            else{
+                self.cancelButton.hidden = false
+            }
+            
             self.removeOverlay()
             self.channelItemCollectionView.reloadData()
         })
@@ -166,18 +174,18 @@ class ChannelItemListViewController: UIViewController {
         if (self.lastContentOffset.y > scrollView.contentOffset.y) {
             if totalCount > 0
             {
-            if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
-            {
-                if self.downloadingFlag == false
+                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
                 {
-                    self.downloadingFlag = true
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.downloadImagesFromGlobalChannelImageMapping()
-                    })
+                    if self.downloadingFlag == false
+                    {
+                        self.downloadingFlag = true
+                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                        dispatch_async(backgroundQueue, {
+                            self.downloadImagesFromGlobalChannelImageMapping()
+                        })
+                    }
                 }
-            }
             }
         }
     }
@@ -406,6 +414,15 @@ class ChannelItemListViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
+        selectedArray.removeAll()
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0){
+            selectionButton.hidden = false
+        }
+        else{
+            selectionButton.hidden = true
+        }
+        
+        channelItemCollectionView.reloadData()
     }
 }
 
@@ -513,33 +530,35 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            self.showOverlay()
-            self.channelItemCollectionView.alpha = 0.4
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            var imageForProfile : UIImage = UIImage()
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(userId)Profile"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForProfile = mediaImageFromFile!
-            }
-            else{
-                imageForProfile =  UIImage(named: "dummyUser")!
-            }
-            
-            let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeStampKey] as! String
-            let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.fullImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.thumbImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.notificationTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaDetailIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
-                self.presentViewController(vc, animated: false) { () -> Void in
-                    self.removeOverlay()
-                    self.channelItemCollectionView.alpha = 1.0
+            if let img = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey]
+            {
+                self.showOverlay()
+                self.channelItemCollectionView.alpha = 0.4
+                let defaults = NSUserDefaults .standardUserDefaults()
+                let userId = defaults.valueForKey(userLoginIdKey) as! String
+                var imageForProfile : UIImage = UIImage()
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(userId)Profile"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForProfile = mediaImageFromFile!
                 }
-            })
+                else{
+                    imageForProfile =  UIImage(named: "dummyUser")!
+                }
+                
+                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeStampKey] as! String
+                let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.fullImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.thumbImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.notificationTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaDetailIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
+                    self.presentViewController(vc, animated: false) { () -> Void in
+                        self.removeOverlay()
+                        self.channelItemCollectionView.alpha = 1.0
+                    }
+                })
+            }
         }
     }
 }

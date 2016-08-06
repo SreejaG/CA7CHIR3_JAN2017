@@ -42,7 +42,7 @@ class LiveStreamingHelpers
     
     func getHost() ->String
     {
-        return "104.197.92.137"
+        return "130.211.135.170"
     }
     
     func getPort() ->String

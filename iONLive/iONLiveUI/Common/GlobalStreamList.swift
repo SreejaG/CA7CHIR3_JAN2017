@@ -238,31 +238,44 @@ class GlobalStreamList: NSObject {
         
         
     }
+    
     func getPullToRefreshData()
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[0][pullTorefreshKey] as! String
-        ChannelManager.sharedInstance.getUpdatedMediaDetails(userId, accessToken:accessToken,timestamp : "\(createdTimeStamp)",success: { (response) in
-            self.authenticationSuccessHandler(response)
+        // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[0][pullTorefreshKey] as! String
+        
+        let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
+        var subIdArray : [Int] = [Int]()
+        for(var i = 0 ; i < sortList.count ; i++)
+        {
+            let subId = sortList[i][pullTorefreshKey] as! String
+            subIdArray.append(Int(subId)!)
+        }
+        if(subIdArray.count > 0)
+        {
+            let subid = subIdArray.maxElement()!
             
-        }) { (error, message) in
-            self.authenticationFailureHandlerStream(error, code: message)
+            
+            ChannelManager.sharedInstance.getUpdatedMediaDetails(userId, accessToken:accessToken,timestamp : "\(subid)",success: { (response) in
+                self.authenticationSuccessHandler(response)
+                
+            }) { (error, message) in
+                self.authenticationFailureHandlerStream(error, code: message)
+            }
         }
     }
     func getMediaByOffset(subId : String)
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
-        
-        print("count",  GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
-        print("data", GlobalStreamList.sharedInstance.GlobalStreamDataSource)
-        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
+
+        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : "\(subId)" ,success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
             self.authenticationFailureHandlerStream(error, code: message)
         }
+        }
         
-    }
+
 }

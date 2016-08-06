@@ -45,27 +45,27 @@ class GlobalChannelToImageMapping: NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GlobalChannelToImageMapping.display), name: "success", object:nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GlobalChannelToImageMapping.mapNewMedias), name: "mapNewMedias", object:nil)
-       
+        
         dummy = source
         
         getMediaByChannelId()
     }
     
-        func display(notif: NSNotification)
+    func display(notif: NSNotification)
+    {
+        if (dataSourceCount < dummy.count - 1)
         {
-            if (dataSourceCount < dummy.count - 1)
-            {
-                dataSourceCount  = dataSourceCount + 1
-    
-                getMediaByChannelId()
-            }
-            else if dataSourceCount == dummy.count - 1
-            {
-                NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: nil)
-
-                NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
-            }
+            dataSourceCount  = dataSourceCount + 1
+            
+            getMediaByChannelId()
         }
+        else if dataSourceCount == dummy.count - 1
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: nil)
+            
+            NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
+        }
+    }
     
     func getMediaByChannelId()
     {
@@ -83,7 +83,7 @@ class GlobalChannelToImageMapping: NSObject {
         
         let startValue = "0"
         let endValue = String(totalMediaCount)
-       
+        
         channelDetailId = channelid
         
         if totalMediaCount <= 0
@@ -124,10 +124,11 @@ class GlobalChannelToImageMapping: NSObject {
             
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
-                    let time1 = p1[createdTimeStampKey] as! String
-                    let time2 = p2[createdTimeStampKey] as! String
+                    let time1 = Int(p1[mediaDetailIdKey] as! String)
+                    let time2 = Int(p2[mediaDetailIdKey] as! String)
                     return time1 > time2
                 })
+                
                 GlobalChannelImageDict.updateValue(imageDataSource, forKey: channelDetailId)
                 NSNotificationCenter.defaultCenter().postNotificationName("success", object: self.channelDetailId)
             }
@@ -136,7 +137,7 @@ class GlobalChannelToImageMapping: NSObject {
     
     func downloadMediaFromGCS(id: String, start: Int, end:Int){
         var url: NSURL = NSURL()
-
+        
         for var i = start; i < end; i++
         {
             var imageForMedia : UIImage = UIImage()
@@ -159,7 +160,7 @@ class GlobalChannelToImageMapping: NSObject {
                             let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                             let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                             if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                
+                                imageForMedia =  UIImage(named: "thumb12")!
                             }
                             else{
                                 FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -172,8 +173,8 @@ class GlobalChannelToImageMapping: NSObject {
                     })
                 }
             }
-            print("i value=======>\(i)")
             GlobalChannelImageDict[id]![i][thumbImageKey] = imageForMedia
+            
         }
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
     }
@@ -268,8 +269,8 @@ class GlobalChannelToImageMapping: NSObject {
                 
                 //sort
                 channelMediaDataSource.sortInPlace({ p1, p2 in
-                    let time1 = p1[createdTimeStampKey] as! String
-                    let time2 = p2[createdTimeStampKey] as! String
+                    let time1 = Int(p1[mediaDetailIdKey] as! String)
+                    let time2 = Int(p2[mediaDetailIdKey] as! String)
                     return time1 > time2
                 })
                 
@@ -316,7 +317,7 @@ class GlobalChannelToImageMapping: NSObject {
         }
         
         var channelMediaDataSource : [[String:AnyObject]] = [[String:AnyObject]]()
-  
+        
         //channel ids from globa channel image mapping data source
         
         let channelMediaKeys : Array = Array(GlobalChannelImageDict.keys)
@@ -327,9 +328,9 @@ class GlobalChannelToImageMapping: NSObject {
         {
             var chkFlag = false
             var dataRow : [String: AnyObject] = [String:AnyObject]()
-           
+            
             var channelId = channelKeys[i] as! String
-        
+            
             //check the channel already contain images
             
             if channelMediaKeys.contains(channelId){
@@ -339,7 +340,7 @@ class GlobalChannelToImageMapping: NSObject {
                 for element in mediaDetailOfSelectedChannel
                 {
                     //each element is stored
-                     dataRow = element
+                    dataRow = element
                     
                     let mediaIdChk = element[mediaDetailIdKey] as! String
                     
@@ -347,7 +348,7 @@ class GlobalChannelToImageMapping: NSObject {
                     for elementGlob in channelMediaDataSource
                     {
                         let mediaId = elementGlob[mediaDetailIdKey] as! String
-
+                        
                         //check medai exists
                         
                         if mediaIdChk == mediaId
@@ -369,7 +370,7 @@ class GlobalChannelToImageMapping: NSObject {
                 }
             }
                 
-            //channel is newly created no medias
+                //channel is newly created no medias
             else{
                 for element in mediaDetailOfSelectedChannel
                 {
@@ -380,8 +381,8 @@ class GlobalChannelToImageMapping: NSObject {
             
             //sort
             channelMediaDataSource.sortInPlace({ p1, p2 in
-                let time1 = p1[createdTimeStampKey] as! String
-                let time2 = p2[createdTimeStampKey] as! String
+                let time1 = Int(p1[mediaDetailIdKey] as! String)
+                let time2 = Int(p2[mediaDetailIdKey] as! String)
                 return time1 > time2
             })
             
@@ -488,7 +489,7 @@ class GlobalChannelToImageMapping: NSObject {
         //All medias in the selected channel to a media array
         channelMediaDataSource = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!
         
-   
+        
         //loop through the channel list array to update total count and latest thumbnail after deletion complete
         for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
         {
@@ -497,7 +498,7 @@ class GlobalChannelToImageMapping: NSObject {
             //check the channel id exists in the channel list array
             if chanIdChk == channelId
             {
-                 let totalNumOfMedias = channelMediaDataSource.count
+                let totalNumOfMedias = channelMediaDataSource.count
                 
                 //if media array contains atleast one element
                 if channelMediaDataSource.count > 0
@@ -545,13 +546,13 @@ class GlobalChannelToImageMapping: NSObject {
                 {
                     let mediaIdDelete = mediaIds[i] as! String
                     var chkFlag = false
-                
+                    
                     //loop through the media array
                     for var j = 0; j < channelMediaDataSource.count; j++
                     {
                         index = j
                         let mediaIdChk = channelMediaDataSource[j][mediaDetailIdKey] as! String
-                    
+                        
                         //check media exist in the media array
                         if mediaIdDelete == mediaIdChk
                         {
@@ -559,16 +560,16 @@ class GlobalChannelToImageMapping: NSObject {
                             break
                         }
                     }
-                
+                    
                     //save the media array index to another array for removing
                     if chkFlag == true
                     {
                         selectedIndex.append(index)
                     }
                 }
-            
+                
                 //loop through the indexes and remove the media from media array
-            
+                
                 if selectedIndex.count > 0
                 {
                     selectedIndex = selectedIndex.sort()
@@ -577,25 +578,25 @@ class GlobalChannelToImageMapping: NSObject {
                         let indexToDelete = selectedIndex[i] - i
                         channelMediaDataSource.removeAtIndex(indexToDelete)
                     }
-                
+                    
                     //sort
                     channelMediaDataSource.sortInPlace({ p1, p2 in
-                        let time1 = p1[createdTimeStampKey] as! String
-                        let time2 = p2[createdTimeStampKey] as! String
+                        let time1 = Int(p1[mediaDetailIdKey] as! String)
+                        let time2 = Int(p2[mediaDetailIdKey] as! String)
                         return time1 > time2
                     })
-                
+                    
                     //update the global image datasource with medias and channel id
                     GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanID)
                 }
             }
             
             //loop through the channel list array to update total count and latest thumbnail after deletion complete
-                
+            
             for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
             {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelDetailIdKey] as! String
-                    
+                
                 //check channel id exists
                 if chanIdChk == chanID
                 {
@@ -614,7 +615,7 @@ class GlobalChannelToImageMapping: NSObject {
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaCountKey] = "\(totalNumOfMedias)"
                 }
             }
-        
+            
             channelMediaDataSource.removeAll()
             selectedIndex.removeAll()
             index = 0
@@ -659,8 +660,8 @@ class GlobalChannelToImageMapping: NSObject {
         
         //sort
         GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeStampKey] as! String
-            let time2 = p2[createdTimeStampKey] as! String
+            let time1 = Int(p1[mediaDetailIdKey] as! String)
+            let time2 = Int(p2[mediaDetailIdKey] as! String)
             return time1 > time2
         })
         

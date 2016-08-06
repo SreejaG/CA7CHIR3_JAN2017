@@ -635,9 +635,7 @@ bool loadingCameraFlag = false;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
-    
-    
-}
+ }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
     NSString * sharedUserCount = detailArray[@"sharedUserCount"];
@@ -646,7 +644,6 @@ bool loadingCameraFlag = false;
     NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
     NSString *latestSharedMediaType =   detailArray[@"latestSharedMediaType"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
-    
     [[NSUserDefaults standardUserDefaults] setObject:mediaSharedCount forKey:@"mediaSharedCount"] ;
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -686,20 +683,32 @@ bool loadingCameraFlag = false;
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
             
             if ( data == nil ){
-                NSLog(@"%lu",(unsigned long)[[[GlobalDataRetriever sharedInstance] globalDataSource] count]);
-                if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
-                    self.thumbnailImageView.image = self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
-                }
-                return;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if([latestCapturedMediaType  isEqual: @"video"])
+                    {
+                        self.playiIconView.hidden = false;
+                    }
+                    return;
+                });
             }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if([latestCapturedMediaType  isEqual: @"video"])
-                {
-                    self.playiIconView.hidden = false;
-                }
-                self.thumbnailImageView.image = [UIImage imageWithData: data];
-            });
+            else{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if([latestCapturedMediaType  isEqual: @"video"])
+                    {
+                        self.playiIconView.hidden = false;
+                    }
+                    self.thumbnailImageView.image = [UIImage imageWithData: data];
+                });
+            }
         });
+    }
+    else{
+        if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
+            if([[[GlobalDataRetriever sharedInstance] globalDataSource][0][@"media_type"]  isEqual: @"video"]){
+                self.playiIconView.hidden = false;
+            }
+            self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
+        }
     }
     
     if([mediaSharedCount  isEqual: @"0"])
@@ -749,7 +758,7 @@ bool loadingCameraFlag = false;
             });
         }
     }
-}
+} 
 
 #pragma mark button action
 

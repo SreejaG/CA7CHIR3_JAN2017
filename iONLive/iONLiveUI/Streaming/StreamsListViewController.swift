@@ -103,7 +103,77 @@ class StreamsListViewController: UIViewController{
             channelPushNotificationLiveStarted(info)
             
         }
+        else if(info["type"] as! String == "channel")
+        {
+            if(info["subType"] as! String == "useradded")
+            {
+                
+            }
+            else{
+                let channelId = info["channelId"]!
+                deleteChannelSpecificMediaFromLocal("\(channelId)")
+                deleteChannelSpecificMediaFromGlobal("\(channelId)")
+            }
+        }
+        
+        
     }
+    func deleteChannelSpecificMediaFromLocal(channelId : String)
+    {
+        var selectedArray : [Int] = [Int]()
+        var foundFlag : Bool = false
+        var removeIndex : Int = Int()
+        
+        
+        for(var i = 0 ; i < mediaAndLiveArray.count ; i++)
+        {
+            let channelIdValue = mediaAndLiveArray[i][self.channelIdkey] as! String
+            var  count : Int = 0
+            print(channelIdValue,"\(channelId)")
+            if ( channelIdValue == "\(channelId)")
+            {
+                selectedArray.append(i)
+            }
+        }
+        selectedArray =  selectedArray.sort()
+        print(selectedArray)
+        for(var i = 0 ; i < selectedArray.count ; i++)
+        {
+            //GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i])
+            mediaAndLiveArray.removeAtIndex(selectedArray[i] - i)
+            
+        }
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            self.streamListCollectionView.reloadData()
+        })
+    }
+    func deleteChannelSpecificMediaFromGlobal(channelId : String)
+    {
+        var selectedArray : [Int] = [Int]()
+        var foundFlag : Bool = false
+        var removeIndex : Int = Int()
+        
+        
+        for(var i = 0 ; i < GlobalStreamList.sharedInstance.GlobalStreamDataSource.count ; i++)
+        {
+            let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.channelIdkey] as! String
+            var  count : Int = 0
+            print(channelIdValue,"\(channelId)")
+            if ( channelIdValue == "\(channelId)")
+            {
+                selectedArray.append(i)
+            }
+        }
+        selectedArray =  selectedArray.sort()
+        print(selectedArray)
+        for(var i = 0 ; i < selectedArray.count ; i++)
+        {
+            GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i] - i)
+            
+        }
+    }
+    
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
         // let info = notif.object as! [String : AnyObject]
@@ -698,7 +768,7 @@ class StreamsListViewController: UIViewController{
     }
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
         }
     }
@@ -946,7 +1016,7 @@ class StreamsListViewController: UIViewController{
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String, "userName":mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, "mediaType":mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, "mediaId":mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,"channelId":mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }

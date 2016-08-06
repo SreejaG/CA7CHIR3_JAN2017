@@ -23,8 +23,8 @@ class MediaBeforeUploadComplete: NSObject {
         GlobalDataRetriever.sharedInstance.globalDataSource.append(dataSourceRow)
         print( GlobalDataRetriever.sharedInstance.globalDataSource.count)
         GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[mediaIdKey] as! String
-            let time2 = p2[mediaIdKey] as! String
+            let time1 = Int(p1[mediaIdKey] as! String)
+            let time2 = Int(p2[mediaIdKey] as! String)
             return time1 > time2
         })
         var archCount : Int = Int()

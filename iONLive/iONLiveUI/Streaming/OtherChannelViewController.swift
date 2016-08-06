@@ -45,6 +45,8 @@ class OtherChannelViewController: UIViewController {
     var pullToRefreshActive = false
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
+    let sharedMediaCount = "total_no_media_shared"
+    
     override func viewDidLoad()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
@@ -59,7 +61,7 @@ class OtherChannelViewController: UIViewController {
             UIControlEvents.ValueChanged)
         self.channelItemsCollectionView.addSubview(self.refreshControl)
         isWatchedTrue()
-        ChannelSharedListAPI.sharedInstance.updateMediaSharedInChannelList()
+        //ChannelSharedListAPI.sharedInstance.updateMediaSharedInChannelList()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -242,6 +244,7 @@ class OtherChannelViewController: UIViewController {
             if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as String
             {
                 mediaSharedCountArray[i][isWatched] = "1";
+                mediaSharedCountArray[i][sharedMediaCount] = "0"
                 let defaults = NSUserDefaults .standardUserDefaults()
                 defaults.setObject(mediaSharedCountArray, forKey: "Shared")
             }
@@ -290,10 +293,10 @@ class OtherChannelViewController: UIViewController {
             }
             if(subIdArray.count > 0)
             {
-            let subid = subIdArray.minElement()!
-            let channelSelectedMediaId =  "\(subid)"
-            let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-            SharedChannelDetailsAPI.sharedInstance.infiniteScroll(channelId, selectedChannelName: channelName, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
+                let subid = subIdArray.minElement()!
+                let channelSelectedMediaId =  "\(subid)"
+                let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
+                SharedChannelDetailsAPI.sharedInstance.infiniteScroll(channelId, selectedChannelName: channelName, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
             }
         }
         
@@ -322,10 +325,10 @@ class OtherChannelViewController: UIViewController {
                     }
                     if(subIdArray.count > 0)
                     {
-                    let subid = subIdArray.maxElement()
-                    let channelSelectedMediaId = "\(subid)"
-                    let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-                    SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
+                        let subid = subIdArray.maxElement()
+                        let channelSelectedMediaId = "\(subid)"
+                        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
+                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
                     }
                 }
             }
@@ -349,9 +352,9 @@ class OtherChannelViewController: UIViewController {
                     }
                     if subIdArray.count > 0
                     {
-                    let subid = subIdArray.maxElement()
-                    let channelSelectedMediaId = "\(subid)"
-                    SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
+                        let subid = subIdArray.maxElement()
+                        let channelSelectedMediaId = "\(subid)"
+                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
                     }
                 }
             }
@@ -418,7 +421,7 @@ class OtherChannelViewController: UIViewController {
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }

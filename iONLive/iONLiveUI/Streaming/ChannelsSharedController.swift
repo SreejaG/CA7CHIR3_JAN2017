@@ -29,6 +29,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     @IBOutlet weak var newShareAvailabellabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
+        // newShareAvailabellabel.layer.backgroundColor  = UIColor.redColor().CGColor
+        newShareAvailabellabel.layer.cornerRadius = 5
         initialise()
     }
     @IBAction func backButtonClicked(sender: AnyObject) {
@@ -40,9 +42,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     
     override func viewWillAppear(animated: Bool) {
-      
-            self.removeOverlay()
-        
+        //  self.removeOverlay()
+        //  self.showOverlay()
         super.viewWillAppear(true)
     }
     
@@ -59,9 +60,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.mediaDeletePushNotificationSharing), name: "MediaDelete", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.deletedMediaFromArchieve), name: "StreamToChannelMedia", object:nil)
-        
-        self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
-        self.ChannelSharedTableView.addSubview(self.refreshControl)
+     
         newShareAvailabellabel.hidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
@@ -69,7 +68,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
             let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
             ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
-            
         }
     }
     
@@ -240,7 +238,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             // Only show label while added new channel either increment count only
             // While deletion remove entry from global source and media array... its need to be implemented based on push notification parameter
             pushNotificationFlag = true
-            newShareAvailabellabel.hidden = false
+            //      newShareAvailabellabel.hidden = false
             if(self.downloadCompleteFlag == "end")
             {
                 
@@ -254,7 +252,17 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         else if (info["type"] as! String == "channel")
         {
-            channelDeletionPushNotification(info)
+            
+            if(info["subType"] as! String == "useradded")
+            {
+                newShareAvailabellabel.hidden = false
+                newShareAvailabellabel.text = info[ "messageText"] as! String
+                
+            }
+            else{
+                
+                channelDeletionPushNotification(info)
+            }
         }
         else if (info["type"] as! String == "liveStream")
         {
@@ -327,9 +335,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let totalNo = mediaShared[index][totalNoShared] as! String
             
             let  latestCount : Int = Int(sharedCount)! - deletedMediaCount
-            let totalNoLatest : Int = Int(totalNo)! - deletedMediaCount
+            //    let totalNoLatest : Int = Int(totalNo)! - deletedMediaCount
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
-            mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
+            //  mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
@@ -355,9 +363,14 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             let sharedCount = mediaShared[index][sharedMediaCount] as! String
             let totalNo = mediaShared[index][totalNoShared] as! String
-            
             let  latestCount : Int = Int(sharedCount)! + 1
             let totalNoLatest : Int = Int(totalNo)! + 1
+            if(latestCount == 1)
+            {
+                mediaShared[index][isWatched]  = "0"
+            }
+            print(latestCount,totalNoLatest)
+            
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
             mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
@@ -398,6 +411,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.removeOverlay()
+                    self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
+                    self.ChannelSharedTableView.addSubview(self.refreshControl)
                     self.ChannelSharedTableView.reloadData()
                 })
             }
@@ -413,6 +428,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     func pullToRefresh()
     {
+        newShareAvailabellabel.hidden = true
         pullToRefreshActive = true
         let sortList : Array = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         var subIdArray : [Int] = [Int]()
@@ -424,26 +440,26 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         if(subIdArray.count > 0)
         {
-        let subid = subIdArray.maxElement()!
-      
-        if(!pushNotificationFlag)
-        {
-            if(pullToRefreshActive){
-                
-                newShareAvailabellabel.hidden = true
-                isNeedRefresh = false
-                ChannelSharedListAPI.sharedInstance.dataSource.removeAll()
-                ChannelSharedListAPI.sharedInstance.dummy.removeAll()
-                ChannelSharedListAPI.sharedInstance.pullToRefreshSource.removeAll()
-                ChannelSharedListAPI.sharedInstance.pullToRefreshData("\(subid)")
+            let subid = subIdArray.maxElement()!
+            
+            if(!pushNotificationFlag)
+            {
+                if(pullToRefreshActive){
+                    
+                    //  newShareAvailabellabel.hidden = true
+                    isNeedRefresh = false
+                    ChannelSharedListAPI.sharedInstance.dataSource.removeAll()
+                    ChannelSharedListAPI.sharedInstance.dummy.removeAll()
+                    ChannelSharedListAPI.sharedInstance.pullToRefreshSource.removeAll()
+                    ChannelSharedListAPI.sharedInstance.pullToRefreshData("\(subid)")
+                    
+                }
                 
             }
-            
-        }
-        else{
-            self.refreshControl.endRefreshing()
-            self.pullToRefreshActive = false
-        }
+            else{
+                self.refreshControl.endRefreshing()
+                self.pullToRefreshActive = false
+            }
         }
     }
     
@@ -529,11 +545,30 @@ extension ChannelsSharedController:UITableViewDataSource
     {
         if ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0
         {
+            //
+            
             return ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count
+            
         }
         else
         {
+            // self.removeOverlay()
+            
             return 0
+            
+        }
+        
+    }
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
+        {
+            if(indexPath.row == ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count - 1){
+                self.removeOverlay()
+            }
+        }
+        else{
+            self.removeOverlay()
+            
         }
     }
     
@@ -631,7 +666,7 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://104.197.92.137:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         
         self.presentViewController(vc, animated: false) { () -> Void in
             

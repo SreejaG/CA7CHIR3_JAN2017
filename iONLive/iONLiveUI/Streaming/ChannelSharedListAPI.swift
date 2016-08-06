@@ -61,11 +61,11 @@ class ChannelSharedListAPI: NSObject {
             dummy.removeAll()
             dataSource.removeAll()
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
-           
+            
             if (responseArrLive.count != 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
-
+                
                 for element in responseArrLive{
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String
@@ -102,7 +102,7 @@ class ChannelSharedListAPI: NSObject {
             if (responseArr.count != 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyShare")
-
+                
                 for element in responseArr{
                     let channelId = element[channelIdkey]?.stringValue
                     let channelName = element[channelNameKey] as! String

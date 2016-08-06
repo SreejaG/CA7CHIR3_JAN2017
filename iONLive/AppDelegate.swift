@@ -232,16 +232,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         
+        
         print(userInfo)
-        let dict = userInfo["aps"]
-        let deleteDict = dict!["alert"]
+        let result = userInfo["messageFrom"] as! NSDictionary
+        print(result)
         let defaults = NSUserDefaults .standardUserDefaults()
-        let result = convertStringToDictionary(deleteDict as! String)
-        if(result!["type"] as! String == "delete" || result!["type"] as! String == "media" )
+        if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
         }
-        else if ( (result!["type"] as! String == "share") || (result!["type"] as! String == "channel") || (result!["type"] as! String == "liveStream" )){
+        else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result) // used while added  a media
         }
         defaults.setValue("1", forKey: "notificationArrived")
@@ -250,6 +250,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             loadNotificationView()
         }
     }
+    
     func convertStringToDictionary(text: String) -> [String:AnyObject]? {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {

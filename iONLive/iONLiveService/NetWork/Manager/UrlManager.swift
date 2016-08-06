@@ -9,11 +9,11 @@
 import Foundation
 class UrlManager {
     
-//     let baseUrl = "http://130.211.135.170:3000";
+     let baseUrl = "http://130.211.135.170:3000";
     
-    //    let baseUrl = "http://104.196.113.247:3000";
+//        let baseUrl = "http://104.196.113.247:3000";
     
-    let baseUrl = "http://104.197.92.137:3000";
+//    let baseUrl = "http://104.197.92.137:3000";
     
 //    let baseUrl = "http://192.168.18.101:3000"; // Local ip
 

@@ -4,7 +4,7 @@ import UIKit
 class GlobalDataChannelList: NSObject {
     
     var globalChannelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-//    var channelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    //    var channelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
     let channelDetailIdKey = "channel_detail_id"
@@ -37,10 +37,10 @@ class GlobalDataChannelList: NSObject {
     
     func getChannelDetails(userName: String, token: String)
     {
-       ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
+        ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
-          //  self.authenticationFailureHandler(error, code: message)
+            //  self.authenticationFailureHandler(error, code: message)
             return
         }
     }
@@ -59,25 +59,25 @@ class GlobalDataChannelList: NSObject {
         }
     }
     
-//    func authenticationFailureHandler(error: NSError?, code: String)
-//    {
-//        print("message = \(code) andError = \(error?.localizedDescription) ")
-//        
-//        if !RequestManager.sharedInstance.validConnection() {
-//            ErrorManager.sharedInstance.noNetworkConnection()
-//        }
-//        else if code.isEmpty == false {
-//            
-//            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-//            }
-//            else{
-//                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-//            }
-//        }
-//        else{
-//            ErrorManager.sharedInstance.inValidResponseError()
-//        }
-//    }
+    //    func authenticationFailureHandler(error: NSError?, code: String)
+    //    {
+    //        print("message = \(code) andError = \(error?.localizedDescription) ")
+    //
+    //        if !RequestManager.sharedInstance.validConnection() {
+    //            ErrorManager.sharedInstance.noNetworkConnection()
+    //        }
+    //        else if code.isEmpty == false {
+    //
+    //            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+    //            }
+    //            else{
+    //                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+    //            }
+    //        }
+    //        else{
+    //            ErrorManager.sharedInstance.inValidResponseError()
+    //        }
+    //    }
     
     func setChannelDetails()
     {
@@ -103,7 +103,7 @@ class GlobalDataChannelList: NSObject {
             
             self.globalChannelDataSource.append([channelDetailIdKey: channelId!,channelNameKey: channelName,mediaDetailIdKey: mediaId,totalMediaCountKey: mediaSharedCount!,createdTimeStampKey: createdTime,self.sharedIndicatorOriginalKey: sharedBool,sharedIndicatorTemporaryKey: sharedBool, thumbImageURLKey: url])
             
-//            channelDataSource.append([channelDetailIdKey:channelId!, mediaDetailIdKey: mediaId, channelNameKey:channelName, totalMediaCountKey:mediaSharedCount!, createdTimeStampKey: createdTime,sharedIndicatorOriginalKey:sharedBool, sharedIndicatorTemporaryKey:sharedBool,thumbImageURLKey:url])
+            //            channelDataSource.append([channelDetailIdKey:channelId!, mediaDetailIdKey: mediaId, channelNameKey:channelName, totalMediaCountKey:mediaSharedCount!, createdTimeStampKey: createdTime,sharedIndicatorOriginalKey:sharedBool, sharedIndicatorTemporaryKey:sharedBool,thumbImageURLKey:url])
         }
         if(self.globalChannelDataSource.count > 0){
             sortChannelList()
@@ -156,16 +156,16 @@ class GlobalDataChannelList: NSObject {
                     })
                 }
                 else{
-                     imageForMedia =  UIImage(named: "thumb12")!
+                    imageForMedia =  UIImage(named: "thumb12")!
                 }
             }
             self.globalChannelDataSource[i][thumbImageKey] = imageForMedia
             
-//            self.globalChannelDataSource.append([self.channelDetailIdKey: self.channelDataSource[i][channelDetailIdKey]!,self.channelNameKey: self.channelDataSource[i][self.channelNameKey]!,self.totalMediaCountKey: self.channelDataSource[i][self.totalMediaCountKey]!,createdTimeStampKey: channelDataSource[i][createdTimeStampKey]!,self.sharedIndicatorOriginalKey: self.channelDataSource[i][sharedIndicatorOriginalKey]!,self.sharedIndicatorTemporaryKey: self.channelDataSource[i][sharedIndicatorTemporaryKey]!,self.thumbImageKey: imageForMedia, self.thumbImageURLKey: self.channelDataSource[i][thumbImageURLKey]!])
+            //            self.globalChannelDataSource.append([self.channelDetailIdKey: self.channelDataSource[i][channelDetailIdKey]!,self.channelNameKey: self.channelDataSource[i][self.channelNameKey]!,self.totalMediaCountKey: self.channelDataSource[i][self.totalMediaCountKey]!,createdTimeStampKey: channelDataSource[i][createdTimeStampKey]!,self.sharedIndicatorOriginalKey: self.channelDataSource[i][sharedIndicatorOriginalKey]!,self.sharedIndicatorTemporaryKey: self.channelDataSource[i][sharedIndicatorTemporaryKey]!,self.thumbImageKey: imageForMedia, self.thumbImageURLKey: self.channelDataSource[i][thumbImageURLKey]!])
         }
-//        sortChannelList()
+        //        sortChannelList()
     }
-
+    
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
@@ -190,7 +190,7 @@ class GlobalDataChannelList: NSObject {
             let time2 = p2[createdTimeStampKey] as! String
             return time1 > time2
         })
-    NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
         
         autoDownloadChannelDetails()
     }
@@ -220,17 +220,14 @@ class GlobalDataChannelList: NSObject {
         {
             let channelIdChk = element[channelDetailIdKey] as! String
             let sharedIndicator = element[sharedIndicatorTemporaryKey] as! Int
-            print(element)
             for var i = 0; i < globalChannelDataSource.count;i++
             {
                 let chanelId = globalChannelDataSource[i][channelDetailIdKey] as! String
-                print(chanelId)
                 if channelIdChk == chanelId
                 {
                     globalChannelDataSource[i][sharedIndicatorOriginalKey] = sharedIndicator
                     globalChannelDataSource[i][sharedIndicatorTemporaryKey] = sharedIndicator
                 }
-                print( globalChannelDataSource[i])
             }
         }
     }
