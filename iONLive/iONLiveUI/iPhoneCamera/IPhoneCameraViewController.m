@@ -165,15 +165,19 @@ bool loadingCameraFlag = false;
             if([loading  isEqual: @"camera"]){
                 loadingCameraFlag = true;
                 _noDataFound.text =  @"   Syncing...";
-                GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
-                if (gbData.globalChannelDataSource.count == 0) {
-                    [gbData initialise];
-                }
-                
                 GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
                 if (gb.globalDataSource.count == 0) {
                     [gb initialise];
                 }
+                GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+                if (gbData.globalChannelDataSource.count == 0) {
+                    [gbData initialise];
+                }
+                ChannelSharedListAPI *chlist = [ChannelSharedListAPI sharedInstance];
+                if (chlist.SharedChannelListDataSource.count == 0) {
+                    [chlist initialisedata];
+                }
+               
             }
             else{
                 loadingCameraFlag = false;
@@ -185,16 +189,19 @@ bool loadingCameraFlag = false;
         loadingCameraFlag = true;
         _noDataFound.text = @"   Syncing...";
         
-        GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
-        if (gbData.globalChannelDataSource.count == 0) {
-            [gbData initialise];
-        }
-        
         GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
         if (gb.globalDataSource.count == 0) {
             [gb initialise];
         }
-       
+        
+        GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+        if (gbData.globalChannelDataSource.count == 0) {
+            [gbData initialise];
+        }
+        ChannelSharedListAPI *chlist = [ChannelSharedListAPI sharedInstance];
+        if (chlist.SharedChannelListDataSource.count == 0) {
+            [chlist initialisedata];
+        }
     }
     
     [self setGUIBasedOnMode];
@@ -234,7 +241,7 @@ bool loadingCameraFlag = false;
                                              selector:@selector(applicationDidActives:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation) name:@"stopInitialising" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation:) name:@"stopInitialising" object:nil];
 }
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
@@ -294,6 +301,18 @@ bool loadingCameraFlag = false;
             [self hidingView];
         }
         dispatch_async( dispatch_get_main_queue(), ^{
+            if (shutterActionMode == SnapCamSelectionModeLiveStream)
+            {
+                _flashButton.hidden = true;
+                _cameraButton.hidden = true;
+                _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+                [_liveSteamSession.previewView removeFromSuperview];
+                AVCaptureVideoPreviewLayer  *ptr;
+                [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+                _liveSteamSession.previewView.frame = self.view.bounds;
+                _liveSteamSession.delegate = self;
+            }
+            else{
             _cameraButton.hidden = false;
             if(flashFlag == 0){
                 _flashButton.hidden = false;
@@ -303,6 +322,7 @@ bool loadingCameraFlag = false;
             }
             [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
             [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+            }
         });
     }
 }
@@ -352,10 +372,22 @@ bool loadingCameraFlag = false;
     });
 }
 
--(void)stopInitialisation
+-(void) stopInitialisation : (NSNotification *)notif
 {
+   
+    NSString *code = notif.object;
+    NSLog(@"%@",code);
     loadingCameraFlag = false;
     [self hidingView];
+    if([code  isEqual: @"noNetwork"]){
+        [[ErrorManager sharedInstance] noNetworkConnection];
+    }
+    else if([code  isEqual: @"ResponseError"]){
+        [[ErrorManager sharedInstance]inValidResponseError];
+    }
+    else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
+        [self loadInitialView];
+    }
 }
 
 -(void)loadingView

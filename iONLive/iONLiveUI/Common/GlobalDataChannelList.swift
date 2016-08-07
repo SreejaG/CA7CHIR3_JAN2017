@@ -40,7 +40,7 @@ class GlobalDataChannelList: NSObject {
         ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
-            //  self.authenticationFailureHandler(error, code: message)
+//            self.authenticationFailureHandler(error, code: message)
             return
         }
     }
@@ -58,26 +58,6 @@ class GlobalDataChannelList: NSObject {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-    
-    //    func authenticationFailureHandler(error: NSError?, code: String)
-    //    {
-    //        print("message = \(code) andError = \(error?.localizedDescription) ")
-    //
-    //        if !RequestManager.sharedInstance.validConnection() {
-    //            ErrorManager.sharedInstance.noNetworkConnection()
-    //        }
-    //        else if code.isEmpty == false {
-    //
-    //            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-    //            }
-    //            else{
-    //                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-    //            }
-    //        }
-    //        else{
-    //            ErrorManager.sharedInstance.inValidResponseError()
-    //        }
-    //    }
     
     func setChannelDetails()
     {
@@ -191,7 +171,7 @@ class GlobalDataChannelList: NSObject {
             return time1 > time2
         })
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
-        
+
         autoDownloadChannelDetails()
     }
     

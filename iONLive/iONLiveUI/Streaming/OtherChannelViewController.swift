@@ -50,7 +50,6 @@ class OtherChannelViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectInserted), name: "AddedOneObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
@@ -65,7 +64,6 @@ class OtherChannelViewController: UIViewController {
         }
         //ChannelSharedListAPI.sharedInstance.updateMediaSharedInChannelList()
     }
-    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         channelItemsCollectionView.alpha = 1.0
@@ -83,7 +81,6 @@ class OtherChannelViewController: UIViewController {
         //        removeOverlay()
         channelItemsCollectionView.alpha = 1.0
     }
-    
     func pushNotificationUpdateStream(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
@@ -101,6 +98,7 @@ class OtherChannelViewController: UIViewController {
         
         switch subType {
         case "started":
+            
             //     updateLiveStreamStartedEntry(info)
             break;
         case "stopped":

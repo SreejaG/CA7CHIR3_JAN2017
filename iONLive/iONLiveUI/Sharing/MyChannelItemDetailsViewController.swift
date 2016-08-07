@@ -108,27 +108,24 @@ class MyChannelItemDetailsViewController: UIViewController {
                 }
                 if totalCount > 0
                 {
+                  
                     removeOverlay()
                     self.channelItemsCollectionView.reloadData()
+                    
                 }
-                else{
-                    let start = 0
-                    var end = 0
-                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 21
-                    {
-                        end = 21
-                    }
-                    else{
-                        end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
-                    }
+                else if totalCount <= 0
+                {
+                 
+                    totalCount = 0
+                    self.channelItemsCollectionView.reloadData()
+                }
                     let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                     let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                     dispatch_async(backgroundQueue, {
-                        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end)
+                        self.downloadImagesFromGlobalChannelImageMapping(21)
                     })
-                }
+        
             }
-            
         }
     }
     
@@ -136,20 +133,21 @@ class MyChannelItemDetailsViewController: UIViewController {
         return item[thumbImageKey] != nil
     }
     
-    func downloadImagesFromGlobalChannelImageMapping()  {
+    func downloadImagesFromGlobalChannelImageMapping(limit : Int)  {
         let start = totalCount
         var end = 0
-        if((totalCount + 12) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-            end = 12
+        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+            end = limit
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
-        totalCount = totalCount + end
+     //   totalCount = totalCount + end
         end = start + end
         
         GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(channelId, start: start, end: end)
     }
+    
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
         self.lastContentOffset = scrollView.contentOffset
@@ -167,7 +165,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                         dispatch_async(backgroundQueue, {
-                            self.downloadImagesFromGlobalChannelImageMapping()
+                            self.downloadImagesFromGlobalChannelImageMapping(12)
                         })
                     }
                 }
@@ -176,16 +174,15 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func removeActivityIndicator(notif : NSNotification){
-        if totalCount <= 21
-        {
-            let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
-            totalCount = filteredData.count
-        }
-        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
-            let time1 = Int(p1[mediaDetailIdKey] as! String)
-            let time2 = Int(p2[mediaDetailIdKey] as! String)
+        let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+        totalCount = filteredData.count
+        
+        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
+            let time1 = Int(p1[self.mediaDetailIdKey] as! String)
+            let time2 = Int(p2[self.mediaDetailIdKey] as! String)
             return time1 > time2
         })
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeOverlay()
             self.channelItemsCollectionView.reloadData()

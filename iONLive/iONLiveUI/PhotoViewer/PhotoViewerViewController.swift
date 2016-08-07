@@ -172,6 +172,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         fullScreenScrollView.delaysContentTouches = false;
         
+        self.view.bringSubviewToFront(fullScrenImageView)
+        
         self.view.bringSubviewToFront(photoThumpCollectionView)
         self.view.bringSubviewToFront(playIconInFullView)
         self.view.bringSubviewToFront(TopView)
@@ -183,10 +185,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
-        self.view .addGestureRecognizer(swipeRight)
+        self.fullScrenImageView .addGestureRecognizer(swipeRight)
+        
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
-        self.view .addGestureRecognizer(swipeLeft)
+        self.fullScrenImageView .addGestureRecognizer(swipeLeft)
         
         //ajith mod starts
         swipeRight.delegate = self;
@@ -425,9 +428,19 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
+        if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0 //If there's no media, then show error message instead of swipe.
+        {
+            ErrorManager.sharedInstance.emptyMedia()
+        }
+        
+        else
+        {
+        
         swipeFlag = true
         self.removeOverlay()
         
+        fullScrenImageView.userInteractionEnabled = true
+            
         if (playHandleflag == 1)
         {
             playHandleflag = 0
@@ -514,6 +527,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             default:
                 break
             }
+        }
         }
     }
     
@@ -1057,7 +1071,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         if(gestureIdentifier==1||gestureIdentifier==2)
                         {
                             let animation = CATransition()
-                            animation.duration = 0.4;
+                            animation.duration = 0.2;
                             animation.type = kCATransitionMoveIn;
                             if(gestureIdentifier==1)
                             {
@@ -1121,7 +1135,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         if(gestureIdentifier==1||gestureIdentifier==2)
                         {
                             let animation = CATransition()
-                            animation.duration = 0.4;
+                            animation.duration = 0.2;
                             animation.type = kCATransitionMoveIn;
                             if(gestureIdentifier==1)
                             {

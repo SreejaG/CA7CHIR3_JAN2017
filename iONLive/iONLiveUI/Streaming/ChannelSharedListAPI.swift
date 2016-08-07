@@ -40,7 +40,15 @@ class ChannelSharedListAPI: NSObject {
         }
         return Singleton.instance
     }
-    
+    func initialisedata()
+    {
+        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
+        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        //ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
+        
+        getChannelSharedDetails(userId, token: accessToken)
+        
+    }
     func getChannelSharedDetails(userName: String, token: String)
     {
         

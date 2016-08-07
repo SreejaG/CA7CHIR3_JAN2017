@@ -235,7 +235,7 @@ class AddChannelViewController: UIViewController {
     
     func authenticationSuccessHandlerAdd(response : AnyObject?, channelIds:NSArray, mediaIds:NSArray)
     {
-        
+        print(localMediaDict)
         GlobalChannelToImageMapping.sharedInstance.addMediaToChannel(localChannelDict, mediaDetailOfSelectedChannel: localMediaDict)
         
         removeOverlay()

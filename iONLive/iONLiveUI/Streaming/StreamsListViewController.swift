@@ -69,18 +69,42 @@ class StreamsListViewController: UIViewController{
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.setSourceByAppendingMediaAndLive()
-                //                self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
-                //                self.streamListCollectionView.addSubview(self.refreshControl)
+                self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
+                self.streamListCollectionView.addSubview(self.refreshControl)
                 self.streamListCollectionView.reloadData()
             })
         }
     }
+    override func viewWillAppear(animated: Bool) {
+        if (NSUserDefaults.standardUserDefaults().objectForKey("StreamListActive") == nil)
+        {
+            NSUserDefaults.standardUserDefaults().setValue("Active", forKey: "StreamListActive")
+        }
+        else{
+            if NSUserDefaults.standardUserDefaults().objectForKey("StreamListActive") as! String == "Active"
+            {
+                if(mediaAndLiveArray.count == 0)
+                {
+                    self.showOverlay()
+                    GlobalStreamList.sharedInstance.imageDataSource.removeAll()
+                    GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAll()
+                    GlobalStreamList.sharedInstance.initialiseCloudData(0, endValueLimit: 21)
+                }
+            }
+            else
+            {
+                NSUserDefaults.standardUserDefaults().setValue("Active", forKey: "StreamListActive")
+            }
+        }
+        super.viewWillAppear(true)
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-//        if(self.pullToRefreshActive)
-//        {
-//            self.refreshControl.endRefreshing()
-//        }
+        //        if(self.pullToRefreshActive)
+        //        {
+        //            self.refreshControl.endRefreshing()
+        //        }
     }
     func pushNotificationUpdateStream(notif: NSNotification)
     {
@@ -209,6 +233,7 @@ class StreamsListViewController: UIViewController{
     func updateLiveStreamStartedEntry(info:[String : AnyObject])
     {
         ErrorManager.sharedInstance.streamAvailable()
+        getAllLiveStreams()
     }
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
@@ -608,7 +633,7 @@ class StreamsListViewController: UIViewController{
                 let index = selectedArray[i]
                 let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
                 pathArray.append(indexPath)
-                mediaAndLiveArray.removeAtIndex(index)
+                mediaAndLiveArray.removeAtIndex(index - i)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
@@ -701,6 +726,7 @@ class StreamsListViewController: UIViewController{
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
+                
                 //  ErrorManager.sharedInstance.emptyMedia()
                 self.setSourceByAppendingMediaAndLive()
                 self.streamListCollectionView.reloadData()
@@ -720,9 +746,7 @@ class StreamsListViewController: UIViewController{
             totalMediaCount = totalMediaCount + Int(mediaShared[i]["totalNo"] as! String)!
         }
     }
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
-    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -815,6 +839,11 @@ class StreamsListViewController: UIViewController{
                 self.getAllLiveStreams()
                 //    })
                 self.getPullToRefreshData()
+                
+            }
+            else{
+                self.refreshControl.endRefreshing()
+                pullToRefreshActive = false
                 
             }
         }
@@ -947,6 +976,13 @@ class StreamsListViewController: UIViewController{
                     // }
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if(self.mediaAndLiveArray.count == 0)
+                    {
+                        if(self.liveStreamSource.count > 0)
+                        {
+                            self.setSourceByAppendingMediaAndLive()
+                        }
+                    }
                     self.streamListCollectionView.reloadData()
                 })
             }
@@ -973,16 +1009,20 @@ class StreamsListViewController: UIViewController{
     }
     func getProfileImageSelectedIndex(indexpathRow: Int)
     {
-        let subUserName = GlobalStreamList.sharedInstance.GlobalStreamDataSource[indexpathRow][userIdKey] as! String
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
-            self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
-            }, failure: { (error, message) -> () in
-                self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
-                return
-        })
+        if(mediaAndLiveArray.count > 0)
+        {
+            let subUserName = mediaAndLiveArray[indexpathRow][userIdKey] as! String
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+                self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
+                }, failure: { (error, message) -> () in
+                    self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
+                    return
+            })
+            
+        }
     }
     var profileImageUserForSelectedIndex : UIImage = UIImage()
     func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
@@ -1018,11 +1058,11 @@ class StreamsListViewController: UIViewController{
         getLikeCountForSelectedIndex(indexPathRow,profile: profileImageUserForSelectedIndex)
     }
     func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage)  {
-        let mediaId = GlobalStreamList.sharedInstance.GlobalStreamDataSource[indexpathRow][mediaIdKey] as! String
+        let mediaId = mediaAndLiveArray[indexpathRow][mediaIdKey] as! String
         getLikeCount(mediaId, indexpathRow: indexpathRow, profile: profile)
     }
     func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
-        let mediaTypeSelected : String = GlobalStreamList.sharedInstance.GlobalStreamDataSource[indexpathRow][mediaTypeKey] as! String
+        let mediaTypeSelected : String = mediaAndLiveArray[indexpathRow][mediaTypeKey] as! String
         var likeCount: String = "0"
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String

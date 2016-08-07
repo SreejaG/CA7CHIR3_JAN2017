@@ -49,10 +49,30 @@ class GlobalDataRetriever: NSObject
         ImageUpload.sharedInstance.getChannelMediaDetails("\(channelId)" , userName: userName, accessToken: accessToken, limit: "\(archiveMeidaCount)", offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
         }) { (error, message) -> () in
-            return
-            // self.authenticationFailureHandlerForFetchMedia(error, code: message)
+                self.authenticationFailureHandler(error, code: message)
+                return
         }
     }
+    
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        var codeString : String = String()
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
+        if !RequestManager.sharedInstance.validConnection() {
+            codeString = "noNetwork"
+            //                ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            codeString = code
+        }
+        else{
+            codeString = "ResponseError"
+            ErrorManager.sharedInstance.inValidResponseError()
+        }
+        NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
+    }
+
     
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {

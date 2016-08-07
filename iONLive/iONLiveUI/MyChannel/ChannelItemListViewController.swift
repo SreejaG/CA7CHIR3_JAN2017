@@ -65,7 +65,7 @@ class ChannelItemListViewController: UIViewController {
         selectionFlag = false
         self.channelItemCollectionView.alwaysBounceVertical = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
         showOverlay()
         
@@ -84,47 +84,39 @@ class ChannelItemListViewController: UIViewController {
                     let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
                     totalCount = filteredData.count
                 }
-                
+              
                 if totalCount > 0
                 {
                     selectionButton.hidden = false
                     removeOverlay()
                     self.channelItemCollectionView.reloadData()
+                    
                 }
-                else{
+                else if totalCount <= 0
+                {
                     selectionButton.hidden = true
-                    let start = 0
-                    var end = 0
-                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 21
-                    {
-                        end = 21
-                    }
-                    else{
-                        end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
-                    }
+                    totalCount = 0
+                    self.channelItemCollectionView.reloadData()
+                }
                     let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                     let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                     dispatch_async(backgroundQueue, {
-                        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end)
+                        self.downloadImagesFromGlobalChannelImageMapping(21)
                     })
-                }
+
             }
         }
     }
     
-    func removeActivityIndicator(notif : NSNotification){
+    func removeActivityIndicatorMyChanel(notif : NSNotification){
+        let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+        totalCount = filteredData.count
         
-        if totalCount <= 21
-        {
-            let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
-            totalCount = filteredData.count
-        }
-        
-        //        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.sortInPlace({ p1, p2 in
-        //            let time1 = Int(p1[mediaDetailIdKey] as! String)
-        //            let time2 = Int(p2[mediaDetailIdKey] as! String)
-        //            return time1 > time2
-        //        })
+        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
+            let time1 = Int(p1[self.mediaDetailIdKey] as! String)
+            let time2 = Int(p2[self.mediaDetailIdKey] as! String)
+            return time1 > time2
+        })
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             if self.selectionFlag == false {
@@ -133,6 +125,7 @@ class ChannelItemListViewController: UIViewController {
             else{
                 self.cancelButton.hidden = false
             }
+            
             
             self.removeOverlay()
             self.channelItemCollectionView.reloadData()
@@ -182,7 +175,7 @@ class ChannelItemListViewController: UIViewController {
                         let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                         dispatch_async(backgroundQueue, {
-                            self.downloadImagesFromGlobalChannelImageMapping()
+                            self.downloadImagesFromGlobalChannelImageMapping(12)
                         })
                     }
                 }
@@ -190,16 +183,16 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    func downloadImagesFromGlobalChannelImageMapping()  {
+    func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
         let start = totalCount
         var end = 0
-        if((totalCount + 12) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-            end = 12
+        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+            end = limit
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
-        totalCount = totalCount + end
+//        totalCount = totalCount + end
         end = start + end
         
         GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(channelId, start: start, end: end)
@@ -530,7 +523,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             collectionView.reloadData()
         }
         else{
-            if let img = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey]
+          
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey] != nil
             {
                 self.showOverlay()
                 self.channelItemCollectionView.alpha = 0.4
