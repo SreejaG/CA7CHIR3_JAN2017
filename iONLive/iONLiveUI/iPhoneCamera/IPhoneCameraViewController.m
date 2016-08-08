@@ -91,6 +91,7 @@ int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
 bool takePictureFlag = false;
 bool loadingCameraFlag = false;
+NSTimer *timer;
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -149,6 +150,8 @@ bool loadingCameraFlag = false;
         self.playiIconView.hidden = YES;
     });
     
+   
+    shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     _noDataFound.lineBreakMode = NSLineBreakByWordWrapping;
     _noDataFound.numberOfLines = 0;
     
@@ -163,6 +166,7 @@ bool loadingCameraFlag = false;
         if([first isEqualToString:@"firstTime"])
         {
             loadingCameraFlag = true;
+             timer = [NSTimer scheduledTimerWithTimeInterval:30.0f target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
             _noDataFound.text = @"   Syncing...";
         }
         else{
@@ -170,6 +174,7 @@ bool loadingCameraFlag = false;
             if([loading  isEqual: @"camera"]){
                 loadingCameraFlag = true;
                 _noDataFound.text =  @"   Syncing...";
+                 timer = [NSTimer scheduledTimerWithTimeInterval:30.0f target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
                 GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
                 if (gb.globalDataSource.count == 0) {
                     [gb initialise];
@@ -193,7 +198,7 @@ bool loadingCameraFlag = false;
     else{
         loadingCameraFlag = true;
         _noDataFound.text = @"   Syncing...";
-        
+         timer = [NSTimer scheduledTimerWithTimeInterval:30.0f target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
         GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
         if (gb.globalDataSource.count == 0) {
             [gb initialise];
@@ -275,6 +280,26 @@ bool loadingCameraFlag = false;
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation:) name:@"stopInitialising" object:nil];
+}
+
+- (void) thisMethodGetsFiredOnceEveryThirtySeconds:(id)sender {
+    NSLog(@"Stop!");
+    if(!_activityImageView.hidden)
+    {
+        
+        
+        dispatch_async( dispatch_get_main_queue(), ^{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+                                                            message:@"Retry??"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:@"Exit App",nil];
+            [alert show];
+            
+        });
+    }
+    loadingCameraFlag = false;
+    [self hidingView];
 }
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
@@ -417,11 +442,44 @@ bool loadingCameraFlag = false;
     if([code  isEqual: @"noNetwork"]){
         [[ErrorManager sharedInstance] noNetworkConnection];
     }
-//    else if([code  isEqual: @"ResponseError"]){
+    else if([code  isEqual: @"ResponseError"]){
 //        [[ErrorManager sharedInstance]inValidResponseError];
-//    }
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+                                                        message:@"Retry??"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:@"Exit App",nil];
+        [alert show];
+
+    }
     else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
         [self loadInitialView];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    // the user clicked OK
+    if (buttonIndex == 0) {
+        _noDataFound.text = @"   Syncing...";
+        [self loadingView];
+        
+        GlobalDataRetriever *gb = [GlobalDataRetriever sharedInstance];
+        if (gb.globalDataSource.count == 0) {
+            [gb initialise];
+        }
+        
+        GlobalDataChannelList *gbData = [GlobalDataChannelList sharedInstance];
+        if (gbData.globalChannelDataSource.count == 0) {
+            [gbData initialise];
+        }
+        ChannelSharedListAPI *chlist = [ChannelSharedListAPI sharedInstance];
+        if (chlist.SharedChannelListDataSource.count == 0) {
+            [chlist initialisedata];
+        }
+        
+    }
+    else{
+        exit(0);
     }
 }
 
@@ -710,16 +768,16 @@ bool loadingCameraFlag = false;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
-    if(shutterActionMode == SnapCamSelectionModeLiveStream){
-
-        [liveStreaming stopStreamingClicked];
-        [_liveSteamSession endRtmpSession];
-        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-        [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-        [_liveSteamSession.previewView removeFromSuperview];
-        _liveSteamSession.delegate = nil;
-        [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-    }
+//    if(shutterActionMode == SnapCamSelectionModeLiveStream){
+//
+//        [liveStreaming stopStreamingClicked];
+//        [_liveSteamSession endRtmpSession];
+//        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+//        [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+//        [_liveSteamSession.previewView removeFromSuperview];
+//        _liveSteamSession.delegate = nil;
+//        [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+//    }
  }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
@@ -1152,7 +1210,7 @@ bool loadingCameraFlag = false;
             NSString *documentsDirectory = [paths firstObject];
             NSString *filePath=@"";
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+            [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss_video"];
             NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
             filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
             NSString *outputFilePath = [filePath stringByAppendingString:@".mov"];
@@ -1487,6 +1545,7 @@ bool loadingCameraFlag = false;
     obj.path = path;
     obj.media = @"video";
     obj.videoSavedURL = filePath;
+    
     [obj initialise];
 }
 
@@ -1594,6 +1653,9 @@ bool loadingCameraFlag = false;
     {
         [self generateStreamAlert:@"settingsPageView"];
     }
+    else  if ( self.movieFileOutput.isRecording ) {
+         [self generateVideoAlert:@"settingsPageView"];
+    }
     else{
         [self settingsPageView];
     }
@@ -1619,7 +1681,9 @@ bool loadingCameraFlag = false;
     {
         [self generateStreamAlert:@"loadSharingView"];
     }
-    
+    else  if ( self.movieFileOutput.isRecording ) {
+        [self generateVideoAlert:@"settingsPageView"];
+    }
     else
     {
         [self loadSharingView];
@@ -1642,6 +1706,9 @@ bool loadingCameraFlag = false;
     if ([self isStreamStarted])
     {
         [self generateStreamAlert:@"loadPhotoViewer"];
+    }
+    else  if ( self.movieFileOutput.isRecording ) {
+        [self generateVideoAlert:@"settingsPageView"];
     }
     else
     {
@@ -1667,6 +1734,10 @@ bool loadingCameraFlag = false;
     if ([self isStreamStarted])
     {
         [self generateStreamAlert:@"loadStreamsGalleryView"];
+        [self generateVideoAlert:@"loadStreamsGalleryView"];
+    }
+    else  if ( self.movieFileOutput.isRecording ) {
+        [self generateVideoAlert:@"settingsPageView"];
     }
     else{
         [self loadStreamsGalleryView];
@@ -1781,6 +1852,60 @@ bool loadingCameraFlag = false;
     NSData *imageData = [[NSData alloc] init];
     imageData = UIImageJPEGRepresentation(result,1.0);
     return imageData;
+}
+
+-(void)generateVideoAlert:(NSString*)generateStream
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Video Recording In Progress" message:@"Do you want to stop video?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"No", @"Alert No") style:UIAlertActionStyleCancel handler:nil];
+    [alertController addAction:cancelAction];
+    
+    UIAlertAction *OkAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Yes", @"Alert Yes") style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+        
+        dispatch_async( dispatch_get_main_queue(), ^{
+            if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                }else {
+                    [self.videoDeviceInput.device lockForConfiguration:nil];
+                    [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                    [self.videoDeviceInput.device unlockForConfiguration];
+                }
+            }
+            _cameraButton.hidden = false;
+            if(flashFlag == 0){
+                _flashButton.hidden = false;
+            }
+            else if(flashFlag == 1){
+                _flashButton.hidden = true;
+            }
+            
+            [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+        });
+        [self.movieFileOutput stopRecording];
+                               
+        [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"shutterActionMode"];
+        
+        
+        if ([generateStream isEqualToString:@"settingsPageView"])
+        {
+            [self settingsPageView];
+        }
+        else if ([generateStream isEqualToString:@"loadSharingView"])
+        {
+            [self loadSharingView];
+        }
+        else if ([generateStream isEqualToString:@"loadPhotoViewer"])
+        {
+            [self loadPhotoViewer];
+        }
+        else if ([generateStream isEqualToString:@"loadStreamsGalleryView"])
+        {
+            [self loadStreamsGalleryView];
+        }
+        
+    }];
+    [alertController addAction:OkAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 -(void)generateStreamAlert:(NSString*)generateStream

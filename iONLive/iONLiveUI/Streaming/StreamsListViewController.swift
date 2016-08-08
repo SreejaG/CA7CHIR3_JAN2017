@@ -101,7 +101,7 @@ class StreamsListViewController: UIViewController{
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
-
+        
     }
     func pushNotificationUpdateStream(notif: NSNotification)
     {
@@ -438,9 +438,10 @@ class StreamsListViewController: UIViewController{
                     //                                    if( mediaIdValue == "\(mediaArrayData[mediaArrayCount])" )
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
-                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! String
+                        // let mediaIdValue = mediaArrayData[mediaArrayCount] as! String
+                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
                         
-                        if(mediaIdValue == mediaId)
+                        if("\(mediaIdValue)" == mediaId)
                         {
                             removeIndex = i
                             count = count + 1
@@ -487,9 +488,8 @@ class StreamsListViewController: UIViewController{
                     let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
-                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! String
-                        
-                        if(mediaIdValue == mediaId)
+                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
+                        if("\(mediaIdValue)" == mediaId)
                         {
                             count = count + 1
                             removeIndex = i

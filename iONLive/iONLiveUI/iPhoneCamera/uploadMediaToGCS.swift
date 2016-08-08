@@ -207,23 +207,38 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         var imageOrVideoData: NSData = NSData()
         if(media == "image"){
             imageOrVideoData = UIImageJPEGRepresentation(imageFromDB, 0.5)!
+            request.HTTPBody = imageOrVideoData
+            let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                if error != nil {
+                    completion(result:"Failed")
+                }
+                else {
+                    completion(result:"Success")
+                }
+            }
+             dataTask.resume()
         }
         else{
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
             let savingPath = "\(parentPath)/\(mediaId)video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
-            imageOrVideoData = NSData(contentsOfURL: url)!
-        }
-        request.HTTPBody = imageOrVideoData
-        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
-            if error != nil {
-                completion(result:"Failed")
+            if let imageOrVideoData1 = NSData(contentsOfURL: url)
+            {
+             imageOrVideoData = NSData(contentsOfURL: url)!
+                request.HTTPBody = imageOrVideoData
+                let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                    if error != nil {
+                        completion(result:"Failed")
+                    }
+                    else {
+                        completion(result:"Success")
+                    }
+                }
+                 dataTask.resume()
+
             }
-            else {
-                completion(result:"Success")
-            }
         }
-        dataTask.resume()
+        
     }
     
     //thumb image upload to cloud
