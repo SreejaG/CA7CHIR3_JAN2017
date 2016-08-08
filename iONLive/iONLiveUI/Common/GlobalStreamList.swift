@@ -27,6 +27,7 @@ class GlobalStreamList: NSObject {
     let notificationKey = "notification"
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var GlobalStreamDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    var operationQueue = NSOperationQueue()
     
     class var sharedInstance: GlobalStreamList
     {
@@ -43,6 +44,8 @@ class GlobalStreamList: NSObject {
     }
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
         
+        imageDataSource.removeAll()
+        GlobalStreamDataSource.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -61,7 +64,6 @@ class GlobalStreamList: NSObject {
         {
             
             let responseArr = json["objectJson"] as! [AnyObject]
-            print(responseArr)
             if(responseArr.count == 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
@@ -100,12 +102,17 @@ class GlobalStreamList: NSObject {
             }
             
             if(imageDataSource.count > 0){
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
+                // let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                //  let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                //   dispatch_async(backgroundQueue, {
+                let operation2 : NSBlockOperation = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
-                    
                 })
+                self.operationQueue.addOperation(operation2)
+                // })
+                //   self.downloadMediaFromGCS()
+                
+                // })
             }
             else{
                 
@@ -155,25 +162,33 @@ class GlobalStreamList: NSObject {
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
+        
         var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
+        
+        // Data object to fetch weather data
+        do {
+            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    mediaImage = mediaImage1
+                }
+                completion(result: mediaImage)
             }
-            completion(result: mediaImage)
-        }
-        else
-        {
+            else
+            {
+                completion(result:UIImage(named: "thumb12")!)
+            }
+            
+        } catch {
+            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
+        
+        
     }
     
     func downloadMediaFromGCS(){
-        //        self.dummy.removeAll()
-        //        self
-        //   print(dataSource[0][timestamp])
         
         for var i = 0; i < imageDataSource.count; i++
         {
@@ -187,6 +202,12 @@ class GlobalStreamList: NSObject {
                 if fileExistFlag == true{
                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
                     imageForMedia = mediaImageFromFile!
+                    if(self.imageDataSource.count > 0)
+                    {
+                        self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                    }
+                    
+                    
                 }
                 else{
                     let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
@@ -199,8 +220,15 @@ class GlobalStreamList: NSObject {
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    // return
                                 }
                                 else{
+                                    imageForMedia = result
+                                    if(self.imageDataSource.count > 0)
+                                    {
+                                        self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                                    }
+                                    
                                     FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                                 }
                                 imageForMedia = result
@@ -213,19 +241,10 @@ class GlobalStreamList: NSObject {
                 }
                 
                 
-                //                    if contains(self.mediaIdKey, {contains(dataSource., self.imageDataSource[i][self.mediaIdKey])}) {
-                //                    print("it is in there")
-                //            }
                 
-                GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
-                //                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                //                        self.removeOverlay()
-                //                       self.streamListCollectionView.reloadData()
-                //                    })
             }
             
         }
-        print(GlobalStreamDataSource.count)
         if(GlobalStreamDataSource.count > 0){
             GlobalStreamDataSource.sortInPlace({ p1, p2 in
                 let time1 = p1[timestamp] as! String
@@ -233,13 +252,13 @@ class GlobalStreamList: NSObject {
                 return time1 > time2
             })
         }
-        print(GlobalStreamDataSource[0][timestamp])
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "success")
         
         
     }
     func getPullToRefreshData()
     {
+        imageDataSource.removeAll()
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
         // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[0][pullTorefreshKey] as! String
@@ -269,9 +288,7 @@ class GlobalStreamList: NSObject {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
         // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
-        
-        print("count",  GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
-        print("data", GlobalStreamList.sharedInstance.GlobalStreamDataSource)
+        GlobalStreamList.sharedInstance.imageDataSource.removeAll()
         ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
             self.authenticationSuccessHandler(response)
         }) { (error, message) in

@@ -380,23 +380,20 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             {
                 mediaShared[index][isWatched]  = "0"
             }
-            print(latestCount,totalNoLatest)
-            
             mediaShared[index][sharedMediaCount]  = "\(latestCount)"
             mediaShared[index][totalNoShared]  = "\(totalNoLatest)"
-            print(mediaShared)
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             let rowIndex  = getUpdateIndexChannel(channelId, isCountArray: false)
             if(rowIndex != -1)
             {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    let indexPath = NSIndexPath(forRow: rowIndex, inSection: 0)
-                    if let visibleIndexPaths = self.ChannelSharedTableView.indexPathsForVisibleRows?.indexOf(indexPath) {
-                        if visibleIndexPaths != NSNotFound {
-                            self.ChannelSharedTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                        }
-                    }
-                    
+                    //                    let indexPath = NSIndexPath(forRow: rowIndex, inSection: 0)
+                    //                    if let visibleIndexPaths = self.ChannelSharedTableView.indexPathsForVisibleRows?.indexOf(indexPath) {
+                    //                        if visibleIndexPaths != NSNotFound {
+                    //                            self.ChannelSharedTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                    //                        }
+                    //                    }
+                    self.ChannelSharedTableView.reloadData()
                 })
             }
         }
@@ -494,9 +491,27 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         if(success == "success")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                print(ChannelSharedListAPI.sharedInstance.pullToRefreshSource)
+                
                 for (var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex-- )
                 {
-                    ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex] , atIndex: 0)
+                    var flag : Bool = false
+                    for(var i = 0 ; i <  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count ; i++)
+                    {
+                        let chId =  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[i][self.channelIdkey] as! String
+                        
+                        let chId2 = ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex][self.channelIdkey] as! String
+                        if(chId == chId2)
+                        {
+                            flag = true
+                        }
+                        
+                    }
+                    if(!flag)
+                    {
+                        ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex] , atIndex: 0)
+                    }
                     //     if(self.isVisibleCell(0))
                     //   {
                     //                    self.ChannelSharedTableView.beginUpdates()
@@ -507,6 +522,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 }
                 self.ChannelSharedTableView.reloadData()
                 
+                //  }
             })
         }
         else{
@@ -709,8 +725,7 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
-        
+        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
             
         }

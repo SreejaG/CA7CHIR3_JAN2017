@@ -137,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
         navigationController = UINavigationController(rootViewController: notificationViewController)
         navigationController!.navigationBarHidden = true
-        self.window!.rootViewController = navigationController
+        self.window?.rootViewController = navigationController
     }
     
     // MARK: - Core Data stack

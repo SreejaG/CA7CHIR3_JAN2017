@@ -145,8 +145,13 @@ bool loadingCameraFlag = false;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.playiIconView.hidden = YES;
+    });
+    
     _noDataFound.lineBreakMode = NSLineBreakByWordWrapping;
     _noDataFound.numberOfLines = 0;
+    
     
     shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     
@@ -204,6 +209,34 @@ bool loadingCameraFlag = false;
         }
     }
     
+    GlobalDataRetriever *gbObj = [GlobalDataRetriever sharedInstance];
+    if (gbObj.globalDataSource.count > 0)
+    {
+        UIImage *img = [[UIImage alloc]init];
+        img = gbObj.globalDataSource[0][@"thumbImage"];
+        NSString *type = gbObj.globalDataSource[0][@"media_type"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if([type  isEqual: @"video"])
+            {
+                self.playiIconView.hidden = NO;
+            }
+            else{
+                self.playiIconView.hidden = YES;
+            }
+            self.thumbnailImageView.image = img;
+        });
+    }
+    
+    GlobalStreamList *streamObj = [GlobalStreamList sharedInstance];
+    if(streamObj.GlobalStreamDataSource.count > 0)
+    {
+        UIImage *img = [[UIImage alloc]init];
+        img = streamObj.GlobalStreamDataSource[0][@"thumbImage"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.latestSharedMediaImage.image = img;
+        });
+    }
+  
     [self setGUIBasedOnMode];
     
     [[NSUserDefaults standardUserDefaults] setValue:@"SecndTime" forKey:@"first"];
@@ -283,9 +316,11 @@ bool loadingCameraFlag = false;
         }
         else if(shutterActionMode == SnapCamSelectionModeLiveStream){
             [liveStreaming stopStreamingClicked];
+            [_liveSteamSession endRtmpSession];
+            [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+            [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
             [_liveSteamSession.previewView removeFromSuperview];
             _liveSteamSession.delegate = nil;
-            [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
         }
     }
@@ -382,9 +417,9 @@ bool loadingCameraFlag = false;
     if([code  isEqual: @"noNetwork"]){
         [[ErrorManager sharedInstance] noNetworkConnection];
     }
-    else if([code  isEqual: @"ResponseError"]){
-        [[ErrorManager sharedInstance]inValidResponseError];
-    }
+//    else if([code  isEqual: @"ResponseError"]){
+//        [[ErrorManager sharedInstance]inValidResponseError];
+//    }
     else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
         [self loadInitialView];
     }
@@ -444,7 +479,7 @@ bool loadingCameraFlag = false;
     _snapCamMode = SnapCamSelectionModeiPhone;
     flashFlag = 0;
     _activitView.hidden = YES;
-    _playiIconView.hidden = YES;
+//    _playiIconView.hidden = YES;
 }
 
 -(void) checkCountForLabel
@@ -552,6 +587,12 @@ bool loadingCameraFlag = false;
         }
         
         AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+        
+        Float64 TotalSeconds = 10*60;
+        int32_t preferredTimeScale = 30;
+        CMTime maxDuration = CMTimeMakeWithSeconds(TotalSeconds, preferredTimeScale);	        movieFileOutput.maxRecordedDuration = maxDuration;
+        movieFileOutput.minFreeDiskSpaceLimit = 1024 * 1024 * 100;
+        
         if ( [self.session canAddOutput:movieFileOutput] ) {
             [self.session addOutput:movieFileOutput];
             AVCaptureConnection *connection = [movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
@@ -606,6 +647,7 @@ bool loadingCameraFlag = false;
             self.session = [[AVCaptureSession alloc] init];
             self.previewView.hidden = false;
             self.previewView.session = self.session;
+            
             [self configureCameraSettings];
             
             dispatch_async( self.sessionQueue, ^{
@@ -614,6 +656,7 @@ bool loadingCameraFlag = false;
                     case AVCamSetupResultSuccess:
                     {
                         [self addObservers];
+                        
                         [self.session startRunning];
                         
                         self.sessionRunning = self.session.isRunning;
@@ -667,6 +710,16 @@ bool loadingCameraFlag = false;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
+    if(shutterActionMode == SnapCamSelectionModeLiveStream){
+
+        [liveStreaming stopStreamingClicked];
+        [_liveSteamSession endRtmpSession];
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+        [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+        [_liveSteamSession.previewView removeFromSuperview];
+        _liveSteamSession.delegate = nil;
+        [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+    }
  }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{
@@ -720,6 +773,9 @@ bool loadingCameraFlag = false;
                     {
                         self.playiIconView.hidden = false;
                     }
+                    else{
+                        self.playiIconView.hidden = true;
+                    }
                     return;
                 });
             }
@@ -728,6 +784,9 @@ bool loadingCameraFlag = false;
                     if([latestCapturedMediaType  isEqual: @"video"])
                     {
                         self.playiIconView.hidden = false;
+                    }
+                    else{
+                        self.playiIconView.hidden = true;
                     }
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
@@ -738,6 +797,9 @@ bool loadingCameraFlag = false;
         if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
             if([[[GlobalDataRetriever sharedInstance] globalDataSource][0][@"media_type"]  isEqual: @"video"]){
                 self.playiIconView.hidden = false;
+            }
+            else{
+                self.playiIconView.hidden = true;
             }
             self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
         }
@@ -753,6 +815,9 @@ bool loadingCameraFlag = false;
                 if([latestSharedMediaType  isEqual: @"video"])
                 {
                     self.playiIconView.hidden = false;
+                }
+                else{
+                    self.playiIconView.hidden = true;
                 }
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
@@ -783,7 +848,10 @@ bool loadingCameraFlag = false;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if([latestSharedMediaType  isEqual: @"video"])
                     {
-                        self.playiIconView.hidden = false;
+                        self.playiIconView.hidden = NO;
+                    }
+                    else{
+                        self.playiIconView.hidden = YES;
                     }
                     self.latestSharedMediaImage.image = [UIImage imageWithData: data];
                 });
@@ -1069,9 +1137,26 @@ bool loadingCameraFlag = false;
             AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
             AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
             connection.videoOrientation = previewLayer.connection.videoOrientation;
+            
+//            if(shutterActionMode == SnapCamSelectionModeVideo){
+                [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+                if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
+                    [self.session setSessionPreset:AVCaptureSessionPresetMedium];
+                }
+//            }
             // Start recording to a temporary file.
-            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
-            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
+//            NSString *outputFileName = [NSProcessInfo processInfo].globallyUniqueString;
+//            NSString *outputFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[outputFileName stringByAppendingPathExtension:@"mov"]];
+            
+            NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths firstObject];
+            NSString *filePath=@"";
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+            NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+            filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
+            NSString *outputFilePath = [filePath stringByAppendingString:@".mov"];
+            NSLog(@"Path ===> %@",outputFilePath);
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
         }
         else {
@@ -1347,6 +1432,7 @@ bool loadingCameraFlag = false;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
                             [self saveImage:imageData];
+                            NSLog(@"%@OutputUrl",outputFileURL);
                             [self moveVideoToDocumentDirectory:outputFileURL];
                             
                             //Save Captured videos to the CA7CH specific album in phone

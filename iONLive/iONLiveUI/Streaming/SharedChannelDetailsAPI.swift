@@ -82,7 +82,7 @@ class SharedChannelDetailsAPI: NSObject {
                 }) { (error, message) -> () in
                     self.authenticationFailureHandler(error, code: message)
                 }
-
+                
                 
             }
         }
@@ -186,7 +186,7 @@ class SharedChannelDetailsAPI: NSObject {
                 }
                 
                 
-                // let infiniteScrollId  = responseArr[index].valueForKey("channel_live_stream_detail_id") as! String
+                //   let infiniteScrollId  = responseArrLive[liveIndex].valueForKey("channel_live_stream_detail_id") as! String
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -340,6 +340,19 @@ class SharedChannelDetailsAPI: NSObject {
         }
         if(imageDataSource.count > 0 )
         {
+            if(selectedSharedChannelMediaSource.count > 0)
+            {
+                let type = selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
+                if type == "live"
+                {
+                    let dateFormatter = NSDateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    dateFormatter.timeZone = NSTimeZone(name: "UTC")
+                    let currentDate = dateFormatter.stringFromDate(NSDate())
+                    selectedSharedChannelMediaSource[0]["createdTime"] = currentDate
+                }
+            }
+            
             if(selectedSharedChannelMediaSource.count > 0){
                 selectedSharedChannelMediaSource.sortInPlace({ p1, p2 in
                     let time1 = p1["createdTime"] as! String

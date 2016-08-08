@@ -69,7 +69,10 @@ class ChannelSharedListAPI: NSObject {
             dummy.removeAll()
             dataSource.removeAll()
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
-            
+            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            {
+                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+            }
             if (responseArrLive.count != 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
@@ -88,21 +91,41 @@ class ChannelSharedListAPI: NSObject {
                     let dateFormatter = NSDateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                     dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                    
-                    //  let cloudDate = dateFormatter.dateFromString(dateStr)
-                    
                     let localDateStr = dateFormatter.stringFromDate(NSDate())
+                    var flag: Bool = false
+                    if(mediaShared.count > 0)
+                    {
+                        for(var i = 0 ;i < mediaShared.count ; i++)
+                        {
+                            if let val = mediaShared[i][channelIdkey] {
+                                if((val as! String) == channelId)
+                                {
+                                    flag = true
+                                }
+                                
+                                
+                            }
+                        }
+                        if(!flag)
+                        {
+                            mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                        }
+                    }
+                    else{
+                        mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                    }
+                    
                     dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,subChannelIdKey : channelSubId!,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
             }
             
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
             
-            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
-            {
-                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
-            }
-            
+            //            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            //            {
+            //                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+            //            }
+            //
             if(responseArr.count == 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")

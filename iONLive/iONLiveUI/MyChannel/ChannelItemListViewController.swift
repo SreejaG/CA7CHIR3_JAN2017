@@ -390,6 +390,9 @@ class ChannelItemListViewController: UIViewController {
     {
         self.removeOverlay()
         selectionButton.hidden = false
+        cancelButton.hidden = true
+        backButton.hidden = false
+        
         print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {

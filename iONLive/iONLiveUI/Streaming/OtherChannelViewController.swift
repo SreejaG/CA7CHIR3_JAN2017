@@ -54,6 +54,10 @@ class OtherChannelViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectInserted), name: "AddedOneObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
         //self.refreshControl = UIRefreshControl()
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
+            UIControlEvents.ValueChanged)
+        self.channelItemsCollectionView.addSubview(self.refreshControl)
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
             self.removeOverlay()
@@ -131,13 +135,21 @@ class OtherChannelViewController: UIViewController {
         if(!pullToRefreshActive){
             pullToRefreshActive = true
             do {
-                getPullToRefreshData()
+                if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
+                {
+                    getPullToRefreshData()
+                }
                 
             } catch {
-                print("Not me error")
             }
             
         }
+        else
+        {
+            pullToRefreshActive = false
+            self.refreshControl.endRefreshing()
+        }
+        
     }
     func ObjectInserted()
     {
@@ -161,11 +173,7 @@ class OtherChannelViewController: UIViewController {
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
-                self.refreshControl.removeFromSuperview()
-                self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-                self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
-                    UIControlEvents.ValueChanged)
-                self.channelItemsCollectionView.addSubview(self.refreshControl)
+                
                 self.channelItemsCollectionView.reloadData()
                 self.isWatchedTrue()
             })
@@ -297,7 +305,11 @@ class OtherChannelViewController: UIViewController {
             
             for(var i = 0 ; i < sortList.count ; i++)
             {
-                subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
+                let id = sortList[i]["channel_media_detail_id"] as! String
+                if(id != "")
+                {
+                    subIdArray.append(Int(id)!)
+                }
                 
             }
             if(subIdArray.count > 0)
@@ -337,6 +349,7 @@ class OtherChannelViewController: UIViewController {
                         let subid = subIdArray.maxElement()
                         let channelSelectedMediaId = "\(subid)"
                         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
+                        print(channelSelectedMediaId)
                         SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
                     }
                 }
@@ -362,7 +375,7 @@ class OtherChannelViewController: UIViewController {
                     if subIdArray.count > 0
                     {
                         let subid = subIdArray.maxElement()
-                        let channelSelectedMediaId = "\(subid)"
+                        let channelSelectedMediaId = "\(subid!)"
                         SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
                     }
                 }
@@ -430,7 +443,7 @@ class OtherChannelViewController: UIViewController {
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://130.211.135.170:1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }

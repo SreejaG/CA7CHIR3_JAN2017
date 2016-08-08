@@ -139,6 +139,15 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 let savingPath = "\(parentPath)/\(mediaId)video.mov"
                 let url = NSURL(fileURLWithPath: savingPath)
                 videoData.writeToURL(url, atomically: true)
+                videoData = NSData()
+                let videoUrlString = videoSavedURL.absoluteString
+                if(NSFileManager.defaultManager().fileExistsAtPath(videoUrlString)){
+                    do {
+                        try NSFileManager.defaultManager().removeItemAtPath(videoUrlString)
+                    } catch let error as NSError {
+                        print(error.debugDescription)
+                    }
+                }
             }
         }
     }
@@ -200,7 +209,10 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             imageOrVideoData = UIImageJPEGRepresentation(imageFromDB, 0.5)!
         }
         else{
-            imageOrVideoData = NSData(contentsOfURL: videoSavedURL)!
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+            let savingPath = "\(parentPath)/\(mediaId)video.mov"
+            let url = NSURL(fileURLWithPath: savingPath)
+            imageOrVideoData = NSData(contentsOfURL: url)!
         }
         request.HTTPBody = imageOrVideoData
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
@@ -242,15 +254,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         if(fileManager.fileExistsAtPath(path)){
             do {
                 try fileManager.removeItemAtPath(path)
-            } catch let error as NSError {
-                print(error.debugDescription)
-            }
-        }
-        
-        let videoUrlString = videoSavedURL.absoluteString
-        if(fileManager.fileExistsAtPath(videoUrlString)){
-            do {
-                try fileManager.removeItemAtPath(videoUrlString)
             } catch let error as NSError {
                 print(error.debugDescription)
             }

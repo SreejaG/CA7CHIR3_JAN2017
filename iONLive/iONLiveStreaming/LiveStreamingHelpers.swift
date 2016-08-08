@@ -42,7 +42,7 @@ class LiveStreamingHelpers
     
     func getHost() ->String
     {
-        return "130.211.135.170"
+        return vowzaIp
     }
     
     func getPort() ->String

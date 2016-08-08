@@ -1,10 +1,3 @@
-//
-//  SnapCamSelectViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/1/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -103,14 +96,8 @@ extension SnapCamSelectViewController:UITableViewDataSource
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         let count = dataSource.count
-        if count > 0
-        {
-            return count
-        }
-        else
-        {
-            return 0
-        }
+        return count > 0 ? count : 0
+
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -403,7 +390,7 @@ extension SnapCamSelectViewController
     
     func updateSnapCamSelection(rowVal:Int)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
+        //let defaults = NSUserDefaults .standardUserDefaults()
         switch(rowVal)
         {
         case 0 :

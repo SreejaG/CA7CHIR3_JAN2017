@@ -21,6 +21,7 @@ let streamingToken = "StreamingToken"
 let initializingStream = "InitializingStream"
 let subChannelIdKey = "channel_sub_detail_id"
 let apiDeveloperFailureMessage = "developerMsg"
+let vowzaIp = "104.154.69.174"
 
 @objc enum SnapCamSelectionMode : Int {
     

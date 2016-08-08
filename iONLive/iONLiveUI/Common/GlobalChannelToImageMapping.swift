@@ -144,11 +144,13 @@ class GlobalChannelToImageMapping: NSObject {
         {
             localDataSource.append(GlobalChannelImageDict[chanelId]![i])
         }
-        for var i = 0; i < localDataSource.count; i++
+        print("localdata \(localDataSource)")
+        for var k = 0; k < localDataSource.count; k++
         {
             var imageForMedia : UIImage = UIImage()
-            let mediaId = String(localDataSource[i][mediaDetailIdKey]!)
+            let mediaId = String(localDataSource[k][mediaDetailIdKey]!)
             let mediaIdForFilePath = "\(mediaId)thumb"
+//            print(mediaIdForFilePath)
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -157,7 +159,7 @@ class GlobalChannelToImageMapping: NSObject {
                 imageForMedia = mediaImageFromFile!
             }
             else{
-                let mediaUrl = localDataSource[i][thumbImageURLKey] as! String
+                let mediaUrl = localDataSource[k][thumbImageURLKey] as! String
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -181,7 +183,7 @@ class GlobalChannelToImageMapping: NSObject {
                     })
                 }
             }
-            localDataSource[i][thumbImageKey] = imageForMedia
+            localDataSource[k][thumbImageKey] = imageForMedia
         }
         
         for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++
