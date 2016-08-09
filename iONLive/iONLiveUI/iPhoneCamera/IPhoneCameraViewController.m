@@ -829,10 +829,10 @@ NSTimer *timer;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if([latestCapturedMediaType  isEqual: @"video"])
                     {
-                        self.playiIconView.hidden = false;
+                        self.playiIconView.hidden = NO;
                     }
                     else{
-                        self.playiIconView.hidden = true;
+                        self.playiIconView.hidden = YES;
                     }
                     return;
                 });
@@ -841,10 +841,10 @@ NSTimer *timer;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if([latestCapturedMediaType  isEqual: @"video"])
                     {
-                        self.playiIconView.hidden = false;
+                        self.playiIconView.hidden = NO;
                     }
                     else{
-                        self.playiIconView.hidden = true;
+                        self.playiIconView.hidden = YES;
                     }
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
@@ -854,10 +854,10 @@ NSTimer *timer;
     else{
         if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
             if([[[GlobalDataRetriever sharedInstance] globalDataSource][0][@"media_type"]  isEqual: @"video"]){
-                self.playiIconView.hidden = false;
+                self.playiIconView.hidden = NO;
             }
             else{
-                self.playiIconView.hidden = true;
+                self.playiIconView.hidden = YES;
             }
             self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
         }
@@ -872,10 +872,10 @@ NSTimer *timer;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if([latestSharedMediaType  isEqual: @"video"])
                 {
-                    self.playiIconView.hidden = false;
+                    self.playiIconView.hidden = NO;
                 }
                 else{
-                    self.playiIconView.hidden = true;
+                    self.playiIconView.hidden = YES;
                 }
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });

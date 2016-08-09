@@ -169,11 +169,11 @@ class StreamsListViewController: UIViewController{
             {
                 if  mediaSharedCountArray[i][channelIdkey] as! String == chanlId
                 {
-                    let totalNo = mediaShared[i][totalNoShared] as! String
+                    let totalNo = mediaSharedCountArray[i][totalNoShared] as! String
                     let totalNoLatest : Int = Int(totalNo)! - count
                     if totalNoLatest >= 0
                     {
-                        mediaShared[i][totalNoShared]  = "\(totalNoLatest)"
+                        mediaSharedCountArray[i][totalNoShared]  = "\(totalNoLatest)"
                     }
                     let defaults = NSUserDefaults .standardUserDefaults()
                     defaults.setObject(mediaSharedCountArray, forKey: "Shared")
@@ -358,6 +358,8 @@ class StreamsListViewController: UIViewController{
                             foundFlag = true
                             removeIndex = i
                         }
+                        
+                        
                     }
                 }
                 if(foundFlag)
@@ -379,6 +381,8 @@ class StreamsListViewController: UIViewController{
         })
         
     }
+    
+    
     func getDataUsingNotificationId(info : [String : AnyObject])
     {
         //  let info = notif.object as! [String : AnyObject]
@@ -439,9 +443,9 @@ class StreamsListViewController: UIViewController{
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
                         // let mediaIdValue = mediaArrayData[mediaArrayCount] as! String
-                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
+                       // let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
                         
-                        if("\(mediaIdValue)" == mediaId)
+                        if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                         {
                             removeIndex = i
                             count = count + 1
@@ -488,8 +492,8 @@ class StreamsListViewController: UIViewController{
                     let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
-                        let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
-                        if("\(mediaIdValue)" == mediaId)
+                     //   let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
+                        if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                         {
                             count = count + 1
                             removeIndex = i

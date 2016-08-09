@@ -216,6 +216,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
             GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr, sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            var imageData = [[String:AnyObject]]()
+             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.myChannelTableView.reloadData()
             })
