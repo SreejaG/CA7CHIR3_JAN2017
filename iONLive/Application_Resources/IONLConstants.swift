@@ -1,10 +1,3 @@
-//
-//  IONLConstants.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
 let userLoginIdKey = "userLoginIdKey"
@@ -38,10 +31,6 @@ let vowzaIp = "130.211.135.170"
         self = .Photos
     }
 
-//    init(rawValue : String)
-//    {
-//        self = SnapCamSelectionMode(rawValue: rawValue)
-//    }
 }
 
 

@@ -1,10 +1,3 @@
-//
-//  ContactDetailsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 16/03/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -50,8 +43,7 @@ class ContactDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-     //   doneButton.hidden = true
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactDetailsViewController.callSignUpRefreshContactListTableView(_:)), name: "refreshSignUpContactListTableView", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactDetailsViewController.callSignUpRefreshContactListTableView(_:)), name: "refreshSignUpContactListTableView", object: nil)
         initialise()
     }
     
@@ -82,7 +74,6 @@ class ContactDetailsViewController: UIViewController {
             for element in dataSource![i]{
                 let selected = element["tempSelected"] as! Int
                 if(selected == 1){
-                    print(element[nameKey] as! String)
                     let number = element[phoneKey] as! String
                     contactsArray.addObject(number)
                 }
@@ -94,7 +85,7 @@ class ContactDetailsViewController: UIViewController {
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             showOverlay()
             contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
-                    self.authenticationSuccessHandlerInvite(response)
+                self.authenticationSuccessHandlerInvite(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandlerInvite(error, code: message)
                 return
@@ -117,7 +108,6 @@ class ContactDetailsViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -168,29 +158,25 @@ class ContactDetailsViewController: UIViewController {
     func authenticationFailureHandlerInvite(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-           
+            
             if code == "CONTACT001"{
-              //   ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 loadIphoneCameraController()
             }
             else  if code == "CONTACT002"{
-            //     ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 loadIphoneCameraController()
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
-            
         }
         else{
             ErrorManager.sharedInstance.addContactError()
         }
+        
         for var i = 0; i < dataSource!.count; i++
         {
             for var j = 0; j < dataSource![i].count; j++
@@ -205,11 +191,12 @@ class ContactDetailsViewController: UIViewController {
     func loadIphoneCameraController(){
         if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
         {
-            NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
+            NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
             GlobalDataRetriever.sharedInstance.initialise()
             GlobalDataChannelList.sharedInstance.initialise()
-            
+            ChannelSharedListAPI.sharedInstance.initialisedata()
         }
+        
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -264,11 +251,10 @@ class ContactDetailsViewController: UIViewController {
             for element in responseArr{
                 
                 let userName = element[nameKey] as! String
-                let selection = "0"
                 let mobNum = element[phoneKey] as! String
                 
                 //signed url iprofile
-               
+                
                 let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
                 let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
                 if(thumbUrl != "")
@@ -285,9 +271,9 @@ class ContactDetailsViewController: UIViewController {
                 else{
                     contactImage = UIImage(named: "dummyUser")!
                 }
-
+                
                 appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage, "orgSelected":0, "tempSelected":0])
-               
+                
             }
             setContactDetails()
         }
@@ -300,13 +286,11 @@ class ContactDetailsViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
+            
             if code == "CONTACT001"{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 setContactDetails()
@@ -326,7 +310,6 @@ class ContactDetailsViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-     //   self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -335,7 +318,6 @@ class ContactDetailsViewController: UIViewController {
     
     func setContactDetails()
     {
-        print(contactDataSource)
         contactDummy.removeAll()
         var Cflag : Bool = false
         for i in 0 ..< contactDataSource.count
@@ -357,13 +339,10 @@ class ContactDetailsViewController: UIViewController {
                 contactDummy.append(contactDataSource[i])
             }
         }
-        
         contactDataSource.removeAll()
         contactDataSource = contactDummy
         contactDummy.removeAll()
-       
         dataSource = [appContactsArr,contactDataSource]
-        print(appContactsArr)
         contactTableView.reloadData()
     }
     
@@ -413,10 +392,8 @@ class ContactDetailsViewController: UIViewController {
                 dataSource![section][row]["tempSelected"] = 1
             }
         }
-        
         contactTableView.reloadData()
     }
-    
 }
 
 extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
@@ -514,7 +491,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             else{
                 cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
-
+            
             cell.selectionStyle = .None
             return cell
         }
@@ -523,7 +500,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             return UITableViewCell()
         }
     }
-    
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {

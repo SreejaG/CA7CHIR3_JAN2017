@@ -32,6 +32,9 @@ class ChannelItemListViewController: UIViewController {
     let cameraController = IPhoneCameraViewController()
     let defaults = NSUserDefaults .standardUserDefaults()
     
+    var operationQueueObjInChannelImageList = NSOperationQueue()
+    var operationInChannelImageList = NSBlockOperation()
+    
     var lastContentOffset: CGPoint = CGPoint()
     
     var loadingOverlay: UIView?
@@ -53,7 +56,6 @@ class ChannelItemListViewController: UIViewController {
     var totalCount = 0
     
     var totalMediaCount: Int = Int()
-    
     
     override func viewDidLoad()
     {
@@ -84,13 +86,14 @@ class ChannelItemListViewController: UIViewController {
                     let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
                     totalCount = filteredData.count
                 }
-              
+                
                 if totalCount > 0
                 {
                     selectionButton.hidden = false
                     removeOverlay()
-                    self.channelItemCollectionView.reloadData()
-                    
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.channelItemCollectionView.reloadData()
+                    })
                 }
                 else if totalCount <= 0
                 {
@@ -98,17 +101,13 @@ class ChannelItemListViewController: UIViewController {
                     totalCount = 0
                     self.channelItemCollectionView.reloadData()
                 }
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.downloadImagesFromGlobalChannelImageMapping(21)
-                    })
-
+                 downloadImagesFromGlobalChannelImageMapping(21)
             }
         }
     }
     
     func removeActivityIndicatorMyChanel(notif : NSNotification){
+        operationInChannelImageList.cancel()
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
@@ -125,11 +124,11 @@ class ChannelItemListViewController: UIViewController {
             else{
                 self.cancelButton.hidden = false
             }
-            
-            
             self.removeOverlay()
             self.channelItemCollectionView.reloadData()
         })
+       
+        
         if downloadingFlag == true
         {
             downloadingFlag = false
@@ -138,6 +137,7 @@ class ChannelItemListViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        downloadingFlag = false
         if let channelName = channelName
         {
             channelTitleLabel.text = channelName.uppercaseString
@@ -146,6 +146,7 @@ class ChannelItemListViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+        operationInChannelImageList.cancel()
         removeOverlay()
         self.channelItemCollectionView.alpha = 1.0
         channelItemCollectionView.userInteractionEnabled = true
@@ -172,11 +173,7 @@ class ChannelItemListViewController: UIViewController {
                     if self.downloadingFlag == false
                     {
                         self.downloadingFlag = true
-                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                        dispatch_async(backgroundQueue, {
-                            self.downloadImagesFromGlobalChannelImageMapping(12)
-                        })
+                        downloadImagesFromGlobalChannelImageMapping(12)
                     }
                 }
             }
@@ -184,6 +181,7 @@ class ChannelItemListViewController: UIViewController {
     }
     
     func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
+        operationInChannelImageList.cancel()
         let start = totalCount
         var end = 0
         if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
@@ -192,10 +190,12 @@ class ChannelItemListViewController: UIViewController {
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
-//        totalCount = totalCount + end
         end = start + end
-        
-        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(channelId, start: start, end: end)
+   
+        operationInChannelImageList  = NSBlockOperation (block: {
+            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInChannelImageList)
+        })
+        self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
     }
     
     func  loadInitialViewController(code: String){
@@ -210,7 +210,6 @@ class ChannelItemListViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -287,7 +286,9 @@ class ChannelItemListViewController: UIViewController {
         addButton.enabled = false
         deleteButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
         addButton.setTitleColor(UIColor.lightGrayColor(), forState: UIControlState.Normal)
-        channelItemCollectionView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemCollectionView.reloadData()
+        })
     }
     
     @IBAction func didTapCancelButton(sender: AnyObject) {
@@ -300,7 +301,9 @@ class ChannelItemListViewController: UIViewController {
         addButton.hidden = true
         backButton.hidden = false
         selectionFlag = false
-        channelItemCollectionView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemCollectionView.reloadData()
+        })
     }
     
     @IBAction func didTapDeleteButton(sender: AnyObject) {
@@ -334,7 +337,7 @@ class ChannelItemListViewController: UIViewController {
             totalMediaCount = totalMediaCount - selected.count
             selectedArray = selectedArray.sort()
             deletedMediaArray.removeAllObjects()
-            
+            operationInChannelImageList.cancel()
             for(var i = 0; i < selectedArray.count; i++){
                 var selectedIndex = selectedArray[i]
                 selectedIndex = selectedIndex - i
@@ -347,25 +350,7 @@ class ChannelItemListViewController: UIViewController {
             
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: deletedMediaArray)
             
-            //            if(channelName == "Archive"){
-            //                let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            //
-            //                if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-            //                {
-            //                    let fileManager = NSFileManager.defaultManager()
-            //                    do {
-            //                        try fileManager.removeItemAtPath(documentsPath)
-            //                    }
-            //                    catch let error as NSError {
-            //                        print("Ooops! Something went wrong: \(error)")
-            //                    }
-            //                    FileManagerViewController.sharedInstance.createParentDirectory()
-            //                }
-            //                else{
-            //                    FileManagerViewController.sharedInstance.createParentDirectory()
-            //                }
-            //
-            //            }
+            downloadingFlag = false
             
             selectionFlag = false
             selectedArray.removeAll()
@@ -381,8 +366,9 @@ class ChannelItemListViewController: UIViewController {
             else{
                 selectionButton.hidden = true
             }
-            
-            channelItemCollectionView.reloadData()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.channelItemCollectionView.reloadData()
+            })
         }
     }
     
@@ -392,8 +378,6 @@ class ChannelItemListViewController: UIViewController {
         selectionButton.hidden = false
         cancelButton.hidden = true
         backButton.hidden = false
-        
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -418,7 +402,9 @@ class ChannelItemListViewController: UIViewController {
             selectionButton.hidden = true
         }
         
-        channelItemCollectionView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemCollectionView.reloadData()
+        })
     }
 }
 
@@ -523,10 +509,12 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 deleteButton.enabled = false
                 addButton.enabled = false
             }
-            collectionView.reloadData()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.channelItemCollectionView.reloadData()
+            })
         }
         else{
-          
+            
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey] != nil
             {
                 self.showOverlay()

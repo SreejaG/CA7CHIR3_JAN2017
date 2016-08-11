@@ -49,30 +49,26 @@ class GlobalDataRetriever: NSObject
         ImageUpload.sharedInstance.getChannelMediaDetails("\(channelId)" , userName: userName, accessToken: accessToken, limit: "\(archiveMeidaCount)", offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandlerForFetchMedia(response)
         }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         var codeString : String = String()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !RequestManager.sharedInstance.validConnection() {
             codeString = "noNetwork"
-            //                ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
             codeString = code
         }
         else{
             codeString = "ResponseError"
-            ErrorManager.sharedInstance.inValidResponseError()
         }
         NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
     }
-
     
     func authenticationSuccessHandlerForFetchMedia(response:AnyObject?)
     {
@@ -114,10 +110,15 @@ class GlobalDataRetriever: NSObject
         }
     }
     
-    func downloadMediaFromGCS(start:Int, end:Int)
+    func downloadMediaFromGCS(start:Int, end:Int, operationObj: NSBlockOperation)
     {
         for(var i = start; i < end; i++)
         {
+            if operationObj.cancelled == true
+            {
+                return
+            }
+            print("i value in global retriever   ===> \(i)")
             var imageForMedia : UIImage = UIImage()
             let mediaId = String(globalDataSource[i][mediaDetailIdKey]!)
             let mediaIdForFilePath = "\(mediaId)thumb"
@@ -169,11 +170,13 @@ class GlobalDataRetriever: NSObject
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
+        var data = NSData(contentsOfURL: downloadURL)
         if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
+            data = nil
+            if var mediaImage1 = UIImage(data: imageData)
             {
                 mediaImage = mediaImage1
+                mediaImage1 = UIImage()
             }
             completion(result: mediaImage)
         }
@@ -186,13 +189,13 @@ class GlobalDataRetriever: NSObject
     func deleteMediasOnGlobalMyMediaDeletionAction(mediaId: String){
         
         //all channelIds from global channel image mapping data source to a channelids array
-        let channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
+        var channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
         
         var channelMediaDataSource : [[String:AnyObject]] = [[String:AnyObject]]()
         var index = 0
         var selectedIndex : Int = -1
-        
-        //loop through the channelIds array
+//
+//        //loop through the channelIds array
         for var mainIndex = 0; mainIndex < channelIds.count; mainIndex++
         {
             let chanID = channelIds[mainIndex]
@@ -201,8 +204,8 @@ class GlobalDataRetriever: NSObject
             
             //store the medias of a particular channel to a media array
             channelMediaDataSource = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanID]!
-            
-            //loop through the media array
+//
+//            //loop through the media array
             for var j = 0; j < channelMediaDataSource.count; j++
             {
                 index = j
@@ -215,7 +218,7 @@ class GlobalDataRetriever: NSObject
                     break
                 }
             }
-            
+
             //save the media array index to another array for removing
             if chkFlag == true
             {
@@ -234,30 +237,35 @@ class GlobalDataRetriever: NSObject
                 
                 //update the global image datasource with medias and channel id
                 GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanID)
-                
+
                 //loop through the channel list array to update total count and latest thumbnail after deletion complete
                 
                 for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
                 {
                     let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelDetailIdKey] as! String
-                    
+
                     //check channel id exists
                     if chanIdChk == chanID
                     {
-                        let totalNumOfMedias = channelMediaDataSource.count
+                        var totalNumOfMedias = channelMediaDataSource.count
                         if channelMediaDataSource.count > 0
                         {
-                            let mediaIdForFilePath = "\(channelMediaDataSource[0][mediaDetailIdKey] as! String)thumb"
-                            let thumbUrl = channelMediaDataSource[0][thumbImageURLKey] as! String
+                            var mediaIdForFilePath = "\(channelMediaDataSource[0][mediaDetailIdKey] as! String)thumb"
+                            var thumbUrl = channelMediaDataSource[0][thumbImageURLKey] as! String
                             GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageURLKey] = thumbUrl
+                           
                             GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] = downloadLatestMedia(mediaIdForFilePath,thumbURL: thumbUrl)
+                            mediaIdForFilePath = ""
+                            thumbUrl = ""
                         }
                         else{
                             GlobalDataChannelList.sharedInstance.globalChannelDataSource[k] [thumbImageURLKey] = "empty"
                             GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][thumbImageKey] =  UIImage(named: "thumb12")
                         }
                         GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaCountKey] = "\(totalNumOfMedias)"
+                        
                     }
+                    
                 }
             }
             channelMediaDataSource.removeAll()
@@ -265,27 +273,33 @@ class GlobalDataRetriever: NSObject
             chkFlag = false
             index = 0
         }
+        channelMediaDataSource.removeAll()
+        channelIds.removeAll()
     }
     
     func downloadLatestMedia(mediaIdForFilePath: String, thumbURL : String) -> UIImage
     {
         var imageForMedia : UIImage = UIImage()
-        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-        let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+        var parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+        var savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+        var fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+        parentPath = NSURL()
+        savingPath = ""
+        
         if fileExistFlag == true{
-            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+            var mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
             imageForMedia = mediaImageFromFile!
+            mediaImageFromFile = UIImage()
         }
         else{
             if(thumbURL != ""){
-                let url = convertStringtoURL(thumbURL)
+                var url = convertStringtoURL(thumbURL)
                 downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                     if(result != UIImage()){
-                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                        var imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                        var imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                        var imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                        var imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                         if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
                             
                         }
@@ -293,29 +307,21 @@ class GlobalDataRetriever: NSObject
                             FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                         }
                         imageForMedia = result
+                        imageDataFromresult = nil
+                        imageDataFromresultAsNsdata = NSData()
+                        imageDataFromDefault = nil
+                        imageDataFromDefaultAsNsdata = NSData()
                     }
                     else{
                         imageForMedia =  UIImage(named: "thumb12")!
                     }
+                    url = NSURL()
                 })
             }
         }
-        
+        fileExistFlag = Bool()
         return imageForMedia
     }
-    
-    
-    //    func authenticationFailureHandlerForFetchMedia(error: NSError?, code: String)
-    //    {
-    //        print("message = \(code) andError = \(error?.localizedDescription) ")
-    //        if !self.requestManager.validConnection() {
-    //            ErrorManager.sharedInstance.noNetworkConnection()
-    //        }
-    //        else if code.isEmpty == false {
-    //            ErrorManager.sharedInstance.inValidResponseError()
-    //        }
-    //    }
-    
 }
 
 

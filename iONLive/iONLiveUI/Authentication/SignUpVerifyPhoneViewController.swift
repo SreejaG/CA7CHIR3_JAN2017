@@ -1,10 +1,3 @@
-//
-//  SignUpVerifyPhoneViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 1/4/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 import Foundation
@@ -67,7 +60,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-//        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -83,7 +75,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         else{
             self.title = "VERIFY PHONE #"
         }
-       
+        
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
@@ -110,7 +102,6 @@ class SignUpVerifyPhoneViewController: UIViewController
         mobileNumberTextField.autocorrectionType = .No
         countryCodeTextField.autocorrectionType = .No
         verificationCodeTextField.autocorrectionType = .No
-        
     }
     
     func checkVerificationCodeVisiblty()
@@ -178,7 +169,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     @IBAction func verifyPhoneContinueButtonClicked(sender: AnyObject)
     {
-//        view.endEditing(true)
         if countryTextField.text!.isEmpty
         {
             ErrorManager.sharedInstance.emptyCountryError()
@@ -200,7 +190,7 @@ class SignUpVerifyPhoneViewController: UIViewController
                 }
                 else if((userName == "invalid") && (email == "invalid"))
                 {
-                   loadForgotPasswordView()
+                    loadForgotPasswordView()
                 }
                 else{
                     
@@ -228,13 +218,6 @@ class SignUpVerifyPhoneViewController: UIViewController
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         verifyPhoneVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
-    }
-    
-    func ltzAbbrev() -> String
-    {
-        let zoneName = NSTimeZone.localTimeZone().name
-        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
-        return timeValue!
     }
     
     func generateWaytoSendAlert()
@@ -268,10 +251,10 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         showOverlay()
         authenticationManager.generateVerificationCodeForResetPassword(mobileNumber, success: { (response) in
-                self.authenticationSuccessHandler(response)
-            }) { (error, message) in
-                self.authenticationFailureHandler(error, code: message)
-                return
+            self.authenticationSuccessHandler(response)
+        }) { (error, message) in
+            self.authenticationFailureHandler(error, code: message)
+            return
         }
     }
     
@@ -279,10 +262,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         showOverlay()
         let userCountryCode = self.countryCodeTextField.text
-
-//        let timeZoneOffsetInGMT : String = ltzAbbrev()
-//        let timeZoneOffsetInUTC = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
-        
         let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
         let timeOffsetStr = String(timeOffset)
         var timeZoneOffsetInUTC : String = String()
@@ -316,7 +295,6 @@ class SignUpVerifyPhoneViewController: UIViewController
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -361,8 +339,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -393,14 +369,12 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func authenticationSuccessHandlerVerification(response:AnyObject?)
     {
-      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             var status: Int!
             status = json["status"] as! Int
             if(status >= 1)
             {
-                print(json)
                 verificationCode = ""
                 if let tocken = json["token"]
                 {
@@ -424,13 +398,6 @@ class SignUpVerifyPhoneViewController: UIViewController
                     defaults.setValue(code, forKey:ArchiveCount)
                     
                 }
-//                if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
-//                {
-//                    NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
-//                    GlobalDataRetriever.sharedInstance.initialise()
-//                    GlobalDataChannelList.sharedInstance.initialise()
-//
-//                }
                 loadFindFriendsView()
             }
         }

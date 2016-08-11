@@ -1,13 +1,5 @@
-//
-//  RequestManager.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
-//import AFNetworking
 
 class RequestManager {
     

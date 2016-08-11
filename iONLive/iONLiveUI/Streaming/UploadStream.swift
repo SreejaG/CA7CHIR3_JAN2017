@@ -1,10 +1,3 @@
-//
-//  UploadStream.swift
-//  iONLive
-//
-//  Created by Vinitha on 12/2/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
 
@@ -52,7 +45,6 @@ class UploadStream : NSObject
                 
                 }, failure: { (error, message) -> () in
                     self.streamingFailed()
-                    print("message = \(message), error = \(error?.localizedDescription)")
                     self.handleFailure(message)
                     return
             })
@@ -292,6 +284,5 @@ class UploadStream : NSObject
     {
         clearStreamingDefaults()
         stop_stream()
-        print("Live streaming stopped.......")
     }
 }

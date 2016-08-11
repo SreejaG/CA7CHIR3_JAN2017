@@ -1,13 +1,5 @@
-//
-//  AuthenticationManager.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
-
 
 class AuthenticationManager: NSObject {
     
@@ -140,7 +132,7 @@ class AuthenticationManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
     func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
@@ -200,5 +192,5 @@ class AuthenticationManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
 }

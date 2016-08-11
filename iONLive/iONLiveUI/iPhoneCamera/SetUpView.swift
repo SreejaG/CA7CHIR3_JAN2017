@@ -1,5 +1,4 @@
 
-
 import UIKit
 
 @objc class SetUpView: UIViewController {
@@ -11,7 +10,6 @@ import UIKit
     var channelDetails: NSDictionary = NSDictionary()
     var status: Int = Int()
     var userImages : [UIImage] = [UIImage]()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +40,6 @@ import UIKit
         if let json = response as? [String: AnyObject]
         {
             channelDetails = json as NSDictionary
-            print(channelDetails)
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {

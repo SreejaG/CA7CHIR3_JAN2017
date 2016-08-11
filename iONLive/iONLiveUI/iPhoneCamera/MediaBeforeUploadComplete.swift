@@ -17,11 +17,11 @@ class MediaBeforeUploadComplete: NSObject {
     var dataSourceFromLocal : [[String:AnyObject]] =  [[String:AnyObject]]()
     
     func updateDataSource(dataSourceRow: [String:AnyObject]) {
+        dataSourceFromLocal.removeAll()
         dataSourceFromLocal.append(dataSourceRow)
         NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("setFullscreenImage", object: nil)
         GlobalDataRetriever.sharedInstance.globalDataSource.append(dataSourceRow)
-        print( GlobalDataRetriever.sharedInstance.globalDataSource.count)
         GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
             let time1 = Int(p1[mediaIdKey] as! String)
             let time2 = Int(p2[mediaIdKey] as! String)
@@ -37,8 +37,6 @@ class MediaBeforeUploadComplete: NSObject {
         }
         archCount = archCount + 1
         NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
-        
-        print(NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount) as! Int)
     }
     
     func deleteRowFromDataSource(mediaId: String)  {

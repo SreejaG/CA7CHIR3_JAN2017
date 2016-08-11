@@ -1,5 +1,4 @@
 
-
 import UIKit
 
 class MyChannelNotificationViewController: UIViewController {
@@ -103,7 +102,6 @@ class MyChannelNotificationViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -240,13 +238,19 @@ class MyChannelNotificationViewController: UIViewController {
                 })
                 
                 if(dataSource.count > 0){
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
                         self.downloadMediaFromGCS()
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.NotificationTableView.reloadData()
                         })
                     })
+//                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+//                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+//                    dispatch_async(backgroundQueue, {
+//                        self.downloadMediaFromGCS()
+//                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                        })
+//                    })
                 }
             }
         }
@@ -287,6 +291,7 @@ class MyChannelNotificationViewController: UIViewController {
             }
             
             self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.NotificationTableView.reloadData()
@@ -345,8 +350,6 @@ class MyChannelNotificationViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

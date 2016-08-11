@@ -1,10 +1,3 @@
-//
-//  ImageUpload.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 3/16/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -76,9 +69,10 @@ class ImageUpload: NSObject {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().POST(UrlManager.sharedInstance.gesMediaObjectCreationUrl(), parameters: ["userName":userName, "access_token":accessToken ,"mediaType": mediaType] , success: { (operation, response) -> Void in
             
-            if let responseObject = response as? [String:AnyObject]
+            if var responseObject = response as? [String:AnyObject]
             {
                 success?(response: responseObject)
+                responseObject.removeAll()
             }
             else
             {
@@ -131,7 +125,6 @@ class ImageUpload: NSObject {
     {
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().GET(UrlManager.sharedInstance.getChannelMediaDetails(channelId, userName: userName, accessToken: accessToken, limit: limit, offset: offset), parameters: nil, success: { (operation, response) -> Void in
-            
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
@@ -188,16 +181,13 @@ class ImageUpload: NSObject {
     //delete media from channel
     func deleteMediasByChannel(userName: String, accessToken: String, mediaIds: NSArray, channelId:NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
-        print(mediaIds)
-        print(channelId)
-        print(userName)
-        
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().DELETE(UrlManager.sharedInstance.MediaByChannelAPIUrl(userName, accessToken: accessToken), parameters: ["mediaId":mediaIds, "channelId":channelId], success: { (operation, response) -> Void in
             
-            if let responseObject = response as? [String:AnyObject]
+            if var responseObject = response as? [String:AnyObject]
             {
                 success?(response: responseObject)
+                responseObject.removeAll()
             }
             else
             {
@@ -274,7 +264,7 @@ class ImageUpload: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
     func getInfinteScrollChannelMediaDetails(channelId : String , userName: String, accessToken: String ,channelMediaId : String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
@@ -331,6 +321,6 @@ class ImageUpload: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
     
 }

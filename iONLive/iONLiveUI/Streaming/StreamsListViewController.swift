@@ -46,6 +46,7 @@ class StreamsListViewController: UIViewController{
     var downloadCompleteFlag : String = "start"
     var lastContentOffset: CGPoint = CGPoint()
     @IBOutlet weak var streamListCollectionView: UICollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         firstTap = 0
@@ -55,9 +56,11 @@ class StreamsListViewController: UIViewController{
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.streamUpdate), name: "stream", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.mediaDeletePushNotification), name: "MediaDelete", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
+        
         getAllLiveStreams()
         initialise()
         showOverlay()
+        
         if GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0
         {
             GlobalStreamList.sharedInstance.initialiseCloudData(count ,endValueLimit: limit)
@@ -75,6 +78,7 @@ class StreamsListViewController: UIViewController{
             })
         }
     }
+    
     override func viewWillAppear(animated: Bool) {
         if (NSUserDefaults.standardUserDefaults().objectForKey("StreamListActive") == nil)
         {
@@ -86,7 +90,6 @@ class StreamsListViewController: UIViewController{
                 if(mediaAndLiveArray.count == 0)
                 {
                     self.showOverlay()
-                    
                     GlobalStreamList.sharedInstance.initialiseCloudData(0, endValueLimit: 21)
                 }
             }
@@ -101,21 +104,19 @@ class StreamsListViewController: UIViewController{
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
-        
     }
+    
     func pushNotificationUpdateStream(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
         if (info["type"] as! String == "liveStream")
         {
             channelPushNotificationLiveStarted(info)
-            
         }
         else if(info["type"] as! String == "channel")
         {
             if(info["subType"] as! String == "useradded")
             {
-                
             }
             else{
                 let channelId = info["channelId"]!
@@ -123,15 +124,13 @@ class StreamsListViewController: UIViewController{
                 deleteChannelSpecificMediaFromGlobal("\(channelId)")
             }
         }
-        
-        
     }
+    
     func deleteChannelSpecificMediaFromLocal(channelId : String)
     {
         var selectedArray : [Int] = [Int]()
         var foundFlag : Bool = false
         var removeIndex : Int = Int()
-        
         
         for(var i = 0 ; i < mediaAndLiveArray.count ; i++)
         {
@@ -145,16 +144,16 @@ class StreamsListViewController: UIViewController{
         selectedArray =  selectedArray.sort()
         for(var i = 0 ; i < selectedArray.count ; i++)
         {
-            //GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i])
             mediaAndLiveArray.removeAtIndex(selectedArray[i] - i)
-            
         }
+        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
             self.streamListCollectionView.reloadData()
         })
+        
         decremntMediaSharedCount(selectedArray.count , chanlId:channelId)
     }
+    
     func decremntMediaSharedCount( count : Int , chanlId : String)
     {
         let totalNoShared = "totalNo"
@@ -180,14 +179,13 @@ class StreamsListViewController: UIViewController{
                 }
             }
         }
-        
     }
+    
     func deleteChannelSpecificMediaFromGlobal(channelId : String)
     {
         var selectedArray : [Int] = [Int]()
         var foundFlag : Bool = false
         var removeIndex : Int = Int()
-        
         
         for(var i = 0 ; i < GlobalStreamList.sharedInstance.GlobalStreamDataSource.count ; i++)
         {
@@ -202,13 +200,11 @@ class StreamsListViewController: UIViewController{
         for(var i = 0 ; i < selectedArray.count ; i++)
         {
             GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i] - i)
-            
         }
     }
     
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
-        // let info = notif.object as! [String : AnyObject]
         let subType = info["subType"] as! String
         
         switch subType {
@@ -223,11 +219,13 @@ class StreamsListViewController: UIViewController{
             break;
         }
     }
+    
     func updateLiveStreamStartedEntry(info:[String : AnyObject])
     {
         ErrorManager.sharedInstance.streamAvailable()
         getAllLiveStreams()
     }
+    
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
         let channelId = info["channelId"] as! Int
@@ -235,7 +233,6 @@ class StreamsListViewController: UIViewController{
         var  checkFlag : Bool = false
         var removeIndex : Int = Int()
         for (index, element) in mediaAndLiveArray.enumerate() {
-            // do something with index
             if element[channelIdkey] as? String == "\(channelId)"
             {
                 if(element[mediaIdKey] as? String == "\(livStreamId)")
@@ -245,6 +242,7 @@ class StreamsListViewController: UIViewController{
                 }
             }
         }
+        
         if checkFlag
         {
             mediaAndLiveArray.removeAtIndex(removeIndex)
@@ -252,14 +250,8 @@ class StreamsListViewController: UIViewController{
                 self.streamListCollectionView.reloadData()
             })
         }
-        
-        
-        //        let index  = getUpdateIndexChannel("\(channelId)", isCountArray: false)
-        //        if(index != -1)
-        //        {
-        //
-        //        }
     }
+    
     func getUpdateIndexChannel(channelId : String , isCountArray : Bool) -> Int
     {
         var selectedArray : NSArray = NSArray()
@@ -278,7 +270,6 @@ class StreamsListViewController: UIViewController{
         }
         var  checkFlag : Bool = false
         for (index, element) in selectedArray.enumerate() {
-            // do something with index
             if element[channelIdkey] as? String == channelId
             {
                 indexOfRow = index
@@ -291,6 +282,7 @@ class StreamsListViewController: UIViewController{
         }
         return indexOfRow
     }
+    
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         if (self.lastContentOffset.y < scrollView.contentOffset.y) {
             if(self.downloadCompleteFlag == "end")
@@ -313,14 +305,11 @@ class StreamsListViewController: UIViewController{
                         }
                     }
                 } catch {
-                    print("do it error")
                 }
             }
         }
-        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-            print("Scrolled Up");
-        }
     }
+    
     func mediaDeletePushNotification(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
@@ -335,6 +324,7 @@ class StreamsListViewController: UIViewController{
             removeDataFromGlobal(channelId, mediaArrayData: mediaArrayData)
         }
     }
+    
     func removeDataFromGlobal(channelId : Int , mediaArrayData : NSArray)
     {
         var selectedArray :[Int] = [Int]()
@@ -358,8 +348,6 @@ class StreamsListViewController: UIViewController{
                             foundFlag = true
                             removeIndex = i
                         }
-                        
-                        
                     }
                 }
                 if(foundFlag)
@@ -368,6 +356,7 @@ class StreamsListViewController: UIViewController{
                 }
             }
         })
+        
         selectedArray.sortInPlace()
         for(var i = 0 ; i < selectedArray.count ; i++)
         {
@@ -377,15 +366,11 @@ class StreamsListViewController: UIViewController{
         let backgroundQueue1 = dispatch_get_global_queue(qualityOfServiceClass1, 0)
         dispatch_async(backgroundQueue1, {
             self.removeFromMediaAndLiveArray(channelId, mediaData: mediaArrayData)
-            
         })
-        
     }
-    
     
     func getDataUsingNotificationId(info : [String : AnyObject])
     {
-        //  let info = notif.object as! [String : AnyObject]
         let notifId : Int = info["notificationId"] as! Int
         let userDefault = NSUserDefaults.standardUserDefaults()
         let loginId = userDefault.objectForKey(userLoginIdKey) as! String
@@ -395,8 +380,8 @@ class StreamsListViewController: UIViewController{
         }) { (error, message) in
             self.authenticationFailureHandlerForLiveStream(error, code: message)
         }
-        
     }
+    
     func getAllChannelIdsSuccessHandler(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
@@ -407,17 +392,14 @@ class StreamsListViewController: UIViewController{
             let mediaArrayData : NSArray = responseArrData!["mediaId"] as! NSArray
             deleteFromLocal(channelIdArray, mediaArrayData: mediaArrayData)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.streamListCollectionView.reloadData()
-                
             })
+            
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
                 self.deleteFromGlobal(channelIdArray, mediaArrayData: mediaArrayData)
-                
             })
-            
         }
     }
     
@@ -439,12 +421,8 @@ class StreamsListViewController: UIViewController{
                     var  count : Int = 0
                     let mediaId = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.mediaIdKey] as! String
                     
-                    //                                    if( mediaIdValue == "\(mediaArrayData[mediaArrayCount])" )
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
-                        // let mediaIdValue = mediaArrayData[mediaArrayCount] as! String
-                       // let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
-                        
                         if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                         {
                             removeIndex = i
@@ -457,7 +435,6 @@ class StreamsListViewController: UIViewController{
                     if(foundFlag)
                     {
                         foundFlag = false
-                        
                         selectedArray.append(i)
                     }
                 }
@@ -467,9 +444,7 @@ class StreamsListViewController: UIViewController{
         for(var i = 0 ; i < selectedArray.count ; i++)
         {
             GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i] - i)
-            
         }
-        
     }
     
     func deleteFromLocal (channelIdArray : NSArray, mediaArrayData : NSArray)
@@ -481,7 +456,6 @@ class StreamsListViewController: UIViewController{
         for(var j = 0 ; j < channelIdArray .count ; j++)
         {
             let channel = channelIdArray[j] as! Int
-            
             for(var i = 0 ; i < mediaAndLiveArray.count ; i++)
             {
                 let channelIdValue = mediaAndLiveArray[i][self.channelIdkey] as! String
@@ -492,7 +466,6 @@ class StreamsListViewController: UIViewController{
                     let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
                     for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                     {
-                     //   let mediaIdValue = mediaArrayData[mediaArrayCount] as! Int
                         if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                         {
                             count = count + 1
@@ -516,19 +489,17 @@ class StreamsListViewController: UIViewController{
         selectedArray =  selectedArray.sort()
         for(var i = 0 ; i < selectedArray.count ; i++)
         {
-            //GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i])
             mediaAndLiveArray.removeAtIndex(selectedArray[i] - i)
-            
         }
-        NSNotificationCenter.defaultCenter().postNotificationName("StreamToChannelMedia", object: channelIDCount)
         
+        NSNotificationCenter.defaultCenter().postNotificationName("StreamToChannelMedia", object: channelIDCount)
     }
+    
     func convertStringToDictionary1(text: String) -> [String:AnyObject]? {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {
                 return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
             } catch let error as NSError {
-                print(error)
             }
         }
         return nil
@@ -539,11 +510,11 @@ class StreamsListViewController: UIViewController{
             do {
                 return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? NSArray
             } catch let error as NSError {
-                print(error)
             }
         }
         return nil
     }
+    
     func removeLiveFromMediaAndLiveArray(channelId : Int,type : String)
     {
         var selectedArray :[Int] = [Int]()
@@ -564,30 +535,30 @@ class StreamsListViewController: UIViewController{
                 }
             }
         }
+        
         if(foundFlag)
         {
             selectedArray.append(removeIndex)
             foundFlag = false
-            
         }
+        
         if(selectedArray.count > 0)
         {
             var pathArray : [NSIndexPath] = [NSIndexPath]()
             selectedArray = selectedArray.sort()
             for(var i = 0 ; i < selectedArray.count ; i++)
             {
-                
                 let index = selectedArray[i]
                 let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
                 pathArray.append(indexPath)
                 mediaAndLiveArray.removeAtIndex(index)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.streamListCollectionView.reloadData()
             })
         }
     }
+    
     func removeFromMediaAndLiveArray(channelId : Int,mediaData : NSArray)
     {
         var selectedArray :[Int] = [Int]()
@@ -614,50 +585,39 @@ class StreamsListViewController: UIViewController{
             {
                 selectedArray.append(removeIndex)
                 foundFlag = false
-                
             }
-            
-            
         }
+        
         if(selectedArray.count > 0)
         {
             var pathArray : [NSIndexPath] = [NSIndexPath]()
             selectedArray = selectedArray.sort()
             for(var i = 0 ; i < selectedArray.count ; i++)
             {
-                
                 let index = selectedArray[i]
                 let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
                 pathArray.append(indexPath)
                 mediaAndLiveArray.removeAtIndex(index - i)
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.streamListCollectionView.reloadData()
             })
         }
-        
-        
     }
+    
     func remove(pathArray : NSArray) {
-        
-        //   var indexPath: NSIndexPath = NSIndexPath(forRow: i, inSection: 0)
         var pathArray : [NSIndexPath] = [NSIndexPath]()
-        // pathArray.append(indexPath)
-        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.streamListCollectionView.performBatchUpdates({
                 self.streamListCollectionView.deleteItemsAtIndexPaths(pathArray)
                 }, completion: {
                     (finished: Bool) in
-                    //                              self.streamListCollectionView.reloadItemsAtIndexPaths(self.streamListCollectionView.indexPathsForVisibleItems())
-                    
             })
         })
     }
+    
     func getUpdateIndex(channelId : String , isCountArray : Bool) -> Int
     {
-        
         var selectedArray : NSArray = NSArray()
         var indexOfRow : Int = Int()
         if(isCountArray)
@@ -668,14 +628,12 @@ class StreamsListViewController: UIViewController{
                 mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
             }
             selectedArray = mediaShared as Array
-            
         }
         else{
             selectedArray = GlobalStreamList.sharedInstance.GlobalStreamDataSource
         }
         var  checkFlag : Bool = false
         for (index, element) in selectedArray.enumerate() {
-            // do something with index
             if element["mediaId"] as? String == channelId
             {
                 indexOfRow = index
@@ -688,6 +646,7 @@ class StreamsListViewController: UIViewController{
         }
         return indexOfRow
     }
+    
     func setSourceByAppendingMediaAndLive()
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -695,8 +654,8 @@ class StreamsListViewController: UIViewController{
             self.mediaAndLiveArray = self.liveStreamSource +  GlobalStreamList.sharedInstance.GlobalStreamDataSource
             self.streamListCollectionView.reloadData()
         })
-        
     }
+    
     func streamUpdate(notif: NSNotification)
     {
         if(self.downloadCompleteFlag == "start")
@@ -722,13 +681,12 @@ class StreamsListViewController: UIViewController{
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
-                
-                //  ErrorManager.sharedInstance.emptyMedia()
                 self.setSourceByAppendingMediaAndLive()
                 self.streamListCollectionView.reloadData()
             })
         }
     }
+    
     func initialise()
     {
         totalMediaCount = 0
@@ -759,7 +717,6 @@ class StreamsListViewController: UIViewController{
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -780,7 +737,6 @@ class StreamsListViewController: UIViewController{
             }
         })
     }
-    
     
     func convertStringtoURL(url : String) -> NSURL
     {
@@ -813,19 +769,21 @@ class StreamsListViewController: UIViewController{
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
     }
+    
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
+    
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
         self.presentViewController(vc, animated: false) { () -> Void in
         }
     }
+    
     func pullToRefresh()
     {
         if(!pullToRefreshActive){
-            
             pullToRefreshActive = true
             self.downloadCompleteFlag = "start"
             if(mediaAndLiveArray.count > 0){
@@ -837,15 +795,13 @@ class StreamsListViewController: UIViewController{
                 pullToRefreshActive = false
             }
         }
-        else
-        {
-            
-        }
     }
+    
     func getPullToRefreshData()
     {
         GlobalStreamList.sharedInstance.getPullToRefreshData()
     }
+    
     //PRAGMA MARK:- API Handlers
     func getAllLiveStreams()
     {
@@ -876,8 +832,6 @@ class StreamsListViewController: UIViewController{
     func authenticationFailureHandlerForLiveStream(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -893,6 +847,7 @@ class StreamsListViewController: UIViewController{
             self.initialise()
         }
     }
+    
     func nullToNil(value : AnyObject?) -> AnyObject? {
         if value is NSNull {
             return ""
@@ -900,12 +855,12 @@ class StreamsListViewController: UIViewController{
             return value
         }
     }
+    
     func getAllStreamSuccessHandler(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
         {
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
-            print(responseArrLive)
             if (responseArrLive.count != 0)
             {
                 for element in responseArrLive{
@@ -950,18 +905,7 @@ class StreamsListViewController: UIViewController{
                     dateFormatter.timeZone = NSTimeZone(name: "UTC")
                     let currentDate = dateFormatter.stringFromDate(NSDate())
                     var foundFlag : Bool = false
-                    //                    for(var liveStreamIndex = 0 ; liveStreamIndex < mediaAndLiveArray.count ; liveStreamIndex++)
-                    //                    {
-                    //                        let mediaIdFromSource = mediaAndLiveArray[liveStreamIndex][self.mediaIdKey] as! String
-                    //
-                    //                        if  mediaIdFromSource == mediaId
-                    //                        {
-                    //                            foundFlag = true
-                    //                        }
-                    //
-                    //                    }
-                    //                    if(!foundFlag)
-                    //                    {
+                    
                     liveStreamSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.timestamp :currentDate,self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate,self.channelNameKey:channelname, self.channelIdkey: channelIdSelected!,"createdTime":currentDate,pullTorefreshKey :pulltorefresh!])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -981,10 +925,12 @@ class StreamsListViewController: UIViewController{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func loadStaticImagesOnly()
     {
         self.streamListCollectionView.reloadData()
     }
+    
     @IBAction func customBackButtonClicked(sender: AnyObject)
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -992,10 +938,12 @@ class StreamsListViewController: UIViewController{
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
+    
     func  didSelectExtension(indexPathRow: Int)
     {
         getProfileImageSelectedIndex(indexPathRow)
     }
+    
     func getProfileImageSelectedIndex(indexpathRow: Int)
     {
         if(mediaAndLiveArray.count > 0)
@@ -1010,10 +958,11 @@ class StreamsListViewController: UIViewController{
                     self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
                     return
             })
-            
         }
     }
+    
     var profileImageUserForSelectedIndex : UIImage = UIImage()
+    
     func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
     {
         if let json = response as? [String: AnyObject]
@@ -1041,15 +990,18 @@ class StreamsListViewController: UIViewController{
         }
         getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
     }
+    
     func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int)
     {
         profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         getLikeCountForSelectedIndex(indexPathRow,profile: profileImageUserForSelectedIndex)
     }
+    
     func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage)  {
         let mediaId = mediaAndLiveArray[indexpathRow][mediaIdKey] as! String
         getLikeCount(mediaId, indexpathRow: indexpathRow, profile: profile)
     }
+    
     func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
         let mediaTypeSelected : String = mediaAndLiveArray[indexpathRow][mediaTypeKey] as! String
         var likeCount: String = "0"
@@ -1063,7 +1015,9 @@ class StreamsListViewController: UIViewController{
                 return
         })
     }
+    
     var likeCountSelectedIndex : String = "0"
+    
     func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int,profile:UIImage)
     {
         if let json = response as? [String: AnyObject]
@@ -1072,11 +1026,13 @@ class StreamsListViewController: UIViewController{
         }
         loadmovieViewController(indexpathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
     }
+    
     func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int,profile:UIImage)
     {
         likeCountSelectedIndex = "0"
         loadmovieViewController(indexPathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
     }
+    
     func loadmovieViewController(indexPathRow:Int,profileImage:UIImage,likeCount:String) {
         
         self.removeOverlay()
@@ -1108,8 +1064,8 @@ class StreamsListViewController: UIViewController{
             }
         }
     }
-    
 }
+
 extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
@@ -1163,9 +1119,9 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
         }
         return cell
     }
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        //   if(!pullToRefreshActive){
         if  mediaAndLiveArray.count>0
         {
             if mediaAndLiveArray.count > indexPath.row
@@ -1175,22 +1131,26 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
                 didSelectExtension(indexPath.row)
             }
         }
-        // }
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 1
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
     {
         return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
     }
 }
+
 extension Dictionary {
     mutating func update(other:Dictionary) {
         for (key,value) in other {

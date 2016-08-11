@@ -53,6 +53,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var moviePlayer : MPMoviePlayerController!
     let defaults = NSUserDefaults .standardUserDefaults()
     
+    var operationQueueObjInMyMediaImageList = NSOperationQueue()
+    var operationInMyMediaImageList = NSBlockOperation()
+    
     private var downloadTask: NSURLSessionDownloadTask?
     
     var progressViewDownload: UIProgressView?
@@ -142,20 +145,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 })
             }
             else{
-                var start = 0
-                var end = 0
-                if GlobalDataRetriever.sharedInstance.globalDataSource.count > 10
-                {
-                    end = 10
-                }
-                else{
-                    end = GlobalDataRetriever.sharedInstance.globalDataSource.count
-                }
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end)
-                })
+                self.downloadImagesFromGlobalRetriever()
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
@@ -173,7 +163,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScreenScrollView.delaysContentTouches = false;
         
         self.view.bringSubviewToFront(fullScrenImageView)
-        
         self.view.bringSubviewToFront(photoThumpCollectionView)
         self.view.bringSubviewToFront(playIconInFullView)
         self.view.bringSubviewToFront(TopView)
@@ -191,10 +180,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
         self.fullScrenImageView .addGestureRecognizer(swipeLeft)
         
-        //ajith mod starts
         swipeRight.delegate = self;
         swipeLeft.delegate = self;
-        //ajith mod ends
         
         let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
@@ -210,11 +197,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.Trial), name: MPMoviePlayerWillEnterFullscreenNotification, object: nil)
+        
+         downloadingFlag = false
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        
+        operationInMyMediaImageList.cancel()
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
         }
@@ -235,11 +224,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         return self.fullScreenZoomView
     }
     
-    //ajith mod starts
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    //ajith mod ends
     
     func handleDoubleTap(recognizer: UITapGestureRecognizer) {
         if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
@@ -324,12 +311,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func removeActivityIndicator(notif : NSNotification)
     {
-        if(totalCount <= 10)
-        {
-            let filteredData = GlobalDataRetriever.sharedInstance.globalDataSource.filter(thumbExists)
-            totalCount = filteredData.count
-        }
-        
+        operationInMyMediaImageList.cancel()
+        let filteredData = GlobalDataRetriever.sharedInstance.globalDataSource.filter(thumbExists)
+        totalCount = filteredData.count
+       
         if(totalCount > 0){
             
             GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
@@ -377,11 +362,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     if self.downloadingFlag == false
                     {
                         self.downloadingFlag = true
-                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                        dispatch_async(backgroundQueue, {
-                            self.downloadImagesFromGlobalRetriever()
-                        })
+                        self.downloadImagesFromGlobalRetriever()
                     }
                 }
             }
@@ -397,9 +378,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         else{
             end = GlobalDataRetriever.sharedInstance.globalDataSource.count - totalCount
         }
-        totalCount = totalCount + end
+//        totalCount = totalCount + end
         end = start + end
-        GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end)
+        operationInMyMediaImageList.cancel()
+        operationInMyMediaImageList  = NSBlockOperation (block: {
+            GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end,operationObj: self.operationInMyMediaImageList)
+        })
+        self.operationQueueObjInMyMediaImageList.addOperation(operationInMyMediaImageList)
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -428,106 +413,101 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0 //If there's no media, then show error message instead of swipe.
+        if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
         {
             ErrorManager.sharedInstance.emptyMedia()
         }
-        
+            
         else
         {
-        
-        swipeFlag = true
-        self.removeOverlay()
-        
-        fullScrenImageView.userInteractionEnabled = true
             
-        if (playHandleflag == 1)
-        {
-            playHandleflag = 0
-            self.moviePlayer.stop()
-            self.moviePlayer.view.removeFromSuperview()
-            playIconInFullView.hidden = false
-            self.view.userInteractionEnabled = true
-        }
-        
-        downloadTask?.cancel()
-        fullScrenImageView.alpha = 1.0
-        progressLabelDownload?.removeFromSuperview()
-        progressViewDownload?.removeFromSuperview()
-        progressLabelDownload?.text=" ";
-        progressViewDownload?.hidden=true;
-        progressLabelDownload?.hidden=true;
-        
-        //ajith mod starts
-        
-        let mediaIdStr = GlobalDataRetriever.sharedInstance.globalDataSource[GlobalDataRetriever.sharedInstance.globalDataSource.count - 1][mediaDetailIdKey]
-        let mediaIdForFilePath = "\(mediaIdStr!)full"
-        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-        let savingPath = "\(parentPath)/\(mediaIdForFilePath )"
-        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-        //ajith mod ends
-        
-        if let swipeGesture = gesture as? UISwipeGestureRecognizer
-        {
-            switch swipeGesture.direction
+            swipeFlag = true
+            self.removeOverlay()
+            
+            fullScrenImageView.userInteractionEnabled = true
+            
+            if (playHandleflag == 1)
             {
-            case UISwipeGestureRecognizerDirection.Left:
-                if(selectedItem < GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
-                {
-                    
-                    //ajith mod starts
-                    if fileExistFlag != true
-                    {
-                        self.showOverlay()
-                    }
-                    //ajith mod ends
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.selectedItem = self.selectedItem+1
-                        let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
-                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.removeOverlay()
-                            self.setLabelValue(self.selectedItem)
-                            self.photoThumpCollectionView.reloadData()
-                        })
-                    })
-                }
-                else if(selectedItem == GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
-                {
-                    self.removeOverlay()
-                }
-                
-            case UISwipeGestureRecognizerDirection.Right:
-                if(selectedItem != 0)
-                {
-                    if fileExistFlag != true
-                    {
-                        self.showOverlay()
-                    }
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.selectedItem = self.selectedItem - 1
-                        let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
-                        self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.removeOverlay()
-                            self.setLabelValue(self.selectedItem)
-                            self.photoThumpCollectionView.reloadData()
-                        })
-                    })
-                }
-                else if(selectedItem == 0)
-                {
-                    self.removeOverlay()
-                }
-                
-            default:
-                break
+                playHandleflag = 0
+                self.moviePlayer.stop()
+                self.moviePlayer.view.removeFromSuperview()
+                playIconInFullView.hidden = false
+                self.view.userInteractionEnabled = true
             }
-        }
+            
+            downloadTask?.cancel()
+            fullScrenImageView.alpha = 1.0
+            progressLabelDownload?.removeFromSuperview()
+            progressViewDownload?.removeFromSuperview()
+            progressLabelDownload?.text=" ";
+            progressViewDownload?.hidden=true;
+            progressLabelDownload?.hidden=true;
+            
+            let mediaIdStr = GlobalDataRetriever.sharedInstance.globalDataSource[GlobalDataRetriever.sharedInstance.globalDataSource.count - 1][mediaDetailIdKey]
+            let mediaIdForFilePath = "\(mediaIdStr!)full"
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+            let savingPath = "\(parentPath)/\(mediaIdForFilePath )"
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+            
+            if let swipeGesture = gesture as? UISwipeGestureRecognizer
+            {
+                switch swipeGesture.direction
+                {
+                case UISwipeGestureRecognizerDirection.Left:
+                    if(selectedItem < GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
+                    {
+                        if fileExistFlag != true
+                        {
+                            self.showOverlay()
+                        }
+                        
+                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                        dispatch_async(backgroundQueue, {
+                            self.selectedItem = self.selectedItem+1
+                            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
+                            self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                self.removeOverlay()
+                                self.setLabelValue(self.selectedItem)
+                                self.photoThumpCollectionView.reloadData()
+                            })
+                        })
+                    }
+                    else if(selectedItem == GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
+                    {
+                        self.removeOverlay()
+                    }
+                    
+                case UISwipeGestureRecognizerDirection.Right:
+                    if(selectedItem != 0)
+                    {
+                        if fileExistFlag != true
+                        {
+                            self.showOverlay()
+                        }
+                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                        dispatch_async(backgroundQueue, {
+                            self.selectedItem = self.selectedItem - 1
+                            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
+                            self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                self.removeOverlay()
+                                self.setLabelValue(self.selectedItem)
+                                self.photoThumpCollectionView.reloadData()
+                            })
+                        })
+                    }
+                    else if(selectedItem == 0)
+                    {
+                        self.removeOverlay()
+                    }
+                    
+                default:
+                    break
+                }
+            }
         }
     }
     
@@ -564,6 +544,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
+            downloadTask = nil
         }
         
         if (playHandleflag == 1)
@@ -610,10 +591,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         }, failure: { (error, message) -> () in
                             self.authenticationFailureHandlerDelete(error, code: message)
                     })
+                
                 }
                 else{
                     ErrorManager.sharedInstance.NoArchiveId()
                 }
+               channelIds.removeAll()
             }
         }))
         
@@ -636,7 +619,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         removeOverlay()
         self.fullScrenImageView.alpha = 1.0
-        if let json = response as? [String: AnyObject]
+        if let _ = response as? [String: AnyObject]
         {
             mediaIdSelected = 0
             mediaSelected.removeAllObjects()
@@ -679,8 +662,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
-                let dict = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem]
+                var dict = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem]
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
+                dict.removeAll()
             }
             else{
                 if(archCount == 0){
@@ -703,7 +687,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         self.removeOverlay()
         self.fullScrenImageView.alpha = 1.0
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -881,23 +864,23 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func playbackStateChange(notif:NSNotification)
     {
         let moviePlayerController = notif.object as! MPMoviePlayerController
-        var playbackState: String = "Unknown"
-        
+     //   var playbackState: String = "Unknown"
+  
         switch moviePlayerController.playbackState {
-        case .Stopped:
-            playbackState = "Stopped"
+        case .Stopped: break
+        //    playbackState = "Stopped"
         case .Playing:
-            playbackState = "Playing"
+         //   playbackState = "Playing"
             playHandleflag = 1
         case .Paused:
-            playbackState = "Paused"
+         //   playbackState = "Paused"
             playHandleflag = 1
-        case .Interrupted:
-            playbackState = "Interrupted"
-        case .SeekingForward:
-            playbackState = "Seeking Forward"
-        case .SeekingBackward:
-            playbackState = "Seeking Backward"
+        case .Interrupted: break
+          //  playbackState = "Interrupted"
+        case .SeekingForward: break
+          //  playbackState = "Seeking Forward"
+        case .SeekingBackward: break
+         //   playbackState = "Seeking Backward"
         }
     }
     
@@ -963,7 +946,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         dictMediaId = dict[mediaDetailIdKey] as! String
         dictProgress = dict[uploadProgressKey] as! Float
         
-        for var i = 0; i < GlobalDataRetriever.sharedInstance.globalDataSource.count; i++
+        for i in 0 ..< GlobalDataRetriever.sharedInstance.globalDataSource.count
         {
             let mediaIdFromData = GlobalDataRetriever.sharedInstance.globalDataSource[i][mediaDetailIdKey] as! String
             
@@ -1175,7 +1158,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

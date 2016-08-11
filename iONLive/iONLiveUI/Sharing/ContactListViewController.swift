@@ -128,7 +128,6 @@ class ContactListViewController: UIViewController
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -256,7 +255,7 @@ class ContactListViewController: UIViewController
                     appendPlus = "+"
                 }
                 else{
-                    appendPlus = ""
+                    appendPlus = "nil"
                 }
                 
                 let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
@@ -314,8 +313,6 @@ class ContactListViewController: UIViewController
     func authenticationFailureHandlerAdd(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -457,8 +454,6 @@ class ContactListViewController: UIViewController
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

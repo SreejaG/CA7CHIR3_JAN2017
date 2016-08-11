@@ -1,10 +1,4 @@
-//
-//  iOnLiveCameraPictureCapture.swift
-//  iONLive
-//
-//  Created by Gadgeon on 1/18/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import Foundation
 

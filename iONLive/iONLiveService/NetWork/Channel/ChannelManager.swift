@@ -1,10 +1,3 @@
-//
-//  ChannelManager.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 02/03/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -424,7 +417,7 @@ class ChannelManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
     func getUpdatedMediaDetails(userName: String, accessToken: String, timestamp: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
@@ -511,5 +504,5 @@ class ChannelManager: NSObject {
         })
     }
     
-
+    
 }

@@ -1,10 +1,4 @@
-//
-//  contactManager.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 16/03/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 
@@ -77,7 +71,6 @@ class contactManager: NSObject {
                 failure?(error: error, code:failureErrorCode)
         })
     }
-    
     
     func inviteContactDetails(userName: String, accessToken: String, contacts: NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {

@@ -191,7 +191,6 @@ class MySharedChannelsViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -282,8 +281,6 @@ class MySharedChannelsViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -299,6 +296,7 @@ class MySharedChannelsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
+        
         for var i = 0; i < dataSource.count; i++
         {
             let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
@@ -336,7 +334,6 @@ class MySharedChannelsViewController: UIViewController {
         }
         else
         {
-            
             let selectedValue =  dataSource[indexpath][sharedIndicatorTemporaryKey] as! Int
             if(selectedValue == 1){
                 dataSource[indexpath][sharedIndicatorTemporaryKey] = 0

@@ -1,10 +1,3 @@
-//
-//  GlobalStreamList.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 7/22/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -35,15 +28,12 @@ class GlobalStreamList: NSObject {
         {
             static let instance = GlobalStreamList()
             private init() {
-                
-                
             }
-            //This prevents others from using the default '()' initializer for this class.
         }
         return Singleton.instance
     }
+    
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
-        
         imageDataSource.removeAll()
         GlobalStreamDataSource.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -62,7 +52,6 @@ class GlobalStreamList: NSObject {
     {
         if let json = response as? [String: AnyObject]
         {
-            
             let responseArr = json["objectJson"] as! [AnyObject]
             if(responseArr.count == 0)
             {
@@ -102,20 +91,12 @@ class GlobalStreamList: NSObject {
             }
             
             if(imageDataSource.count > 0){
-                // let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                //  let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                //   dispatch_async(backgroundQueue, {
                 let operation2 : NSBlockOperation = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
-                // })
-                //   self.downloadMediaFromGCS()
-                
-                // })
             }
             else{
-                
                 NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
             }
         }
@@ -124,6 +105,7 @@ class GlobalStreamList: NSObject {
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
+    
     func nullToNil(value : AnyObject?) -> AnyObject? {
         if value is NSNull {
             return ""
@@ -131,11 +113,10 @@ class GlobalStreamList: NSObject {
             return value
         }
     }
+    
     func authenticationFailureHandlerStream(error: NSError?, code: String)
     {
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -162,10 +143,7 @@ class GlobalStreamList: NSObject {
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
-        
         var mediaImage : UIImage = UIImage()
-        
-        // Data object to fetch weather data
         do {
             let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
             if let imageData = data as NSData? {
@@ -181,15 +159,11 @@ class GlobalStreamList: NSObject {
             }
             
         } catch {
-            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
-        
-        
     }
     
     func downloadMediaFromGCS(){
-        
         for var i = 0; i < imageDataSource.count; i++
         {
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
@@ -206,8 +180,6 @@ class GlobalStreamList: NSObject {
                     {
                         self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
                     }
-                    
-                    
                 }
                 else{
                     let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
@@ -220,7 +192,6 @@ class GlobalStreamList: NSObject {
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                    // return
                                 }
                                 else{
                                     imageForMedia = result
@@ -239,11 +210,7 @@ class GlobalStreamList: NSObject {
                         })
                     }
                 }
-                
-                
-                
             }
-            
         }
         if(GlobalStreamDataSource.count > 0){
             GlobalStreamDataSource.sortInPlace({ p1, p2 in
@@ -253,16 +220,13 @@ class GlobalStreamList: NSObject {
             })
         }
         NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "success")
-        
-        
     }
+    
     func getPullToRefreshData()
     {
         imageDataSource.removeAll()
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[0][pullTorefreshKey] as! String
-        
         let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
         var subIdArray : [Int] = [Int]()
         for(var i = 0 ; i < sortList.count ; i++)
@@ -273,8 +237,6 @@ class GlobalStreamList: NSObject {
         if(subIdArray.count > 0)
         {
             let subid = subIdArray.maxElement()!
-            
-            
             ChannelManager.sharedInstance.getUpdatedMediaDetails(userId, accessToken:accessToken,timestamp : "\(subid)",success: { (response) in
                 self.authenticationSuccessHandler(response)
                 
@@ -287,7 +249,6 @@ class GlobalStreamList: NSObject {
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        // let createdTimeStamp = GlobalStreamList.sharedInstance.GlobalStreamDataSource[GlobalStreamList.sharedInstance.GlobalStreamDataSource.count - 1][pullTorefreshKey] as! String
         GlobalStreamList.sharedInstance.imageDataSource.removeAll()
         ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
             self.authenticationSuccessHandler(response)
@@ -295,6 +256,4 @@ class GlobalStreamList: NSObject {
             self.authenticationFailureHandlerStream(error, code: message)
         }
     }
-    
-    // }
 }

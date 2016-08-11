@@ -119,7 +119,7 @@ class LoginViewController: UIViewController {
             if let deviceToken = defaults.valueForKey("deviceToken")
             {
                 let gcmRegId = "ios".stringByAppendingString(deviceToken as! String)
-            
+                
                 self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
             }
             else{
@@ -129,7 +129,7 @@ class LoginViewController: UIViewController {
                 else{
                     ErrorManager.sharedInstance.installFailure()
                 }
-            
+                
             }
         }
     }
@@ -148,7 +148,6 @@ class LoginViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-     //   self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -180,7 +179,6 @@ class LoginViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -211,8 +209,7 @@ class LoginViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             clearStreamingUserDefaults(defaults)
-            print(json)
-            print("success = \(json["status"]),\(json["token"]),\(json["user"])")
+            
             if let tocken = json["token"]
             {
                 defaults.setValue(tocken, forKey: userAccessTockenKey)
@@ -232,15 +229,14 @@ class LoginViewController: UIViewController {
             }
             if let code = json["totalMediaInArchive"]
             {
-                print(code)
                 defaults.setValue(code, forKey:ArchiveCount)
-                
             }
-           if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
-           {
-                NSUserDefaults.standardUserDefaults().setValue("firstTime", forKey: "first")
+            if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
+            {
+                NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
                 GlobalDataRetriever.sharedInstance.initialise()
                 GlobalDataChannelList.sharedInstance.initialise()
+                ChannelSharedListAPI.sharedInstance.initialisedata()
             }
         }
         else
@@ -259,13 +255,11 @@ class LoginViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }

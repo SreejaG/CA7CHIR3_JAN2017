@@ -1,10 +1,3 @@
-//
-//  SignUpUserNameViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 1/4/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -34,7 +27,6 @@ class SignUpUserNameViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         view.endEditing(true)
-//        removeOverlay()
     }
     
     override func didReceiveMemoryWarning() {
@@ -159,7 +151,6 @@ class SignUpUserNameViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -203,18 +194,16 @@ class SignUpUserNameViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-          
+            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
             else{
-                  ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
             }
         }
         else{
@@ -228,13 +217,11 @@ class SignUpUserNameViewController: UIViewController {
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-    
 }
 
 extension SignUpUserNameViewController:UITextFieldDelegate{

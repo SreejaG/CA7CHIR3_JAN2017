@@ -197,6 +197,9 @@ class AddChannelViewController: UIViewController {
             
             GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
             
+            var imageData = [[String:AnyObject]]()
+            GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
+            
             fulldataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
             
             addChannelTableView.reloadData()
@@ -235,7 +238,6 @@ class AddChannelViewController: UIViewController {
     
     func authenticationSuccessHandlerAdd(response : AnyObject?, channelIds:NSArray, mediaIds:NSArray)
     {
-        print(localMediaDict)
         GlobalChannelToImageMapping.sharedInstance.addMediaToChannel(localChannelDict, mediaDetailOfSelectedChannel: localMediaDict)
         
         removeOverlay()
@@ -256,8 +258,6 @@ class AddChannelViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -310,7 +310,6 @@ class AddChannelViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

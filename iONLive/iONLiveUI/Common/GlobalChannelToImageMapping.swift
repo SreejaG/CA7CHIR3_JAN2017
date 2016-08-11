@@ -64,7 +64,7 @@ class GlobalChannelToImageMapping: NSObject {
         {
             let codeString = "Success"
             NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
-            NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
+          //  NSNotificationCenter.defaultCenter().postNotificationName("mapNewMedias", object: nil)
         }
     }
     
@@ -138,69 +138,77 @@ class GlobalChannelToImageMapping: NSObject {
         }
     }
     
-    func downloadMediaFromGCS(chanelId: String, start: Int, end:Int){
+    func downloadMediaFromGCS(chanelId: String, start: Int, end:Int, operationObj: NSBlockOperation){
+        
         localDataSource.removeAll()
         for var i = start; i < end; i++
         {
             localDataSource.append(GlobalChannelImageDict[chanelId]![i])
         }
-        print("localdata \(localDataSource)")
-        for var k = 0; k < localDataSource.count; k++
+        if localDataSource.count > 0
         {
-            var imageForMedia : UIImage = UIImage()
-            let mediaId = String(localDataSource[k][mediaDetailIdKey]!)
-            let mediaIdForFilePath = "\(mediaId)thumb"
-//            print(mediaIdForFilePath)
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                let mediaUrl = localDataSource[k][thumbImageURLKey] as! String
-                if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    
-                        if(result != UIImage()){
-                            let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                            let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                            let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                            let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                            if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+            for var k = 0; k < localDataSource.count; k++
+            {
+                if operationObj.cancelled == true{
+                    return
+                }
+                
+                print("k value in chanel image mapping ===> \(k)")
+                
+                var imageForMedia : UIImage = UIImage()
+                let mediaId = String(localDataSource[k][mediaDetailIdKey]!)
+                let mediaIdForFilePath = "\(mediaId)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
+                }
+                else{
+                    let mediaUrl = localDataSource[k][thumbImageURLKey] as! String
+                    if(mediaUrl != ""){
+                        let url: NSURL = convertStringtoURL(mediaUrl)
+                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                             
+                            if(result != UIImage()){
+                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    
+                                }
+                                else{
+                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                }
+                                imageForMedia = result
                             }
                             else{
-                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                imageForMedia = UIImage(named: "thumb12")!
                             }
-                            imageForMedia = result
-                        }
-                        else{
-                        imageForMedia = UIImage(named: "thumb12")!
-                        }
-                    })
+                        })
+                    }
                 }
+               localDataSource[k][thumbImageKey] = imageForMedia
             }
-            localDataSource[k][thumbImageKey] = imageForMedia
-        }
-        
-        for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++
-        {
-            let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaDetailIdKey] as! String
-            var chkFlag = false
-            for element in localDataSource
-            {
-                let mediaIdFromLocal = element[mediaDetailIdKey] as! String
-                if mediaIdChk == mediaIdFromLocal
-                {
-                   GlobalChannelImageDict[chanelId]![j][thumbImageKey] = element[thumbImageKey] as! UIImage
-                }
-            }
-        }
             
-    NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
+            for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++
+            {
+                let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaDetailIdKey] as! String
+                var chkFlag = false
+                for element in localDataSource
+                {
+                    let mediaIdFromLocal = element[mediaDetailIdKey] as! String
+                    if mediaIdChk == mediaIdFromLocal
+                    {
+                        GlobalChannelImageDict[chanelId]![j][thumbImageKey] = element[thumbImageKey] as! UIImage
+                    }
+                }
+            }
+            localDataSource.removeAll()
+            NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
+        }
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -321,9 +329,12 @@ class GlobalChannelToImageMapping: NSObject {
                 let time2 = p2[createdTimeStampKey] as! String
                 return time1 > time2
             })
-            MediaBeforeUploadComplete.sharedInstance.dataSourceFromLocal.removeAll()
-            localMediasForMapping.removeAll()
+            globalChannelKeys.removeAllObjects()
+            channelMediaDataSource.removeAll()
+            channelMediaKeys.removeAll()
         }
+        MediaBeforeUploadComplete.sharedInstance.dataSourceFromLocal.removeAll()
+        localMediasForMapping.removeAll()
     }
     
     // Add media from one channel to other channels
@@ -692,30 +703,4 @@ class GlobalChannelToImageMapping: NSObject {
         //update new archive count
         NSUserDefaults.standardUserDefaults().setInteger(GlobalDataRetriever.sharedInstance.globalDataSource.count, forKey: ArchiveCount)
     }
-    
-    //    func authenticationFailureHandler(error: NSError?, code: String)
-    //    {
-    //        //removeOverlay()
-    //        NSNotificationCenter.defaultCenter().postNotificationName("success", object: id)
-    //        GlobalChannelImageDict.updateValue(GlobalChannelImageDataSource, forKey: id)
-    //        print("message = \(code) andError = \(error?.localizedDescription) ")
-    //
-    //        if !RequestManager.sharedInstance.validConnection() {
-    //            ErrorManager.sharedInstance.noNetworkConnection()
-    //        }
-    //        else if code.isEmpty == false {
-    //
-    //            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-    //             //   loadInitialViewController(code)
-    //            }
-    //            else{
-    //                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-    //            }
-    //        }
-    //        else{
-    //            ErrorManager.sharedInstance.inValidResponseError()
-    //        }
-    //    }
-    
-    
 }

@@ -1,10 +1,3 @@
-//
-//  MovieViewController.h
-//  LiveStreamingKXMovie
-//
-//  Created by Vinitha on 11/20/15.
-//  Copyright © 2015 Vinitha K S. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 

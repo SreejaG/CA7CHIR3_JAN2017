@@ -1,10 +1,3 @@
-//
-//  ChannelSharedCell.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 4/11/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 class ChannelSharedCell: UITableViewCell {

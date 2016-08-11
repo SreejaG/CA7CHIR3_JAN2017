@@ -1,12 +1,4 @@
 
-//
-//  IPhoneLiveStreaming.swift
-//  iONLive
-//
-//  Created by Vinitha on 2/10/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
-
 import UIKit
 
 class IPhoneLiveStreaming: NSObject {

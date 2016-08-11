@@ -1,10 +1,4 @@
-//
-//  ErrorManager.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
+
 
 import Foundation
 import UIKit
@@ -258,17 +252,13 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     // MARK: SwiftAlertViewDelegate
     
     func alertView(alertView: SwiftAlertView, clickedButtonAtIndex buttonIndex: Int) {
-     //   print("Button Clicked At Index \(buttonIndex)")
     }
     
     func didPresentAlertView(alertView: SwiftAlertView) {
-      //  print("Did Present Alert View\n")
     }
     
     func didDismissAlertView(alertView: SwiftAlertView) {
-     //   print("Did Dismiss Alert View\n")
     }
-
     
     func dismissAlert(alert : SwiftAlertView){
         alert.dismiss()

@@ -1,10 +1,3 @@
-//
-//  SharedChannelDetailsAPI.swift
-//  iONLive
-//
-//  Created by sreejesh on 7/29/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -18,8 +11,8 @@ class SharedChannelDetailsAPI: NSObject {
         }
         return Singleton.instance
     }
-    var operationQueue = NSOperationQueue()
     
+    var operationQueue = NSOperationQueue()
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var selectedSharedChannelMediaSource: [[String:AnyObject]] = [[String:AnyObject]]()
     let mediaUrlKey = "mediaUrl"
@@ -35,15 +28,8 @@ class SharedChannelDetailsAPI: NSObject {
     var userName:String!
     var channelName :String = String()
     
-    func cancelOpratn()
-    {
-        // operationQueue.cancelAllOperations()
-        //  imageDataSource.removeAll()
-        //  selectedSharedChannelMediaSource.removeAll()
-    }
     func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , sharedCount : String)
     {
-        
         if(!channelName.isEmpty)
         {
             if channelName == selectedChannelName
@@ -65,9 +51,7 @@ class SharedChannelDetailsAPI: NSObject {
                     }) { (error, message) -> () in
                         self.authenticationFailureHandler(error, code: message)
                     }
-                    
                 }
-                
             }
             else{
                 selectedSharedChannelMediaSource.removeAll()
@@ -82,8 +66,6 @@ class SharedChannelDetailsAPI: NSObject {
                 }) { (error, message) -> () in
                     self.authenticationFailureHandler(error, code: message)
                 }
-                
-                
             }
         }
         else{
@@ -110,9 +92,9 @@ class SharedChannelDetailsAPI: NSObject {
             self.authenticationSuccessHandler(response)
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
-            
         }
     }
+    
     func pullToRefresh (channelId : String ,selectedChannelUserName :String , channelMediaId : String)
     {
         let accessToken = NSUserDefaults .standardUserDefaults().valueForKey(userAccessTockenKey) as! String
@@ -122,13 +104,13 @@ class SharedChannelDetailsAPI: NSObject {
             self.authenticationFailureHandler(error, code: message)
         }
     }
+    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         imageDataSource.removeAll()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -151,17 +133,13 @@ class SharedChannelDetailsAPI: NSObject {
                 else{
                     notificationType = "shared"
                 }
-                
-                
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time])
             }
-            
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
             
             for var liveIndex = 0 ; liveIndex < responseArrLive.count ; liveIndex++
             {
-                print(index , responseArrLive.count )
                 let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
                 let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
                 let mediaId = responseArrLive[liveIndex].valueForKey("live_stream_detail_id")?.stringValue
@@ -185,8 +163,6 @@ class SharedChannelDetailsAPI: NSObject {
                     notificationType = "shared"
                 }
                 
-                
-                //   let infiniteScrollId  = responseArrLive[liveIndex].valueForKey("channel_live_stream_detail_id") as! String
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -200,12 +176,9 @@ class SharedChannelDetailsAPI: NSObject {
                         else{
                             self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate], atIndex: 0)
                         }
-                        
                     })
                 }
             }
-            
-            
             
             if(imageDataSource.count > 0){
                 if(self.selectedSharedChannelMediaSource.count > 0)
@@ -216,21 +189,13 @@ class SharedChannelDetailsAPI: NSObject {
                     }
                 }
                 
-                
                 let operation1 : NSBlockOperation = NSBlockOperation (block: {
-                    //  self.doCalculations()
-                    
                     let operation2 : NSBlockOperation = NSBlockOperation (block: {
                         self.downloadMediaFromGCS()
                     })
                     self.operationQueue.addOperation(operation2)
                 })
                 operationQueue.addOperation(operation1)
-                //  let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                //  let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                //   dispatch_async(backgroundQueue, {
-                
-                //   })
             }
             else{
                 if self.selectedSharedChannelMediaSource.count > 0
@@ -239,10 +204,8 @@ class SharedChannelDetailsAPI: NSObject {
                 }
                 else{
                     NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
-                    
                 }
             }
-            
         }
         else
         {
@@ -253,15 +216,11 @@ class SharedChannelDetailsAPI: NSObject {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
-        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            //                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            //                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-            //                    loadInitialViewController(code)
-            //                }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
@@ -284,18 +243,17 @@ class SharedChannelDetailsAPI: NSObject {
             completion(result:UIImage(named:"thumb12")!)
         }
     }
+    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
+    
     func downloadMediaFromGCS(){
-        
-        
         for var i = 0; i < imageDataSource.count; i++
         {
-            
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
@@ -317,7 +275,7 @@ class SharedChannelDetailsAPI: NSObject {
                             let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                             let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                             if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                print("not same")
+                                
                             }
                             else{
                                 FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -328,16 +286,15 @@ class SharedChannelDetailsAPI: NSObject {
                             imageForMedia = UIImage(named: "thumb12")!
                         }
                     })
-                    
                 }
             }
+            
             if(imageDataSource.count > 0 )
             {
                 self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
-                
-                
             }
         }
+        
         if(imageDataSource.count > 0 )
         {
             if(selectedSharedChannelMediaSource.count > 0)
@@ -361,9 +318,7 @@ class SharedChannelDetailsAPI: NSObject {
                 })
             }
         }
-        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
         
+        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
     }
-    
-    
 }

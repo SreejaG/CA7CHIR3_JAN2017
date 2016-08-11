@@ -1,10 +1,4 @@
-//
-//  iONCamLiveStatusManager.swift
-//  iONLive
-//
-//  Created by Gadgeon on 2/9/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 

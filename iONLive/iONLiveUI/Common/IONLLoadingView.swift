@@ -1,10 +1,3 @@
-//
-//  IONLLoadingView.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/20/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
 class IONLLoadingView: UIViewController {

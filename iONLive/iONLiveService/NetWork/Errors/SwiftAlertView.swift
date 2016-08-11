@@ -1,29 +1,3 @@
-//
-//  SwiftAlertView.swift
-//  SwiftAlertView
-//
-//  Created by Dinh Quan on 8/26/15.
-//  Copyright (c) 2015 Dinh Quan. All rights reserved.
-//
-// This code is distributed under the terms and conditions of the MIT license.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 
 import UIKit
@@ -73,32 +47,6 @@ public class SwiftAlertView: UIView {
     public var clickedButtonAction:((buttonIndex: Int) -> (Void))? // all buttons
     public var clickedCancelButtonAction:((Void) -> (Void))? // for cancel button
     public var clickedOtherButtonAction:((buttonIndex: Int) -> (Void))? // sometimes you want to handle the other button click event but don't want to write if/else in clickedButtonAction closure, use this property
-
-    /** Example of using these closures
-    alertView.clickedButtonAction = {(buttonIndex) -> Void in
-        println("Button Clicked At Index \(buttonIndex)")
-    }
-    alertView.clickedCancelButtonAction = {
-        println("Cancel Button Clicked")
-    }
-    alertView.clickedOtherButtonAction = {(buttonIndex) -> Void in
-        println("Other Button Clicked At Index \(buttonIndex)")
-    }
-    */
-    
-    // MARK: Constants
-    
-//    private let kSeparatorWidth = 0.5
-//    private let kDefaultWidth = 270.0
-//    private let kDefaultHeight = 120.0
-//    private let kDefaultTitleSizeMargin = 5.0
-//    private let kDefaultMessageSizeMargin = 2.0
-//    private let kDefaultButtonHeight = 44.0
-//    private let kDefaultCornerRadius = 8.0
-//    private let kDefaultTitleTopMargin = 10.0
-//    private let kDefaultTitleToMessageSpacing = 2.0
-//    private let kDefaultMessageBottomMargin = 10.0
-//    private let kDefaultDimAlpha = 0.4
     
     private let kSeparatorWidth = 0.5
     private let kDefaultWidth = 270.0
@@ -124,8 +72,7 @@ public class SwiftAlertView: UIView {
     private var otherButtonTitles = [String]()
     private var viewWidth: Double!
     private var viewHeight: Double!
-    
-    
+
     // MARK: Init
     
     // init with title and message, set title to nil to make alert be no title, same with message
@@ -596,7 +543,6 @@ public class SwiftAlertView: UIView {
         
     }
     
-    
     // MARK: Utils
     
     private func labelHeightToFit(label: UILabel) {
@@ -627,7 +573,6 @@ extension SwiftAlertView {
 
 
 public enum SwiftAlertViewAppearType : Int {
-    
     case Default
     case FadeIn
     case FlyFromTop
@@ -642,7 +587,6 @@ public enum SwiftAlertViewDisappearType : Int {
     case FlyToBottom
     case FlyToRight
 }
-
 
 @objc public protocol SwiftAlertViewDelegate : NSObjectProtocol{
     

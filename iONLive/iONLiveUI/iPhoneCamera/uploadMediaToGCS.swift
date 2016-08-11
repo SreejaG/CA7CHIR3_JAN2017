@@ -53,13 +53,13 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func initialise(){
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         getMediaFromDB()
     }
     
     //get image from local db
     func getMediaFromDB(){
         imageFromDB = FileManagerViewController.sharedInstance.getImageFromFilePath(path)!
+        
         var sizeThumb : CGSize = CGSize()
         if(media == "image"){
             sizeThumb = CGSizeMake(70,70)
@@ -68,7 +68,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             sizeThumb = CGSizeMake(140, 140)
         }
         imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageFromDB, scaledToFillSize: sizeThumb)
-        print(imageAfterConversionThumbnail)
+        
         getSignedURLFromCloud()
     }
     
@@ -91,15 +91,12 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             mediaId = "\(mediaDetailId!)"
             uploadImageNameForGCS = json["ObjectName"] as! String
             self.saveImageToLocalCache()
-            
             startUploadingToGCS()
         }
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -123,6 +120,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
         let filePathToSaveFull = "\(mediaId)full"
         FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveFull, mediaImage: imageFromDB)
+        
         if (media == "video"){
             saveVideoToCahce()
         }
@@ -133,19 +131,21 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func  saveVideoToCahce()  {
         if ((videoSavedURL.path?.isEmpty) != nil)
         {
-            if let imageDatadup = NSData(contentsOfURL: videoSavedURL){
+            if var imageDatadup = NSData(contentsOfURL: videoSavedURL){
                 videoData = imageDatadup
+            
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
                 let savingPath = "\(parentPath)/\(mediaId)video.mov"
                 let url = NSURL(fileURLWithPath: savingPath)
                 videoData.writeToURL(url, atomically: true)
+                
+                imageDatadup = NSData()
                 videoData = NSData()
-                let videoUrlString = videoSavedURL.absoluteString
-                if(NSFileManager.defaultManager().fileExistsAtPath(videoUrlString)){
+                
+                if(NSFileManager.defaultManager().fileExistsAtPath(videoSavedURL.path!)){
                     do {
-                        try NSFileManager.defaultManager().removeItemAtPath(videoUrlString)
+                        try NSFileManager.defaultManager().removeItemAtPath(videoSavedURL.path!)
                     } catch let error as NSError {
-                        print(error.debugDescription)
                     }
                 }
             }
@@ -154,9 +154,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     func updateDataToLocalDataSource() {
         dataRowFromLocal.removeAll()
-        
         let currentTimeStamp : String = getCurrentTimeStamp()
-        
         dataRowFromLocal = [self.mediaDetailIdKey:mediaId,self.thumbImageURLKey:uploadThumbImageURLGCS,self.fullImageURLKey:uploadFullImageOrVideoURLGCS,self.mediaTypeKey:media,self.notificationTypeKey:"likes", self.createdTimeStampKey:currentTimeStamp,self.thumbImageKey:imageAfterConversionThumbnail,self.uploadProgressKey: 0.02]
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
@@ -178,17 +176,18 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 if(result == "Success"){
                     
                     self.uploadThumbImageToGCS({(result) -> Void in
+                        self.deleteDataFromDB()
+                        self.imageAfterConversionThumbnail = UIImage()
+                        self.imageFromDB = UIImage()
                         if(result == "Success"){
                             self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
-                            self.deleteDataFromDB()
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.mapMediaToDefaultChannels()
-                            })
+//                            })
                         }
                         else{
                         }
                     })
-                    
                 }
                 else{
                 }
@@ -209,6 +208,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             imageOrVideoData = UIImageJPEGRepresentation(imageFromDB, 0.5)!
             request.HTTPBody = imageOrVideoData
             let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                
                 if error != nil {
                     completion(result:"Failed")
                 }
@@ -216,7 +216,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                     completion(result:"Success")
                 }
             }
-             dataTask.resume()
+            dataTask.resume()
+            session.finishTasksAndInvalidate()
+            imageOrVideoData = NSData()
         }
         else{
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
@@ -224,9 +226,10 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             let url = NSURL(fileURLWithPath: savingPath)
             if let imageOrVideoData1 = NSData(contentsOfURL: url)
             {
-             imageOrVideoData = NSData(contentsOfURL: url)!
+                imageOrVideoData = NSData(contentsOfURL: url)!
                 request.HTTPBody = imageOrVideoData
                 let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                    imageOrVideoData = NSData()
                     if error != nil {
                         completion(result:"Failed")
                     }
@@ -234,11 +237,11 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                         completion(result:"Success")
                     }
                 }
-                 dataTask.resume()
-
+                dataTask.resume()
+                session.finishTasksAndInvalidate()
+                imageOrVideoData = NSData()
             }
         }
-        
     }
     
     //thumb image upload to cloud
@@ -260,7 +263,8 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             }
         }
         dataTask.resume()
-        
+        imageData = NSData()
+        session.finishTasksAndInvalidate()
     }
     
     //after upload complete delete data from local file and db
@@ -270,7 +274,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             do {
                 try fileManager.removeItemAtPath(path)
             } catch let error as NSError {
-                print(error.debugDescription)
             }
         }
         
@@ -286,9 +289,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
                 context.deleteObject(managedObjectData)
             }
+            
         }
         catch let error as NSError {
-            print(error.debugDescription)
         }
     }
     
@@ -314,7 +317,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func addScrollingIdsToChannels(channelScrollsDict: [[String:AnyObject]], mediaId: String)
     {
         //all channelIds from global channel image mapping data source to a channelids array
-        let channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
+        var channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
         
         var channelMediaDataSource : [[String:AnyObject]] = [[String:AnyObject]]()
         
@@ -353,6 +356,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(channelMediaDataSource, forKey: chanelIdChk)
                 
                 channelMediaDataSource.removeAll()
+                channelIds.removeAll()
+                channelMediaDataSource = [[String:AnyObject]]()
+                channelIds = Array()
                 chkFlag = false
                 chanelIdChk = ""
                 chanelMediaId = ""
@@ -378,7 +384,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     func updateProgressToDefault(progress:Float, mediaIds: String)
     {
-        let dict = [mediaDetailIdKey: mediaIds, uploadProgressKey: progress]
+        var dict = [mediaDetailIdKey: mediaIds, uploadProgressKey: progress]
         NSNotificationCenter.defaultCenter().postNotificationName("upload", object:dict)
+        dict = NSDictionary()
+        
     }
 }

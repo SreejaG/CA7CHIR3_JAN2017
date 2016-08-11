@@ -1,10 +1,3 @@
-//
-//  FileManagerViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 30/04/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -47,7 +40,7 @@ class FileManagerViewController: UIViewController {
     func fileExist(mediaPath: String) -> Bool
     {
         let flag : Bool
-        let fileManager = NSFileManager.defaultManager()
+        var fileManager = NSFileManager.defaultManager()
         if(fileManager.fileExistsAtPath(mediaPath))
         {
             flag = true
@@ -55,6 +48,7 @@ class FileManagerViewController: UIViewController {
         else{
             flag = false
         }
+        fileManager = NSFileManager()
         return flag
     }
     
@@ -73,8 +67,6 @@ class FileManagerViewController: UIViewController {
         {
             if let image = UIImageJPEGRepresentation(mediaImage, 0.5)
             {
-    
-             //   print(savingPath)
                 let result = image.writeToFile(savingPath, atomically: true)
                 mediaSaveFlag = result
             }
@@ -148,6 +140,7 @@ class FileManagerViewController: UIViewController {
         if secondsFrom(date,todate:todate) > 0 { return "\(secondsFrom(date,todate:todate))sec ago" }
         return ""
     }
+    
     func  getTimeDifference(dateStr:String) -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"

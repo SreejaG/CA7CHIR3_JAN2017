@@ -1,10 +1,3 @@
-//
-//  EditProfileViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/14/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -67,7 +60,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         initialise()
         
-        NSNotificationCenter .defaultCenter() .addObserver(self, selector: "keyBoardWasShown:", name: UIKeyboardDidShowNotification, object: nil)
+        NSNotificationCenter .defaultCenter() .addObserver(self, selector: #selector(EditProfileViewController.keyBoardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
     }
     
     @IBAction func tapGestureRecognizer(sender: AnyObject) {
@@ -85,7 +78,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         NSNotificationCenter.defaultCenter().removeObserver(self)
-     //   removeOverlay()
     }
     
     func initialise()
@@ -120,7 +112,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -143,7 +134,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         })
     }
     
-    
     func nullToNil(value : AnyObject?) -> AnyObject? {
         if value is NSNull {
             return ""
@@ -154,7 +144,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-       
+        
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -181,8 +171,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     {
         self.removeOverlay()
         
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -192,7 +180,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-
+                
             }
         }
         else{
@@ -210,7 +198,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-     //   self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -232,7 +219,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         emails = userDetails["email"] as! String
         mobileNo = userDetails["mobile_no"] as! String
         
-//        print(fullNames)
         let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
         if(thumbUrl != "")
         {
@@ -279,14 +265,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }))
         self.presentViewController(alert, animated: true, completion: nil)
     }
-
+    
     func redirect() {
-         self.navigationController?.popViewControllerAnimated(false)
+        self.navigationController?.popViewControllerAnimated(false)
     }
     
     @IBAction func backClicked(sender: AnyObject) {
         if(saveButton.hidden == false){
-                generateWaytoSendAlert()
+            generateWaytoSendAlert()
         }
         else{
             self.navigationController?.popViewControllerAnimated(false)
@@ -310,7 +296,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func authenticationSuccessHandlerSignedUrl(response:AnyObject?)
     {
-        
         if let json = response as? [String: AnyObject]
         {
             if let fullUrl = json["UploadActualImageUrl"]{
@@ -374,7 +359,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
         }
         
-//        print(fullName)
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
@@ -495,7 +479,6 @@ extension EditProfileViewController: UITableViewDelegate
         {
             return 44.0
         }
-        
     }
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
@@ -529,10 +512,9 @@ extension EditProfileViewController:UITableViewDataSource
         }
     }
     
-    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-      
+        
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
@@ -541,14 +523,13 @@ extension EditProfileViewController:UITableViewDataSource
                 switch indexPath.section
                 {
                 case 0:
-                  
+                    
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
                     cell.editProfileImageButton.addTarget(self, action: "editProfileTapped:", forControlEvents: UIControlEvents.TouchUpInside)
                     
                     if cellDataSource[displayNameKey] == ""
                     {
-                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Name",
-                                                                                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Name", attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
                     }
                     let cameraController = IPhoneCameraViewController()
                     let sizeThumb = CGSizeMake(70,70)
@@ -615,7 +596,7 @@ extension EditProfileViewController:UITableViewDataSource
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
-    
+        
         activeField = textField
         saveButton.hidden = false
     }
@@ -641,7 +622,7 @@ extension EditProfileViewController:UITableViewDataSource
         if(textField.tag == 0)
         {
             if((textField.text?.isEmpty) == nil){
-               
+                
                 dataSource![textField.tag][0][displayNameKey] = ""
             }
             else{
@@ -672,7 +653,6 @@ extension EditProfileViewController:UITableViewDataSource
                 return
             }
         }
-        
     }
     
     func isEmail(email:String) -> Bool {
@@ -711,7 +691,6 @@ extension EditProfileViewController:UITableViewDataSource
             return 0
         }
     }
-    
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {

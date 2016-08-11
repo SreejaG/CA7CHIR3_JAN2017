@@ -171,7 +171,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -357,7 +356,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
             pullToRefreshActiveSecnd = false
         }
         tapCountContactShare = 0
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -374,6 +372,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.addContactError()
         }
+        
         for var i = 0; i < fullDataSource.count; i++
         {
             let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int

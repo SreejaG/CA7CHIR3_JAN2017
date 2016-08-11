@@ -13,6 +13,4 @@ class ChannelItemListCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
-  
 }

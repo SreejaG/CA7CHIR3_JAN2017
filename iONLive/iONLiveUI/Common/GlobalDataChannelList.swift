@@ -4,7 +4,6 @@ import UIKit
 class GlobalDataChannelList: NSObject {
     
     var globalChannelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    //    var channelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
     let channelDetailIdKey = "channel_detail_id"
@@ -16,6 +15,9 @@ class GlobalDataChannelList: NSObject {
     let sharedIndicatorTemporaryKey = "tempSelected"
     let thumbImageKey = "thumbImage"
     let thumbImageURLKey = "thumbImage_URL"
+    
+    var operationQueueObjInChannelList = NSOperationQueue()
+    var operationInChannelList = NSBlockOperation()
     
     class var sharedInstance: GlobalDataChannelList
     {
@@ -40,7 +42,6 @@ class GlobalDataChannelList: NSObject {
         ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
-//            self.authenticationFailureHandler(error, code: message)
             return
         }
     }
@@ -82,19 +83,14 @@ class GlobalDataChannelList: NSObject {
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
             
             self.globalChannelDataSource.append([channelDetailIdKey: channelId!,channelNameKey: channelName,mediaDetailIdKey: mediaId,totalMediaCountKey: mediaSharedCount!,createdTimeStampKey: createdTime,self.sharedIndicatorOriginalKey: sharedBool,sharedIndicatorTemporaryKey: sharedBool, thumbImageURLKey: url])
-            
-            //            channelDataSource.append([channelDetailIdKey:channelId!, mediaDetailIdKey: mediaId, channelNameKey:channelName, totalMediaCountKey:mediaSharedCount!, createdTimeStampKey: createdTime,sharedIndicatorOriginalKey:sharedBool, sharedIndicatorTemporaryKey:sharedBool,thumbImageURLKey:url])
         }
         if(self.globalChannelDataSource.count > 0){
             sortChannelList()
             
-            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            dispatch_async(backgroundQueue, {
+            operationInChannelList  = NSBlockOperation (block: {
                 self.downloadMediaFromGCS()
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                })
             })
+            self.operationQueueObjInChannelList.addOperation(operationInChannelList)
         }
     }
     
@@ -140,12 +136,8 @@ class GlobalDataChannelList: NSObject {
                 }
             }
             self.globalChannelDataSource[i][thumbImageKey] = imageForMedia
-            
-            //            self.globalChannelDataSource.append([self.channelDetailIdKey: self.channelDataSource[i][channelDetailIdKey]!,self.channelNameKey: self.channelDataSource[i][self.channelNameKey]!,self.totalMediaCountKey: self.channelDataSource[i][self.totalMediaCountKey]!,createdTimeStampKey: channelDataSource[i][createdTimeStampKey]!,self.sharedIndicatorOriginalKey: self.channelDataSource[i][sharedIndicatorOriginalKey]!,self.sharedIndicatorTemporaryKey: self.channelDataSource[i][sharedIndicatorTemporaryKey]!,self.thumbImageKey: imageForMedia, self.thumbImageURLKey: self.channelDataSource[i][thumbImageURLKey]!])
         }
-        //        sortChannelList()
     }
-    
     
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
@@ -171,7 +163,6 @@ class GlobalDataChannelList: NSObject {
             return time1 > time2
         })
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
-
         autoDownloadChannelDetails()
     }
     

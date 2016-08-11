@@ -215,9 +215,11 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
+            
             GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr, sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            
             var imageData = [[String:AnyObject]]()
-             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
+            GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.myChannelTableView.reloadData()
             })
@@ -232,7 +234,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         self.removeOverlay()
         channelTextField.text = ""
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -272,11 +273,21 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 if(searchActive){
                     let channelId = searchDataSource[index][channelDetailIdKey] as! String
                     searchDataSource.removeAtIndex(index)
+                    
+                    var deleteIndexOfI : Int = Int()
+                    var deleteFlag = false
+                    
                     for(var i = 0; i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; i++){
                         let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelDetailIdKey] as! String
                         if(orgChannel == channelId){
-                            GlobalDataChannelList.sharedInstance.globalChannelDataSource.removeAtIndex(i)
+                            deleteFlag = true
+                            deleteIndexOfI = i
+                            break
                         }
+                    }
+                    if deleteFlag == true
+                    {
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource.removeAtIndex(deleteIndexOfI)
                     }
                 }
                 else{
@@ -328,7 +339,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -440,7 +450,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         
         self.presentViewController(alert, animated: true, completion: nil)
     }
-    
 }
 
 extension MyChannelViewController: UITableViewDelegate

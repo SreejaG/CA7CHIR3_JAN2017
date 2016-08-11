@@ -16,6 +16,10 @@ class MyChannelItemDetailsViewController: UIViewController {
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
+    var operationQueueObjInSharingImageList = NSOperationQueue()
+    var operationInSharingImageList = NSBlockOperation()
+
+    
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
     
@@ -55,10 +59,12 @@ class MyChannelItemDetailsViewController: UIViewController {
         {
             channelTitleLabel.text = channelName.uppercaseString
         }
+        downloadingFlag = false
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+        operationInSharingImageList.cancel()
         self.channelItemsCollectionView.alpha = 1.0
     }
     
@@ -108,23 +114,17 @@ class MyChannelItemDetailsViewController: UIViewController {
                 }
                 if totalCount > 0
                 {
-                  
                     removeOverlay()
-                    self.channelItemsCollectionView.reloadData()
-                    
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.channelItemsCollectionView.reloadData()
+                    })
                 }
                 else if totalCount <= 0
                 {
-                 
                     totalCount = 0
                     self.channelItemsCollectionView.reloadData()
                 }
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.downloadImagesFromGlobalChannelImageMapping(21)
-                    })
-        
+                self.downloadImagesFromGlobalChannelImageMapping(21)
             }
         }
     }
@@ -134,6 +134,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func downloadImagesFromGlobalChannelImageMapping(limit : Int)  {
+        operationInSharingImageList.cancel()
         let start = totalCount
         var end = 0
         if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
@@ -142,12 +143,13 @@ class MyChannelItemDetailsViewController: UIViewController {
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
-     //   totalCount = totalCount + end
         end = start + end
         
-        GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(channelId, start: start, end: end)
+        operationInSharingImageList  = NSBlockOperation (block: {
+            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
+        })
+        self.operationQueueObjInSharingImageList.addOperation(operationInSharingImageList)
     }
-    
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
         self.lastContentOffset = scrollView.contentOffset
@@ -162,11 +164,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                     if self.downloadingFlag == false
                     {
                         self.downloadingFlag = true
-                        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                        dispatch_async(backgroundQueue, {
-                            self.downloadImagesFromGlobalChannelImageMapping(12)
-                        })
+                        self.downloadImagesFromGlobalChannelImageMapping(12)
                     }
                 }
             }
@@ -174,6 +172,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func removeActivityIndicator(notif : NSNotification){
+        operationInSharingImageList.cancel()
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
@@ -187,6 +186,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             self.removeOverlay()
             self.channelItemsCollectionView.reloadData()
         })
+       
         if downloadingFlag == true
         {
             downloadingFlag = false
@@ -217,7 +217,6 @@ class MyChannelItemDetailsViewController: UIViewController {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

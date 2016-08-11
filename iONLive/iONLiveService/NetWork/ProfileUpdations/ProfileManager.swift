@@ -1,10 +1,3 @@
-//
-//  ProfileManager.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 25/02/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -105,10 +98,10 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
         
         var paramet = NSMutableDictionary()
         if(fullName == ""){
-           paramet  = ["email":email,"mobileNumber":mobNo]
+            paramet  = ["email":email,"mobileNumber":mobNo]
         }
         else{
-           paramet  = ["email":email,"mobileNumber":mobNo,"fullName":fullName]
+            paramet  = ["email":email,"mobileNumber":mobNo,"fullName":fullName]
         }
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: paramet, success: { (operation, response) -> Void in
@@ -165,5 +158,5 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
                 failure?(error: error, code:failureErrorCode)
         })
     }
-
+    
 }

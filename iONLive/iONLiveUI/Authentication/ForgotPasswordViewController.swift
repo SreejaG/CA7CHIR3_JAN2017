@@ -1,17 +1,10 @@
-//
-//  ForgotPasswordViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/30/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     
     static let identifier = "ForgotPasswordViewController"
-
+    
     @IBOutlet weak var resetPasswdBottomConstraint: NSLayoutConstraint!
     
     var verificationCode : String!
@@ -23,10 +16,9 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     
     @IBOutlet var reEnterPwdText: UITextField!
     @IBOutlet var newPwdText: UITextField!
-  
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-     //   print(verificationCode)
         initialise()
     }
     
@@ -40,11 +32,11 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         newPwdText.attributedPlaceholder = NSAttributedString(string: "New Password",
-                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                              attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         newPwdText.autocorrectionType = UITextAutocorrectionType.No
         
         reEnterPwdText.attributedPlaceholder = NSAttributedString(string: "Re-enter Password",
-                                                              attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         reEnterPwdText.autocorrectionType = UITextAutocorrectionType.No
         addObserver()
         newPwdText.becomeFirstResponder()
@@ -52,7 +44,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         newPwdText.delegate = self
         reEnterPwdText.secureTextEntry = true
         reEnterPwdText.delegate = self
-  //      print("\(mobileNumber)      \(verificationCode)")
     }
     
     func addObserver()
@@ -130,7 +121,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
             else{
                 showOverlay()
                 authenticationManager.resetPassword(mobileNumber, newPassword: newPaswrd!, verificationCode: verificationCode, success: { (response) in
-                        self.authenticationSuccessHandler(response)
+                    self.authenticationSuccessHandler(response)
                     }, failure: { (error, message) in
                         self.authenticationFailureHandler(error, code: message)
                         return
@@ -148,7 +139,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
             if(status == 1){
                 let alert = UIAlertController(title: "", message: "Your password has been changed", preferredStyle: UIAlertControllerStyle.Alert)
                 alert.addAction(UIAlertAction(title: "Go To Login Screen", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                     self.loadInitialViewController()
+                    self.loadInitialViewController()
                 }))
                 self.presentViewController(alert, animated: true, completion: nil)
             }
@@ -162,8 +153,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -181,12 +170,12 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-     //   self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
+    
     func  loadInitialViewController(){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             
@@ -199,7 +188,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -217,9 +205,8 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
             let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
             channelItemListVC.navigationController?.navigationBarHidden = true
             self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-              
+                
             }
         })
     }
-
 }

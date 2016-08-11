@@ -1,23 +1,8 @@
-//
-//  UrlManager.swift
-//  iONLive
-//
-//  Created by Gadgeon on 11/24/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import Foundation
 class UrlManager {
     
-     let baseUrl = "http://130.211.135.170:3000";
-    
-//        let baseUrl = "http://104.196.113.247:3000";
-    
-//    let baseUrl = "http://104.197.92.137:3000";
-    
-//    let baseUrl = "http://192.168.18.101:3000"; // Local ip
-
-    
+    let baseUrl = "http://130.211.135.170:3000";
     let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
@@ -119,7 +104,6 @@ class UrlManager {
     }
     func MediaInteractionUrl() -> String{
         let mediaInteractionAPI = baseUrl+"/api/v1/mediaInteraction"
-        print(mediaInteractionAPI)
         return mediaInteractionAPI
     }
     
@@ -147,7 +131,6 @@ class UrlManager {
     func getUserRelatedDataAPIUrl(userName: String) -> String
     {
         let getUserRelatedDataAPI = usersSignUpAPIUrl() + "/" + userName
-        print(getUserRelatedDataAPI)
         return getUserRelatedDataAPI
     }
     
@@ -166,7 +149,6 @@ class UrlManager {
     func getProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
         let getProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken
-        print(getProfileImageAPI)
         return getProfileImageAPI
     }
     
@@ -185,10 +167,9 @@ class UrlManager {
     func getProfileUploadAPIUrl(userName: String, accessToken: String) -> String
     {
         let getProfileUploadAPI = profileImageAPIUrl() + "/" + userName + "/" + accessToken
-        print(getProfileUploadAPI)
         return getProfileUploadAPI
     }
-
+    
     func getAllChannelsAPIUrl(userName: String, accessToken: String) -> String
     {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
@@ -366,7 +347,6 @@ class UrlManager {
     func getUpdatedMediaDetails(userName: String, accessToken: String, timeStamp: String)->String
     {
         let getUpdatedMediaUrl = SubscribedChannelMediaUrl() + "/" + userName + "/" + accessToken + "/" + timeStamp
-        print(getUpdatedMediaUrl)
         return getUpdatedMediaUrl
     }
     
@@ -374,7 +354,6 @@ class UrlManager {
         
     {
         let getUpdatedMediaUrl = SubscribedChannelMediaUrl() + "/" + userName + "/" + accessToken
-        print(getUpdatedMediaUrl)
         return getUpdatedMediaUrl
     }
     

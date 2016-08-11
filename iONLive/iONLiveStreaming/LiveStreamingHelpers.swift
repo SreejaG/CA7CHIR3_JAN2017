@@ -1,10 +1,3 @@
-//
-//  LiveStreamingHelpers.swift
-//  iONLive
-//
-//  Created by Sreeja on 25/07/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import Foundation
 
@@ -77,7 +70,6 @@ class LiveStreamingHelpers
                 if let json = response as? [String: AnyObject]
                 {
                     self.currentStreamingTocken = json["streamToken"] as? String
-                    print(self.currentStreamingTocken)
                     self.startLiveStreamingToken(self.currentStreamingTocken)
                 }
                 else
@@ -88,7 +80,6 @@ class LiveStreamingHelpers
                 
                 }, failure: { (error, message) -> () in
                     self.streamingFailed()
-                    print("message = \(message), error = \(error?.localizedDescription)")
                     self.handleFailure(message)
                     return
             })
@@ -107,7 +98,6 @@ class LiveStreamingHelpers
     {
         let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
         let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
-        print(streamTocken)
         cleanStreamingToken()
         
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
@@ -121,7 +111,6 @@ class LiveStreamingHelpers
                     defaults.setValue(url, forKey: "liveStreamURL")
                     
                     let streamToken:String = json["streamToken"] as! String
-                        print(streamTocken)
                     NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
                     self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
                     
@@ -272,7 +261,6 @@ class LiveStreamingHelpers
         }
         else
         {
-            //                self.removeStreaming()
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
@@ -289,6 +277,5 @@ class LiveStreamingHelpers
     {
         stopStream()
         clearStreamingDefaults()
-        print("Live streaming stopped.......")
     }
 }

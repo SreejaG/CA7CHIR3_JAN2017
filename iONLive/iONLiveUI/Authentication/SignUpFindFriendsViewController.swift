@@ -1,10 +1,3 @@
-//
-//  SignUpFindFriendsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon Smart Systems  on 24/02/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import AddressBook
 import AddressBookUI
@@ -39,7 +32,6 @@ class SignUpFindFriendsViewController: UIViewController{
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-//        removeOverlay()
     }
     
     override func viewDidLoad() {
@@ -67,13 +59,10 @@ class SignUpFindFriendsViewController: UIViewController{
         let authorizationStatus = ABAddressBookGetAuthorizationStatus()
         switch authorizationStatus {
         case .Denied, .Restricted:
-            print("Denied")
             generateContactSynchronizeAlert()
         case .Authorized:
-            print("Authorized")
             displayContacts()
         case .NotDetermined:
-            print("Not Determined")
             promptForAddressBookRequestAccess()
         }
     }
@@ -96,10 +85,8 @@ class SignUpFindFriendsViewController: UIViewController{
             (granted: Bool, error: CFError!) in
             dispatch_async(dispatch_get_main_queue()) {
                 if !granted {
-                    print("Just denied")
                     self.generateContactSynchronizeAlert()
                 } else {
-                    print("Just authorized")
                     self.displayContacts()
                 }
             }
@@ -160,7 +147,7 @@ class SignUpFindFriendsViewController: UIViewController{
             else{
                 currentContactImage = UIImage(named: "avatar")!
             }
-            print(phoneNumber)
+            
             if(phoneNumber != ""){
                 contactPhoneNumbers.append(phoneNumber)
                 var currentContactName = String()
@@ -171,7 +158,6 @@ class SignUpFindFriendsViewController: UIViewController{
                 else{
                     currentContactName = "No Name"
                 }
-                print(currentContactName)
                 
                 self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, "orgSelected":0, "tempSelected":0])
             }
@@ -219,7 +205,6 @@ class SignUpFindFriendsViewController: UIViewController{
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -244,7 +229,6 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-      //  removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             var status: Int!
@@ -264,7 +248,6 @@ class SignUpFindFriendsViewController: UIViewController{
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -297,7 +280,6 @@ class SignUpFindFriendsViewController: UIViewController{
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
-//        self.navigationController?.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
