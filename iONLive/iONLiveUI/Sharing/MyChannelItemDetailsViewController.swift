@@ -3,22 +3,12 @@ import UIKit
 
 class MyChannelItemDetailsViewController: UIViewController {
     
-    let mediaDetailIdKey = "media_detail_id"
-    let thumbImageURLKey = "thumbImage_URL"
-    let fullImageURLKey = "fullImage_URL"
-    let thumbImageKey = "thumbImage"
-    let notificationTypeKey = "notification_type"
-    let createdTimeStampKey = "created_timeStamp"
-    let mediaTypeKey = "media_type"
-    let channelMediaDetailIdKey = "channel_media_detail_id"
-    let uploadProgressKey = "upload_progress"
-    
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
     var operationQueueObjInSharingImageList = NSOperationQueue()
     var operationInSharingImageList = NSBlockOperation()
-
+    
     
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
@@ -130,7 +120,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func thumbExists (item: [String : AnyObject]) -> Bool {
-        return item[thumbImageKey] != nil
+        return item[tImageKey] != nil
     }
     
     func downloadImagesFromGlobalChannelImageMapping(limit : Int)  {
@@ -177,8 +167,8 @@ class MyChannelItemDetailsViewController: UIViewController {
         totalCount = filteredData.count
         
         GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
-            let time1 = Int(p1[self.mediaDetailIdKey] as! String)
-            let time2 = Int(p2[self.mediaDetailIdKey] as! String)
+            let time1 = Int(p1[mediaIdKey] as! String)
+            let time2 = Int(p2[mediaIdKey] as! String)
             return time1 > time2
         })
         
@@ -186,7 +176,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             self.removeOverlay()
             self.channelItemsCollectionView.reloadData()
         })
-       
+        
         if downloadingFlag == true
         {
             downloadingFlag = false
@@ -256,7 +246,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
         {
             let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaTypeKey] as! String
             let channelImageView = cell.viewWithTag(100) as! UIImageView
-            if let imageData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey] {
+            if let imageData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][tImageKey] {
                 channelImageView.image = imageData as? UIImage
             }
             else{
@@ -293,7 +283,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0){
-            if let img = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][thumbImageKey]
+            if let img = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][tImageKey]
             {
                 
                 let defaults = NSUserDefaults .standardUserDefaults()
@@ -313,10 +303,10 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 else{
                     imageForProfile =  UIImage(named: "dummyUser")!
                 }
-                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeStampKey] as! String
+                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.fullImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.thumbImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.notificationTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][self.mediaDetailIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][fImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0") as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemsCollectionView.alpha = 1.0

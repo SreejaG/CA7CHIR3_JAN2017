@@ -189,13 +189,9 @@ class ContactDetailsViewController: UIViewController {
     }
     
     func loadIphoneCameraController(){
-        if(GlobalDataRetriever.sharedInstance.globalDataSource.count == 0)
-        {
-            NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
-            GlobalDataRetriever.sharedInstance.initialise()
-            GlobalDataChannelList.sharedInstance.initialise()
-            ChannelSharedListAPI.sharedInstance.initialisedata()
-        }
+        NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
+        GlobalDataChannelList.sharedInstance.initialise()
+        ChannelSharedListAPI.sharedInstance.initialisedata()
         
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController

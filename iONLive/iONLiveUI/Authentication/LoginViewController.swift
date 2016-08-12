@@ -231,13 +231,9 @@ class LoginViewController: UIViewController {
             {
                 defaults.setValue(code, forKey:ArchiveCount)
             }
-            if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
-            {
-                NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
-                GlobalDataRetriever.sharedInstance.initialise()
-                GlobalDataChannelList.sharedInstance.initialise()
-                ChannelSharedListAPI.sharedInstance.initialisedata()
-            }
+            NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
+            GlobalDataChannelList.sharedInstance.initialise()
+            ChannelSharedListAPI.sharedInstance.initialisedata()
         }
         else
         {

@@ -371,7 +371,6 @@ NSTimer *timer;
         [self initialiseAPICall];
     }
     
-    [self setLeftAndRightThumbnailInCameraPage];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setGUIBasedOnMode];
@@ -397,11 +396,6 @@ NSTimer *timer;
 
 -(void) initialiseAPICall
 {
-    GlobalDataRetriever *GlobalDataRetrieverObj = [GlobalDataRetriever sharedInstance];
-    if (GlobalDataRetrieverObj.globalDataSource.count == 0) {
-        [GlobalDataRetrieverObj initialise];
-    }
-    
     GlobalDataChannelList *GlobalDataChannelListObj = [GlobalDataChannelList sharedInstance];
     if (GlobalDataChannelListObj.globalChannelDataSource.count == 0) {
         [GlobalDataChannelListObj initialise];
@@ -440,12 +434,13 @@ NSTimer *timer;
 
 -(void) setLeftAndRightThumbnailInCameraPage
 {
-    GlobalDataRetriever *GlobalDataRetrieverObj = [GlobalDataRetriever sharedInstance];
-    if (GlobalDataRetrieverObj.globalDataSource.count > 0)
+    NSString *archiveChanelId = [[NSUserDefaults standardUserDefaults] valueForKey:@"archiveId"];
+    GlobalChannelToImageMapping *GlobalChannelToImageMappingObj = [GlobalChannelToImageMapping sharedInstance];
+    if (GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId].count > 0)
     {
         UIImage *img = [[UIImage alloc]init];
-        img = GlobalDataRetrieverObj.globalDataSource[0][@"thumbImage"];
-        NSString *type = GlobalDataRetrieverObj.globalDataSource[0][@"media_type"];
+        img = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"thumbImage"];
+        NSString *type = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"media_type"];
         dispatch_async(dispatch_get_main_queue(), ^{
             if([type  isEqual: @"video"])
             {
@@ -668,6 +663,7 @@ NSTimer *timer;
         [self initialise];
     });
     [self enabelOrDisableButtons:true];
+//    [self setLeftAndRightThumbnailInCameraPage];
 }
 
 -(void) initialise{
@@ -804,14 +800,23 @@ NSTimer *timer;
         });
     }
     else{
-        if([[[GlobalDataRetriever sharedInstance] globalDataSource] count] > 0){
-            if([[[GlobalDataRetriever sharedInstance] globalDataSource][0][@"media_type"]  isEqual: @"video"]){
-                self.playiIconView.hidden = NO;
-            }
-            else{
-                self.playiIconView.hidden = YES;
-            }
-            self.thumbnailImageView.image = [[GlobalDataRetriever sharedInstance] globalDataSource][0][@"thumbImage"];
+        NSString *archiveChanelId = [[NSUserDefaults standardUserDefaults] valueForKey:@"archiveId"];
+        GlobalChannelToImageMapping *GlobalChannelToImageMappingObj = [GlobalChannelToImageMapping sharedInstance];
+        if (GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId].count > 0)
+        {
+            UIImage *img = [[UIImage alloc]init];
+            img = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"thumbImage"];
+            NSString *type = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"media_type"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if([type  isEqual: @"video"])
+                {
+                    self.playiIconView.hidden = NO;
+                }
+                else{
+                    self.playiIconView.hidden = YES;
+                }
+                self.thumbnailImageView.image = img;
+            });
         }
     }
     

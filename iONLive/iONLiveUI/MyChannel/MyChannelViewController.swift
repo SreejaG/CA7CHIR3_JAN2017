@@ -21,16 +21,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     static let identifier = "MyChannelViewController"
     
-    let channelDetailIdKey = "channel_detail_id"
-    let mediaDetailIdKey = "media_detail_id"
-    let channelNameKey = "channel_name"
-    let totalMediaCountKey = "total_media_count"
-    let createdTimeStampKey = "created_timeStamp"
-    let sharedIndicatorOriginalKey = "orgSelected"
-    let sharedIndicatorTemporaryKey = "tempSelected"
-    let thumbImageKey = "thumbImage"
-    let thumbImageURLKey = "thumbImage_URL"
-    
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
@@ -122,17 +112,17 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             if(!searchActive){
                 if GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > swipedIndexPath.row
                 {
-                    channelItemListVC.channelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[swipedIndexPath.row][channelDetailIdKey] as! String
+                    channelItemListVC.channelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[swipedIndexPath.row][channelIdKey] as! String
                     channelItemListVC.channelName = GlobalDataChannelList.sharedInstance.globalChannelDataSource[swipedIndexPath.row][channelNameKey] as! String
-                    channelItemListVC.totalMediaCount = Int(GlobalDataChannelList.sharedInstance.globalChannelDataSource[swipedIndexPath.row][totalMediaCountKey]! as! String)!
+                    channelItemListVC.totalMediaCount = Int(GlobalDataChannelList.sharedInstance.globalChannelDataSource[swipedIndexPath.row][totalMediaKey]! as! String)!
                 }
             }
             else{
                 if searchDataSource.count > swipedIndexPath.row
                 {
-                    channelItemListVC.channelId = searchDataSource[swipedIndexPath.row][channelDetailIdKey] as! String
+                    channelItemListVC.channelId = searchDataSource[swipedIndexPath.row][channelIdKey] as! String
                     channelItemListVC.channelName = searchDataSource[swipedIndexPath.row][channelNameKey] as! String
-                    channelItemListVC.totalMediaCount = Int(searchDataSource[swipedIndexPath.row][totalMediaCountKey]! as! String)!
+                    channelItemListVC.totalMediaCount = Int(searchDataSource[swipedIndexPath.row][totalMediaKey]! as! String)!
                 }
             }
             channelItemListVC.navigationController?.navigationBarHidden = true
@@ -216,9 +206,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
             
-            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr, sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", createdTimeKey: localDateStr, sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
             
-            var imageData = [[String:AnyObject]]()
+            let imageData = [[String:AnyObject]]()
             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.myChannelTableView.reloadData()
@@ -271,14 +261,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
             let status = json["status"] as! Int
             if(status == 1){
                 if(searchActive){
-                    let channelId = searchDataSource[index][channelDetailIdKey] as! String
+                    let channelId = searchDataSource[index][channelIdKey] as! String
                     searchDataSource.removeAtIndex(index)
                     
                     var deleteIndexOfI : Int = Int()
                     var deleteFlag = false
                     
                     for(var i = 0; i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; i++){
-                        let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelDetailIdKey] as! String
+                        let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
                         if(orgChannel == channelId){
                             deleteFlag = true
                             deleteIndexOfI = i
@@ -493,8 +483,8 @@ extension MyChannelViewController:UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelCell.identifier, forIndexPath:indexPath) as! MyChannelCell
             
             cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
-            cell.channelItemCount.text = dataSourceTmp![indexPath.row][totalMediaCountKey] as? String
-            if let latestImage = dataSourceTmp![indexPath.row][thumbImageKey]
+            cell.channelItemCount.text = dataSourceTmp![indexPath.row][totalMediaKey] as? String
+            if let latestImage = dataSourceTmp![indexPath.row][tImageKey]
             {
                 cell.channelHeadImageView.image = latestImage as! UIImage
             }
@@ -539,10 +529,10 @@ extension MyChannelViewController:UITableViewDataSource
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
             var deletedChannelId : String = String()
             if(searchActive){
-                deletedChannelId = self.searchDataSource[indexPath.row][self.channelDetailIdKey]! as! String
+                deletedChannelId = self.searchDataSource[indexPath.row][channelIdKey] as! String
             }
             else{
-                deletedChannelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[indexPath.row][self.channelDetailIdKey]! as! String
+                deletedChannelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[indexPath.row][channelIdKey] as! String
             }
             generateWaytoSendAlert(deletedChannelId, indexPath: indexPath.row)
         }

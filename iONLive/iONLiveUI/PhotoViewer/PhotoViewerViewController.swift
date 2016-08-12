@@ -36,16 +36,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     static let identifier = "PhotoViewerViewController"
     
-    let mediaDetailIdKey = "media_detail_id"
-    let thumbImageURLKey = "thumbImage_URL"
-    let fullImageURLKey = "fullImage_URL"
-    let thumbImageKey = "thumbImage"
-    let notificationTypeKey = "notification_type"
-    let createdTimeStampKey = "created_timeStamp"
-    let mediaTypeKey = "media_type"
-    let uploadProgressKey = "upload_progress"
-    let channelMediaDetailIdKey = "channel_media_detail_id"
-    
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
@@ -53,10 +43,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var moviePlayer : MPMoviePlayerController!
     let defaults = NSUserDefaults .standardUserDefaults()
     
-    var operationQueueObjInMyMediaImageList = NSOperationQueue()
-    var operationInMyMediaImageList = NSBlockOperation()
-    
     private var downloadTask: NSURLSessionDownloadTask?
+    
+    var operationQueueObjInMyMediaList = NSOperationQueue()
+    var operationInMyMediaList = NSBlockOperation()
     
     var progressViewDownload: UIProgressView?
     var progressLabelDownload: UILabel?
@@ -70,6 +60,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var playHandleflag : NSInteger = NSInteger()
     var selectedItem : Int = Int()
     var archiveMediaCount : Int = Int()
+    var archiveChanelId : String = String()
     var mediaIdSelected : Int = 0
     var videoDownloadIntex : Int = 0
     var totalCount = 0
@@ -80,7 +71,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var dictMediaId : String = String()
     var userId : String = String()
     var accessToken: String = String()
-    var deletedMediaId : String = String()
+    var deletedMediaId : NSMutableArray = NSMutableArray()
     
     var dictProgress : Float = Float()
     
@@ -108,7 +99,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         playHandleflag = 0
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyMedia", object: nil)
+         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
         
@@ -119,39 +110,47 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         initialise()
         
         archiveMediaCount = defaults.valueForKey(ArchiveCount) as! Int
+        archiveChanelId = "\(defaults.valueForKey(archiveId) as! Int)"
         
         if archiveMediaCount == 0{
             self.removeOverlay()
             ErrorManager.sharedInstance.emptyMedia()
+            self.addToButton.hidden = true
+            self.deletButton.hidden = true
+            self.fullScreenZoomView.image = UIImage()
+            self.fullScrenImageView.image = UIImage()
         }
-        else if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
+        else if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0)
         {
-            let filteredData = GlobalDataRetriever.sharedInstance.globalDataSource.filter(thumbExists)
-            totalCount = filteredData.count
-            
+            var channelKeys = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
+            if(channelKeys.contains(archiveChanelId)){
+                let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
+                totalCount = filteredData.count
+            }
+            channelKeys.removeAll()
             if totalCount > 0
             {
+                removeOverlay()
+                var dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
+                downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
-                    if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
-                    {
-                        let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
-                        self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
-                    }
-                    
                     self.addToButton.hidden = false
                     self.deletButton.hidden = false
                     self.photoThumpCollectionView.reloadData()
                 })
             }
-            else{
-                self.downloadImagesFromGlobalRetriever()
-                
+            else if totalCount <= 0
+            {
+                self.removeOverlay()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
+                    self.fullScreenZoomView.image = UIImage()
+                    self.fullScrenImageView.image = UIImage()
+                    self.photoThumpCollectionView.reloadData()
                 })
             }
+            downloadImagesFromGlobalChannelImageMapping(10)
         }
         
         fullScreenScrollView.delegate = self
@@ -203,7 +202,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        operationInMyMediaImageList.cancel()
+        operationInMyMediaList.cancel()
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
         }
@@ -220,6 +219,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
+    func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
+        operationInMyMediaList.cancel()
+        let start = totalCount
+        var end = 0
+        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
+            end = limit
+        }
+        else{
+            end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
+        }
+        end = start + end
+        
+        operationInMyMediaList  = NSBlockOperation (block: {
+            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
+        })
+        self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+    }
+    
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
         return self.fullScreenZoomView
     }
@@ -229,9 +246,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func handleDoubleTap(recognizer: UITapGestureRecognizer) {
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
-            let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
+            let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
             
             if mediaType != "video"
             {
@@ -259,7 +276,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func scrollViewWillBeginZooming(scrollView: UIScrollView, withView views: UIView?) {
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
             if(fullScreenZoomView.hidden==true)
             {
@@ -295,10 +312,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
-        if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
-            if GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] != nil
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
             {
-                let mediaType = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem][mediaTypeKey] as! String
+                let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
                 
                 if mediaType == "video"
                 {
@@ -309,44 +326,40 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
-    func removeActivityIndicator(notif : NSNotification)
-    {
-        operationInMyMediaImageList.cancel()
-        let filteredData = GlobalDataRetriever.sharedInstance.globalDataSource.filter(thumbExists)
+    func removeActivityIndicatorMyMedia(notif : NSNotification){
+        operationInMyMediaList.cancel()
+        let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
         totalCount = filteredData.count
-       
-        if(totalCount > 0){
-            
-            GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
-                let time1 = Int(p1[mediaDetailIdKey] as! String)
-                let time2 = Int(p2[mediaDetailIdKey] as! String)
-                return time1 > time2
-            })
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.addToButton.hidden = false
-                self.deletButton.hidden = false
-                self.photoThumpCollectionView.reloadData()
-            })
-            
-            if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
-            {
-                let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
-                self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
-            }
-            else{
-                removeOverlay()
-                ErrorManager.sharedInstance.emptyMedia()
-                
-            }
-            if downloadingFlag == true
-            {
-                downloadingFlag = false
-            }
+        
+        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.sortInPlace({ p1, p2 in
+            let time1 = Int(p1[mediaIdKey] as! String)
+            let time2 = Int(p2[mediaIdKey] as! String)
+            return time1 > time2
+        })
+        
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.count > 0
+        {
+            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![0]
+            self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
+        }
+        else{
+            removeOverlay()
+            ErrorManager.sharedInstance.emptyMedia()
+        }
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.addToButton.hidden = false
+            self.deletButton.hidden = false
+            self.photoThumpCollectionView.reloadData()
+        })
+
+        if downloadingFlag == true
+        {
+            downloadingFlag = false
         }
     }
-    
+
     func thumbExists (item: [String : AnyObject]) -> Bool {
-        return item[thumbImageKey] != nil
+        return item[tImageKey] != nil
     }
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
@@ -355,36 +368,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         if (self.lastContentOffset.x > scrollView.contentOffset.x) {
-            if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
+            if totalCount > 0
             {
-                if(totalCount < GlobalDataRetriever.sharedInstance.globalDataSource.count)
+                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count)
                 {
                     if self.downloadingFlag == false
                     {
                         self.downloadingFlag = true
-                        self.downloadImagesFromGlobalRetriever()
+                        downloadImagesFromGlobalChannelImageMapping(12)
                     }
                 }
             }
         }
-    }
-    
-    func downloadImagesFromGlobalRetriever()  {
-        let start = totalCount
-        var end = 0
-        if((totalCount + 10) < GlobalDataRetriever.sharedInstance.globalDataSource.count){
-            end = 10
-        }
-        else{
-            end = GlobalDataRetriever.sharedInstance.globalDataSource.count - totalCount
-        }
-//        totalCount = totalCount + end
-        end = start + end
-        operationInMyMediaImageList.cancel()
-        operationInMyMediaImageList  = NSBlockOperation (block: {
-            GlobalDataRetriever.sharedInstance.downloadMediaFromGCS(start, end: end,operationObj: self.operationInMyMediaImageList)
-        })
-        self.operationQueueObjInMyMediaImageList.addOperation(operationInMyMediaImageList)
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -413,14 +408,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count == 0
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count == 0
         {
-            ErrorManager.sharedInstance.emptyMedia()
+//            ErrorManager.sharedInstance.emptyMedia()
         }
             
         else
         {
-            
             swipeFlag = true
             self.removeOverlay()
             
@@ -443,7 +437,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             progressViewDownload?.hidden=true;
             progressLabelDownload?.hidden=true;
             
-            let mediaIdStr = GlobalDataRetriever.sharedInstance.globalDataSource[GlobalDataRetriever.sharedInstance.globalDataSource.count - 1][mediaDetailIdKey]
+            let mediaIdStr = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1][mediaIdKey]
             let mediaIdForFilePath = "\(mediaIdStr!)full"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath )"
@@ -454,7 +448,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 switch swipeGesture.direction
                 {
                 case UISwipeGestureRecognizerDirection.Left:
-                    if(selectedItem < GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
+                    if(selectedItem < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1)
                     {
                         if fileExistFlag != true
                         {
@@ -465,7 +459,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                         dispatch_async(backgroundQueue, {
                             self.selectedItem = self.selectedItem+1
-                            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
+                            let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
                             self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.removeOverlay()
@@ -474,7 +468,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             })
                         })
                     }
-                    else if(selectedItem == GlobalDataRetriever.sharedInstance.globalDataSource.count-1)
+                    else if(selectedItem == GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1)
                     {
                         self.removeOverlay()
                     }
@@ -490,7 +484,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                         dispatch_async(backgroundQueue, {
                             self.selectedItem = self.selectedItem - 1
-                            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem]
+                            let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
                             self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.removeOverlay()
@@ -540,7 +534,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     @IBAction func deleteButtonAction(sender: AnyObject) {
         
-        deletedMediaId = ""
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
@@ -562,21 +555,25 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: {(
             action:UIAlertAction!) in
-            if(GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaTypeKey] as! String == "video"){
+            self.deletedMediaId.removeAllObjects()
+            self.mediaSelected.removeAllObjects()
+            
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem][mediaIdKey] as! String == "video"){
                 self.playIconInFullView.hidden = false
             }
             else{
                 self.playIconInFullView.hidden = true
             }
-            self.mediaIdSelected = Int(GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaDetailIdKey] as! String)!
-            self.deletedMediaId = GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaDetailIdKey] as! String
-            
+            let mediaIdChecked : String = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem][mediaIdKey] as! String
+
+            self.mediaIdSelected = Int(mediaIdChecked)!
+            self.deletedMediaId.addObject(mediaIdChecked)
             self.mediaSelected.addObject(self.mediaIdSelected)
             
             if(self.mediaSelected.count > 0)
             {
                 var channelIds : [Int] = [Int]()
-                if let channel = NSUserDefaults.standardUserDefaults().valueForKey("archiveId")
+                if let channel = NSUserDefaults.standardUserDefaults().valueForKey(archiveId)
                 {
                     let channelIdForApi = channel as! Int
                     channelIds.append(channelIdForApi)
@@ -604,7 +601,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             (action:UIAlertAction!) in print("you have pressed the Cancel button")
             self.fullScrenImageView.alpha = 1.0
             
-            if(GlobalDataRetriever.sharedInstance.globalDataSource[self.selectedItem][self.mediaTypeKey] as! String == "video"){
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem][mediaIdKey] as! String == "video"){
                 self.playIconInFullView.hidden = false
             }
             else{
@@ -623,34 +620,34 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
             mediaIdSelected = 0
             mediaSelected.removeAllObjects()
-            
-            
-            if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
-            {
-                GlobalDataRetriever.sharedInstance.globalDataSource.removeAtIndex(selectedItem)
-            }
-            
-            GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
-                let time1 = Int(p1[mediaDetailIdKey] as! String)
-                let time2 = Int(p2[mediaDetailIdKey] as! String)
-                return time1 > time2
-            })
-            
+            GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(archiveChanelId, mediaIds: deletedMediaId)
+//            
+//            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
+//            {
+//                GlobalDataRetriever.sharedInstance.globalDataSource.removeAtIndex(selectedItem)
+//            }
+//            
+//            GlobalDataRetriever.sharedInstance.globalDataSource.sortInPlace({ p1, p2 in
+//                let time1 = Int(p1[mediaDetailIdKey] as! String)
+//                let time2 = Int(p2[mediaDetailIdKey] as! String)
+//                return time1 > time2
+//            })
+//            
             totalCount = totalCount - 1
-            
-            GlobalDataRetriever.sharedInstance.deleteMediasOnGlobalMyMediaDeletionAction(deletedMediaId)
-            
-            var archCount : Int = Int()
-            if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
-            {
-                archCount = archivetotal as! Int
-            }
-            else{
-                archCount = 0
-            }
-            archCount = archCount - 1
-            
-            NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
+            archiveMediaCount = archiveMediaCount - 1
+//            GlobalDataRetriever.sharedInstance.deleteMediasOnGlobalMyMediaDeletionAction(deletedMediaId)
+//            
+//            var archCount : Int = Int()
+//            if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
+//            {
+//                archCount = archivetotal as! Int
+//            }
+//            else{
+//                archCount = 0
+//            }
+//            archCount = archCount - 1
+//            
+//            NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
             
             if(selectedItem - 1 <= 0){
                 selectedItem = 0
@@ -659,15 +656,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 selectedItem = selectedItem - 1
             }
             
-            if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0){
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
-                var dict = GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem]
+                var dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
-                dict.removeAll()
             }
             else{
-                if(archCount == 0){
+                if(archiveMediaCount == 0){
                     removeOverlay()
                     ErrorManager.sharedInstance.emptyMedia()
                 }
@@ -719,12 +715,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func setLabelValue(index: NSInteger)
     {
-        if(GlobalDataRetriever.sharedInstance.globalDataSource.count > 0)
+        if( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0)
         {
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
-            let fromdate = dateFormatter.dateFromString(GlobalDataRetriever.sharedInstance.globalDataSource[index][createdTimeStampKey] as! String)
+            let fromdate = dateFormatter.dateFromString(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][createdTimeKey] as! String)
             var dateForDisplay : String
             if(fromdate != nil){
                 let dateStr = dateFormatter.stringFromDate(NSDate())
@@ -804,9 +800,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func downloadVideo(index : Int)
     {
         videoDownloadIntex = index
-        let videoDownloadUrl = convertStringtoURL(GlobalDataRetriever.sharedInstance.globalDataSource[index][fullImageURLKey] as! String)
+        let videoDownloadUrl = convertStringtoURL( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][fImageURLKey] as! String)
         
-        let mediaIdForFilePath = "\(GlobalDataRetriever.sharedInstance.globalDataSource[index][mediaDetailIdKey]!)"
+        let mediaIdForFilePath = "\( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][mediaIdKey]!)"
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
         
@@ -864,23 +860,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func playbackStateChange(notif:NSNotification)
     {
         let moviePlayerController = notif.object as! MPMoviePlayerController
-     //   var playbackState: String = "Unknown"
-  
+     
         switch moviePlayerController.playbackState {
         case .Stopped: break
-        //    playbackState = "Stopped"
         case .Playing:
-         //   playbackState = "Playing"
             playHandleflag = 1
         case .Paused:
-         //   playbackState = "Paused"
             playHandleflag = 1
         case .Interrupted: break
-          //  playbackState = "Interrupted"
         case .SeekingForward: break
-          //  playbackState = "Seeking Forward"
         case .SeekingBackward: break
-         //   playbackState = "Seeking Backward"
         }
     }
     
@@ -902,7 +891,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
         let data = NSData(contentsOfURL: location)
         if let imageData = data as NSData? {
-            let mediaIdForFilePath = "\(GlobalDataRetriever.sharedInstance.globalDataSource[videoDownloadIntex][mediaDetailIdKey]!)"
+            let mediaIdForFilePath = "\( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![videoDownloadIntex][mediaIdKey]!)"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
@@ -943,15 +932,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func uploadMediaProgress(notif:NSNotification)
     {
         let dict = notif.object as! [String:AnyObject]
-        dictMediaId = dict[mediaDetailIdKey] as! String
-        dictProgress = dict[uploadProgressKey] as! Float
+        dictMediaId = dict[mediaIdKey] as! String
+        dictProgress = dict[progressKey] as! Float
         
-        for i in 0 ..< GlobalDataRetriever.sharedInstance.globalDataSource.count
+        for i in 0 ..<  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
         {
-            let mediaIdFromData = GlobalDataRetriever.sharedInstance.globalDataSource[i][mediaDetailIdKey] as! String
+            let mediaIdFromData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][mediaIdKey] as! String
             
             if(mediaIdFromData == dictMediaId){
-                GlobalDataRetriever.sharedInstance.globalDataSource[i][uploadProgressKey] = dictProgress
+                 GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][progressKey] = dictProgress
             }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.photoThumpCollectionView.reloadData()
@@ -963,12 +952,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.archiveMediaCount = self.defaults.valueForKey(ArchiveCount) as! Int
-            let filteredData = GlobalDataRetriever.sharedInstance.globalDataSource.filter(self.thumbExists)
+            let filteredData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.filter(self.thumbExists)
             self.totalCount = filteredData.count
             self.addToButton.hidden = false
             self.deletButton.hidden = false
             
-            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[0]
+            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![0]
             self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             self.photoThumpCollectionView.reloadData()
         })
@@ -994,11 +983,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         addToDict.removeAll()
         if mediaIdSelected == 0
         {
-            mediaIdSelected = Int(GlobalDataRetriever.sharedInstance.globalDataSource[0][mediaDetailIdKey] as! String)!
-            addToDict.append(GlobalDataRetriever.sharedInstance.globalDataSource[0])
+            mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![0][mediaIdKey] as! String)!
+            addToDict.append( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![0])
         }
         else{
-            addToDict.append(GlobalDataRetriever.sharedInstance.globalDataSource[selectedItem])
+            addToDict.append( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem])
         }
         
         mediaSelected.addObject(mediaIdSelected)
@@ -1041,11 +1030,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
         var imageForMedia : UIImage = UIImage()
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count > 0
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
-            if let fullImage = imageDict[thumbImageKey]
+            if let fullImage = imageDict[tImageKey]
             {
-                if GlobalDataRetriever.sharedInstance.globalDataSource[indexpaths][mediaTypeKey] as! String == "video"
+                if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][mediaTypeKey] as! String == "video"
                 {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.photoThumpCollectionView.alpha = 1.0
@@ -1076,7 +1065,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 }
                 else
                 {
-                    let mediaIdStr = GlobalDataRetriever.sharedInstance.globalDataSource[indexpaths][mediaDetailIdKey]
+                    let mediaIdStr =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][mediaIdKey]
                     let mediaIdForFilePath = "\(mediaIdStr!)full"
                     let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                     let savingPath = "\(parentPath)/\(mediaIdForFilePath )"
@@ -1086,7 +1075,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         imageForMedia = mediaImageFromFile!
                     }
                     else{
-                        let mediaUrl = GlobalDataRetriever.sharedInstance.globalDataSource[indexpaths][fullImageURLKey] as! String
+                        let mediaUrl =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][fImageURLKey] as! String
                         if(mediaUrl != ""){
                             let url: NSURL = convertStringtoURL(mediaUrl)
                             downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -1198,7 +1187,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
-        if((GlobalDataRetriever.sharedInstance.globalDataSource.count > indexPath.row) && (GlobalDataRetriever.sharedInstance.globalDataSource.count > 0))
+        if(( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row) && ( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0))
         {
             if(indexPath.row == selectedItem){
                 if(swipeFlag){
@@ -1211,11 +1200,11 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 cell.layer.borderWidth = 0;
                 cell.layer.borderColor = UIColor.clearColor().CGColor;
             }
-            var dict = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row]
+            var dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
             
-            if let thumpImage = dict[thumbImageKey]
+            if let thumpImage = dict[tImageKey]
             {
-                if GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][mediaTypeKey] as! String == "video"
+                if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaTypeKey] as! String == "video"
                 {
                     cell.playIcon.hidden = false
                 }
@@ -1227,7 +1216,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 
                 cell.thumbImageView.image = (thumpImage as! UIImage)
                 
-                let progress = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][uploadProgressKey] as! Float
+                let progress =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
                 if((progress == 1.0) || (progress == 0.0))
                 {
                     cell.progressView.hidden = true
@@ -1258,7 +1247,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.photoThumpCollectionView.reloadData()
         })
         
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count > indexPath.row
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
         {
             if(downloadTask?.state == .Running)
             {
@@ -1273,10 +1262,10 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         self.fullScrenImageView.alpha = 1.0
         self.showOverlay()
-        if GlobalDataRetriever.sharedInstance.globalDataSource.count > indexPath.row
+        if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
         {
-            self.mediaIdSelected = Int(GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row][self.mediaDetailIdKey] as! String)!
-            let dict = GlobalDataRetriever.sharedInstance.globalDataSource[indexPath.row]
+            self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
+            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath.row ,gestureIdentifier:0)
             })

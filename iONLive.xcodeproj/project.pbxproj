@@ -216,7 +216,6 @@
 		B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */; };
 		B20B8BC81D45F98900323599 /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */; };
 		B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
-		B23F26641D409D5600A320BF /* GlobalDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */; };
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
 		B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */; };
@@ -619,7 +618,6 @@
 		B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "scroll/UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
 		B222EA551D38C363002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
 		B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
-		B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataRetriever.swift; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
 		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
@@ -743,7 +741,6 @@
 			isa = PBXGroup;
 			children = (
 				B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */,
-				B23F26631D409D5600A320BF /* GlobalDataRetriever.swift */,
 				160F47B01BFEEF6300599AA7 /* IONLLoadingView.swift */,
 				16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */,
 				16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */,
@@ -1948,7 +1945,6 @@
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */,
 				59BC3F691BFF848600710905 /* UIRefreshControl+AFNetworking.m in Sources */,
-				B23F26641D409D5600A320BF /* GlobalDataRetriever.swift in Sources */,
 				16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */,
 				166456031C2A8F8700D09FAE /* TimeTapseCell.swift in Sources */,
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,

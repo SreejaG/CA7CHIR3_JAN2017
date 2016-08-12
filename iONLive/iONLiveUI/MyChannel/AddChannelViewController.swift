@@ -25,16 +25,6 @@ class AddChannelViewController: UIViewController {
     var shareFlag : Bool = true
     var loadingOverlay: UIView?
     
-    let channelDetailIdKey = "channel_detail_id"
-    let mediaDetailIdKey = "media_detail_id"
-    let channelNameKey = "channel_name"
-    let totalMediaCountKey = "total_media_count"
-    let createdTimeStampKey = "created_timeStamp"
-    let sharedIndicatorOriginalKey = "orgSelected"
-    let sharedIndicatorTemporaryKey = "tempSelected"
-    let thumbImageKey = "thumbImage"
-    let thumbImageURLKey = "thumbImage_URL"
-    
     var selectedChannelId:String!
     
     var channelSelected: NSMutableArray = NSMutableArray()
@@ -116,7 +106,7 @@ class AddChannelViewController: UIViewController {
         fulldataSource.removeAll()
         for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource{
             
-            let channelId = element[channelDetailIdKey] as! String
+            let channelId = element[channelIdKey] as! String
             if(channelId != selectedChannelId)
             {
                 fulldataSource.append(element)
@@ -195,12 +185,12 @@ class AddChannelViewController: UIViewController {
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
             
-            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", createdTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
             
-            var imageData = [[String:AnyObject]]()
+            let imageData = [[String:AnyObject]]()
             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
             
-            fulldataSource.insert([channelDetailIdKey:channelId!, channelNameKey:channelName, totalMediaCountKey:"0", createdTimeStampKey: localDateStr,sharedIndicatorOriginalKey:1, sharedIndicatorTemporaryKey:1], atIndex: 0)
+            fulldataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", createdTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
             
             addChannelTableView.reloadData()
         }
@@ -213,9 +203,9 @@ class AddChannelViewController: UIViewController {
     @IBAction func didTapDoneButton(sender: AnyObject) {
         localChannelDict.removeAll()
         for(var i = 0; i < selectedArray.count; i++){
-            let channelSelectedId = fulldataSource[selectedArray[i]][channelDetailIdKey]
+            let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey] as! String
             localChannelDict.append(fulldataSource[selectedArray[i]])
-            channelSelected.addObject(channelSelectedId!)
+            channelSelected.addObject(channelSelectedId)
         }
         if channelSelected.count > 0
         {
@@ -367,9 +357,9 @@ extension AddChannelViewController:UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier(AddChannelCell.identifier, forIndexPath:indexPath) as! AddChannelCell
             
             cell.addChannelTextLabel.text = fulldataSource[indexPath.row][channelNameKey] as? String
-            cell.addChannelCountLabel.text = fulldataSource[indexPath.row][totalMediaCountKey] as? String
+            cell.addChannelCountLabel.text = fulldataSource[indexPath.row][totalMediaKey] as? String
             
-            if let latestImage = fulldataSource[indexPath.row][thumbImageKey]
+            if let latestImage = fulldataSource[indexPath.row][tImageKey]
             {
                 cell.addChannelImageView.image = latestImage as! UIImage
             }
@@ -378,7 +368,7 @@ extension AddChannelViewController:UITableViewDataSource
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
             
-            if(fulldataSource[indexPath.row][totalMediaCountKey] as! String == "0"){
+            if(fulldataSource[indexPath.row][totalMediaKey] as! String == "0"){
                 cell.addChannelImageView.image = UIImage(named: "thumb12")
             }
             

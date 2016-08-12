@@ -6,16 +6,6 @@ class GlobalDataChannelList: NSObject {
     var globalChannelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
     
-    let channelDetailIdKey = "channel_detail_id"
-    let mediaDetailIdKey = "media_detail_id"
-    let channelNameKey = "channel_name"
-    let totalMediaCountKey = "total_media_count"
-    let createdTimeStampKey = "created_timeStamp"
-    let sharedIndicatorOriginalKey = "orgSelected"
-    let sharedIndicatorTemporaryKey = "tempSelected"
-    let thumbImageKey = "thumbImage"
-    let thumbImageURLKey = "thumbImage_URL"
-    
     var operationQueueObjInChannelList = NSOperationQueue()
     var operationInChannelList = NSBlockOperation()
     
@@ -42,6 +32,7 @@ class GlobalDataChannelList: NSObject {
         ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
             return
         }
     }
@@ -58,6 +49,22 @@ class GlobalDataChannelList: NSObject {
         {
             ErrorManager.sharedInstance.inValidResponseError()
         }
+    }
+    
+    func authenticationFailureHandler(error: NSError?, code: String)
+    {
+        var codeString : String = String()
+        
+        if !RequestManager.sharedInstance.validConnection() {
+            codeString = "noNetwork"
+        }
+        else if code.isEmpty == false {
+            codeString = code
+        }
+        else{
+            codeString = "ResponseError"
+        }
+        NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
     }
     
     func setChannelDetails()
@@ -82,7 +89,7 @@ class GlobalDataChannelList: NSObject {
             let createdTime = element["last_updated_time_stamp"] as! String
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
             
-            self.globalChannelDataSource.append([channelDetailIdKey: channelId!,channelNameKey: channelName,mediaDetailIdKey: mediaId,totalMediaCountKey: mediaSharedCount!,createdTimeStampKey: createdTime,self.sharedIndicatorOriginalKey: sharedBool,sharedIndicatorTemporaryKey: sharedBool, thumbImageURLKey: url])
+            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,createdTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool, tImageURLKey: url])
         }
         if(self.globalChannelDataSource.count > 0){
             sortChannelList()
@@ -100,7 +107,7 @@ class GlobalDataChannelList: NSObject {
         for var i = 0; i < globalChannelDataSource.count; i++
         {
             var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaDetailIdKey] as! String)thumb"
+            let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
             let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
             let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -109,7 +116,7 @@ class GlobalDataChannelList: NSObject {
                 imageForMedia = mediaImageFromFile!
             }
             else{
-                if let mediaUrl = globalChannelDataSource[i][thumbImageURLKey]
+                if let mediaUrl = globalChannelDataSource[i][tImageURLKey]
                 {
                     url = convertStringtoURL(mediaUrl as! String)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -135,7 +142,7 @@ class GlobalDataChannelList: NSObject {
                     imageForMedia =  UIImage(named: "thumb12")!
                 }
             }
-            self.globalChannelDataSource[i][thumbImageKey] = imageForMedia
+            self.globalChannelDataSource[i][tImageKey] = imageForMedia
         }
     }
     
@@ -158,8 +165,8 @@ class GlobalDataChannelList: NSObject {
     
     func sortChannelList(){
         globalChannelDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeStampKey] as! String
-            let time2 = p2[createdTimeStampKey] as! String
+            let time1 = p1[createdTimeKey] as! String
+            let time2 = p2[createdTimeKey] as! String
             return time1 > time2
         })
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
@@ -189,15 +196,15 @@ class GlobalDataChannelList: NSObject {
     func enableDisableChannelList(dataSource : [[String:AnyObject]])  {
         for element in dataSource
         {
-            let channelIdChk = element[channelDetailIdKey] as! String
-            let sharedIndicator = element[sharedIndicatorTemporaryKey] as! Int
+            let channelIdChk = element[channelIdKey] as! String
+            let sharedIndicator = element[sharedTemporaryKey] as! Int
             for var i = 0; i < globalChannelDataSource.count;i++
             {
-                let chanelId = globalChannelDataSource[i][channelDetailIdKey] as! String
+                let chanelId = globalChannelDataSource[i][channelIdKey] as! String
                 if channelIdChk == chanelId
                 {
-                    globalChannelDataSource[i][sharedIndicatorOriginalKey] = sharedIndicator
-                    globalChannelDataSource[i][sharedIndicatorTemporaryKey] = sharedIndicator
+                    globalChannelDataSource[i][sharedOriginalKey] = sharedIndicator
+                    globalChannelDataSource[i][sharedTemporaryKey] = sharedIndicator
                 }
             }
         }
