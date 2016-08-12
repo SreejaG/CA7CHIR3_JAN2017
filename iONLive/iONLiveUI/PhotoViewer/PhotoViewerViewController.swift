@@ -141,7 +141,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             else if totalCount <= 0
             {
-                self.removeOverlay()
+//                self.removeOverlay()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
