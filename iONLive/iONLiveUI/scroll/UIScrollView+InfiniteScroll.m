@@ -41,7 +41,7 @@ static void PBForceUpdateTableViewContentSize(UITableView *tableView) {
 }
 
 // Animation duration used for setContentOffset:
-static const NSTimeInterval kPBInfiniteScrollAnimationDuration = 0.60;
+static const NSTimeInterval kPBInfiniteScrollAnimationDuration = 0.50;
 
 // Keys for values in associated dictionary
 static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;

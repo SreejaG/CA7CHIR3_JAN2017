@@ -18,11 +18,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     }
     
     func serverError() {
-        alert("Something went wrong :-/", message: "Something bad happened, we're looking into it now.")
+        alert("Something went wrong :-/", message: "Something bad happened")
     }
     
     func inValidResponseError() {
-        alert("Invalid Response", message: "Something bad happened, we're looking into it now.")
+        alert("Invalid Response", message: "Something bad happened")
     }
     
     func subscriptionEmpty ()

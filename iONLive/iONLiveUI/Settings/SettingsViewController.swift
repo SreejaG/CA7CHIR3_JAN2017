@@ -129,6 +129,8 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             {
                let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
+                cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+                cell.userInteractionEnabled = false
                 return cell
             }
             else
@@ -136,6 +138,14 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsTableViewCell", forIndexPath:indexPath) as! SettingsTableViewCell
                 cell.titleLabel.text = cellDataSource[optionTitle]
                 cell.accessryLabel.text = cellDataSource[accessryText]
+                if((indexPath.section == 1) && (indexPath.row == 0))
+                {
+                    
+                }
+                else{
+                    cell.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+                    cell.userInteractionEnabled = false
+                }
                 return cell
             }
         }

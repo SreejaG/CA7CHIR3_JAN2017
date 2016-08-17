@@ -25,6 +25,7 @@ int thumbnailSize = 50;
 int deleteCount = 0;
 int flashFlag = 0;
 
+
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSuccess,
     AVCamSetupResultCameraNotAuthorized,
@@ -91,6 +92,7 @@ NSInteger shutterActionMode;
 bool takePictureFlag = false;
 bool loadingCameraFlag = false;
 NSTimer *timer;
+int timerCount = 0;
                       
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -276,9 +278,9 @@ NSTimer *timer;
     }
     else if([code  isEqual: @"ResponseError"]){
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
-                                                        message:@"Do you want to Retry"
+                                                        message:@""
                                                        delegate:self
-                                              cancelButtonTitle:@"OK"
+                                              cancelButtonTitle:@"Retry"
                                               otherButtonTitles:@"Exit App",nil];
         [alert show];
         
@@ -318,6 +320,9 @@ NSTimer *timer;
         _noDataFound.text = @"   Syncing...";
         
         [self loadingView];
+        timerCount = timerCount * 2;
+//        NSLog(@"%d", timerCount);
+        [self initialiseTimerForSyncing:timerCount];
         [self initialiseAPICall];
     }
     else{
@@ -346,20 +351,24 @@ NSTimer *timer;
     
     if([[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"] != nil)
     {
+        timerCount = 30;
         NSString *initialCall = [[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"];
         if([initialCall isEqualToString:@"initialCall"])
         {
             loadingCameraFlag = true;
-            [self initialiseTimerForSyncing];
+            [self initialiseTimerForSyncing:timerCount];
         }
         else{
             NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"viewFromWhichPage"];
             if([loading  isEqual: @"appDelegateRedirection"]){
                 loadingCameraFlag = true;
-                [self initialiseTimerForSyncing];
+               [self initialiseTimerForSyncing:timerCount];
                 [self initialiseAPICall];
             }
             else{
+                dispatch_async( dispatch_get_main_queue(), ^{
+                    [self updateThumbnails];
+                });
                 loadingCameraFlag = false;
                 _noDataFound.text = @"Loading camera...";
             }
@@ -367,7 +376,7 @@ NSTimer *timer;
     }
     else{
         loadingCameraFlag = true;
-        [self initialiseTimerForSyncing];
+        [self initialiseTimerForSyncing:timerCount];
         [self initialiseAPICall];
     }
     
@@ -376,8 +385,39 @@ NSTimer *timer;
         [self setGUIBasedOnMode];
     });
     
+    PhotoViewerInstance.iphoneCam = self;
+    SetUpView *viewSet = [[SetUpView alloc]init];
+    [viewSet getValue];
+    
     [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
     [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
+}
+
+-(void) updateThumbnails
+{
+    NSString *archiveChanelId = [NSString stringWithFormat:@"%@", [[NSUserDefaults standardUserDefaults] valueForKey:@"archiveId"]];
+    GlobalChannelToImageMapping *GlobalChannelToImageMappingObj = [GlobalChannelToImageMapping sharedInstance];
+    if(GlobalChannelToImageMappingObj.GlobalChannelImageDict.count > 0){
+        if(GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId].count > 0)
+        {
+                UIImage *img = [[UIImage alloc]init];
+                if(GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"thumbImage"] != nil)
+                {
+                    img = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"thumbImage"];
+                    NSString *type = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"media_type"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if([type  isEqual: @"video"])
+                        {
+                            self.playiIconView.hidden = NO;
+                        }
+                        else{
+                            self.playiIconView.hidden = YES;
+                        }
+                        self.thumbnailImageView.image = img;
+                    });
+                }
+            }
+        }
 }
 
 -(void)loadingView
@@ -397,9 +437,9 @@ NSTimer *timer;
 -(void) initialiseAPICall
 {
     GlobalDataChannelList *GlobalDataChannelListObj = [GlobalDataChannelList sharedInstance];
-    if (GlobalDataChannelListObj.globalChannelDataSource.count == 0) {
+  //  if (GlobalDataChannelListObj.globalChannelDataSource.count == 0) {
         [GlobalDataChannelListObj initialise];
-    }
+ //   }
     
     ChannelSharedListAPI *ChannelSharedListAPIObj = [ChannelSharedListAPI sharedInstance];
     if (ChannelSharedListAPIObj.SharedChannelListDataSource.count == 0) {
@@ -407,12 +447,12 @@ NSTimer *timer;
     }
 }
 
--(void) initialiseTimerForSyncing
+-(void) initialiseTimerForSyncing : (int)count
 {
     _noDataFound.text = @"   Syncing...";
     [timer invalidate];
     timer = nil;
-    timer = [NSTimer scheduledTimerWithTimeInterval:100.0f target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
+    timer = [NSTimer scheduledTimerWithTimeInterval:count target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
 }
 
 - (void) thisMethodGetsFiredOnceEveryThirtySeconds:(id)sender {
@@ -420,9 +460,9 @@ NSTimer *timer;
     {
         dispatch_async( dispatch_get_main_queue(), ^{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
-                                                            message:@"Do you want to Retry?"
+                                                            message:@""
                                                            delegate:self
-                                                  cancelButtonTitle:@"OK"
+                                                  cancelButtonTitle:@"Retry"
                                                   otherButtonTitles:@"Exit App",nil];
             [alert show];
             
@@ -672,9 +712,9 @@ NSTimer *timer;
     [self setGUIModifications];
     fileManager = [[FileManagerViewController alloc]init];
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
-    PhotoViewerInstance.iphoneCam = self;
-    SetUpView *viewSet = [[SetUpView alloc]init];
-    [viewSet getValue];
+//    PhotoViewerInstance.iphoneCam = self;
+//    SetUpView *viewSet = [[SetUpView alloc]init];
+//    [viewSet getValue];
 }
 
 -(void)enabelOrDisableButtons: (BOOL *)value
@@ -782,7 +822,8 @@ NSTimer *timer;
             
             if ( data == nil ){
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    return;
+                    [self updateThumbnails];
+//                    return;
                 });
             }
             else{
@@ -800,24 +841,7 @@ NSTimer *timer;
         });
     }
     else{
-        NSString *archiveChanelId = [[NSUserDefaults standardUserDefaults] valueForKey:@"archiveId"];
-        GlobalChannelToImageMapping *GlobalChannelToImageMappingObj = [GlobalChannelToImageMapping sharedInstance];
-        if (GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId].count > 0)
-        {
-            UIImage *img = [[UIImage alloc]init];
-            img = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"thumbImage"];
-            NSString *type = GlobalChannelToImageMappingObj.GlobalChannelImageDict[archiveChanelId][0][@"media_type"];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if([type  isEqual: @"video"])
-                {
-                    self.playiIconView.hidden = NO;
-                }
-                else{
-                    self.playiIconView.hidden = YES;
-                }
-                self.thumbnailImageView.image = img;
-            });
-        }
+         [self updateThumbnails];
     }
     
     if([mediaSharedCount  isEqual: @"0"])

@@ -30,6 +30,8 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     var downloadingFlag : Bool = false
     
+    var scrollObjSharing = UIScrollView()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -87,7 +89,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
         
         showOverlay()
-        
+        createScrollViewAnimations()
         if totalMediaCount == 0
         {
             removeOverlay()
@@ -127,36 +129,67 @@ class MyChannelItemDetailsViewController: UIViewController {
         operationInSharingImageList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
             end = limit
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
         end = start + end
-        
-        operationInSharingImageList  = NSBlockOperation (block: {
-            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
-        })
-        self.operationQueueObjInSharingImageList.addOperation(operationInSharingImageList)
+//        if end >= totalCount
+//        {
+        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
+        {
+
+            operationInSharingImageList  = NSBlockOperation (block: {
+                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
+            })
+            self.operationQueueObjInSharingImageList.addOperation(operationInSharingImageList)
+        }
+//        }
     }
     
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-        self.lastContentOffset = scrollView.contentOffset
-    }
+//    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+//        self.lastContentOffset = scrollView.contentOffset
+//    }
+//    
+//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
+//            if totalCount > 0
+//            {
+//                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
+//                {
+//                    if self.downloadingFlag == false
+//                    {
+//                        self.downloadingFlag = true
+//                        self.downloadImagesFromGlobalChannelImageMapping(12)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-            if totalCount > 0
+    func createScrollViewAnimations()  {
+        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        channelItemsCollectionView.infiniteScrollIndicatorMargin = 50
+        channelItemsCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
+            if self!.totalCount > 0
             {
-                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
+                if(self!.totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self!.channelId]!.count)
                 {
-                    if self.downloadingFlag == false
+                    if self!.downloadingFlag == false
                     {
-                        self.downloadingFlag = true
-                        self.downloadImagesFromGlobalChannelImageMapping(12)
+                        self!.scrollObjSharing = scrollView
+                        self!.downloadingFlag = true
+                        self!.downloadImagesFromGlobalChannelImageMapping(12)
                     }
                 }
+                else{
+                    scrollView.finishInfiniteScroll()
+                }
+            }
+            else{
+                scrollView.finishInfiniteScroll()
             }
         }
     }
@@ -166,14 +199,16 @@ class MyChannelItemDetailsViewController: UIViewController {
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
-            let time1 = Int(p1[mediaIdKey] as! String)
-            let time2 = Int(p2[mediaIdKey] as! String)
-            return time1 > time2
-        })
-        
+//        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
+//            let time1 = Int(p1[mediaIdKey] as! String)
+//            let time2 = Int(p2[mediaIdKey] as! String)
+//            return time1 > time2
+//        })
+//        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeOverlay()
+            self.scrollObjSharing.finishInfiniteScroll()
+            self.scrollObjSharing = UIScrollView()
             self.channelItemsCollectionView.reloadData()
         })
         

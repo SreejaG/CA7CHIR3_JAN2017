@@ -46,6 +46,7 @@ class ChannelItemListViewController: UIViewController {
     var totalCount = 0
     
     var totalMediaCount: Int = Int()
+    var scrollObj = UIScrollView()
     
     override func viewDidLoad()
     {
@@ -60,7 +61,8 @@ class ChannelItemListViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
         showOverlay()
-        
+        totalCount = 0
+        createScrollViewAnimations()
         if totalMediaCount == 0
         {
             selectionButton.hidden = true
@@ -101,12 +103,13 @@ class ChannelItemListViewController: UIViewController {
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
-            let time1 = Int(p1[mediaIdKey] as! String)
-            let time2 = Int(p2[mediaIdKey] as! String)
-            return time1 > time2
-        })
+//        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
+//            let time1 = Int(p1[mediaIdKey] as! String)
+//            let time2 = Int(p2[mediaIdKey] as! String)
+//            return time1 > time2
+//        })
         
+       
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             if self.selectionFlag == false {
                 self.selectionButton.hidden = false
@@ -115,6 +118,8 @@ class ChannelItemListViewController: UIViewController {
                 self.cancelButton.hidden = false
             }
             self.removeOverlay()
+            self.scrollObj.finishInfiniteScroll()
+            self.scrollObj = UIScrollView()
             self.channelItemCollectionView.reloadData()
         })
         
@@ -150,42 +155,75 @@ class ChannelItemListViewController: UIViewController {
         return item[tImageKey] != nil
     }
     
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-        self.lastContentOffset = scrollView.contentOffset
-    }
-    
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-            if totalCount > 0
+    func createScrollViewAnimations()  {
+        channelItemCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        channelItemCollectionView.infiniteScrollIndicatorMargin = 50
+        channelItemCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
+           if self!.totalCount > 0
             {
-                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
+                if(self!.totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self!.channelId]!.count)
                 {
-                    if self.downloadingFlag == false
+                    if self!.downloadingFlag == false
                     {
-                        self.downloadingFlag = true
-                        downloadImagesFromGlobalChannelImageMapping(12)
+                        self!.scrollObj = scrollView
+                        self!.downloadingFlag = true
+                        self!.downloadImagesFromGlobalChannelImageMapping(12)
                     }
                 }
+                else{
+                    scrollView.finishInfiniteScroll()
+                }
+            
+//                scrollView.finishInfiniteScroll()
+            }
+            else{
+                scrollView.finishInfiniteScroll()
             }
         }
     }
+    
+//    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+//        self.lastContentOffset = scrollView.contentOffset
+//    }
+//    
+//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
+//            if totalCount > 0
+//            {
+//                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
+//                {
+//                    if self.downloadingFlag == false
+//                    {
+//                        self.downloadingFlag = true
+//                        downloadImagesFromGlobalChannelImageMapping(12)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
         operationInChannelImageList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
             end = limit
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
         end = start + end
-        
-        operationInChannelImageList  = NSBlockOperation (block: {
+        print("start \(start) end ====> \(end)")
+//        if end >= totalCount
+//        {
+        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
+        {
+            operationInChannelImageList  = NSBlockOperation (block: {
             GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInChannelImageList)
-        })
-        self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
+            })
+            self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
+        }
+//        }
     }
     
     func  loadInitialViewController(code: String){
@@ -330,6 +368,9 @@ class ChannelItemListViewController: UIViewController {
             operationInChannelImageList.cancel()
             downloadingFlag = false
             selectionFlag = false
+            
+            downloadImagesFromGlobalChannelImageMapping(selected.count)
+            
             selectedArray.removeAll()
             selected.removeAllObjects()
             channelTitleLabel.text = channelName.uppercaseString

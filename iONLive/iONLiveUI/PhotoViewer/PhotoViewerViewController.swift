@@ -223,18 +223,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         operationInMyMediaList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
+        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
             end = limit
         }
         else{
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
         }
         end = start + end
-        
-        operationInMyMediaList  = NSBlockOperation (block: {
-            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
-        })
-        self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+//        if end >= totalCount
+//        {
+        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+        {
+
+            operationInMyMediaList  = NSBlockOperation (block: {
+                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
+            })
+            self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+        }
+//        }
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
@@ -331,11 +337,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.sortInPlace({ p1, p2 in
-            let time1 = Int(p1[mediaIdKey] as! String)
-            let time2 = Int(p2[mediaIdKey] as! String)
-            return time1 > time2
-        })
+//        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.sortInPlace({ p1, p2 in
+//            let time1 = Int(p1[mediaIdKey] as! String)
+//            let time2 = Int(p2[mediaIdKey] as! String)
+//            return time1 > time2
+//        })
         
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.count > 0
         {
@@ -635,6 +641,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
 //            
             totalCount = totalCount - 1
             archiveMediaCount = archiveMediaCount - 1
+            
+            downloadImagesFromGlobalChannelImageMapping(1)
 //            GlobalDataRetriever.sharedInstance.deleteMediasOnGlobalMyMediaDeletionAction(deletedMediaId)
 //            
 //            var archCount : Int = Int()

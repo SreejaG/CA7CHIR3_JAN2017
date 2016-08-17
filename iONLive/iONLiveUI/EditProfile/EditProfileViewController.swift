@@ -10,10 +10,15 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     var userName : String = String()
     var emails : String = String()
     var mobileNo : String = String()
+    var timeZoneInSecondsFromAPI : String = String()
+    var timeZoneInSecondsUpdated : String = String()
+    var timeZoneOffsetInUTCOriginal = String()
+    var timeZoneOffsetInUTCUpdated : String = String()
     
     var email: String = String()
     var mobNo: String = String()
     var fullName: String = String()
+    var ZoneInSeconds : String = String()
     
     let requestManager = RequestManager.sharedInstance
     let profileManager = ProfileManager.sharedInstance
@@ -52,7 +57,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     var dataSource:[[[String:String]]]?
     
     var userDetails: NSMutableDictionary = NSMutableDictionary()
-    
     
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
@@ -187,8 +191,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             ErrorManager.sharedInstance.inValidResponseError()
         }
         dataSource![0][0][displayNameKey] = fullNames
-        dataSource![1][0][privateInfoKey] = emails
-        dataSource![1][1][privateInfoKey] = mobileNo
+        dataSource![2][0][privateInfoKey] = emails
+        dataSource![2][1][privateInfoKey] = mobileNo
+        dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
         editProfTableView.reloadData()
     }
     
@@ -218,6 +223,19 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         userName = userDetails["user_name"] as! String
         emails = userDetails["email"] as! String
         mobileNo = userDetails["mobile_no"] as! String
+        timeZoneInSecondsFromAPI = userDetails["user_time_zone"] as! String
+        
+        let hoursFromOffset = Int(timeZoneInSecondsFromAPI)! / 3600
+        let minutesFromOffset = (Int(timeZoneInSecondsFromAPI)! % 3600) / 60
+        var addOrMinusChk = String()
+        if timeZoneInSecondsFromAPI.hasPrefix("-"){
+            addOrMinusChk = ""
+        }
+        else{
+            addOrMinusChk = "+"
+        }
+        
+        timeZoneOffsetInUTCOriginal = "UTC\(addOrMinusChk)\(hoursFromOffset):\(minutesFromOffset)"
         
         let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
         if(thumbUrl != "")
@@ -237,11 +255,18 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         imageForProfileOld = imageForProfile
         
         profileInfoOptions = [[displayNameKey:fullNames, userNameKey:userName]]
-        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"]]
+        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"], [titleKey:timeZoneOffsetInUTCOriginal]]
         privateInfoOptions = [[privateInfoKey:emails],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
         
         dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
         editProfTableView.reloadData()
+    }
+    
+    func ltzAbbrev() -> String
+    {
+        let zoneName = NSTimeZone.localTimeZone().name
+        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
+        return timeValue!
     }
     
     @IBAction func saveClicked(sender: AnyObject) {
@@ -358,18 +383,26 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 }
             }
         }
-        
+        var timeUpdate = String()
+        if timeZoneInSecondsUpdated == ""
+        {
+            timeUpdate = timeZoneInSecondsFromAPI
+        }
+        else{
+            timeUpdate = timeZoneInSecondsUpdated
+        }
         let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-        
-        profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, success: { (response) in
+        profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, timeZone: timeUpdate, success: { (response) in
             self.removeOverlay()
             let savingPath = "\(userId)Profile"
             FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
             self.fullNames = self.fullName
             self.mobileNo = self.mobNo
             self.emails = self.email
+            self.timeZoneOffsetInUTCOriginal = self.timeZoneOffsetInUTCUpdated
+            self.timeZoneInSecondsFromAPI = self.timeZoneInSecondsUpdated
         }) { (error, message) in
             self.authenticationFailureHandler(error, code: message)
             return
@@ -554,12 +587,26 @@ extension EditProfileViewController:UITableViewDataSource
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
                         cell.borderLine.hidden = true
+                        cell.selectionStyle = .Default
                     }
                     else
                     {
                         cell.borderLine.hidden = false
+                        cell.selectionStyle = .Default
                     }
-                    cell.selectionStyle = .Default
+                    if indexPath.row == 3
+                    {
+                        cell.accessoryType = .None
+                        cell.selectionStyle = .None
+                        let image = UIImage(named: "synchronising.png")
+                        let button   = UIButton(type: UIButtonType.Custom) as UIButton
+                        button.frame = CGRectMake(cell.frame.width - 30, cell.frame.height/2 - 10, 25, 25)
+                        button.backgroundColor = UIColor.clearColor()
+                        button.setImage(image, forState: .Normal)
+                        button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
+                        cell.addSubview(button)
+                    }
+                    
                     return cell
                     
                 case 2:
@@ -593,6 +640,30 @@ extension EditProfileViewController:UITableViewDataSource
             }
         }
         return UITableViewCell()
+    }
+    
+    func synchronisingTapped(sender: AnyObject)
+    {
+        let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
+        let timeOffsetStr = String(timeOffset)
+        if timeOffsetStr.hasPrefix("-")
+        {
+            timeZoneInSecondsUpdated = timeOffsetStr
+        }
+        else
+        {
+            timeZoneInSecondsUpdated = "+\(timeOffsetStr)"
+        }
+        
+        if timeZoneInSecondsUpdated != timeZoneInSecondsFromAPI
+        {
+            let timeZoneOffsetInGMT : String = ltzAbbrev()
+            let timeZoneOffsetStr = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+            dataSource![1][3][titleKey] = timeZoneOffsetStr
+            saveButton.hidden = false
+        }
+        let indexPath = NSIndexPath(forRow: 3, inSection: 1)
+        self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
