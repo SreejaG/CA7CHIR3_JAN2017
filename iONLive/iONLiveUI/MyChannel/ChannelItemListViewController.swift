@@ -13,6 +13,7 @@ class ChannelItemListViewController: UIViewController {
     @IBOutlet var cancelButton: UIButton!
     @IBOutlet var backButton: UIButton!
     
+    @IBOutlet var bottomView: UIView!
     static let identifier = "ChannelItemListViewController"
     
     let imageUploadManger = ImageUpload.sharedInstance
@@ -51,7 +52,7 @@ class ChannelItemListViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+        bottomView.hidden = true
         deleteButton.hidden = true
         addButton.hidden = true
         cancelButton.hidden = true
@@ -307,6 +308,7 @@ class ChannelItemListViewController: UIViewController {
         channelTitleLabel.text = "SELECT"
         cancelButton.hidden = false
         selectionButton.hidden = true
+        bottomView.hidden = false
         deleteButton.hidden = false
         addButton.hidden = false
         backButton.hidden = true
@@ -325,6 +327,7 @@ class ChannelItemListViewController: UIViewController {
         channelTitleLabel.text = channelName.uppercaseString
         cancelButton.hidden = true
         selectionButton.hidden = false
+        bottomView.hidden = true
         deleteButton.hidden = true
         addButton.hidden = true
         backButton.hidden = false
