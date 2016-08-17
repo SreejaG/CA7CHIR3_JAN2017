@@ -378,6 +378,7 @@ class ChannelItemListViewController: UIViewController {
             selected.removeAllObjects()
             channelTitleLabel.text = channelName.uppercaseString
             cancelButton.hidden = true
+            bottomView.hidden = true
             deleteButton.hidden = true
             addButton.hidden = true
             backButton.hidden = false
@@ -399,7 +400,7 @@ class ChannelItemListViewController: UIViewController {
         selectionButton.hidden = false
         cancelButton.hidden = true
         backButton.hidden = false
-        
+        bottomView.hidden = true
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
