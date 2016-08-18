@@ -49,6 +49,9 @@ class ChannelItemListViewController: UIViewController {
     var totalMediaCount: Int = Int()
     var scrollObj = UIScrollView()
     
+    var NoDatalabelFormyChanelImageList : UILabel = UILabel()
+
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -68,7 +71,8 @@ class ChannelItemListViewController: UIViewController {
         {
             selectionButton.hidden = true
             removeOverlay()
-            ErrorManager.sharedInstance.emptyMedia()
+            addNoDataLabel()
+//            ErrorManager.sharedInstance.emptyMedia()
         }
         else
         {
@@ -97,6 +101,15 @@ class ChannelItemListViewController: UIViewController {
                 downloadImagesFromGlobalChannelImageMapping(21)
             }
         }
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake(0, 0, self.channelItemCollectionView.frame.width, self.channelItemCollectionView.frame.height))
+        self.NoDatalabelFormyChanelImageList.center = CGPointMake(160, 284)
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList.text = "No Media Available"
+        self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
     
     func removeActivityIndicatorMyChanel(notif : NSNotification){
@@ -391,6 +404,10 @@ class ChannelItemListViewController: UIViewController {
             else{
                 selectionButton.hidden = true
             }
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count == 0){
+                addNoDataLabel()
+            }
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.channelItemCollectionView.reloadData()
             })

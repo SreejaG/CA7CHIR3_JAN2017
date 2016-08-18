@@ -31,6 +31,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     var downloadingFlag : Bool = false
     
     var scrollObjSharing = UIScrollView()
+    var NoDatalabelFormySharingImageList : UILabel = UILabel()
     
     override func viewDidLoad()
     {
@@ -93,7 +94,8 @@ class MyChannelItemDetailsViewController: UIViewController {
         if totalMediaCount == 0
         {
             removeOverlay()
-            ErrorManager.sharedInstance.emptyMedia()
+            addNoDataLabel()
+//            ErrorManager.sharedInstance.emptyMedia()
         }
         else
         {
@@ -192,6 +194,15 @@ class MyChannelItemDetailsViewController: UIViewController {
                 scrollView.finishInfiniteScroll()
             }
         }
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormySharingImageList = UILabel(frame: CGRectMake(0, 0, self.channelItemsCollectionView.frame.width, self.channelItemsCollectionView.frame.height))
+        self.NoDatalabelFormySharingImageList.center = CGPointMake(160, 284)
+        self.NoDatalabelFormySharingImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormySharingImageList.text = "No Media Available"
+        self.view.addSubview(self.NoDatalabelFormySharingImageList)
     }
     
     func removeActivityIndicator(notif : NSNotification){

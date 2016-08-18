@@ -1709,7 +1709,7 @@ int timerCount = 0;
         [self generateStreamAlert:@"loadSharingView"];
     }
     else  if ( self.movieFileOutput.isRecording ) {
-        [self generateVideoAlert:@"settingsPageView"];
+        [self generateVideoAlert:@"loadSharingView"];
     }
     else
     {
@@ -1735,7 +1735,7 @@ int timerCount = 0;
         [self generateStreamAlert:@"loadPhotoViewer"];
     }
     else  if ( self.movieFileOutput.isRecording ) {
-        [self generateVideoAlert:@"settingsPageView"];
+        [self generateVideoAlert:@"loadPhotoViewer"];
     }
     else
     {
@@ -1764,7 +1764,7 @@ int timerCount = 0;
         [self generateVideoAlert:@"loadStreamsGalleryView"];
     }
     else  if ( self.movieFileOutput.isRecording ) {
-        [self generateVideoAlert:@"settingsPageView"];
+        [self generateVideoAlert:@"loadStreamsGalleryView"];
     }
     else{
         [self loadStreamsGalleryView];

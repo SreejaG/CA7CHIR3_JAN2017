@@ -455,13 +455,23 @@
                                     <outlet property="delegate" destination="K3I-ov-Eit" id="WjK-8p-iU2"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have some notifications" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a7G-zg-BC9">
+                                <rect key="frame" x="0.0" y="64" width="600" height="21"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <constraints>
                             <constraint firstItem="7lb-VM-ZVf" firstAttribute="top" secondItem="jUA-sK-Gz9" secondAttribute="bottom" id="04x-yY-Y86"/>
                             <constraint firstItem="jUA-sK-Gz9" firstAttribute="top" secondItem="Yyd-ok-wXI" secondAttribute="top" id="4JF-50-hGw"/>
+                            <constraint firstAttribute="trailing" secondItem="a7G-zg-BC9" secondAttribute="trailing" id="6fG-PK-Mp1"/>
                             <constraint firstItem="crS-UD-ZdI" firstAttribute="top" secondItem="7lb-VM-ZVf" secondAttribute="bottom" id="GnU-uA-bpv"/>
                             <constraint firstAttribute="trailing" secondItem="7lb-VM-ZVf" secondAttribute="trailing" id="QYb-K0-2hi"/>
+                            <constraint firstItem="a7G-zg-BC9" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="RCD-9x-tPi"/>
+                            <constraint firstItem="a7G-zg-BC9" firstAttribute="top" secondItem="jUA-sK-Gz9" secondAttribute="bottom" id="W9s-M9-Uxg"/>
                             <constraint firstItem="jUA-sK-Gz9" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="b9t-34-acG"/>
                             <constraint firstItem="7lb-VM-ZVf" firstAttribute="leading" secondItem="Yyd-ok-wXI" secondAttribute="leading" id="jpb-Rd-42C"/>
                             <constraint firstAttribute="trailing" secondItem="jUA-sK-Gz9" secondAttribute="trailing" id="n4I-NZ-GM7"/>
@@ -470,6 +480,7 @@
                     <tabBarItem key="tabBarItem" title="Stream" image="all_media" selectedImage="all_media_blue" id="8WK-e4-zG1"/>
                     <navigationItem key="navigationItem" id="OIm-4M-Uc2"/>
                     <connections>
+                        <outlet property="sharedNewMediaLabel" destination="a7G-zg-BC9" id="wUv-Y0-lRn"/>
                         <outlet property="streamListCollectionView" destination="7lb-VM-ZVf" id="g2B-Zh-f5E"/>
                     </connections>
                 </viewController>

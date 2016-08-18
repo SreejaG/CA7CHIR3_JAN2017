@@ -1,8 +1,14 @@
+//
+//  ChannelSharedListAPI.swift
+//  iONLive
+//
+//  Created by sreejesh on 7/29/16.
+//  Copyright © 2016 Gadgeon. All rights reserved.
+//
 
 import UIKit
 
 class ChannelSharedListAPI: NSObject {
-    
     let channelIdkey = "ch_detail_id"
     let channelNameKey = "channel_name"
     let sharedMediaCount = "total_no_media_shared"
@@ -22,8 +28,9 @@ class ChannelSharedListAPI: NSObject {
     var pullToRefreshSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
-    
     var pullTorefresh : Bool = false
+    var operationQueue = NSOperationQueue()
+    
     class var sharedInstance: ChannelSharedListAPI
     {
         struct Singleton
@@ -37,9 +44,9 @@ class ChannelSharedListAPI: NSObject {
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        //ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
         getChannelSharedDetails(userId, token: accessToken)
     }
-    
     func getChannelSharedDetails(userName: String, token: String)
     {
         ChannelManager.sharedInstance.getChannelShared(userName, accessToken: token, success: { (response) -> () in
@@ -56,7 +63,6 @@ class ChannelSharedListAPI: NSObject {
         {
             dummy.removeAll()
             dataSource.removeAll()
-            
             let responseArrLive = json["liveChannels"] as! [[String:AnyObject]]
             if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
             {
@@ -95,17 +101,17 @@ class ChannelSharedListAPI: NSObject {
                         }
                         if(!flag)
                         {
-                            mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                            mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                            print( "\(#file) \(#line) \(mediaShared)")
                         }
                     }
                     else{
-                        mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                        mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                        print( "\(#file) \(#line) \(mediaShared)")
                     }
-                    
                     dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,subChannelIdKey : channelSubId!,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
             }
-            
             let responseArr = json["subscribedChannels"] as! [[String:AnyObject]]
             if(responseArr.count == 0)
             {
@@ -146,21 +152,22 @@ class ChannelSharedListAPI: NSObject {
                                 {
                                     flag = true
                                 }
+                                
+                                
                             }
                         }
                         if(!flag)
                         {
-                            mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                            mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
                         }
                     }
                     else{
-                        mediaShared.append([channelIdkey:channelId!,totalNoShared:mediaSharedCount! ,sharedMediaCount:mediaSharedCount!,isWatched :"0"])
+                        mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
                     }
                     
                     dummy.append([channelIdkey:channelId!, subChannelIdKey : channelSubId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
                 }
             }
-            
             if(dummy.count > 0)
             {
                 dummy.sortInPlace({ p1, p2 in
@@ -170,23 +177,29 @@ class ChannelSharedListAPI: NSObject {
                     return time1 > time2
                 })
             }
-            
             for element in dummy
             {
                 dataSource.append(element)
             }
-            
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            
+            NSLog("MediaShared_ChannelSharedList_API: %@",mediaShared);
+            
             if(dataSource.count > 0){
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
+                let operation2 : NSBlockOperation = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
-                    
                 })
+                self.operationQueue.addOperation(operation2)
+                //                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                //                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                //                dispatch_async(backgroundQueue, {
+                //                    self.downloadMediaFromGCS()
+                //
+                //                })
             }
             else{
                 NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")
+                
             }
         }
         else
@@ -197,73 +210,6 @@ class ChannelSharedListAPI: NSObject {
         }
     }
     
-    func updateMediaSharedInChannelList()
-    {
-        var mediaSharedSource : [[String : AnyObject]] = [[String : AnyObject]]()
-        if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
-        {
-            mediaSharedSource = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
-        }
-        
-        if( mediaSharedSource.count > 0)
-        {
-            for i in 0  ..< mediaSharedSource.count
-            {
-                for(var globalChannelListIndex  = 0 ; globalChannelListIndex  < ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count ; globalChannelListIndex++ )
-                {
-                    let channelId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[globalChannelListIndex][channelIdkey] as! String
-                    let mediaSharedCount = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[globalChannelListIndex][sharedMediaCount] as! String
-                    if let val = mediaSharedSource[i][channelIdkey] {
-                        if((val as! String) == channelId)
-                        {
-                            if mediaSharedSource[i][isWatched] as! String == "1"
-                            {
-                                if((mediaSharedSource[i][totalNoShared] as! String) == mediaSharedCount)
-                                {
-                                    let count:Int? = Int(mediaSharedCount)! - Int(mediaSharedSource[i][totalNoShared] as! String)!
-                                    let countString = String(                                      callAbsolute(count!))
-                                    mediaSharedSource[i][sharedMediaCount] = countString
-                                    mediaSharedSource[i][totalNoShared] = mediaSharedCount
-                                    mediaSharedSource[i][isWatched] = "0"
-                                }
-                                else
-                                {
-                                    let count:Int? = Int(mediaSharedCount)! - Int(mediaSharedSource[i][totalNoShared] as! String)!
-                                    mediaSharedSource[i][sharedMediaCount] = String(callAbsolute(count!))
-                                    mediaSharedSource[i][totalNoShared] = mediaSharedCount
-                                }
-                            }
-                            else
-                            {
-                                if(mediaSharedSource[i][totalNoShared] as? String != mediaSharedCount)
-                                {
-                                    let count = Int(mediaSharedCount)! - Int(mediaSharedSource[i][totalNoShared] as! String)!
-                                    let p = mediaSharedSource[i][sharedMediaCount] as! String
-                                    let countString:Int
-                                    if( Int(p) == nil)
-                                    {
-                                        countString = 0 + Int(callAbsolute(count))
-                                    }
-                                    else
-                                    {
-                                        countString = Int((mediaSharedSource[i][sharedMediaCount] as! String))! + Int(callAbsolute(count))
-                                    }
-                                    
-                                    
-                                    mediaSharedSource[i][sharedMediaCount] = String(countString)
-                                    mediaSharedSource[i][totalNoShared] = mediaSharedCount
-                                    mediaSharedSource[i][isWatched] = "0"
-                                }
-                            }
-                        }
-                        
-                    }
-                }
-                NSUserDefaults.standardUserDefaults().setObject(mediaSharedSource, forKey: "Shared")
-            }
-        }
-    }
-    
     func pullToRefreshData( subID : String)
     {
         pullTorefresh = true
@@ -271,13 +217,15 @@ class ChannelSharedListAPI: NSObject {
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
         if( SharedChannelListDataSource.count > 0 )
         {
+            // let subId = SharedChannelListDataSource[0][subChannelIdKey] as! String
             ChannelManager.sharedInstance.getChannelSharedPullToRefresh(userId, accessToken:    accessToken, channelSubId: subID, success: { (response) in
                 self.authenticationSuccessHandler(response)
+                
             }) { (error, code) in
+                print("errorr")
             }
         }
     }
-    
     func convertStringtoURL(url : String) -> NSURL
     {
         let url : NSString = url
@@ -325,7 +273,10 @@ class ChannelSharedListAPI: NSObject {
             
             if(!pullTorefresh)
             {
-                SharedChannelListDataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]! ])
+                if(!checkDuplicate(self.dataSource[i][self.channelIdkey] as! String))
+                {
+                    SharedChannelListDataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]! ])
+                }
             }
             else
             {
@@ -333,16 +284,21 @@ class ChannelSharedListAPI: NSObject {
             }
             
         }
+        print(SharedChannelListDataSource)
         
+        // if data available while pull to refresh no need to add data to global here
+        // access datasource from calling view and insert respected rows to table view and update global source there in main view
         if(pullTorefresh)
         {
             if(pullToRefreshSource.count > 0)
             {
                 NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "success")
+                
             }
             else
             {
                 NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")
+                
             }
         }
         else
@@ -350,18 +306,50 @@ class ChannelSharedListAPI: NSObject {
             NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelList", object: "success")
         }
     }
+    func checkDuplicate( chId : String) -> Bool
+    {
+        var flag: Bool = false
+        for(var i = 0 ; i < SharedChannelListDataSource.count ; i++ )
+        {
+            if SharedChannelListDataSource[i][channelIdkey] as! String == chId{
+                flag = true
+                
+            }
+        }
+        return flag
+    }
+    
+    func uniq<S : SequenceType, T : Hashable where S.Generator.Element == T>(source: S) -> [T] {
+        var buffer = [T]()
+        var added = Set<T>()
+        for elem in source {
+            if !added.contains(elem) {
+                buffer.append(elem)
+                added.insert(elem)
+            }
+        }
+        return buffer
+    }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
+        print("message = \(code) andError = \(error?.localizedDescription) ")
+        
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
+            
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                // loadInitialViewController(code)
+            }
+            else{
+                //    ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
         }
         else{
         }
     }
-    
     func createMediaThumb(mediaName: String) -> UIImage
     {
         var mediaImage : UIImage?
@@ -402,7 +390,9 @@ class ChannelSharedListAPI: NSObject {
         {
             let value1 = value * -1;
             return value1
+            
         }
         return value
     }
+    
 }

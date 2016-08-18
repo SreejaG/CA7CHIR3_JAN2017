@@ -8,7 +8,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var photoViewController : PhotoViewerViewController?
     let requestManager = RequestManager.sharedInstance
-    
+    var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
+    let sharedMediaCount = "total_no_media_shared"
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
@@ -198,23 +199,137 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        
+        
+        print(userInfo)
         let result = userInfo["messageFrom"] as! NSDictionary
+        print(result)
         let defaults = NSUserDefaults .standardUserDefaults()
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
+            if (result["type"] as! String == "share"){
+                NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
+                // let channelId = result["channelId"] as! Int
+                let chid : String = "\(result["channelId"]!)"
+                //   print("MediaSharedChannelId: \(chid)")
+                updateCount(chid)
+            }
+            if (result["type"] as! String == "channel"){
+                
+                if (result["subType"] as! String == "deleted")
+                {
+                    let chid : String = "\(result["channelId"]!)"
+                    removeEntryFromShare(chid)
+                    removeEntryFromGlobal(chid)
+                }
+                if(result["subType"] as! String == "useradded")
+                {
+                    NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationChannelText")
+                    NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
+                    //    pull()
+                }
+            }
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result) //
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) // used while added  a media
+            
+            
         }
         defaults.setValue("1", forKey: "notificationArrived")
-        
         if(application.applicationState == .Inactive || application.applicationState == .Background)
         {
             loadNotificationView()
         }
     }
-    
+    func updateCount( channelId : String)
+    {
+        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        if(index != -1)
+        {
+            if(mediaShared.count > 0)
+            {
+            let sharedCount = mediaShared[index][sharedMediaCount] as! String
+            print( "\(#file) \(#line) \(sharedCount)")
+            let  latestCount : Int = Int(sharedCount)! + 1
+            mediaShared[index][sharedMediaCount]  = "\(latestCount)"
+            NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            }
+        }
+        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
+        
+    }
+    func removeEntryFromShare(channelId : String)
+    {
+        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        if(index != -1)
+        {
+            if(mediaShared.count > 0)
+            {
+            print(mediaShared)
+            mediaShared.removeAtIndex(index)
+            NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            }
+        }
+        print(mediaShared)
+        
+        
+    }
+   
+    func removeEntryFromGlobal(channelId : String)
+    {
+        let index  = getUpdateIndexChannel(channelId, isCountArray: false)
+        if(index != -1)
+        {
+            if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
+            {
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
+            }
+        }
+    }
+    func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
+    {
+        let channelIdkey = "ch_detail_id"
+        var selectedArray : NSArray = NSArray()
+        var indexOfRow : Int = Int()
+        if(isCountArray)
+        {
+            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            {
+                mediaShared.removeAll()
+                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                selectedArray = mediaShared as Array
+            }
+            else{
+                indexOfRow = -1
+            }
+            
+        }
+        else{
+            selectedArray = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
+        }
+        var  checkFlag : Bool = false
+        var index : Int =  -1
+        
+        for( var i = 0 ; i < selectedArray.count ; i++ )
+        {
+            let channelId = selectedArray[i][channelIdkey]!
+            print("\(channelId!)" , channelIdValue)
+            if "\(channelId!)"  == channelIdValue
+            {
+                checkFlag = true
+                index = i
+                break
+            }
+        }
+        if(checkFlag)
+        {
+            indexOfRow = index
+        }
+        
+        return indexOfRow
+    }
     func convertStringToDictionary(text: String) -> [String:AnyObject]? {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {

@@ -50,6 +50,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     var progressViewDownload: UIProgressView?
     var progressLabelDownload: UILabel?
+    var NoDatalabelFormyMediaImageList : UILabel = UILabel()
     
     var loadingOverlay: UIView?
     
@@ -114,7 +115,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         if archiveMediaCount == 0{
             self.removeOverlay()
-            ErrorManager.sharedInstance.emptyMedia()
+            addNoDataLabel()
+//            ErrorManager.sharedInstance.emptyMedia()
             self.addToButton.hidden = true
             self.deletButton.hidden = true
             self.fullScreenZoomView.image = UIImage()
@@ -331,6 +333,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormyMediaImageList = UILabel(frame: CGRectMake(0, 0, self.photoThumpCollectionView.frame.width, self.photoThumpCollectionView.frame.height))
+        self.NoDatalabelFormyMediaImageList.center = CGPointMake(160, 284)
+        self.NoDatalabelFormyMediaImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyMediaImageList.text = "No Media Available"
+        self.view.addSubview(self.NoDatalabelFormyMediaImageList)
+    }
+    
     func removeActivityIndicatorMyMedia(notif : NSNotification){
         operationInMyMediaList.cancel()
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
@@ -349,7 +360,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         else{
             removeOverlay()
-            ErrorManager.sharedInstance.emptyMedia()
+            addNoDataLabel()
+//            ErrorManager.sharedInstance.emptyMedia()
         }
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.addToButton.hidden = false
@@ -672,7 +684,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             else{
                 if(archiveMediaCount == 0){
                     removeOverlay()
-                    ErrorManager.sharedInstance.emptyMedia()
+                    addNoDataLabel()
+//                    ErrorManager.sharedInstance.emptyMedia()
                 }
                 else{
                     showOverlay()
