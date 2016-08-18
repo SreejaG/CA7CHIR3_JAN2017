@@ -339,6 +339,7 @@ class ChannelItemListViewController: UIViewController {
     
     @IBAction func didTapDeleteButton(sender: AnyObject) {
         var channelIds : [Int] = [Int]()
+        scrollObj.finishInfiniteScroll()
         operationInChannelImageList.cancel()
         for(var i = 0; i < selectedArray.count; i++){
             let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
