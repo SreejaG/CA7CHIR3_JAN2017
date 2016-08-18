@@ -339,7 +339,7 @@ class ChannelItemListViewController: UIViewController {
     
     @IBAction func didTapDeleteButton(sender: AnyObject) {
         var channelIds : [Int] = [Int]()
-        
+        operationInChannelImageList.cancel()
         for(var i = 0; i < selectedArray.count; i++){
             let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
             selected.addObject(mediaSelectedId!)
@@ -367,8 +367,10 @@ class ChannelItemListViewController: UIViewController {
         {
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: selected)
             totalMediaCount = totalMediaCount - selected.count
-            totalCount = totalCount - selectedArray.count
-            operationInChannelImageList.cancel()
+          
+            let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+            totalCount = filteredData.count
+         
             downloadingFlag = false
             selectionFlag = false
             
