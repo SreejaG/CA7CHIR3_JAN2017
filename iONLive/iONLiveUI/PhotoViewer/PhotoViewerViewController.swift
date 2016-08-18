@@ -293,7 +293,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 photoThumpCollectionView.hidden = true
                 playIconInFullView.hidden = true
                 scrollView.scrollEnabled=true;
-                
+                swipeFlag = false
                 self.view.bringSubviewToFront(photoThumpCollectionView)
                 self.view.bringSubviewToFront(playIconInFullView)
                 self.view.bringSubviewToFront(TopView)
@@ -313,6 +313,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             photoThumpCollectionView.hidden = false
             fullScreenScrollView.scrollEnabled=false;
             self.photoThumpCollectionView.reloadData()
+            swipeFlag = false
             fullScreenScrollView.bounds = fullScrenImageView.bounds
         }
     }
@@ -1037,6 +1038,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
+        
         var imageForMedia : UIImage = UIImage()
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
