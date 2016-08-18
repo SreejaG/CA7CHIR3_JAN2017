@@ -384,10 +384,12 @@ int timerCount = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setGUIBasedOnMode];
     });
-    
-    PhotoViewerInstance.iphoneCam = self;
-    SetUpView *viewSet = [[SetUpView alloc]init];
-    [viewSet getValue];
+    if(takePictureFlag == false)
+    {
+        PhotoViewerInstance.iphoneCam = self;
+        SetUpView *viewSet = [[SetUpView alloc]init];
+        [viewSet getValue];
+    }
     
     [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
     [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
