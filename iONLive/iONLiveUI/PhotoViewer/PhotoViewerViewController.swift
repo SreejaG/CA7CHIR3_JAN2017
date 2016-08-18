@@ -141,7 +141,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             else if totalCount <= 0
             {
-//                self.removeOverlay()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
@@ -173,11 +172,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
-        self.fullScrenImageView .addGestureRecognizer(swipeRight)
+        self.fullScrenImageView.addGestureRecognizer(swipeRight)
         
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
-        self.fullScrenImageView .addGestureRecognizer(swipeLeft)
+        self.fullScrenImageView.addGestureRecognizer(swipeLeft)
         
         swipeRight.delegate = self;
         swipeLeft.delegate = self;
@@ -230,8 +229,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
         }
         end = start + end
-//        if end >= totalCount
-//        {
         if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
         {
 
@@ -240,7 +237,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             })
             self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
         }
-//        }
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
@@ -286,6 +282,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
             if(fullScreenZoomView.hidden==true)
             {
+                downloadingFlag = true
                 fullScreenZoomView.hidden = false
                 fullScrenImageView.alpha = 0.0
                 TopView.hidden = true
@@ -293,7 +290,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 photoThumpCollectionView.hidden = true
                 playIconInFullView.hidden = true
                 scrollView.scrollEnabled=true;
-                swipeFlag = false
+                fullScrenImageView.userInteractionEnabled = false
                 self.view.bringSubviewToFront(photoThumpCollectionView)
                 self.view.bringSubviewToFront(playIconInFullView)
                 self.view.bringSubviewToFront(TopView)
@@ -306,6 +303,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         if(scale<=1.0)
         {
+            downloadingFlag = false
             fullScreenZoomView.hidden = true
             fullScrenImageView.alpha = 1.0
             TopView.hidden = false
@@ -313,7 +311,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             photoThumpCollectionView.hidden = false
             fullScreenScrollView.scrollEnabled=false;
             self.photoThumpCollectionView.reloadData()
-            swipeFlag = false
+            fullScrenImageView.userInteractionEnabled = true
             fullScreenScrollView.bounds = fullScrenImageView.bounds
         }
     }
@@ -1064,7 +1062,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             }
                             
                             self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
-                            self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
+//                            self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
                         }
                         
                         self.fullScrenImageView.image = (fullImage as! UIImage)
