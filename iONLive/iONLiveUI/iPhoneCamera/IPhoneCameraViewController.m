@@ -1505,6 +1505,11 @@ int timerCount = 0;
                         NSData *imageData = [[NSData alloc]init];
                         imageData = [self getThumbNail:outputFileURL];
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                        
+                        self.imageViewAnimate.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
+                        [self cameraAnimation];
+                        
+                        
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
                             [self saveImage:imageData];
