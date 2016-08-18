@@ -154,6 +154,7 @@ int timerCount = 0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation:) name:@"stopInitialising" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkCountForLabel) name:@"PushNotificationIphone" object:nil];
 }
 
 - (void) orientationChanged2:(NSNotification *)note
@@ -784,11 +785,13 @@ int timerCount = 0;
     {
         _countLabel.hidden= true;
     }
-    else
-    {
-        _countLabel.hidden= false;
-        _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
-    }
+   else
+   {
+       dispatch_async(dispatch_get_main_queue(), ^{
+           _countLabel.hidden= false;
+           _countLabel.text = [NSString stringWithFormat:@"%ld",(long)count];
+       });
+   }
 }
 
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages{

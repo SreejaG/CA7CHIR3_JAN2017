@@ -34,6 +34,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
     @IBOutlet var contactSearchBar: UISearchBar!
     @IBOutlet var contactTableView: UITableView!
     
+    var NoContactsAddedList : UILabel = UILabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -66,6 +68,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func pullToRefreshSecnd()
     {
+        
         tapCountContactShare = tapCountContactShare + 1
         if(tapCountContactShare <= 1){
             if(!pullToRefreshActiveSecnd){
@@ -157,6 +160,15 @@ class MyChannelSharingDetailsViewController: UIViewController {
             self.authenticationFailureHandler(error, code: message)
             return
         }
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoContactsAddedList = UILabel(frame: CGRectMake(0, 0, self.contactTableView.frame.width, self.contactTableView.frame.height))
+        self.NoContactsAddedList.center = CGPointMake(160, 284)
+        self.NoContactsAddedList.textAlignment = NSTextAlignment.Center
+        self.NoContactsAddedList.text = "No Shared Contacts"
+        self.view.addSubview(self.NoContactsAddedList)
     }
     
     func  loadInitialViewController(code: String){
@@ -304,6 +316,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             else
             {
                 removeOverlay()
+                addNoDataLabel()
             }
         }
         else
@@ -492,6 +505,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     fullDataSource.removeAtIndex(index)
                     dataSource.removeAtIndex(index)
                 }
+            }
+            if fullDataSource.count == 0
+            {
+                addNoDataLabel()
             }
             contactTableView.reloadData()
         }
