@@ -647,6 +647,13 @@ int timerCount = 0;
                     initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
                 }
                 AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
+                if (shutterActionMode == SnapCamSelectionModeVideo)
+                {
+                    [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+                    if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
+                        [self.session setSessionPreset:AVCaptureSessionPresetMedium];
+                    }
+                }
                 previewLayer.connection.videoOrientation = initialVideoOrientation;
             } );
         }
@@ -1224,10 +1231,11 @@ int timerCount = 0;
             AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
             AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
             connection.videoOrientation = previewLayer.connection.videoOrientation;
-            [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-            if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
-                [self.session setSessionPreset:AVCaptureSessionPresetMedium];
-            }
+            
+//            [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+//            if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
+//                [self.session setSessionPreset:AVCaptureSessionPresetMedium];
+//            }
             
             NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString *documentsDirectory = [paths firstObject];
