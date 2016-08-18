@@ -19,7 +19,22 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hPk-zc-tpz" userLabel="Preview View" customClass="AAPLPreviewView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xqQ-5y-mlC">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="600" id="Q4u-dY-cns"/>
+                                            <constraint firstAttribute="height" constant="600" id="x0N-g9-7Mh"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="xqQ-5y-mlC" firstAttribute="leading" secondItem="hPk-zc-tpz" secondAttribute="leading" id="LRI-zk-uUX"/>
+                                    <constraint firstAttribute="trailing" secondItem="xqQ-5y-mlC" secondAttribute="trailing" id="ZNs-dw-dby"/>
+                                    <constraint firstAttribute="bottom" secondItem="xqQ-5y-mlC" secondAttribute="bottom" id="p6t-pD-e8v"/>
+                                    <constraint firstItem="xqQ-5y-mlC" firstAttribute="top" secondItem="hPk-zc-tpz" secondAttribute="top" id="t6i-tt-r69"/>
+                                </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ucJ-gA-nDs" userLabel="TopView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
@@ -279,6 +294,7 @@
                         <outlet property="countLabel" destination="2fe-SJ-fm1" id="kGr-cC-Dwj"/>
                         <outlet property="firstButton" destination="eZ6-5L-198" id="Bxn-dI-ngZ"/>
                         <outlet property="flashButton" destination="QMd-g2-gjt" id="pOa-vc-adQ"/>
+                        <outlet property="imageViewAnimate" destination="xqQ-5y-mlC" id="XQm-Sd-Rdq"/>
                         <outlet property="iphoneCameraButton" destination="ryW-Iz-I7M" id="8as-6J-mT1"/>
                         <outlet property="latestSharedMediaImage" destination="VfF-28-FyM" id="GNh-th-Xna"/>
                         <outlet property="noDataFound" destination="BIV-8z-Rim" id="UAO-Fj-ncf"/>

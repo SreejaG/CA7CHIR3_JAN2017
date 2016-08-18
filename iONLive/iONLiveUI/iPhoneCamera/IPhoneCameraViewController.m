@@ -79,9 +79,14 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @property (strong, nonatomic) IBOutlet UIButton *secondButton;
 @property (strong, nonatomic) IBOutlet UIButton *thirdButton;
 
+@property (weak, nonatomic) IBOutlet UIImageView *imageViewAnimate;
+
+
 @end
 
 int orientationFlag = 0;
+
+UIView *snapshot;
 
 @implementation IPhoneCameraViewController
 
@@ -336,6 +341,8 @@ int timerCount = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playiIconView.hidden = YES;
     });
+    
+    snapshot = [[UIView alloc]init];
     
     shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
     _noDataFound.lineBreakMode = NSLineBreakByWordWrapping;
@@ -1073,6 +1080,12 @@ int timerCount = 0;
                             self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                             takePictureFlag = true;
                             
+                            self.imageViewAnimate.hidden = NO;
+                            [self.view bringSubviewToFront:self.imageViewAnimate];
+                            self.imageViewAnimate.image = [UIImage imageWithData:imageData];
+                            
+                            [self cameraAnimation];
+                            
                             //Save images to CA7CH specific album in iphone
                             [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
                              {
@@ -1092,6 +1105,39 @@ int timerCount = 0;
             }
         }];
     });
+}
+
+-(void)cameraAnimation
+{
+    //    UIView *snapshot = [[UIView alloc]init];
+    snapshot = [self.imageViewAnimate snapshotViewAfterScreenUpdates:YES];
+    snapshot.frame = self.imageViewAnimate.frame;
+    [self.view addSubview:snapshot];
+    
+    
+    [UIView animateKeyframesWithDuration:0.5 delay:0 options: UIViewKeyframeAnimationOptionCalculationModeCubic animations:^{
+        
+        [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:0.5 animations:^{
+            
+            snapshot.frame = CGRectInset(self.imageViewAnimate.frame, self.imageViewAnimate.frame.size.width/2, self.imageViewAnimate.frame.size.height/2);
+        }];
+        
+        [UIView addKeyframeWithRelativeStartTime:0.5 relativeDuration:0.4 animations:^{
+            
+            //            snapshot.frame = CGRectOffset(snapshot.frame, self.view.frame.origin.x-270, self.view.frame.size.height*85/100);
+            
+            snapshot.frame = CGRectMake(self.view.frame.size.width*13.4/100, self.view.frame.size.height*85.4/100,44,44);
+            
+        }];
+        
+    }completion:nil];
+    
+    self.imageViewAnimate.image = nil;
+    
+    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationCurveEaseOut animations:^{
+        snapshot.alpha = 0.0;
+    }completion:nil];
+    
 }
 
 #pragma mark save image to db
