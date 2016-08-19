@@ -72,7 +72,6 @@ class ChannelItemListViewController: UIViewController {
             selectionButton.hidden = true
             removeOverlay()
             addNoDataLabel()
-//            ErrorManager.sharedInstance.emptyMedia()
         }
         else
         {
@@ -116,13 +115,6 @@ class ChannelItemListViewController: UIViewController {
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-//        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
-//            let time1 = Int(p1[mediaIdKey] as! String)
-//            let time2 = Int(p2[mediaIdKey] as! String)
-//            return time1 > time2
-//        })
-        
-       
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             if self.selectionFlag == false {
                 self.selectionButton.hidden = false
@@ -186,35 +178,13 @@ class ChannelItemListViewController: UIViewController {
                 else{
                     scrollView.finishInfiniteScroll()
                 }
-            
-//                scrollView.finishInfiniteScroll()
             }
             else{
                 scrollView.finishInfiniteScroll()
             }
         }
     }
-    
-//    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-//        self.lastContentOffset = scrollView.contentOffset
-//    }
-//    
-//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-//        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-//            if totalCount > 0
-//            {
-//                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
-//                {
-//                    if self.downloadingFlag == false
-//                    {
-//                        self.downloadingFlag = true
-//                        downloadImagesFromGlobalChannelImageMapping(12)
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
+
     func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
         operationInChannelImageList.cancel()
         let start = totalCount
@@ -226,9 +196,6 @@ class ChannelItemListViewController: UIViewController {
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
         end = start + end
-        print("start \(start) end ====> \(end)")
-//        if end >= totalCount
-//        {
         if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
         {
             operationInChannelImageList  = NSBlockOperation (block: {
@@ -236,7 +203,6 @@ class ChannelItemListViewController: UIViewController {
             })
             self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
         }
-//        }
     }
     
     func  loadInitialViewController(code: String){

@@ -125,8 +125,6 @@ class GlobalChannelToImageMapping: NSObject {
         {
             localDataSource.append(GlobalChannelImageDict[chanelId]![i])
         }
-        print("local data source full \(localDataSource)")
-            
         if localDataSource.count > 0
         {
             for var k = 0; k < localDataSource.count; k++
@@ -134,9 +132,7 @@ class GlobalChannelToImageMapping: NSObject {
                 if operationObj.cancelled == true{
                     return
                 }
-                
-                print("k value in chanel image mapping ===> \(k)")
-                
+                                
                 var imageForMedia : UIImage = UIImage()
                 let mediaId = String(localDataSource[k][mediaIdKey]!)
                 let mediaIdForFilePath = "\(mediaId)thumb"
@@ -149,7 +145,6 @@ class GlobalChannelToImageMapping: NSObject {
                 }
                 else{
                     let mediaUrl = localDataSource[k][tImageURLKey] as! String
-                    print("Media url  \(mediaUrl)")
                     if(mediaUrl != ""){
                         let url: NSURL = convertStringtoURL(mediaUrl)
                         downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -178,7 +173,6 @@ class GlobalChannelToImageMapping: NSObject {
                 }
                 if localDataSource.count > 0
                 {
-                   // print("local datasource k   \(localDataSource[k])")
                     if k < localDataSource.count
                     {
                         localDataSource[k][tImageKey] = imageForMedia
@@ -194,13 +188,10 @@ class GlobalChannelToImageMapping: NSObject {
                     let mediaIdFromLocal = element[mediaIdKey] as! String
                     if mediaIdChk == mediaIdFromLocal
                     {
-//                        if j < localDataSource.count
-//                        {
                         if let p = element[tImageKey]
                         {
                             GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
                         }
-//                        }
                     }
                 }
             }
@@ -220,7 +211,6 @@ class GlobalChannelToImageMapping: NSObject {
     {
         var mediaImage : UIImage = UIImage()
         do {
-            print(downloadURL)
             let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
             if let imageData = data as NSData? {
                 if let mediaImage1 = UIImage(data: imageData)
@@ -235,26 +225,8 @@ class GlobalChannelToImageMapping: NSObject {
             }
             
         } catch {
-            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
-        
-//        var mediaImage : UIImage = UIImage()
-//        let data = NSData(contentsOfURL: downloadURL)
-//        if let imageData = data as NSData? {
-//            if let mediaImage1 = UIImage(data: imageData)
-//            {
-//                mediaImage = mediaImage1
-//            }
-//            else{
-//                mediaImage = UIImage(named: "thumb12")!
-//            }
-//            completion(result: mediaImage)
-//        }
-//        else
-//        {
-//            completion(result:UIImage(named: "thumb12")!)
-//        }
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {

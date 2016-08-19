@@ -95,7 +95,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         {
             removeOverlay()
             addNoDataLabel()
-//            ErrorManager.sharedInstance.emptyMedia()
         }
         else
         {
@@ -138,8 +137,6 @@ class MyChannelItemDetailsViewController: UIViewController {
             end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
         }
         end = start + end
-//        if end >= totalCount
-//        {
         if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
         {
 
@@ -148,28 +145,7 @@ class MyChannelItemDetailsViewController: UIViewController {
             })
             self.operationQueueObjInSharingImageList.addOperation(operationInSharingImageList)
         }
-//        }
     }
-    
-//    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-//        self.lastContentOffset = scrollView.contentOffset
-//    }
-//    
-//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-//        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-//            if totalCount > 0
-//            {
-//                if(totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count)
-//                {
-//                    if self.downloadingFlag == false
-//                    {
-//                        self.downloadingFlag = true
-//                        self.downloadImagesFromGlobalChannelImageMapping(12)
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     func createScrollViewAnimations()  {
         channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
@@ -209,12 +185,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-//        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]!.sortInPlace({ p1, p2 in
-//            let time1 = Int(p1[mediaIdKey] as! String)
-//            let time2 = Int(p2[mediaIdKey] as! String)
-//            return time1 > time2
-//        })
-//        
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.removeOverlay()
             self.scrollObjSharing.finishInfiniteScroll()

@@ -331,7 +331,6 @@ int timerCount = 0;
             
         }];
         timerCount = timerCount * 2;
-//        NSLog(@"%d", timerCount);
         [self initialiseTimerForSyncing:timerCount];
         [self initialiseAPICall];
     }

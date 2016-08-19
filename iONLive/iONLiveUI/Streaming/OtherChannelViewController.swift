@@ -48,30 +48,23 @@ class OtherChannelViewController: UIViewController  {
     let sharedMediaCount = "total_no_media_shared"
     var scrollObj = UIScrollView()
     var NoDatalabel : UILabel = UILabel()
-
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        // finishDelegate?.delegate = self
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectInserted), name: "AddedOneObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
-        //self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
             UIControlEvents.ValueChanged)
         self.channelItemsCollectionView.addSubview(self.refreshControl)
         isWatchedTrue()
         createScrollViewAnimations()
-        //        if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
-        //        {
-        //            self.removeOverlay()
-        //        }
-        //        else{
+        
         showOverlay()
         SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(channelId
             , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
-        //  }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -123,7 +116,6 @@ class OtherChannelViewController: UIViewController  {
                 self.channelItemsCollectionView.reloadData()
             })
         }
-        //  }
     }
     func createScrollViewAnimations()  {
         channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
@@ -207,7 +199,7 @@ class OtherChannelViewController: UIViewController  {
     @IBAction func backClicked(sender: AnyObject)
     {
         self.setMediaimage()
-
+        
         SharedChannelDetailsAPI.sharedInstance.cancelOpratn()
         NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "SelectedTab")
         let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
@@ -291,7 +283,7 @@ class OtherChannelViewController: UIViewController  {
         var index : Int = Int()
         for i in 0  ..< ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count
         {
-           
+            
             if  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[i][channelIdkey] as! String == channelId as String
             {
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
@@ -306,7 +298,7 @@ class OtherChannelViewController: UIViewController  {
         {
             if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
             {
-              ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage
             }
         }
         
@@ -378,8 +370,6 @@ class OtherChannelViewController: UIViewController  {
                     for(var i = 1 ; i < sortList.count ; i++)
                     {
                         subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
-                        
-                        //subIdArray[i] =            // subIdArray.arrayByAddingObject()
                         
                     }
                     if subIdArray.count > 0
