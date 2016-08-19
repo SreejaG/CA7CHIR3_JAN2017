@@ -125,6 +125,8 @@ class GlobalChannelToImageMapping: NSObject {
         {
             localDataSource.append(GlobalChannelImageDict[chanelId]![i])
         }
+        print("local data source full \(localDataSource)")
+            
         if localDataSource.count > 0
         {
             for var k = 0; k < localDataSource.count; k++
@@ -147,6 +149,7 @@ class GlobalChannelToImageMapping: NSObject {
                 }
                 else{
                     let mediaUrl = localDataSource[k][tImageURLKey] as! String
+                    print("Media url  \(mediaUrl)")
                     if(mediaUrl != ""){
                         let url: NSURL = convertStringtoURL(mediaUrl)
                         downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -169,10 +172,17 @@ class GlobalChannelToImageMapping: NSObject {
                             }
                         })
                     }
+                    else{
+                        imageForMedia = UIImage(named: "thumb12")!
+                    }
                 }
                 if localDataSource.count > 0
                 {
+                   // print("local datasource k   \(localDataSource[k])")
+                    if k < localDataSource.count
+                    {
                     localDataSource[k][tImageKey] = imageForMedia
+                    }
                 }
             }
             
@@ -203,18 +213,42 @@ class GlobalChannelToImageMapping: NSObject {
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
+        do {
+            print(downloadURL)
+            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    mediaImage = mediaImage1
+                }
+                completion(result: mediaImage)
             }
-            completion(result: mediaImage)
-        }
-        else
-        {
+            else
+            {
+                completion(result:UIImage(named: "thumb12")!)
+            }
+            
+        } catch {
+            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
+        
+//        var mediaImage : UIImage = UIImage()
+//        let data = NSData(contentsOfURL: downloadURL)
+//        if let imageData = data as NSData? {
+//            if let mediaImage1 = UIImage(data: imageData)
+//            {
+//                mediaImage = mediaImage1
+//            }
+//            else{
+//                mediaImage = UIImage(named: "thumb12")!
+//            }
+//            completion(result: mediaImage)
+//        }
+//        else
+//        {
+//            completion(result:UIImage(named: "thumb12")!)
+//        }
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {

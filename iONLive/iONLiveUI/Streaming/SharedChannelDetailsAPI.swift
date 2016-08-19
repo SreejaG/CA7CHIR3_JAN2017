@@ -269,17 +269,25 @@ class SharedChannelDetailsAPI: NSObject {
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
-        let data = NSData(contentsOfURL: downloadURL)
-        if let imageData = data as NSData? {
-            if let mediaImage1 = UIImage(data: imageData)
-            {
-                mediaImage = mediaImage1
+        
+        // Data object to fetch weather data
+        do {
+            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    mediaImage = mediaImage1
+                }
+                completion(result: mediaImage)
             }
-            completion(result: UIImage(data: imageData)!)
-        }
-        else
-        {
-            completion(result:UIImage(named:"thumb12")!)
+            else
+            {
+                completion(result:UIImage(named: "thumb12")!)
+            }
+            
+        } catch {
+            print("Error")
+            completion(result:UIImage(named: "thumb12")!)
         }
     }
     func convertStringtoURL(url : String) -> NSURL

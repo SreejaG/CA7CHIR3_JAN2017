@@ -200,7 +200,9 @@ int timerCount = 0;
             _noDataFound.text = @"   Syncing...";
         }
         
-        [self loadingView];
+        [self loadingView:@"load" completion:^{
+            
+        }];
         
         if (shutterActionMode == SnapCamSelectionModeVideo)
         {
@@ -325,7 +327,9 @@ int timerCount = 0;
     if (buttonIndex == 0) {
         _noDataFound.text = @"   Syncing...";
         
-        [self loadingView];
+        [self loadingView:@"load" completion:^{
+            
+        }];
         timerCount = timerCount * 2;
 //        NSLog(@"%d", timerCount);
         [self initialiseTimerForSyncing:timerCount];
@@ -355,52 +359,52 @@ int timerCount = 0;
         [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
     });
     
-    [self loadingView];
-    
-    if([[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"] != nil)
-    {
-        timerCount = 50;
-        NSString *initialCall = [[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"];
-        if([initialCall isEqualToString:@"initialCall"])
+    [self loadingView:@"load" completion:^{
+        if([[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"] != nil)
         {
-            loadingCameraFlag = true;
-            [self initialiseTimerForSyncing:timerCount];
-        }
-        else{
-            NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"viewFromWhichPage"];
-            if([loading  isEqual: @"appDelegateRedirection"]){
+            timerCount = 50;
+            NSString *initialCall = [[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"];
+            if([initialCall isEqualToString:@"initialCall"])
+            {
                 loadingCameraFlag = true;
-               [self initialiseTimerForSyncing:timerCount];
-                [self initialiseAPICall];
+                [self initialiseTimerForSyncing:timerCount];
             }
             else{
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    [self updateThumbnails];
-                });
-                loadingCameraFlag = false;
-                _noDataFound.text = @"Loading camera...";
+                NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"viewFromWhichPage"];
+                if([loading  isEqual: @"appDelegateRedirection"]){
+                    loadingCameraFlag = true;
+                    [self initialiseTimerForSyncing:timerCount];
+                    [self initialiseAPICall];
+                }
+                else{
+                    dispatch_async( dispatch_get_main_queue(), ^{
+                        [self updateThumbnails];
+                    });
+                    loadingCameraFlag = false;
+                    _noDataFound.text = @"Loading camera...";
+                }
             }
         }
-    }
-    else{
-        loadingCameraFlag = true;
-        [self initialiseTimerForSyncing:timerCount];
-        [self initialiseAPICall];
-    }
-    
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self setGUIBasedOnMode];
-    });
-    if(takePictureFlag == false)
-    {
-        PhotoViewerInstance.iphoneCam = self;
-        SetUpView *viewSet = [[SetUpView alloc]init];
-        [viewSet getValue];
-    }
-    
-    [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
-    [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
+        else{
+            loadingCameraFlag = true;
+            [self initialiseTimerForSyncing:timerCount];
+            [self initialiseAPICall];
+        }
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setGUIBasedOnMode];
+        });
+        if(takePictureFlag == false)
+        {
+            PhotoViewerInstance.iphoneCam = self;
+            SetUpView *viewSet = [[SetUpView alloc]init];
+            [viewSet getValue];
+        }
+        
+        [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
+        [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
+    }];
 }
 
 -(void) updateThumbnails
@@ -430,7 +434,7 @@ int timerCount = 0;
         }
 }
 
--(void)loadingView
+-(void)loadingView : (NSString *)name completion:(void (^)(void))completionBlock
 {
     dispatch_async( dispatch_get_main_queue(), ^{
         self.activitView.hidden =false;
@@ -442,6 +446,7 @@ int timerCount = 0;
         _noDataFound.hidden = false;
     });
     [self enabelOrDisableButtons:false];
+    completionBlock();
 }
 
 -(void) initialiseAPICall
