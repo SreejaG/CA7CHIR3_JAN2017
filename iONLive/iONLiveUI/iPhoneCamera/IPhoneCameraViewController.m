@@ -359,7 +359,7 @@ int timerCount = 0;
     
     if([[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"] != nil)
     {
-        timerCount = 30;
+        timerCount = 50;
         NSString *initialCall = [[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"];
         if([initialCall isEqualToString:@"initialCall"])
         {
