@@ -298,36 +298,7 @@ class StreamsListViewController: UIViewController{
         }
         return indexOfRow
     }
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if (self.lastContentOffset.y < scrollView.contentOffset.y) {
-            //            if(self.downloadCompleteFlagStream == "end")
-            //            {
-            //                do {
-            //                    if(self.downloadCompleteFlagStream == "end")
-            //                    {
-            //                        let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
-            //                        var subIdArray : [Int] = [Int]()
-            //
-            //                        for(var i = 0 ; i < sortList.count ; i++)
-            //                        {
-            //                            subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
-            //                        }
-            //                        if(subIdArray.count > 0)
-            //                        {
-            //                            let subid = subIdArray.minElement()!
-            //                            self.downloadCompleteFlagStream = "start"
-            //                            GlobalStreamList.sharedInstance.getMediaByOffset("\(subid)")
-            //                        }
-            //                    }
-            //                } catch {
-            //                    print("do it error")
-            //                }
-            //            }
-        }
-        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-            print("Scrolled Up");
-        }
-    }
+  
     func mediaDeletePushNotification(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
@@ -974,7 +945,6 @@ class StreamsListViewController: UIViewController{
         if let json = response as? [String: AnyObject]
         {
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
-            print(responseArrLive)
             if (responseArrLive.count != 0)
             {
                 for element in responseArrLive{

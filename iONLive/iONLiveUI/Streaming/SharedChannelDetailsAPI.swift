@@ -37,9 +37,9 @@ class SharedChannelDetailsAPI: NSObject {
     
     func cancelOpratn()
     {
-        // operationQueue.cancelAllOperations()
-        //  imageDataSource.removeAll()
-        //  selectedSharedChannelMediaSource.removeAll()
+//         operationQueue.cancelAllOperations()
+//          imageDataSource.removeAll()
+//          selectedSharedChannelMediaSource.removeAll()
     }
     func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , sharedCount : String)
     {
@@ -128,7 +128,6 @@ class SharedChannelDetailsAPI: NSObject {
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
-            print(responseArr)
             for index in 0 ..< responseArr.count
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
@@ -161,7 +160,6 @@ class SharedChannelDetailsAPI: NSObject {
             
             for var liveIndex = 0 ; liveIndex < responseArrLive.count ; liveIndex++
             {
-                print(index , responseArrLive.count )
                 let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
                 let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
                 let mediaId = responseArrLive[liveIndex].valueForKey("live_stream_detail_id")?.stringValue
@@ -325,7 +323,6 @@ class SharedChannelDetailsAPI: NSObject {
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                    print("not same")
                                 }
                                 else{
                                     FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -342,7 +339,10 @@ class SharedChannelDetailsAPI: NSObject {
             }
             if(imageDataSource.count > 0 )
             {
-                self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                if(i < imageDataSource.count)
+                {
+                 self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                }
                 
                 
             }

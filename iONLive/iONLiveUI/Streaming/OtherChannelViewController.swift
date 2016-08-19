@@ -190,10 +190,10 @@ class OtherChannelViewController: UIViewController  {
                 self.channelItemsCollectionView.reloadData()
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                 {
-                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
-                    self.NoDatalabel.text = "No Media Available"
-                    self.view.addSubview(self.NoDatalabel)
+//                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+//                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+//                    self.NoDatalabel.text = "No Media Available"
+//                    self.view.addSubview(self.NoDatalabel)
                 }
             })
         }
@@ -271,9 +271,6 @@ class OtherChannelViewController: UIViewController  {
     func isWatchedTrue(){
         let defaults = NSUserDefaults .standardUserDefaults()
         mediaSharedCountArray = defaults.valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
-        
-        print("MediaShared0: \(mediaSharedCountArray)")
-        
         for i in 0  ..< mediaSharedCountArray.count
         {
             if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as String
@@ -282,9 +279,6 @@ class OtherChannelViewController: UIViewController  {
                 mediaSharedCountArray[i][sharedMediaCount] = "0"
                 let defaults = NSUserDefaults .standardUserDefaults()
                 defaults.setObject(mediaSharedCountArray, forKey: "Shared")
-                
-                print("MediaShared1:\(mediaSharedCountArray) ")
-                
             }
         }
     }
@@ -318,20 +312,6 @@ class OtherChannelViewController: UIViewController  {
     }
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
         self.lastContentOffset = scrollView.contentOffset
-    }
-    
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
-        if (self.lastContentOffset.y < scrollView.contentOffset.y) {
-            print("Scrolled Down");
-            
-        }
-            
-        else if (self.lastContentOffset.y > scrollView.contentOffset.y) {
-            print("Scrolled Up");
-            
-            
-        }
     }
     func getInfinteScrollData()
     {
@@ -373,15 +353,12 @@ class OtherChannelViewController: UIViewController  {
                     {
                         subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
                         
-                        //subIdArray[i] =            // subIdArray.arrayByAddingObject()
-                        
                     }
                     if(subIdArray.count > 0)
                     {
                         let subid = subIdArray.maxElement()
                         let channelSelectedMediaId = "\(subid)"
                         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-                        print(channelSelectedMediaId)
                         SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
                     }
                 }

@@ -188,7 +188,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 newShareAvailabellabel.hidden = true
             }
             let chid : String = "\(channelId)"
-            print("MediaSharedChannelId: \(chid)")
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.ChannelSharedTableView.reloadData()
             })
@@ -202,28 +201,16 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 newShareAvailabellabel.text = info[ "messageText"] as! String
             }
             else{
-                
-                //                UIViewController *viewContr = self.navigationController.visibleViewController;
-                //                if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
-                //                {
-                
-                //                let viewCont = self.tabBarController?.navigationController?.visibleViewController
-                // UIWindow.getVisibleViewControllerFrom(presentationController.presentedViewContr‌​oller!)
-                //   print(topMostController().tabBarItem.tag)
-                // if (self == self.navigationController!.visibleViewController)
-                // {
                 if(!ChannelSharedTableView.visibleCells.isEmpty)
                 {
                     refreshAlert = UIAlertController(title: "Deleted", message: "Shared channel deleted.", preferredStyle: UIAlertControllerStyle.Alert)
                     
                     refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
-                        // print("Handle Ok logic here")
                     }))
                     self.presentViewController(refreshAlert, animated: true, completion: nil)
                     self.channelDeletionPushNotification(info)
                 }
             }
-            // }
         }
         else if (info["type"] as! String == "liveStream")
         {
@@ -260,7 +247,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         for( var i = 0 ; i < selectedArray.count ; i++ )
         {
             let channelId = selectedArray[i][channelIdkey]!
-            print(channelId! , channelIdValue)
             if "\(channelId!)"  == channelIdValue
             {
                 checkFlag = true
@@ -379,8 +365,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         if(success == "success")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                print(ChannelSharedListAPI.sharedInstance.pullToRefreshSource)
-                
                 for (var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex-- )
                 {
                     var flag : Bool = false
@@ -532,11 +516,7 @@ extension ChannelsSharedController:UITableViewDataSource
                         var fromdateStr = dateFormatter.stringFromDate(NSDate())
                         var fromdate = dateFormatter.dateFromString(fromdateStr)
                         let sdifferentString =  offsetFrom(date!, todate: fromdate!)
-                        
                         let count = (mediaShared[i][sharedMediaCount]?.intValue)!
-                        
-                        print(count)
-                        
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {

@@ -182,6 +182,8 @@ class GlobalStreamList: NSObject {
                     }
                 }
                 else{
+                    if(imageDataSource.count > 0)
+                    {
                     let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
                     if(mediaUrl != ""){
                         let url: NSURL = convertStringtoURL(mediaUrl)
@@ -208,6 +210,7 @@ class GlobalStreamList: NSObject {
                                 imageForMedia = UIImage(named: "thumb12")!
                             }
                         })
+                    }
                     }
                 }
             }

@@ -102,12 +102,10 @@ class ChannelSharedListAPI: NSObject {
                         if(!flag)
                         {
                             mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
-                            print( "\(#file) \(#line) \(mediaShared)")
                         }
                     }
                     else{
                         mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
-                        print( "\(#file) \(#line) \(mediaShared)")
                     }
                     dataSource.append([channelIdkey:channelId!,channelNameKey:channelName,subChannelIdKey : channelSubId!,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
@@ -275,16 +273,21 @@ class ChannelSharedListAPI: NSObject {
             {
                 if(!checkDuplicate(self.dataSource[i][self.channelIdkey] as! String))
                 {
+                    if(dataSource.count > 0)
+                    {
                     SharedChannelListDataSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]! ])
+                    }
                 }
             }
             else
             {
+                if(dataSource.count > 0)
+                {
                 pullToRefreshSource.append([self.channelIdkey:self.dataSource[i][self.channelIdkey]!,self.channelNameKey:self.dataSource[i][self.channelNameKey]!,self.sharedMediaCount:self.dataSource[i][self.sharedMediaCount]!,self.timeStamp:self.dataSource[i][self.timeStamp]!,self.usernameKey:self.dataSource[i][self.usernameKey]!,self.liveStreamStatus:self.dataSource[i][self.liveStreamStatus]!,self.streamTockenKey:self.dataSource[i][self.streamTockenKey]!,self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]! ])
+                }
             }
             
         }
-        print(SharedChannelListDataSource)
         
         // if data available while pull to refresh no need to add data to global here
         // access datasource from calling view and insert respected rows to table view and update global source there in main view

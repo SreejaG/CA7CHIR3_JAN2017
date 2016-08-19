@@ -1145,7 +1145,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             }
                             
                             self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
-                            self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
+//                            self.fullScreenZoomView.layer.addAnimation(animation, forKey: "imageTransition")
                         }
                         
                         self.playIconInFullView.hidden = true;
