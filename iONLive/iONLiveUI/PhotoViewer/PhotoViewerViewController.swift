@@ -196,7 +196,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.Trial), name: MPMoviePlayerWillEnterFullscreenNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
         
          downloadingFlag = false
     }
@@ -532,13 +532,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         willEnterFlag = 0
         let fullScreenController = notif2.object as! MPMoviePlayerController
-        fullScreenController.scalingMode = MPMovieScalingMode.AspectFill
-        fullScreenController.play()
+        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        //fullScreenController.play()
     }
     
-    func Trial()
+    func moviePlayerWillenterFullScreen(notif:NSNotification)
     {
         willEnterFlag = 1
+        let fullScreenController = notif.object as! MPMoviePlayerController
+        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
     }
     
     func initialise()

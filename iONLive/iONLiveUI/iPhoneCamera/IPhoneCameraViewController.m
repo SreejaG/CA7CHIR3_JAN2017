@@ -694,7 +694,8 @@ int timerCount = 0;
             }
             self.movieFileOutput = movieFileOutput;
         }
-        else {
+        else
+        {
             self.setupResult = AVCamSetupResultSessionConfigurationFailed;
         }
         
