@@ -732,8 +732,7 @@ class StreamsListViewController: UIViewController{
             
             if(self.mediaAndLiveArray.count == 0)
             {
-                self.NoDatalabel = UILabel(frame: CGRectMake(0, 0, self.streamListCollectionView.frame.width, self.streamListCollectionView.frame.height))
-                self.NoDatalabel.center = CGPointMake(160, 284)
+                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
                 self.NoDatalabel.textAlignment = NSTextAlignment.Center
                 self.NoDatalabel.text = "No Media Available"
                 self.view.addSubview(self.NoDatalabel)
@@ -784,8 +783,7 @@ class StreamsListViewController: UIViewController{
                     
                     if(self.mediaAndLiveArray.count == 0)
                     {
-                        self.NoDatalabel = UILabel(frame: CGRectMake(0, 0, self.streamListCollectionView.frame.width, self.streamListCollectionView.frame.height))
-                        self.NoDatalabel.center = CGPointMake(160, 284)
+                        self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
                         self.NoDatalabel.textAlignment = NSTextAlignment.Center
                         self.NoDatalabel.text = "No Media Available"
                         self.view.addSubview(self.NoDatalabel)

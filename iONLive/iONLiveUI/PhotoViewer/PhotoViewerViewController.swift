@@ -335,8 +335,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormyMediaImageList = UILabel(frame: CGRectMake(0, 0, self.photoThumpCollectionView.frame.width, self.photoThumpCollectionView.frame.height))
-        self.NoDatalabelFormyMediaImageList.center = CGPointMake(160, 284)
+        self.NoDatalabelFormyMediaImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
         self.NoDatalabelFormyMediaImageList.textAlignment = NSTextAlignment.Center
         self.NoDatalabelFormyMediaImageList.text = "No Media Available"
         self.view.addSubview(self.NoDatalabelFormyMediaImageList)

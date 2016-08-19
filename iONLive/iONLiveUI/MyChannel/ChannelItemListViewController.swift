@@ -105,8 +105,7 @@ class ChannelItemListViewController: UIViewController {
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake(0, 0, self.channelItemCollectionView.frame.width, self.channelItemCollectionView.frame.height))
-        self.NoDatalabelFormyChanelImageList.center = CGPointMake(160, 284)
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
         self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
         self.NoDatalabelFormyChanelImageList.text = "No Media Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)

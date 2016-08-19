@@ -64,8 +64,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
             self.NoDatalabel.removeFromSuperview()
-            self.NoDatalabel = UILabel(frame: CGRectMake(0, 0, self.ChannelSharedTableView.frame.width, self.ChannelSharedTableView.frame.height))
-            self.NoDatalabel.center = CGPointMake(160, 284)
+            self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+            
             self.NoDatalabel.textAlignment = NSTextAlignment.Center
             self.NoDatalabel.text = "No Channel Available"
             self.view.addSubview(self.NoDatalabel)
@@ -314,8 +314,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
             {
                 self.NoDatalabel.removeFromSuperview()
-                self.NoDatalabel = UILabel(frame: CGRectMake(0, 0, self.ChannelSharedTableView.frame.width, self.ChannelSharedTableView.frame.height))
-                self.NoDatalabel.center = CGPointMake(160, 284)
+                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
                 self.NoDatalabel.textAlignment = NSTextAlignment.Center
                 self.NoDatalabel.text = "No Channel Available"
                 self.view.addSubview(self.NoDatalabel)

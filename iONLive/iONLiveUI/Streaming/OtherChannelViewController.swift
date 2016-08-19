@@ -188,11 +188,9 @@ class OtherChannelViewController: UIViewController  {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.channelItemsCollectionView.reloadData()
-                self.setMediaimage()
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                 {
-                    self.NoDatalabel = UILabel(frame: CGRectMake(0, 0, self.channelItemsCollectionView.frame.width, self.channelItemsCollectionView.frame.height))
-                    self.NoDatalabel.center = CGPointMake(160, 284)
+                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
                     self.NoDatalabel.textAlignment = NSTextAlignment.Center
                     self.NoDatalabel.text = "No Media Available"
                     self.view.addSubview(self.NoDatalabel)
@@ -207,6 +205,8 @@ class OtherChannelViewController: UIViewController  {
     }
     @IBAction func backClicked(sender: AnyObject)
     {
+        self.setMediaimage()
+
         SharedChannelDetailsAPI.sharedInstance.cancelOpratn()
         NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "SelectedTab")
         let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
@@ -292,15 +292,26 @@ class OtherChannelViewController: UIViewController  {
     {
         let mediaImageKey = "mediaImage"
         
+        var flag : Bool = false
+        var index : Int = Int()
         for i in 0  ..< ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count
         {
+           
             if  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[i][channelIdkey] as! String == channelId as String
             {
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                 {
-                    ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[i][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage;
+                    flag = true
+                    index = i
+                    
                 }
-                
+            }
+        }
+        if(flag)
+        {
+            if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+            {
+              ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage
             }
         }
         

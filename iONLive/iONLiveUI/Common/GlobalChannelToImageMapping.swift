@@ -170,7 +170,10 @@ class GlobalChannelToImageMapping: NSObject {
                         })
                     }
                 }
-                localDataSource[k][tImageKey] = imageForMedia
+                if localDataSource.count > 0
+                {
+                    localDataSource[k][tImageKey] = imageForMedia
+                }
             }
             
             for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++

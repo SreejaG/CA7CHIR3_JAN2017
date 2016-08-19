@@ -164,8 +164,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func addNoDataLabel()
     {
-        self.NoContactsAddedList = UILabel(frame: CGRectMake(0, 0, self.contactTableView.frame.width, self.contactTableView.frame.height))
-        self.NoContactsAddedList.center = CGPointMake(160, 284)
+        self.NoContactsAddedList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
         self.NoContactsAddedList.textAlignment = NSTextAlignment.Center
         self.NoContactsAddedList.text = "No Shared Contacts"
         self.view.addSubview(self.NoContactsAddedList)
