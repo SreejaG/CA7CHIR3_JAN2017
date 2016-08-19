@@ -842,18 +842,17 @@ int timerCount = 0;
             if ( data == nil ){
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self updateThumbnails];
-//                    return;
                 });
             }
             else{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if([latestCapturedMediaType  isEqual: @"video"])
-                    {
-                        self.playiIconView.hidden = NO;
-                    }
-                    else{
-                        self.playiIconView.hidden = YES;
-                    }
+//                    if([latestCapturedMediaType  isEqual: @"video"])
+//                    {
+//                        self.playiIconView.hidden = NO;
+//                    }
+//                    else{
+//                        self.playiIconView.hidden = YES;
+//                    }
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
             }
