@@ -438,6 +438,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             
         else
         {
+            if totalCount > 0
+            {
             swipeFlag = true
             self.removeOverlay()
             
@@ -524,6 +526,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 default:
                     break
                 }
+            }
             }
         }
     }

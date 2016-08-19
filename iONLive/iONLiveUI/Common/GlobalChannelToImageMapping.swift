@@ -181,7 +181,7 @@ class GlobalChannelToImageMapping: NSObject {
                    // print("local datasource k   \(localDataSource[k])")
                     if k < localDataSource.count
                     {
-                    localDataSource[k][tImageKey] = imageForMedia
+                        localDataSource[k][tImageKey] = imageForMedia
                     }
                 }
             }
@@ -194,7 +194,13 @@ class GlobalChannelToImageMapping: NSObject {
                     let mediaIdFromLocal = element[mediaIdKey] as! String
                     if mediaIdChk == mediaIdFromLocal
                     {
-                        GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
+//                        if j < localDataSource.count
+//                        {
+                        if let p = element[tImageKey]
+                        {
+                            GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
+                        }
+//                        }
                     }
                 }
             }

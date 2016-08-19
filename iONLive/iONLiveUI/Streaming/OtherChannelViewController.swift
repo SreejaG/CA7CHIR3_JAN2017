@@ -188,12 +188,13 @@ class OtherChannelViewController: UIViewController  {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
                 self.channelItemsCollectionView.reloadData()
+                self.NoDatalabel.removeFromSuperview()
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                 {
-//                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-//                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
-//                    self.NoDatalabel.text = "No Media Available"
-//                    self.view.addSubview(self.NoDatalabel)
+                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                    self.NoDatalabel.text = "No Media Available"
+                    self.view.addSubview(self.NoDatalabel)
                 }
             })
         }
