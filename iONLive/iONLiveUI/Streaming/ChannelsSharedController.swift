@@ -115,6 +115,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         
         switch subType {
         case "started":
+            ErrorManager.sharedInstance.streamAvailable()
             updateLiveStreamStartedEntry(info)
             break;
         case "stopped":

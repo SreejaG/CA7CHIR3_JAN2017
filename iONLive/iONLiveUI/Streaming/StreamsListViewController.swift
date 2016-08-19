@@ -213,6 +213,7 @@ class StreamsListViewController: UIViewController{
         
         switch subType {
         case "started":
+            ErrorManager.sharedInstance.streamAvailable()
             updateLiveStreamStartedEntry(info)
             sharedNewMediaLabel.hidden = false
             sharedNewMediaLabel.text = "Pull to get live stream"
