@@ -238,7 +238,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             
         }
-        if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
+        
+        if(result["type"] as! String == "liveStream")
+        {
+            if(result["subType"] as! String == "started"){
+                defaults.setValue("1", forKey: "notificationArrived")
+                if(application.applicationState == .Inactive || application.applicationState == .Background)
+                {
+                    loadNotificationView()
+                }
+            }
+        }
+        else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
             defaults.setValue("1", forKey: "notificationArrived")
             if(application.applicationState == .Inactive || application.applicationState == .Background)
