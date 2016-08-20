@@ -477,6 +477,8 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         
         if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
         {
+            if indexPath.row < SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count
+            {
             let mediaType = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][mediaTypeKey] as! String
             let imageData =  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][thumbImageKey] as! UIImage
             if mediaType == "video"
@@ -502,6 +504,7 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 cell.videoView.image = UIImage(named: "Live_now")
                 cell.channelMediaImage.image = imageData
             }
+        }
         }
         return cell
     }

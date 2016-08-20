@@ -189,19 +189,24 @@ class ChannelItemListViewController: UIViewController {
         operationInChannelImageList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-            end = limit
-        }
-        else{
-            end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
-        }
-        end = start + end
-        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
+        
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId] != nil
         {
-            operationInChannelImageList  = NSBlockOperation (block: {
-            GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInChannelImageList)
-            })
-            self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
+            
+            if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
+                end = limit
+            }
+            else{
+                end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count - totalCount
+            }
+            end = start + end
+            if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
+            {
+                operationInChannelImageList  = NSBlockOperation (block: {
+                    GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInChannelImageList)
+                })
+                self.operationQueueObjInChannelImageList.addOperation(operationInChannelImageList)
+            }
         }
     }
     

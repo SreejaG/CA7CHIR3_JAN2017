@@ -210,6 +210,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
+            
             if (result["type"] as! String == "share"){
                 NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
                 // let channelId = result["channelId"] as! Int
@@ -237,10 +238,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             
         }
-        defaults.setValue("1", forKey: "notificationArrived")
-        if(application.applicationState == .Inactive || application.applicationState == .Background)
+        if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
-            loadNotificationView()
+            defaults.setValue("1", forKey: "notificationArrived")
+            if(application.applicationState == .Inactive || application.applicationState == .Background)
+            {
+                loadNotificationView()
+            }
+        
         }
     }
     func updateCount( channelId : String)

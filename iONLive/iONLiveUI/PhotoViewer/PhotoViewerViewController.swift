@@ -224,20 +224,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         operationInMyMediaList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
-            end = limit
-        }
-        else{
-            end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
-        }
-        end = start + end
-        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+        
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId] != nil
         {
-
-            operationInMyMediaList  = NSBlockOperation (block: {
-                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
-            })
-            self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+            if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
+                end = limit
+            }
+            else{
+                end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
+            }
+            end = start + end
+            if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+            {
+                
+                operationInMyMediaList  = NSBlockOperation (block: {
+                    GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
+                })
+                self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+            }
         }
     }
     

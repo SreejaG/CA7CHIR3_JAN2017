@@ -248,32 +248,35 @@ class GlobalChannelToImageMapping: NSObject {
             
             if(sharedInd == true || chanName == "Archive")
             {
-                GlobalChannelImageDict[chanId]!.append(dataSourceRow)
-                
-                GlobalChannelImageDict[chanId]!.sortInPlace({ p1, p2 in
-                    let time1 = Int(p1[mediaIdKey] as! String)
-                    let time2 = Int(p2[mediaIdKey] as! String)
-                    return time1 > time2
-                })
-                
-                let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
-                let mediaIdForFilePath = "\(GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String)thumb"
-                GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
-                GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
-                GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath, thumbURL: thumbURL)
-                
-                if chanName == "Archive"
+                if GlobalChannelImageDict[chanId] != nil
                 {
-                    var archCount : Int = Int()
-                    if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
+                    GlobalChannelImageDict[chanId]!.append(dataSourceRow)
+                    
+                    GlobalChannelImageDict[chanId]!.sortInPlace({ p1, p2 in
+                        let time1 = Int(p1[mediaIdKey] as! String)
+                        let time2 = Int(p2[mediaIdKey] as! String)
+                        return time1 > time2
+                    })
+                    
+                    let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
+                    let mediaIdForFilePath = "\(GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String)thumb"
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath, thumbURL: thumbURL)
+                    
+                    if chanName == "Archive"
                     {
-                        archCount = archivetotal as! Int
+                        var archCount : Int = Int()
+                        if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
+                        {
+                            archCount = archivetotal as! Int
+                        }
+                        else{
+                            archCount = 0
+                        }
+                        archCount = archCount + 1
+                        NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
                     }
-                    else{
-                        archCount = 0
-                    }
-                    archCount = archCount + 1
-                    NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
                 }
             }
         }

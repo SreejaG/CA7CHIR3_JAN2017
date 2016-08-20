@@ -238,19 +238,19 @@ class MyChannelNotificationViewController: UIViewController {
                 })
                 
                 if(dataSource.count > 0){
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-                        self.downloadMediaFromGCS()
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.NotificationTableView.reloadData()
-                        })
-                    })
-//                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//                    dispatch_async(backgroundQueue, {
+//                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
 //                        self.downloadMediaFromGCS()
 //                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                            self.NotificationTableView.reloadData()
 //                        })
 //                    })
+                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                    dispatch_async(backgroundQueue, {
+                        self.downloadMediaFromGCS()
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        })
+                    })
                 }
             }
         }
@@ -301,36 +301,77 @@ class MyChannelNotificationViewController: UIViewController {
     
     func createMediaThumb(mediaName: String) -> UIImage
     {
-        var mediaImage : UIImage?
-        if(mediaName != "")
-        {
+        var mediaImage : UIImage = UIImage()
+        do {
             let url: NSURL = convertStringtoURL(mediaName)
-            if let mediaData = NSData(contentsOfURL: url){
-                let mediaImageData = (mediaData as NSData?)!
-                mediaImage = UIImage(data: mediaImageData)
+            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    mediaImage = mediaImage1
+                }
             }
-            else{
-                mediaImage = UIImage(named: "thumb12")
+            else
+            {
+              mediaImage = UIImage(named: "thumb12")!
             }
+            
+        } catch {
+           mediaImage = UIImage(named: "thumb12")!
         }
-        else{
-            mediaImage = UIImage(named: "thumb12")
-        }
-        return mediaImage!
+        return mediaImage
+
+//        var mediaImage : UIImage?
+//        if(mediaName != "")
+//        {
+//            let url: NSURL = convertStringtoURL(mediaName)
+//            if let mediaData = NSData(contentsOfURL: url){
+//                let mediaImageData = (mediaData as NSData?)!
+//                mediaImage = UIImage(data: mediaImageData)
+//            }
+//            else{
+//                mediaImage = UIImage(named: "thumb12")
+//            }
+//        }
+//        else{
+//            mediaImage = UIImage(named: "thumb12")
+//        }
+//        return mediaImage!
+        
     }
     
     func createProfileImage(profileName: String) -> UIImage
     {
         var profileImage : UIImage = UIImage()
-        let url: NSURL = convertStringtoURL(profileName)
-        if let data = NSData(contentsOfURL: url){
-            let imageDetailsData = (data as NSData?)!
-            profileImage = UIImage(data: imageDetailsData)!
-        }
-        else{
+        do {
+            let url: NSURL = convertStringtoURL(profileName)
+            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    profileImage = mediaImage1
+                }
+            }
+            else
+            {
+                profileImage = UIImage(named: "dummyUser")!
+            }
+            
+        } catch {
             profileImage = UIImage(named: "dummyUser")!
         }
         return profileImage
+        
+//        
+//        let url: NSURL = convertStringtoURL(profileName)
+//        if let data = NSData(contentsOfURL: url){
+//            let imageDetailsData = (data as NSData?)!
+//            profileImage = UIImage(data: imageDetailsData)!
+//        }
+//        else{
+//            profileImage = UIImage(named: "dummyUser")!
+//        }
+//        return profileImage
     }
     
     func  getTimeDifference(dateStr:String) -> String {

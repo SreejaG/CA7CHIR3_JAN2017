@@ -127,7 +127,7 @@ int timerCount = 0;
 {
     [super viewWillDisappear:animated];
     
-
+    [self removeObservers];
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
     }else {
         [self.videoDeviceInput.device lockForConfiguration:nil];
@@ -244,10 +244,10 @@ int timerCount = 0;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        if(loadingCameraFlag == false)
-        {
-            [self hidingView];
-        }
+//        if(loadingCameraFlag == false)
+//        {
+//            [self hidingView];
+//        }
         dispatch_async( dispatch_get_main_queue(), ^{
             if (shutterActionMode == SnapCamSelectionModeLiveStream)
             {
@@ -259,6 +259,10 @@ int timerCount = 0;
                 [_liveSteamSession getCameraPreviewLayer:(&ptr)];
                 _liveSteamSession.previewView.frame = self.view.bounds;
                 _liveSteamSession.delegate = self;
+                if(loadingCameraFlag == false)
+                {
+                    [self hidingView];
+                }
             }
             else{
                 _cameraButton.hidden = false;
@@ -270,6 +274,10 @@ int timerCount = 0;
                 }
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+                if(loadingCameraFlag == false)
+                {
+                    [self hidingView];
+                }
             }
         });
     }
@@ -394,6 +402,7 @@ int timerCount = 0;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setGUIBasedOnMode];
         });
+        
         if(takePictureFlag == false)
         {
             PhotoViewerInstance.iphoneCam = self;
@@ -1053,6 +1062,7 @@ int timerCount = 0;
 
 -(void)takePicture
 {
+    if(self.session != nil){
     dispatch_async( self.sessionQueue, ^{
         AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
         AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
@@ -1119,6 +1129,7 @@ int timerCount = 0;
             }
         }];
     });
+    }
 }
 
 -(void)cameraAnimation
@@ -1401,7 +1412,7 @@ int timerCount = 0;
 - (void)addObservers
 {
     [self.session addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
-    [self.stillImageOutput addObserver:self forKeyPath:@"capturingStillImage" options:NSKeyValueObservingOptionNew context:CapturingStillImageContext];
+  //  [self.stillImageOutput addObserver:self forKeyPath:@"capturingStillImage" options:NSKeyValueObservingOptionNew context:CapturingStillImageContext];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:self.videoDeviceInput.device];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.session];
@@ -1411,7 +1422,7 @@ int timerCount = 0;
 
 - (void)removeObservers
 {
-    [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
+   // [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -1461,6 +1472,8 @@ int timerCount = 0;
 }
 
 - (void)dealloc {
+    [self removeObservers];
+
     AVCaptureInput* input = [_session.inputs objectAtIndex:0];
     [_session removeInput:input];
     AVCaptureVideoDataOutput* output = [_session.outputs objectAtIndex:0];
