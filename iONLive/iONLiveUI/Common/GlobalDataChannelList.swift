@@ -165,7 +165,6 @@ class GlobalDataChannelList: NSObject {
             }
             
         } catch {
-            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
     }

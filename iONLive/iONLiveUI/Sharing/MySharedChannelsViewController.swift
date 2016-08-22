@@ -270,7 +270,6 @@ class MySharedChannelsViewController: UIViewController {
             }
             
         } catch {
-            print("Error")
             completion(result:UIImage(named: "thumb12")!)
         }
     }

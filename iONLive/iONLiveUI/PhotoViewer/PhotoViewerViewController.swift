@@ -196,7 +196,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.Trial), name: MPMoviePlayerWillEnterFullscreenNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
         
          downloadingFlag = false
     }
@@ -224,20 +224,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         operationInMyMediaList.cancel()
         let start = totalCount
         var end = 0
-        if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
-            end = limit
-        }
-        else{
-            end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
-        }
-        end = start + end
-        if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+        
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId] != nil
         {
-
-            operationInMyMediaList  = NSBlockOperation (block: {
-                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
-            })
-            self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+            if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
+                end = limit
+            }
+            else{
+                end = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - totalCount
+            }
+            end = start + end
+            if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+            {
+                
+                operationInMyMediaList  = NSBlockOperation (block: {
+                    GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.archiveChanelId, start: start, end: end, operationObj: self.operationInMyMediaList)
+                })
+                self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
+            }
         }
     }
     
@@ -438,6 +442,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             
         else
         {
+            if totalCount > 0
+            {
             swipeFlag = true
             self.removeOverlay()
             
@@ -525,6 +531,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     break
                 }
             }
+            }
         }
     }
     
@@ -532,13 +539,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         willEnterFlag = 0
         let fullScreenController = notif2.object as! MPMoviePlayerController
-        fullScreenController.scalingMode = MPMovieScalingMode.AspectFill
-        fullScreenController.play()
+        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        //fullScreenController.play()
     }
     
-    func Trial()
+    func moviePlayerWillenterFullScreen(notif:NSNotification)
     {
         willEnterFlag = 1
+        let fullScreenController = notif.object as! MPMoviePlayerController
+        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
     }
     
     func initialise()

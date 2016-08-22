@@ -32,7 +32,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     var NoDatalabel : UILabel = UILabel()
     override func viewDidLoad() {
         super.viewDidLoad()
-        // newShareAvailabellabel.layer.backgroundColor  = UIColor.redColor().CGColor
         newShareAvailabellabel.layer.cornerRadius = 5
         initialise()
         
@@ -49,7 +48,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     @IBAction func backButtonClicked(sender: AnyObject) {
         SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
         SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
-        //self.dismissViewControllerAnimated(true, completion: nil)
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -110,11 +108,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
-        // let info = notif.object as! [String : AnyObject]
         let subType = info["subType"] as! String
         
         switch subType {
         case "started":
+            ErrorManager.sharedInstance.streamAvailable()
             updateLiveStreamStartedEntry(info)
             break;
         case "stopped":
@@ -293,7 +291,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         else{
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
-                //  self.isWatchedTrue()
             })
         }
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -563,8 +560,6 @@ extension ChannelsSharedController:UITableViewDataSource
             channelItemListVC.userName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
             channelItemListVC.profileImage = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as! UIImage
             channelItemListVC.navigationController?.navigationBarHidden = true
-            //                SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelIdkey] as! String
-            //                    , selectedChannelName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as! String, selectedChannelUserName: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String , sharedCount: sharedCount)
             self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
