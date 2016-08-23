@@ -36,6 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? NSDictionary {
             let defaults = NSUserDefaults .standardUserDefaults()
             defaults.setValue("1", forKey: "notificationArrived")
+            GlobalDataChannelList.sharedInstance.initialise()
+            ChannelSharedListAPI.sharedInstance.initialisedata()
             loadNotificationView()
         }
         else{
@@ -63,6 +65,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             if(application.applicationState == .Inactive || application.applicationState == .Background)
             {
+                GlobalDataChannelList.sharedInstance.initialise()
+                ChannelSharedListAPI.sharedInstance.initialisedata()
                 loadNotificationView()
             }
         }
@@ -113,6 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var navigationController:UINavigationController?
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        
         navigationController = UINavigationController(rootViewController: iPhoneCameraViewController)
         navigationController!.navigationBarHidden = true
         self.window!.rootViewController = navigationController
@@ -216,11 +221,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaults = NSUserDefaults .standardUserDefaults()
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
+            defaults.setValue("0", forKey: "notificationArrived")
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
             
             if (result["type"] as! String == "share"){
+  
                 NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
                 let chid : String = "\(result["channelId"]!)"
                 updateCount(chid)
@@ -230,12 +237,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if (result["subType"] as! String == "deleted")
                 {
                     let chid : String = "\(result["channelId"]!)"
+                    defaults.setValue("0", forKey: "notificationArrived")
+
                     NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
                     removeEntryFromShare(chid)
                     removeEntryFromGlobal(chid)
                 }
                 if(result["subType"] as! String == "useradded")
                 {
+                    defaults.setValue("0", forKey: "notificationArrived")
+
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationChannelText")
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
                 }
@@ -251,22 +262,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
             if(result["subType"] as! String == "started"){
                 defaults.setValue("1", forKey: "notificationArrived")
-//                if(application.applicationState == .Inactive || application.applicationState == .Background)
-//                {
-//                    loadNotificationView()
-//                }
+
             }
             else{
-                 defaults.setValue("1", forKey: "notificationArrived")
+                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
             defaults.setValue("1", forKey: "notificationArrived")
-//            if(application.applicationState == .Inactive || application.applicationState == .Background)
-//            {
-//                loadNotificationView()
-//            }
+
         }
         
     }

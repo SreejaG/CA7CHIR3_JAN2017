@@ -866,6 +866,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
+                    
+                    self.playHandleflag = 1
+                    
                     player.play()
                 })
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playbackStateChange(_:)), name: MPMoviePlayerPlaybackStateDidChangeNotification, object: self.moviePlayer)
@@ -947,7 +950,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         player.movieSourceType = MPMovieSourceType.File
                         player.repeatMode = MPMovieRepeatMode.None
                         self.view.addSubview(player.view)
+                        
+                        self.playHandleflag = 1
+                        
                         player.prepareToPlay()
+                        player.play()
                     })
                 }
             }
@@ -1060,10 +1067,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     @IBAction func donebuttonClicked(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.navigationBarHidden = true
-        self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        if(playHandleflag == 0)
+        {
+            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+            self.navigationController?.navigationBarHidden = true
+            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
+        }
+        
+        else if(playHandleflag == 1)
+        {
+            playHandleflag = 0;
+            moviePlayer.stop()
+            moviePlayer.view.removeFromSuperview()
+            
+            playIconInFullView.hidden = false
+            self.view.userInteractionEnabled = true
+            
+        }
     }
     
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {

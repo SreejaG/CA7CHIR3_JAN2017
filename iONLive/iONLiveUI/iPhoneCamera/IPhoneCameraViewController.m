@@ -306,12 +306,16 @@ int timerCount = 0;
         [[ErrorManager sharedInstance] noNetworkConnection];
     }
     else if([code  isEqual: @"ResponseError"]){
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+        if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+        {
+
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error ResponseError"
                                                         message:@""
                                                        delegate:self
                                               cancelButtonTitle:@"Retry"
                                               otherButtonTitles:@"Exit App",nil];
         [alert show];
+        }
         
     }
     else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
@@ -384,6 +388,7 @@ int timerCount = 0;
     });
     
     [self loadingView:@"load" completion:^{
+       
         if([[NSUserDefaults standardUserDefaults] valueForKey:@"CallingAPI"] != nil)
         {
             timerCount = 50;
@@ -391,13 +396,20 @@ int timerCount = 0;
             if([initialCall isEqualToString:@"initialCall"])
             {
                 loadingCameraFlag = true;
-                [self initialiseTimerForSyncing:timerCount];
+                if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+                {
+                    [self initialiseTimerForSyncing:timerCount];
+                }
             }
             else{
                 NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"viewFromWhichPage"];
                 if([loading  isEqual: @"appDelegateRedirection"]){
                     loadingCameraFlag = true;
+                    if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+                    {
+
                     [self initialiseTimerForSyncing:timerCount];
+                    }
                     [self initialiseAPICall];
                 }
                 else{
@@ -411,7 +423,11 @@ int timerCount = 0;
         }
         else{
             loadingCameraFlag = true;
+            if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+            {
+
             [self initialiseTimerForSyncing:timerCount];
+            }
             [self initialiseAPICall];
         }
         
@@ -502,7 +518,7 @@ int timerCount = 0;
     if(!_activityImageView.hidden)
     {
         dispatch_async( dispatch_get_main_queue(), ^{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error "
                                                             message:@""
                                                            delegate:self
                                                   cancelButtonTitle:@"Retry"
