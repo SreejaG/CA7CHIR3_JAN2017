@@ -135,6 +135,9 @@ int timerCount = 0;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
+    
+    [timer invalidate];
+    timer = nil;
 }
 
 -(void)addApplicationObserversInIphone
@@ -204,6 +207,8 @@ int timerCount = 0;
             
         }];
         
+        [timer invalidate];
+        timer = nil;
         
         if (shutterActionMode == SnapCamSelectionModeVideo)
         {

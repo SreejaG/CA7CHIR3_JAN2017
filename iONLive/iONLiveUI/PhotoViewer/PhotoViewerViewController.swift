@@ -985,6 +985,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func setFullscreenImage(notif:NSNotification)
     {
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0
+        {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.archiveMediaCount = self.defaults.valueForKey(ArchiveCount) as! Int
             let filteredData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.filter(self.thumbExists)
@@ -996,6 +998,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             self.photoThumpCollectionView.reloadData()
         })
+        }
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {
