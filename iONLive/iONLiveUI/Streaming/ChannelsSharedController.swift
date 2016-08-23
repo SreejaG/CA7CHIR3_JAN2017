@@ -473,14 +473,12 @@ extension ChannelsSharedController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        
         if ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(ChannelSharedCell.identifier, forIndexPath:indexPath) as! ChannelSharedCell
             cell.channelProfileImage.image = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as? UIImage
             cell.channelNameLabel.text =   ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][channelNameKey] as? String
             cell.countLabel.hidden = true
-            
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
                 cell.currentUpdationImage.hidden = false
@@ -510,7 +508,7 @@ extension ChannelsSharedController:UITableViewDataSource
                         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                         dateFormatter.timeZone = NSTimeZone(name: "UTC")
                         var date = dateFormatter.dateFromString(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][timeStamp] as! String)
-                        var fromdateStr = dateFormatter.stringFromDate(NSDate())
+                        let fromdateStr = dateFormatter.stringFromDate(NSDate())
                         var fromdate = dateFormatter.dateFromString(fromdateStr)
                         let sdifferentString =  offsetFrom(date!, todate: fromdate!)
                         let count = (mediaShared[i][sharedMediaCount]?.intValue)!
@@ -521,9 +519,6 @@ extension ChannelsSharedController:UITableViewDataSource
                             cell.countLabel.hidden = true
                             cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][mediaImageKey] as? UIImage
                             cell.detailLabel.text = "@" + text + " " +  sdifferentString
-                            
-                            
-                            
                         }
                         else
                         {
@@ -532,19 +527,17 @@ extension ChannelsSharedController:UITableViewDataSource
                             cell.countLabel.text = String(count)
                             cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
+                       
                         date = nil
                         fromdate = nil
-                        
                     }
                 }
             }
             cell.selectionStyle = .None
             return cell
         }
-        
         return UITableViewCell()
     }
-    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
@@ -563,7 +556,6 @@ extension ChannelsSharedController:UITableViewDataSource
             self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
-    
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
@@ -593,7 +585,6 @@ extension ChannelsSharedController:UITableViewDataSource
     func secondsFrom(date:NSDate,todate:NSDate) -> Int{
         return calendar.components(.Second, fromDate: date, toDate: todate, options: []).second
     }
-    
     func offsetFrom(date:NSDate,todate:NSDate) -> String {
         if yearsFrom(date,todate:todate)   > 0 {
             return String(yearsFrom(date,todate:todate))+"Y"

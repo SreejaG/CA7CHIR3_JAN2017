@@ -188,12 +188,6 @@ class ChannelSharedListAPI: NSObject {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
-                //                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                //                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                //                dispatch_async(backgroundQueue, {
-                //                    self.downloadMediaFromGCS()
-                //
-                //                })
             }
             else{
                 NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")

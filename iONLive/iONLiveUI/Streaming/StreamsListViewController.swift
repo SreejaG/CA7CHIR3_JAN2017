@@ -215,6 +215,7 @@ class StreamsListViewController: UIViewController{
             sharedNewMediaLabel.text = "Pull to get live stream"
             break;
         case "stopped":
+            //ErrorManager.sharedInstance.liveStreamStopped()
             updateLiveStreamStoppeddEntry(info)
             break;
             
@@ -224,7 +225,7 @@ class StreamsListViewController: UIViewController{
     }
     func updateLiveStreamStartedEntry(info:[String : AnyObject])
     {
-        getAllLiveStreams()
+      //  getAllLiveStreams()
     }
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
@@ -294,17 +295,21 @@ class StreamsListViewController: UIViewController{
         let type =  info["type"] as! String
         if(type == "media")
         {
+            //delete media from archive
             self.getDataUsingNotificationId(info)
         }
         else{
             let channelId = info["channelId"] as! Int
             let mediaArrayData  = info["mediaId"] as! NSArray
             self.removeDataFromGlobal(channelId, mediaArrayData: mediaArrayData)
+            self.deleteFromOtherChannelIfExist(mediaArrayData)
+
         }
         
         var refreshAlert = UIAlertController(title: "Deleted", message: "Shared media deleted.", preferredStyle: UIAlertControllerStyle.Alert)
         
         refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            
         }))
         presentViewController(refreshAlert, animated: true, completion: nil)
     }
@@ -349,6 +354,7 @@ class StreamsListViewController: UIViewController{
             }
         }
         self.removeFromMediaAndLiveArray(channelId, mediaData: mediaArrayData)
+        
     }
     
     
@@ -375,12 +381,61 @@ class StreamsListViewController: UIViewController{
             let mediaArrayData : NSArray = responseArrData!["mediaId"] as! NSArray
             deleteFromLocal(channelIdArray, mediaArrayData: mediaArrayData)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
                 self.streamListCollectionView.reloadData()
-                
             })
+            
             self.deleteFromGlobal(channelIdArray, mediaArrayData: mediaArrayData)
+            self.deleteFromOtherChannelIfExist(mediaArrayData)
         }
+    }
+    func deleteFromOtherChannelIfExist( mediaArrayData : NSArray)
+    {
+        if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+        {
+        var selectedArray : [Int] = [Int]()
+        var removeIndex : Int = Int()
+        for(var i = 0 ; i < SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count ; i++)
+            {
+               
+                var foundFlag : Bool = false
+                
+                    if(i < SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count)
+                    {
+                        var  count : Int = 0
+                        let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[i][self.mediaIdKey] as! String
+                        
+                        for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
+                        {
+                            if("\(mediaArrayData[mediaArrayCount])" == mediaId)
+                            {
+                                removeIndex = i
+                                count = count + 1
+                                foundFlag = true
+                                break;
+                                
+                            }
+                        }
+                    }
+                    if(foundFlag)
+                    {
+                        foundFlag = false
+                        
+                        selectedArray.append(i)
+                    }
+                }
+            
+      
+        selectedArray =  selectedArray.sort()
+        for(var i = 0 ; i < selectedArray.count ; i++)
+        {
+           SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(selectedArray[i] - i)
+            
+        }
+        }
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("DeletedObject", object: nil)
+     
+
     }
     
     func deleteFromGlobal (channelIdArray : NSArray, mediaArrayData : NSArray)
@@ -831,9 +886,7 @@ class StreamsListViewController: UIViewController{
             self.sharedNewMediaLabel.hidden = true
             self.NoDatalabel.removeFromSuperview()
         })
-        
         if(!pullToRefreshActive){
-            
             pullToRefreshActive = true
             self.downloadCompleteFlagStream = "start"
             if(mediaAndLiveArray.count > 0){
@@ -962,6 +1015,13 @@ class StreamsListViewController: UIViewController{
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if(self.mediaAndLiveArray.count == 0)
+                    {
+                        if(self.liveStreamSource.count > 0)
+                        {
+                            self.setSourceByAppendingMediaAndLive()
+                        }
+                    }
+                    else
                     {
                         if(self.liveStreamSource.count > 0)
                         {

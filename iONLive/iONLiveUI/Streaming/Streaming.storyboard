@@ -122,12 +122,22 @@
                                     <outlet property="delegate" destination="q5E-EL-prV" id="gxI-qb-JyN"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have some notifications" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3fV-Mr-Zze">
+                                <rect key="frame" x="0.0" y="64" width="600" height="21"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="jjt-pt-oMA" secondAttribute="trailing" id="4Et-cJ-yVn"/>
                             <constraint firstItem="Qt6-KQ-io9" firstAttribute="top" secondItem="mLO-aW-Gn0" secondAttribute="bottom" id="CHD-SD-01M"/>
+                            <constraint firstAttribute="trailing" secondItem="3fV-Mr-Zze" secondAttribute="trailing" id="E4H-8V-xcX"/>
+                            <constraint firstItem="3fV-Mr-Zze" firstAttribute="leading" secondItem="bNl-Lp-EdO" secondAttribute="leading" id="HnP-x3-wU9"/>
                             <constraint firstAttribute="trailing" secondItem="mLO-aW-Gn0" secondAttribute="trailing" id="Mgx-yQ-NJj"/>
+                            <constraint firstItem="3fV-Mr-Zze" firstAttribute="top" secondItem="jjt-pt-oMA" secondAttribute="bottom" id="WYX-Dp-mXR"/>
                             <constraint firstItem="jjt-pt-oMA" firstAttribute="leading" secondItem="bNl-Lp-EdO" secondAttribute="leading" id="biD-t8-lui"/>
                             <constraint firstItem="mLO-aW-Gn0" firstAttribute="leading" secondItem="bNl-Lp-EdO" secondAttribute="leading" id="nj9-NN-foH"/>
                             <constraint firstItem="jjt-pt-oMA" firstAttribute="top" secondItem="bNl-Lp-EdO" secondAttribute="top" id="qUx-s8-ew9"/>
@@ -137,6 +147,7 @@
                     <connections>
                         <outlet property="channelItemsCollectionView" destination="mLO-aW-Gn0" id="nG1-FR-PRj"/>
                         <outlet property="channelTitleLabel" destination="sue-mS-gzx" id="u5W-7G-3ox"/>
+                        <outlet property="notificationLabel" destination="3fV-Mr-Zze" id="TdH-8n-wl3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xkK-Pz-bsz" userLabel="First Responder" sceneMemberID="firstResponder"/>

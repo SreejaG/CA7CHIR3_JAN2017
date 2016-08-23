@@ -223,6 +223,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if (result["subType"] as! String == "deleted")
                 {
                     let chid : String = "\(result["channelId"]!)"
+                    NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
                     removeEntryFromShare(chid)
                     removeEntryFromGlobal(chid)
                 }
@@ -234,13 +235,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result) //
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) // used while added  a media
-            
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) // 
+            //used while added  a media
             
         }
         
         if(result["type"] as! String == "liveStream")
         {
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
             if(result["subType"] as! String == "started"){
                 defaults.setValue("1", forKey: "notificationArrived")
                 if(application.applicationState == .Inactive || application.applicationState == .Background)
@@ -273,8 +275,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             }
         }
+        let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
+        if(indexOfChannelList != -1)
+        {
+            if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
+            {
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][sharedMediaCount]  = "1"
+            }
+        }
+
         NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
-        
+        NSNotificationCenter.defaultCenter().postNotificationName("CountIncrementedPushNotification", object: channelId)
+
     }
     func removeEntryFromShare(channelId : String)
     {
@@ -292,7 +304,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
     }
-   
+
     func removeEntryFromGlobal(channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: false)

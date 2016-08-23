@@ -200,7 +200,10 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Live Stream Fetching Error", message: "\nWe're sorry, but an error occurred. Please try again.")
     }
-    
+    func liveStreamStopped()
+    {
+        alert("Live Stream Stopped", message: " live stream stopped by user")
+    }
     func invalidTockenError()
     {
         alert("Invalid Token", message:"Invalid Token error. Please try again")
@@ -274,6 +277,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Channel Exist", message: "Channel name already exists")
     }
+   
     
     func unsubscribedUserChannel()
     {
