@@ -166,6 +166,7 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for var i = 0; i < imageDataSource.count; i++
         {
+            print("stream list thrad")
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){
                 var imageForMedia : UIImage = UIImage()

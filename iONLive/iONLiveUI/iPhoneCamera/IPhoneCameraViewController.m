@@ -306,17 +306,19 @@ int timerCount = 0;
         [[ErrorManager sharedInstance] noNetworkConnection];
     }
     else if([code  isEqual: @"ResponseError"]){
-        if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+        if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
         {
+            if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+            {
 
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error ResponseError"
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                         message:@""
                                                        delegate:self
                                               cancelButtonTitle:@"Retry"
                                               otherButtonTitles:@"Exit App",nil];
-        [alert show];
+                [alert show];
+            }
         }
-        
     }
     else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
         [self loadInitialView];
@@ -396,19 +398,27 @@ int timerCount = 0;
             if([initialCall isEqualToString:@"initialCall"])
             {
                 loadingCameraFlag = true;
+                if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
+                {
+
                 if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
                 {
                     [self initialiseTimerForSyncing:timerCount];
+                }
                 }
             }
             else{
                 NSString *loading = [[NSUserDefaults standardUserDefaults] valueForKey:@"viewFromWhichPage"];
                 if([loading  isEqual: @"appDelegateRedirection"]){
                     loadingCameraFlag = true;
+                    if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
+                    {
+
                     if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
                     {
 
                     [self initialiseTimerForSyncing:timerCount];
+                    }
                     }
                     [self initialiseAPICall];
                 }
@@ -423,10 +433,14 @@ int timerCount = 0;
         }
         else{
             loadingCameraFlag = true;
+            if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
+            {
+
             if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
             {
 
             [self initialiseTimerForSyncing:timerCount];
+            }
             }
             [self initialiseAPICall];
         }

@@ -27,6 +27,10 @@ class MyChannelNotificationViewController: UIViewController {
     let messageKey = "message"
     let notificationTimeKey = "notifTime"
     
+    var operationQueueObjInNotif = NSOperationQueue()
+    var operationInNotif = NSBlockOperation()
+    
+    
     @IBOutlet var notifImage: UIButton!
     
     override func viewDidLoad() {
@@ -57,6 +61,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+         operationInNotif.cancel()
     }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
@@ -245,13 +250,20 @@ class MyChannelNotificationViewController: UIViewController {
 //                            self.NotificationTableView.reloadData()
 //                        })
 //                    })
-                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                    dispatch_async(backgroundQueue, {
-                        self.downloadMediaFromGCS()
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        })
+//                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+//                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+//                    dispatch_async(backgroundQueue, {
+//                        self.downloadMediaFromGCS()
+//                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                        })
+//                    })
+                    
+                    
+                    operationInNotif  = NSBlockOperation (block: {
+                        self.downloadMediaFromGCS(self.operationInNotif)
                     })
+                    self.operationQueueObjInNotif.addOperation(operationInNotif)
+        
                 }
             }
         }
@@ -261,10 +273,14 @@ class MyChannelNotificationViewController: UIViewController {
         }
     }
     
-    func downloadMediaFromGCS(){
+    func downloadMediaFromGCS(operationObj: NSBlockOperation){
         fulldataSource.removeAll()
         for var i = 0; i < dataSource.count; i++
         {
+            if operationObj.cancelled == true{
+                return
+            }
+            print("in notification thrad")
             var mediaImage : UIImage?
             var profileImage : UIImage?
             

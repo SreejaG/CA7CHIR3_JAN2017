@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(application: UIApplication) {
         
         NSNotificationCenter.defaultCenter().postNotificationName("enterBackground", object:nil)
-        
+        if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") != nil{
         if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
         {
             if(application.applicationState == .Inactive || application.applicationState == .Background)
@@ -69,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 ChannelSharedListAPI.sharedInstance.initialisedata()
                 loadNotificationView()
             }
+        }
         }
     }
     
