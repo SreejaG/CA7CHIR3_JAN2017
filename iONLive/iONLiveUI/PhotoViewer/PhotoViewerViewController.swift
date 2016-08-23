@@ -862,7 +862,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     player.prepareToPlay()
                     player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
-                    player.scalingMode = MPMovieScalingMode.Fill
+                    player.scalingMode = MPMovieScalingMode.AspectFit
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)

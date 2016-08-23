@@ -109,12 +109,15 @@ int timerCount = 0;
     [self addApplicationObserversInIphone];
     
     //device orientation
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self selector:@selector(orientationChanged2:)
-     name:UIDeviceOrientationDidChangeNotification
-     object:[UIDevice currentDevice]];
-    //end
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]
+         addObserver:self selector:@selector(orientationChanged2:)
+         name:UIDeviceOrientationDidChangeNotification
+         object:[UIDevice currentDevice]];
+    });
+    
+        //end
 }
 
 - (void)didReceiveMemoryWarning
@@ -361,9 +364,12 @@ int timerCount = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playiIconView.hidden = YES;
     });
+    
     
     snapshot = [[UIView alloc]init];
     
@@ -1267,6 +1273,34 @@ int timerCount = 0;
             AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
             AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
             connection.videoOrientation = previewLayer.connection.videoOrientation;
+            
+            UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+            
+            if(orientationFlag == 1) //Default Orientation (portrait mode)
+            {
+                if(orientation ==1) //Checking device orientation as per status bar position
+                {
+                    
+                }
+            }
+            else
+            {
+                if(orientationFlag == 3) //Device Orientation LandscapeLeft
+                {
+                    connection.videoOrientation = UIImageOrientationRight;
+                }
+                if(orientationFlag == 4) //Device Orientation LandscapeRight
+                {
+                    connection.videoOrientation = UIImageOrientationUpMirrored;
+                }
+                if (orientationFlag == 2) //Device Orientation Portrait upside down
+                {
+                    connection.videoOrientation = UIImageOrientationUpMirrored;
+                    connection.videoOrientation = UIImageOrientationLeft;
+                }
+            }
+
+            
             
 //            [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
 //            if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
