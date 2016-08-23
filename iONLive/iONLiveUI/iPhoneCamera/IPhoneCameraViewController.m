@@ -109,12 +109,15 @@ int timerCount = 0;
     [self addApplicationObserversInIphone];
     
     //device orientation
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self selector:@selector(orientationChanged2:)
-     name:UIDeviceOrientationDidChangeNotification
-     object:[UIDevice currentDevice]];
-    //end
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]
+         addObserver:self selector:@selector(orientationChanged2:)
+         name:UIDeviceOrientationDidChangeNotification
+         object:[UIDevice currentDevice]];
+    });
+    
+        //end
 }
 
 - (void)didReceiveMemoryWarning
@@ -127,7 +130,7 @@ int timerCount = 0;
 {
     [super viewWillDisappear:animated];
     
-    [self removeObservers];
+//    [self removeObservers];
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
     }else {
         [self.videoDeviceInput.device lockForConfiguration:nil];
@@ -135,6 +138,9 @@ int timerCount = 0;
         [self.videoDeviceInput.device unlockForConfiguration];
     }
     takePictureFlag = false;
+    
+    [timer invalidate];
+    timer = nil;
 }
 
 -(void)addApplicationObserversInIphone
@@ -204,6 +210,9 @@ int timerCount = 0;
             
         }];
         
+        [timer invalidate];
+        timer = nil;
+        
         if (shutterActionMode == SnapCamSelectionModeVideo)
         {
             dispatch_async( dispatch_get_main_queue(), ^{
@@ -223,7 +232,6 @@ int timerCount = 0;
                     _flashButton.hidden = true;
                 }
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-                [self.previewView.session stopRunning];
             });
             [self.movieFileOutput stopRecording];
         }
@@ -236,6 +244,7 @@ int timerCount = 0;
             _liveSteamSession.delegate = nil;
             [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
         }
+        [self removeObservers];
     }
 }
 
@@ -244,10 +253,15 @@ int timerCount = 0;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-//        if(loadingCameraFlag == false)
-//        {
-//            [self hidingView];
-//        }
+        [self configureCameraSettings];
+        self.previewView.session = self.session;
+        [self addObservers];
+        [self.session startRunning];
+        
+        if(loadingCameraFlag == false)
+        {
+            [self hidingView];
+        }
         dispatch_async( dispatch_get_main_queue(), ^{
             if (shutterActionMode == SnapCamSelectionModeLiveStream)
             {
@@ -274,10 +288,6 @@ int timerCount = 0;
                 }
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
                 [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-                if(loadingCameraFlag == false)
-                {
-                    [self hidingView];
-                }
             }
         });
     }
@@ -285,6 +295,9 @@ int timerCount = 0;
 
 -(void) stopInitialisation : (NSNotification *)notif
 {
+    UIViewController *viewContr = self.navigationController.visibleViewController;
+    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+    {
     NSString *code = notif.object;
     loadingCameraFlag = false;
     [self hidingView];
@@ -303,6 +316,7 @@ int timerCount = 0;
     }
     else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
         [self loadInitialView];
+    }
     }
 }
 
@@ -350,9 +364,12 @@ int timerCount = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playiIconView.hidden = YES;
     });
+    
     
     snapshot = [[UIView alloc]init];
     
@@ -479,6 +496,9 @@ int timerCount = 0;
 }
 
 - (void) thisMethodGetsFiredOnceEveryThirtySeconds:(id)sender {
+    UIViewController *viewContr = self.navigationController.visibleViewController;
+    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+    {
     if(!_activityImageView.hidden)
     {
         dispatch_async( dispatch_get_main_queue(), ^{
@@ -491,8 +511,10 @@ int timerCount = 0;
             
         });
     }
+        
     loadingCameraFlag = false;
     [self hidingView];
+    }
 }
 
 -(void) setLeftAndRightThumbnailInCameraPage
@@ -552,9 +574,11 @@ int timerCount = 0;
             }
             self.session = [[AVCaptureSession alloc] init];
             self.previewView.hidden = false;
-            self.previewView.session = self.session;
+            self.previewView.session = nil;
             
             [self configureCameraSettings];
+            
+            self.previewView.session = self.session;
             
             dispatch_async( self.sessionQueue, ^{
                 switch ( self.setupResult )
@@ -1250,6 +1274,34 @@ int timerCount = 0;
             AVCaptureVideoPreviewLayer *previewLayer = (AVCaptureVideoPreviewLayer *)self.previewView.layer;
             connection.videoOrientation = previewLayer.connection.videoOrientation;
             
+            UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+            
+            if(orientationFlag == 1) //Default Orientation (portrait mode)
+            {
+                if(orientation ==1) //Checking device orientation as per status bar position
+                {
+                    
+                }
+            }
+            else
+            {
+                if(orientationFlag == 3) //Device Orientation LandscapeLeft
+                {
+                    connection.videoOrientation = UIImageOrientationRight;
+                }
+                if(orientationFlag == 4) //Device Orientation LandscapeRight
+                {
+                    connection.videoOrientation = UIImageOrientationUpMirrored;
+                }
+                if (orientationFlag == 2) //Device Orientation Portrait upside down
+                {
+                    connection.videoOrientation = UIImageOrientationUpMirrored;
+                    connection.videoOrientation = UIImageOrientationLeft;
+                }
+            }
+
+            
+            
 //            [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
 //            if([self.session canSetSessionPreset:AVCaptureSessionPresetMedium]){
 //                [self.session setSessionPreset:AVCaptureSessionPresetMedium];
@@ -1412,7 +1464,7 @@ int timerCount = 0;
 - (void)addObservers
 {
     [self.session addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
-  //  [self.stillImageOutput addObserver:self forKeyPath:@"capturingStillImage" options:NSKeyValueObservingOptionNew context:CapturingStillImageContext];
+    [self.stillImageOutput addObserver:self forKeyPath:@"capturingStillImage" options:NSKeyValueObservingOptionNew context:CapturingStillImageContext];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:self.videoDeviceInput.device];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.session];
@@ -1422,7 +1474,10 @@ int timerCount = 0;
 
 - (void)removeObservers
 {
-   // [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
+    [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -1471,15 +1526,15 @@ int timerCount = 0;
     }
 }
 
-- (void)dealloc {
-    [self removeObservers];
-
-    AVCaptureInput* input = [_session.inputs objectAtIndex:0];
-    [_session removeInput:input];
-    AVCaptureVideoDataOutput* output = [_session.outputs objectAtIndex:0];
-    [_session removeOutput:output];
-    [_session stopRunning];
-}
+//- (void)dealloc {
+//    [self removeObservers];
+//
+//    AVCaptureInput* input = [_session.inputs objectAtIndex:0];
+//    [_session removeInput:input];
+//    AVCaptureVideoDataOutput* output = [_session.outputs objectAtIndex:0];
+//    [_session removeOutput:output];
+//    [_session stopRunning];
+//}
 
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {

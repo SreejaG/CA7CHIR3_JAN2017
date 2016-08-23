@@ -44,7 +44,7 @@ class MyChannelNotificationViewController: UIViewController {
             let image = UIImage(named: "notif") as UIImage?
             notifImage.setImage(image, forState: .Normal)
         }
-        defaults.setValue("0", forKey: "notificationArrived")
+//        defaults.setValue("0", forKey: "notificationArrived")
         initialise()
     }
     
@@ -189,6 +189,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
+        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -390,6 +391,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
+        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
         self.removeOverlay()
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -441,7 +443,6 @@ extension MyChannelNotificationViewController:UITableViewDataSource
         if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
-            
             cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
             cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage

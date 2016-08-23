@@ -862,7 +862,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     player.prepareToPlay()
                     player.view.frame = CGRect(x: self.fullScrenImageView.frame.origin.x, y: self.fullScrenImageView.frame.origin.y, width: self.fullScrenImageView.frame.size.width, height: self.fullScrenImageView.frame.size.height)
                     player.view.sizeToFit()
-                    player.scalingMode = MPMovieScalingMode.Fill
+                    player.scalingMode = MPMovieScalingMode.AspectFit
                     player.movieSourceType = MPMovieSourceType.File
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
@@ -985,6 +985,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func setFullscreenImage(notif:NSNotification)
     {
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0
+        {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.archiveMediaCount = self.defaults.valueForKey(ArchiveCount) as! Int
             let filteredData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.filter(self.thumbExists)
@@ -996,6 +998,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
             self.photoThumpCollectionView.reloadData()
         })
+        }
     }
     
     @IBAction func didTapAddChannelButton(sender: AnyObject) {

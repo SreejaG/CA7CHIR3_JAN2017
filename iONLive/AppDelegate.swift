@@ -48,6 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillResignActive(application: UIApplication) {
+        
     }
     
     func applicationDidEnterBackground(application: UIApplication) {
@@ -57,6 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(application: UIApplication) {
         
         NSNotificationCenter.defaultCenter().postNotificationName("enterBackground", object:nil)
+        
+        if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
+        {
+            if(application.applicationState == .Inactive || application.applicationState == .Background)
+            {
+                loadNotificationView()
+            }
+        }
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -213,9 +222,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if (result["type"] as! String == "share"){
                 NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
-                // let channelId = result["channelId"] as! Int
                 let chid : String = "\(result["channelId"]!)"
-                //   print("MediaSharedChannelId: \(chid)")
                 updateCount(chid)
             }
             if (result["type"] as! String == "channel"){
@@ -231,7 +238,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 {
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationChannelText")
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
-                    //    pull()
                 }
             }
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result) //
@@ -245,21 +251,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
             if(result["subType"] as! String == "started"){
                 defaults.setValue("1", forKey: "notificationArrived")
-                if(application.applicationState == .Inactive || application.applicationState == .Background)
-                {
-                    loadNotificationView()
-                }
+//                if(application.applicationState == .Inactive || application.applicationState == .Background)
+//                {
+//                    loadNotificationView()
+//                }
+            }
+            else{
+                 defaults.setValue("1", forKey: "notificationArrived")
             }
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
             defaults.setValue("1", forKey: "notificationArrived")
-            if(application.applicationState == .Inactive || application.applicationState == .Background)
-            {
-                loadNotificationView()
-            }
-        
+//            if(application.applicationState == .Inactive || application.applicationState == .Background)
+//            {
+//                loadNotificationView()
+//            }
         }
+        
     }
     func updateCount( channelId : String)
     {
