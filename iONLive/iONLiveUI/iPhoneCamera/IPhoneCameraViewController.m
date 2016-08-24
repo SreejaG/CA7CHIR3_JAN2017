@@ -45,7 +45,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 @property (nonatomic, retain) VCSimpleSession* liveSteamSession;
 
 // For use in the storyboards.
-@property (nonatomic, weak) IBOutlet AAPLPreviewView *previewView;
+@property (nonatomic) IBOutlet AAPLPreviewView *previewView;
 @property (nonatomic, weak) IBOutlet UIButton *cameraButton;
 @property (nonatomic, weak) IBOutlet UIButton *startCameraActionButton;
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
@@ -196,65 +196,77 @@ int timerCount = 0;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
-    
+    [self dismissViewControllerAnimated:NO completion:nil];
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        if(loadingCameraFlag == false){
-            _noDataFound.text = @"Loading camera...";
-        }
-        else{
-            _noDataFound.text = @"   Syncing...";
-        }
-        
-        [self loadingView:@"load" completion:^{
-            [timer invalidate];
-            timer = nil;
+        if(loadingCameraFlag == true){
+            [[NSUserDefaults standardUserDefaults] setValue:@"initialCall" forKey:@"CallingAPI"];
+            [[NSUserDefaults standardUserDefaults] setValue:@"appDelegateRedirection" forKey:@"viewFromWhichPage"];
             
-            if (shutterActionMode == SnapCamSelectionModeVideo)
-            {
-                dispatch_async( dispatch_get_main_queue(), ^{
-                    if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
-                        if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
-                        }else {
-                            [self.videoDeviceInput.device lockForConfiguration:nil];
-                            [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
-                            [self.videoDeviceInput.device unlockForConfiguration];
-                        }
-                    }
-                    _cameraButton.hidden = false;
-                    if(flashFlag == 0){
-                        _flashButton.hidden = false;
-                    }
-                    else if(flashFlag == 1){
-                        _flashButton.hidden = true;
-                    }
-                    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-                });
-                [self.movieFileOutput stopRecording];
-            }
-            else if(shutterActionMode == SnapCamSelectionModeLiveStream){
-                [liveStreaming stopStreamingClicked];
-                [_liveSteamSession endRtmpSession];
-                [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
-                [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
-                [_liveSteamSession.previewView removeFromSuperview];
-                _liveSteamSession.delegate = nil;
-                [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-            }
-            for(AVCaptureInput *input1 in _session.inputs) {
-                [_session removeInput:input1];
-            }
-            for(AVCaptureOutput *output1 in _session.outputs) {
-                [_session removeOutput:output1];
-            }
-            [_session stopRunning];
-            _session=nil;
-            [self removeObservers];
-            _stillImageOutput = nil;
-
-        }];
+        }
+       
     }
+    
+//    UIViewController *viewContr = self.navigationController.visibleViewController;
+//    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+//    {
+//        if(loadingCameraFlag == false){
+//            _noDataFound.text = @"Loading camera...";
+//        }
+//        else{
+//            _noDataFound.text = @"   Syncing...";
+//        }
+//        
+//        [self loadingView:@"load" completion:^{
+//            [timer invalidate];
+//            timer = nil;
+//            
+//            if (shutterActionMode == SnapCamSelectionModeVideo)
+//            {
+//                dispatch_async( dispatch_get_main_queue(), ^{
+//                    if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+//                        if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+//                        }else {
+//                            [self.videoDeviceInput.device lockForConfiguration:nil];
+//                            [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+//                            [self.videoDeviceInput.device unlockForConfiguration];
+//                        }
+//                    }
+////                    _cameraButton.hidden = false;
+////                    if(flashFlag == 0){
+////                        _flashButton.hidden = false;
+////                    }
+////                    else if(flashFlag == 1){
+////                        _flashButton.hidden = true;
+////                    }
+//                    [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+//                });
+//                [self.movieFileOutput stopRecording];
+//            }
+//            else if(shutterActionMode == SnapCamSelectionModeLiveStream){
+//                [liveStreaming stopStreamingClicked];
+//                [_liveSteamSession endRtmpSession];
+//                [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+//                [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"StartedStreaming"];
+//                [_liveSteamSession.previewView removeFromSuperview];
+//                _liveSteamSession.delegate = nil;
+//                [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+//            }
+//        
+//            for(AVCaptureInput *input1 in _session.inputs) {
+//                [_session removeInput:input1];
+//            }
+//            for(AVCaptureOutput *output1 in _session.outputs) {
+//                [_session removeOutput:output1];
+//            }
+////            
+////            dispatch_async( dispatch_get_main_queue(), ^{
+////                [self setGUIBasedOnMode];
+////            });
+//        }];
+//        
+//    }
 }
 
 -(void)applicationDidActives: (NSNotification *)notification
@@ -262,32 +274,46 @@ int timerCount = 0;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        dispatch_async( dispatch_get_main_queue(), ^{
-            if (shutterActionMode == SnapCamSelectionModeLiveStream)
-            {
-                _flashButton.hidden = true;
-                _cameraButton.hidden = true;
-                _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
-                [_liveSteamSession.previewView removeFromSuperview];
-                AVCaptureVideoPreviewLayer  *ptr;
-                [_liveSteamSession getCameraPreviewLayer:(&ptr)];
-                _liveSteamSession.previewView.frame = self.view.bounds;
-                _liveSteamSession.delegate = self;
-            }
-            else{
-                _cameraButton.hidden = false;
-                if(flashFlag == 0){
-                    _flashButton.hidden = false;
-                }
-                else if(flashFlag == 1){
-                    _flashButton.hidden = true;
-                }
-                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
-                [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
-            }
-             [self setGUIBasedOnMode];
-        });
+        UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"IPhoneCameraView" bundle:nil];
+        IPhoneCameraViewController *photoViewerViewController =( IPhoneCameraViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"IPhoneCameraViewController"];
+        UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
+        navController.navigationBarHidden = true;
+        navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self presentViewController:navController animated:true completion:^{
+        }];
     }
+    
+    
+   
+//    UIViewController *viewContr = self.navigationController.visibleViewController;
+//    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+//    {
+//        dispatch_async( dispatch_get_main_queue(), ^{
+//            if (shutterActionMode == SnapCamSelectionModeLiveStream)
+//            {
+//                _flashButton.hidden = true;
+//                _cameraButton.hidden = true;
+//                _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+//                [_liveSteamSession.previewView removeFromSuperview];
+//                AVCaptureVideoPreviewLayer  *ptr;
+//                [_liveSteamSession getCameraPreviewLayer:(&ptr)];
+//                _liveSteamSession.previewView.frame = self.view.bounds;
+//                _liveSteamSession.delegate = self;
+//            }
+//            else{
+//                _cameraButton.hidden = false;
+//                if(flashFlag == 0){
+//                    _flashButton.hidden = false;
+//                }
+//                else if(flashFlag == 1){
+//                    _flashButton.hidden = true;
+//                }
+//                [_startCameraActionButton setImage:[UIImage imageNamed:@"Camera_Button_OFF"] forState:UIControlStateNormal];
+//                [_startCameraActionButton setImage:[UIImage imageNamed:@"camera_Button_ON"] forState:UIControlStateHighlighted];
+//            }
+//             [self setGUIBasedOnMode];
+//        });
+//    }
 }
 
 -(void) stopInitialisation : (NSNotification *)notif
@@ -496,9 +522,11 @@ int timerCount = 0;
         [__activityIndicatorView startAnimating];
         __activityIndicatorView.hidden = false;
         _noDataFound.hidden = false;
+      
     });
     [self enabelOrDisableButtons:false];
     completionBlock();
+   
 }
 
 - (void)dealloc {
@@ -508,10 +536,10 @@ int timerCount = 0;
     for(AVCaptureOutput *output1 in _session.outputs) {
         [_session removeOutput:output1];
     }
-    [_session stopRunning];
-    _session=nil;
+//    [_session stopRunning];
+//    _session=nil;
     [self removeObservers];
-    _stillImageOutput = nil;
+//    _stillImageOutput = nil;
     
 }
 
@@ -1522,10 +1550,13 @@ int timerCount = 0;
     self.stillImageOutput = nil;
     self.previewView.session = nil;
     SessionRunningContext = nil;
+    self.sessionRunning = nil;
+    [self.session stopRunning];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if(CapturingStillImageContext != nil){
     if ( context == CapturingStillImageContext ) {
         BOOL isCapturingStillImage = [change[NSKeyValueChangeNewKey] boolValue];
         
@@ -1537,6 +1568,7 @@ int timerCount = 0;
                 }];
             } );
         }
+    }
     }
     else if (context == SessionRunningContext ) {
         BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
