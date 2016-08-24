@@ -504,6 +504,20 @@ int timerCount = 0;
     completionBlock();
 }
 
+- (void)dealloc {
+    for(AVCaptureInput *input1 in _session.inputs) {
+        [_session removeInput:input1];
+    }
+    for(AVCaptureOutput *output1 in _session.outputs) {
+        [_session removeOutput:output1];
+    }
+    [_session stopRunning];
+    _session=nil;
+    [self removeObservers];
+    _stillImageOutput = nil;
+    
+}
+
 -(void) initialiseAPICall
 {
     GlobalDataChannelList *GlobalDataChannelListObj = [GlobalDataChannelList sharedInstance];
@@ -580,6 +594,7 @@ int timerCount = 0;
 }
 
 -(void) setGUIBasedOnMode{
+    [self removeObservers];
     if (![self isStreamStarted]) {
         if (shutterActionMode == SnapCamSelectionModeLiveStream)
         {
@@ -1504,10 +1519,11 @@ int timerCount = 0;
 
 - (void)removeObservers
 {
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     [self.session removeObserver:self forKeyPath:@"running" context:SessionRunningContext];
     [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
+    self.stillImageOutput = nil;
+    self.previewView.session = nil;
+    SessionRunningContext = nil;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -1524,12 +1540,13 @@ int timerCount = 0;
             } );
         }
     }
-    else if ( context == SessionRunningContext ) {
+    else if (context == SessionRunningContext ) {
         BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
         
-        dispatch_async( dispatch_get_main_queue(), ^{
-            self.cameraButton.enabled = isSessionRunning && ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
-        } );
+//        dispatch_async( dispatch_get_main_queue(), ^{
+//            self.cameraButton.enabled = isSessionRunning && ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
+//        } );
+        
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1555,16 +1572,6 @@ int timerCount = 0;
     else {
     }
 }
-
-//- (void)dealloc {
-//    [self removeObservers];
-//
-//    AVCaptureInput* input = [_session.inputs objectAtIndex:0];
-//    [_session removeInput:input];
-//    AVCaptureVideoDataOutput* output = [_session.outputs objectAtIndex:0];
-//    [_session removeOutput:output];
-//    [_session stopRunning];
-//}
 
 - (void)sessionWasInterrupted:(NSNotification *)notification
 {

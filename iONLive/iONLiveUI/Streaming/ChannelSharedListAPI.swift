@@ -237,6 +237,8 @@ class ChannelSharedListAPI: NSObject {
         
         for var i = 0; i < dataSource.count; i++
         {
+            
+            print("In channelSharedListAPI thread  \(i)")
             var mediaImage : UIImage?
             var profileImage : UIImage?
             

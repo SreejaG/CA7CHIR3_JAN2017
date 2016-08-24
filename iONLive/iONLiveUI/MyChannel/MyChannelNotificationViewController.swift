@@ -244,21 +244,6 @@ class MyChannelNotificationViewController: UIViewController {
                 })
                 
                 if(dataSource.count > 0){
-//                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-//                        self.downloadMediaFromGCS()
-//                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                            self.NotificationTableView.reloadData()
-//                        })
-//                    })
-//                    let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//                    let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//                    dispatch_async(backgroundQueue, {
-//                        self.downloadMediaFromGCS()
-//                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                        })
-//                    })
-                    
-                    
                     operationInNotif  = NSBlockOperation (block: {
                         self.downloadMediaFromGCS(self.operationInNotif)
                     })
@@ -280,7 +265,7 @@ class MyChannelNotificationViewController: UIViewController {
             if operationObj.cancelled == true{
                 return
             }
-            print("in notification thrad")
+            print("In notification thread  \(i)")
             var mediaImage : UIImage?
             var profileImage : UIImage?
             

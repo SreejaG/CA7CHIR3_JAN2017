@@ -132,7 +132,10 @@ class GlobalChannelToImageMapping: NSObject {
                 if operationObj.cancelled == true{
                     return
                 }
-                                
+                
+                print("In channel Image Mapping thread  \(k)")
+                
+                
                 var imageForMedia : UIImage = UIImage()
                 let mediaId = String(localDataSource[k][mediaIdKey]!)
                 let mediaIdForFilePath = "\(mediaId)thumb"

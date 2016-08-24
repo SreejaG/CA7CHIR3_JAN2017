@@ -9,12 +9,12 @@ let apiErrorMessageKey = "errorMessage"
 let apiErrorCodeKey = "errorCode"
 let pullTorefreshKey = "channel_media_detail_id"
 let infiniteScrollIdKey = "channel_media_detail_id"
-let startedStreaming = "StartedStreaming"
+let startedStreaming = "StartedS treaming"
 let streamingToken = "StreamingToken"
 let initializingStream = "InitializingStream"
 let subChannelIdKey = "channel_sub_detail_id"
 let apiDeveloperFailureMessage = "developerMsg"
-let vowzaIp = "104.154.69.174"
+let vowzaIp = "130.211.135.170"
 
 
 //channel details

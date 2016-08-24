@@ -52,7 +52,7 @@ class GlobalStreamList: NSObject {
     {
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["objectJson"] as! [AnyObject]
+            let responseArr = json["objectJson"] as! [  AnyObject]
             if(responseArr.count == 0)
             {
                 NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
@@ -166,7 +166,7 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for var i = 0; i < imageDataSource.count; i++
         {
-            print("stream list thrad")
+            print("stream list thread \(i)")
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){
                 var imageForMedia : UIImage = UIImage()

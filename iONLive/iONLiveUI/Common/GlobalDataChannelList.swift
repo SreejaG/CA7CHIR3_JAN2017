@@ -106,6 +106,9 @@ class GlobalDataChannelList: NSObject {
         
         for var i = 0; i < globalChannelDataSource.count; i++
         {
+            
+            print("In my channel list thread  \(i)")
+            
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()

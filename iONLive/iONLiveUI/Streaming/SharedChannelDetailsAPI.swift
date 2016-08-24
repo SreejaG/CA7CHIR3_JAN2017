@@ -299,7 +299,7 @@ class SharedChannelDetailsAPI: NSObject {
         
         for var i = 0; i < imageDataSource.count; i++
         {
-            
+            print("In sharedChannelDetailsAPI thread  \(i)")
             var imageForMedia : UIImage = UIImage()
             if(imageDataSource.count > 0)
             {

@@ -341,6 +341,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func downloadMediaFromGCS(){
         for var i = 0; i < dataSource.count; i++
         {
+            
+            print("In mychannelContactList thread  \(i)")
             var profileImage : UIImage?
             let profileImageName = dataSource[i][profileImageKey] as! String
             if(profileImageName != "")
