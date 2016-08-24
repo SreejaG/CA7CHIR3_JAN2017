@@ -446,7 +446,13 @@ extension MyChannelNotificationViewController:UITableViewDataSource
             let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
             cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
-            cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
+            if let img1 = fulldataSource[indexPath.row][mediaImageKey]
+            {
+                cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
+            }
+            else{
+                cell.NotificationImage.image = UIImage(named:"thumb12")
+            }
             cell.selectionStyle = .None
             return cell
         }

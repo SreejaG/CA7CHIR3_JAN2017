@@ -213,11 +213,18 @@ class OtherChannelViewController: UIViewController  {
             do {
                 if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
                 {
-                   // if self.downloadCompleteFlag == "end"
-                  //  {
-                  //      self.downloadCompleteFlag == "start"
                         getPullToRefreshData()
-                  //  }
+                }
+                else{
+                    if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
+                    {
+                        if self.downloadCompleteFlag == "end"
+                        {
+                            self.downloadCompleteFlag = "start"
+                            SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
+                                , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
+                        }
+                    }
                 }
             } catch {
             }
@@ -455,6 +462,7 @@ class OtherChannelViewController: UIViewController  {
                 }
             }
         }
+    
     }
     func  didSelectExtension(indexPathRow: Int)
     {

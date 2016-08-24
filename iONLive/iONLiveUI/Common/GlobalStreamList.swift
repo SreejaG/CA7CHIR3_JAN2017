@@ -21,6 +21,7 @@ class GlobalStreamList: NSObject {
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var GlobalStreamDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var operationQueue = NSOperationQueue()
+    var operation2 : NSBlockOperation = NSBlockOperation()
     
     class var sharedInstance: GlobalStreamList
     {
@@ -31,6 +32,13 @@ class GlobalStreamList: NSObject {
             }
         }
         return Singleton.instance
+    }
+    
+    func cancelOperationQueue()
+    {
+        operationQueue.cancelAllOperations()
+        operation2.cancel()
+        
     }
     
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
@@ -91,7 +99,7 @@ class GlobalStreamList: NSObject {
             }
             
             if(imageDataSource.count > 0){
-                let operation2 : NSBlockOperation = NSBlockOperation (block: {
+                operation2 = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
@@ -166,6 +174,11 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for var i = 0; i < imageDataSource.count; i++
         {
+            if(operation2.cancelled)
+            {
+                return
+            }
+            
             print("stream list thread \(i)")
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){

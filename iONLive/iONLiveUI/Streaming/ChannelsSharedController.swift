@@ -74,6 +74,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         refreshAlert = UIAlertController()
+        ChannelSharedListAPI.sharedInstance.cancelOperationQueue()
     }
     func initialise()
     {

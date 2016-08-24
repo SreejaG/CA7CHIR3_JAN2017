@@ -93,8 +93,9 @@ class StreamsListViewController: UIViewController{
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
         
+        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
+        GlobalStreamList.sharedInstance.cancelOperationQueue()
     }
     func createScrollViewAnimations()  {
         streamListCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))

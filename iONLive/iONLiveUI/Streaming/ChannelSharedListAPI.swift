@@ -30,6 +30,7 @@ class ChannelSharedListAPI: NSObject {
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     var pullTorefresh : Bool = false
     var operationQueue = NSOperationQueue()
+    var operation2 : NSBlockOperation = NSBlockOperation()
     
     class var sharedInstance: ChannelSharedListAPI
     {
@@ -47,6 +48,12 @@ class ChannelSharedListAPI: NSObject {
         //ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
         getChannelSharedDetails(userId, token: accessToken)
     }
+    func cancelOperationQueue()
+    {
+        // operationQueue.cancelAllOperations()
+        operation2.cancel()
+    }
+    
     func getChannelSharedDetails(userName: String, token: String)
     {
         ChannelManager.sharedInstance.getChannelShared(userName, accessToken: token, success: { (response) -> () in
@@ -184,7 +191,7 @@ class ChannelSharedListAPI: NSObject {
             NSLog("MediaShared_ChannelSharedList_API: %@",mediaShared);
             
             if(dataSource.count > 0){
-                let operation2 : NSBlockOperation = NSBlockOperation (block: {
+                operation2  = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
@@ -237,6 +244,11 @@ class ChannelSharedListAPI: NSObject {
         
         for var i = 0; i < dataSource.count; i++
         {
+            
+            if operation2.cancelled
+            {
+                return
+            }
             
             print("In channelSharedListAPI thread  \(i)")
             var mediaImage : UIImage?
