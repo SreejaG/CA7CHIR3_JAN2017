@@ -196,17 +196,17 @@ int timerCount = 0;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
-    [self dismissViewControllerAnimated:NO completion:nil];
-    UIViewController *viewContr = self.navigationController.visibleViewController;
-    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
-    {
-        if(loadingCameraFlag == true){
-            [[NSUserDefaults standardUserDefaults] setValue:@"initialCall" forKey:@"CallingAPI"];
-            [[NSUserDefaults standardUserDefaults] setValue:@"appDelegateRedirection" forKey:@"viewFromWhichPage"];
-            
-        }
-       
-    }
+//    [self dismissViewControllerAnimated:NO completion:nil];
+//    UIViewController *viewContr = self.navigationController.visibleViewController;
+//    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+//    {
+//        if(loadingCameraFlag == true){
+//            [[NSUserDefaults standardUserDefaults] setValue:@"initialCall" forKey:@"CallingAPI"];
+//            [[NSUserDefaults standardUserDefaults] setValue:@"appDelegateRedirection" forKey:@"viewFromWhichPage"];
+//            
+//        }
+//       
+//    }
     
 //    UIViewController *viewContr = self.navigationController.visibleViewController;
 //    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
@@ -271,18 +271,18 @@ int timerCount = 0;
 
 -(void)applicationDidActives: (NSNotification *)notification
 {
-    UIViewController *viewContr = self.navigationController.visibleViewController;
-    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
-    {
-        UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"IPhoneCameraView" bundle:nil];
-        IPhoneCameraViewController *photoViewerViewController =( IPhoneCameraViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"IPhoneCameraViewController"];
-        UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
-        navController.navigationBarHidden = true;
-        navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        [self presentViewController:navController animated:true completion:^{
-        }];
-    }
-    
+//    UIViewController *viewContr = self.navigationController.visibleViewController;
+//    if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
+//    {
+//        UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"IPhoneCameraView" bundle:nil];
+//        IPhoneCameraViewController *photoViewerViewController =( IPhoneCameraViewController*)[streamingStoryboard instantiateViewControllerWithIdentifier:@"IPhoneCameraViewController"];
+//        UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:photoViewerViewController];
+//        navController.navigationBarHidden = true;
+//        navController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//        [self presentViewController:navController animated:true completion:^{
+//        }];
+//    }
+//    
     
    
 //    UIViewController *viewContr = self.navigationController.visibleViewController;
