@@ -60,7 +60,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         }
         
         initialise()
-        
         hideView(0)
     }
     
@@ -131,12 +130,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
-        
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
         channelItemListVC.navigationController?.navigationBarHidden = true
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
-        
     }
     
     @IBAction func didtapBackButton(sender: AnyObject)
@@ -164,16 +161,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         let channelname: String = channelTextField.text!
-        
         channelTextField.resignFirstResponder()
         channelCreateButton.hidden = true
         addChannelViewTopConstraint.constant = 0
         myChannelTableViewTopConstraint.constant = 0
-        
         hideView(0)
-        
         myChannelSearchBar.text = ""
         myChannelSearchBar.resignFirstResponder()
         myChannelSearchBar.delegate = self
@@ -198,7 +191,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
-            
             let channelId = json["channelId"]?.stringValue
             let channelName = json["channelName"] as! String
             let dateFormatter = NSDateFormatter()
@@ -298,8 +290,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func authenticationFailureHandlerDelete(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

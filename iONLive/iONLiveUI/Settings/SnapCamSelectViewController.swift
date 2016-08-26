@@ -45,22 +45,22 @@ class SnapCamSelectViewController: UIViewController {
         switch(shutterMode)
         {
         case 0 :
-           snapCamMode = .LiveStream
+            snapCamMode = .LiveStream
             break
         case 1:
             snapCamMode = .Photos
             break
         case 2:
-             snapCamMode = .Video
+            snapCamMode = .Video
             break
         case 3:
             snapCamMode = .CatchGif
             break
         case 4:
-           snapCamMode = .Timelapse
+            snapCamMode = .Timelapse
             break
         case 5:
-          snapCamMode = .iPhone
+            snapCamMode = .iPhone
             break
         case 6:
             snapCamMode = .TestAPI
@@ -68,7 +68,7 @@ class SnapCamSelectViewController: UIViewController {
         default :
             break
         }
-
+        
         if toggleSnapCamIPhoneMode == SnapCamSelectionMode.SnapCam
         {
             dataSource[5] = "Switch to iPhone"
@@ -97,7 +97,6 @@ extension SnapCamSelectViewController:UITableViewDataSource
     {
         let count = dataSource.count
         return count > 0 ? count : 0
-
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -108,9 +107,7 @@ extension SnapCamSelectViewController:UITableViewDataSource
         {
             cell.optionlabel.text = dataSource[indexPath.row]
         }
-        
         customizeCellBasedOnSnapCamSelectionMode(cell , row: indexPath.row)
-        
         return cell
     }
 }
@@ -150,7 +147,6 @@ extension SnapCamSelectViewController:UITableViewDelegate
             let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
             self.presentViewController(navController, animated: false) { () -> Void in
             }
-            //            self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
             break;
         }
     }
@@ -187,7 +183,7 @@ extension SnapCamSelectViewController
         iPhoneSnapCamImageView.image = UIImage(named: "Switched_mode_Camera");
         snapCamSettingsTableView.hidden = true;
         
-        UIView .animateWithDuration(1.0, animations: { () -> Void in
+        UIView.animateWithDuration(1.0, animations: { () -> Void in
             self.blurView.alpha = 1.0
         }) { (finished) -> Void in
             UIView.animateWithDuration(1.0, animations: { () -> Void in
@@ -238,7 +234,7 @@ extension SnapCamSelectViewController
     {
         dataSource[5] = "Switch to SnapCam"
         toggleSnapCamIPhoneMode = SnapCamSelectionMode.SnapCam
-
+        
         loadLiveStreamView()
     }
     
@@ -282,7 +278,6 @@ extension SnapCamSelectViewController
     {
         if snapCamMode == selectedMode
         {
-            //snapCamMode = .DefaultMode
         }
         else
         {
@@ -291,12 +286,6 @@ extension SnapCamSelectViewController
             {
                 NSUserDefaults.standardUserDefaults().setObject(selectedMode.rawValue, forKey: "shutterActionMode");
             }
-//            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-//            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-//            let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-//            self.presentViewController(navController, animated: false) { () -> Void in
-//            }
-
         }
     }
     
@@ -325,7 +314,6 @@ extension SnapCamSelectViewController
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
-      //      print(rowAfterAlertHit)
             updateSnapCamSelection(rowAfterAlertHit)
             changeSnapCamModeForCell(cellAfterAlertHit)
             self.snapCamSettingsTableView.reloadData()
@@ -369,7 +357,7 @@ extension SnapCamSelectViewController
         {
             customizeSnapCamIPhoneCell(selectedCell)
         }
-        else if snapCamMode == SnapCamSelectionMode.TestAPI && row == 6 // this is only for testing ,we can remove this once we can done.
+        else if snapCamMode == SnapCamSelectionMode.TestAPI && row == 6
         {
             selectedCell.contentView.backgroundColor = UIColor(red: 44/255, green: 214/255, blue: 224/255, alpha: 1.0)
         }
@@ -390,7 +378,6 @@ extension SnapCamSelectViewController
     
     func updateSnapCamSelection(rowVal:Int)
     {
-        //let defaults = NSUserDefaults .standardUserDefaults()
         switch(rowVal)
         {
         case 0 :
@@ -447,14 +434,6 @@ extension SnapCamSelectViewController
     
     @IBAction func snapcamButtonClicked(sender: AnyObject)
     {
-//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-//        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-//        navController.navigationBarHidden = true
-//        self.presentViewController(navController, animated: false) { () -> Void in
-//        }
-//
-
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     

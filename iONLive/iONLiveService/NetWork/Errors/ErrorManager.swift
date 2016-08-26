@@ -50,7 +50,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Invalid Email", message:"Please provide a valid image")
     }
-        
+    
     func loginInvalidEmail()
     {
         alert("Invalid Email", message: "Please provide a valid email address.")
@@ -166,7 +166,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert(signUpErrorTitle, message: "Please enter your country code")
     }
-
+    
     func emptyCountryCodeError()
     {
         alert(signUpErrorTitle, message: "Please enter your country code")
@@ -271,13 +271,13 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Failed", message: "Failed to get channel details")
     }
-
+    
     
     func channelAlreayExist()
     {
         alert("Channel Exist", message: "Channel name already exists")
     }
-   
+    
     
     func unsubscribedUserChannel()
     {
@@ -364,7 +364,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert("Install Failed", message: "Ooops, The CA7CH is not installed properly, please reinstall the application once again...")
     }
-
+    
     
     //PRAGMA MARK:- Error code mapping
     

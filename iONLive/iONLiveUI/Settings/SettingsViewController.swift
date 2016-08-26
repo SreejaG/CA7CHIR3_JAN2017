@@ -1,10 +1,3 @@
-//
-//  SettingsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/10/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -26,12 +19,12 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var settingsTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-         cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Media Capture Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Camera LED", optionType : toggleCell, accessryText: ""],[optionTitle:"Program Camera Button", optionType : normalCell, accessryText: ""],
-             [optionTitle:"Software Updates", optionType : normalCell, accessryText: ""],[optionTitle:"Save to Camera Roll", optionType : toggleCell, accessryText: ""],[optionTitle:"Get Snapcam! ", optionType : normalCell, accessryText: ""]]
+        cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Media Capture Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Camera LED", optionType : toggleCell, accessryText: ""],[optionTitle:"Program Camera Button", optionType : normalCell, accessryText: ""],
+                         [optionTitle:"Software Updates", optionType : normalCell, accessryText: ""],[optionTitle:"Save to Camera Roll", optionType : toggleCell, accessryText: ""],[optionTitle:"Get Snapcam! ", optionType : normalCell, accessryText: ""]]
         
-         accountOptions = [[optionTitle:"Edit profile", optionType : normalCell, accessryText:""],[optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"],[optionTitle:"Connect Accounts", optionType : normalCell, accessryText:""]]
+        accountOptions = [[optionTitle:"Edit profile", optionType : normalCell, accessryText:""],[optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"],[optionTitle:"Connect Accounts", optionType : normalCell, accessryText:""]]
         
-         supportOptions = [[optionTitle:"Help Center ", optionType : normalCell, accessryText:""],[optionTitle:"Report a Problem", optionType : normalCell, accessryText:""]]
+        supportOptions = [[optionTitle:"Help Center ", optionType : normalCell, accessryText:""],[optionTitle:"Report a Problem", optionType : normalCell, accessryText:""]]
         
         dataSource = [cameraOptions,accountOptions,supportOptions]
     }
@@ -40,13 +33,12 @@ class SettingsViewController: UIViewController {
         super.viewWillAppear(true)
         self.settingsTableView.backgroundView = nil
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-       
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
     }
-
+    
     @IBAction func doneClicked(sender: AnyObject) {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
@@ -92,42 +84,39 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         switch section
         {
         case 0:
-           return dataSource != nil ? (dataSource?[0].count)! :0
+            return dataSource != nil ? (dataSource?[0].count)! :0
             
         case 1:
-             return dataSource != nil ? (dataSource?[1].count)! :0
+            return dataSource != nil ? (dataSource?[1].count)! :0
             
         case 2:
             return dataSource != nil ? (dataSource?[2].count)! :0
             
         default:
-             return 0
+            return 0
         }
     }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        
         var cellDataSource:[String:String]?
-        
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section
             {
-               if dataSource[indexPath.section].count > indexPath.row
-               {
-                   cellDataSource = dataSource[indexPath.section][indexPath.row]
-               }
+                if dataSource[indexPath.section].count > indexPath.row
+                {
+                    cellDataSource = dataSource[indexPath.section][indexPath.row]
+                }
             }
-        
         }
         
         if let cellDataSource = cellDataSource
         {
             if cellDataSource[optionType] == toggleCell
             {
-               let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
+                let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
                 cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
                 cell.userInteractionEnabled = false
@@ -151,10 +140,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         }
         else
         {
-           return UITableViewCell()
+            return UITableViewCell()
         }
     }
-    
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
@@ -171,18 +159,16 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
-        // switch case for sections and inside that for rows TODO
         switch indexPath.section
         {
         case 0:
             switch indexPath.row
             {
             case 2:
-                // time lapse
-             //   loadTimeLapseOptionsView()
+                //   loadTimeLapseOptionsView()
                 break
             case 5:
-            //    loadProgramCameraButtonView()
+                //    loadProgramCameraButtonView()
                 break
             default:
                 break
@@ -194,10 +180,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 loadEditProfileView()
                 break
             case 1:
-              //  loadDeleteMediaOptionsView()
+                //  loadDeleteMediaOptionsView()
                 break
             case 2:
-             //   loadConnectAccountView()
+                //   loadConnectAccountView()
                 break
             default:
                 break
@@ -209,7 +195,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     
     func loadEditProfileView()
     {
-        // edit profile
         let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
         let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
         self.navigationController?.pushViewController(editProfileVC, animated: true)
@@ -231,7 +216,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     
     func loadConnectAccountView()
     {
-        // edit profile
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ConnectAccountViewController.identifier) as! ConnectAccountViewController
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
@@ -239,10 +223,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     
     func loadProgramCameraButtonView()
     {
-        // edit profile
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ProgramCameraButtonViewController.identifier) as! ProgramCameraButtonViewController
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
-   
+    
 }

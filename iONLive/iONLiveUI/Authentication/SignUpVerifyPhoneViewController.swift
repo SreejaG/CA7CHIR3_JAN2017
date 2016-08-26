@@ -20,7 +20,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     static let identifier = "SignUpVerifyPhoneViewController"
     var verificationCode = ""
     
-    
     @IBOutlet weak var countryTextField: UITextField!
     
     @IBOutlet weak var mobileNumberTextField: UITextField!
@@ -117,7 +116,6 @@ class SignUpVerifyPhoneViewController: UIViewController
             mobileNumberTextField.resignFirstResponder()
             verificationCodeTextField.becomeFirstResponder()
             topConstaintDescriptionLabel.constant = 67
-            
         }
         else
         {
@@ -133,7 +131,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         
@@ -162,7 +159,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     }
     
     //PRAGMA MARK:- IBActions
-    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }
@@ -193,7 +189,6 @@ class SignUpVerifyPhoneViewController: UIViewController
                     loadForgotPasswordView()
                 }
                 else{
-                    
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
                     let gcmRegId = "ios".stringByAppendingString(deviceToken)
                     validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
@@ -281,7 +276,6 @@ class SignUpVerifyPhoneViewController: UIViewController
             return
         }
     }
-    
     
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -391,12 +385,10 @@ class SignUpVerifyPhoneViewController: UIViewController
                 if let code = json["archiveId"]
                 {
                     defaults.setValue(code, forKey: archiveId)
-                    
                 }
                 if let code = json["totalMediaInArchive"]
                 {
                     defaults.setValue(code, forKey:ArchiveCount)
-                    
                 }
                 loadFindFriendsView()
             }

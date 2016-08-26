@@ -248,9 +248,6 @@ class ContactDetailsViewController: UIViewController {
                 
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
-                
-                //signed url iprofile
-                
                 let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
                 let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
                 if(thumbUrl != "")
@@ -267,9 +264,7 @@ class ContactDetailsViewController: UIViewController {
                 else{
                     contactImage = UIImage(named: "dummyUser")!
                 }
-                
                 appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage, "orgSelected":0, "tempSelected":0])
-                
             }
             setContactDetails()
         }
@@ -286,7 +281,6 @@ class ContactDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            
             if code == "CONTACT001"{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
                 setContactDetails()
@@ -367,7 +361,6 @@ class ContactDetailsViewController: UIViewController {
             {
                 searchDataSource![section][row]["tempSelected"] = 1
             }
-            
             let selecteduserId =  searchDataSource![section][row][nameKey] as! String
             for var j = 0; j < dataSource![section].count; j++
             {
@@ -449,7 +442,6 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        
         let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
         
         var cellDataSource:[String:AnyObject]?

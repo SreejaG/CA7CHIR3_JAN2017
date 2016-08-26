@@ -45,6 +45,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             NSUserDefaults.standardUserDefaults().setObject("", forKey: "NotificationChannelText")
         }
     }
+    
     @IBAction func backButtonClicked(sender: AnyObject) {
         SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
         SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
@@ -54,6 +55,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
         
     }
+    
     override func viewWillAppear(animated: Bool) {
         if(GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
         {
@@ -68,14 +70,15 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             self.NoDatalabel.text = "No Channel Available"
             self.view.addSubview(self.NoDatalabel)
         }
-        
         super.viewWillAppear(true)
     }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         refreshAlert = UIAlertController()
         ChannelSharedListAPI.sharedInstance.cancelOperationQueue()
     }
+    
     func initialise()
     {
         self.refreshControl = UIRefreshControl()
@@ -99,6 +102,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             self.showOverlay()
         }
     }
+    
     // channel delete push notification handler
     func channelDeletionPushNotification(info:  [String : AnyObject])
     {
@@ -124,6 +128,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             break;
         }
     }
+    
     func updateLiveStreamStartedEntry(info:[String : AnyObject])
     {
         let channelId = info["channelId"] as! Int
@@ -146,6 +151,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             newShareAvailabellabel.text = "Live stream available"
         }
     }
+    
     func isVisibleCell( index : Int ) -> Bool
     {
         if let indices = ChannelSharedTableView.indexPathsForVisibleRows {
@@ -157,6 +163,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         return false
     }
+    
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
         let channelId = info["channelId"] as! Int
@@ -216,6 +223,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             channelPushNotificationLiveStarted(info)
         }
     }
+    
     func topMostController() -> UIViewController {
         var topController: UIViewController = UIApplication.sharedApplication().keyWindow!.rootViewController!
         while (topController.presentedViewController != nil) {
@@ -223,6 +231,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         return topController
     }
+    
     func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
     {
         var selectedArray : NSArray = NSArray()
@@ -258,6 +267,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         return indexOfRow
     }
+    
     func updateChannelList(notif : NSNotification)
     {
         if(self.downloadCompleteFlag == "start")
@@ -309,11 +319,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             }
         })
     }
+    
     func pullToRefresh()
     {
         newShareAvailabellabel.hidden = true
         NSUserDefaults.standardUserDefaults().setObject("", forKey: "NotificationChannelText")
-        
         pullToRefreshActive = true
         let sortList : Array = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         var subIdArray : [Int] = [Int]()
@@ -341,7 +351,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.refreshControl.endRefreshing()
                 })
-                
                 self.pullToRefreshActive = false
             }
         }
@@ -353,6 +362,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ChannelSharedListAPI.sharedInstance.initialisedata()
         }
     }
+    
     func pullToRefreshUpdate(notif : NSNotification)
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -375,7 +385,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                         {
                             flag = true
                         }
-                        
                     }
                     if(!flag)
                     {
@@ -383,7 +392,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     }
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
                     if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
                     {
                         self.NoDatalabel.removeFromSuperview()
@@ -401,7 +409,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
             let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
             
             if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
@@ -411,7 +418,6 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
                 catch let error as NSError {
-                    print("Ooops! Something went wrong: \(error)")
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -446,6 +452,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         self.loadingOverlay?.removeFromSuperview()
     }
 }
+
 extension ChannelsSharedController:UITableViewDataSource
 {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -460,6 +467,7 @@ extension ChannelsSharedController:UITableViewDataSource
         }
         
     }
+    
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
         {
@@ -528,7 +536,7 @@ extension ChannelsSharedController:UITableViewDataSource
                             cell.countLabel.text = String(count)
                             cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
-                       
+                        
                         date = nil
                         fromdate = nil
                     }
@@ -539,6 +547,7 @@ extension ChannelsSharedController:UITableViewDataSource
         }
         return UITableViewCell()
     }
+    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
@@ -557,6 +566,7 @@ extension ChannelsSharedController:UITableViewDataSource
             self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
+    
     func loadLiveStreamView(streamTocken:String)
     {
         let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
@@ -598,6 +608,5 @@ extension ChannelsSharedController:UITableViewDataSource
         if secondsFrom(date,todate:todate) > 0 { return String(secondsFrom(date,todate:todate))+"s" }
         return ""
     }
-    
 }
 

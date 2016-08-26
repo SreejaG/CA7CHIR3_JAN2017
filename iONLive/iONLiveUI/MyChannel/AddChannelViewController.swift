@@ -177,7 +177,6 @@ class AddChannelViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             channelTextField.text = ""
-            
             let channelId = json["channelId"]?.stringValue
             let channelName = json["channelName"] as! String
             let dateFormatter = NSDateFormatter()
@@ -286,7 +285,6 @@ class AddChannelViewController: UIViewController {
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
     }
-    
     
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in

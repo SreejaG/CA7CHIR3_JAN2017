@@ -90,10 +90,12 @@ class LiveStreamingHelpers
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
+    
     func mapStream()
     {
         self.setDefaultMappingForLiveStream(NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String)
     }
+    
     func startLiveStreamingToken(streamTocken:String?)
     {
         let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
@@ -142,7 +144,6 @@ class LiveStreamingHelpers
         let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)as! String
         let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey) as! String
         livestreamingManager.defaultStreamMapping(loginId: loginId, accesstocken:accessTocken, streamTockn: Tocken, success: { (response) in
-            
         }) { (error, code) in
         }
     }
@@ -187,7 +188,6 @@ class LiveStreamingHelpers
                     NSNotificationCenter.defaultCenter().postNotificationName("refreshLogin", object:self)
                 }
             }
-            
         }
         else{
             ErrorManager.sharedInstance.streamingError()
@@ -198,20 +198,16 @@ class LiveStreamingHelpers
     func updateDefaultsAndStartStreamWithToken(streamToken:String , AndUserName userName:String)
     {
         let baseStreamName = self.getBaseStreamWithToken(streamToken, AndUserName: userName)
-        
         NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: streamingToken)
-        
         self.setStreamingDefaults()
         self.startStreamingWithUrl(baseStreamName, andStreamToken: streamToken)
     }
     
     func startStreamingWithUrl(url:String ,andStreamToken streamToken:String)
     {
-        
         if let session = iPhoneLiveStreamingSession
         {
             switch session.rtmpSessionState {
-                
             case .None, .PreviewStarted, .Ended, .Error:
                 startiPhoneCameraLiveStreamingWithUrl(url, andStreamToken: streamToken)
                 break
@@ -250,7 +246,6 @@ class LiveStreamingHelpers
                 }
                 
                 }, failure: { (error, message) -> () in
-                    
                     if iPhoneLiveStreaming.showAlert
                     {
                         self.removeStreaming()

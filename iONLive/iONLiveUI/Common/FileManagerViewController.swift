@@ -26,7 +26,6 @@ class FileManagerViewController: UIViewController {
             try NSFileManager.defaultManager().createDirectoryAtPath(documentsPath, withIntermediateDirectories: true, attributes: nil)
             flag = true
         } catch let error as NSError {
-            NSLog("Unable to create directory \(error.debugDescription)")
             flag = false
         }
         return flag
@@ -145,14 +144,10 @@ class FileManagerViewController: UIViewController {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         dateFormatter.timeZone = NSTimeZone(name: "UTC")
-        
         let cloudDate = dateFormatter.dateFromString(dateStr)
-        
         let localDateStr = dateFormatter.stringFromDate(NSDate())
         let localDate = dateFormatter.dateFromString(localDateStr)
-        
         let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
         return differenceString
     }
-    
 }

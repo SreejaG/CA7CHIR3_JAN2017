@@ -148,7 +148,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -184,7 +183,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-                
             }
         }
         else{
@@ -765,7 +763,6 @@ extension EditProfileViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
     }
 }
 

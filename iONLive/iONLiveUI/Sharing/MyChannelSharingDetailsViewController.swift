@@ -68,7 +68,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func pullToRefreshSecnd()
     {
-        
         tapCountContactShare = tapCountContactShare + 1
         if(tapCountContactShare <= 1){
             if(!pullToRefreshActiveSecnd){
@@ -111,7 +110,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     }
     
     @IBAction func inviteContacts(sender: AnyObject) {
-        
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ContactListViewController.identifier) as! ContactListViewController
         inviteContactsVC.channelId = channelId
@@ -341,8 +339,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func downloadMediaFromGCS(){
         for var i = 0; i < dataSource.count; i++
         {
-            
-            print("In mychannelContactList thread  \(i)")
             var profileImage : UIImage?
             let profileImageName = dataSource[i][profileImageKey] as! String
             if(profileImageName != "")

@@ -73,7 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-        
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -150,7 +149,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // MARK: - Core Data stack
-    
     lazy var applicationDocumentsDirectory: NSURL = {
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
         return urls[urls.count-1]
@@ -187,7 +185,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
     
     // MARK: - Core Data Saving support
-    
     func saveContext () {
         if managedObjectContext.hasChanges {
             do {
@@ -200,7 +197,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     //push notification
-    
     func application(application: UIApplication,didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         
         let characterSet: NSCharacterSet = NSCharacterSet( charactersInString: "<>" )
@@ -217,11 +213,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        
-        
-        print(userInfo)
         let result = userInfo["messageFrom"] as! NSDictionary
-        print(result)
         let defaults = NSUserDefaults .standardUserDefaults()
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
@@ -255,10 +247,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
                 }
             }
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result) //
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) //
-            //used while added  a media
-            
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
         }
         
         if(result["type"] as! String == "liveStream")
@@ -275,10 +265,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
             defaults.setValue("1", forKey: "notificationArrived")
-            
         }
-        
     }
+    
     func updateCount( channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: true)
@@ -287,12 +276,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if(mediaShared.count > 0)
             {
                 let sharedCount = mediaShared[index][sharedMediaCount] as! String
-                print( "\(#file) \(#line) \(sharedCount)")
                 let  latestCount : Int = Int(sharedCount)! + 1
                 mediaShared[index][sharedMediaCount]  = "\(latestCount)"
                 NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             }
         }
+        
         let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
         if(indexOfChannelList != -1)
         {
@@ -304,8 +293,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("CountIncrementedPushNotification", object: channelId)
-        
     }
+    
     func removeEntryFromShare(channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: true)
@@ -313,14 +302,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             if(mediaShared.count > 0)
             {
-                print(mediaShared)
                 mediaShared.removeAtIndex(index)
                 NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             }
         }
-        print(mediaShared)
-        
-        
     }
     
     func removeEntryFromGlobal(channelId : String)
@@ -334,6 +319,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+    
     func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
     {
         let channelIdkey = "ch_detail_id"
@@ -350,18 +336,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             else{
                 indexOfRow = -1
             }
-            
         }
         else{
             selectedArray = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         }
+        
         var  checkFlag : Bool = false
         var index : Int =  -1
         
         for( var i = 0 ; i < selectedArray.count ; i++ )
         {
             let channelId = selectedArray[i][channelIdkey]!
-            print("\(channelId!)" , channelIdValue)
             if "\(channelId!)"  == channelIdValue
             {
                 checkFlag = true
@@ -376,6 +361,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return indexOfRow
     }
+    
     func convertStringToDictionary(text: String) -> [String:AnyObject]? {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {

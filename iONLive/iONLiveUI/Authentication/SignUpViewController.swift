@@ -150,7 +150,6 @@ class SignUpViewController: UIViewController {
     }
     
     //PRAGMA MARK:- Helper functions
-    
     func isEmail(email:String) -> Bool {
         let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
         return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil

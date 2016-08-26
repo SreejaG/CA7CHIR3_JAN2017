@@ -2,11 +2,11 @@
 import UIKit
 
 class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
-   
+    
     @IBOutlet weak var playIcon: UIImageView!
     
     @IBOutlet weak var thumbImageView: UIImageView!
-  
+    
     @IBOutlet var progressView: UIProgressView!
     
     @IBOutlet weak var cloudIcon: UIImageView!
@@ -23,8 +23,7 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
             cell.layer.borderColor = UIColor.blueColor().CGColor;
         }else {
             cell.layer.borderColor = UIColor.clearColor().CGColor;
-
-       }
+        }
     }
     
     override func awakeFromNib() {

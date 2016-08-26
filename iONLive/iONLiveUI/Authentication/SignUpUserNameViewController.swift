@@ -55,7 +55,6 @@ class SignUpUserNameViewController: UIViewController {
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
@@ -83,7 +82,6 @@ class SignUpUserNameViewController: UIViewController {
     }
     
     //PRAGMA MARK:- IBActions
-    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }

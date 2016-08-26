@@ -48,7 +48,6 @@ class MyChannelNotificationViewController: UIViewController {
             let image = UIImage(named: "notif") as UIImage?
             notifImage.setImage(image, forState: .Normal)
         }
-//        defaults.setValue("0", forKey: "notificationArrived")
         initialise()
     }
     
@@ -61,7 +60,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-         operationInNotif.cancel()
+        operationInNotif.cancel()
     }
     
     @IBAction func didTapNotificationButton(sender: AnyObject) {
@@ -242,13 +241,11 @@ class MyChannelNotificationViewController: UIViewController {
                     let time2 = p2[notificationTimeKey] as! String
                     return time1 > time2
                 })
-                
                 if(dataSource.count > 0){
                     operationInNotif  = NSBlockOperation (block: {
                         self.downloadMediaFromGCS(self.operationInNotif)
                     })
                     self.operationQueueObjInNotif.addOperation(operationInNotif)
-        
                 }
             }
         }
@@ -265,7 +262,6 @@ class MyChannelNotificationViewController: UIViewController {
             if operationObj.cancelled == true{
                 return
             }
-            print("In notification thread  \(i)")
             var mediaImage : UIImage?
             var profileImage : UIImage?
             
@@ -291,7 +287,6 @@ class MyChannelNotificationViewController: UIViewController {
             else{
                 mediaImage = UIImage()
             }
-            
             self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -315,31 +310,13 @@ class MyChannelNotificationViewController: UIViewController {
             }
             else
             {
-              mediaImage = UIImage(named: "thumb12")!
+                mediaImage = UIImage(named: "thumb12")!
             }
             
         } catch {
-           mediaImage = UIImage(named: "thumb12")!
+            mediaImage = UIImage(named: "thumb12")!
         }
         return mediaImage
-
-//        var mediaImage : UIImage?
-//        if(mediaName != "")
-//        {
-//            let url: NSURL = convertStringtoURL(mediaName)
-//            if let mediaData = NSData(contentsOfURL: url){
-//                let mediaImageData = (mediaData as NSData?)!
-//                mediaImage = UIImage(data: mediaImageData)
-//            }
-//            else{
-//                mediaImage = UIImage(named: "thumb12")
-//            }
-//        }
-//        else{
-//            mediaImage = UIImage(named: "thumb12")
-//        }
-//        return mediaImage!
-        
     }
     
     func createProfileImage(profileName: String) -> UIImage
@@ -363,17 +340,6 @@ class MyChannelNotificationViewController: UIViewController {
             profileImage = UIImage(named: "dummyUser")!
         }
         return profileImage
-        
-//        
-//        let url: NSURL = convertStringtoURL(profileName)
-//        if let data = NSData(contentsOfURL: url){
-//            let imageDetailsData = (data as NSData?)!
-//            profileImage = UIImage(data: imageDetailsData)!
-//        }
-//        else{
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
     }
     
     func  getTimeDifference(dateStr:String) -> String {
@@ -382,7 +348,6 @@ class MyChannelNotificationViewController: UIViewController {
         dateFormatter.timeZone = NSTimeZone(name: "UTC")
         
         let cloudDate = dateFormatter.dateFromString(dateStr)
-        
         let localDateStr = dateFormatter.stringFromDate(NSDate())
         let localDate = dateFormatter.dateFromString(localDateStr)
         
@@ -398,7 +363,6 @@ class MyChannelNotificationViewController: UIViewController {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code)
             }
@@ -461,7 +425,6 @@ extension MyChannelNotificationViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        
     }
     
 }

@@ -29,7 +29,6 @@ class GlobalChannelToImageMapping: NSObject {
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GlobalChannelToImageMapping.display), name: "success", object:nil)
         dummy = source
-        
         getMediaByChannelId()
     }
     
@@ -38,7 +37,6 @@ class GlobalChannelToImageMapping: NSObject {
         if (dataSourceCount < dummy.count - 1)
         {
             dataSourceCount  = dataSourceCount + 1
-            
             getMediaByChannelId()
         }
         else if dataSourceCount == dummy.count - 1
@@ -57,14 +55,11 @@ class GlobalChannelToImageMapping: NSObject {
     }
     
     func initialise(totalMediaCount : Int, channelid : String){
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         let startValue = "0"
         let endValue = String(totalMediaCount)
-        
         channelDetailId = channelid
         
         if totalMediaCount <= 0
@@ -74,11 +69,9 @@ class GlobalChannelToImageMapping: NSObject {
             NSNotificationCenter.defaultCenter().postNotificationName("success", object: channelDetailId)
         }
         else{
-            
             ImageUpload.sharedInstance.getChannelMediaDetails(channelid , userName: userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) -> () in
                 self.authenticationSuccessHandler(response,id: channelid)
             }) { (error, message) -> () in
-                //   self.authenticationFailureHandler(error, code: message)
                 return
             }
         }
@@ -101,17 +94,14 @@ class GlobalChannelToImageMapping: NSObject {
                 let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                
                 imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0, tImageURLKey:mediaUrl,fImageURLKey:actualUrl])
             }
-            
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
                     let time1 = Int(p1[mediaIdKey] as! String)
                     let time2 = Int(p2[mediaIdKey] as! String)
                     return time1 > time2
                 })
-                
                 GlobalChannelImageDict.updateValue(imageDataSource, forKey: channelDetailId)
                 NSNotificationCenter.defaultCenter().postNotificationName("success", object: self.channelDetailId)
             }
@@ -119,7 +109,6 @@ class GlobalChannelToImageMapping: NSObject {
     }
     
     func downloadMediaFromGCS(chanelId: String, start: Int, end:Int, operationObj: NSBlockOperation){
-        
         localDataSource.removeAll()
         for var i = start; i < end; i++
         {
@@ -132,10 +121,6 @@ class GlobalChannelToImageMapping: NSObject {
                 if operationObj.cancelled == true{
                     return
                 }
-                
-                print("In channel Image Mapping thread  \(k)")
-                
-                
                 var imageForMedia : UIImage = UIImage()
                 let mediaId = String(localDataSource[k][mediaIdKey]!)
                 let mediaIdForFilePath = "\(mediaId)thumb"
@@ -158,7 +143,6 @@ class GlobalChannelToImageMapping: NSObject {
                                 let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                                 let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                                 if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                    
                                 }
                                 else{
                                     FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -459,6 +443,7 @@ class GlobalChannelToImageMapping: NSObject {
                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[chanelId]!.count)"
             }
         }
+        
         GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
             let time1 = p1[createdTimeKey] as! String
             let time2 = p2[createdTimeKey] as! String
@@ -471,13 +456,11 @@ class GlobalChannelToImageMapping: NSObject {
     func deleteMediasFromAllChannels(chanelId : String,mediaIds: NSMutableArray)
     {
         let globalchannelIdList : Array = Array(GlobalChannelImageDict.keys)
-        
         for var i = 0; i < globalchannelIdList.count; i++
         {
             let globalChanelId = globalchannelIdList[i]
             deleteMediaFromParticularChannel(globalChanelId, mediaIds: mediaIds)
         }
-        
         NSUserDefaults.standardUserDefaults().setInteger(GlobalChannelImageDict[chanelId]!.count, forKey: ArchiveCount)
     }
 }

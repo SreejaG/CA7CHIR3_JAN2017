@@ -113,7 +113,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         if (media == "video"){
             saveVideoToCahce()
         }
-        
         updateDataToLocalDataSource()
     }
     
@@ -122,7 +121,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         {
             if var imageDatadup = NSData(contentsOfURL: videoSavedURL){
                 videoData = imageDatadup
-            
+                
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
                 let savingPath = "\(parentPath)/\(mediaId)video.mov"
                 let url = NSURL(fileURLWithPath: savingPath)
@@ -164,7 +163,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         dispatch_async(backgroundQueue, {
             self.uploadFullImageOrVideoToGCS({(result) -> Void in
                 if(result == "Success"){
-                    
                     self.uploadThumbImageToGCS({(result) -> Void in
                         self.deleteDataFromDB()
                         self.imageAfterConversionThumbnail = UIImage()
@@ -277,7 +275,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
                 context.deleteObject(managedObjectData)
             }
-            
         }
         catch let error as NSError {
         }

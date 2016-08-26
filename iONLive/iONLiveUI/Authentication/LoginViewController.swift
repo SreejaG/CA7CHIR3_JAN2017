@@ -44,7 +44,6 @@ class LoginViewController: UIViewController {
         passwordTextField.secureTextEntry = true
         userNameTextfield.delegate = self
         passwordTextField.delegate = self
-        
         addObserver()
     }
     
@@ -55,7 +54,6 @@ class LoginViewController: UIViewController {
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
@@ -83,7 +81,6 @@ class LoginViewController: UIViewController {
     }
     
     //PRAGMA MARK:- IBActions
-    
     @IBAction func forgetPasswordClicked(sender: AnyObject)
     {
         loadVerifyPhoneView()
@@ -129,7 +126,6 @@ class LoginViewController: UIViewController {
                 else{
                     ErrorManager.sharedInstance.installFailure()
                 }
-                
             }
         }
     }

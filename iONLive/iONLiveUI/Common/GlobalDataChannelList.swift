@@ -70,7 +70,6 @@ class GlobalDataChannelList: NSObject {
     func setChannelDetails()
     {
         globalChannelDataSource.removeAll()
-        
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             var mediaId = String()
@@ -91,9 +90,9 @@ class GlobalDataChannelList: NSObject {
             
             self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,createdTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool, tImageURLKey: url])
         }
+        
         if(self.globalChannelDataSource.count > 0){
             sortChannelList()
-            
             operationInChannelList  = NSBlockOperation (block: {
                 self.downloadMediaFromGCS()
             })
@@ -103,12 +102,8 @@ class GlobalDataChannelList: NSObject {
     
     func downloadMediaFromGCS(){
         var url: NSURL = NSURL()
-        
         for var i = 0; i < globalChannelDataSource.count; i++
         {
-            
-            print("In my channel list thread  \(i)")
-            
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaIdKey] as! String)thumb"
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
@@ -152,7 +147,6 @@ class GlobalDataChannelList: NSObject {
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
-        
         do {
             let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
             if let imageData = data as NSData? {
@@ -178,7 +172,7 @@ class GlobalDataChannelList: NSObject {
             let time2 = p2[createdTimeKey] as! String
             return time1 > time2
         })
-        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+     NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
         autoDownloadChannelDetails()
     }
     

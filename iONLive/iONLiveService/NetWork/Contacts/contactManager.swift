@@ -74,7 +74,6 @@ class contactManager: NSObject {
     
     func inviteContactDetails(userName: String, accessToken: String, contacts: NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
-        
         let requestManager = RequestManager.sharedInstance
         requestManager.httpManager().PUT(UrlManager.sharedInstance.getContactDataAPIUrl(userName, accessToken: accessToken), parameters: ["contactList":contacts], success: { (operation, response) -> Void in
             if let responseObject = response as? [String:AnyObject]

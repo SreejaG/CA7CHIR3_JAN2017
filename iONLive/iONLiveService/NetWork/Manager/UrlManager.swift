@@ -2,7 +2,9 @@
 import Foundation
 class UrlManager {
     
-    let baseUrl = "http://130.211.135.170:3000";
+//    let baseUrl = "http://130.211.135.170:3000";
+    
+    let baseUrl = "http://104.197.92.137:3000";
     let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
@@ -55,7 +57,6 @@ class UrlManager {
     func getChannelMediaDetails(channelId : String, userName: String, accessToken: String , limit : String , offset : String) -> String
     {
         let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + channelId + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
-        print(getchannelMediaDetailsAPI)
         return getchannelMediaDetailsAPI
     }
     

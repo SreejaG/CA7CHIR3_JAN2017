@@ -50,7 +50,6 @@ class ChannelItemListViewController: UIViewController {
     var scrollObj = UIScrollView()
     
     var NoDatalabelFormyChanelImageList : UILabel = UILabel()
-
     
     override func viewDidLoad()
     {
@@ -128,7 +127,6 @@ class ChannelItemListViewController: UIViewController {
             self.channelItemCollectionView.reloadData()
         })
         
-        
         if downloadingFlag == true
         {
             downloadingFlag = false
@@ -164,7 +162,7 @@ class ChannelItemListViewController: UIViewController {
         channelItemCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
         channelItemCollectionView.infiniteScrollIndicatorMargin = 50
         channelItemCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
-           if self!.totalCount > 0
+            if self!.totalCount > 0
             {
                 if(self!.totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self!.channelId]!.count)
                 {
@@ -184,7 +182,7 @@ class ChannelItemListViewController: UIViewController {
             }
         }
     }
-
+    
     func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
         operationInChannelImageList.cancel()
         let start = totalCount
@@ -192,7 +190,6 @@ class ChannelItemListViewController: UIViewController {
         
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId] != nil
         {
-            
             if((totalCount + limit) <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
                 end = limit
             }
@@ -265,7 +262,6 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapAddtoButton(sender: AnyObject) {
-        
         for(var i = 0; i < selectedArray.count; i++){
             let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
             selected.addObject(mediaSelectedId!)
@@ -351,10 +347,10 @@ class ChannelItemListViewController: UIViewController {
         {
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: selected)
             totalMediaCount = totalMediaCount - selected.count
-          
+            
             let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
             totalCount = filteredData.count
-         
+            
             downloadingFlag = false
             selectionFlag = false
             

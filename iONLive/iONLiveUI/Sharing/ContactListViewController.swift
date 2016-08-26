@@ -159,7 +159,6 @@ class ContactListViewController: UIViewController
         deleteUserArray.removeAllObjects()
         searchActive = false
         doneButton.hidden = true
-        
         contactPhoneNumbers.removeAll()
         displayContacts()
     }
@@ -434,7 +433,6 @@ class ContactListViewController: UIViewController
     func downloadMediaFromGCS(){
         for var i = 0; i < dataSource.count; i++
         {
-            print("In Contact List thread  \(i)")
             var profileImage : UIImage?
             let profileImageName = dataSource[i][profileImageKey] as! String
             if(profileImageName != "")

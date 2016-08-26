@@ -53,7 +53,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
@@ -80,7 +79,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     }
     
     // PRAGMA MARK:- textField delegates
-    
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
@@ -88,7 +86,6 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     }
     
     //PRAGMA MARK:- IBActions
-    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }

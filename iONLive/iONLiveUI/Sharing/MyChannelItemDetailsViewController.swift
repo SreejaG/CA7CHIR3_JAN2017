@@ -139,7 +139,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         end = start + end
         if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
         {
-
             operationInSharingImageList  = NSBlockOperation (block: {
                 GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
             })
@@ -300,7 +299,6 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0){
             if let img = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][tImageKey]
             {
-                
                 let defaults = NSUserDefaults .standardUserDefaults()
                 let userId = defaults.valueForKey(userLoginIdKey) as! String
                 

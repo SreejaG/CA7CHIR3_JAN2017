@@ -13,7 +13,6 @@ class MyChannelNotificationCell: UITableViewCell {
         super.awakeFromNib()
         NotificationSenderImageView.layer.cornerRadius = NotificationSenderImageView.frame.size.width/2
         NotificationSenderImageView.layer.masksToBounds = true
-        
     }
     
     override func setSelected(selected: Bool, animated: Bool) {

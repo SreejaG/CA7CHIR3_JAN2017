@@ -38,7 +38,6 @@ class GlobalStreamList: NSObject {
     {
         operationQueue.cancelAllOperations()
         operation2.cancel()
-        
     }
     
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
@@ -97,7 +96,6 @@ class GlobalStreamList: NSObject {
                 let pulltorefreshId = responseArr[index].valueForKey(pullTorefreshKey)?.stringValue
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time])
             }
-            
             if(imageDataSource.count > 0){
                 operation2 = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
@@ -133,11 +131,9 @@ class GlobalStreamList: NSObject {
                 
             }
             else{
-                
             }
         }
         else{
-            
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
@@ -178,8 +174,6 @@ class GlobalStreamList: NSObject {
             {
                 return
             }
-            
-            print("stream list thread \(i)")
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){
                 var imageForMedia : UIImage = UIImage()
@@ -198,33 +192,33 @@ class GlobalStreamList: NSObject {
                 else{
                     if(imageDataSource.count > 0)
                     {
-                    let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            if(result != UIImage()){
-                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                        let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                        if(mediaUrl != ""){
+                            let url: NSURL = convertStringtoURL(mediaUrl)
+                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                if(result != UIImage()){
+                                    let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    }
+                                    else{
+                                        imageForMedia = result
+                                        if(self.imageDataSource.count > 0)
+                                        {
+                                            self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                                        }
+                                        
+                                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    }
+                                    imageForMedia = result
                                 }
                                 else{
-                                    imageForMedia = result
-                                    if(self.imageDataSource.count > 0)
-                                    {
-                                        self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
-                                    }
-                                    
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    imageForMedia = UIImage(named: "thumb12")!
                                 }
-                                imageForMedia = result
-                            }
-                            else{
-                                imageForMedia = UIImage(named: "thumb12")!
-                            }
-                        })
-                    }
+                            })
+                        }
                     }
                 }
             }
@@ -262,6 +256,7 @@ class GlobalStreamList: NSObject {
             }
         }
     }
+    
     func getMediaByOffset(subId : String)
     {
         let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
