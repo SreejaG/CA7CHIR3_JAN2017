@@ -9,6 +9,9 @@
 
 @interface IPhoneCameraViewController : UIViewController
 
+-(void) setGUIBasedOnMode;
+- (void)removeObservers;
+
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
 -(void) deleteIphoneCameraSnapShots;
 -(void) loggedInDetails:(NSDictionary *) detailArray userImages : (NSArray *) userImages;

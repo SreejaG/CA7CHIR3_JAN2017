@@ -447,13 +447,15 @@ extension SnapCamSelectViewController
     
     @IBAction func snapcamButtonClicked(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
-        }
+//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+//        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//        navController.navigationBarHidden = true
+//        self.presentViewController(navController, animated: false) { () -> Void in
+//        }
+//
 
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {

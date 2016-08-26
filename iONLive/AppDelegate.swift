@@ -6,11 +6,15 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    
     var photoViewController : PhotoViewerViewController?
     let requestManager = RequestManager.sharedInstance
+    
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     let sharedMediaCount = "total_no_media_shared"
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
         
@@ -45,32 +49,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             defaults.setValue("0", forKey: "notificationArrived")
             initialViewController()
         }
+        
         self.window!.makeKeyAndVisible()
         return true
     }
     
     func applicationWillResignActive(application: UIApplication) {
-        
     }
     
     func applicationDidEnterBackground(application: UIApplication) {
-        
     }
     
     func applicationWillEnterForeground(application: UIApplication) {
-        
         NSNotificationCenter.defaultCenter().postNotificationName("enterBackground", object:nil)
         if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") != nil{
-        if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
-        {
-            if(application.applicationState == .Inactive || application.applicationState == .Background)
+            if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
             {
-                GlobalDataChannelList.sharedInstance.initialise()
-                ChannelSharedListAPI.sharedInstance.initialisedata()
-                loadNotificationView()
+                if(application.applicationState == .Inactive || application.applicationState == .Background)
+                {
+                    GlobalDataChannelList.sharedInstance.initialise()
+                    ChannelSharedListAPI.sharedInstance.initialisedata()
+                    loadNotificationView()
+                }
             }
         }
-        }
+        
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -228,7 +231,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
             
             if (result["type"] as! String == "share"){
-  
+                
                 NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
                 let chid : String = "\(result["channelId"]!)"
                 updateCount(chid)
@@ -239,7 +242,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 {
                     let chid : String = "\(result["channelId"]!)"
                     defaults.setValue("0", forKey: "notificationArrived")
-
+                    
                     NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
                     removeEntryFromShare(chid)
                     removeEntryFromGlobal(chid)
@@ -247,13 +250,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if(result["subType"] as! String == "useradded")
                 {
                     defaults.setValue("0", forKey: "notificationArrived")
-
+                    
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationChannelText")
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
                 }
             }
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result) //
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) // 
+            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result) //
             //used while added  a media
             
         }
@@ -263,16 +266,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
             if(result["subType"] as! String == "started"){
                 defaults.setValue("1", forKey: "notificationArrived")
-
+                
             }
             else{
-                 defaults.setValue("0", forKey: "notificationArrived")
+                defaults.setValue("0", forKey: "notificationArrived")
             }
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
         {
             defaults.setValue("1", forKey: "notificationArrived")
-
+            
         }
         
     }
@@ -283,11 +286,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             if(mediaShared.count > 0)
             {
-            let sharedCount = mediaShared[index][sharedMediaCount] as! String
-            print( "\(#file) \(#line) \(sharedCount)")
-            let  latestCount : Int = Int(sharedCount)! + 1
-            mediaShared[index][sharedMediaCount]  = "\(latestCount)"
-            NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+                let sharedCount = mediaShared[index][sharedMediaCount] as! String
+                print( "\(#file) \(#line) \(sharedCount)")
+                let  latestCount : Int = Int(sharedCount)! + 1
+                mediaShared[index][sharedMediaCount]  = "\(latestCount)"
+                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             }
         }
         let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
@@ -298,10 +301,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][sharedMediaCount]  = "1"
             }
         }
-
+        
         NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("CountIncrementedPushNotification", object: channelId)
-
+        
     }
     func removeEntryFromShare(channelId : String)
     {
@@ -310,16 +313,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             if(mediaShared.count > 0)
             {
-            print(mediaShared)
-            mediaShared.removeAtIndex(index)
-            NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+                print(mediaShared)
+                mediaShared.removeAtIndex(index)
+                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
             }
         }
         print(mediaShared)
         
         
     }
-
+    
     func removeEntryFromGlobal(channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: false)
