@@ -236,29 +236,58 @@ class ChannelSharedListAPI: NSObject {
             }
             var mediaImage : UIImage?
             var profileImage : UIImage?
-            let profileImageName = dataSource[i][profileImageKey] as! String
-            if(profileImageName != "")
+            if(dataSource.count > 0)
             {
-                profileImage = createProfileImage(profileImageName)
-            }
-            else{
-                profileImage = UIImage(named: "dummyUser")
-            }
-            
-            let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
-            if(mediaThumbUrl != "noimage"){
-                if(mediaThumbUrl != "")
+                let profileImageName = dataSource[i][profileImageKey] as! String
+                if(profileImageName != "")
                 {
-                    mediaImage = createMediaThumb(mediaThumbUrl)
+                    profileImage = createProfileImage(profileImageName)
                 }
                 else{
-                    mediaImage = UIImage()
+                    profileImage = UIImage(named: "dummyUser")
                 }
+                
+                if(dataSource.count > 0)
+                {
+                    if let media1 = dataSource[i][mediaImageKey]
+                    {
+                        if(media1 as! String == "noimage"){
+                            if(media1 as! String != "")
+                            {
+                                mediaImage = createMediaThumb(media1 as! String)
+                            }
+                            else{
+                                mediaImage = UIImage()
+                            }
+                        }
+                        else{
+                            mediaImage = UIImage()
+                        }
+                        
+                    }
+                }
+                
+//                if let mediaThumbUrl = dataSource[i][mediaImageKey]
+//                {
+//                    if(mediaThumbUrl as! String == "noimage"){
+//                        if(mediaThumbUrl != "")
+//                        {
+//                            mediaImage = createMediaThumb(mediaThumbUrl)
+//                        }
+//                        else{
+//                            mediaImage = UIImage()
+//                        }
+//                    }
+//                    else{
+//                        mediaImage = UIImage()
+//                    }
+//                }
+//                else{
+//                    mediaImage = UIImage()
+//                }
+                
+                
             }
-            else{
-                mediaImage = UIImage()
-            }
-            
             if(!pullTorefresh)
             {
                 if(!checkDuplicate(self.dataSource[i][self.channelIdkey] as! String))
