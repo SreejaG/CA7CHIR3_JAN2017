@@ -338,9 +338,11 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             uploadImage(fullImageURL, imageToSave: imageForProfile, completion: { (result) in
                 self.uploadImage(self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
                     if(result == "Success"){
+                         self.removeOverlay()
                         self.imageForProfileOld = self.imageForProfile
                     }
                     else{
+                        self.removeOverlay()
                         self.imageForProfile = self.imageForProfileOld
                     }
                 })
@@ -393,7 +395,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, timeZone: timeUpdate, success: { (response) in
-            self.removeOverlay()
+//            self.removeOverlay()
             let savingPath = "\(userId)Profile"
             FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
             self.fullNames = self.fullName

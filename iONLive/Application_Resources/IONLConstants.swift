@@ -16,7 +16,7 @@ let subChannelIdKey = "channel_sub_detail_id"
 let apiDeveloperFailureMessage = "developerMsg"
 
 //let vowzaIp = "130.211.135.170"
-let vowzaIp = "104.197.92.137"
+let vowzaIp = "104.154.69.174"
 
 //channel details
 
