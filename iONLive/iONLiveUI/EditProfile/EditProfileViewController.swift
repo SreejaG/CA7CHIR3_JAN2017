@@ -731,13 +731,41 @@ extension EditProfileViewController:UITableViewDataSource
     
     func editProfileTapped(sender:UIButton!)
     {
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.SavedPhotosAlbum){
-            imagePicker.delegate = self
-            imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum;
-            imagePicker.allowsEditing = false
-            
-            self.presentViewController(imagePicker, animated: true, completion: nil)
+        self.imagePicker.delegate = self
+        let myActionSheet = UIAlertController(title: "", message: "How would you like to set your photo?", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        
+        let takeAction = UIAlertAction(title: "Take a photo", style: UIAlertActionStyle.Default) { (action) in
+            if (UIImagePickerController.isSourceTypeAvailable(.Camera)) {
+                if UIImagePickerController.availableCaptureModesForCameraDevice(.Rear) != nil {
+                    self.imagePicker.allowsEditing = false
+                    self.imagePicker.sourceType = .Camera
+                    self.imagePicker.cameraCaptureMode = .Photo
+                    self.presentViewController(self.imagePicker, animated: true, completion: {
+                        
+                    })
+                    
+                } else {
+                }
+            } else {
+            }
         }
+
+        let chooseAction = UIAlertAction(title: "Choose a photo", style: UIAlertActionStyle.Default) { (action) in
+           
+            self.imagePicker.allowsEditing = false
+            self.imagePicker.sourceType = .SavedPhotosAlbum
+            self.presentViewController(self.imagePicker, animated: true, completion: nil)
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) in
+            print("Cancel action button tapped")
+        }
+        
+        myActionSheet.addAction(takeAction)
+        myActionSheet.addAction(chooseAction)
+        myActionSheet.addAction(cancelAction)
+        
+        self.presentViewController(myActionSheet, animated: true, completion: nil)
     }
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
