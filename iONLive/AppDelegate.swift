@@ -38,11 +38,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.backgroundColor = UIColor.whiteColor()
         
         if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? NSDictionary {
-            let defaults = NSUserDefaults .standardUserDefaults()
-            defaults.setValue("1", forKey: "notificationArrived")
+             NSUserDefaults.standardUserDefaults().setValue(remoteNotification, forKey: "remote")
             GlobalDataChannelList.sharedInstance.initialise()
             ChannelSharedListAPI.sharedInstance.initialisedata()
-            loadNotificationView()
+            let result = remoteNotification["messageFrom"] as! NSDictionary
+            if(result["type"] as! String == "liveStream")
+            {
+                NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
+                if(result["subType"] as! String == "started"){
+                    defaults.setValue("1", forKey: "notificationArrived")
+                    
+                }
+                else{
+                    defaults.setValue("0", forKey: "notificationArrived")
+                }
+            }
+            else if ( (result["type"] as! String == "share") || (result["type"] as! String == "like" ))
+            {
+                defaults.setValue("1", forKey: "notificationArrived")
+            }
+            else{
+               defaults.setValue("0", forKey: "notificationArrived")
+            }
+            
+            
+            if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
+            {
+                loadNotificationView()
+            }
+            else{
+                let defaults = NSUserDefaults .standardUserDefaults()
+                defaults.setValue("0", forKey: "notificationArrived")
+                initialViewController()
+            }
         }
         else{
             let defaults = NSUserDefaults .standardUserDefaults()
@@ -58,6 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(application: UIApplication) {
+       
     }
     
     func applicationWillEnterForeground(application: UIApplication) {
@@ -81,6 +110,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(application: UIApplication) {
         self.saveContext()
+         NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
     }
     
     func initialViewController()
@@ -138,14 +168,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func  loadNotificationView()  {
+        
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue("1", forKey: "notificationFlag")
         var navigationController:UINavigationController?
-        let notificationStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
-        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
+        let notificationStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
+        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
         navigationController = UINavigationController(rootViewController: notificationViewController)
         navigationController!.navigationBarHidden = true
         self.window?.rootViewController = navigationController
+        
+        
+//        let defaults = NSUserDefaults .standardUserDefaults()
+//        defaults.setValue("1", forKey: "notificationFlag")
+//        var navigationController:UINavigationController?
+//        let notificationStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
+//        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
+//        navigationController = UINavigationController(rootViewController: notificationViewController)
+//        navigationController!.navigationBarHidden = true
+//        self.window?.rootViewController = navigationController
     }
     
     // MARK: - Core Data stack
@@ -215,6 +256,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         let result = userInfo["messageFrom"] as! NSDictionary
         let defaults = NSUserDefaults .standardUserDefaults()
+        
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             defaults.setValue("0", forKey: "notificationArrived")

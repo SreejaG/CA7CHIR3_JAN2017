@@ -16,6 +16,7 @@ class StreamsGalleryViewController: UITabBarController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.addTabBarItems()
+        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
     }
     
     func addTabBarItems()
