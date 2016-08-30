@@ -130,6 +130,7 @@ int timerCount = 0;
     dispatch_async( self.sessionQueue, ^{
         if ( self.setupResult == AVCamSetupResultSuccess ) {
             [self.session stopRunning];
+            NSLog(@"%@Session ======== > ", self.session);
             [self removeObservers:@"remove" completion:^{
                 
             }];
@@ -414,18 +415,20 @@ int timerCount = 0;
             [self initialiseAPICall];
         }
         
-        [self configureCameraSettings];
+        [self configureCameraSettings:@"configure" completion:^{
+            if(takePictureFlag == false)
+            {
+                PhotoViewerInstance.iphoneCam = self;
+                SetUpView *viewSet = [[SetUpView alloc]init];
+                [viewSet getValue];
+            }
+            
+            [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
+            [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
+
+        }];
         
-        if(takePictureFlag == false)
-        {
-            PhotoViewerInstance.iphoneCam = self;
-            SetUpView *viewSet = [[SetUpView alloc]init];
-            [viewSet getValue];
-        }
-        
-        [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
-        [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
-    }];
+           }];
 }
 
 -(void) updateThumbnails
@@ -585,47 +588,49 @@ int timerCount = 0;
             self.session = [[AVCaptureSession alloc] init];
             self.previewView.hidden = false;
             self.previewView.session = nil;
-            [self configureCameraSettings];
-            self.previewView.session = self.session;
-            dispatch_async( self.sessionQueue, ^{
-                switch ( self.setupResult )
-                {
-                    case AVCamSetupResultSuccess:
+            [self configureCameraSettings:@"configure" completion:^{
+                self.previewView.session = self.session;
+                dispatch_async( self.sessionQueue, ^{
+                    switch ( self.setupResult )
                     {
-                        [self addObservers];
-                        [self.session startRunning];
-                        self.sessionRunning = self.session.isRunning;
-                        if(loadingCameraFlag == false){
-                            [self hidingView];
+                        case AVCamSetupResultSuccess:
+                        {
+                            [self addObservers];
+                            [self.session startRunning];
+                            self.sessionRunning = self.session.isRunning;
+                            if(loadingCameraFlag == false){
+                                [self hidingView];
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case AVCamSetupResultCameraNotAuthorized:
-                    {
-                        dispatch_async( dispatch_get_main_queue(), ^{
-                            NSString *message = NSLocalizedString( @"CA7CH doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera");
-                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
-                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
-                            [alertController addAction:cancelAction];
+                        case AVCamSetupResultCameraNotAuthorized:
+                        {
+                            dispatch_async( dispatch_get_main_queue(), ^{
+                                NSString *message = NSLocalizedString( @"CA7CH doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera");
+                                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+                                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+                                [alertController addAction:cancelAction];
+                                
+                                UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                                }];
+                                [alertController addAction:settingsAction];
+                                [self presentViewController:alertController animated:YES completion:nil];
+                            } );
+                            break;
+                        }
+                        case AVCamSetupResultSessionConfigurationFailed:
+                        {
+                            dispatch_async( dispatch_get_main_queue(), ^{
+                                [self setGUIBasedOnMode];
+                            } );
                             
-                            UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
-                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-                            }];
-                            [alertController addAction:settingsAction];
-                            [self presentViewController:alertController animated:YES completion:nil];
-                        } );
-                        break;
+                            break;
+                        }
                     }
-                    case AVCamSetupResultSessionConfigurationFailed:
-                    {
-                        dispatch_async( dispatch_get_main_queue(), ^{
-                            [self setGUIBasedOnMode];
-                        } );
-                        
-                        break;
-                    }
-                }
-            });
+                });
+            }];
+           
         }
     }
 }
@@ -636,7 +641,7 @@ int timerCount = 0;
     return [defaults boolForKey:@"StartedStreaming"];
 }
 
--(void)configureCameraSettings
+-(void)configureCameraSettings: (NSString *)name completion:(void (^)(void))completionBlock
 {
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
     self.setupResult = AVCamSetupResultSuccess;
@@ -744,6 +749,7 @@ int timerCount = 0;
         
         [self.session commitConfiguration];
     } );
+    completionBlock();
 }
 
 -(void)hidingView
@@ -1445,6 +1451,7 @@ int timerCount = 0;
                     [self.stillImageOutput removeObserver:self forKeyPath:@"capturingStillImage" context:CapturingStillImageContext];
                     [[NSUserDefaults standardUserDefaults] setObject:false forKey:@"HasObserver"];
                 }@catch(id anException){
+                    [[NSUserDefaults standardUserDefaults] setObject:false forKey:@"HasObserver"];
                 }
             }
             [self.session stopRunning];
