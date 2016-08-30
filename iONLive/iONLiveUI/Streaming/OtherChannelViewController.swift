@@ -269,8 +269,18 @@ class OtherChannelViewController: UIViewController  {
         if(success == "success")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+                {
                 self.removeOverlay()
                 self.channelItemsCollectionView.reloadData()
+                self.NoDatalabel.removeFromSuperview()
+                }
+               
+            })
+        }
+        else{
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
                 self.NoDatalabel.removeFromSuperview()
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                 {
@@ -279,11 +289,6 @@ class OtherChannelViewController: UIViewController  {
                     self.NoDatalabel.text = "No Media Available"
                     self.view.addSubview(self.NoDatalabel)
                 }
-            })
-        }
-        else{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
             })
         }
     }

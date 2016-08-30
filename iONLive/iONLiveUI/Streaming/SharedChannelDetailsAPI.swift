@@ -210,13 +210,7 @@ class SharedChannelDetailsAPI: NSObject {
                 self.operationQueue.addOperation(operation2)
             }
             else{
-                if self.selectedSharedChannelMediaSource.count > 0
-                {
-                    NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
-                }
-                else{
-                    NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
-                }
+              NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
             }
         }
         else

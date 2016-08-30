@@ -96,8 +96,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             {
                 if(application.applicationState == .Inactive || application.applicationState == .Background)
                 {
+                    
                     GlobalDataChannelList.sharedInstance.initialise()
-                    ChannelSharedListAPI.sharedInstance.initialisedata()
+                        ChannelSharedListAPI.sharedInstance.initialisedata()
                     loadNotificationView()
                 }
             }
