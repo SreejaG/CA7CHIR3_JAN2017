@@ -684,7 +684,7 @@ int timerCount = 0;
             [self.session addInput:videoDeviceInput];
             self.videoDeviceInput = videoDeviceInput;
             
-            dispatch_async( dispatch_get_main_queue(), ^{
+//            dispatch_async( dispatch_get_main_queue(), ^{
                 UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
                 AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
                 if ( statusBarOrientation != UIInterfaceOrientationUnknown ) {
@@ -699,7 +699,7 @@ int timerCount = 0;
                     }
                 }
                 previewLayer.connection.videoOrientation = initialVideoOrientation;
-            } );
+//            } );
         }
         else {
             self.setupResult = AVCamSetupResultSessionConfigurationFailed;

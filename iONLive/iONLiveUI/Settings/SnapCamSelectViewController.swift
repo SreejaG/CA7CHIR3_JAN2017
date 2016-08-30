@@ -142,6 +142,7 @@ extension SnapCamSelectViewController:UITableViewDelegate
             break
             
         default :
+           
             let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
             let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
             let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
