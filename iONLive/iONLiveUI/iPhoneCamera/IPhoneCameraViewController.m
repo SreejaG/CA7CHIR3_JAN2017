@@ -130,7 +130,6 @@ int timerCount = 0;
     dispatch_async( self.sessionQueue, ^{
         if ( self.setupResult == AVCamSetupResultSuccess ) {
             [self.session stopRunning];
-            NSLog(@"%@Session ======== > ", self.session);
             [self removeObservers:@"remove" completion:^{
                 
             }];
@@ -248,17 +247,17 @@ int timerCount = 0;
         dispatch_async( dispatch_get_main_queue(), ^{
             if (shutterActionMode == SnapCamSelectionModeLiveStream)
             {
-//                dispatch_async( dispatch_get_main_queue(), ^{
-//                    _liveSteamSession.previewView.backgroundColor = [UIColor clearColor];
-//                     _liveSteamSession.previewView.hidden = false;
-//                    [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
-//                    _activityImageView.hidden = true;
-//                    [__activityIndicatorView stopAnimating];
-//                    __activityIndicatorView.hidden = true;
-//                    _noDataFound.hidden = true;
-//                    self.activitView.hidden = true;
-//                    [self.bottomView setUserInteractionEnabled:YES];
-//                });
+                //                dispatch_async( dispatch_get_main_queue(), ^{
+                //                    _liveSteamSession.previewView.backgroundColor = [UIColor clearColor];
+                //                     _liveSteamSession.previewView.hidden = false;
+                //                    [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+                //                    _activityImageView.hidden = true;
+                //                    [__activityIndicatorView stopAnimating];
+                //                    __activityIndicatorView.hidden = true;
+                //                    _noDataFound.hidden = true;
+                //                    self.activitView.hidden = true;
+                //                    [self.bottomView setUserInteractionEnabled:YES];
+                //                });
             }
             else{
                 _cameraButton.hidden = false;
@@ -425,10 +424,10 @@ int timerCount = 0;
             
             [[NSUserDefaults standardUserDefaults] setValue:@"secondCall" forKey:@"CallingAPI"];
             [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
-
+            
         }];
         
-           }];
+    }];
 }
 
 -(void) updateThumbnails
@@ -630,7 +629,7 @@ int timerCount = 0;
                     }
                 });
             }];
-           
+            
         }
     }
 }

@@ -64,7 +64,7 @@ import UIKit
         userImages.removeAll()
         let userThumbnailImage = channelDetails["sharedUserThumbnails"] as! NSArray
         let cameraController = IPhoneCameraViewController()
-        let sizeThumb = CGSizeMake(28,28)
+        let sizeThumb = CGSizeMake(30,30)
         for i in 0 ..< userThumbnailImage.count
         {
             var image = UIImage()
