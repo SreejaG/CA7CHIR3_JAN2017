@@ -30,11 +30,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     let calendar = NSCalendar.currentCalendar()
     var refreshAlert : UIAlertController = UIAlertController()
     var NoDatalabel : UILabel = UILabel()
+    var timer : NSTimer = NSTimer()
     override func viewDidLoad() {
         super.viewDidLoad()
         newShareAvailabellabel.layer.cornerRadius = 5
         initialise()
-        
+        timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChannelsSharedController.timerFunc(_:)), userInfo: nil, repeats: false)
+
         if NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") != nil{
             let messageText = NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") as! String
             if(messageText != "")
@@ -55,12 +57,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
         
     }
-    
-    override func viewWillAppear(animated: Bool) {
+    func timerFunc(timer:NSTimer!) {
+     
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
             self.removeOverlay()
-            
             if (GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
             {
                 self.removeOverlay()
@@ -74,9 +75,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         else
         {
             self.removeOverlay()
-
         }
+    }
 
+    override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
     }
     
