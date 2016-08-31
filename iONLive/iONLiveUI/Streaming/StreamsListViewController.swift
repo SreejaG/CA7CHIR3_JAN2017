@@ -176,6 +176,14 @@ class StreamsListViewController: UIViewController{
             mediaAndLiveArray.removeAtIndex(selectedArray[i] - i)
         }
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if(self.mediaAndLiveArray.count == 0)
+            {
+                self.NoDatalabel.removeFromSuperview()
+                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel.text = "No Media Available"
+                self.view.addSubview(self.NoDatalabel)
+            }
             self.streamListCollectionView.reloadData()
         })
     }
@@ -702,19 +710,21 @@ class StreamsListViewController: UIViewController{
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.mediaAndLiveArray.removeAll()
             self.mediaAndLiveArray = self.liveStreamSource +  GlobalStreamList.sharedInstance.GlobalStreamDataSource
-            if(self.mediaAndLiveArray.count == 0)
-            {
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
-                self.NoDatalabel.text = "No Media Available"
-                self.view.addSubview(self.NoDatalabel)
-            }
+//            if(self.mediaAndLiveArray.count == 0)
+//            {
+//                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+//                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+//                self.NoDatalabel.text = "No Media Available"
+//                self.view.addSubview(self.NoDatalabel)
+//            }
             self.streamListCollectionView.reloadData()
         })
     }
     
     func streamUpdate(notif: NSNotification)
     {
+        NSNotificationCenter.defaultCenter().postNotificationName("RemoveOverlay", object: nil)
+
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.scrollObj.finishInfiniteScroll()
             self.scrollObj = UIScrollView()
@@ -750,7 +760,7 @@ class StreamsListViewController: UIViewController{
                 else{
                     self.mediaAndLiveArray.removeAll()
                     self.mediaAndLiveArray = GlobalStreamList.sharedInstance.GlobalStreamDataSource
-                    
+                    self.NoDatalabel.removeFromSuperview()
                     if(self.mediaAndLiveArray.count == 0)
                     {
                         self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))

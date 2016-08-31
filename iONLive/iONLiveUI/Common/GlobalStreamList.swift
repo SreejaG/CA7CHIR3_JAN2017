@@ -170,10 +170,10 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for var i = 0; i < imageDataSource.count; i++
         {
-            if(operation2.cancelled)
-            {
-                return
-            }
+//            if(operation2.cancelled)
+//            {
+//                return
+//            }
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){
                 var imageForMedia : UIImage = UIImage()

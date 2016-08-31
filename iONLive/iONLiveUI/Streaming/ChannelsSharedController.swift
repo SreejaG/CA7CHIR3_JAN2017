@@ -57,19 +57,26 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     
     override func viewWillAppear(animated: Bool) {
-        if(GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
-        {
-            self.removeOverlay()
-        }
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
-            self.NoDatalabel.removeFromSuperview()
-            self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+            self.removeOverlay()
             
-            self.NoDatalabel.textAlignment = NSTextAlignment.Center
-            self.NoDatalabel.text = "No Channel Available"
-            self.view.addSubview(self.NoDatalabel)
+            if (GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
+            {
+                self.removeOverlay()
+                self.NoDatalabel.removeFromSuperview()
+                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel.text = "No Channel Available"
+                self.view.addSubview(self.NoDatalabel)
+            }
         }
+        else
+        {
+            self.removeOverlay()
+
+        }
+
         super.viewWillAppear(true)
     }
     
@@ -89,6 +96,8 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.updateChannelList), name: "SharedChannelList", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pushNotificationUpdate), name: "PushNotificationChannel", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.removeOverlay), name: "RemoveOverlay", object:nil)
+        
         newShareAvailabellabel.hidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
@@ -99,7 +108,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             
         }else
         {
-            self.showOverlay()
+            self.removeOverlay()
         }
     }
     
@@ -107,6 +116,19 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     func channelDeletionPushNotification(info:  [String : AnyObject])
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+                if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
+                {
+                    self.NoDatalabel.removeFromSuperview()
+                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                    self.NoDatalabel.text = "No Channel Available"
+                    self.view.addSubview(self.NoDatalabel)
+                }
+                else
+                {
+                    self.NoDatalabel.removeFromSuperview()
+                }
             self.ChannelSharedTableView.reloadData()
         })
     }
@@ -303,21 +325,22 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.removeOverlay()
             })
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
+                {
+                    self.NoDatalabel.removeFromSuperview()
+                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                    self.NoDatalabel.text = "No Channel Available"
+                    self.view.addSubview(self.NoDatalabel)
+                }
+                else
+                {
+                    self.NoDatalabel.removeFromSuperview()
+                }
+            })
+
         }
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
-            {
-                self.NoDatalabel.removeFromSuperview()
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
-                self.NoDatalabel.text = "No Channel Available"
-                self.view.addSubview(self.NoDatalabel)
-            }
-            else
-            {
-                self.NoDatalabel.removeFromSuperview()
-            }
-        })
     }
     
     func pullToRefresh()
@@ -469,15 +492,18 @@ extension ChannelsSharedController:UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
-        {
-            if(indexPath.row == ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count - 1){
-                self.removeOverlay()
-            }
-        }
-        else{
+//        if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
+//        {
+//            if(indexPath.row == ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count - 1){
+//                self.removeOverlay()
+//            }
+//            else{
+//                self.removeOverlay()
+//            }
+//        }
+//        else{
             self.removeOverlay()
-        }
+       // }
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -524,10 +550,10 @@ extension ChannelsSharedController:UITableViewDataSource
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {
-                            cell.latestImage.hidden = false
-                            cell.countLabel.hidden = true
-                            cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][mediaImageKey] as? UIImage
-                            cell.detailLabel.text = "@" + text + " " +  sdifferentString
+                                cell.latestImage.hidden = false
+                                cell.countLabel.hidden = true
+                                cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][self.mediaImageKey] as? UIImage
+                                cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
                         else
                         {

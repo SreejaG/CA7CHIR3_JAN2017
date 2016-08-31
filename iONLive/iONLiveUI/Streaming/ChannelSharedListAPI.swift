@@ -159,7 +159,7 @@ class ChannelSharedListAPI: NSObject {
                     else{
                         mediaShared.append([channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
                     }
-                    
+                    print(mediaThumbUrl)
                     dummy.append([channelIdkey:channelId!, subChannelIdKey : channelSubId!,channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
                 }
             }
@@ -230,10 +230,10 @@ class ChannelSharedListAPI: NSObject {
     func downloadMediaFromGCS(){
         for var i = 0; i < dataSource.count; i++
         {
-            if operation2.cancelled
-            {
-                return
-            }
+//            if operation2.cancelled
+//            {
+//                return
+//            }
             var mediaImage : UIImage?
             var profileImage : UIImage?
             if(dataSource.count > 0)
@@ -251,9 +251,10 @@ class ChannelSharedListAPI: NSObject {
                 {
                     if let media1 = dataSource[i][mediaImageKey]
                     {
-                        if(media1 as! String == "noimage"){
+                        if(media1 as! String != "noimage"){
                             if(media1 as! String != "")
                             {
+                            
                                 mediaImage = createMediaThumb(media1 as! String)
                             }
                             else{
