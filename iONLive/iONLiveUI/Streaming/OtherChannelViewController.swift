@@ -379,6 +379,9 @@ class OtherChannelViewController: UIViewController  {
                     flag = true
                     index = i
                 }
+                else{
+                    index = i
+                }
             }
         }
         if(flag)
@@ -388,6 +391,14 @@ class OtherChannelViewController: UIViewController  {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage
             }
         }
+        else{
+            if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
+            {
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] =  UIImage()
+            }
+        }
+       
+        
     }
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {

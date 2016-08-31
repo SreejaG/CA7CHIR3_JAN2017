@@ -492,7 +492,7 @@ class StreamsListViewController: UIViewController{
                 let channelIdValue = mediaAndLiveArray[i][self.channelIdkey] as! String
                 var foundFlag : Bool = false
                 var  count : Int = 0
-                if ( channelIdValue == "\(channel)")
+                if (channelIdValue == "\(channel)")
                 {
                     if(i < mediaAndLiveArray.count)
                     {

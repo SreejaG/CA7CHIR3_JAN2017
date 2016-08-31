@@ -277,7 +277,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 {
                     let chid : String = "\(result["channelId"]!)"
                     defaults.setValue("0", forKey: "notificationArrived")
-                    
                     NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
                     removeEntryFromShare(chid)
                     removeEntryFromGlobal(chid)
