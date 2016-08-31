@@ -526,14 +526,19 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         willEnterFlag = 0
         let fullScreenController = notif2.object as! MPMoviePlayerController
-        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        })
     }
     
     func moviePlayerWillenterFullScreen(notif:NSNotification)
     {
         willEnterFlag = 1
         let fullScreenController = notif.object as! MPMoviePlayerController
-        fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+        })
     }
     
     func initialise()

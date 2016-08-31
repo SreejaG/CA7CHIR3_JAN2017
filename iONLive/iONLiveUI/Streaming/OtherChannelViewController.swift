@@ -173,7 +173,14 @@ class OtherChannelViewController: UIViewController  {
             let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
             if(type == "live")
             {
-                SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
+                    self.channelItemsCollectionView.reloadData()
+                })
+            }
+            else
+            {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.channelItemsCollectionView.reloadData()
                 })

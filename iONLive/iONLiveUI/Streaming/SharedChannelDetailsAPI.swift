@@ -191,6 +191,7 @@ class SharedChannelDetailsAPI: NSObject {
                         else{
                             self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate], atIndex: 0)
                         }
+                    NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
                     })
                 }
             }
