@@ -26,7 +26,12 @@ class IPhoneLiveStreaming: NSObject {
         liveStreamingHelpers.stopLiveStreaming()
     }
     
-    func mapStream(){
-        liveStreamingHelpers.mapStream()
-    }
+//    func mapStream(){
+//        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey) as! String
+//        let streamToken = NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String
+//       
+//        liveStreamingHelpers.setDefaultMappingForLiveStream(streamToken)
+//
+////        liveStreamingHelpers.mapStream()
+//    }
 }

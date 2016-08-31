@@ -91,6 +91,7 @@ UIView *snapshot;
 @implementation IPhoneCameraViewController
 
 IPhoneLiveStreaming * liveStreaming;
+LiveStreamingHelpers *helper;
 FileManagerViewController *fileManager;
 int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
@@ -127,6 +128,14 @@ int timerCount = 0;
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+    
+    if([self isStreamStarted]){
+        [liveStreaming stopStreamingClicked];
+        [_liveSteamSession endRtmpSession];
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"StartedStreaming"];
+    }
+
     dispatch_async( self.sessionQueue, ^{
         if ( self.setupResult == AVCamSetupResultSuccess ) {
             [self.session stopRunning];
@@ -146,6 +155,7 @@ int timerCount = 0;
     takePictureFlag = false;
     [timer invalidate];
     timer = nil;
+    
     
 }
 -(void)addApplicationObserversInIphone
@@ -287,19 +297,19 @@ int timerCount = 0;
             [[ErrorManager sharedInstance] noNetworkConnection];
         }
         else if([code  isEqual: @"ResponseError"]){
-            if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
-            {
-                if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
-                {
-                    
+//            if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
+//            {
+//                if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
+//                {
+                
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                     message:@""
                                                                    delegate:self
                                                           cancelButtonTitle:@"Retry"
                                                           otherButtonTitles:@"Exit App",nil];
                     [alert show];
-                }
-            }
+//                }
+//            }
         }
         else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
             [self loadInitialView];
@@ -515,7 +525,7 @@ int timerCount = 0;
         if(!_activityImageView.hidden)
         {
             dispatch_async( dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error "
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                 message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
@@ -772,6 +782,7 @@ int timerCount = 0;
     [self setGUIModifications];
     fileManager = [[FileManagerViewController alloc]init];
     liveStreaming = [[IPhoneLiveStreaming alloc]init];
+    helper = [[LiveStreamingHelpers alloc]init];
 }
 
 -(void)enabelOrDisableButtons: (BOOL *)value
@@ -1411,6 +1422,7 @@ int timerCount = 0;
         {
         }
         else{
+            [helper mapLiveStream];
             [self deleteThumbnailImageLive];
         }
     }];
@@ -1798,7 +1810,6 @@ int timerCount = 0;
     if ([self isStreamStarted])
     {
         [self generateStreamAlert:@"loadStreamsGalleryView"];
-        [self generateVideoAlert:@"loadStreamsGalleryView"];
     }
     else  if ( self.movieFileOutput.isRecording ) {
         [self generateVideoAlert:@"loadStreamsGalleryView"];
