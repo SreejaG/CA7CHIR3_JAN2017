@@ -15,6 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        if(NSUserDefaults.standardUserDefaults().boolForKey("StartedStreaming"))
+        {
+            NSUserDefaults.standardUserDefaults().setBool(false, forKey: "StartedStreaming")
+        }
+     
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
         
@@ -98,7 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 {
                     
                     GlobalDataChannelList.sharedInstance.initialise()
-                        ChannelSharedListAPI.sharedInstance.initialisedata()
+                    ChannelSharedListAPI.sharedInstance.initialisedata()
                     loadNotificationView()
                 }
             }

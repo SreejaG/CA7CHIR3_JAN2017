@@ -2,7 +2,7 @@
 import Foundation
 
 
-class LiveStreamingHelpers
+class LiveStreamingHelpers: NSObject
 {
     let livestreamingManager = LiveStreamingManager()
     let requestManager = RequestManager()
@@ -114,10 +114,13 @@ class LiveStreamingHelpers
                     
                     let streamToken:String = json["streamToken"] as! String
                     NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
-                    self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String)
                     
-                    self.setDefaultMappingForLiveStream(streamTocken)
+                    self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String )
+                    
+                    //                    NSNotificationCenter.defaultCenter().addObserver(self, selector:Selector(self.mapLiveStream()), name: "mapLiveStream", object: nil)
+                    
                 }
+                    
                 else
                 {
                     self.streamingFailed()
@@ -137,6 +140,12 @@ class LiveStreamingHelpers
             self.streamingFailed()
             ErrorManager.sharedInstance.authenticationIssue()
         }
+    }
+    
+    func mapLiveStream(){
+        
+        let streamToken = NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String
+        self.setDefaultMappingForLiveStream(streamToken)
     }
     
     func setDefaultMappingForLiveStream(Tocken : String)
