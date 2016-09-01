@@ -12,7 +12,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     let sharedMediaCount = "total_no_media_shared"
-    
+    var deleteQueue : NSMutableArray = NSMutableArray()
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         if(NSUserDefaults.standardUserDefaults().boolForKey("StartedStreaming"))
@@ -108,6 +109,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+        if(deleteQueue.count > 0)
+        {
+            for(var i = 0 ; i < deleteQueue.count ; i += 1)
+            {
+
+                NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: deleteQueue[i])
+            }
+        }
+        deleteQueue.removeAllObjects()
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -267,6 +277,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             defaults.setValue("0", forKey: "notificationArrived")
             NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
+            
+            if ( result["type"] as! String == "media")
+            {
+                if(application.applicationState == .Inactive || application.applicationState == .Background)
+                {
+                    deleteQueue.addObject(result)
+                }
+            }
         }
         else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
             
