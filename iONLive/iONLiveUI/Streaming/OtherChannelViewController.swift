@@ -175,7 +175,7 @@ class OtherChannelViewController: UIViewController  {
             {
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    if (SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+                    if ( SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                     {
                     SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
                     self.channelItemsCollectionView.reloadData()
