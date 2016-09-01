@@ -87,7 +87,7 @@ class LiveStreamingHelpers: NSObject
         else
         {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
-            ErrorManager.sharedInstance.authenticationIssue()
+//            ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     
@@ -138,7 +138,7 @@ class LiveStreamingHelpers: NSObject
         else
         {
             self.streamingFailed()
-            ErrorManager.sharedInstance.authenticationIssue()
+//            ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     
@@ -265,7 +265,7 @@ class LiveStreamingHelpers: NSObject
         }
         else
         {
-            ErrorManager.sharedInstance.authenticationIssue()
+//            ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     
