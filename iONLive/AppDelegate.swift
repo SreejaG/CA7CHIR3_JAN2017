@@ -272,7 +272,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         let result = userInfo["messageFrom"] as! NSDictionary
         let defaults = NSUserDefaults .standardUserDefaults()
-        
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             defaults.setValue("0", forKey: "notificationArrived")
@@ -383,13 +382,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
             }
         }
+
     }
     
     func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
     {
         let channelIdkey = "ch_detail_id"
         var selectedArray : NSArray = NSArray()
-        var indexOfRow : Int = Int()
+        var indexOfRow : Int = -1
         if(isCountArray)
         {
             if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
