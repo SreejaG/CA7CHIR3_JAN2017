@@ -4,7 +4,10 @@ class UrlManager {
     
 //    let baseUrl = "http://130.211.135.170:3000";
     
-    let baseUrl = "http://104.196.113.247:3000";
+//    let baseUrl = "http://104.196.113.247:3000"; Production
+    
+    let baseUrl = "http://104.197.92.137:3000"; //test instance
+    
     let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
