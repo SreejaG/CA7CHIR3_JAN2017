@@ -14,6 +14,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     var timeZoneInSecondsUpdated : String = String()
     var timeZoneOffsetInUTCOriginal = String()
     var timeZoneOffsetInUTCUpdated : String = String()
+    var isKeyBoardUp : Bool = false
     
     var email: String = String()
     var mobNo: String = String()
@@ -53,7 +54,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     var profileInfoOptions = [[String:String]]()
     var privateInfoOptions = [[String:String]]()
     var accountInfoOptions = [[String:String]]()
-    
+    var button : UIButton = UIButton()
     var dataSource:[[[String:String]]]?
     
     var userDetails: NSMutableDictionary = NSMutableDictionary()
@@ -437,6 +438,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func keyboardDidShow(notification:NSNotification)
     {
+        isKeyBoardUp = true
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         if tableViewBottomConstaint.constant == 0
@@ -451,6 +453,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         {
             self.tableViewBottomConstaint.constant = 0
         }
+        isKeyBoardUp = false
     }
 }
 
@@ -582,6 +585,8 @@ extension EditProfileViewController:UITableViewDataSource
                     return cell
                     
                 case 1:
+                    button.removeFromSuperview()
+
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
                     if dataSource[indexPath.section].count-1 == indexPath.row
@@ -598,13 +603,16 @@ extension EditProfileViewController:UITableViewDataSource
                     {
                         cell.accessoryType = .None
                         cell.selectionStyle = .None
+                       // if(!isKeyBoardUp)
+                       // {
                         let image = UIImage(named: "synchronising.png")
-                        let button   = UIButton(type: UIButtonType.Custom) as UIButton
+                        button = UIButton(type: UIButtonType.Custom) as UIButton
                         button.frame = CGRectMake(cell.frame.width - 30, cell.frame.height/2 - 10, 25, 25)
                         button.backgroundColor = UIColor.clearColor()
                         button.setImage(image, forState: .Normal)
                         button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
                         cell.addSubview(button)
+                       // }
                     }
                     
                     return cell
@@ -641,7 +649,14 @@ extension EditProfileViewController:UITableViewDataSource
         }
         return UITableViewCell()
     }
-    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        //self.editProfTableView.endUpdates()
+//        if isKeyBoardUp
+//        {
+//        let indexPath = NSIndexPath(forRow: 3, inSection: 1)
+//        self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+//        }
+    }
     func synchronisingTapped(sender: AnyObject)
     {
         let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
