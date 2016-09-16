@@ -689,7 +689,7 @@ extension EditProfileViewController:UITableViewDataSource
     
     func keyBoardWasShown(notif:NSNotification)
     {
-        if(activeField.tag >= 100)
+        if(activeField.tag == 100)
         {
             var info: NSDictionary = NSDictionary()
             info = notif .userInfo!
@@ -698,6 +698,16 @@ extension EditProfileViewController:UITableViewDataSource
             bkgndRect.size.height += kbSize.height
             activeField.superview?.frame = bkgndRect
             editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 70), animated: true)
+        }
+        else if(activeField.tag == 101)
+        {
+            var info: NSDictionary = NSDictionary()
+            info = notif .userInfo!
+            let kbSize : CGSize = info.objectForKey(UIKeyboardFrameBeginUserInfoKey)!.CGRectValue.size
+            var bkgndRect:CGRect = (activeField.superview?.frame)!
+            bkgndRect.size.height += kbSize.height
+            activeField.superview?.frame = bkgndRect
+            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 20), animated: true)
         }
     }
     

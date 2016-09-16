@@ -908,6 +908,13 @@ MovieViewController *obj1;
             [playIconView addGestureRecognizer:singleTap];
         }
     }
+    else if([mediaTypeSelected isEqual:@"live"]){
+        if(_liveVideo == false){
+            if(self.playing){
+                [self restorePlay];
+            }
+        }
+    }
 }
 
 -(void)applicationDidEnterBackground: (NSNotification *)notification
@@ -921,8 +928,14 @@ MovieViewController *obj1;
         videoProgressBar.progress = 0.0;
     }
     
-    _backGround =  true;
-    [self close];
+    if([mediaTypeSelected  isEqual: @"live"])
+    {
+        
+    }
+    else{
+        _backGround =  true;
+        [self close];
+    }
 }
 
 -(void)close
