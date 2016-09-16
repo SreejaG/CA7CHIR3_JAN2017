@@ -1039,7 +1039,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
-        self.removeOverlay()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+        })
         var imageForMedia : UIImage = UIImage()
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
