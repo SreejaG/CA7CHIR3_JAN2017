@@ -26,6 +26,8 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                likeCountStr: (NSString *) likeCountStr;
 
 -(void) successFromSetUpView:( NSString *) count;
+-(void) closeView;
+-(void) mediaDeletedErrorMessage;
 
 @property (readonly) BOOL playing;
 

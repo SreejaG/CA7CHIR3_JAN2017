@@ -1194,7 +1194,16 @@ MovieViewController *obj1;
     alertView.tag = 101;
     [alertView show];
 }
-
+-(void) mediaDeletedErrorMessage
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Deleted"
+                                                        message:@"shared media deleted"
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"Ok", nil)
+                                              otherButtonTitles:nil];
+    alertView.tag = 105;
+    [alertView show];
+}
 -(NSString*)getErrorMessage:(NSError *) error
 {
     if ([error.description containsString:@"kxmovie"]) {
@@ -1236,6 +1245,18 @@ MovieViewController *obj1;
                 return;
             }
             break;
+        case 105 :
+            if (buttonIndex == 1)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowAlert" object:@"1"];
+            }
+            else if (buttonIndex == 0)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowAlert" object:@"0"];
+
+                return;
+            }
+            
         default:
             break;
     }
@@ -1646,6 +1667,21 @@ MovieViewController *obj1;
     return frame.duration;
 }
 
+
+-(void) closeView
+{
+    if(downloadTask.state == 0)
+    {
+        [downloadTask cancel];
+        
+    }
+    [_moviePlayer stop];
+    _moviePlayer = nil;
+    [self dismissViewControllerAnimated:true
+                             completion:^{
+                                 
+                             }];
+}
 #pragma mark : Button Actions
 
 - (IBAction)didTapCloseButton:(id)sender {

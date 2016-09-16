@@ -47,6 +47,9 @@ class StreamsListViewController: UIViewController{
     var downloadCompleteFlagStream : String = "start"
     var lastContentOffset: CGPoint = CGPoint()
     var NoDatalabel : UILabel = UILabel()
+    var selectedMediaId : String = String()
+    var isMovieView : Bool = false
+    var vc : MovieViewController = MovieViewController()
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +60,8 @@ class StreamsListViewController: UIViewController{
         self.streamListCollectionView.alwaysBounceVertical = true
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.streamUpdate), name: "stream", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.mediaDeletePushNotification), name: "MediaDelete", object:nil)
+    
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.closeMovieView), name: "ShowAlert", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.pushNotificationUpdateStream), name: "PushNotificationStream", object:nil)
         getAllLiveStreams()
         showOverlay()
@@ -89,6 +94,7 @@ class StreamsListViewController: UIViewController{
     }
     
     override func viewWillAppear(animated: Bool) {
+        isMovieView = false
         super.viewWillAppear(true)
     }
     
@@ -97,7 +103,13 @@ class StreamsListViewController: UIViewController{
         NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
         GlobalStreamList.sharedInstance.cancelOperationQueue()
     }
-    
+    func closeMovieView(notif : NSNotification)
+    {
+        let info = notif.object as! String
+       
+        vc.closeView()
+       
+    }
     func createScrollViewAnimations()  {
         streamListCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
         streamListCollectionView.infiniteScrollIndicatorMargin = 50
@@ -507,6 +519,17 @@ class StreamsListViewController: UIViewController{
                         let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
                         for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                         {
+                            print("media" ,mediaId,selectedMediaId)
+                            if("\(mediaArrayData[mediaArrayCount])" == selectedMediaId)
+                            {
+                                if isMovieView
+                                {
+                                    
+                                        self.vc.mediaDeletedErrorMessage()
+                                        self.isMovieView = false
+                                }
+                            }
+
                             if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                             {
                                 count = count + 1
@@ -514,6 +537,7 @@ class StreamsListViewController: UIViewController{
                                 foundFlag = true
                                 break;
                             }
+                            
                         }
                         
                         if(foundFlag)
@@ -625,13 +649,27 @@ class StreamsListViewController: UIViewController{
                     if(i < mediaAndLiveArray.count)
                     {
                         let mediaIdValue = mediaAndLiveArray[i][mediaIdKey] as! String
-                        
+                        if("\(mediaData[mediaArrayCount])" == selectedMediaId)
+                        {
+                            if isMovieView
+                            {
+                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                    
+                                    self.vc.mediaDeletedErrorMessage()
+                                    self.isMovieView = false
+                                    
+                                })
+                                
+                            }
+                        }
                         if(mediaIdValue == "\(mediaData[mediaArrayCount])" )
                         {
                             foundFlag = true
                             removeIndex = i
                             break
                         }
+                     
+                        
                     }
                 }
             }
@@ -1142,9 +1180,11 @@ class StreamsListViewController: UIViewController{
         let type = mediaAndLiveArray[indexPathRow][mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
+            isMovieView = true
+            selectedMediaId = mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String
             let dateString = mediaAndLiveArray[indexPathRow]["createdTime"] as! String
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            let vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][self.actualImageKey] as! String, channelName: mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount) as! MovieViewController
+          vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][self.actualImageKey] as! String, channelName: mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }
@@ -1154,7 +1194,8 @@ class StreamsListViewController: UIViewController{
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String, "userName":mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, "mediaType":mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, "mediaId":mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,"channelId":mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount as! String]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                 vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false)  as! MovieViewController
+                
                 
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }
