@@ -15,34 +15,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var deleteQueue : NSMutableArray = NSMutableArray()
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
         if(NSUserDefaults.standardUserDefaults().boolForKey("StartedStreaming"))
         {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: "StartedStreaming")
         }
-     
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
-        
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
-        
         let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        
         if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
         {
         }
         else{
             FileManagerViewController.sharedInstance.createParentDirectory()
         }
-        
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(nil, forKey: "uploaObjectDict")
         defaults.setObject(nil, forKey: "ProgressDict")
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window!.backgroundColor = UIColor.whiteColor()
-        
         if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? NSDictionary {
              NSUserDefaults.standardUserDefaults().setValue(remoteNotification, forKey: "remote")
             GlobalDataChannelList.sharedInstance.initialise()
@@ -53,7 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
                 if(result["subType"] as! String == "started"){
                     defaults.setValue("1", forKey: "notificationArrived")
-                    
                 }
                 else{
                     defaults.setValue("0", forKey: "notificationArrived")
@@ -66,8 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             else{
                defaults.setValue("0", forKey: "notificationArrived")
             }
-            
-            
             if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
             {
                 loadNotificationView()
@@ -272,6 +262,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         let result = userInfo["messageFrom"] as! NSDictionary
         let defaults = NSUserDefaults .standardUserDefaults()
+        print(result)
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             defaults.setValue("0", forKey: "notificationArrived")
@@ -279,6 +270,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if ( result["type"] as! String == "media")
             {
+                
                 if(application.applicationState == .Inactive || application.applicationState == .Background)
                 {
                     deleteQueue.addObject(result)
@@ -326,7 +318,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
-        else if  (result["type"] as! String == "share")
+        else if  (result["type"] as! String == "share"||result["type"] as! String == "like")
         {
             defaults.setValue("1", forKey: "notificationArrived")
         }
