@@ -351,7 +351,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.count > 0
         {
             let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![0]
-            self.downloadFullImageWhenTapThumb(dict, indexpaths: 0,gestureIdentifier:0)
+            self.downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier:0)
         }
         else{
             removeOverlay()
@@ -464,13 +464,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     switch swipeGesture.direction
                     {
                     case UISwipeGestureRecognizerDirection.Left:
-                        if(selectedItem < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1)
+                        if(selectedItem < totalCount - 1)
                         {
-                            if fileExistFlag != true
-                            {
-                                self.showOverlay()
-                            }
-                            
                             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                             dispatch_async(backgroundQueue, {
@@ -484,7 +479,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                                 })
                             })
                         }
-                        else if(selectedItem == GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1)
+                        else if(selectedItem == totalCount - 1)
                         {
                             self.removeOverlay()
                         }
@@ -492,10 +487,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     case UISwipeGestureRecognizerDirection.Right:
                         if(selectedItem != 0)
                         {
-                            if fileExistFlag != true
-                            {
-                                self.showOverlay()
-                            }
                             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                             dispatch_async(backgroundQueue, {
@@ -1048,7 +1039,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
-        
+        self.removeOverlay()
         var imageForMedia : UIImage = UIImage()
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
@@ -1090,6 +1081,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         imageForMedia = mediaImageFromFile!
                     }
                     else{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.showOverlay()
+                        })
                         let mediaUrl =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][fImageURLKey] as! String
                         if(mediaUrl != ""){
                             let url: NSURL = convertStringtoURL(mediaUrl)
@@ -1269,12 +1263,15 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         }
         
         self.fullScrenImageView.alpha = 1.0
-        self.showOverlay()
+        
         if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
         {
             self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
             let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+            dispatch_async(backgroundQueue, {
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath.row ,gestureIdentifier:0)
             })
         }
