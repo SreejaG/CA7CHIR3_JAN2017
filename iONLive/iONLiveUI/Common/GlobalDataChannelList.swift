@@ -32,8 +32,8 @@ class GlobalDataChannelList: NSObject {
         ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
-            return
+            self.authenticationFailureHandlerChannel(error, code: message)
+            
         }
     }
     
@@ -51,7 +51,7 @@ class GlobalDataChannelList: NSObject {
         }
     }
     
-    func authenticationFailureHandler(error: NSError?, code: String)
+    func authenticationFailureHandlerChannel(error: NSError?, code: String)
     {
         var codeString : String = String()
         

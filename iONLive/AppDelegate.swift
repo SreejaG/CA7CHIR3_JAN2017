@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: "StartedStreaming")
         }
+//        NSUserDefaults.standardUserDefaults().setBool(false, forKey:"Background")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
         let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)

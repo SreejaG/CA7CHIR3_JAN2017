@@ -24,6 +24,7 @@ NSString* selectedFlashOption = @"selectedFlashOption";
 int thumbnailSize = 50;
 int deleteCount = 0;
 int flashFlag = 0;
+int timeSec = 0;
 
 
 typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
@@ -153,8 +154,7 @@ int timerCount = 0;
     }
     
     takePictureFlag = false;
-    [timer invalidate];
-    timer = nil;
+    [self stopTimer];
     
     
 }
@@ -209,8 +209,7 @@ int timerCount = 0;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
-    [timer invalidate];
-    timer = nil;
+    [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"Background"];
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
@@ -252,6 +251,9 @@ int timerCount = 0;
 
 -(void)applicationDidActives: (NSNotification *)notification
 {
+//    dispatch_async( dispatch_get_main_queue(), ^{
+//        [self stopTimer];
+//    });
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
@@ -293,7 +295,7 @@ int timerCount = 0;
         NSString *code = notif.object;
         loadingCameraFlag = false;
         [self hidingView];
-        
+        [self stopTimer];
         if([code  isEqual: @"noNetwork"]){
             [[ErrorManager sharedInstance] noNetworkConnection];
         }
@@ -302,16 +304,18 @@ int timerCount = 0;
 //            {
 //                if([[[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"]  isEqual: @"0"])
 //                {
-                
+                  //if (timeSec != 0)
+                //  {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                     message:@""
                                                                    delegate:self
                                                           cancelButtonTitle:@"Retry"
                                                           otherButtonTitles:@"Exit App",nil];
                     [alert show];
-//                }
+              //  }
+               }
 //            }
-        }
+      //  }
         else if(([code  isEqual: @"USER004"]) || ([code  isEqual: @"USER005"]) || ([code  isEqual: @"USER006"])){
             [self loadInitialView];
         }
@@ -402,7 +406,9 @@ int timerCount = 0;
                             [self initialiseTimerForSyncing:timerCount];
                         }
                     }
+                    dispatch_async( dispatch_get_main_queue(), ^{
                     [self initialiseAPICall];
+                    });
                 }
                 else{
                     dispatch_async( dispatch_get_main_queue(), ^{
@@ -423,7 +429,9 @@ int timerCount = 0;
                     [self initialiseTimerForSyncing:timerCount];
                 }
             }
-            [self initialiseAPICall];
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [self initialiseAPICall];
+            });
         }
         [self configureCameraSettings:@"configure" completion:^{
             if(takePictureFlag == false)
@@ -514,26 +522,45 @@ int timerCount = 0;
 -(void) initialiseTimerForSyncing : (int)count
 {
     _noDataFound.text = @"   Syncing...";
-    [timer invalidate];
-    timer = nil;
+    [self stopTimer];
     timer = [NSTimer scheduledTimerWithTimeInterval:count target:self selector:@selector(thisMethodGetsFiredOnceEveryThirtySeconds:) userInfo:nil repeats:NO];
+   timeSec = timeSec + count;
 }
-
-- (void) thisMethodGetsFiredOnceEveryThirtySeconds:(id)sender {
+-(void ) stopTimer
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [timer invalidate];
+    });
+    timer = nil;
+    timeSec = 0 ;
+}
+- (void) thisMethodGetsFiredOnceEveryThirtySeconds:(NSTimer *)sender {
+   
     
+    NSLog(@"%d",timeSec);
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
         if(!_activityImageView.hidden)
         {
             dispatch_async( dispatch_get_main_queue(), ^{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
-                                                                message:@""
+          
+            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"Background"])
+            {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
                                                       otherButtonTitles:@"Exit App",nil];
                 [alert show];
+                
+            }
+            else{
+                [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"Background"];
+            }
+          
             });
+            
+           
         }
         loadingCameraFlag = false;
         [self hidingView];
