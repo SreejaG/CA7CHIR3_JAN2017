@@ -414,6 +414,13 @@ class ChannelItemListViewController: UIViewController {
             self.channelItemCollectionView.reloadData()
         })
     }
+    
+    func convertStringtoURL(url : String) -> NSURL
+    {
+        let url : NSString = url
+        let searchURL : NSURL = NSURL(string: url as String)!
+        return searchURL
+    }
 }
 
 extension ChannelItemListViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
@@ -450,6 +457,11 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
+                let videoURLStr = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][fImageURLKey] as! String
+                let videoURL = convertStringtoURL(videoURLStr)
+                let sourceAsset: AVURLAsset = AVURLAsset.init(URL: videoURL, options: nil)
+                let duration : CMTime = sourceAsset.duration
+                print(duration)
             }
             else{
                 cell.videoView.hidden = true
