@@ -623,6 +623,7 @@
 		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
 		B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedChannelDetailsAPI.swift; sourceTree = "<group>"; };
 		B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalStreamList.swift; sourceTree = "<group>"; };
+		B2B4E83A1D910795001E62E9 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
 		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
@@ -1567,6 +1568,7 @@
 		657062C36B2B324EA47A48A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B2B4E83A1D910795001E62E9 /* CoreMedia.framework */,
 				16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */,
 				166B9CDD1CC8FF0E00396C4E /* CoreTelephony.framework */,
 				16DB09AC1CC7671F0092B742 /* QuartzCore.framework */,

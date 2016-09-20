@@ -457,11 +457,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
-                let videoURLStr = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][fImageURLKey] as! String
-                let videoURL = convertStringtoURL(videoURLStr)
-                let sourceAsset: AVURLAsset = AVURLAsset.init(URL: videoURL, options: nil)
-                let duration : CMTime = sourceAsset.duration
-                print(duration)
             }
             else{
                 cell.videoView.hidden = true

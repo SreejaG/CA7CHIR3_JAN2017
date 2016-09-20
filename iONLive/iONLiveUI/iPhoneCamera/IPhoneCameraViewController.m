@@ -926,6 +926,13 @@ int timerCount = 0;
             }
             else{
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    if([latestCapturedMediaType  isEqual: @"video"])
+                    {
+                        self.playiIconView.hidden = NO;
+                    }
+                    else{
+                        self.playiIconView.hidden = YES;
+                    }
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
             }
@@ -942,13 +949,13 @@ int timerCount = 0;
             if ( data == nil )
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
-                if([latestSharedMediaType  isEqual: @"video"])
-                {
-                    self.playiIconView.hidden = NO;
-                }
-                else{
-                    self.playiIconView.hidden = YES;
-                }
+//                if([latestSharedMediaType  isEqual: @"video"])
+//                {
+//                    self.playiIconView.hidden = NO;
+//                }
+//                else{
+//                    self.playiIconView.hidden = YES;
+//                }
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
         });
@@ -976,13 +983,13 @@ int timerCount = 0;
                 if ( data == nil )
                     return;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if([latestSharedMediaType  isEqual: @"video"])
-                    {
-                        self.playiIconView.hidden = NO;
-                    }
-                    else{
-                        self.playiIconView.hidden = YES;
-                    }
+//                    if([latestSharedMediaType  isEqual: @"video"])
+//                    {
+//                        self.playiIconView.hidden = NO;
+//                    }
+//                    else{
+//                        self.playiIconView.hidden = YES;
+//                    }
                     self.latestSharedMediaImage.image = [UIImage imageWithData: data];
                 });
             });
@@ -1161,7 +1168,7 @@ int timerCount = 0;
                             dispatch_async( dispatch_get_main_queue(), ^{
                                 self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                                 takePictureFlag = true;
-                                
+                                self.playiIconView.hidden = true;
                                 self.imageViewAnimate.hidden = NO;
                                 [self.view bringSubviewToFront:self.imageViewAnimate];
                                 self.imageViewAnimate.image = [UIImage imageWithData:imageData];
@@ -1602,10 +1609,28 @@ int timerCount = 0;
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                         self.imageViewAnimate.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                         [self cameraAnimation];
+                        takePictureFlag = true;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
+                            
+                            AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outputFileURL
+                                                                        options:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                                 [NSNumber numberWithBool:YES],
+                                                                                 AVURLAssetPreferPreciseDurationAndTimingKey,
+                                                                                 nil]];
+                            
+                            NSTimeInterval durationInSeconds = 0.0;
+                            if (asset) 
+                                durationInSeconds = CMTimeGetSeconds(asset.duration) ;
+                            NSDate* d = [NSDate dateWithTimeIntervalSince1970:durationInSeconds];
+                            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                            [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+                            [dateFormatter setDateFormat:@"HH:mm:ss"];
+                            NSString* result = [dateFormatter stringFromDate:d];
+                            NSLog(@"%@",result);
+                            
                             [self saveImage:imageData];
-                            [self moveVideoToDocumentDirectory:outputFileURL];
+                            [self moveVideoToDocumentDirectory:outputFileURL videoDuration:result];
                             [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
                              {
                              } failure:^(NSError *error)
@@ -1640,17 +1665,18 @@ int timerCount = 0;
 
 #pragma mark save video
 
--(void) moveVideoToDocumentDirectory : (NSURL *) path
+-(void) moveVideoToDocumentDirectory : (NSURL *) path videoDuration: (NSString *) duration
 {
-    [self loaduploadManager : path ];
+    [self loaduploadManager : path videoDuration:duration];
 }
 
--(void) loaduploadManager : (NSURL *)filePath
+-(void) loaduploadManager : (NSURL *)filePath videoDuration: (NSString *) duration
 {
     NSString *path = [self readIphoneCameraSnapShotsFromDB];
     uploadMediaToGCS *obj = [[uploadMediaToGCS alloc]init];
     obj.path = path;
     obj.media = @"video";
+    obj.videoDuration = duration;
     obj.videoSavedURL = filePath;
     [obj initialise];
 }

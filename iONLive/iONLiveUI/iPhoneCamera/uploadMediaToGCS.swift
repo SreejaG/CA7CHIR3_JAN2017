@@ -16,6 +16,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     var path : String = String()
     var media : String = String()
     var videoSavedURL : NSURL = NSURL()
+    var videoDuration : String = String()
     
     var imageFromDB : UIImage = UIImage()
     var imageAfterConversionThumbnail : UIImage = UIImage()
@@ -42,6 +43,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func initialise(){
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        print(videoDuration)
         getMediaFromDB()
     }
     
