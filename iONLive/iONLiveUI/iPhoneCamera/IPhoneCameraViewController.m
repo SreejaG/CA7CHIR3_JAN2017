@@ -1577,8 +1577,25 @@ int timerCount = 0;
                         [self cameraAnimation];
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
+                            
+                            AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outputFileURL
+                                                                        options:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                                 [NSNumber numberWithBool:YES],
+                                                                                 AVURLAssetPreferPreciseDurationAndTimingKey,
+                                                                                 nil]];
+                            
+                            NSTimeInterval durationInSeconds = 0.0;
+                            if (asset) 
+                                durationInSeconds = CMTimeGetSeconds(asset.duration) ;
+                            NSDate* d = [NSDate dateWithTimeIntervalSince1970:durationInSeconds];
+                            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                            [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+                            [dateFormatter setDateFormat:@"HH:mm:ss"];
+                            NSString* result = [dateFormatter stringFromDate:d];
+                            NSLog(@"%@",result);
+                            
                             [self saveImage:imageData];
-                            [self moveVideoToDocumentDirectory:outputFileURL];
+                            [self moveVideoToDocumentDirectory:outputFileURL videoDuration:result];
                             [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
                              {
                              } failure:^(NSError *error)
@@ -1613,17 +1630,18 @@ int timerCount = 0;
 
 #pragma mark save video
 
--(void) moveVideoToDocumentDirectory : (NSURL *) path
+-(void) moveVideoToDocumentDirectory : (NSURL *) path videoDuration: (NSString *) duration
 {
-    [self loaduploadManager : path ];
+    [self loaduploadManager : path videoDuration:duration];
 }
 
--(void) loaduploadManager : (NSURL *)filePath
+-(void) loaduploadManager : (NSURL *)filePath videoDuration: (NSString *) duration
 {
     NSString *path = [self readIphoneCameraSnapShotsFromDB];
     uploadMediaToGCS *obj = [[uploadMediaToGCS alloc]init];
     obj.path = path;
     obj.media = @"video";
+    obj.videoDuration = duration;
     obj.videoSavedURL = filePath;
     [obj initialise];
 }
