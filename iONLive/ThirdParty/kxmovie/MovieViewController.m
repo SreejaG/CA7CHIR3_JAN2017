@@ -471,7 +471,7 @@ MovieViewController *obj1;
     [_moviePlayer.view removeFromSuperview];
     UIImageView *playIconView = [[UIImageView alloc]init];
     playIconView.image = [UIImage imageNamed:@"Circled Play"];
-    playIconView.frame = CGRectMake(glView.frame.size.width/2, glView.frame.size.height/2, 30, 30);
+    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
     [glView addSubview:playIconView];
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
     singleTap.numberOfTapsRequired = 1;
@@ -899,7 +899,7 @@ MovieViewController *obj1;
             
             UIImageView *playIconView = [[UIImageView alloc]init];
             playIconView.image = [UIImage imageNamed:@"Circled Play"];
-            playIconView.frame = CGRectMake(glView.frame.size.width/2, glView.frame.size.height/2, 30, 30);
+            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
             [playIconView removeFromSuperview];
             [glView addSubview:playIconView];
             UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
