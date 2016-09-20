@@ -899,6 +899,13 @@ int timerCount = 0;
             }
             else{
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    if([latestCapturedMediaType  isEqual: @"video"])
+                    {
+                        self.playiIconView.hidden = NO;
+                    }
+                    else{
+                        self.playiIconView.hidden = YES;
+                    }
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
             }
@@ -915,13 +922,13 @@ int timerCount = 0;
             if ( data == nil )
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
-                if([latestSharedMediaType  isEqual: @"video"])
-                {
-                    self.playiIconView.hidden = NO;
-                }
-                else{
-                    self.playiIconView.hidden = YES;
-                }
+//                if([latestSharedMediaType  isEqual: @"video"])
+//                {
+//                    self.playiIconView.hidden = NO;
+//                }
+//                else{
+//                    self.playiIconView.hidden = YES;
+//                }
                 self.latestSharedMediaImage.image= [UIImage imageWithData: data];
             });
         });
@@ -949,13 +956,13 @@ int timerCount = 0;
                 if ( data == nil )
                     return;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if([latestSharedMediaType  isEqual: @"video"])
-                    {
-                        self.playiIconView.hidden = NO;
-                    }
-                    else{
-                        self.playiIconView.hidden = YES;
-                    }
+//                    if([latestSharedMediaType  isEqual: @"video"])
+//                    {
+//                        self.playiIconView.hidden = NO;
+//                    }
+//                    else{
+//                        self.playiIconView.hidden = YES;
+//                    }
                     self.latestSharedMediaImage.image = [UIImage imageWithData: data];
                 });
             });
@@ -1134,7 +1141,7 @@ int timerCount = 0;
                             dispatch_async( dispatch_get_main_queue(), ^{
                                 self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                                 takePictureFlag = true;
-                                
+                                self.playiIconView.hidden = true;
                                 self.imageViewAnimate.hidden = NO;
                                 [self.view bringSubviewToFront:self.imageViewAnimate];
                                 self.imageViewAnimate.image = [UIImage imageWithData:imageData];
@@ -1575,6 +1582,7 @@ int timerCount = 0;
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                         self.imageViewAnimate.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
                         [self cameraAnimation];
+                        takePictureFlag = true;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
                             
