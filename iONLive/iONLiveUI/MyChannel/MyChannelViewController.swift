@@ -133,6 +133,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
         let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
         channelItemListVC.navigationController?.navigationBarHidden = true
+        let animation:CATransition = CATransition()
+        animation.timingFunction = CAMediaTimingFunction(name:
+            kCAMediaTimingFunctionEaseOut)
+        animation.type = kCATransitionFade
+        animation.subtype = kCATransitionFromBottom
+        animation.fillMode = kCAFillModeRemoved
+        animation.duration = 0.2
+        self.navigationController?.view.layer.addAnimation(animation, forKey: "animation")
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
     }
     

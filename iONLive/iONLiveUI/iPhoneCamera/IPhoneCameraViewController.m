@@ -209,11 +209,12 @@ int timerCount = 0;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
+    [timer invalidate];
+    timer = nil;
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
-        [timer invalidate];
-        timer = nil;
+        
         if (shutterActionMode == SnapCamSelectionModeVideo)
         {
             dispatch_async( dispatch_get_main_queue(), ^{

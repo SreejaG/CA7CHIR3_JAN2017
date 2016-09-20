@@ -779,13 +779,13 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="triangleIcon" translatesAutoresizingMaskIntoConstraints="NO" id="7Zy-bp-RyN">
-                                                <rect key="frame" x="527" y="52" width="16" height="12"/>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="triIcon" translatesAutoresizingMaskIntoConstraints="NO" id="7Zy-bp-RyN">
+                                                <rect key="frame" x="517" y="52" width="35" height="23"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <color key="tintColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="16" id="A8K-fh-fje"/>
-                                                    <constraint firstAttribute="height" constant="12" id="znz-4R-dUM"/>
+                                                    <constraint firstAttribute="width" constant="35" id="A8K-fh-fje"/>
+                                                    <constraint firstAttribute="height" constant="23" id="znz-4R-dUM"/>
                                                 </constraints>
                                             </imageView>
                                             <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nyi-oD-WXT" userLabel="PlusButton">
@@ -805,12 +805,12 @@
                                             <constraint firstItem="Nyi-oD-WXT" firstAttribute="leading" secondItem="350-DW-hho" secondAttribute="trailing" constant="2" id="9OY-Bb-0kz"/>
                                             <constraint firstItem="wVA-tv-6nx" firstAttribute="leading" secondItem="UoC-6H-2O5" secondAttribute="leading" id="BWC-Fw-IML"/>
                                             <constraint firstItem="Nyi-oD-WXT" firstAttribute="top" secondItem="UoC-6H-2O5" secondAttribute="top" constant="21" id="JOs-5j-qUJ"/>
-                                            <constraint firstAttribute="bottom" secondItem="7Zy-bp-RyN" secondAttribute="bottom" id="K75-St-wYl"/>
+                                            <constraint firstAttribute="bottom" secondItem="7Zy-bp-RyN" secondAttribute="bottom" constant="-11" id="K75-St-wYl"/>
                                             <constraint firstAttribute="trailing" secondItem="Nyi-oD-WXT" secondAttribute="trailing" constant="10" id="MRS-Ua-fF8"/>
                                             <constraint firstItem="7Zy-bp-RyN" firstAttribute="top" secondItem="wVA-tv-6nx" secondAttribute="bottom" constant="2" id="Nwp-jA-d5e"/>
                                             <constraint firstItem="350-DW-hho" firstAttribute="top" secondItem="UoC-6H-2O5" secondAttribute="top" constant="21" id="P2e-pu-Q6s"/>
                                             <constraint firstAttribute="bottom" secondItem="wVA-tv-6nx" secondAttribute="bottom" constant="14" id="TAU-PK-o65"/>
-                                            <constraint firstItem="Nyi-oD-WXT" firstAttribute="leading" secondItem="7Zy-bp-RyN" secondAttribute="trailing" constant="15" id="VkJ-E3-PGC"/>
+                                            <constraint firstItem="Nyi-oD-WXT" firstAttribute="leading" secondItem="7Zy-bp-RyN" secondAttribute="trailing" constant="6" id="VkJ-E3-PGC"/>
                                             <constraint firstItem="hnK-vh-aY8" firstAttribute="top" secondItem="UoC-6H-2O5" secondAttribute="top" constant="16" id="aJO-wW-bES"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="64" id="hv0-d4-nMN"/>
                                             <constraint firstItem="hnK-vh-aY8" firstAttribute="leading" secondItem="UoC-6H-2O5" secondAttribute="leading" constant="15" id="mTV-vd-HtS"/>
@@ -818,7 +818,7 @@
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CPM-mt-YIw">
-                                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                        <rect key="frame" x="0.0" y="64" width="600" height="541"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <view key="tableHeaderView" contentMode="scaleToFill" id="yMF-2G-kHG">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="69"/>
@@ -896,7 +896,7 @@
                                         </connections>
                                     </tableView>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="tintColor" red="0.9999125599861145" green="1" blue="0.99988144636154175" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="UoC-6H-2O5" firstAttribute="leading" secondItem="NNb-5o-TOE" secondAttribute="leading" id="3Yh-na-RVD"/>
@@ -905,7 +905,7 @@
                                     <constraint firstAttribute="trailing" secondItem="UoC-6H-2O5" secondAttribute="trailing" id="XOU-e0-Pr5"/>
                                     <constraint firstItem="UoC-6H-2O5" firstAttribute="top" secondItem="NNb-5o-TOE" secondAttribute="top" id="a5p-bp-EEL"/>
                                     <constraint firstItem="CPM-mt-YIw" firstAttribute="leading" secondItem="NNb-5o-TOE" secondAttribute="leading" id="bIR-UP-lfu"/>
-                                    <constraint firstAttribute="bottom" secondItem="CPM-mt-YIw" secondAttribute="bottom" id="dHG-Fq-Vfa"/>
+                                    <constraint firstAttribute="bottom" secondItem="CPM-mt-YIw" secondAttribute="bottom" constant="-5" id="dHG-Fq-Vfa"/>
                                     <constraint firstAttribute="trailing" secondItem="UoC-6H-2O5" secondAttribute="trailing" id="hyj-Hf-BeJ"/>
                                     <constraint firstItem="UoC-6H-2O5" firstAttribute="top" secondItem="NNb-5o-TOE" secondAttribute="top" id="vAR-1i-70q"/>
                                     <constraint firstItem="UoC-6H-2O5" firstAttribute="leading" secondItem="NNb-5o-TOE" secondAttribute="leading" id="zIU-g7-trE"/>
@@ -943,7 +943,7 @@
         <image name="snapCamMode" width="25" height="25"/>
         <image name="thumb11" width="124" height="125"/>
         <image name="thumb12" width="128" height="128"/>
-        <image name="triangleIcon" width="64" height="52"/>
+        <image name="triIcon" width="587" height="437"/>
         <image name="white_back" width="12" height="21"/>
     </resources>
 </document>

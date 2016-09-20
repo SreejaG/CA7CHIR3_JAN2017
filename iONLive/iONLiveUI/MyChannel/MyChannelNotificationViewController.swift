@@ -56,6 +56,7 @@ class MyChannelNotificationViewController: UIViewController {
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        NotificationTableView.layer.cornerRadius=10
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -71,7 +72,7 @@ class MyChannelNotificationViewController: UIViewController {
     }
     
     func initialise(){
-        NotificationTableView.layer.cornerRadius=10
+       
         channelDataSource.removeAll()
         mediaDataSource.removeAll()
         fulldataSource.removeAll()
@@ -130,7 +131,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRectMake(0, 72, self.view.frame.width, self.view.frame.height - 72)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
