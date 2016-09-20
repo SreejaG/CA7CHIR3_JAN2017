@@ -414,6 +414,7 @@ int timerCount = 0;
             }
         }
         else{
+            timerCount = 50;
             loadingCameraFlag = true;
             if([[NSUserDefaults standardUserDefaults] valueForKey:@"notificationArrived"] != nil)
             {
@@ -424,7 +425,6 @@ int timerCount = 0;
             }
             [self initialiseAPICall];
         }
-        
         [self configureCameraSettings:@"configure" completion:^{
             if(takePictureFlag == false)
             {
@@ -520,6 +520,7 @@ int timerCount = 0;
 }
 
 - (void) thisMethodGetsFiredOnceEveryThirtySeconds:(id)sender {
+    
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
