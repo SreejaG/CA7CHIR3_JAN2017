@@ -606,7 +606,34 @@ int timerCount = 0;
         {
             _flashButton.hidden = true;
             _cameraButton.hidden = true;
-            _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:[[UIScreen mainScreen]bounds].size frameRate:30 bitrate:1000000 useInterfaceOrientation:YES];
+            
+            if([[NSUserDefaults standardUserDefaults] valueForKey:@"liveResolution"] != nil)
+            {
+                NSString *resolution = [[NSUserDefaults standardUserDefaults] valueForKey:@"liveResolution"];
+                if([resolution isEqualToString:@"240p"])
+                {
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(352,240) frameRate:30 bitrate:40000 useInterfaceOrientation:YES];
+                }
+                else if([resolution isEqualToString:@"360p"])
+                {
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(480,360) frameRate:30 bitrate:75000 useInterfaceOrientation:YES];
+                }
+                else if([resolution isEqualToString:@"480p"])
+                {
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(850,480) frameRate:30 bitrate:100000 useInterfaceOrientation:YES];
+                }
+                else if([resolution isEqualToString:@"720p"])
+                {
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280,720) frameRate:30 bitrate:250000 useInterfaceOrientation:YES];
+                }
+                else if([resolution isEqualToString:@"1080p"])
+                {
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1920,1080) frameRate:30 bitrate:450000 useInterfaceOrientation:YES];
+                }
+            }
+            else{
+                 _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280, 720) frameRate:30 bitrate:250000 useInterfaceOrientation:YES];
+            }
             [_liveSteamSession.previewView removeFromSuperview];
             AVCaptureVideoPreviewLayer  *ptr;
             [_liveSteamSession getCameraPreviewLayer:(&ptr)];
