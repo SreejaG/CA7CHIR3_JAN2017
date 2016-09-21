@@ -612,27 +612,27 @@ int timerCount = 0;
                 NSString *resolution = [[NSUserDefaults standardUserDefaults] valueForKey:@"liveResolution"];
                 if([resolution isEqualToString:@"240p"])
                 {
-                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(352,240) frameRate:30 bitrate:70000 useInterfaceOrientation:YES];
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(352,240) frameRate:30 bitrate:40000 useInterfaceOrientation:YES];
                 }
                 else if([resolution isEqualToString:@"360p"])
                 {
-                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(480,360) frameRate:30 bitrate:100000 useInterfaceOrientation:YES];
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(480,360) frameRate:30 bitrate:75000 useInterfaceOrientation:YES];
                 }
                 else if([resolution isEqualToString:@"480p"])
                 {
-                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(850,480) frameRate:30 bitrate:200000 useInterfaceOrientation:YES];
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(850,480) frameRate:30 bitrate:100000 useInterfaceOrientation:YES];
                 }
                 else if([resolution isEqualToString:@"720p"])
                 {
-                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280,720) frameRate:30 bitrate:400000 useInterfaceOrientation:YES];
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280,720) frameRate:30 bitrate:250000 useInterfaceOrientation:YES];
                 }
                 else if([resolution isEqualToString:@"1080p"])
                 {
-                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1920,1080) frameRate:30 bitrate:600000 useInterfaceOrientation:YES];
+                    _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1920,1080) frameRate:30 bitrate:450000 useInterfaceOrientation:YES];
                 }
             }
             else{
-                 _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280, 720) frameRate:30 bitrate:400000 useInterfaceOrientation:YES];
+                 _liveSteamSession = [[VCSimpleSession alloc] initWithVideoSize:CGSizeMake(1280, 720) frameRate:30 bitrate:250000 useInterfaceOrientation:YES];
             }
             [_liveSteamSession.previewView removeFromSuperview];
             AVCaptureVideoPreviewLayer  *ptr;
