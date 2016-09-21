@@ -199,10 +199,10 @@ class SharedChannelDetailsAPI: NSObject {
             if(imageDataSource.count > 0){
                 if(self.selectedSharedChannelMediaSource.count > 0)
                 {
-                    if (self.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String != "live")
-                    {
-                        self.selectedSharedChannelMediaSource.removeAtIndex(0)
-                    }
+//                    if (self.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String != "live")
+//                    {
+//                        self.selectedSharedChannelMediaSource.removeAtIndex(0)
+//                    }
                 }
                 
                 let operation2 : NSBlockOperation = NSBlockOperation (block: {

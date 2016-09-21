@@ -41,6 +41,7 @@ class OtherChannelViewController: UIViewController  {
     let sharedMediaCount = "total_no_media_shared"
     var scrollObj = UIScrollView()
     var NoDatalabel : UILabel = UILabel()
+    var liveStreamFlag : Bool = false
     
     @IBOutlet weak var notificationLabel: UILabel!
     
@@ -78,6 +79,7 @@ class OtherChannelViewController: UIViewController  {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
         channelItemsCollectionView.alpha = 1.0
     }
     
@@ -139,7 +141,6 @@ class OtherChannelViewController: UIViewController  {
             })
         }
     }
-    
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
         let subType = info["subType"] as! String
@@ -147,6 +148,7 @@ class OtherChannelViewController: UIViewController  {
         
         switch subType {
         case "started":
+            liveStreamFlag = false
             if("\(chId)" == channelId as String )
             {
                 notificationLabel.hidden = false
@@ -154,6 +156,7 @@ class OtherChannelViewController: UIViewController  {
             }
             break;
         case "stopped":
+            liveStreamFlag = true
             updateLiveStreamStoppeddEntry(info)
             break;
         default:
@@ -170,15 +173,15 @@ class OtherChannelViewController: UIViewController  {
     {
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
-            let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
+        let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
             if(type == "live")
             {
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if ( SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                     {
-                    SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
-                    self.channelItemsCollectionView.reloadData()
+                        SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
+                        self.channelItemsCollectionView.reloadData()
                     }
                 })
             }
@@ -219,6 +222,7 @@ class OtherChannelViewController: UIViewController  {
                 {
                     getPullToRefreshData()
                 }
+               
                 else{
                     if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                     {
@@ -481,6 +485,15 @@ class OtherChannelViewController: UIViewController  {
                     }
                 }
             }
+        }
+        else
+        {
+              if self.downloadCompleteFlag == "end"
+                {
+                    self.downloadCompleteFlag = "start"
+                    SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
+                        , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
+                }
         }
     }
     
