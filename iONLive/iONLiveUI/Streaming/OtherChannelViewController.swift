@@ -538,6 +538,7 @@ class OtherChannelViewController: UIViewController  {
     }
     
     func loadmovieViewController(indexPathRow:Int,likeCount:String) {
+        let otherChannelIdentificationFlag : Bool = true
         self.removeOverlay()
         channelItemsCollectionView.alpha = 1.0
         let defaults = NSUserDefaults .standardUserDefaults()
@@ -545,8 +546,9 @@ class OtherChannelViewController: UIViewController  {
         if((type ==  "image") || (type == "video"))
         {
             let dateString = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow]["createdTime"] as! String
+            let index = Int32 (indexPathRow)
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            let vc = MovieViewController.movieViewControllerWithImageVideo(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.actualImageKey] as! String, channelName: self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount) as! MovieViewController
+            let vc = MovieViewController.movieViewControllerWithImageVideo(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.actualImageKey] as! String, channelName: self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }

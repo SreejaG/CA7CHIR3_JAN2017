@@ -13,7 +13,6 @@
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
 
@@ -157,9 +156,7 @@ static NSMutableDictionary * gHistory;
     NSInputStream *inputStream;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
-    
-    NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected,*notificationTypes,*mediaUrlForReplay;
-    UIImageView *backgroundImage;
+
 }
 
 @property (readwrite) BOOL playing;
@@ -169,13 +166,26 @@ static NSMutableDictionary * gHistory;
 @property (nonatomic) Connectivity *internetReachability;
 @property(nonatomic,strong) MPMoviePlayerController *moviePlayer;
 
-
-
 @end
 
+int indexForSwipe, screenNumber, orgIndex;
+int gestureId=0;
+int streamIdFlag;
+int otherChannelIdFlag;
+NSString *mediaTypeCheckString;
+UIPinchGestureRecognizer *pinchGesture;
+UIImage *videoThumbImage;
+BOOL pinchFlag;
+NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected,*notificationTypes,*mediaUrlForReplay;
+UIImageView *backgroundImage;
+UIImageView *playIconView;
+NSURL *urlForSwipe;
+UIImage *mediaImage;
+NSArray *streamORChannelDict;
+NSString *mediaURL,*mediaType,*mediaId,*timeDiff,*likeCountStr,*notifType;
 @implementation MovieViewController
 MovieViewController *obj1;
-
+int playHandleFlag = 0;
 + (void)initialize
 {
     if (!gHistory)
@@ -203,8 +213,10 @@ MovieViewController *obj1;
                                  mediaId: (NSString *) mediaId
                                 timeDiff: (NSString *) timeDiff
                             likeCountStr: (NSString *) likeCountStr
+                           selectedItem : (int) selectedItem
+                           pageIndicator:(int)pageIndicator
 {
-    obj1 = [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname channelId: channelId userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr];
+    obj1 = [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname channelId: channelId userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr selectedItem:selectedItem pageIndicator: pageIndicator];
     return obj1;
 }
 
@@ -280,39 +292,45 @@ MovieViewController *obj1;
                   mediaId: (NSString *) mediaId
                  timeDiff: (NSString *) timeDiff
              likeCountStr: (NSString *) likeCountStr
+            selectedItem : (int) selectedItem
+            pageIndicator: (int) pageIndicator
 {
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
-    
     if (self) {
         
-        [self setUpDefaultValues];
-        [self setUpViewForImageVideo];
+        //Swipe Gesture Declaration
+        UISwipeGestureRecognizer *leftSwipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRecogniser:)];
+        leftSwipe.numberOfTouchesRequired = 1;
+        leftSwipe.direction = UISwipeGestureRecognizerDirectionLeft;
+        leftSwipe.delegate = self;
+        [self.view addGestureRecognizer:leftSwipe];
+        
+        UISwipeGestureRecognizer *rightSwipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRecogniser:)];
+        rightSwipe.numberOfTouchesRequired = 1;
+        rightSwipe.direction = UISwipeGestureRecognizerDirectionRight;
+        rightSwipe.delegate = self;
+        [self.view addGestureRecognizer:rightSwipe];
+        
+        //Pan Gesture
+//        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
+//        panGesture.delegate = self;
+//        [imageVideoView addGestureRecognizer:panGesture];
+        
+        //Pinch Zoom
+//        pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
+//        pinchGesture.delegate = self;
+//        [imageVideoView addGestureRecognizer:pinchGesture];
+       
+        streamORChannelDict = [[NSArray alloc]init];
+        
         NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
         userId = [standardDefaults valueForKey:@"userLoginIdKey"];
         accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
         profilePicture.image = profileImage;
         channelName.text = channelname;
-        likeCount.text = likeCountStr;
-        if([mediaType  isEqual: @"live"]){
-            typeMedia.textColor = [UIColor redColor];
-            typeMedia.text = mediaType;
-        }
-        else{
-            typeMedia.textColor = [UIColor blackColor];
-            typeMedia.text = timeDiff;
-        }
         userName.text = [NSString stringWithFormat:@"@%@",username];
-        [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
-        
-        mediaUrlForReplay = mediaUrl;
-        
-        notificationTypes = notifType;
-        notificationType = @"LIKE";
-        
-        mediaDetailId = mediaId;
         channelIdSelected = channelId;
-        mediaTypeSelected = mediaType;
         
         if([userId isEqualToString:username]){
             heartTapButton.hidden = true;
@@ -324,68 +342,109 @@ MovieViewController *obj1;
             likeCount.hidden = false;
             avatarImage.hidden = false;
         }
-        if([mediaType  isEqual: @"video"])
-        {
-            imageVideoView.hidden = true;
-            imageView.hidden = true;
-            videoProgressBar.hidden = false;
-            backgroundImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,( (self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height))];
-            backgroundImage.image = VideoImageUrl;
-            topView.hidden = false;
-            
-            [glView addSubview:backgroundImage];
-            [glView sendSubviewToBack:backgroundImage];
-            
-            NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-            NSString *parentPathStr = [parentPath absoluteString];
-            NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
-            NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
-            BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
-            
-            if(fileExistFlag == true){
-                videoProgressBar.hidden = true;
-                self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-                MPMoviePlayerController *player = _moviePlayer;
-                player.view.frame = CGRectMake(glView.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,((self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height));
-                player.scalingMode = MPMovieScalingModeFill;
-                player.movieSourceType = MPMovieSourceTypeFile;
-                player.controlStyle = MPMovieControlStyleNone;
-                player.repeatMode = MPMovieRepeatModeNone;
-                [glView addSubview:[player view]];
-                
-                topView.hidden = false;
-                cameraSelectionButton.hidden = true;
-                liveView.hidden = true;
-                numberOfSharedChannels.hidden = true;
-                topView.backgroundColor = [UIColor clearColor];
-                [glView bringSubviewToFront:heartView];
-                [glView bringSubviewToFront:topView];
-                
-                [player play];
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(playerDidFinish:)
-                                                             name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
-            }
-            else{
-                NSURL *url = [self convertStringToUrl:mediaUrl];
-                [self downloadVideo:url];
-            }
+        
+        indexForSwipe = selectedItem;
+        orgIndex = indexForSwipe;
+        screenNumber = pageIndicator;
+        
+        if(pageIndicator == 1){
+            streamORChannelDict = [[GlobalStreamList sharedInstance] GlobalStreamDataSource];
         }
-        else{
-            [self setUpImageVideo:mediaType mediaUrl:mediaUrl];
+        else if(pageIndicator == 2){
+            streamORChannelDict = [[SharedChannelDetailsAPI sharedInstance] selectedSharedChannelMediaSource];
         }
+        
+        [self setGUIChanges:mediaUrl mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
     }
     return self;
 }
 
-
--(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl
+-(void) setGUIChanges:(NSString *) mediaUrl
+            mediaType: (NSString *) mediaType
+              mediaId: (NSString *) mediaId
+             timeDiff: (NSString *) timeDiff
+         likeCountStr: (NSString *) likeCountStr
+            notifType: (NSString *) notifType
+        VideoImageUrl: (UIImage *) VideoImageUrl
 {
+    [self setUpDefaultValues];
+    [self setUpViewForImageVideo];
+    
+    likeCount.text = likeCountStr;
+    
+    if([mediaType  isEqual: @"live"]){
+        typeMedia.textColor = [UIColor redColor];
+        typeMedia.text = mediaType;
+    }
+    else{
+        typeMedia.textColor = [UIColor blackColor];
+        typeMedia.text = timeDiff;
+    }
+    
+     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+    [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
+    
+    mediaUrlForReplay = mediaUrl;
+    notificationTypes = notifType;
+    notificationType = @"LIKE";
+    mediaDetailId = mediaId;
+    mediaTypeSelected = mediaType;
+    
+    if([mediaType  isEqual: @"video"])
+    {
+        videoProgressBar.hidden = false;
+        topView.hidden = false;
+        imageVideoView.image = VideoImageUrl;
+        if(indexForSwipe == orgIndex){
+            [self playVideoAutomatically];
+        }
+        else{
+            videoProgressBar.hidden = true;
+            [playIconView removeFromSuperview];
+            playIconView = [[UIImageView alloc]init];
+            playIconView.image = [UIImage imageNamed:@"Circled Play"];
+            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 -20, 40, 40);
+            [glView addSubview:playIconView];
+            [glView bringSubviewToFront:playIconView];
+            UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
+            singleTap.numberOfTapsRequired = 1;
+            singleTap.delegate = self;
+            [playIconView setUserInteractionEnabled:YES];
+            [playIconView addGestureRecognizer:singleTap];
+        }
+    }
+    else{
+        videoProgressBar.hidden = true;
+        [playIconView removeFromSuperview];
+        [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
+    }
+    
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionMoveIn;
+    
+    if (gestureId == 0)
+    {
+        transition.subtype = kCATransitionFromRight;
+    }
+    else if (gestureId == 1)
+    {
+        transition.subtype = kCATransitionFromLeft;
+    }
+    [imageVideoView.layer addAnimation:transition forKey:nil];
+}
+
+-(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
+{
+    imageVideoView.hidden = false;
+    imageView.hidden = false;
+    videoProgressBar.hidden = true;
+    [self.view bringSubviewToFront:imageVideoView];
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
     NSString *mediaNamePath = [NSString stringWithFormat:@"%@full",mediaDetailId];
     NSString *savingPath = [NSString stringWithFormat:@"%@/%@full",parentPathStr,mediaDetailId];
-    UIImage *mediaImage;
     bool fileExistFlag = [[FileManagerViewController sharedInstance] fileExist:savingPath];
     if(fileExistFlag == true){
         mediaImage = [[FileManagerViewController sharedInstance] getImageFromFilePath:savingPath];
@@ -404,6 +463,192 @@ MovieViewController *obj1;
         [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
     }
     imageVideoView.image = mediaImage;
+}
+
+-(void) playVideoAutomatically
+{
+        [playIconView removeFromSuperview];
+        [glView bringSubviewToFront:videoProgressBar];
+        NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+        NSString *parentPathStr = [parentPath absoluteString];
+        NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
+        NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
+        BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
+        
+        if(fileExistFlag == true){
+            videoProgressBar.hidden = true;
+            self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
+            MPMoviePlayerController *player = _moviePlayer;
+            player.view.frame = CGRectMake(glView.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,((self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height));
+            player.scalingMode = MPMovieScalingModeFill;
+            player.movieSourceType = MPMovieSourceTypeFile;
+            player.controlStyle = MPMovieControlStyleNone;
+            player.repeatMode = MPMovieRepeatModeNone;
+            [imageVideoView addSubview:[player view]];
+            
+            topView.hidden = false;
+            cameraSelectionButton.hidden = true;
+            liveView.hidden = true;
+            numberOfSharedChannels.hidden = true;
+            topView.backgroundColor = [UIColor clearColor];
+            [glView bringSubviewToFront:heartView];
+            [glView bringSubviewToFront:topView];
+            
+            [player play];
+            playHandleFlag = 1;
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playbackStateChange:)
+                                                         name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playerDidFinish:)
+                                                         name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
+        }
+        else{
+            NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
+            [self downloadVideo:url];
+        }
+}
+-(void) playbackStateChange:(NSNotification *) notif
+{
+    switch ([_moviePlayer playbackState]) {
+        case MPMoviePlaybackStateStopped:
+            NSLog(@"Stopped");
+            break;
+        case MPMoviePlaybackStatePlaying:
+            NSLog(@"Playing");
+            playHandleFlag = 1;
+            break;
+        case MPMoviePlaybackStatePaused:
+            NSLog(@"Paused");
+            playHandleFlag = 1;
+            break;
+        case MPMoviePlaybackStateInterrupted:
+            NSLog(@"Interrupted");
+            break;
+        case MPMoviePlaybackStateSeekingForward:
+            NSLog(@"Seeking Forward");
+            break;
+        case MPMoviePlaybackStateSeekingBackward:
+            NSLog(@"Seeking Backward");
+            break;
+        default:
+            break;
+    }
+}
+
+-(void) checkVideoStatus
+{
+    if (playHandleFlag == 1)
+    {
+        playHandleFlag = 0;
+        [_moviePlayer stop];
+        [_moviePlayer.view removeFromSuperview];
+        playIconView.hidden = false;
+        self.view.userInteractionEnabled = true;
+    }
+    if(downloadTask.state == 0)
+    {
+        [downloadTask cancel];
+    }
+}
+
+-(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
+{
+    UIImage *VideoImageUrl;
+    [self checkVideoStatus];
+    if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
+    {
+        gestureId = 0;
+    }
+    else if (swipeReceived.direction == UISwipeGestureRecognizerDirectionRight)  //Swipe Right Direction check starts
+    {
+        gestureId = 1;
+    }
+    
+    if(screenNumber == 0)
+    {
+        if(gestureId == 0)
+        {
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+            {
+                indexForSwipe = indexForSwipe + 1;
+            }
+        }
+        else
+        {
+            if (indexForSwipe == [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+            {
+                indexForSwipe = (int)[GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count] - 1;
+            }
+            indexForSwipe = indexForSwipe - 1;
+        }
+
+        if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+        {
+            if (indexForSwipe != -1)
+            {
+                mediaURL = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
+                mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
+                mediaId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
+                NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
+                timeDiff = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+                likeCountStr = @"0";
+                notifType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
+                VideoImageUrl = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
+                [self setGUIChanges:mediaURL mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
+            }
+        }
+    }
+    else
+    {
+        if(gestureId == 0)
+        {
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                indexForSwipe = indexForSwipe + 1;
+            }
+        }
+        else
+        {
+            if (indexForSwipe == [streamORChannelDict count])
+            {
+                indexForSwipe = (int)[streamORChannelDict count] - 1;
+            }
+            indexForSwipe = indexForSwipe - 1;
+        }
+        
+        if(indexForSwipe < [streamORChannelDict count])
+        {
+            if (indexForSwipe != -1)
+            {
+                mediaURL = streamORChannelDict[indexForSwipe][@"actualImage"];
+                mediaType = streamORChannelDict[indexForSwipe][@"mediaType"];
+                mediaId = streamORChannelDict[indexForSwipe][@"mediaId"];
+                NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
+                timeDiff = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+                likeCountStr = @"0";
+                notifType = streamORChannelDict[indexForSwipe][@"notification"];
+                VideoImageUrl = streamORChannelDict[indexForSwipe][@"mediaUrl"];
+                
+                if(screenNumber == 1){
+                    profilePicture.image = [UIImage imageNamed:@"thumb12"];
+                    channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
+                    userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
+                    channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                }
+                
+                [self setGUIChanges:mediaURL mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
+            }
+        }
+    }
 }
 
 -(void) downloadVideo: (NSURL *) url
@@ -461,6 +706,10 @@ MovieViewController *obj1;
             [glView bringSubviewToFront:topView];
             
             [player play];
+            playHandleFlag = 1;
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playbackStateChange:)
+                                                         name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
             
         }
     }
@@ -469,7 +718,8 @@ MovieViewController *obj1;
 -(void) playerDidFinish :(NSNotification *) notif
 {
     [_moviePlayer.view removeFromSuperview];
-    UIImageView *playIconView = [[UIImageView alloc]init];
+    [playIconView removeFromSuperview];
+    playIconView = [[UIImageView alloc]init];
     playIconView.image = [UIImage imageNamed:@"Circled Play"];
     playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
     [glView addSubview:playIconView];
@@ -477,7 +727,6 @@ MovieViewController *obj1;
     singleTap.numberOfTapsRequired = 1;
     [playIconView setUserInteractionEnabled:YES];
     [playIconView addGestureRecognizer:singleTap];
-    
 }
 
 -(void) tapDetected{
@@ -505,6 +754,10 @@ MovieViewController *obj1;
     topView.backgroundColor = [UIColor clearColor];
     [glView bringSubviewToFront:topView];
     [player play];
+    playHandleFlag = 1;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playbackStateChange:)
+                                                 name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(playerDidFinish:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
@@ -563,6 +816,7 @@ MovieViewController *obj1;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    pinchFlag = false;
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
     [self setUpView];
@@ -897,7 +1151,7 @@ MovieViewController *obj1;
         }
         else{
             
-            UIImageView *playIconView = [[UIImageView alloc]init];
+            playIconView = [[UIImageView alloc]init];
             playIconView.image = [UIImage imageNamed:@"Circled Play"];
             playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
             [playIconView removeFromSuperview];
