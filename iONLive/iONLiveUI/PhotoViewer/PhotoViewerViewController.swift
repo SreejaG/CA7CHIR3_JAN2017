@@ -820,6 +820,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     player.repeatMode = MPMovieRepeatMode.None
                     self.view.addSubview(player.view)
                     
+                    let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+                    swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+                    player.view.addGestureRecognizer(swipeRight)
+                    
+                    let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+                    swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+                    player.view.addGestureRecognizer(swipeLeft)
                     self.playHandleflag = 1
                     
                     player.play()
@@ -906,6 +913,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         
                         self.playHandleflag = 1
                         
+                        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+                        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+                        player.view.addGestureRecognizer(swipeRight)
+                        
+                        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+                        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+                        player.view.addGestureRecognizer(swipeLeft)
+
                         player.prepareToPlay()
                         player.play()
                     })
