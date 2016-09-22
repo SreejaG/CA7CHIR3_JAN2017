@@ -713,9 +713,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
                     activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
                     profilePicture.alpha = 0.2;
                     activityIndicatorProfile.color = [UIColor blueColor];
-
-                 //   profilePicture.backgroundColor = [UIColor blackColor];
-                    // activityIndicator.center = CGPointMake(profilePicture.frame.size.width, profilePicture.frame.size.height);
+                    [activityIndicatorProfile stopAnimating];
                     [activityIndicatorProfile startAnimating];//to start animating
                     mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
                     mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
