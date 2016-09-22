@@ -187,7 +187,7 @@ NSString *mediaURLChk,*mediaTypeChk,*mediaIdChk,*timeDiffChk,*likeCountStrChk,*n
 MovieViewController *obj1;
 int playHandleFlag = 0;
 float imageVideoViewHeight;
-
+UIActivityIndicatorView *activityIndicatorProfile;
 + (void)initialize
 {
     if (!gHistory)
@@ -627,6 +627,7 @@ float imageVideoViewHeight;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
+    
     if (pinchFlag == false)
     {
         orgIndex = -11;
@@ -705,6 +706,17 @@ float imageVideoViewHeight;
             {
                 if (indexForSwipe != -1)
                 {
+                    [activityIndicatorProfile removeFromSuperview];
+                    activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                    activityIndicatorProfile.alpha = 1.0;
+                    [heartView addSubview:activityIndicatorProfile];
+                    activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
+                    profilePicture.alpha = 0.2;
+                    activityIndicatorProfile.color = [UIColor blueColor];
+
+                 //   profilePicture.backgroundColor = [UIColor blackColor];
+                    // activityIndicator.center = CGPointMake(profilePicture.frame.size.width, profilePicture.frame.size.height);
+                    [activityIndicatorProfile startAnimating];//to start animating
                     mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
                     mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
                     mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
@@ -2195,7 +2207,10 @@ float imageVideoViewHeight;
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-    profilePicture.image =profImage;
+        [activityIndicatorProfile removeFromSuperview];
+        profilePicture.backgroundColor = [UIColor clearColor];
+        profilePicture.alpha = 1.0;
+        profilePicture.image =profImage;
     });
 }
 - (IBAction)didTapSharingListIcon:(id)sender
