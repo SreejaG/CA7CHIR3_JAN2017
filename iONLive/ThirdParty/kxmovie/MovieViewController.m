@@ -182,10 +182,12 @@ UIImageView *playIconView;
 NSURL *urlForSwipe;
 UIImage *mediaImage;
 NSArray *streamORChannelDict;
-NSString *mediaURL,*mediaType,*mediaId,*timeDiff,*likeCountStr,*notifType;
+NSString *mediaURLChk,*mediaTypeChk,*mediaIdChk,*timeDiffChk,*likeCountStrChk,*notifTypeChk;
 @implementation MovieViewController
 MovieViewController *obj1;
 int playHandleFlag = 0;
+float imageVideoViewHeight;
+
 + (void)initialize
 {
     if (!gHistory)
@@ -312,15 +314,18 @@ int playHandleFlag = 0;
         rightSwipe.delegate = self;
         [self.view addGestureRecognizer:rightSwipe];
         
+        imageVideoView.userInteractionEnabled = YES;
+        
         //Pan Gesture
-//        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
-//        panGesture.delegate = self;
-//        [imageVideoView addGestureRecognizer:panGesture];
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
+        panGesture.delegate = self;
+        [imageVideoView addGestureRecognizer:panGesture];
         
         //Pinch Zoom
-//        pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
-//        pinchGesture.delegate = self;
-//        [imageVideoView addGestureRecognizer:pinchGesture];
+        
+        pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
+        pinchGesture.delegate = self;
+        [imageVideoView addGestureRecognizer:pinchGesture];
        
         streamORChannelDict = [[NSArray alloc]init];
         
@@ -508,6 +513,74 @@ int playHandleFlag = 0;
             [self downloadVideo:url];
         }
 }
+
+-(void)pinchGestureRecogniserDetected:(UIPinchGestureRecognizer *)pinchGestureDetected
+{
+    glView.backgroundColor = [UIColor whiteColor];
+    UIGestureRecognizerState state = [pinchGestureDetected state];
+    if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged)
+    {
+        pinchFlag = true;
+        CGFloat scale;
+        scale = [pinchGestureDetected scale];
+        [pinchGestureDetected.view setTransform:CGAffineTransformScale(pinchGestureDetected.view.transform, scale, scale)];
+        [pinchGestureDetected setScale:1.0];
+    }
+    
+    if(state == UIGestureRecognizerStateEnded)
+    {
+        if( imageVideoView.frame.size.height < 600)
+        {
+            pinchFlag = false;
+            if ([pinchGestureDetected scale]<1.0f)
+            {
+                [pinchGestureDetected setScale:1.0f];
+            }
+            CGAffineTransform transform = CGAffineTransformMakeScale([pinchGestureDetected scale],  [pinchGestureDetected scale]);
+            imageVideoView.transform = transform;
+        }
+    }
+}
+
+-(void)panGestureRecogniser:(UIPanGestureRecognizer *)recognizer
+{
+    if(pinchFlag == true){
+        if( imageVideoView.frame.size.height > 600)
+        {
+            CGPoint translation = [recognizer translationInView:imageVideoView];
+            recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
+                                                 recognizer.view.center.y + translation.y);
+            [recognizer setTranslation:CGPointMake(0, 0) inView:imageVideoView];
+            
+            if (recognizer.state == UIGestureRecognizerStateEnded) {
+                
+                CGPoint velocity = [recognizer velocityInView:imageVideoView];
+                CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
+                CGFloat slideMult = magnitude / 200;
+                NSLog(@"magnitude: %f, slideMult: %f", magnitude, slideMult);
+                
+                float slideFactor = 0.1 * slideMult; // Increase for more of a slide
+                CGPoint finalPoint = CGPointMake(recognizer.view.center.x + (velocity.x * slideFactor),
+                                                 recognizer.view.center.y + (velocity.y * slideFactor));
+                finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
+                finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
+                
+                [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                    recognizer.view.center = finalPoint;
+                } completion:nil];
+            }
+        }
+        else if( imageVideoView.frame.size.height < 600)
+        {
+            pinchFlag = false;
+            CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
+            finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
+            finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
+            recognizer.view.center = finalPoint;
+        }
+    }
+}
+
 -(void) playbackStateChange:(NSNotification *) notif
 {
     switch ([_moviePlayer playbackState]) {
@@ -554,101 +627,109 @@ int playHandleFlag = 0;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
-    UIImage *VideoImageUrl;
-    [self checkVideoStatus];
-    if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
+    if (pinchFlag == false)
     {
-        gestureId = 0;
-    }
-    else if (swipeReceived.direction == UISwipeGestureRecognizerDirectionRight)  //Swipe Right Direction check starts
-    {
-        gestureId = 1;
-    }
-    
-    if(screenNumber == 0)
-    {
-        if(gestureId == 0)
+        UIImage *VideoImageUrlChk;
+        [self checkVideoStatus];
+        if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
         {
-            if(indexForSwipe < 0)
-            {
-                indexForSwipe = 0;
-            }
-            if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
-            {
-                indexForSwipe = indexForSwipe + 1;
-            }
+            gestureId = 0;
         }
-        else
+        else if (swipeReceived.direction == UISwipeGestureRecognizerDirectionRight)  //Swipe Right Direction check starts
         {
-            if (indexForSwipe == [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
-            {
-                indexForSwipe = (int)[GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count] - 1;
-            }
-            indexForSwipe = indexForSwipe - 1;
-        }
-
-        if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
-        {
-            if (indexForSwipe != -1)
-            {
-                mediaURL = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
-                mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
-                mediaId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
-                NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
-                timeDiff = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
-                likeCountStr = @"0";
-                notifType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
-                VideoImageUrl = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
-                [self setGUIChanges:mediaURL mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
-            }
-        }
-    }
-    else
-    {
-        if(gestureId == 0)
-        {
-            if(indexForSwipe < 0)
-            {
-                indexForSwipe = 0;
-            }
-            if(indexForSwipe < [streamORChannelDict count])
-            {
-                indexForSwipe = indexForSwipe + 1;
-            }
-        }
-        else
-        {
-            if (indexForSwipe == [streamORChannelDict count])
-            {
-                indexForSwipe = (int)[streamORChannelDict count] - 1;
-            }
-            indexForSwipe = indexForSwipe - 1;
+            gestureId = 1;
         }
         
-        if(indexForSwipe < [streamORChannelDict count])
+        if(screenNumber == 0)
         {
-            if (indexForSwipe != -1)
+            if(gestureId == 0)
             {
-                mediaURL = streamORChannelDict[indexForSwipe][@"actualImage"];
-                mediaType = streamORChannelDict[indexForSwipe][@"mediaType"];
-                mediaId = streamORChannelDict[indexForSwipe][@"mediaId"];
-                NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
-                timeDiff = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
-                likeCountStr = @"0";
-                notifType = streamORChannelDict[indexForSwipe][@"notification"];
-                VideoImageUrl = streamORChannelDict[indexForSwipe][@"mediaUrl"];
-                
-                if(screenNumber == 1){
-                    profilePicture.image = [UIImage imageNamed:@"thumb12"];
-                    channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
-                    userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
-                    channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                if(indexForSwipe < 0)
+                {
+                    indexForSwipe = 0;
                 }
-                
-                [self setGUIChanges:mediaURL mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
+                if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+                {
+                    indexForSwipe = indexForSwipe + 1;
+                }
+            }
+            else
+            {
+                if (indexForSwipe == [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+                {
+                    indexForSwipe = (int)[GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count] - 1;
+                }
+                indexForSwipe = indexForSwipe - 1;
+            }
+            
+            if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+            {
+                if (indexForSwipe != -1)
+                {
+                    mediaURLChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
+                    mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
+                    mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
+                    NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
+                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+                    likeCountStrChk = @"0";
+                    notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
+                    VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
+                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                }
+            }
+        }
+        else
+        {
+            if(gestureId == 0)
+            {
+                if(indexForSwipe < 0)
+                {
+                    indexForSwipe = 0;
+                }
+                if(indexForSwipe < [streamORChannelDict count])
+                {
+                    indexForSwipe = indexForSwipe + 1;
+                }
+            }
+            else
+            {
+                if (indexForSwipe == [streamORChannelDict count])
+                {
+                    indexForSwipe = (int)[streamORChannelDict count] - 1;
+                }
+                indexForSwipe = indexForSwipe - 1;
+            }
+            
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                if (indexForSwipe != -1)
+                {
+                    mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
+                    mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
+                    mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
+                    NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
+                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+                    likeCountStrChk = @"0";
+                    notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
+                    VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
+                    
+                    if(screenNumber == 1){
+                        profilePicture.image = [UIImage imageNamed:@"thumb12"];
+                        channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
+                        userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
+                        channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                    }
+                    
+                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                }
             }
         }
     }
+}
+
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return true;
 }
 
 -(void) downloadVideo: (NSURL *) url
@@ -816,6 +897,7 @@ int playHandleFlag = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    imageVideoViewHeight = imageVideoView.frame.size.height;
     pinchFlag = false;
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
