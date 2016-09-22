@@ -629,6 +629,7 @@ float imageVideoViewHeight;
 {
     if (pinchFlag == false)
     {
+        orgIndex = -11;
         UIImage *VideoImageUrlChk;
         [self checkVideoStatus];
         if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
