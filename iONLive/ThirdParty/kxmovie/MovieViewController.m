@@ -713,12 +713,15 @@ float imageVideoViewHeight;
                     likeCountStrChk = @"0";
                     notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
                     VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
-                    
+                    SetUpView *setUpObj = [[SetUpView alloc]init];
                     if(screenNumber == 1){
-                        profilePicture.image = [UIImage imageNamed:@"thumb12"];
+                        [setUpObj getProfileImageSelectedIndex:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
                         channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
                         userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
                         channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                    }
+                    if(screenNumber == 1 || screenNumber == 2){
+                         [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
                     }
                     
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
@@ -2184,10 +2187,17 @@ float imageVideoViewHeight;
 
 -(void) successFromSetUpView:(NSString *) count
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
     [likeCount setText:count];
     likeFlag = count;
+    });
 }
-
+-(void) successFromSetUpViewProfileImage :(UIImage *)profImage
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+    profilePicture.image =profImage;
+    });
+}
 - (IBAction)didTapSharingListIcon:(id)sender
 {
     if ([self isViewFinderLoading]) {

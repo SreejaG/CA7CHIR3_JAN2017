@@ -30,7 +30,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) successFromSetUpView:( NSString *) count;
 -(void) closeView;
 -(void) mediaDeletedErrorMessage;
-
+-(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
 @property (readonly) BOOL playing;
 
 @end

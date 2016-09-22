@@ -124,6 +124,95 @@ import UIKit
             obj.successFromSetUpView(count)
         }
     }
+    func getProfileImageSelectedIndex(userIdKey: String ,objects: MovieViewController)
+    {
+        let subUserName = userIdKey
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+            self.successHandlerForProfileImage(response,obj: objects)
+            
+            }, failure: { (error, message) -> () in
+                self.failureHandlerForprofileImage(error, code: message,obj:objects)
+                return
+        })
+        
+        
+    }
     
+    var profileImageUserForSelectedIndex : UIImage = UIImage()
+    func successHandlerForProfileImage(response:AnyObject?,obj: MovieViewController)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
+            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
+            if(profileImageName != "")
+            {
+                let url: NSURL = self.convertStringtoURL(profileImageName)
+                if let data = NSData(contentsOfURL: url){
+                    let imageDetailsData = (data as NSData?)!
+                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
+                }
+                else{
+                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+                }
+            }
+            else{
+                profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+            }
+            
+        }
+        else{
+            profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+        }
+        obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
+    }
+    func nullToNil(value : AnyObject?) -> AnyObject? {
+        if value is NSNull {
+            return ""
+        } else {
+            return value
+        }
+    }
+    func failureHandlerForprofileImage(error: NSError?, code: String,obj: MovieViewController)
+    {
+        profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+        obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
+        
+    }
+    func getLikeCount(mediaType : String,mediaId: String, Objects:MovieViewController) {
+        
+        let mediaTypeSelected : String = mediaType
+        var likeCount: String = "0"
+        let defaults = NSUserDefaults .standardUserDefaults()
+        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
+            self.successHandlerForMediaCount(response,obj:Objects)
+            }, failure: { (error, message) -> () in
+                self.failureHandlerForMediaCount(error, code: message,obj:Objects)
+                return
+        })
+    }
+    
+    var likeCountSelectedIndex : String = "0"
+    
+    func successHandlerForMediaCount(response:AnyObject?,obj:MovieViewController)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            likeCountSelectedIndex = json["likeCount"] as! String
+        }
+        obj.successFromSetUpView("\(likeCountSelectedIndex)")
+        
+    }
+    
+    func failureHandlerForMediaCount(error: NSError?, code: String,obj:MovieViewController)
+    {
+        likeCountSelectedIndex = "0"
+        obj.successFromSetUpView("\(likeCountSelectedIndex)")
+    }
 }
 
