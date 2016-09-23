@@ -150,7 +150,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.photoThumpCollectionView.reloadData()
                 })
             }
-            downloadImagesFromGlobalChannelImageMapping(10)
+            downloadImagesFromGlobalChannelImageMapping(21)
         }
         
         fullScreenScrollView.delegate = self
