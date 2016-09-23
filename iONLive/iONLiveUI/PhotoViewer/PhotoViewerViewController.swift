@@ -723,7 +723,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 break;
                 default :
                     let dateFormatterDisplay = NSDateFormatter()
-                    dateFormatterDisplay.dateFormat = "MMM d, yyyy"
+                    dateFormatterDisplay.dateFormat = "   MMM d, yyyy"
                     let dateString = dateFormatterDisplay.stringFromDate(fromdate!)
                     dateForDisplay = "  \(dateString)"
                     break;
