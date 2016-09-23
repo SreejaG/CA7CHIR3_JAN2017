@@ -319,9 +319,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
-        else if  (result["type"] as! String == "share"||result["type"] as! String == "like")
+        else if  (result["type"] as! String == "share")
         {
             defaults.setValue("1", forKey: "notificationArrived")
+        }
+        else if (result["type"] as! String == "like")
+        {
+            defaults.setValue("2", forKey: "notificationArrived")
+
         }
     }
     

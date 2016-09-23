@@ -45,7 +45,7 @@ class SharedChannelDetailsAPI: NSObject {
                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                 channelName = selectedChannelName
                 userName = selectedChannelUserName
-                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
                     self.authenticationSuccessHandler(response)
                 }) { (error, message) -> () in
                     self.authenticationFailureHandler(error, code: message)
@@ -59,7 +59,7 @@ class SharedChannelDetailsAPI: NSObject {
                 let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                 channelName = selectedChannelName
                 userName = selectedChannelUserName
-                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
                     self.authenticationSuccessHandler(response)
                 }) { (error, message) -> () in
                     self.authenticationFailureHandler(error, code: message)
@@ -74,7 +74,7 @@ class SharedChannelDetailsAPI: NSObject {
             let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             channelName = selectedChannelName
             userName = selectedChannelUserName
-            ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+            ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
                 self.authenticationSuccessHandler(response)
             }) { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
@@ -103,7 +103,7 @@ class SharedChannelDetailsAPI: NSObject {
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         channelName = selectedChannelName
         userName = selectedChannelUserName
-        ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "21", offset: "0", success: { (response) -> () in
+        ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)

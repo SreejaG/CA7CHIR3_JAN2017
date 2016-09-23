@@ -41,7 +41,7 @@ class StreamsListViewController: UIViewController{
     var pullToRefreshActive = false
     var  liveStreamSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var count : Int = 0
-    var limit : Int = 21
+    var limit : Int = 27
     var scrollObj = UIScrollView()
     @IBOutlet weak var sharedNewMediaLabel: UILabel!
     var downloadCompleteFlagStream : String = "start"
