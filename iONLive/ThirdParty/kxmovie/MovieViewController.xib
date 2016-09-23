@@ -28,6 +28,7 @@
                 <outlet property="mainView" destination="ARi-W0-byd" id="5aD-pQ-VTj"/>
                 <outlet property="noDataFound" destination="KZE-R5-aYy" id="5T8-7N-yfO"/>
                 <outlet property="numberOfSharedChannels" destination="L40-1V-WGS" id="OTK-rh-hOY"/>
+                <outlet property="playView" destination="076-BU-e8a" id="X0X-6a-ihg"/>
                 <outlet property="profilePicture" destination="BMp-J9-C8j" id="4vf-dX-udw"/>
                 <outlet property="secondCircleButton" destination="WbX-hr-Zxb" id="OLz-WO-P5h"/>
                 <outlet property="thirdCircleButton" destination="kF6-Vj-OCx" id="wgz-RR-ZT2"/>
@@ -333,6 +334,13 @@
                                         <constraint firstAttribute="width" constant="49" id="v1E-0p-ymu"/>
                                     </constraints>
                                 </imageView>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Circled Play" translatesAutoresizingMaskIntoConstraints="NO" id="076-BU-e8a">
+                                    <rect key="frame" x="280" y="280" width="40" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="40" id="Ieh-MC-JU9"/>
+                                        <constraint firstAttribute="height" constant="40" id="sEo-wq-1ms"/>
+                                    </constraints>
+                                </imageView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
@@ -348,12 +356,14 @@
                                 <constraint firstItem="JM0-t4-a8I" firstAttribute="top" secondItem="R2J-HD-A0s" secondAttribute="top" id="NsA-TJ-mPV"/>
                                 <constraint firstItem="fVQ-mp-3vZ" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="Qv2-3C-8gJ"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="R2N-W9-00b"/>
+                                <constraint firstItem="076-BU-e8a" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="Vqh-aM-PZV"/>
                                 <constraint firstItem="8cA-HV-eex" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="WeN-QK-2BA"/>
                                 <constraint firstAttribute="trailing" secondItem="KWR-bQ-XwK" secondAttribute="trailing" id="WhH-yb-r9h"/>
                                 <constraint firstItem="8cA-HV-eex" firstAttribute="top" secondItem="KWR-bQ-XwK" secondAttribute="bottom" constant="-70" id="YFY-M3-3dy"/>
                                 <constraint firstItem="5C7-am-vGG" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="aYF-V3-ubx"/>
                                 <constraint firstAttribute="trailing" secondItem="8cA-HV-eex" secondAttribute="trailing" id="amB-XE-fRV"/>
                                 <constraint firstAttribute="trailing" secondItem="BB9-od-AqJ" secondAttribute="trailing" id="hAG-r5-L4J"/>
+                                <constraint firstItem="076-BU-e8a" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="iLE-ww-KrZ"/>
                                 <constraint firstAttribute="trailing" secondItem="5C7-am-vGG" secondAttribute="trailing" id="nLz-MQ-yCI"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="top" secondItem="fVQ-mp-3vZ" secondAttribute="bottom" id="ngz-PF-VkZ"/>
                                 <constraint firstAttribute="bottom" secondItem="5C7-am-vGG" secondAttribute="bottom" constant="3" id="pSG-dk-DXt"/>
@@ -389,6 +399,7 @@
     <resources>
         <image name="Camera_Button_OFF" width="86" height="86"/>
         <image name="Camera_Thumb" width="51" height="50"/>
+        <image name="Circled Play" width="25" height="25"/>
         <image name="Live_camera" width="26" height="25"/>
         <image name="Stream_Thumb" width="56" height="56"/>
         <image name="avatar" width="11" height="12"/>

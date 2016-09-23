@@ -32,5 +32,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) mediaDeletedErrorMessage;
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
 @property (readonly) BOOL playing;
+@property (weak, nonatomic) IBOutlet UIImageView *playView;
+
 
 @end
