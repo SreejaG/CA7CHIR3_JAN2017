@@ -166,7 +166,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     @IBAction func didTapCreateButton(sender: AnyObject) {
-        if(channelTextField.text?.characters.count >= 15){
+        if(channelTextField.text?.characters.count > 15){
             channelTextField.resignFirstResponder()
             channelTextField.text = ""
             channelCreateButton.hidden = true

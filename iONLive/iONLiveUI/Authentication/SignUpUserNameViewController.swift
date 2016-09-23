@@ -96,7 +96,7 @@ class SignUpUserNameViewController: UIViewController {
         {
             let text = userNameTextfield.text
             let chrSet = NSCharacterSet.whitespaceCharacterSet()
-            if((text?.characters.count < 5) || (text?.characters.count > 20))
+            if((text?.characters.count < 5) || (text?.characters.count > 15))
             {
                 ErrorManager.sharedInstance.InvalidUsernameEnteredError()
                 userNameTextfield.text = ""
