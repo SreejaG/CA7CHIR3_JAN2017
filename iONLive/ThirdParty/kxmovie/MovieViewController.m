@@ -228,7 +228,6 @@ UIActivityIndicatorView *activityIndicatorProfile;
                  liveVideo:(BOOL)live
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
-  //  _playView.hidden = true;
     if (self) {
         if(live){
             _liveVideo = live;
@@ -401,31 +400,29 @@ UIActivityIndicatorView *activityIndicatorProfile;
         videoProgressBar.hidden = false;
         topView.hidden = false;
         imageVideoView.image = VideoImageUrl;
+        videoProgressBar.hidden = true;
+        [playIconView removeFromSuperview];
+        playIconView = [[UIImageView alloc]init];
+        playIconView.image = [UIImage imageNamed:@"Circled Play"];
         if(indexForSwipe == orgIndex){
-            [self playVideoAutomatically];
+            CGFloat width = [UIScreen mainScreen].bounds.size.width;
+            CGFloat height = [UIScreen mainScreen].bounds.size.height;
+            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
         }
         else{
-            videoProgressBar.hidden = true;
-//        _playView.hidden = false;
-     //  [ _playView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Circled Play"]]];
-        
-            [playIconView removeFromSuperview];
-            playIconView = [[UIImageView alloc]init];
-            playIconView.image = [UIImage imageNamed:@"Circled Play"];
             playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
             playIconView.center = imageVideoView.center;
-            [glView addSubview:playIconView];
-            [glView bringSubviewToFront:playIconView];
-            UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
-            singleTap.numberOfTapsRequired = 1;
-            singleTap.delegate = self;
-            [playIconView setUserInteractionEnabled:YES];
-            [playIconView addGestureRecognizer:singleTap];
-        
         }
+      
+        [glView addSubview:playIconView];
+        [glView bringSubviewToFront:playIconView];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
+        singleTap.numberOfTapsRequired = 1;
+        singleTap.delegate = self;
+        [playIconView setUserInteractionEnabled:YES];
+        [playIconView addGestureRecognizer:singleTap];
     }
     else{
-//        _playView.hidden = true;
         videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
         [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
@@ -626,7 +623,6 @@ UIActivityIndicatorView *activityIndicatorProfile;
         playHandleFlag = 0;
         [_moviePlayer stop];
         [_moviePlayer.view removeFromSuperview];
-//        _playView.hidden = false;
         self.view.userInteractionEnabled = true;
     }
     if(downloadTask.state == 0)
@@ -1257,7 +1253,6 @@ UIActivityIndicatorView *activityIndicatorProfile;
             [self downloadVideo:url];
         }
         else{
-//            _playView.hidden = false;
             playIconView = [[UIImageView alloc]init];
             playIconView.image = [UIImage imageNamed:@"Circled Play"];
             playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
