@@ -228,6 +228,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
                  liveVideo:(BOOL)live
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
+    _playView.hidden = true;
     if (self) {
         if(live){
             _liveVideo = live;
@@ -400,25 +401,31 @@ UIActivityIndicatorView *activityIndicatorProfile;
         videoProgressBar.hidden = false;
         topView.hidden = false;
         imageVideoView.image = VideoImageUrl;
-        if(indexForSwipe == orgIndex){
-            [self playVideoAutomatically];
-        }
-        else{
+       // if(indexForSwipe == orgIndex){
+      //      [self playVideoAutomatically];
+     //   }
+     //   else{
             videoProgressBar.hidden = true;
-            [playIconView removeFromSuperview];
-            playIconView = [[UIImageView alloc]init];
-            playIconView.image = [UIImage imageNamed:@"Circled Play"];
-            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 -20, 40, 40);
-            [glView addSubview:playIconView];
-            [glView bringSubviewToFront:playIconView];
+        _playView.hidden = false;
+     //  [ _playView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Circled Play"]]];
+        
+          //  [playIconView removeFromSuperview];
+         //   playIconView = [[UIImageView alloc]init];
+          //  playIconView.image = [UIImage imageNamed:@"Circled Play"];
+          //  playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
+        ///playIconView.center = imageVideoView.center;
+         //   [glView addSubview:playIconView];
+          //  [glView bringSubviewToFront:playIconView];
             UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
             singleTap.numberOfTapsRequired = 1;
             singleTap.delegate = self;
-            [playIconView setUserInteractionEnabled:YES];
-            [playIconView addGestureRecognizer:singleTap];
-        }
+            [_playView setUserInteractionEnabled:YES];
+            [_playView addGestureRecognizer:singleTap];
+        
+        //}
     }
     else{
+        _playView.hidden = true;
         videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
         [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
@@ -472,7 +479,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
 
 -(void) playVideoAutomatically
 {
-        [playIconView removeFromSuperview];
+    _playView.hidden = true;
         [glView bringSubviewToFront:videoProgressBar];
         NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
         NSString *parentPathStr = [parentPath absoluteString];
@@ -516,6 +523,8 @@ UIActivityIndicatorView *activityIndicatorProfile;
 
 -(void)pinchGestureRecogniserDetected:(UIPinchGestureRecognizer *)pinchGestureDetected
 {
+    if(playHandleFlag == 0)
+    {
     glView.backgroundColor = [UIColor whiteColor];
     UIGestureRecognizerState state = [pinchGestureDetected state];
     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged)
@@ -540,11 +549,12 @@ UIActivityIndicatorView *activityIndicatorProfile;
             imageVideoView.transform = transform;
         }
     }
+    }
 }
 
 -(void)panGestureRecogniser:(UIPanGestureRecognizer *)recognizer
 {
-    if(pinchFlag == true){
+    if(pinchFlag == true && playHandleFlag == 0){
         if( imageVideoView.frame.size.height > 600)
         {
             CGPoint translation = [recognizer translationInView:imageVideoView];
@@ -616,7 +626,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
         playHandleFlag = 0;
         [_moviePlayer stop];
         [_moviePlayer.view removeFromSuperview];
-        playIconView.hidden = false;
+        _playView.hidden = false;
         self.view.userInteractionEnabled = true;
     }
     if(downloadTask.state == 0)
@@ -814,14 +824,15 @@ UIActivityIndicatorView *activityIndicatorProfile;
 {
     [_moviePlayer.view removeFromSuperview];
     [playIconView removeFromSuperview];
-    playIconView = [[UIImageView alloc]init];
-    playIconView.image = [UIImage imageNamed:@"Circled Play"];
-    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
-    [glView addSubview:playIconView];
+    _playView.hidden = false;
+//    playIconView = [[UIImageView alloc]init];
+//    playIconView.image = [UIImage imageNamed:@"Circled Play"];
+//    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+//    [glView addSubview:playIconView];
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
     singleTap.numberOfTapsRequired = 1;
-    [playIconView setUserInteractionEnabled:YES];
-    [playIconView addGestureRecognizer:singleTap];
+    [_playView setUserInteractionEnabled:YES];
+    [_playView addGestureRecognizer:singleTap];
 }
 
 -(void) tapDetected{
@@ -1246,16 +1257,16 @@ UIActivityIndicatorView *activityIndicatorProfile;
             [self downloadVideo:url];
         }
         else{
-            
-            playIconView = [[UIImageView alloc]init];
-            playIconView.image = [UIImage imageNamed:@"Circled Play"];
-            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
-            [playIconView removeFromSuperview];
-            [glView addSubview:playIconView];
+            _playView.hidden = false;
+//            playIconView = [[UIImageView alloc]init];
+//            playIconView.image = [UIImage imageNamed:@"Circled Play"];
+//            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+//            [playIconView removeFromSuperview];
+//            [glView addSubview:playIconView];
             UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
             singleTap.numberOfTapsRequired = 1;
-            [playIconView setUserInteractionEnabled:YES];
-            [playIconView addGestureRecognizer:singleTap];
+            [_playView setUserInteractionEnabled:YES];
+            [_playView addGestureRecognizer:singleTap];
         }
     }
     else if([mediaTypeSelected isEqual:@"live"]){
