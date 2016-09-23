@@ -135,6 +135,8 @@ class ChannelItemListViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        channelTitleLabel.minimumScaleFactor = 2
+        channelTitleLabel.adjustsFontSizeToFitWidth = true
         downloadingFlag = false
         if let channelName = channelName
         {

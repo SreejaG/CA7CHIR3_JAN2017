@@ -9,6 +9,9 @@ class MyChannelCell: UITableViewCell {
     @IBOutlet weak var channelNameLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
+        channelNameLabel.numberOfLines = 1
+        channelNameLabel.minimumScaleFactor = 0.5
+        channelNameLabel.adjustsFontSizeToFitWidth = true
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

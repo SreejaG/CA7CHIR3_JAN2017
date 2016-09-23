@@ -119,7 +119,7 @@ class AddChannelViewController: UIViewController {
     {
         if let text = textField.text where !text.isEmpty
         {
-            if text.characters.count >= 3
+            if(text.characters.count >= 3)
             {
                 channelCreateButton.hidden = false
             }
@@ -153,11 +153,19 @@ class AddChannelViewController: UIViewController {
     }
     
     @IBAction func didTapCreateButton(sender: AnyObject) {
-        let channelname: String = channelTextField.text!
-        channelTextField.text = ""
-        channelCreateButton.hidden = true
-        channelTextField.resignFirstResponder()
-        addChannelDetails(userId, token: accessToken, channelName: channelname)
+        if(channelTextField.text?.characters.count >= 15){
+            channelTextField.resignFirstResponder()
+            channelTextField.text = ""
+            channelCreateButton.hidden = true
+            ErrorManager.sharedInstance.InvalidChannelEnteredError()
+        }
+        else{
+            let channelname: String = channelTextField.text!
+            channelTextField.text = ""
+            channelCreateButton.hidden = true
+            channelTextField.resignFirstResponder()
+            addChannelDetails(userId, token: accessToken, channelName: channelname)
+        }
     }
     
     func addChannelDetails(userName: String, token: String, channelName: String)

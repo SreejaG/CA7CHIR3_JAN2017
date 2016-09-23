@@ -53,6 +53,7 @@ class StreamsListViewController: UIViewController{
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
         firstTap = 0
         sharedNewMediaLabel.hidden = true
         self.refreshControl = UIRefreshControl()

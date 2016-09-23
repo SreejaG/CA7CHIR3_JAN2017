@@ -175,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func  loadNotificationView()  {
-        
+        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
         let defaults = NSUserDefaults .standardUserDefaults()
         defaults.setValue("1", forKey: "notificationFlag")
         var navigationController:UINavigationController?

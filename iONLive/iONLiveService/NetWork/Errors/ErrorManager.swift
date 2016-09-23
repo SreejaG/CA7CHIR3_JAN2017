@@ -127,6 +127,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alert("Invalid Password", message: "Password must contain atleast 8 characters and atmost 40 characters")
     }
     
+    func InvalidChannelEnteredError()
+    {
+        alert("Invalid Channel", message: "Channel Name must contain atmost 15 characters")
+    }
+    
     func noNumberInPassword()
     {
         alert("Invalid Password", message: "Password must contain atleast 1 digit")

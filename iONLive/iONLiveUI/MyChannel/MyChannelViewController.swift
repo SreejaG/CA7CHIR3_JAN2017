@@ -166,20 +166,28 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     }
     
     @IBAction func didTapCreateButton(sender: AnyObject) {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        let channelname: String = channelTextField.text!
-        channelTextField.resignFirstResponder()
-        channelCreateButton.hidden = true
-        addChannelViewTopConstraint.constant = 0
-        myChannelTableViewTopConstraint.constant = 0
-        hideView(0)
-        myChannelSearchBar.text = ""
-        myChannelSearchBar.resignFirstResponder()
-        myChannelSearchBar.delegate = self
-        
-        addChannelDetails(userId, token: accessToken, channelName: channelname)
+        if(channelTextField.text?.characters.count >= 15){
+            channelTextField.resignFirstResponder()
+            channelTextField.text = ""
+            channelCreateButton.hidden = true
+            ErrorManager.sharedInstance.InvalidChannelEnteredError()
+        }
+        else{
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let userId = defaults.valueForKey(userLoginIdKey) as! String
+            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            let channelname: String = channelTextField.text!
+            channelTextField.resignFirstResponder()
+            channelCreateButton.hidden = true
+            addChannelViewTopConstraint.constant = 0
+            myChannelTableViewTopConstraint.constant = 0
+            hideView(0)
+            myChannelSearchBar.text = ""
+            myChannelSearchBar.resignFirstResponder()
+            myChannelSearchBar.delegate = self
+            
+            addChannelDetails(userId, token: accessToken, channelName: channelname)
+        }
     }
     
     func addChannelDetails(userName: String, token: String, channelName: String)
@@ -353,7 +361,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
         
         if let text = channelTextField.text where !text.isEmpty
         {
-            if text.characters.count >= 3
+            if(text.characters.count >= 3)
             {
                 channelCreateButton.hidden = false
             }
@@ -388,12 +396,13 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     {
         if let text = textField.text where !text.isEmpty
         {
-            if text.characters.count >= 3
+            if(text.characters.count >= 3)
             {
                 channelCreateButton.hidden = false
             }
             else
             {
+                ErrorManager.sharedInstance.InvalidChannelEnteredError()
                 channelCreateButton.hidden = true
             }
         }
