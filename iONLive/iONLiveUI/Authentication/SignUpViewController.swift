@@ -141,6 +141,7 @@ class SignUpViewController: UIViewController {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
         let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier) as! SignUpUserNameViewController
         
+        print(self.emailTextfield.text!)
         userNameVC.email = self.emailTextfield.text!
         userNameVC.password = self.passwdTextField.text!
         

@@ -98,6 +98,7 @@ int cameraChangeFlag = 0;
 NSInteger shutterActionMode;
 bool takePictureFlag = false;
 bool loadingCameraFlag = false;
+bool backgroundEnterFlag = false;
 NSTimer *timer;
 int timerCount = 0;
 
@@ -209,6 +210,7 @@ int timerCount = 0;
 
 -(void)applicationDidEnterBackgrounds: (NSNotification *)notification
 {
+    backgroundEnterFlag = true;
     [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"Background"];
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
@@ -306,12 +308,14 @@ int timerCount = 0;
 //                {
                   //if (timeSec != 0)
                 //  {
+            if(backgroundEnterFlag == false){
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                     message:@""
                                                                    delegate:self
                                                           cancelButtonTitle:@"Retry"
                                                           otherButtonTitles:@"Exit App",nil];
                     [alert show];
+            }
               //  }
                }
 //            }
@@ -447,6 +451,7 @@ int timerCount = 0;
         }];
         
     }];
+    backgroundEnterFlag = false;
 }
 
 -(void) updateThumbnails
@@ -544,7 +549,7 @@ int timerCount = 0;
         if(!_activityImageView.hidden)
         {
             dispatch_async( dispatch_get_main_queue(), ^{
-          
+            if(backgroundEnterFlag == false){
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"Background"])
             {
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
@@ -552,6 +557,7 @@ int timerCount = 0;
                                                       cancelButtonTitle:@"Retry"
                                                       otherButtonTitles:@"Exit App",nil];
                 [alert show];
+            }
                 
             }
             else{
