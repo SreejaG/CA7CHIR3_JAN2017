@@ -306,7 +306,7 @@ int timerCount = 0;
                   //if (timeSec != 0)
                 //  {
             if(backgroundEnterFlag == false){
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Stop"
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                     message:@""
                                                                    delegate:self
                                                           cancelButtonTitle:@"Retry"
@@ -537,7 +537,6 @@ int timerCount = 0;
     timeSec = 0 ;
 }
 - (void) thisMethodGetsFiredOnceEveryThirtySeconds:(NSTimer *)sender {
-   
     
     NSLog(@"%d",timeSec);
     UIViewController *viewContr = self.navigationController.visibleViewController;
@@ -549,11 +548,14 @@ int timerCount = 0;
             if(backgroundEnterFlag == false){
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"Background"])
             {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Timer"                                                                message:@""
+                if([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive){
+
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
                                                       otherButtonTitles:@"Exit App",nil];
                 [alert show];
+                }
             }
                 
             }
@@ -568,6 +570,7 @@ int timerCount = 0;
         loadingCameraFlag = false;
         [self hidingView];
     }
+        
 }
 
 -(void) setLeftAndRightThumbnailInCameraPage
