@@ -363,12 +363,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][sharedMediaCount]  = "1"
             }
+            let timeStamp = "created_time_stamp"
+
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            dateFormatter.timeZone = NSTimeZone(name: "UTC")
+            let currentDate = dateFormatter.stringFromDate(NSDate())
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][timeStamp] = currentDate
+            let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
+            let totalCount = filteredData.count
+            print(totalCount)
+            let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList]
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(indexOfChannelList)
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)
         }
         
         NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("CountIncrementedPushNotification", object: channelId)
     }
-    
+    func thumbExists (item: [String : AnyObject]) -> Bool {
+        let liveStreamStatus = "liveChannel"
+        return item[liveStreamStatus] as! String == "1"
+    }
     func removeEntryFromShare(channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: true)

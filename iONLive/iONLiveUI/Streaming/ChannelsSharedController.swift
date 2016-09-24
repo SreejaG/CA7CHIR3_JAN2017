@@ -161,13 +161,19 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.liveStreamStatus] = "1"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "1"
+            
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                var pathArray :[NSIndexPath] = [NSIndexPath]()
-                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
-                self.ChannelSharedTableView.beginUpdates()
-                pathArray.append(indexPath)
-                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
-                self.ChannelSharedTableView.endUpdates()
+                var itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: 0)
+                self.ChannelSharedTableView.reloadData()
+//                var pathArray :[NSIndexPath] = [NSIndexPath]()
+//                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
+//                self.ChannelSharedTableView.beginUpdates()
+//                pathArray.append(indexPath)
+//                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
+//                self.ChannelSharedTableView.endUpdates()
             })
         }
         else{
@@ -187,7 +193,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }
         return false
     }
-    
+    func thumbExists (item: [String : AnyObject]) -> Bool {
+        let liveStreamStatus = "liveChannel"
+        return item[liveStreamStatus] as! String == "1"
+    }
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
         let channelId = info["channelId"] as! Int
@@ -196,13 +205,23 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.liveStreamStatus] = "0"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "0"
+            
+            let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
+            let totalCount = filteredData.count
+            print(totalCount)
+           
+           
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.ChannelSharedTableView.beginUpdates()
-                var pathArray :[NSIndexPath] = [NSIndexPath]()
-                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
-                pathArray.append(indexPath)
-                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
-                self.ChannelSharedTableView.endUpdates()
+                let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)
+                self.ChannelSharedTableView.reloadData()
+//                self.ChannelSharedTableView.beginUpdates()
+//                var pathArray :[NSIndexPath] = [NSIndexPath]()
+//                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
+//                pathArray.append(indexPath)
+//                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
+//                self.ChannelSharedTableView.endUpdates()
             })
         }
     }
@@ -548,6 +567,7 @@ extension ChannelsSharedController:UITableViewDataSource
                         let fromdateStr = dateFormatter.stringFromDate(NSDate())
                         var fromdate = dateFormatter.dateFromString(fromdateStr)
                         let sdifferentString =  offsetFrom(date!, todate: fromdate!)
+                        print("date-----",sdifferentString)
                         let count = (mediaShared[i][sharedMediaCount]?.intValue)!
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
@@ -634,6 +654,9 @@ extension ChannelsSharedController:UITableViewDataSource
         if hoursFrom(date,todate:todate)   > 0 { return String(hoursFrom(date,todate:todate))+"h"   }
         if minutesFrom(date,todate:todate) > 0 { return String(minutesFrom(date,todate:todate))+"m" }
         if secondsFrom(date,todate:todate) > 0 { return String(secondsFrom(date,todate:todate))+"s" }
+        if secondsFrom(date,todate:todate) == 0 {
+            return "Just now"
+        }
         return ""
     }
 }
