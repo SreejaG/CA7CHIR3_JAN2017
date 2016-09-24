@@ -263,7 +263,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
         let result = userInfo["messageFrom"] as! NSDictionary
         let defaults = NSUserDefaults .standardUserDefaults()
+        var checkFlag : Bool = false
         print(result)
+        if( application.applicationState == .Inactive )
+        {
+            checkFlag = true
+        }
         if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
         {
             defaults.setValue("0", forKey: "notificationArrived")
@@ -284,7 +289,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
                 let chid : String = "\(result["channelId"]!)"
-                updateCount(chid)
+                if(!checkFlag)
+                {
+                    updateCount(chid)
+                }
             }
             if (result["type"] as! String == "channel"){
                 

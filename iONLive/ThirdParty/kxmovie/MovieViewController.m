@@ -188,6 +188,9 @@ MovieViewController *obj1;
 int playHandleFlag = 0;
 float imageVideoViewHeight;
 UIActivityIndicatorView *activityIndicatorProfile;
+UIView *loadingOverlay;
+bool swipeFlag;
+
 + (void)initialize
 {
     if (!gHistory)
@@ -300,7 +303,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
-        
+        glView.backgroundColor = [UIColor whiteColor];
         //Swipe Gesture Declaration
         UISwipeGestureRecognizer *leftSwipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRecogniser:)];
         leftSwipe.numberOfTouchesRequired = 1;
@@ -397,6 +400,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
     
     if([mediaType  isEqual: @"video"])
     {
+        [self removeOverlay];
         videoProgressBar.hidden = false;
         topView.hidden = false;
         imageVideoView.image = VideoImageUrl;
@@ -421,6 +425,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
         singleTap.delegate = self;
         [playIconView setUserInteractionEnabled:YES];
         [playIconView addGestureRecognizer:singleTap];
+        [self setUpTransitionForSwipe];
     }
     else{
         videoProgressBar.hidden = true;
@@ -428,6 +433,23 @@ UIActivityIndicatorView *activityIndicatorProfile;
         [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
     }
     
+//    CATransition *transition = [CATransition animation];
+//    transition.duration = 0.3;
+//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    transition.type = kCATransitionMoveIn;
+//    
+//    if (gestureId == 0)
+//    {
+//        transition.subtype = kCATransitionFromRight;
+//    }
+//    else if (gestureId == 1)
+//    {
+//        transition.subtype = kCATransitionFromLeft;
+//    }
+//    [imageVideoView.layer addAnimation:transition forKey:nil];
+}
+
+-(void) setUpTransitionForSwipe{
     CATransition *transition = [CATransition animation];
     transition.duration = 0.3;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -442,10 +464,16 @@ UIActivityIndicatorView *activityIndicatorProfile;
         transition.subtype = kCATransitionFromLeft;
     }
     [imageVideoView.layer addAnimation:transition forKey:nil];
+    swipeFlag = false;
+
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
 {
+    if((indexForSwipe == orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
+    {
+        [self showOverlay];
+    }
     imageVideoView.hidden = false;
     imageView.hidden = false;
     videoProgressBar.hidden = true;
@@ -456,10 +484,15 @@ UIActivityIndicatorView *activityIndicatorProfile;
     NSString *savingPath = [NSString stringWithFormat:@"%@/%@full",parentPathStr,mediaDetailId];
     bool fileExistFlag = [[FileManagerViewController sharedInstance] fileExist:savingPath];
     if(fileExistFlag == true){
+        [self removeOverlay];
         mediaImage = [[FileManagerViewController sharedInstance] getImageFromFilePath:savingPath];
+        imageVideoView.image = mediaImage;
+        if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
+        {
+            [self setUpTransitionForSwipe];
+        }
     }
     else{
-        
         NSURL *url = [self convertStringToUrl:mediaUrl];
         NSData *data = [[NSData alloc] initWithContentsOfURL:url];
         if(data != nil)
@@ -470,54 +503,21 @@ UIActivityIndicatorView *activityIndicatorProfile;
             mediaImage = [UIImage imageNamed:@"thumb12"];
         }
         [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
+        NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0f
+                                                      target: self
+                                                    selector:@selector(onHide:)
+                                                    userInfo: nil repeats:NO];
     }
-    imageVideoView.image = mediaImage;
 }
 
-//-(void) playVideoAutomatically
-//{
-//        playIconView.hidden = true;
-//        [glView bringSubviewToFront:videoProgressBar];
-//        NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-//        NSString *parentPathStr = [parentPath absoluteString];
-//        NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
-//        NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
-//        BOOL fileExistFlag = [[FileManagerViewController sharedInstance]fileExist:savingPath];
-//        
-//        if(fileExistFlag == true){
-//            videoProgressBar.hidden = true;
-//            self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-//            MPMoviePlayerController *player = _moviePlayer;
-//            player.view.frame = CGRectMake(glView.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width,((self.view.bounds.size.height+67.0) - heartBottomDescView.bounds.size.height));
-//            player.scalingMode = MPMovieScalingModeFill;
-//            player.movieSourceType = MPMovieSourceTypeFile;
-//            player.controlStyle = MPMovieControlStyleNone;
-//            player.repeatMode = MPMovieRepeatModeNone;
-//            [imageVideoView addSubview:[player view]];
-//            
-//            topView.hidden = false;
-//            cameraSelectionButton.hidden = true;
-//            liveView.hidden = true;
-//            numberOfSharedChannels.hidden = true;
-//            topView.backgroundColor = [UIColor clearColor];
-//            [glView bringSubviewToFront:heartView];
-//            [glView bringSubviewToFront:topView];
-//            
-//            [player play];
-//            playHandleFlag = 1;
-//            [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                     selector:@selector(playbackStateChange:)
-//                                                         name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
-//            [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                     selector:@selector(playerDidFinish:)
-//                                                         name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
-//        }
-//        else{
-//            NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
-//            [self downloadVideo:url];
-//        }
-//}
-
+-(void)onHide:(NSTimer *)timer {
+    [self removeOverlay];
+    imageVideoView.image = mediaImage;
+    if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
+    {
+        [self setUpTransitionForSwipe];
+    }
+}
 -(void) playVideoAutomatically
 {
     [playIconView removeFromSuperview];
@@ -566,6 +566,23 @@ UIActivityIndicatorView *activityIndicatorProfile;
         [self downloadVideo:url];
     }
 }
+
+-(void) showOverlay
+{
+    imageVideoView.userInteractionEnabled = false;
+    IONLLoadingView *loadingOverlayController = [[IONLLoadingView alloc]initWithNibName:@"IONLLoadingOverlay" bundle:nil];
+    loadingOverlayController.view.frame = CGRectMake(0, 0, imageVideoView.frame.size.width,imageVideoView.frame.size.height);
+    [loadingOverlayController startLoading];
+    loadingOverlay = [[UIView alloc]init];
+    loadingOverlay = loadingOverlayController.view;
+    [self.view addSubview:loadingOverlay];
+}
+
+-(void) removeOverlay{
+    [loadingOverlay removeFromSuperview];
+    imageVideoView.userInteractionEnabled = true;
+}
+
 
 -(void)pinchGestureRecogniserDetected:(UIPinchGestureRecognizer *)pinchGestureDetected
 {
@@ -682,9 +699,12 @@ UIActivityIndicatorView *activityIndicatorProfile;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
-    
-    if (pinchFlag == false)
+    [self removeOverlay];
+    if ((pinchFlag == false) && (swipeFlag == false))
     {
+        swipeFlag = true;
+        [self showOverlay];
+        imageVideoView.userInteractionEnabled = false;
         orgIndex = -11;
         UIImage *VideoImageUrlChk;
         [self checkVideoStatus];
@@ -1013,6 +1033,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
     [super viewDidLoad];
     imageVideoViewHeight = imageVideoView.frame.size.height;
     pinchFlag = false;
+    swipeFlag = false;
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
     [self setUpView];

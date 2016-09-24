@@ -343,8 +343,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
     
-
-    
 }
 
 extension SettingsViewController : UIPickerViewDelegate{
