@@ -253,9 +253,6 @@ int timerCount = 0;
 
 -(void)applicationDidActives: (NSNotification *)notification
 {
-//    dispatch_async( dispatch_get_main_queue(), ^{
-//        [self stopTimer];
-//    });
     UIViewController *viewContr = self.navigationController.visibleViewController;
     if([viewContr.restorationIdentifier  isEqual: @"IPhoneCameraViewController"])
     {
@@ -309,7 +306,7 @@ int timerCount = 0;
                   //if (timeSec != 0)
                 //  {
             if(backgroundEnterFlag == false){
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Stop"
                                                                     message:@""
                                                                    delegate:self
                                                           cancelButtonTitle:@"Retry"
@@ -552,7 +549,7 @@ int timerCount = 0;
             if(backgroundEnterFlag == false){
             if (![[NSUserDefaults standardUserDefaults] boolForKey:@"Background"])
             {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Timer"                                                                message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
                                                       otherButtonTitles:@"Exit App",nil];

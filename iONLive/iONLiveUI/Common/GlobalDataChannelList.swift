@@ -62,7 +62,13 @@ class GlobalDataChannelList: NSObject {
             codeString = code
         }
         else{
-            codeString = "ResponseError"
+            if(UIApplication.sharedApplication().applicationState == .Inactive)
+            {
+                codeString = "Nothing"
+            }
+            else{
+                codeString = "ResponseError"
+            }
         }
         NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
     }
