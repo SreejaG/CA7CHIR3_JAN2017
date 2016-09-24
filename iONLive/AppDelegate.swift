@@ -333,8 +333,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else if (result["type"] as! String == "like")
         {
-            defaults.setValue("2", forKey: "notificationArrived")
-
+            if(result["subType"] as! String != "liveStream"){
+                defaults.setValue("2", forKey: "notificationArrived")
+            }
+            else{
+                defaults.setValue("0", forKey: "notificationArrived")
+            }
         }
     }
     
