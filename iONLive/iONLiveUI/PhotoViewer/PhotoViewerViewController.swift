@@ -142,7 +142,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             else if totalCount <= 0
             {
+                addNoDataLabel()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.removeOverlay()
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
                     self.fullScreenZoomView.image = UIImage()
