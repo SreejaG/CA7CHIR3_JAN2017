@@ -655,7 +655,7 @@ extension ChannelsSharedController:UITableViewDataSource
         if minutesFrom(date,todate:todate) > 0 { return String(minutesFrom(date,todate:todate))+"m" }
         if secondsFrom(date,todate:todate) > 0 { return String(secondsFrom(date,todate:todate))+"s" }
         if secondsFrom(date,todate:todate) == 0 {
-            return "Just now"
+            return "0s"
         }
         return ""
     }
