@@ -754,6 +754,10 @@ bool swipeFlag;
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
                 }
             }
+            else{
+                swipeFlag = false;
+                [self removeOverlay];
+            }
         }
         else
         {
@@ -811,6 +815,10 @@ bool swipeFlag;
                     
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
                 }
+            }
+            else{
+                swipeFlag = false;
+                [self removeOverlay];
             }
         }
     }
