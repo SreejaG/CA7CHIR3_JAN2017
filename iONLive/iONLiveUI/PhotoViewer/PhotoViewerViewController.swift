@@ -653,7 +653,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
             }
             else{
-                if(archiveMediaCount == 0){
+                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){
                     removeOverlay()
                     addNoDataLabel()
                 }
