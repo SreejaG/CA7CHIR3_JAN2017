@@ -22,11 +22,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
     let profileImageKey = "profile_image"
     let selectionKey = "selected"
     
-    var refreshControlSecnd:UIRefreshControl!
-    var pullToRefreshActiveSecnd = false
+//    var refreshControlSecnd:UIRefreshControl!
+//    var pullToRefreshActiveSecnd = false
     
     var searchActive: Bool = false
-    var tapCountContactShare : Int = 0
+//    var tapCountContactShare : Int = 0
     
     @IBOutlet var inviteButton: UIButton!
     @IBOutlet var doneButton: UIButton!
@@ -41,8 +41,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MyChannelSharingDetailsViewController.callRefreshContactSharingTableView(_:)), name: "refreshContactSharingTableView", object: nil)
         
-        self.refreshControlSecnd = UIRefreshControl()
-        self.refreshControlSecnd.attributedTitle = NSAttributedString(string: "Pull to refresh")
+//        self.refreshControlSecnd = UIRefreshControl()
+//        self.refreshControlSecnd.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.contactTableView.alwaysBounceVertical = true
         
         initialise()
@@ -66,20 +66,20 @@ class MyChannelSharingDetailsViewController: UIViewController {
         super.viewWillDisappear(true)
     }
     
-    func pullToRefreshSecnd()
-    {
-        tapCountContactShare = tapCountContactShare + 1
-        if(tapCountContactShare <= 1){
-            if(!pullToRefreshActiveSecnd){
-                pullToRefreshActiveSecnd = true
-                totalMediaCount = 0
-                initialise()
-            }
-        }
-        else{
-            self.refreshControlSecnd.endRefreshing()
-        }
-    }
+//    func pullToRefreshSecnd()
+//    {
+//        tapCountContactShare = tapCountContactShare + 1
+//        if(tapCountContactShare <= 1){
+//            if(!pullToRefreshActiveSecnd){
+//                pullToRefreshActiveSecnd = true
+//                totalMediaCount = 0
+//                initialise()
+//            }
+//        }
+//        else{
+//            self.refreshControlSecnd.endRefreshing()
+//        }
+//    }
     
     @IBAction func gestureTapped(sender: AnyObject) {
         view.endEditing(true)
@@ -149,9 +149,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     }
     
     func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
-        if(!pullToRefreshActiveSecnd){
+      //  if(!pullToRefreshActiveSecnd){
             showOverlay()
-        }
+     //   }
         channelManager.inviteContactList(userName, accessToken: accessToken, channelId: channelid, adduser: addUser, deleteUser: deleteUser, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
         }) { (error, message) -> () in
@@ -204,13 +204,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
-        if(!pullToRefreshActiveSecnd){
+      //  if(!pullToRefreshActiveSecnd){
             removeOverlay()
-        }
-        else{
-            self.refreshControlSecnd.endRefreshing()
-            pullToRefreshActiveSecnd = false
-        }
+      //  }
+//        else{
+//            self.refreshControlSecnd.endRefreshing()
+//            pullToRefreshActiveSecnd = false
+//        }
         
         if let json = response as? [String: AnyObject]
         {
@@ -253,9 +253,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func getChannelContactDetails(username: String, token: String, channelid: String)
     {
         showOverlay()
-        if(pullToRefreshActiveSecnd){
-            removeOverlay()
-        }
+//        if(pullToRefreshActiveSecnd){
+//            removeOverlay()
+//        }
         channelManager.getChannelContactDetails(channelid, userName: username, accessToken: token, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
@@ -281,10 +281,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        if(pullToRefreshActiveSecnd){
-            self.refreshControlSecnd.endRefreshing()
-            pullToRefreshActiveSecnd = false
-        }
+//        if(pullToRefreshActiveSecnd){
+//            self.refreshControlSecnd.endRefreshing()
+//            pullToRefreshActiveSecnd = false
+//        }
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -304,9 +304,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.refreshControlSecnd.addTarget(self, action: "pullToRefreshSecnd", forControlEvents: UIControlEvents.ValueChanged)
-                        self.contactTableView.addSubview(self.refreshControlSecnd)
-                        self.tapCountContactShare = 0
+//                        self.refreshControlSecnd.addTarget(self, action: "pullToRefreshSecnd", forControlEvents: UIControlEvents.ValueChanged)
+//                        self.contactTableView.addSubview(self.refreshControlSecnd)
+//                        self.tapCountContactShare = 0
                     })
                 })
             }
@@ -361,11 +361,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         removeOverlay()
-        if(pullToRefreshActiveSecnd){
-            self.refreshControlSecnd.endRefreshing()
-            pullToRefreshActiveSecnd = false
-        }
-        tapCountContactShare = 0
+//        if(pullToRefreshActiveSecnd){
+//            self.refreshControlSecnd.endRefreshing()
+//            pullToRefreshActiveSecnd = false
+//        }
+//        tapCountContactShare = 0
         
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -400,23 +400,25 @@ class MyChannelSharingDetailsViewController: UIViewController {
         
         if(searchActive)
         {
-            let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
-            if(selectedValue == 1)
-            {
-                searchDataSource[indexpath]["tempSelected"] = 0
-            }
-            else
-            {
-                searchDataSource[indexpath]["tempSelected"] = 1
-            }
-            
-            let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-            for (var i = 0; i < fullDataSource.count; i++)
-            {
-                let dataSourceUserId = fullDataSource[i][userNameKey] as! String
-                if(selecteduserId == dataSourceUserId)
+            if(indexpath < searchDataSource.count){
+                let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
+                if(selectedValue == 1)
                 {
-                    fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                    searchDataSource[indexpath]["tempSelected"] = 0
+                }
+                else
+                {
+                    searchDataSource[indexpath]["tempSelected"] = 1
+                }
+                
+                let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
+                for (var i = 0; i < fullDataSource.count; i++)
+                {
+                    let dataSourceUserId = fullDataSource[i][userNameKey] as! String
+                    if(selecteduserId == dataSourceUserId)
+                    {
+                        fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                    }
                 }
             }
         }
@@ -475,13 +477,13 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandlerDeleteContact(response:AnyObject?, index: Int)
     {
-        if(!pullToRefreshActiveSecnd){
+       // if(!pullToRefreshActiveSecnd){
             removeOverlay()
-        }
-        else{
-            self.refreshControlSecnd.endRefreshing()
-            pullToRefreshActiveSecnd = false
-        }
+//        }
+//        else{
+//            self.refreshControlSecnd.endRefreshing()
+//            pullToRefreshActiveSecnd = false
+//        }
         
         if let json = response as? [String: AnyObject]
         {
