@@ -113,7 +113,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         archiveMediaCount = defaults.valueForKey(ArchiveCount) as! Int
         archiveChanelId = "\(defaults.valueForKey(archiveId) as! Int)"
         
-        if archiveMediaCount == 0{
+        if((archiveMediaCount == 0) || (GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count <= 0)){
             self.removeOverlay()
             addNoDataLabel()
             self.addToButton.hidden = true
@@ -142,9 +142,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             else if totalCount <= 0
             {
-                addNoDataLabel()
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.removeOverlay()
                     self.addToButton.hidden = true
                     self.deletButton.hidden = true
                     self.fullScreenZoomView.image = UIImage()
