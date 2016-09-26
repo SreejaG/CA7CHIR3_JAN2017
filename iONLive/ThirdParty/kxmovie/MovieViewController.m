@@ -408,15 +408,15 @@ bool swipeFlag;
         [playIconView removeFromSuperview];
         playIconView = [[UIImageView alloc]init];
         playIconView.image = [UIImage imageNamed:@"Circled Play"];
-        if(indexForSwipe == orgIndex){
+      //  if(indexForSwipe == orgIndex){
             CGFloat width = [UIScreen mainScreen].bounds.size.width;
             CGFloat height = [UIScreen mainScreen].bounds.size.height;
             playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
-        }
-        else{
-            playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
-            playIconView.center = imageVideoView.center;
-        }
+      //  }
+//        else{
+//            playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
+//            playIconView.center = imageVideoView.center;
+//        }
       
         [glView addSubview:playIconView];
         [glView bringSubviewToFront:playIconView];
@@ -902,11 +902,15 @@ bool swipeFlag;
 {
     [_moviePlayer.view removeFromSuperview];
     [playIconView removeFromSuperview];
-//    _playView.hidden = false;
     playIconView = [[UIImageView alloc]init];
     playIconView.image = [UIImage imageNamed:@"Circled Play"];
-    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    CGFloat height = [UIScreen mainScreen].bounds.size.height;
+    playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
     [glView addSubview:playIconView];
+    [glView bringSubviewToFront:playIconView];
+//    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+//    [glView addSubview:playIconView];
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
     singleTap.numberOfTapsRequired = 1;
     [playIconView setUserInteractionEnabled:YES];
@@ -1375,11 +1379,16 @@ bool swipeFlag;
             [self downloadVideo:url];
         }
         else{
+            [playIconView removeFromSuperview];
             playIconView = [[UIImageView alloc]init];
             playIconView.image = [UIImage imageNamed:@"Circled Play"];
-            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
-            [playIconView removeFromSuperview];
+            CGFloat width = [UIScreen mainScreen].bounds.size.width;
+            CGFloat height = [UIScreen mainScreen].bounds.size.height;
+            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
             [glView addSubview:playIconView];
+            [glView bringSubviewToFront:playIconView];
+//            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+//            [glView addSubview:playIconView];
             UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
             singleTap.numberOfTapsRequired = 1;
             [playIconView setUserInteractionEnabled:YES];
@@ -1397,7 +1406,9 @@ bool swipeFlag;
 
 -(void)applicationDidEnterBackground: (NSNotification *)notification
 {
+    [playIconView removeFromSuperview];
     if([mediaTypeSelected  isEqual: @"video"]){
+       
         [_moviePlayer.view removeFromSuperview];
         _moviePlayer = nil;
         [downloadTask cancel];
