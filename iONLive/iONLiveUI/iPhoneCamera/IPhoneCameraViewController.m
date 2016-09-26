@@ -966,6 +966,7 @@ int timerCount = 0;
                     else{
                         self.playiIconView.hidden = YES;
                     }
+                    
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
                 });
             }
