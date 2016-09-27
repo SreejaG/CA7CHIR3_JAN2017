@@ -137,15 +137,25 @@ int timerCount = 0;
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"StartedStreaming"];
     }
-
-    dispatch_async( self.sessionQueue, ^{
+    
+    if(self.sessionQueue != nil){
+        dispatch_async( self.sessionQueue, ^{
+            if ( self.setupResult == AVCamSetupResultSuccess ) {
+                [self.session stopRunning];
+                [self removeObservers:@"remove" completion:^{
+                    
+                }];
+            }
+        });
+    }
+    else{
         if ( self.setupResult == AVCamSetupResultSuccess ) {
             [self.session stopRunning];
             [self removeObservers:@"remove" completion:^{
                 
             }];
         }
-    });
+    }
     
     if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
     }else {
@@ -434,7 +444,11 @@ int timerCount = 0;
                 [self initialiseAPICall];
             });
         }
-        [self configureCameraSettings:@"configure" completion:^{
+        
+//        self.session = [[AVCaptureSession alloc] init];
+//        self.previewView.hidden = false;
+//        self.previewView.session = nil;
+//        [self configureCameraSettings:@"configure" completion:^{
             if(takePictureFlag == false)
             {
                 PhotoViewerInstance.iphoneCam = self;
@@ -446,8 +460,8 @@ int timerCount = 0;
             [[NSUserDefaults standardUserDefaults] setValue:@"otherPageRedirection" forKey:@"viewFromWhichPage"];
             
         }];
-        
-    }];
+//        
+//    }];
     backgroundEnterFlag = false;
 }
 
@@ -714,6 +728,7 @@ int timerCount = 0;
 
 -(void)configureCameraSettings: (NSString *)name completion:(void (^)(void))completionBlock
 {
+    
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
     self.setupResult = AVCamSetupResultSuccess;
     switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
