@@ -61,8 +61,8 @@ class StreamsListViewController: UIViewController{
         self.streamListCollectionView.alwaysBounceVertical = true
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.streamUpdate), name: "stream", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.mediaDeletePushNotification), name: "MediaDelete", object:nil)
-    
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.closeMovieView), name: "ShowAlert", object:nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.closeMovieView), name: "ShowAlert", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(StreamsListViewController.pushNotificationUpdateStream), name: "PushNotificationStream", object:nil)
         getAllLiveStreams()
         showOverlay()
@@ -107,9 +107,9 @@ class StreamsListViewController: UIViewController{
     func closeMovieView(notif : NSNotification)
     {
         let info = notif.object as! String
-       
+        
         vc.closeView()
-       
+        
     }
     func createScrollViewAnimations()  {
         streamListCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
@@ -520,17 +520,16 @@ class StreamsListViewController: UIViewController{
                         let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
                         for(var mediaArrayCount = 0 ; mediaArrayCount < mediaArrayData.count ; mediaArrayCount++)
                         {
-                            print("media" ,mediaId,selectedMediaId)
                             if("\(mediaArrayData[mediaArrayCount])" == selectedMediaId)
                             {
                                 if isMovieView
                                 {
                                     
-                                        self.vc.mediaDeletedErrorMessage()
-                                        self.isMovieView = false
+                                    self.vc.mediaDeletedErrorMessage()
+                                    self.isMovieView = false
                                 }
                             }
-
+                            
                             if("\(mediaArrayData[mediaArrayCount])" == mediaId)
                             {
                                 count = count + 1
@@ -669,7 +668,7 @@ class StreamsListViewController: UIViewController{
                             removeIndex = i
                             break
                         }
-                     
+                        
                         
                     }
                 }
@@ -1186,7 +1185,7 @@ class StreamsListViewController: UIViewController{
             selectedMediaId = mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String
             let dateString = mediaAndLiveArray[indexPathRow]["createdTime"] as! String
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-          vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][self.actualImageKey] as! String, channelName: mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount, selectedItem: index,pageIndicator: 1) as! MovieViewController
+            vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][self.actualImageKey] as! String, channelName: mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount, selectedItem: index,pageIndicator: 1) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }
@@ -1196,7 +1195,7 @@ class StreamsListViewController: UIViewController{
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String, "userName":mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, "mediaType":mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, "mediaId":mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,"channelId":mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount as! String]
-                 vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false)  as! MovieViewController
+                vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false)  as! MovieViewController
                 
                 
                 self.presentViewController(vc, animated: false) { () -> Void in

@@ -191,7 +191,7 @@ class SharedChannelDetailsAPI: NSObject {
                         else{
                             self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate], atIndex: 0)
                         }
-                    NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
+                        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
                     })
                 }
             }
@@ -199,10 +199,6 @@ class SharedChannelDetailsAPI: NSObject {
             if(imageDataSource.count > 0){
                 if(self.selectedSharedChannelMediaSource.count > 0)
                 {
-//                    if (self.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String != "live")
-//                    {
-//                        self.selectedSharedChannelMediaSource.removeAtIndex(0)
-//                    }
                 }
                 
                 let operation2 : NSBlockOperation = NSBlockOperation (block: {
@@ -211,7 +207,7 @@ class SharedChannelDetailsAPI: NSObject {
                 self.operationQueue.addOperation(operation2)
             }
             else{
-              NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
+                NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
             }
         }
         else

@@ -173,7 +173,7 @@ class OtherChannelViewController: UIViewController  {
     {
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
-        let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
+            let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
             if(type == "live")
             {
                 
@@ -222,7 +222,7 @@ class OtherChannelViewController: UIViewController  {
                 {
                     getPullToRefreshData()
                 }
-               
+                    
                 else{
                     if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                     {
@@ -285,11 +285,11 @@ class OtherChannelViewController: UIViewController  {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                 {
-                self.removeOverlay()
-                self.channelItemsCollectionView.reloadData()
-                self.NoDatalabel.removeFromSuperview()
+                    self.removeOverlay()
+                    self.channelItemsCollectionView.reloadData()
+                    self.NoDatalabel.removeFromSuperview()
                 }
-               
+                
             })
         }
         else{
@@ -411,7 +411,7 @@ class OtherChannelViewController: UIViewController  {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] =  UIImage()
             }
         }
-       
+        
         
     }
     
@@ -488,12 +488,12 @@ class OtherChannelViewController: UIViewController  {
         }
         else
         {
-              if self.downloadCompleteFlag == "end"
-                {
-                    self.downloadCompleteFlag = "start"
-                    SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
-                        , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
-                }
+            if self.downloadCompleteFlag == "end"
+            {
+                self.downloadCompleteFlag = "start"
+                SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
+                    , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
+            }
         }
     }
     

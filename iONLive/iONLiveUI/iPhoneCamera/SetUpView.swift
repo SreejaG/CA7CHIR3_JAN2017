@@ -103,6 +103,7 @@ import UIKit
             objects.successFromSetUpView(count)
         }
     }
+    
     func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {
         let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String
@@ -123,6 +124,7 @@ import UIKit
             obj.successFromSetUpView(count)
         }
     }
+    
     func getProfileImageSelectedIndex(userIdKey: String ,objects: MovieViewController)
     {
         let subUserName = userIdKey
@@ -135,6 +137,7 @@ import UIKit
                 self.failureHandlerForprofileImage(error, code: message,obj:objects)
         })
     }
+    
     var profileImageUserForSelectedIndex : UIImage = UIImage()
     func successHandlerForProfileImage(response:AnyObject?,obj: MovieViewController)
     {
@@ -163,6 +166,7 @@ import UIKit
         }
         obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
     }
+    
     func nullToNil(value : AnyObject?) -> AnyObject? {
         if value is NSNull {
             return ""
@@ -170,11 +174,13 @@ import UIKit
             return value
         }
     }
+    
     func failureHandlerForprofileImage(error: NSError?, code: String,obj: MovieViewController)
     {
         profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
     }
+    
     func getLikeCount(mediaType : String,mediaId: String, Objects:MovieViewController) {
         
         let mediaTypeSelected : String = mediaType

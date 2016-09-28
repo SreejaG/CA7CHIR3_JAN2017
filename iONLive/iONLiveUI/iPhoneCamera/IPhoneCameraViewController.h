@@ -1,16 +1,12 @@
 
-
 #import <UIKit/UIKit.h>
-
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "ALAssetsLibrary+CustomPhotoAlbum.h"
 #import <Photos/Photos.h>
 
-
 @interface IPhoneCameraViewController : UIViewController
 
 -(void) setGUIBasedOnMode;
-- (void)removeObservers;
 
 -(UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size;
 -(void) deleteIphoneCameraSnapShots;

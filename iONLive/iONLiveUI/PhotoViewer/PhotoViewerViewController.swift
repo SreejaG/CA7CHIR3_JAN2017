@@ -1,5 +1,4 @@
 
-
 import UIKit
 import MediaPlayer
 import Foundation
@@ -17,19 +16,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     @IBOutlet var TopView: UIView!
     @IBOutlet var BottomView: UIView!
-    
     @IBOutlet var playIconInFullView: UIImageView!
     @IBOutlet weak var fullScrenImageView: UIImageView!
     @IBOutlet var fullScreenZoomView: UIImageView!
-    
     @IBOutlet weak var fullScreenScrollView: UIScrollView!
-    
     @IBOutlet weak var mediaTimeLabel: UILabel!
-    
     @IBOutlet var progressView: UIProgressView!
-    
     @IBOutlet weak var photoThumpCollectionView: UICollectionView!
-    
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var addToButton: UIButton!
     @IBOutlet var deletButton: UIButton!
@@ -51,12 +44,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var progressViewDownload: UIProgressView?
     var progressLabelDownload: UILabel?
     var NoDatalabelFormyMediaImageList : UILabel = UILabel()
-    
     var loadingOverlay: UIView?
-    
     var addToDict : [[String:AnyObject]] = [[String:AnyObject]]()
     var mediaSelected: NSMutableArray = NSMutableArray()
-    
     var willEnterFlag : NSInteger = NSInteger()
     var playHandleflag : NSInteger = NSInteger()
     var selectedItem : Int = Int()
@@ -65,16 +55,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaIdSelected : Int = 0
     var videoDownloadIntex : Int = 0
     var totalCount = 0
-    
     var swipeFlag : Bool = false
     var downloadingFlag : Bool = false
-    
     var dictMediaId : String = String()
     var userId : String = String()
     var accessToken: String = String()
     var deletedMediaId : NSMutableArray = NSMutableArray()
-    
     var dictProgress : Float = Float()
+    var orientationFlag: Int = Int()
+    var Orgimage : UIImage = UIImage()
+    var mediaTypeSelected : String = String()
     
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
@@ -86,18 +76,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+        getCurrentOrientaion()
         selectedItem = 0
         self.photoThumpCollectionView.alwaysBounceHorizontal = true
-        
         progressLabelDownload = UILabel()
-        
         progressViewDownload?.hidden = true
         progressLabelDownload?.hidden = true
-        
         self.fullScrenImageView.image = UIImage()
         self.fullScreenZoomView.image = UIImage()
-        
         playHandleflag = 0
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
@@ -107,9 +93,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.setFullscreenImage(_:)), name: "setFullscreenImage", object: nil)
         
         showOverlay()
-        
         initialise()
-        
         archiveMediaCount = defaults.valueForKey(ArchiveCount) as! Int
         archiveChanelId = "\(defaults.valueForKey(archiveId) as! Int)"
         
@@ -158,7 +142,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         fullScreenScrollView.maximumZoomScale = 10.0
         fullScreenScrollView.zoomScale = 1.0
         view.addSubview(fullScreenScrollView)
-        
         fullScreenScrollView.delaysContentTouches = false;
         
         self.view.bringSubviewToFront(fullScrenImageView)
@@ -197,12 +180,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
+        
         downloadingFlag = false
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         operationInMyMediaList.cancel()
+        NSNotificationCenter.defaultCenter().removeObserver(UIDeviceOrientationDidChangeNotification)
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
         }
@@ -210,12 +196,101 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
             playHandleflag = 0
             self.moviePlayer .stop()
-            
             NSNotificationCenter.defaultCenter().removeObserver(self)
         }
         if(downloadTask?.state == .Running)
         {
             downloadTask?.cancel()
+        }
+    }
+    
+    func getCurrentOrientaion()
+    {
+        let device: UIDevice = UIDevice.currentDevice()
+        switch device.orientation {
+        case .Portrait,.PortraitUpsideDown:
+            orientationFlag = 1;
+            break;
+        case .LandscapeLeft:
+            orientationFlag = 2;
+            break;
+        case .LandscapeRight:
+            orientationFlag = 3;
+            break;
+        default:
+            orientationFlag = 1
+            break;
+        }
+    }
+    
+    func orientaionChanged(notification:NSNotification)
+    {
+        if(Orgimage != UIImage() && totalCount > 0){
+            let viewController: UIViewController = (self.navigationController?.visibleViewController)!
+            if(viewController.restorationIdentifier == "PhotoViewerViewController"){
+                if(mediaTypeSelected != "video")
+                {
+                    let transition : CATransition = CATransition()
+                    transition.duration = 0.3;
+                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                    transition.type = kCATransitionFade;
+                    transition.delegate = self;
+                    self.fullScrenImageView.layer.addAnimation(transition, forKey: nil)
+                    
+                    var orientedImage = Orgimage
+                    let device: UIDevice = notification.object as! UIDevice
+                    switch device.orientation {
+                    case .Portrait,.PortraitUpsideDown:
+                        orientationFlag = 1;
+                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        {
+                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+                        }
+                        else{
+                            self.fullScrenImageView.contentMode = .ScaleAspectFill
+                        }
+                        orientedImage = self.Orgimage
+                        break;
+                    case .LandscapeLeft:
+                        orientationFlag = 2;
+                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        {
+                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                                    orientation: .Right)
+                        }
+                        else{
+                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                                    orientation: .Down)
+                        }
+                        break;
+                    case .LandscapeRight:
+                        orientationFlag = 3;
+                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        {
+                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                                    orientation: .Left)
+                        }
+                        else{
+                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                                    orientation: .Up)
+                        }
+                        break;
+                    default:
+                        orientationFlag = 1
+                        break;
+                    }
+                    
+                    self.fullScrenImageView.image = orientedImage as UIImage
+                    self.fullScreenZoomView.image = orientedImage as UIImage
+                }
+                else{
+                    self.fullScrenImageView.contentMode = .ScaleAspectFill
+                }
+            }
         }
     }
     
@@ -305,7 +380,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
-        
         if(scale<=1.0)
         {
             downloadingFlag = false
@@ -326,7 +400,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
             {
                 let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
-                
                 if mediaType == "video"
                 {
                     playIconInFullView.hidden = true
@@ -404,7 +477,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
-        
         do {
             let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
             if let imageData = data as NSData? {
@@ -920,7 +992,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
                         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
                         player.view.addGestureRecognizer(swipeLeft)
-
+                        
                         player.prepareToPlay()
                         player.play()
                     })
@@ -1060,6 +1132,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         var imageForMedia : UIImage = UIImage()
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
+            mediaTypeSelected = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][mediaTypeKey] as! String
             if let fullImage = imageDict[tImageKey]
             {
                 if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][mediaTypeKey] as! String == "video"
@@ -1068,6 +1141,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         self.photoThumpCollectionView.alpha = 1.0
                         self.removeOverlay()
                         self.playIconInFullView.hidden = false;
+                        self.fullScrenImageView.contentMode = .ScaleAspectFill
                         if(gestureIdentifier==1||gestureIdentifier==2)
                         {
                             let animation = CATransition()
@@ -1125,8 +1199,58 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     }
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.fullScrenImageView.image = imageForMedia as UIImage
-                        self.fullScreenZoomView.image = imageForMedia as UIImage
+                        self.getCurrentOrientaion()
+                        self.Orgimage = imageForMedia
+                        var orientedImage = UIImage()
+                        switch self.orientationFlag
+                        {
+                        case 1:
+                            //portrait
+                            if self.Orgimage.size.width > self.Orgimage.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFill
+                            }
+                            orientedImage = self.Orgimage
+                            break
+                            
+                        case 2:
+                            //landscape left
+                            if self.Orgimage.size.width > self.Orgimage.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                self.fullScrenImageView.startAnimating()
+                                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Right)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Down)
+                            }
+                            break
+                        case 3:
+                            //landscape right
+                            if self.Orgimage.size.width > self.Orgimage.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Left)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Up)
+                            }
+                            break
+                        default:
+                            break
+                        }
+                        
+                        self.fullScrenImageView.image = orientedImage as UIImage
+                        self.fullScreenZoomView.image = orientedImage as UIImage
                         self.photoThumpCollectionView.alpha = 1.0
                         self.removeOverlay()
                         if(gestureIdentifier==1||gestureIdentifier==2)
@@ -1223,6 +1347,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             
             if let thumpImage = dict[tImageKey]
             {
+                
                 if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaTypeKey] as! String == "video"
                 {
                     cell.playIcon.hidden = false

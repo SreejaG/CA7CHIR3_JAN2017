@@ -36,7 +36,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         newShareAvailabellabel.layer.cornerRadius = 5
         initialise()
         timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChannelsSharedController.timerFunc(_:)), userInfo: nil, repeats: false)
-
+        
         if NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") != nil{
             let messageText = NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") as! String
             if(messageText != "")
@@ -58,7 +58,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         
     }
     func timerFunc(timer:NSTimer!) {
-     
+        
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
             self.removeOverlay()
@@ -77,7 +77,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             self.removeOverlay()
         }
     }
-
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
     }
@@ -98,7 +98,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.updateChannelList), name: "SharedChannelList", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pushNotificationUpdate), name: "PushNotificationChannel", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.removeOverlay), name: "RemoveOverlay", object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.removeOverlay), name: "RemoveOverlay", object:nil)
         
         newShareAvailabellabel.hidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
@@ -119,18 +119,18 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             
-                if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
-                {
-                    self.NoDatalabel.removeFromSuperview()
-                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
-                    self.NoDatalabel.text = "No Channel Available"
-                    self.view.addSubview(self.NoDatalabel)
-                }
-                else
-                {
-                    self.NoDatalabel.removeFromSuperview()
-                }
+            if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
+            {
+                self.NoDatalabel.removeFromSuperview()
+                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel.text = "No Channel Available"
+                self.view.addSubview(self.NoDatalabel)
+            }
+            else
+            {
+                self.NoDatalabel.removeFromSuperview()
+            }
             self.ChannelSharedTableView.reloadData()
         })
     }
@@ -162,18 +162,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.liveStreamStatus] = "1"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "1"
             
-            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 var itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: 0)
                 self.ChannelSharedTableView.reloadData()
-//                var pathArray :[NSIndexPath] = [NSIndexPath]()
-//                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
-//                self.ChannelSharedTableView.beginUpdates()
-//                pathArray.append(indexPath)
-//                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
-//                self.ChannelSharedTableView.endUpdates()
             })
         }
         else{
@@ -208,20 +201,12 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             
             let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
             let totalCount = filteredData.count
-            print(totalCount)
-           
-           
+            
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)
                 self.ChannelSharedTableView.reloadData()
-//                self.ChannelSharedTableView.beginUpdates()
-//                var pathArray :[NSIndexPath] = [NSIndexPath]()
-//                let indexPath: NSIndexPath = NSIndexPath(forRow: index, inSection: 0)
-//                pathArray.append(indexPath)
-//                self.ChannelSharedTableView.reloadRowsAtIndexPaths(pathArray, withRowAnimation: UITableViewRowAnimation.Left)
-//                self.ChannelSharedTableView.endUpdates()
             })
         }
     }
@@ -360,7 +345,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     self.NoDatalabel.removeFromSuperview()
                 }
             })
-
+            
         }
     }
     
@@ -513,18 +498,7 @@ extension ChannelsSharedController:UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-//        if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
-//        {
-//            if(indexPath.row == ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count - 1){
-//                self.removeOverlay()
-//            }
-//            else{
-//                self.removeOverlay()
-//            }
-//        }
-//        else{
-            self.removeOverlay()
-       // }
+        self.removeOverlay()
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -567,15 +541,14 @@ extension ChannelsSharedController:UITableViewDataSource
                         let fromdateStr = dateFormatter.stringFromDate(NSDate())
                         var fromdate = dateFormatter.dateFromString(fromdateStr)
                         let sdifferentString =  offsetFrom(date!, todate: fromdate!)
-                        print("date-----",sdifferentString)
                         let count = (mediaShared[i][sharedMediaCount]?.intValue)!
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {
-                                cell.latestImage.hidden = false
-                                cell.countLabel.hidden = true
-                                cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][self.mediaImageKey] as? UIImage
-                                cell.detailLabel.text = "@" + text + " " +  sdifferentString
+                            cell.latestImage.hidden = false
+                            cell.countLabel.hidden = true
+                            cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][self.mediaImageKey] as? UIImage
+                            cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
                         else
                         {

@@ -9,7 +9,7 @@
         <!--Photo Viewer View Controller-->
         <scene sceneID="PTu-bS-VKX">
             <objects>
-                <viewController storyboardIdentifier="PhotoViewerViewController" id="Ayi-XJ-Ys0" customClass="PhotoViewerViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="PhotoViewerViewController" storyboardIdentifier="PhotoViewerViewController" id="Ayi-XJ-Ys0" customClass="PhotoViewerViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="EEP-hd-F3N"/>
                         <viewControllerLayoutGuide type="bottom" id="x1k-wQ-7XO"/>

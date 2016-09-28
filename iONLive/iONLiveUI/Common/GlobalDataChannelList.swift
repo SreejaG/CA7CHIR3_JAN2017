@@ -178,7 +178,7 @@ class GlobalDataChannelList: NSObject {
             let time2 = p2[createdTimeKey] as! String
             return time1 > time2
         })
-     NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
         autoDownloadChannelDetails()
     }
     

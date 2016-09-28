@@ -25,12 +25,12 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var settingsTableView: UITableView!
     
     @IBOutlet var pickerUIView: UIView!
-  
+    
     @IBOutlet var pickerView: UIPickerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      
+        
         liveResolutions = ["352x240 (240p)","480x360 (360p)","850x480 (480p)","1280x720 (720p)","1920x1080 (1080p)", "Cancel"]
         
         cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Media Capture Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Camera LED", optionType : toggleCell, accessryText: ""],[optionTitle:"Program Camera Button", optionType : normalCell, accessryText: ""],
@@ -53,7 +53,7 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate {
             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
             resValue = "720p"
         }
-
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -331,7 +331,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     func loadPickerView()  {
         pickerFullView.hidden = false
         doneButton.hidden = true
-//        backbutton.hidden = false
         self.settingsTableView.userInteractionEnabled = false
         self.view.bringSubviewToFront(self.pickerUIView)
     }
@@ -366,47 +365,5 @@ extension SettingsViewController : UIPickerViewDelegate{
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-//        if(row == 0)
-//        {
-//            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"240p"]
-//            resValue = "240p"
-//        }
-//        else if(row == 1)
-//        {
-//             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"360p"]
-//            resValue = "360p"
-//        }
-//        else if(row == 2)
-//        {
-//             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"480p"]
-//            resValue = "480p"
-//        }
-//        else if(row == 3)
-//        {
-//             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-//            resValue = "720p"
-//        }
-//        else if(row == 4){
-//             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"1080p"]
-//            resValue = "1080p"
-//        }
-//        else if(row == 5)
-//        {
-//            if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
-//            {
-//                let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
-//                 dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
-//            }
-//            else{
-//                  dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-//                resValue = "720p"
-//            }
-//        }
-//        doneButton.hidden = false
-//        backbutton.hidden = true
-//        settingsTableView.reloadData()
-//        pickerFullView.hidden = true
-//        self.settingsTableView.userInteractionEnabled = true
     }
-    
-   }
+}

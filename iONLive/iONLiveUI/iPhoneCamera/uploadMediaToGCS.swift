@@ -43,7 +43,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func initialise(){
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        print(videoDuration)
         getMediaFromDB()
     }
     
@@ -180,7 +179,6 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 else{
                 }
             })
-            
         })
     }
     

@@ -156,7 +156,7 @@ static NSMutableDictionary * gHistory;
     NSInputStream *inputStream;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
-
+    
 }
 
 @property (readwrite) BOOL playing;
@@ -329,7 +329,7 @@ bool swipeFlag;
         pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
         pinchGesture.delegate = self;
         [imageVideoView addGestureRecognizer:pinchGesture];
-       
+        
         streamORChannelDict = [[NSArray alloc]init];
         
         NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
@@ -389,7 +389,7 @@ bool swipeFlag;
         typeMedia.text = timeDiff;
     }
     
-     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+    NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
     
     mediaUrlForReplay = mediaUrl;
@@ -408,16 +408,16 @@ bool swipeFlag;
         [playIconView removeFromSuperview];
         playIconView = [[UIImageView alloc]init];
         playIconView.image = [UIImage imageNamed:@"Circled Play"];
-      //  if(indexForSwipe == orgIndex){
-            CGFloat width = [UIScreen mainScreen].bounds.size.width;
-            CGFloat height = [UIScreen mainScreen].bounds.size.height;
-            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
-      //  }
-//        else{
-//            playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
-//            playIconView.center = imageVideoView.center;
-//        }
-      
+        //  if(indexForSwipe == orgIndex){
+        CGFloat width = [UIScreen mainScreen].bounds.size.width;
+        CGFloat height = [UIScreen mainScreen].bounds.size.height;
+        playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
+        //  }
+        //        else{
+        //            playIconView.frame = CGRectMake(imageVideoView.frame.size.width/2 - 20, imageVideoView.frame.size.height/2 - 20, 40, 40);
+        //            playIconView.center = imageVideoView.center;
+        //        }
+        
         [glView addSubview:playIconView];
         [glView bringSubviewToFront:playIconView];
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
@@ -433,20 +433,20 @@ bool swipeFlag;
         [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
     }
     
-//    CATransition *transition = [CATransition animation];
-//    transition.duration = 0.3;
-//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//    transition.type = kCATransitionMoveIn;
-//    
-//    if (gestureId == 0)
-//    {
-//        transition.subtype = kCATransitionFromRight;
-//    }
-//    else if (gestureId == 1)
-//    {
-//        transition.subtype = kCATransitionFromLeft;
-//    }
-//    [imageVideoView.layer addAnimation:transition forKey:nil];
+    //    CATransition *transition = [CATransition animation];
+    //    transition.duration = 0.3;
+    //    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    //    transition.type = kCATransitionMoveIn;
+    //
+    //    if (gestureId == 0)
+    //    {
+    //        transition.subtype = kCATransitionFromRight;
+    //    }
+    //    else if (gestureId == 1)
+    //    {
+    //        transition.subtype = kCATransitionFromLeft;
+    //    }
+    //    [imageVideoView.layer addAnimation:transition forKey:nil];
 }
 
 -(void) setUpTransitionForSwipe{
@@ -465,7 +465,7 @@ bool swipeFlag;
     }
     [imageVideoView.layer addAnimation:transition forKey:nil];
     swipeFlag = false;
-
+    
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
@@ -588,30 +588,30 @@ bool swipeFlag;
 {
     if(([mediaTypeSelected isEqualToString:@"image"]) && (playHandleFlag == 0))
     {
-    glView.backgroundColor = [UIColor whiteColor];
-    UIGestureRecognizerState state = [pinchGestureDetected state];
-    if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged)
-    {
-        pinchFlag = true;
-        CGFloat scale;
-        scale = [pinchGestureDetected scale];
-        [pinchGestureDetected.view setTransform:CGAffineTransformScale(pinchGestureDetected.view.transform, scale, scale)];
-        [pinchGestureDetected setScale:1.0];
-    }
-    
-    if(state == UIGestureRecognizerStateEnded)
-    {
-        if( imageVideoView.frame.size.height < 600)
+        glView.backgroundColor = [UIColor whiteColor];
+        UIGestureRecognizerState state = [pinchGestureDetected state];
+        if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged)
         {
-            pinchFlag = false;
-            if ([pinchGestureDetected scale]<1.0f)
-            {
-                [pinchGestureDetected setScale:1.0f];
-            }
-            CGAffineTransform transform = CGAffineTransformMakeScale([pinchGestureDetected scale],  [pinchGestureDetected scale]);
-            imageVideoView.transform = transform;
+            pinchFlag = true;
+            CGFloat scale;
+            scale = [pinchGestureDetected scale];
+            [pinchGestureDetected.view setTransform:CGAffineTransformScale(pinchGestureDetected.view.transform, scale, scale)];
+            [pinchGestureDetected setScale:1.0];
         }
-    }
+        
+        if(state == UIGestureRecognizerStateEnded)
+        {
+            if( imageVideoView.frame.size.height < 600)
+            {
+                pinchFlag = false;
+                if ([pinchGestureDetected scale]<1.0f)
+                {
+                    [pinchGestureDetected setScale:1.0f];
+                }
+                CGAffineTransform transform = CGAffineTransformMakeScale([pinchGestureDetected scale],  [pinchGestureDetected scale]);
+                imageVideoView.transform = transform;
+            }
+        }
     }
 }
 
@@ -810,7 +810,7 @@ bool swipeFlag;
                         channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
                     }
                     if(screenNumber == 1 || screenNumber == 2){
-                         [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
+                        [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
                     }
                     
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
@@ -909,8 +909,8 @@ bool swipeFlag;
     playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
     [glView addSubview:playIconView];
     [glView bringSubviewToFront:playIconView];
-//    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
-//    [glView addSubview:playIconView];
+    //    playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+    //    [glView addSubview:playIconView];
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
     singleTap.numberOfTapsRequired = 1;
     [playIconView setUserInteractionEnabled:YES];
@@ -918,7 +918,7 @@ bool swipeFlag;
 }
 
 //-(void) tapDetected{
-//    
+//
 //    NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
 //    NSString *parentPathStr = [parentPath absoluteString];
 //    NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
@@ -1387,8 +1387,8 @@ bool swipeFlag;
             playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
             [glView addSubview:playIconView];
             [glView bringSubviewToFront:playIconView];
-//            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
-//            [glView addSubview:playIconView];
+            //            playIconView.frame = CGRectMake(glView.frame.size.width/2 - 20, glView.frame.size.height/2 - 20, 40, 40);
+            //            [glView addSubview:playIconView];
             UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
             singleTap.numberOfTapsRequired = 1;
             [playIconView setUserInteractionEnabled:YES];
@@ -1408,7 +1408,7 @@ bool swipeFlag;
 {
     [playIconView removeFromSuperview];
     if([mediaTypeSelected  isEqual: @"video"]){
-       
+        
         [_moviePlayer.view removeFromSuperview];
         _moviePlayer = nil;
         [downloadTask cancel];
@@ -1755,7 +1755,7 @@ bool swipeFlag;
             else if (buttonIndex == 0)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowAlert" object:@"0"];
-
+                
                 return;
             }
             
@@ -2337,8 +2337,8 @@ bool swipeFlag;
 -(void) successFromSetUpView:(NSString *) count
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-    [likeCount setText:count];
-    likeFlag = count;
+        [likeCount setText:count];
+        likeFlag = count;
     });
 }
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage

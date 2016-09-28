@@ -339,7 +339,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             uploadImage(fullImageURL, imageToSave: imageForProfile, completion: { (result) in
                 self.uploadImage(self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
                     if(result == "Success"){
-                         self.removeOverlay()
+                        self.removeOverlay()
                         self.imageForProfileOld = self.imageForProfile
                     }
                     else{
@@ -396,7 +396,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
         profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, timeZone: timeUpdate, success: { (response) in
-//            self.removeOverlay()
             let savingPath = "\(userId)Profile"
             FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
             self.fullNames = self.fullName
@@ -586,7 +585,7 @@ extension EditProfileViewController:UITableViewDataSource
                     
                 case 1:
                     button.removeFromSuperview()
-
+                    
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
                     if dataSource[indexPath.section].count-1 == indexPath.row
@@ -603,8 +602,6 @@ extension EditProfileViewController:UITableViewDataSource
                     {
                         cell.accessoryType = .None
                         cell.selectionStyle = .None
-                       // if(!isKeyBoardUp)
-                       // {
                         let image = UIImage(named: "synchronising.png")
                         button = UIButton(type: UIButtonType.Custom) as UIButton
                         button.frame = CGRectMake(cell.frame.width - 30, cell.frame.height/2 - 10, 25, 25)
@@ -612,7 +609,6 @@ extension EditProfileViewController:UITableViewDataSource
                         button.setImage(image, forState: .Normal)
                         button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
                         cell.addSubview(button)
-                       // }
                     }
                     
                     return cell
@@ -649,14 +645,10 @@ extension EditProfileViewController:UITableViewDataSource
         }
         return UITableViewCell()
     }
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        //self.editProfTableView.endUpdates()
-//        if isKeyBoardUp
-//        {
-//        let indexPath = NSIndexPath(forRow: 3, inSection: 1)
-//        self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-//        }
     }
+    
     func synchronisingTapped(sender: AnyObject)
     {
         let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
@@ -776,16 +768,15 @@ extension EditProfileViewController:UITableViewDataSource
             } else {
             }
         }
-
+        
         let chooseAction = UIAlertAction(title: "Choose a photo", style: UIAlertActionStyle.Default) { (action) in
-           
+            
             self.imagePicker.allowsEditing = false
             self.imagePicker.sourceType = .SavedPhotosAlbum
             self.presentViewController(self.imagePicker, animated: true, completion: nil)
         }
-
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) in
-            print("Cancel action button tapped")
         }
         
         myActionSheet.addAction(takeAction)
