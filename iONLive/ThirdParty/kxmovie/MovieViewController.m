@@ -979,6 +979,8 @@ AVPlayerViewController *_AVPlayerViewController;
     [glView addSubview:playIconView];
     [glView bringSubviewToFront:playIconView];
     
+    [self setGuiBasedOnOrientation];
+    
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapDetected)];
     singleTap.numberOfTapsRequired = 1;
     [playIconView setUserInteractionEnabled:YES];
@@ -1087,6 +1089,7 @@ AVPlayerViewController *_AVPlayerViewController;
 -(void)viewWillAppear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChangedForFullscreenMedia:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    [self setGuiBasedOnOrientation];
     
     if (_liveVideo) {
         activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
@@ -1099,12 +1102,12 @@ AVPlayerViewController *_AVPlayerViewController;
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:UIDeviceOrientationDidChangeNotification];
 }
 
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:UIDeviceOrientationDidChangeNotification];
     [self hideProgressBar];
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
