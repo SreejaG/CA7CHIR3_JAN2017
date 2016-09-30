@@ -836,68 +836,68 @@ AVPlayerViewController *_AVPlayerViewController;
                 [self removeOverlay];
             }
         }
-//        else
-//        {
-//            if(gestureId == 0)
-//            {
-//                if(indexForSwipe < 0)
-//                {
-//                    indexForSwipe = 0;
-//                }
-//                if(indexForSwipe < [streamORChannelDict count])
-//                {
-//                    indexForSwipe = indexForSwipe + 1;
-//                }
-//            }
-//            else
-//            {
-//                if (indexForSwipe == [streamORChannelDict count])
-//                {
-//                    indexForSwipe = (int)[streamORChannelDict count] - 1;
-//                }
-//                indexForSwipe = indexForSwipe - 1;
-//            }
-//            
-//            if(indexForSwipe < [streamORChannelDict count])
-//            {
-//                if (indexForSwipe != -1)
-//                {
-//                    [activityIndicatorProfile removeFromSuperview];
-//                    activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-//                    activityIndicatorProfile.alpha = 1.0;
-//                    [heartView addSubview:activityIndicatorProfile];
-//                    activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
-//                    profilePicture.alpha = 0.2;
-//                    activityIndicatorProfile.color = [UIColor blueColor];
-//                    [activityIndicatorProfile stopAnimating];
-//                    [activityIndicatorProfile startAnimating];//to start animating
-//                    mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
-//                    mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
-//                    mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
-//                    NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
-//                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
-//                    likeCountStrChk = @"0";
-//                    notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
-//                    VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
-//                    SetUpView *setUpObj = [[SetUpView alloc]init];
-//                    if(screenNumber == 1){
-//                        [setUpObj getProfileImageSelectedIndex:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
-//                        channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
-//                        userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
-//                        channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
-//                    }
-//                    if(screenNumber == 1 || screenNumber == 2){
-//                        [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
-//                    }
-//                    
-//                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
-//                }
-//            }
-//            else{
-//                swipeFlag = false;
-//                [self removeOverlay];
-//            }
-//        }
+        else
+        {
+            if(gestureId == 0)
+            {
+                if(indexForSwipe < 0)
+                {
+                    indexForSwipe = 0;
+                }
+                if(indexForSwipe < [streamORChannelDict count])
+                {
+                    indexForSwipe = indexForSwipe + 1;
+                }
+            }
+            else
+            {
+                if (indexForSwipe == [streamORChannelDict count])
+                {
+                    indexForSwipe = (int)[streamORChannelDict count] - 1;
+                }
+                indexForSwipe = indexForSwipe - 1;
+            }
+            
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                if (indexForSwipe != -1)
+                {
+                    [activityIndicatorProfile removeFromSuperview];
+                    activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                    activityIndicatorProfile.alpha = 1.0;
+                    [heartView addSubview:activityIndicatorProfile];
+                    activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
+                    profilePicture.alpha = 0.2;
+                    activityIndicatorProfile.color = [UIColor blueColor];
+                    [activityIndicatorProfile stopAnimating];
+                    [activityIndicatorProfile startAnimating];//to start animating
+                    mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
+                    mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
+                    mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
+                    NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
+                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+                    likeCountStrChk = @"0";
+                    notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
+                    VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
+                    SetUpView *setUpObj = [[SetUpView alloc]init];
+                    if(screenNumber == 1){
+                        [setUpObj getProfileImageSelectedIndex:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
+                        channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
+                        userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
+                        channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                    }
+                    if(screenNumber == 1 || screenNumber == 2){
+                        [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
+                    }
+                    
+                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                }
+            }
+            else{
+                swipeFlag = false;
+                [self removeOverlay];
+            }
+        }
     }
 }
 
