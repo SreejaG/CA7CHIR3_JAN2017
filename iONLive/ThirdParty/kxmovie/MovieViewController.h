@@ -1,5 +1,6 @@
 
 #import <UIKit/UIKit.h>
+#import <AVKit/AVKit.h>
 
 @class KxMovieDecoder;
 
@@ -7,7 +8,7 @@ extern NSString * const KxMovieParameterMinBufferedDuration;    // Float
 extern NSString * const KxMovieParameterMaxBufferedDuration;    // Float
 extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 
-@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate >
+@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate >
 
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters

@@ -12,6 +12,7 @@
 #import "IPhoneCameraViewController.h"
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <AVKit/AVKit.h>
 
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
@@ -191,6 +192,7 @@ UIActivityIndicatorView *activityIndicatorProfile;
 UIView *loadingOverlay;
 bool swipeFlag;
 int orientationFlagForFullScreenMediaFlag;
+AVPlayerViewController *_AVPlayerViewController;
 
 + (void)initialize
 {
@@ -404,7 +406,8 @@ int orientationFlagForFullScreenMediaFlag;
         videoProgressBar.hidden = false;
         topView.hidden = false;
         imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
-        imageVideoView.image = VideoImageUrl;
+        mediaImage = VideoImageUrl;
+//        imageVideoView.image = VideoImageUrl;
         videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
         playIconView = [[UIImageView alloc]init];
@@ -415,6 +418,7 @@ int orientationFlagForFullScreenMediaFlag;
         
         [glView addSubview:playIconView];
         [glView bringSubviewToFront:playIconView];
+        [self setGuiBasedOnOrientation];
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playVideoAutomatically)];
         singleTap.numberOfTapsRequired = 1;
         singleTap.delegate = self;
@@ -501,8 +505,41 @@ int orientationFlagForFullScreenMediaFlag;
         imageVideoView.image = orientedImage;
     }
     else{
-        imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
+        [self setGuiBasedOnOrientationForVideo];
+//        imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
     }
+}
+
+-(void) setGuiBasedOnOrientationForVideo{
+    orientationFlagForFullScreenMediaFlag = [self getFullscreenMediaOrientation];
+    UIImage *orientedImage = [[UIImage alloc]init];
+    orientedImage = mediaImage;
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    CGFloat height = [UIScreen mainScreen].bounds.size.height;
+    switch (orientationFlagForFullScreenMediaFlag) {
+        case 1:
+            imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
+            orientedImage = mediaImage;
+            playIconView.image = [UIImage imageNamed:@"Circled Play"];
+            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
+            break;
+        case 2:
+            imageVideoView.contentMode = UIViewContentModeScaleAspectFit;
+            orientedImage = [UIImage imageWithCGImage:mediaImage.CGImage scale:1.0 orientation:UIImageOrientationRight];
+            playIconView.image = [UIImage imageWithCGImage:[UIImage imageNamed:@"Circled Play"].CGImage scale:1.0 orientation:UIImageOrientationRight];
+            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 40, 40, 40);
+            break;
+        case 3:
+            imageVideoView.contentMode = UIViewContentModeScaleAspectFit;
+            orientedImage = [UIImage imageWithCGImage:mediaImage.CGImage scale:1.0 orientation:UIImageOrientationLeft];
+            playIconView.image = [UIImage imageWithCGImage:[UIImage imageNamed:@"Circled Play"].CGImage scale:1.0 orientation:UIImageOrientationLeft];
+            playIconView.frame = CGRectMake(width/2 - 20, height/2 - 40, 40, 40);
+            break;
+        default:
+            break;
+    }
+    imageVideoView.image = orientedImage;
+
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
@@ -558,7 +595,6 @@ int orientationFlagForFullScreenMediaFlag;
 }
 -(void) playVideoAutomatically
 {
-    [playIconView removeFromSuperview];
     [glView bringSubviewToFront:videoProgressBar];
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
@@ -569,36 +605,35 @@ int orientationFlagForFullScreenMediaFlag;
     if(fileExistFlag == true)
     {
         videoProgressBar.hidden = true;
-        self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-        MPMoviePlayerController *player = _moviePlayer;
-        player.controlStyle = MPMovieControlStyleNone;
-        [player prepareToPlay];
-        self.view.userInteractionEnabled = true;
-        player.shouldAutoplay = true;
-        player.view.frame = CGRectMake(imageVideoView.frame.origin.x, imageVideoView.frame.origin.y, imageVideoView.frame.size.width, imageVideoView.frame.size.height);
-        player.scalingMode = MPMovieScalingModeAspectFit;
-        player.movieSourceType = MPMovieSourceTypeFile;
-        player.controlStyle = MPMovieControlStyleEmbedded;
-        player.repeatMode = MPMovieRepeatModeNone;
-        [imageVideoView addSubview:[player view]];
+        
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [[AVAudioSession sharedInstance] setActive: YES error: nil];
+         NSURL *url = [NSURL fileURLWithPath:savingPath];
+        _AVPlayerViewController = [AVPlayerViewController new];
+        _AVPlayerViewController.delegate = self;
+        _AVPlayerViewController.showsPlaybackControls = YES;
+        _AVPlayerViewController.allowsPictureInPicturePlayback = YES;
+        _AVPlayerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+        _AVPlayerViewController.player = [AVPlayer playerWithURL:url];
+        [_AVPlayerViewController.player play];
+        _AVPlayerViewController.player.closedCaptionDisplayEnabled = NO;
+        [self presentViewController:_AVPlayerViewController animated:NO completion:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(playerDidFinish:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:[_AVPlayerViewController.player currentItem]];
+        
         topView.hidden = false;
         cameraSelectionButton.hidden = true;
         liveView.hidden = true;
-        playIconView.hidden = true;
+        playIconView.hidden = false;
         numberOfSharedChannels.hidden = true;
         topView.backgroundColor = [UIColor clearColor];
         [glView bringSubviewToFront:heartView];
         [glView bringSubviewToFront:topView];
-        [player play];
         playHandleFlag = 1;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(playbackStateChange:)
-                                                     name:MPMoviePlayerPlaybackStateDidChangeNotification  object:_moviePlayer];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(playerDidFinish:)
-                                                     name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
-    }
+     }
     else{
         NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
         [self downloadVideo:url];
@@ -867,6 +902,7 @@ int orientationFlagForFullScreenMediaFlag;
 
 -(void) downloadVideo: (NSURL *) url
 {
+    playIconView.hidden = true;
     NSMutableURLRequest *downloadReq = [[NSMutableURLRequest alloc]initWithURL:url];
     NSURLSession *session = [NSURLSession sessionWithConfiguration: [NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     downloadTask = [session downloadTaskWithRequest:downloadReq];
@@ -900,43 +936,40 @@ int orientationFlagForFullScreenMediaFlag;
         bool write = [data writeToURL:fileURL atomically:YES];
         if(write)
         {
-            self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-            MPMoviePlayerController *player = self.moviePlayer;
-            player.controlStyle = MPMovieControlStyleNone;
-            [player prepareToPlay];
-            self.view.userInteractionEnabled = true;
-            player.shouldAutoplay = true;
-            player.view.frame = CGRectMake(imageVideoView.frame.origin.x, imageVideoView.frame.origin.y, imageVideoView.frame.size.width, imageVideoView.frame.size.height);
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+            [[AVAudioSession sharedInstance] setActive: YES error: nil];
+            NSURL *url = [NSURL fileURLWithPath:savingPath];
+            _AVPlayerViewController = [AVPlayerViewController new];
+            _AVPlayerViewController.delegate = self;
+            _AVPlayerViewController.showsPlaybackControls = YES;
+            _AVPlayerViewController.allowsPictureInPicturePlayback = YES;
+            _AVPlayerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+            _AVPlayerViewController.player = [AVPlayer playerWithURL:url];
+            [_AVPlayerViewController.player play];
+            _AVPlayerViewController.player.closedCaptionDisplayEnabled = NO;
+            [self presentViewController:_AVPlayerViewController animated:NO completion:nil];
             
-            player.scalingMode = MPMovieScalingModeAspectFit;
-            player.movieSourceType = MPMovieSourceTypeFile;
-            player.controlStyle = MPMovieControlStyleEmbedded;
-            player.repeatMode = MPMovieRepeatModeNone;
-            [imageVideoView addSubview:[player view]];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playerDidFinish:)
+                                                         name:AVPlayerItemDidPlayToEndTimeNotification
+                                                       object:[_AVPlayerViewController.player currentItem]];
             topView.hidden = false;
             cameraSelectionButton.hidden = true;
             liveView.hidden = true;
             numberOfSharedChannels.hidden = true;
-            playIconView.hidden = true;
+            playIconView.hidden = false;
             topView.backgroundColor = [UIColor clearColor];
             [glView bringSubviewToFront:heartView];
             [glView bringSubviewToFront:topView];
-            [player play];
             playHandleFlag = 1;
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(playbackStateChange:)
-                                                         name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(playerDidFinish:)
-                                                         name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
-            
         }
     }
 }
 
 -(void) playerDidFinish :(NSNotification *) notif
 {
-    [_moviePlayer.view removeFromSuperview];
+    [_AVPlayerViewController removeFromParentViewController];
+    [self dismissViewControllerAnimated:_AVPlayerViewController completion:nil];
     [playIconView removeFromSuperview];
     playIconView = [[UIImageView alloc]init];
     playIconView.image = [UIImage imageNamed:@"Circled Play"];
@@ -960,36 +993,33 @@ int orientationFlagForFullScreenMediaFlag;
     NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
     videoProgressBar.hidden = true;
     
-    self.moviePlayer = [[MPMoviePlayerController alloc]initWithContentURL:[NSURL fileURLWithPath:savingPath]];
-    MPMoviePlayerController *player = self.moviePlayer;
-    player.controlStyle = MPMovieControlStyleNone;
-    [player prepareToPlay];
-    self.view.userInteractionEnabled = true;
-    player.shouldAutoplay = true;
-    player.view.frame = CGRectMake(imageVideoView.frame.origin.x, imageVideoView.frame.origin.y, imageVideoView.frame.size.width, imageVideoView.frame.size.height);
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive: YES error: nil];
+    NSURL *url = [NSURL fileURLWithPath:savingPath];
+    _AVPlayerViewController = [AVPlayerViewController new];
+    _AVPlayerViewController.delegate = self;
+    _AVPlayerViewController.showsPlaybackControls = YES;
+    _AVPlayerViewController.allowsPictureInPicturePlayback = YES;
+    _AVPlayerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+    _AVPlayerViewController.player = [AVPlayer playerWithURL:url];
+    [_AVPlayerViewController.player play];
+    _AVPlayerViewController.player.closedCaptionDisplayEnabled = NO;
+    [self presentViewController:_AVPlayerViewController animated:NO completion:nil];
     
-    player.scalingMode = MPMovieScalingModeAspectFit;
-    player.movieSourceType = MPMovieSourceTypeFile;
-    player.controlStyle = MPMovieControlStyleEmbedded;
-    player.repeatMode = MPMovieRepeatModeNone;
-    [imageVideoView addSubview:[player view]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerDidFinish:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:[_AVPlayerViewController.player currentItem]];
     topView.hidden = false;
     cameraSelectionButton.hidden = true;
     liveView.hidden = true;
     numberOfSharedChannels.hidden = true;
-    playIconView.hidden = true;
+    playIconView.hidden = false;
     topView.backgroundColor = [UIColor clearColor];
     [glView bringSubviewToFront:heartView];
     [glView bringSubviewToFront:topView];
-    [player play];
-    
     playHandleFlag = 1;
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playbackStateChange:)
-                                                 name:MPMoviePlayerPlaybackStateDidChangeNotification object:_moviePlayer];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(playerDidFinish:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
+
 }
 -(void) setUpViewForImageVideo
 {
