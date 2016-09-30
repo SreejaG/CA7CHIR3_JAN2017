@@ -772,9 +772,9 @@ AVPlayerViewController *_AVPlayerViewController;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
-    [self removeOverlay];
     if ((pinchFlag == false) && (swipeFlag == false))
     {
+        [self removeOverlay];
         swipeFlag = true;
         [self showOverlay];
         imageVideoView.userInteractionEnabled = false;
