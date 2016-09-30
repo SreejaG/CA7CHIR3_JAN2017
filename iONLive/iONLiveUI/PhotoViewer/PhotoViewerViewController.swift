@@ -64,7 +64,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var deletedMediaId : NSMutableArray = NSMutableArray()
     var dictProgress : Float = Float()
     var orientationFlag: Int = Int()
-    var Orgimage : UIImage = UIImage()
+    var Orgimage : UIImage? = UIImage()
     var mediaTypeSelected : String = String()
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
@@ -239,7 +239,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         var orientedImage = Orgimage
    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        if(self.Orgimage != UIImage() && self.totalCount > 0){
+        if(self.Orgimage != nil && self.totalCount > 0){
             let viewController: UIViewController = (self.navigationController?.visibleViewController)!
             if(viewController.restorationIdentifier == "PhotoViewerViewController"){
                 if(self.mediaTypeSelected != "video")
@@ -255,7 +255,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     switch device.orientation {
                     case .Portrait,.PortraitUpsideDown:
                         self.orientationFlag = 1;
-                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        if self.Orgimage!.size.width > self.Orgimage!.size.height
                         {
                             self.fullScrenImageView.contentMode = .ScaleAspectFit
                         }
@@ -266,29 +266,29 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         break;
                     case .LandscapeLeft:
                         self.orientationFlag = 2;
-                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        if self.Orgimage!.size.width > self.Orgimage!.size.height
                         {
                             self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                                     orientation: .Right)
                         }
                         else{
                             self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                                     orientation: .Down)
                         }
                         break;
                     case .LandscapeRight:
                         self.orientationFlag = 3;
-                        if self.Orgimage.size.width > self.Orgimage.size.height
+                        if self.Orgimage!.size.width > self.Orgimage!.size.height
                         {
                             self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                                     orientation: .Left)
                         }
                         else{
                             self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                                     orientation: .Up)
                         }
                         break;
@@ -301,8 +301,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 else{
                     orientedImage = self.setOrientationForVideo()
                 }
-                self.fullScrenImageView.image = orientedImage as UIImage
-                self.fullScreenZoomView.image = orientedImage as UIImage
+                self.fullScrenImageView.image = orientedImage! as UIImage
+                self.fullScreenZoomView.image = orientedImage! as UIImage
             
             }
         }
@@ -1306,42 +1306,42 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
         case 1:
             //portrait
-            if self.Orgimage.size.width > self.Orgimage.size.height
+            if self.Orgimage!.size.width > self.Orgimage!.size.height
             {
                 self.fullScrenImageView.contentMode = .ScaleAspectFit
             }
             else{
                 self.fullScrenImageView.contentMode = .ScaleAspectFill
             }
-            orientedImage = self.Orgimage
+            orientedImage = self.Orgimage!
             break
             
         case 2:
             //landscape left
-            if self.Orgimage.size.width > self.Orgimage.size.height
+            if self.Orgimage!.size.width > self.Orgimage!.size.height
             {
                 self.fullScrenImageView.contentMode = .ScaleAspectFit
                 self.fullScrenImageView.startAnimating()
-                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                         orientation: .Right)
             }
             else{
                 self.fullScrenImageView.contentMode = .ScaleAspectFit
-                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                         orientation: .Down)
             }
             break
         case 3:
             //landscape right
-            if self.Orgimage.size.width > self.Orgimage.size.height
+            if self.Orgimage!.size.width > self.Orgimage!.size.height
             {
                 self.fullScrenImageView.contentMode = .ScaleAspectFit
-                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                         orientation: .Left)
             }
             else{
                 self.fullScrenImageView.contentMode = .ScaleAspectFit
-                orientedImage = UIImage(CGImage: self.Orgimage.CGImage!, scale: CGFloat(1.0),
+                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
                                         orientation: .Up)
             }
             break
