@@ -34,7 +34,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
-    var moviePlayer : MPMoviePlayerController!
+    //var moviePlayer : MPMoviePlayerController!
     let defaults = NSUserDefaults .standardUserDefaults()
     
     private var downloadTask: NSURLSessionDownloadTask?
@@ -187,9 +187,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.fullScreenZoomView.image = self.setOrientationForVideo()
             })
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
+     //   NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
+    //    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
         
@@ -526,8 +526,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if (playHandleflag == 1)
                 {
                     playHandleflag = 0
-                    self.moviePlayer.stop()
-                    self.moviePlayer.view.removeFromSuperview()
+                  //  self.moviePlayer.stop()
+                  //  self.moviePlayer.view.removeFromSuperview()
                     playIconInFullView.hidden = false
                     self.view.userInteractionEnabled = true
                 }
@@ -610,14 +610,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         })
     }
     
-    func moviePlayerWillenterFullScreen(notif:NSNotification)
-    {
-        willEnterFlag = 1
-        let fullScreenController = notif.object as! MPMoviePlayerController
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
-        })
-    }
+//    func moviePlayerWillenterFullScreen(notif:NSNotification)
+//    {
+//        willEnterFlag = 1
+//        let fullScreenController = notif.object as! MPMoviePlayerController
+//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//            fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
+//        })
+//    }
     
     func initialise()
     {
@@ -644,8 +644,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-            self.moviePlayer.stop()
-            self.moviePlayer.view.removeFromSuperview()
+           // self.moviePlayer.stop()
+           // self.moviePlayer.view.removeFromSuperview()
         }
         
         progressLabelDownload?.removeFromSuperview()
@@ -985,7 +985,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let url = NSURL(fileURLWithPath: savingPath)
             let writeFlag = imageData.writeToURL(url, atomically: true)
             if(writeFlag){
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
+              //  NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
                     videoDownloadIntex = 0
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.view.userInteractionEnabled = true
@@ -1012,8 +1012,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             self.playerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
                             self.playerViewController.player = player1
                             self.presentViewController(self.playerViewController, animated: true, completion: {
-                                self.playerViewController.player!.play()
-                                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
+                            self.playerViewController.player!.play()
+                            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
                         })
 
                     })
@@ -1023,7 +1023,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func playerDidFinish(notif:NSNotification)
     {
-        self.moviePlayer.view.removeFromSuperview()
+        //self.moviePlayer.view.removeFromSuperview()
         playIconInFullView.hidden = false
         self.view.userInteractionEnabled = true
     }
@@ -1077,8 +1077,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-            self.moviePlayer.stop()
-            self.moviePlayer.view.removeFromSuperview()
+           // self.moviePlayer.stop()
+           // self.moviePlayer.view.removeFromSuperview()
         }
         
         progressLabelDownload?.removeFromSuperview()
@@ -1137,8 +1137,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         else if(playHandleflag == 1)
         {
             playHandleflag = 0;
-            moviePlayer.stop()
-            moviePlayer.view.removeFromSuperview()
+           // moviePlayer.stop()
+          //  moviePlayer.view.removeFromSuperview()
             
             playIconInFullView.hidden = false
             self.view.userInteractionEnabled = true
@@ -1455,8 +1455,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-            self.moviePlayer.stop()
-            self.moviePlayer.view.removeFromSuperview()
+           // self.moviePlayer.stop()
+           // self.moviePlayer.view.removeFromSuperview()
         }
         self.selectedItem = indexPath.row
         
