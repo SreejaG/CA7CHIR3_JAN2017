@@ -577,21 +577,23 @@ AVPlayerViewController *_AVPlayerViewController;
         else{
             mediaImage = [UIImage imageNamed:@"thumb12"];
         }
-        [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
         NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0f
                                                       target: self
                                                     selector:@selector(onHide:)
                                                     userInfo: nil repeats:NO];
+        
+
+        [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
     }
 }
 
 -(void)onHide:(NSTimer *)timer {
     [self removeOverlay];
-    [self setGuiBasedOnOrientation];
     if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
     {
         [self setUpTransitionForSwipe];
     }
+    [self setGuiBasedOnOrientation];
 }
 -(void) playVideoAutomatically
 {
