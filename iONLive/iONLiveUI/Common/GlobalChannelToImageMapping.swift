@@ -14,7 +14,7 @@ class GlobalChannelToImageMapping: NSObject {
     var channelDetailId : String = String()
     
     var dataSourceCount : Int = 0
-    
+    var filteredcount : Int = Int()
     class var sharedInstance: GlobalChannelToImageMapping
     {
         struct Singleton
@@ -462,5 +462,13 @@ class GlobalChannelToImageMapping: NSObject {
             deleteMediaFromParticularChannel(globalChanelId, mediaIds: mediaIds)
         }
         NSUserDefaults.standardUserDefaults().setInteger(GlobalChannelImageDict[chanelId]!.count, forKey: ArchiveCount)
+    }
+    func getFilteredCount() -> Int
+    {
+        return self.filteredcount
+    }
+    func setFilteredCount( count : Int)
+    {
+        self.filteredcount = count
     }
 }

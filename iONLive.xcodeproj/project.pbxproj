@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		067B996B1DA227A3002B78BA /* photoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 067B996A1DA227A3002B78BA /* photoViewCell.m */; };
+		067B996E1DA2720C002B78BA /* photoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 067B996D1DA2720C002B78BA /* photoCell.xib */; };
 		160903EE1C6C7E66004E381D /* Connectivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 160903ED1C6C7E66004E381D /* Connectivity.m */; };
 		160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */; };
 		160903F71C6C7ED1004E381D /* EditProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160903F11C6C7ED1004E381D /* EditProfile.storyboard */; };
@@ -244,6 +246,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		067B99691DA227A3002B78BA /* photoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = photoViewCell.h; sourceTree = "<group>"; };
+		067B996A1DA227A3002B78BA /* photoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = photoViewCell.m; sourceTree = "<group>"; };
+		067B996D1DA2720C002B78BA /* photoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = photoCell.xib; sourceTree = "<group>"; };
 		06DD833BCC68B7DCB2D38C82 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CC816436167DE7B08669471 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		160903EC1C6C7E66004E381D /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
@@ -1485,6 +1490,9 @@
 				599964CB1C057EF000D20FB2 /* MovieViewController.h */,
 				599964CC1C057EF000D20FB2 /* MovieViewController.m */,
 				599964CD1C057EF000D20FB2 /* MovieViewController.xib */,
+				067B99691DA227A3002B78BA /* photoViewCell.h */,
+				067B996A1DA227A3002B78BA /* photoViewCell.m */,
+				067B996D1DA2720C002B78BA /* photoCell.xib */,
 			);
 			path = kxmovie;
 			sourceTree = "<group>";
@@ -1717,6 +1725,7 @@
 				160903F71C6C7ED1004E381D /* EditProfile.storyboard in Resources */,
 				16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */,
 				165B77DF1C4CE73800BDB02F /* iONCamPictureAPITest.storyboard in Resources */,
+				067B996E1DA2720C002B78BA /* photoCell.xib in Resources */,
 				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
@@ -1843,6 +1852,7 @@
 				B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */,
 				16BFCA691D1A6DE700761C94 /* UIButton+WebCache.m in Sources */,
 				1632825B1C7F098000D03F51 /* ProfileManager.swift in Sources */,
+				067B996B1DA227A3002B78BA /* photoViewCell.m in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
 				16BFCA671D1A6DE700761C94 /* SDWebImageManager.m in Sources */,
 				16DA06ED1C7ED8A8004759D5 /* NBNumberFormat.m in Sources */,

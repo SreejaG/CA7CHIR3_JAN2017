@@ -113,6 +113,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(channelKeys.contains(archiveChanelId)){
                 let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
                 totalCount = filteredData.count
+                GlobalChannelToImageMapping.sharedInstance.setFilteredCount(totalCount)
             }
             channelKeys.removeAll()
             if totalCount > 0
@@ -332,6 +333,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.operationQueueObjInMyMediaList.addOperation(operationInMyMediaList)
             }
         }
+        GlobalChannelToImageMapping.sharedInstance.setFilteredCount(end)
+
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {

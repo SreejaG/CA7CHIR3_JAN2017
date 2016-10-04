@@ -13,6 +13,9 @@
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
+#import "photoViewCell.h"
+#import <QuartzCore/QuartzCore.h>
+
 
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
@@ -120,7 +123,7 @@ static NSMutableDictionary * gHistory;
     __weak IBOutlet UIImageView *avatarImage;
     
     __weak IBOutlet UILabel *likeCount;
-    
+    NSDictionary *photoCollectionViewDatasource;
     
     BOOL                _interrupted;
     NSURLSessionDownloadTask *downloadTask;
@@ -191,8 +194,11 @@ float imageVideoViewHeight;
 UIActivityIndicatorView *activityIndicatorProfile;
 UIView *loadingOverlay;
 bool swipeFlag;
+bool tapHeartDescViewFlag;
+bool tapFromDidSelectFlag;
 int orientationFlagForFullScreenMediaFlag;
 AVPlayerViewController *_AVPlayerViewController;
+int totalCount;
 
 + (void)initialize
 {
@@ -307,19 +313,32 @@ AVPlayerViewController *_AVPlayerViewController;
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
         
-        //Swipe Gesture Declaration
+        NSArray *filteredData = [[NSArray alloc]init];
+        
+        _photoCollectionView.hidden = true;
+        imageVideoView.userInteractionEnabled = YES;
+        [self.view bringSubviewToFront:imageVideoView];
+        
+        UITapGestureRecognizer *heartBottomDescViewtap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapHeartView:)];
+        heartBottomDescViewtap.delegate = self;
+        heartBottomDescViewtap.numberOfTapsRequired = 1;
+        heartBottomDescViewtap.cancelsTouchesInView = NO;
+        [heartView addGestureRecognizer:heartBottomDescViewtap];
+        [heartTapButton removeGestureRecognizer:heartBottomDescViewtap];
+        
+        //Swipe Gesture nuDeclaration
         UISwipeGestureRecognizer *leftSwipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRecogniser:)];
         leftSwipe.numberOfTouchesRequired = 1;
         leftSwipe.direction = UISwipeGestureRecognizerDirectionLeft;
         leftSwipe.delegate = self;
-        [self.view addGestureRecognizer:leftSwipe];
+        [imageVideoView addGestureRecognizer:leftSwipe];
         
         UISwipeGestureRecognizer *rightSwipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRecogniser:)];
         rightSwipe.numberOfTouchesRequired = 1;
         rightSwipe.direction = UISwipeGestureRecognizerDirectionRight;
         rightSwipe.delegate = self;
-        [self.view addGestureRecognizer:rightSwipe];
-        imageVideoView.userInteractionEnabled = YES;
+        [imageVideoView addGestureRecognizer:rightSwipe];
+        
         
         //Pan Gesture
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
@@ -327,7 +346,6 @@ AVPlayerViewController *_AVPlayerViewController;
         [imageVideoView addGestureRecognizer:panGesture];
         
         //Pinch Zoom
-        
         pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
         pinchGesture.delegate = self;
         [imageVideoView addGestureRecognizer:pinchGesture];
@@ -352,7 +370,6 @@ AVPlayerViewController *_AVPlayerViewController;
             likeCount.hidden = false;
             avatarImage.hidden = false;
         }
-        
         indexForSwipe = selectedItem;
         orgIndex = indexForSwipe;
         screenNumber = pageIndicator;
@@ -363,11 +380,15 @@ AVPlayerViewController *_AVPlayerViewController;
         else if(pageIndicator == 2){
             streamORChannelDict = [[SharedChannelDetailsAPI sharedInstance] selectedSharedChannelMediaSource];
         }
-        
+        else if(pageIndicator == 0){
+            SetUpView *setUpObj = [[SetUpView alloc]init];
+            totalCount = (int)[setUpObj getMediaCount:channelIdSelected];
+        }
         [self setGUIChanges:mediaUrl mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
     }
     return self;
 }
+
 
 -(void) setGUIChanges:(NSString *) mediaUrl
             mediaType: (NSString *) mediaType
@@ -379,7 +400,6 @@ AVPlayerViewController *_AVPlayerViewController;
 {
     [self setUpDefaultValues];
     [self setUpViewForImageVideo];
-    
     likeCount.text = likeCountStr;
     
     if([mediaType  isEqual: @"live"]){
@@ -390,7 +410,7 @@ AVPlayerViewController *_AVPlayerViewController;
         typeMedia.textColor = [UIColor blackColor];
         typeMedia.text = timeDiff;
     }
-
+    
     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
     
@@ -399,7 +419,7 @@ AVPlayerViewController *_AVPlayerViewController;
     notificationType = @"LIKE";
     mediaDetailId = mediaId;
     mediaTypeSelected = mediaType;
-
+    
     if([mediaType  isEqual: @"video"])
     {
         [self removeOverlay];
@@ -414,7 +434,6 @@ AVPlayerViewController *_AVPlayerViewController;
         CGFloat width = [UIScreen mainScreen].bounds.size.width;
         CGFloat height = [UIScreen mainScreen].bounds.size.height;
         playIconView.frame = CGRectMake(width/2 - 20, height/2 - 20, 40, 40);
-        
         [glView addSubview:playIconView];
         [glView bringSubviewToFront:playIconView];
         [self setGuiBasedOnOrientation];
@@ -423,12 +442,62 @@ AVPlayerViewController *_AVPlayerViewController;
         singleTap.delegate = self;
         [playIconView setUserInteractionEnabled:YES];
         [playIconView addGestureRecognizer:singleTap];
-        [self setUpTransitionForSwipe];
+        if(!tapFromDidSelectFlag)
+        {
+            [self setUpTransitionForSwipe];
+        }
+        else{
+            swipeFlag = false;
+        }
     }
     else{
         videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
         [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
+    }
+}
+
+- (BOOL)gestureRecognizer:(UITapGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ([touch.view isKindOfClass:[UIButton class]]){
+        return NO;
+    }
+    return YES;
+}
+
+-(void) tapHeartView :(UITapGestureRecognizer *) tap
+{
+    if(!tapHeartDescViewFlag)
+    {
+        _photoCollectionView.hidden = false;
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [_photoCollectionView reloadData];
+            if(screenNumber == 0){
+                if(indexForSwipe < totalCount){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                }
+                else if(indexForSwipe == totalCount){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    indexForSwipe = indexForSwipe - 1;
+                }
+            }
+            else{
+                if(indexForSwipe < [streamORChannelDict count])
+                {
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                }
+                else if(indexForSwipe == [streamORChannelDict count]){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    indexForSwipe = indexForSwipe - 1;
+                }
+            }
+        });
+        _bottomConstraintForHeartView.constant = 50;
+        tapHeartDescViewFlag = true;
+    }
+    else{
+        _photoCollectionView.hidden = true;
+        _bottomConstraintForHeartView.constant = 0;
+        tapHeartDescViewFlag = false;
     }
 }
 
@@ -448,7 +517,28 @@ AVPlayerViewController *_AVPlayerViewController;
     }
     [imageVideoView.layer addAnimation:transition forKey:nil];
     swipeFlag = false;
-    
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        [_photoCollectionView reloadData];
+        if(screenNumber == 0){
+            if(indexForSwipe < totalCount){
+                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+            }
+            else if(indexForSwipe == totalCount){
+                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                indexForSwipe = indexForSwipe - 1;
+            }
+        }
+        else{
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+            }
+            else if(indexForSwipe == [streamORChannelDict count]){
+                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                indexForSwipe = indexForSwipe - 1;
+            }
+        }
+    });
 }
 
 -(void) setGuiBasedOnOrientation
@@ -505,7 +595,6 @@ AVPlayerViewController *_AVPlayerViewController;
     }
     else{
         [self setGuiBasedOnOrientationForVideo];
-//        imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
     }
 }
 
@@ -538,11 +627,11 @@ AVPlayerViewController *_AVPlayerViewController;
             break;
     }
     imageVideoView.image = orientedImage;
-
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
 {
+    
     if((indexForSwipe == orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
     {
         [self showOverlay];
@@ -561,14 +650,16 @@ AVPlayerViewController *_AVPlayerViewController;
         [self removeOverlay];
         mediaImage = [[FileManagerViewController sharedInstance] getImageFromFilePath:savingPath];
         [self setGuiBasedOnOrientation];
-        if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
+        if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]) && (!tapFromDidSelectFlag))
         {
             [self setUpTransitionForSwipe];
+        }
+        else{
+            swipeFlag = false;
         }
     }
     else{
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            //Background Thread
             NSURL *url = [self convertStringToUrl:mediaUrl];
             NSData *data = [[NSData alloc] initWithContentsOfURL:url];
             if(data != nil)
@@ -579,13 +670,10 @@ AVPlayerViewController *_AVPlayerViewController;
                 mediaImage = [UIImage imageNamed:@"thumb12"];
             }
             dispatch_async(dispatch_get_main_queue(), ^(void){
-                //Run UI Updates
                 NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0f
                                                               target: self
                                                             selector:@selector(onHide:)
                                                             userInfo: nil repeats:NO];
-                
-                
                 [[FileManagerViewController sharedInstance] saveImageToFilePath:mediaNamePath mediaImage:mediaImage];
             });
         });
@@ -594,12 +682,15 @@ AVPlayerViewController *_AVPlayerViewController;
 
 -(void)onHide:(NSTimer *)timer {
     [self removeOverlay];
-    if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
+    
+    if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]) && (!tapFromDidSelectFlag))
     {
         [self setUpTransitionForSwipe];
     }
+    
     [self setGuiBasedOnOrientation];
 }
+
 -(void) playVideoAutomatically
 {
     [glView bringSubviewToFront:videoProgressBar];
@@ -612,10 +703,9 @@ AVPlayerViewController *_AVPlayerViewController;
     if(fileExistFlag == true)
     {
         videoProgressBar.hidden = true;
-        
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [[AVAudioSession sharedInstance] setActive: YES error: nil];
-         NSURL *url = [NSURL fileURLWithPath:savingPath];
+        NSURL *url = [NSURL fileURLWithPath:savingPath];
         _AVPlayerViewController = [AVPlayerViewController new];
         _AVPlayerViewController.delegate = self;
         _AVPlayerViewController.showsPlaybackControls = YES;
@@ -640,7 +730,7 @@ AVPlayerViewController *_AVPlayerViewController;
         [glView bringSubviewToFront:heartView];
         [glView bringSubviewToFront:topView];
         playHandleFlag = 1;
-     }
+    }
     else{
         NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
         [self downloadVideo:url];
@@ -651,7 +741,7 @@ AVPlayerViewController *_AVPlayerViewController;
 {
     imageVideoView.userInteractionEnabled = false;
     IONLLoadingView *loadingOverlayController = [[IONLLoadingView alloc]initWithNibName:@"IONLLoadingOverlay" bundle:nil];
-    loadingOverlayController.view.frame = CGRectMake(0, 0, imageVideoView.frame.size.width,imageVideoView.frame.size.height);
+    loadingOverlayController.view.frame = CGRectMake(0, 0, imageVideoView.frame.size.width,imageVideoView.frame.size.height + heartView.frame.size.height);
     [loadingOverlayController startLoading];
     loadingOverlay = [[UIView alloc]init];
     loadingOverlay = loadingOverlayController.view;
@@ -662,7 +752,6 @@ AVPlayerViewController *_AVPlayerViewController;
     [loadingOverlay removeFromSuperview];
     imageVideoView.userInteractionEnabled = true;
 }
-
 
 -(void)pinchGestureRecogniserDetected:(UIPinchGestureRecognizer *)pinchGestureDetected
 {
@@ -779,6 +868,7 @@ AVPlayerViewController *_AVPlayerViewController;
 {
     if ((pinchFlag == false) && (swipeFlag == false))
     {
+        tapFromDidSelectFlag = false;
         [self removeOverlay];
         swipeFlag = true;
         [self showOverlay];
@@ -802,21 +892,21 @@ AVPlayerViewController *_AVPlayerViewController;
                 {
                     indexForSwipe = 0;
                 }
-                if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+                if(indexForSwipe < totalCount)
                 {
                     indexForSwipe = indexForSwipe + 1;
                 }
             }
             else
             {
-                if (indexForSwipe == [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+                if (indexForSwipe == totalCount)
                 {
-                    indexForSwipe = (int)[GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count] - 1;
+                    indexForSwipe = (int)totalCount - 1;
                 }
                 indexForSwipe = indexForSwipe - 1;
             }
             
-            if(indexForSwipe < [GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected] count])
+            if(indexForSwipe < totalCount)
             {
                 if (indexForSwipe != -1)
                 {
@@ -1027,8 +1117,8 @@ AVPlayerViewController *_AVPlayerViewController;
     [glView bringSubviewToFront:heartView];
     [glView bringSubviewToFront:topView];
     playHandleFlag = 1;
-
 }
+
 -(void) setUpViewForImageVideo
 {
     heart2Button.hidden = true;
@@ -1082,6 +1172,18 @@ AVPlayerViewController *_AVPlayerViewController;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    totalCount = 0;
+    tapHeartDescViewFlag = false;
+    tapFromDidSelectFlag = false;
+    self.photoCollectionView.delegate = self;
+    self.photoCollectionView.dataSource = self;
+    [self.view bringSubviewToFront:self.photoCollectionView];
+    [self.photoCollectionView registerNib:[UINib nibWithNibName:@"photoCell" bundle:nil] forCellWithReuseIdentifier:@"photoViewCell"];
+    UICollectionViewFlowLayout *flow = [[UICollectionViewFlowLayout alloc] init];
+    flow.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    flow.minimumInteritemSpacing = 3;
+    flow.minimumLineSpacing = 3;
+    _photoCollectionView.collectionViewLayout = flow;
     imageVideoViewHeight = imageVideoView.frame.size.height;
     pinchFlag = false;
     swipeFlag = false;
@@ -1089,7 +1191,7 @@ AVPlayerViewController *_AVPlayerViewController;
     profilePicture.layer.masksToBounds = YES;
     [self setUpView];
     [self setUpThumbailImage];
-    
+    self.photoCollectionView.hidden = true;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -2623,6 +2725,131 @@ AVPlayerViewController *_AVPlayerViewController;
         dispatch_async(dispatch_get_main_queue(), ^{
             [cameraSelectionButton setImage:[UIImage imageNamed:@"Live_camera.png"] forState:UIControlStateNormal];
         });
+    }
+}
+
+#pragma mark : Collection View Delegates
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if (screenNumber == 1 || screenNumber == 2)
+    {
+        if ([streamORChannelDict count] > 0)
+        {
+            return [streamORChannelDict count];
+        }
+        else{
+            return 0;
+        }
+    }
+    else if(screenNumber == 0){
+        if (totalCount > 0)
+        {
+            return totalCount;
+        }
+        else{
+            return 0;
+        }
+    }
+    return 0;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellIdentifier = @"photoViewCell";
+    NSString * thumbImageKey = @"thumbImage";
+    photoViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath]  ;
+    cell.layer.shouldRasterize = true;
+    cell.layer.rasterizationScale = [[UIScreen mainScreen]scale];
+    
+    if(indexPath.row == indexForSwipe)
+    {
+        cell.layer.borderWidth = 3;
+        cell.layer.borderColor = [UIColor colorWithRed: 44.0/255.0 green:214.0/255.0 blue:229.0/255.0 alpha:0.7].CGColor;
+    }
+    else{
+        cell.layer.borderWidth = 0;
+        cell.layer.borderColor =[UIColor clearColor].CGColor;
+    }
+    if (screenNumber == 1 || screenNumber == 2)
+    {
+        cell.thumbImageView.image = streamORChannelDict[indexPath.row][thumbImageKey];
+        if([streamORChannelDict[indexPath.row][@"mediaType"] isEqualToString:@"video"])
+        {
+            cell.videoIconImgView.hidden = false;
+        }
+        else{
+            cell.videoIconImgView.hidden = true;
+        }
+    }
+    else if (screenNumber == 0){
+        cell.thumbImageView.image = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexPath.row][thumbImageKey];
+        if([GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexPath.row][@"media_type"] isEqualToString:@"video"])
+        {
+            cell.videoIconImgView.hidden = false;
+        }
+        else{
+            cell.videoIconImgView.hidden = true;
+        }
+    }
+    return cell;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(50, 46);
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if(indexForSwipe != (int)indexPath.row){
+        tapFromDidSelectFlag = false;
+    }
+    indexForSwipe = (int)indexPath.row;
+    dispatch_async(dispatch_get_main_queue(),^{
+        [self.photoCollectionView reloadData];
+    });
+    [self removeOverlay];
+    [self showOverlay];
+
+    [self setSelectionForPhotoView];
+}
+-(void) setSelectionForPhotoView
+{
+    tapFromDidSelectFlag = true;
+    UIImage *VideoImageUrlChk;
+    
+    if(screenNumber == 0)
+    {
+        mediaURLChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
+        mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
+        mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
+        NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
+        timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+        likeCountStrChk = @"0";
+        notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
+        VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
+        [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+    }
+    else
+    {
+        mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
+        mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
+        mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
+        NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
+        timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
+        likeCountStrChk = @"0";
+        notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
+        VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
+        SetUpView *setUpObj = [[SetUpView alloc]init];
+        if(screenNumber == 1){
+            [setUpObj getProfileImageSelectedIndex:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
+            channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
+            userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
+            channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+        }
+        if(screenNumber == 1 || screenNumber == 2){
+            [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
+        }
+        
+        [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
     }
 }
 

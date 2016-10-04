@@ -213,5 +213,15 @@ import UIKit
         likeCountSelectedIndex = "0"
         obj.successFromSetUpView("\(likeCountSelectedIndex)")
     }
+    
+    func getMediaCount(channelId: String) -> Int{
+        let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
+        let totalCount = filteredData.count
+        return totalCount
+    }
+    
+    func thumbExists (item: [String : AnyObject]) -> Bool {
+        return item[tImageKey] != nil
+    }
 }
 

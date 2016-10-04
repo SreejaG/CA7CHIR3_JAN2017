@@ -8,7 +8,7 @@ extern NSString * const KxMovieParameterMinBufferedDuration;    // Float
 extern NSString * const KxMovieParameterMaxBufferedDuration;    // Float
 extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 
-@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate >
+@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate ,UICollectionViewDelegate, UICollectionViewDataSource>
 
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters
@@ -34,5 +34,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
 @property (readonly) BOOL playing;
 
+@property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraintForHeartView;
 
 @end
