@@ -313,8 +313,6 @@ int totalCount;
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
         
-        NSArray *filteredData = [[NSArray alloc]init];
-        
         _photoCollectionView.hidden = true;
         imageVideoView.userInteractionEnabled = YES;
         [self.view bringSubviewToFront:imageVideoView];
@@ -470,24 +468,27 @@ int totalCount;
     {
         _photoCollectionView.hidden = false;
         dispatch_async(dispatch_get_main_queue(), ^(void){
-            [_photoCollectionView reloadData];
-            if(screenNumber == 0){
-                if(indexForSwipe < totalCount){
-                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+            if(indexForSwipe != -1){
+                
+                [_photoCollectionView reloadData];
+                if(screenNumber == 0){
+                    if(indexForSwipe < totalCount){
+                        [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    }
+                    else if(indexForSwipe == totalCount){
+                        [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                        indexForSwipe = indexForSwipe - 1;
+                    }
                 }
-                else if(indexForSwipe == totalCount){
-                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-                    indexForSwipe = indexForSwipe - 1;
-                }
-            }
-            else{
-                if(indexForSwipe < [streamORChannelDict count])
-                {
-                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-                }
-                else if(indexForSwipe == [streamORChannelDict count]){
-                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-                    indexForSwipe = indexForSwipe - 1;
+                else{
+                    if(indexForSwipe < [streamORChannelDict count])
+                    {
+                        [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    }
+                    else if(indexForSwipe == [streamORChannelDict count]){
+                        [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                        indexForSwipe = indexForSwipe - 1;
+                    }
                 }
             }
         });
@@ -518,24 +519,26 @@ int totalCount;
     [imageVideoView.layer addAnimation:transition forKey:nil];
     swipeFlag = false;
     dispatch_async(dispatch_get_main_queue(), ^(void){
-        [_photoCollectionView reloadData];
-        if(screenNumber == 0){
-            if(indexForSwipe < totalCount){
-                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+        if(indexForSwipe != -1){
+            [_photoCollectionView reloadData];
+            if(screenNumber == 0){
+                if(indexForSwipe < totalCount){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                }
+                else if(indexForSwipe == totalCount){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    indexForSwipe = indexForSwipe - 1;
+                }
             }
-            else if(indexForSwipe == totalCount){
-                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-                indexForSwipe = indexForSwipe - 1;
-            }
-        }
-        else{
-            if(indexForSwipe < [streamORChannelDict count])
-            {
-                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-            }
-            else if(indexForSwipe == [streamORChannelDict count]){
-                [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
-                indexForSwipe = indexForSwipe - 1;
+            else{
+                if(indexForSwipe < [streamORChannelDict count])
+                {
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                }
+                else if(indexForSwipe == [streamORChannelDict count]){
+                    [_photoCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexForSwipe - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+                    indexForSwipe = indexForSwipe - 1;
+                }
             }
         }
     });
@@ -899,6 +902,10 @@ int totalCount;
             }
             else
             {
+                if(indexForSwipe < 0)
+                {
+                    indexForSwipe = 0;
+                }
                 if (indexForSwipe == totalCount)
                 {
                     indexForSwipe = (int)totalCount - 1;
@@ -919,6 +926,10 @@ int totalCount;
                     notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
                     VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                }
+                else{
+                    swipeFlag = false;
+                    [self removeOverlay];
                 }
             }
             else{
@@ -941,6 +952,10 @@ int totalCount;
             }
             else
             {
+                if(indexForSwipe < 0)
+                {
+                    indexForSwipe = 0;
+                }
                 if (indexForSwipe == [streamORChannelDict count])
                 {
                     indexForSwipe = (int)[streamORChannelDict count] - 1;
@@ -981,6 +996,10 @@ int totalCount;
                     }
                     
                     [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                }
+                else{
+                    swipeFlag = false;
+                    [self removeOverlay];
                 }
             }
             else{
@@ -1177,6 +1196,9 @@ int totalCount;
     tapFromDidSelectFlag = false;
     self.photoCollectionView.delegate = self;
     self.photoCollectionView.dataSource = self;
+    
+    mediaImage = [UIImage imageNamed:@"live_stream_blur.png"];
+    
     [self.view bringSubviewToFront:self.photoCollectionView];
     [self.photoCollectionView registerNib:[UINib nibWithNibName:@"photoCell" bundle:nil] forCellWithReuseIdentifier:@"photoViewCell"];
     UICollectionViewFlowLayout *flow = [[UICollectionViewFlowLayout alloc] init];
