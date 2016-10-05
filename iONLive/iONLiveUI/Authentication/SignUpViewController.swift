@@ -52,8 +52,8 @@ class SignUpViewController: UIViewController {
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler

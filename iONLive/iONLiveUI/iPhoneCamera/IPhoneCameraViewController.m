@@ -468,7 +468,7 @@ int timerCount = 0;
         _noDataFound.hidden = false;
         
     });
-    [self enabelOrDisableButtons:false];
+    [self enabelOrDisableButtons:0];
     completionBlock();
 }
 
@@ -803,7 +803,7 @@ int timerCount = 0;
         
         [self initialise];
     });
-    [self enabelOrDisableButtons:true];
+    [self enabelOrDisableButtons:1];
 }
 
 -(void) initialise{
@@ -814,11 +814,17 @@ int timerCount = 0;
     helper = [[LiveStreamingHelpers alloc]init];
 }
 
--(void)enabelOrDisableButtons: (BOOL *)value
+-(void)enabelOrDisableButtons: (int)value
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-        self.topView.userInteractionEnabled = value;
-        self.bottomView.userInteractionEnabled = value;
+        if(value == 1){
+            self.topView.userInteractionEnabled = true;
+            self.bottomView.userInteractionEnabled = true;
+        }
+        else{
+            self.topView.userInteractionEnabled = false;
+            self.bottomView.userInteractionEnabled = false;
+        }
     });
 }
 
@@ -1195,7 +1201,7 @@ int timerCount = 0;
         }];
     }completion:nil];
     self.imageViewAnimate.image = nil;
-    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationCurveEaseOut animations:^{
+    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationOptionCurveEaseOut animations:^{
         snapshot.alpha = 0.0;
     }completion:nil];
 }
@@ -1510,7 +1516,6 @@ int timerCount = 0;
         }
     }
     else if (context == SessionRunningContext ) {
-        BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1578,7 +1583,6 @@ int timerCount = 0;
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
-    UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     BOOL success = YES;
     
@@ -1941,11 +1945,6 @@ int timerCount = 0;
 
 -(NSData *)getThumbNail:(NSURL*)stringPath
 {
-    UIImage *firstImage =[[UIImage alloc] init];
-    NSURL *videoURL = [NSURL fileURLWithPath:[stringPath path]];
-    AVPlayerItem *SelectedItem = [AVPlayerItem playerItemWithURL:stringPath];
-    CMTime duration = SelectedItem.duration;
-    float seconds = CMTimeGetSeconds(duration);
     AVURLAsset *asset1 = [[AVURLAsset alloc] initWithURL:stringPath options:nil];
     AVAssetImageGenerator *generate1 = [[AVAssetImageGenerator alloc] initWithAsset:asset1];
     generate1.appliesPreferredTrackTransform = YES;

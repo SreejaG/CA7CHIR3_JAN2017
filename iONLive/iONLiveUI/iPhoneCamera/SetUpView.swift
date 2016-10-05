@@ -184,7 +184,6 @@ import UIKit
     func getLikeCount(mediaType : String,mediaId: String, Objects:MovieViewController) {
         
         let mediaTypeSelected : String = mediaType
-        var likeCount: String = "0"
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String

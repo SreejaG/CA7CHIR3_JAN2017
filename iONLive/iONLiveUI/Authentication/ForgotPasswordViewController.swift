@@ -48,11 +48,12 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
+    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
@@ -79,6 +80,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     }
     
     // PRAGMA MARK:- textField delegates
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
@@ -86,6 +88,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     }
     
     //PRAGMA MARK:- IBActions
+    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }
@@ -184,7 +187,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

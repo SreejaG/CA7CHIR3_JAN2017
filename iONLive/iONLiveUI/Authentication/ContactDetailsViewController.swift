@@ -69,7 +69,7 @@ class ContactDetailsViewController: UIViewController {
         let contactsArray : NSMutableArray = NSMutableArray()
         contactsArray.removeAllObjects()
         
-        for var i = 0; i < dataSource?.count; i++
+        for i in 0 ..< dataSource!.count
         {
             for element in dataSource![i]{
                 let selected = element["tempSelected"] as! Int
@@ -107,7 +107,7 @@ class ContactDetailsViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch  _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -143,9 +143,9 @@ class ContactDetailsViewController: UIViewController {
         else
         {
             ErrorManager.sharedInstance.addContactError()
-            for var i = 0; i < dataSource!.count; i++
+            for i in 0 ..< dataSource!.count
             {
-                for var j = 0; j < dataSource![i].count; j++
+                for j in 0 ..< dataSource![i].count
                 {
                     let selected = dataSource![i][j]["orgSelected"] as! Int
                     dataSource![i][j]["tempSelected"] = selected
@@ -177,9 +177,9 @@ class ContactDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
         }
         
-        for var i = 0; i < dataSource!.count; i++
+        for i in 0 ..< dataSource!.count
         {
-            for var j = 0; j < dataSource![i].count; j++
+            for j in 0 ..< dataSource![i].count
             {
                 let selected = dataSource![i][j]["orgSelected"] as! Int
                 dataSource![i][j]["tempSelected"] = selected
@@ -362,7 +362,7 @@ class ContactDetailsViewController: UIViewController {
                 searchDataSource![section][row]["tempSelected"] = 1
             }
             let selecteduserId =  searchDataSource![section][row][nameKey] as! String
-            for var j = 0; j < dataSource![section].count; j++
+            for j in 0 ..< dataSource![section].count
             {
                 let dataSourceUserId = dataSource![section][j][nameKey] as! String
                 if(selecteduserId == dataSourceUserId)

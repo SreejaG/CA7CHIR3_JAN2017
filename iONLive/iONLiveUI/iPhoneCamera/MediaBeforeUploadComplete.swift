@@ -17,7 +17,7 @@ class MediaBeforeUploadComplete: NSObject {
     
     func deleteRowFromDataSource(mediaId: String)  {
         let archiveChanelId = "\(NSUserDefaults.standardUserDefaults().valueForKey(archiveId) as! Int)"
-        for var i = 0; i <  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count; i++
+        for i in 0 ..< GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
         {
             let mediaDetailId =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][mediaIdKey] as! String
             

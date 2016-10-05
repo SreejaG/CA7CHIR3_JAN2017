@@ -134,7 +134,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 if(NSFileManager.defaultManager().fileExistsAtPath(videoSavedURL.path!)){
                     do {
                         try NSFileManager.defaultManager().removeItemAtPath(videoSavedURL.path!)
-                    } catch let error as NSError {
+                    } catch _ as NSError {
                     }
                 }
             }
@@ -210,7 +210,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
             let savingPath = "\(parentPath)/\(mediaId)video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
-            if let imageOrVideoData1 = NSData(contentsOfURL: url)
+            if NSData(contentsOfURL: url) != nil
             {
                 imageOrVideoData = NSData(contentsOfURL: url)!
                 request.HTTPBody = imageOrVideoData
@@ -259,7 +259,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         if(fileManager.fileExistsAtPath(path)){
             do {
                 try fileManager.removeItemAtPath(path)
-            } catch let error as NSError {
+            } catch _ as NSError {
             }
         }
         
@@ -276,7 +276,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 context.deleteObject(managedObjectData)
             }
         }
-        catch let error as NSError {
+        catch _ as NSError {
         }
     }
     
@@ -304,7 +304,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         //all channelIds from global channel image mapping data source to a channelids array
         let channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
         
-        for var i = 0 ;i < channelScrollsDict.count; i++
+        for i in 0  ..< channelScrollsDict.count
         {
             let chanelIdChk : String = String(channelScrollsDict[i][channelIdKey]!)
             let chanelMediaId : String = String(channelScrollsDict[i][channelMediaIdKey]!)
@@ -313,7 +313,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             
             if channelIds.contains(chanelIdChk)
             {
-                for var j = 0; j < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]!.count; j++
+                for j in 0 ..< GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]!.count
                 {
                     indexOfJ = j
                     let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]![j][mediaIdKey] as! String

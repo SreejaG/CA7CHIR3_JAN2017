@@ -1,10 +1,3 @@
-//
-//  IONCamLiveStreamStatusViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 2/9/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -43,7 +36,7 @@ class IONCamLiveStreamStatusViewController: UIViewController {
             if let liveStreamStatus = json["status"]
             {
                 let alertController = UIAlertController(title: "Live Stream Status", message:
-                    liveStreamStatus as! String, preferredStyle: UIAlertControllerStyle.Alert)
+                    liveStreamStatus as? String, preferredStyle: UIAlertControllerStyle.Alert)
                 alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
                 self.presentViewController(alertController, animated: true, completion: nil)
             }

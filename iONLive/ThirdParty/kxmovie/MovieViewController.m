@@ -2822,8 +2822,9 @@ int totalCount;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if(indexForSwipe != (int)indexPath.row){
+         orgIndex = -11;
         tapFromDidSelectFlag = false;
-    }
+   
     indexForSwipe = (int)indexPath.row;
     dispatch_async(dispatch_get_main_queue(),^{
         [self.photoCollectionView reloadData];
@@ -2832,6 +2833,7 @@ int totalCount;
     [self showOverlay];
 
     [self setSelectionForPhotoView];
+    }
 }
 -(void) setSelectionForPhotoView
 {

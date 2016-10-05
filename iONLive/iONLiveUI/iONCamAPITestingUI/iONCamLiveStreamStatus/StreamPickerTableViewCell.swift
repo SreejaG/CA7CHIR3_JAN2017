@@ -1,10 +1,3 @@
-//
-//  StreamPickerTableViewCell.swift
-//  iONLive
-//
-//  Created by Gadgeon on 2/10/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -42,6 +35,6 @@ extension StreamPickerTableViewCell:UIPickerViewDelegate , UIPickerViewDataSourc
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        let selectedValue = pickerViewData[pickerView.selectedRowInComponent(0)]
+        _ = pickerViewData[pickerView.selectedRowInComponent(0)]
     }
 }

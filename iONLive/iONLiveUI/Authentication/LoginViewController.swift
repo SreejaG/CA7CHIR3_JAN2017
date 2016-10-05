@@ -49,8 +49,8 @@ class LoginViewController: UIViewController {
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
@@ -174,7 +174,7 @@ class LoginViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

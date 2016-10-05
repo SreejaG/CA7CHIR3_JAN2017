@@ -153,7 +153,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 var currentContactName = String()
                 if ABRecordCopyCompositeName(record) != nil
                 {
-                    currentContactName = (ABRecordCopyCompositeName(record).takeRetainedValue() as? String)!
+                    currentContactName = ABRecordCopyCompositeName(record).takeRetainedValue() as String
                 }
                 else{
                     currentContactName = "No Name"
@@ -204,7 +204,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

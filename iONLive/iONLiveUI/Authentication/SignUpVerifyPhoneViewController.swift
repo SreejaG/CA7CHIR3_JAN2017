@@ -126,11 +126,12 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow:", name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "KeyboardDidHide:", name:UIKeyboardWillHideNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpVerifyPhoneViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpVerifyPhoneViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
+    
     func keyboardDidShow(notification: NSNotification)
     {
         
@@ -159,6 +160,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     }
     
     //PRAGMA MARK:- IBActions
+    
     @IBAction func tapGestureRecognized(sender: AnyObject) {
         view.endEditing(true)
     }
@@ -288,7 +290,7 @@ class SignUpVerifyPhoneViewController: UIViewController
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
