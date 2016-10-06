@@ -289,7 +289,7 @@ int timerCount = 0;
         }
         else if([code  isEqual: @"ResponseError"]){
             if(backgroundEnterFlag == false){
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error StopAPI"
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
                                                                 message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
@@ -526,7 +526,7 @@ int timerCount = 0;
                     {
                         if([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive){
                             
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Timer"                                                                message:@""
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
                                                                            delegate:self
                                                                   cancelButtonTitle:@"Retry"
                                                                   otherButtonTitles:@"Exit App",nil];
