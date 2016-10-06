@@ -39,9 +39,9 @@ static NSString * formatTimeInterval(CGFloat seconds, BOOL isLeft)
     m = m % 60;
     
     NSMutableString *format = [(isLeft && seconds >= 0.5 ? @"-" : @"") mutableCopy];
-    if (h != 0) [format appendFormat:@"%d:%0.2d", h, m];
-    else        [format appendFormat:@"%d", m];
-    [format appendFormat:@":%0.2d", s];
+    if (h != 0) [format appendFormat:@"%ld:%0.2ld", (long)h, (long)m];
+    else        [format appendFormat:@"%ld", (long)m];
+    [format appendFormat:@":%0.2ld", (long)s];
     
     return format;
 }
@@ -673,7 +673,7 @@ int totalCount;
                 mediaImage = [UIImage imageNamed:@"thumb12"];
             }
             dispatch_async(dispatch_get_main_queue(), ^(void){
-                NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0f
+                [NSTimer scheduledTimerWithTimeInterval: 1.0f
                                                               target: self
                                                             selector:@selector(onHide:)
                                                             userInfo: nil repeats:NO];

@@ -78,7 +78,7 @@ class GlobalStreamList: NSObject {
                 {
                     if notifType != ""
                     {
-                        notificationType = (notifType as? String)!.lowercaseString
+                        notificationType = notifType.lowercaseString
                     }
                     else{
                         notificationType = "shared"
@@ -168,7 +168,7 @@ class GlobalStreamList: NSObject {
     }
     
     func downloadMediaFromGCS(){
-        for var i = 0; i < imageDataSource.count; i++
+        for i in 0 ..< imageDataSource.count
         {
             let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if(mediaIdS != ""){
@@ -236,7 +236,7 @@ class GlobalStreamList: NSObject {
         let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
         let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
         var subIdArray : [Int] = [Int]()
-        for(var i = 0 ; i < sortList.count ; i++)
+        for i in 0  ..< sortList.count 
         {
             let subId = sortList[i][pullTorefreshKey] as! String
             subIdArray.append(Int(subId)!)

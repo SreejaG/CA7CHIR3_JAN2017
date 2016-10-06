@@ -132,7 +132,7 @@ class iONLiveCamVideoViewController: UIViewController {
     //PRAGMA MARK:- API Handlers
     func iONLiveCamStopVideoSuccessHandler(response:AnyObject?)
     {
-        if let json = response as? [String: AnyObject]
+        if (response as? [String: AnyObject]) != nil
         {
             ErrorManager.sharedInstance.alert(" Video Stopped", message: "Successfully  Stopped Video")
             print("Show Alert")

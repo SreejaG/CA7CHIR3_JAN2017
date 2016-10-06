@@ -88,7 +88,7 @@ class ChannelSharedListAPI: NSObject {
                     var flag: Bool = false
                     if(mediaShared.count > 0)
                     {
-                        for(var i = 0 ;i < mediaShared.count ; i++)
+                        for i in 0  ..< mediaShared.count
                         {
                             if let val = mediaShared[i][channelIdkey] {
                                 if((val as! String) == channelId)
@@ -142,7 +142,7 @@ class ChannelSharedListAPI: NSObject {
                     
                     if(mediaShared.count > 0)
                     {
-                        for(var i = 0 ;i < mediaShared.count ; i++)
+                        for i in 0  ..< mediaShared.count 
                         {
                             if let val = mediaShared[i][channelIdkey] {
                                 if((val as! String) == channelId)
@@ -227,7 +227,7 @@ class ChannelSharedListAPI: NSObject {
     }
     
     func downloadMediaFromGCS(){
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             var mediaImage : UIImage?
             var profileImage : UIImage?
@@ -305,7 +305,7 @@ class ChannelSharedListAPI: NSObject {
     func checkDuplicate( chId : String) -> Bool
     {
         var flag: Bool = false
-        for(var i = 0 ; i < SharedChannelListDataSource.count ; i++ )
+        for i in 0  ..< SharedChannelListDataSource.count 
         {
             if SharedChannelListDataSource[i][channelIdkey] as! String == chId{
                 flag = true

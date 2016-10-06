@@ -91,7 +91,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     func initialise()
     {
         myChannelSearchBar.delegate = self
-        gestureRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
+        gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleTap(_:)))
         myChannelTableView.addGestureRecognizer(gestureRecognizer)
         channelCreateButton.hidden = true
     }
@@ -275,7 +275,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                     var deleteIndexOfI : Int = Int()
                     var deleteFlag = false
                     
-                    for(var i = 0; i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; i++){
+                    for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+                    {
                         let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
                         if(orgChannel == channelId){
                             deleteFlag = true
@@ -334,7 +335,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -410,8 +411,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate {
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
     }
     
     func keyboardDidShow(notification:NSNotification)
@@ -493,7 +494,7 @@ extension MyChannelViewController:UITableViewDataSource
             cell.channelItemCount.text = dataSourceTmp![indexPath.row][totalMediaKey] as? String
             if let latestImage = dataSourceTmp![indexPath.row][tImageKey]
             {
-                cell.channelHeadImageView.image = latestImage as! UIImage
+                cell.channelHeadImageView.image = latestImage as? UIImage
             }
             else
             {

@@ -217,7 +217,7 @@ class iONCamPictureAPIViewController: UIViewController {
     func iONLiveCamDeletePictureSuccessHandler(response:AnyObject?)
     {
         self.removeOverlay()
-        if let json = response as? [String: AnyObject]
+        if (response as? [String: AnyObject]) != nil
         {
             ErrorManager.sharedInstance.alert("Success", message: "Successfully deleted picture")
          //   print("success = \(json["burstID"]))")
@@ -231,7 +231,7 @@ class iONCamPictureAPIViewController: UIViewController {
     func iONLiveCamCancelSnaps(response:AnyObject?)
     {
         self.removeOverlay()
-        if let json = response as? [String: AnyObject]
+        if (response as? [String: AnyObject]) != nil
         {
             ErrorManager.sharedInstance.alert("Success", message: "Cancel all ongoing image capture bursts")
         //    print("success = \(json["burstID"]))")

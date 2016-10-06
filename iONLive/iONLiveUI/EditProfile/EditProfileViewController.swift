@@ -116,7 +116,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -360,7 +360,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
-        for(var i = 0; i < dataSource?.count; i += 1)
+        for i in 0 ..< dataSource!.count
         {
             var j = 0
             if i == 0
@@ -431,8 +431,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
     }
     
     func keyboardDidShow(notification:NSNotification)
@@ -560,7 +560,7 @@ extension EditProfileViewController:UITableViewDataSource
                 case 0:
                     
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
-                    cell.editProfileImageButton.addTarget(self, action: "editProfileTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+                    cell.editProfileImageButton.addTarget(self, action: #selector(EditProfileViewController.editProfileTapped(_:)), forControlEvents: UIControlEvents.TouchUpInside)
                     
                     if cellDataSource[displayNameKey] == ""
                     {

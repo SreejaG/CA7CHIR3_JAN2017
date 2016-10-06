@@ -106,7 +106,7 @@ class MyChannelNotificationViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -227,7 +227,7 @@ class MyChannelNotificationViewController: UIViewController {
                     let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
                     
                     let notTime = element["created_time_stamp"] as! String
-                    var timeDiff = getTimeDifference(notTime)
+                    let timeDiff = getTimeDifference(notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     
@@ -258,7 +258,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         fulldataSource.removeAll()
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             if operationObj.cancelled == true{
                 return
@@ -412,7 +412,7 @@ extension MyChannelNotificationViewController:UITableViewDataSource
             
             cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
-            if let img1 = fulldataSource[indexPath.row][mediaImageKey]
+            if fulldataSource[indexPath.row][mediaImageKey] != nil
             {
                 cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
             }

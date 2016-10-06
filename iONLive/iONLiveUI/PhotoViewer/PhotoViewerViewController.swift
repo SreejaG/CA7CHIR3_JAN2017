@@ -543,12 +543,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 progressViewDownload?.hidden=true;
                 progressLabelDownload?.hidden=true;
                 
-                let mediaIdStr = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count - 1][mediaIdKey]
-                let mediaIdForFilePath = "\(mediaIdStr!)full"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath )"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                
                 if let swipeGesture = gesture as? UISwipeGestureRecognizer
                 {
                     switch swipeGesture.direction
@@ -737,7 +731,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
-                var dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
+                let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
             }
             else{
@@ -1366,7 +1360,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

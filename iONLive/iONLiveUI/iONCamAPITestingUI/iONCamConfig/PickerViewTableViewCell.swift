@@ -50,8 +50,6 @@ extension PickerViewTableViewCell:UIPickerViewDelegate , UIPickerViewDataSource
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        var selectRow = pickerViewData[row]
-        var selectedSource = inputLabel.text;
     }
 }
 

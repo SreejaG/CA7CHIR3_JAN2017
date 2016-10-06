@@ -87,7 +87,7 @@ class MySharedChannelsViewController: UIViewController {
     {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            for var i = 0; i < dataSource.count; i++
+            for i in 0 ..< dataSource.count
             {
                 let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
                 dataSource[i]["tempSelected"] = selectionValue
@@ -104,8 +104,8 @@ class MySharedChannelsViewController: UIViewController {
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
     }
     
     func keyboardDidShow(notification:NSNotification)
@@ -140,7 +140,7 @@ class MySharedChannelsViewController: UIViewController {
         sharedChannelsTableView.layoutIfNeeded()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             let channelid = dataSource[i][channelIdKey] as! String
             let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
@@ -180,7 +180,7 @@ class MySharedChannelsViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -210,7 +210,7 @@ class MySharedChannelsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                for var i = 0; i < dataSource.count; i++
+                for i in 0 ..< dataSource.count
                 {
                     let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
                     dataSource[i][sharedOriginalKey] = selectionValue
@@ -221,7 +221,7 @@ class MySharedChannelsViewController: UIViewController {
         }
         else
         {
-            for var i = 0; i < dataSource.count; i++
+            for i in 0 ..< dataSource.count
             {
                 let selectionValue : Int = dataSource[i][sharedOriginalKey] as! Int
                 dataSource[i][sharedTemporaryKey] = selectionValue
@@ -293,7 +293,7 @@ class MySharedChannelsViewController: UIViewController {
             ErrorManager.sharedInstance.inValidResponseError()
         }
         
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
             dataSource[i]["tempSelected"] = selectionValue
@@ -319,7 +319,7 @@ class MySharedChannelsViewController: UIViewController {
             }
             
             let selectedChannelId =  searchDataSource[indexpath][channelIdKey] as! String
-            for (var i = 0; i < dataSource.count; i++)
+            for i in 0 ..< dataSource.count
             {
                 let dataSourceChannelId = dataSource[i][channelIdKey] as! String
                 if(selectedChannelId == dataSourceChannelId)

@@ -220,7 +220,7 @@ class ChannelItemListViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -264,7 +264,8 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapAddtoButton(sender: AnyObject) {
-        for(var i = 0; i < selectedArray.count; i++){
+        for i in 0 ..< selectedArray.count
+        {
             let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
             selected.addObject(mediaSelectedId!)
             addToDict.append(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]])
@@ -322,7 +323,8 @@ class ChannelItemListViewController: UIViewController {
         var channelIds : [Int] = [Int]()
         scrollObj.finishInfiniteScroll()
         operationInChannelImageList.cancel()
-        for(var i = 0; i < selectedArray.count; i++){
+        for i in 0 ..< selectedArray.count
+        {
             let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
             selected.addObject(mediaSelectedId!)
         }
@@ -345,7 +347,7 @@ class ChannelItemListViewController: UIViewController {
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
         removeOverlay()
-        if let json = response as? [String: AnyObject]
+        if (response as? [String: AnyObject]) != nil
         {
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: selected)
             totalMediaCount = totalMediaCount - selected.count

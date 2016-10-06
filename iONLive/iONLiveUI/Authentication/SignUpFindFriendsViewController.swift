@@ -100,7 +100,7 @@ class SignUpFindFriendsViewController: UIViewController{
             let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
             var phoneNumber: String = String()
             var appendPlus : String = String()
-            for(var numberIndex : CFIndex = 0; numberIndex < ABMultiValueGetCount(phones); numberIndex += 1)
+            for numberIndex : CFIndex in 0 ..< ABMultiValueGetCount(phones)
             {
                 let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
                 let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String

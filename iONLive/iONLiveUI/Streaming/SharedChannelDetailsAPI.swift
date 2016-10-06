@@ -139,7 +139,7 @@ class SharedChannelDetailsAPI: NSObject {
                 {
                     if notifType != ""
                     {
-                        notificationType = (notifType as? String)!.lowercaseString
+                        notificationType = notifType.lowercaseString
                     }
                     else{
                         notificationType = "shared"
@@ -153,7 +153,7 @@ class SharedChannelDetailsAPI: NSObject {
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
             
-            for var liveIndex = 0 ; liveIndex < responseArrLive.count ; liveIndex++
+            for liveIndex in 0  ..< responseArrLive.count 
             {
                 let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
                 let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
@@ -168,7 +168,7 @@ class SharedChannelDetailsAPI: NSObject {
                 {
                     if notifType != ""
                     {
-                        notificationType = (notifType as? String)!.lowercaseString
+                        notificationType = notifType.lowercaseString
                     }
                     else{
                         notificationType = "shared"
@@ -262,7 +262,7 @@ class SharedChannelDetailsAPI: NSObject {
     
     
     func downloadMediaFromGCS(){
-        for var i = 0; i < imageDataSource.count; i++
+        for i in 0 ..< imageDataSource.count
         {
             var imageForMedia : UIImage = UIImage()
             if(imageDataSource.count > 0)

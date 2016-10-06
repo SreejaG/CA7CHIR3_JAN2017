@@ -345,20 +345,6 @@
             </objects>
             <point key="canvasLocation" x="463" y="267"/>
         </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="KDW-PI-Mot">
-            <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="ZIw-FJ-uMt" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="ix1-yP-A3J">
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </tabBar>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="HIR-fv-DLV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1152" y="393"/>
-        </scene>
         <!--Stream-->
         <scene sceneID="fMq-yY-otP">
             <objects>

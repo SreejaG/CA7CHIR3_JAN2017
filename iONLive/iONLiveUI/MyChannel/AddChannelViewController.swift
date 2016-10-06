@@ -58,8 +58,8 @@ class AddChannelViewController: UIViewController {
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidShow:", name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:"keyboardDidHide", name: UIKeyboardWillHideNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(AddChannelViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(AddChannelViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
     }
     
     func keyboardDidShow(notification:NSNotification)
@@ -88,7 +88,7 @@ class AddChannelViewController: UIViewController {
         doneButton.hidden = true
         shareFlag = true
         channelCreateButton.hidden = true
-        channelTextField.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        channelTextField.addTarget(self, action: #selector(AddChannelViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
         
         addChannelView.userInteractionEnabled = true
         addChannelView.alpha = 1
@@ -209,7 +209,8 @@ class AddChannelViewController: UIViewController {
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
         localChannelDict.removeAll()
-        for(var i = 0; i < selectedArray.count; i++){
+        for i in 0 ..< selectedArray.count
+        {
             let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey] as! String
             localChannelDict.append(fulldataSource[selectedArray[i]])
             channelSelected.addObject(channelSelectedId)
@@ -238,7 +239,7 @@ class AddChannelViewController: UIViewController {
         GlobalChannelToImageMapping.sharedInstance.addMediaToChannel(localChannelDict, mediaDetailOfSelectedChannel: localMediaDict)
         
         removeOverlay()
-        if let json = response as? [String: AnyObject]
+        if (response as? [String: AnyObject]) != nil
         {
             channelTextField.text = ""
             let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -305,7 +306,7 @@ class AddChannelViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -367,7 +368,7 @@ extension AddChannelViewController:UITableViewDataSource
             
             if let latestImage = fulldataSource[indexPath.row][tImageKey]
             {
-                cell.addChannelImageView.image = latestImage as! UIImage
+                cell.addChannelImageView.image = latestImage as? UIImage
             }
             else
             {

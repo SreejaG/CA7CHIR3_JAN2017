@@ -106,7 +106,7 @@ class OtherChannelViewController: UIViewController  {
     func channelRemoved()
     {
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            var refreshAlert = UIAlertController(title: "Deleted", message: "User deleted shared channel.", preferredStyle: UIAlertControllerStyle.Alert)
+            let refreshAlert = UIAlertController(title: "Deleted", message: "User deleted shared channel.", preferredStyle: UIAlertControllerStyle.Alert)
             
             refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
             }))
@@ -201,8 +201,6 @@ class OtherChannelViewController: UIViewController  {
             
             if(!self.pullToRefreshActive)
             {
-                let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
-                var subIdArray : [Int] = [Int]()
                 self.scrollObj = scrollView
                 self.getInfinteScrollData()
             }
@@ -234,7 +232,6 @@ class OtherChannelViewController: UIViewController  {
                         }
                     }
                 }
-            } catch {
             }
         }
         else
@@ -340,7 +337,7 @@ class OtherChannelViewController: UIViewController  {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -424,7 +421,7 @@ class OtherChannelViewController: UIViewController  {
         self.downloadCompleteFlag = "start"
         let sortList : Array = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource
         var subIdArray : [Int] = [Int]()
-        for(var i = 0 ; i < sortList.count ; i++)
+        for i in 0  ..< sortList.count
         {
             let id = sortList[i]["channel_media_detail_id"] as! String
             if(id != "")
@@ -453,7 +450,7 @@ class OtherChannelViewController: UIViewController  {
                 {
                     self.downloadCompleteFlag = "start"
                     var subIdArray : [Int] = [Int]()
-                    for(var i = 0 ; i < sortList.count ; i++)
+                    for i in 0  ..< sortList.count
                     {
                         subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
                     }
@@ -473,7 +470,7 @@ class OtherChannelViewController: UIViewController  {
                     let sortList : Array = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource
                     self.downloadCompleteFlag = "start"
                     var subIdArray : [Int] = [Int]()
-                    for(var i = 1 ; i < sortList.count ; i++)
+                    for i in 1  ..< sortList.count
                     {
                         subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
                     }
@@ -538,10 +535,8 @@ class OtherChannelViewController: UIViewController  {
     }
     
     func loadmovieViewController(indexPathRow:Int,likeCount:String) {
-        let otherChannelIdentificationFlag : Bool = true
         self.removeOverlay()
         channelItemsCollectionView.alpha = 1.0
-        let defaults = NSUserDefaults .standardUserDefaults()
         let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
@@ -557,7 +552,7 @@ class OtherChannelViewController: UIViewController  {
             let streamTocken = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.streamTockenKey] as! String
             if streamTocken != ""
             {
-                let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount as! String]
+                let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
                 let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }
@@ -641,8 +636,6 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         {
             if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > indexPath.row
             {
-                let userId = userName
-                let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][mediaTypeKey] as! String
                 showOverlay()
                 channelItemsCollectionView.alpha = 0.4
                 didSelectExtension(indexPath.row)

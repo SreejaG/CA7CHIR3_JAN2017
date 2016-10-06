@@ -163,7 +163,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ self.streamTockenKey] = "1"
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                var itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
+                let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: 0)
                 self.ChannelSharedTableView.reloadData()
@@ -215,13 +215,11 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     {
         let info = notif.object as! [String : AnyObject]
         if (info["type"] as! String == "share"){
-            let channelId = info["channelId"] as! Int
             pushNotificationFlag = true
             if(self.downloadCompleteFlag != "end")
             {
                 newShareAvailabellabel.hidden = true
             }
-            let chid : String = "\(channelId)"
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.ChannelSharedTableView.reloadData()
             })
@@ -232,7 +230,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             if(info["subType"] as! String == "useradded")
             {
                 newShareAvailabellabel.hidden = false
-                newShareAvailabellabel.text = info[ "messageText"] as! String
+                newShareAvailabellabel.text = info[ "messageText"] as? String
             }
             else{
                 if(!ChannelSharedTableView.visibleCells.isEmpty)
@@ -280,7 +278,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         var  checkFlag : Bool = false
         var index : Int =  Int()
         
-        for( var i = 0 ; i < selectedArray.count ; i++ )
+        for i in 0  ..< selectedArray.count 
         {
             let channelId = selectedArray[i][channelIdkey]!
             if "\(channelId!)"  == channelIdValue
@@ -357,7 +355,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         let sortList : Array = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         var subIdArray : [Int] = [Int]()
         
-        for(var i = 0 ; i < sortList.count ; i++)
+        for i in 0  ..< sortList.count 
         {
             let subId = sortList[i][subChannelIdKey] as! String
             subIdArray.append(Int(subId)!)
@@ -402,10 +400,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         if(success == "success")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                for (var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex-- )
+                for(var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex--)
                 {
                     var flag : Bool = false
-                    for(var i = 0 ; i <  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count ; i++)
+                    for i in 0  ..< ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count
                     {
                         let chId =  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[i][self.channelIdkey] as! String
                         
@@ -446,7 +444,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }

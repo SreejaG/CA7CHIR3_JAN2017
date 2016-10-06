@@ -250,7 +250,7 @@ class UploadStream : NSObject
         {
             livestreamingManager.stopLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken as! String,success: { (response) -> () in
                 
-                if let json = response as? [String: AnyObject]
+                if (response as? [String: AnyObject]) != nil
                 {
                     self.removeStreaming()
                 }

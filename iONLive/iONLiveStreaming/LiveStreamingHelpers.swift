@@ -244,7 +244,7 @@ class LiveStreamingHelpers: NSObject
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             livestreamingManager.stopLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken as! String,success: { (response) -> () in
-                if let json = response as? [String: AnyObject]
+                if (response as? [String: AnyObject]) != nil
                 {
                     self.removeStreaming()
                 }

@@ -71,7 +71,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if(doneButton.hidden == false){
             inviteButton.hidden = false
             doneButton.hidden = true
-            for var i = 0; i < fullDataSource.count; i++
+            for i in 0 ..< fullDataSource.count
             {
                 let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
                 fullDataSource[i]["tempSelected"] = selectionValue
@@ -104,7 +104,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         
-        for var i = 0; i < fullDataSource.count; i++
+        for i in 0 ..< fullDataSource.count
         {
             let userId = fullDataSource[i][userNameKey] as! String
             let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
@@ -154,7 +154,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -184,7 +184,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                for var i = 0; i < fullDataSource.count; i++
+                for i in 0 ..< fullDataSource.count
                 {
                     let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
                     fullDataSource[i]["orgSelected"] = selectionValue
@@ -295,7 +295,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             var profileImage : UIImage?
             let profileImageName = dataSource[i][profileImageKey] as! String
@@ -335,7 +335,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
         }
         
-        for var i = 0; i < fullDataSource.count; i++
+        for i in 0 ..< fullDataSource.count
         {
             let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
             fullDataSource[i]["tempSelected"] = selectionValue
@@ -364,7 +364,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 }
                 
                 let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-                for (var i = 0; i < fullDataSource.count; i++)
+                for i in 0 ..< fullDataSource.count
                 {
                     let dataSourceUserId = fullDataSource[i][userNameKey] as! String
                     if(selecteduserId == dataSourceUserId)
@@ -437,7 +437,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 if(searchActive){
                     let channelId = searchDataSource[index][userNameKey] as! String
                     searchDataSource.removeAtIndex(index)
-                    for(var i = 0; i < fullDataSource.count; i++){
+                    for i in 0 ..< fullDataSource.count
+                    {
                         let orgChannel = fullDataSource[i][userNameKey] as! String
                         if(orgChannel == channelId){
                             dataSource.removeAtIndex(i)

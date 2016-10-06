@@ -102,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         if(deleteQueue.count > 0)
         {
-            for(var i = 0 ; i < deleteQueue.count ; i += 1)
+            for i in 0  ..< deleteQueue.count
             {
 
                 NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: deleteQueue[i])
@@ -238,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 try managedObjectContext.save()
             } catch {
-                let nserror = error as NSError
+                _ = error as NSError
                 abort()
             }
         }
@@ -435,7 +435,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var  checkFlag : Bool = false
         var index : Int =  -1
         
-        for( var i = 0 ; i < selectedArray.count ; i++ )
+        for i in 0  ..< selectedArray.count 
         {
             let channelId = selectedArray[i][channelIdkey]!
             if "\(channelId!)"  == channelIdValue
@@ -457,7 +457,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
             do {
                 return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
-            } catch let error as NSError {
+            } catch  _ as NSError {
             }
         }
         return nil

@@ -25,7 +25,7 @@ class FileManagerViewController: UIViewController {
         do {
             try NSFileManager.defaultManager().createDirectoryAtPath(documentsPath, withIntermediateDirectories: true, attributes: nil)
             flag = true
-        } catch let error as NSError {
+        } catch _ as NSError {
             flag = false
         }
         return flag
@@ -98,7 +98,7 @@ class FileManagerViewController: UIViewController {
                 try fileManager.removeItemAtPath(mediaPath)
                 mediaDeleteFlag = 1
             }
-            catch let error as NSError {
+            catch _ as NSError {
                 mediaDeleteFlag = 0
             }
         }

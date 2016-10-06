@@ -37,23 +37,21 @@ class IONLiveCamConfigViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             print("success")
-            if let quality = json["quality"]
+            if json["quality"] != nil
             {
-                let intVal = quality as! Int
-                let stringVal = String(intVal)
+             //   let intVal = quality as! Int
                 //                outputQualityTextField.text =  stringVal
             }
-            if let scale = json["scale"]
+            if json["scale"] != nil
             {
-                let intVal = scale as! Int
-                let stringVal = String(intVal)
+              //  let intVal = scale as! Int
                 //                outputScaleTextField.text = stringVal
             }
-            if let singleClick = json["singleClick"]
+            if json["singleClick"] != nil
             {
                 //                outputSingleClickTextField.text = singleClick as? String
             }
-            if let doubleClick = json["doubleClick"]
+            if json["doubleClick"] != nil
             {
                 //                outputDoubleClickTextField.text = doubleClick as? String
             }

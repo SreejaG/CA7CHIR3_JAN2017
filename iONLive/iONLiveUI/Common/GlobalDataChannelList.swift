@@ -108,7 +108,7 @@ class GlobalDataChannelList: NSObject {
     
     func downloadMediaFromGCS(){
         var url: NSURL = NSURL()
-        for var i = 0; i < globalChannelDataSource.count; i++
+        for i in 0 ..< globalChannelDataSource.count
         {
             var imageForMedia : UIImage = UIImage()
             let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaIdKey] as! String)thumb"
@@ -207,7 +207,7 @@ class GlobalDataChannelList: NSObject {
         {
             let channelIdChk = element[channelIdKey] as! String
             let sharedIndicator = element[sharedTemporaryKey] as! Int
-            for var i = 0; i < globalChannelDataSource.count;i++
+            for i in 0 ..< globalChannelDataSource.count
             {
                 let chanelId = globalChannelDataSource[i][channelIdKey] as! String
                 if channelIdChk == chanelId

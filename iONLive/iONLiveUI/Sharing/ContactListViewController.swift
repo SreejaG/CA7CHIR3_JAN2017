@@ -59,7 +59,7 @@ class ContactListViewController: UIViewController
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            for var i = 0; i < fullDataSource.count; i++
+            for i in 0 ..< fullDataSource.count
             {
                 let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
                 fullDataSource[i]["tempSelected"] = selectionValue
@@ -86,7 +86,7 @@ class ContactListViewController: UIViewController
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         
-        for var i = 0; i < fullDataSource.count; i++
+        for i in 0 ..< fullDataSource.count
         {
             let userId = fullDataSource[i][userNameKey] as! String
             let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
@@ -127,7 +127,7 @@ class ContactListViewController: UIViewController
                 do {
                     try fileManager.removeItemAtPath(documentsPath)
                 }
-                catch let error as NSError {
+                catch _ as NSError {
                 }
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
@@ -338,7 +338,7 @@ class ContactListViewController: UIViewController
         {
             let status = json["status"] as! Int
             if(status == 1){
-                for var i = 0; i < fullDataSource.count; i++
+                for i in 0 ..< fullDataSource.count
                 {
                     let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
                     fullDataSource[i]["orgSelected"] = selectionValue
@@ -390,7 +390,6 @@ class ContactListViewController: UIViewController
             dataSource.removeAll()
             fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
-            var contactImage : UIImage = UIImage()
             for element in responseArr{
                 let userName = element["userName"] as! String
                 let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
@@ -431,7 +430,7 @@ class ContactListViewController: UIViewController
     }
     
     func downloadMediaFromGCS(){
-        for var i = 0; i < dataSource.count; i++
+        for i in 0 ..< dataSource.count
         {
             var profileImage : UIImage?
             let profileImageName = dataSource[i][profileImageKey] as! String
@@ -469,7 +468,7 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        for var i = 0; i < fullDataSource.count; i++
+        for i in 0 ..< fullDataSource.count
         {
             let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
             fullDataSource[i]["tempSelected"] = selectionValue
@@ -496,7 +495,7 @@ class ContactListViewController: UIViewController
                 }
                 
                 let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-                for (var i = 0; i < fullDataSource.count; i++)
+                for i in 0 ..< fullDataSource.count
                 {
                     let dataSourceUserId = fullDataSource[i][userNameKey] as! String
                     if(selecteduserId == dataSourceUserId)

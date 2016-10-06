@@ -289,7 +289,7 @@ int timerCount = 0;
         }
         else if([code  isEqual: @"ResponseError"]){
             if(backgroundEnterFlag == false){
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error StopAPI"
                                                                 message:@""
                                                                delegate:self
                                                       cancelButtonTitle:@"Retry"
@@ -526,7 +526,7 @@ int timerCount = 0;
                     {
                         if([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive){
                             
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Timer"                                                                message:@""
                                                                            delegate:self
                                                                   cancelButtonTitle:@"Retry"
                                                                   otherButtonTitles:@"Exit App",nil];
@@ -1321,6 +1321,7 @@ int timerCount = 0;
             NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
             filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
             NSString *outputFilePath = [filePath stringByAppendingString:@".mov"];
+            [[NSFileManager defaultManager] removeItemAtPath:outputFilePath error:nil];
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
         }
         else {
@@ -1594,6 +1595,15 @@ int timerCount = 0;
             if ( status == PHAuthorizationStatusAuthorized ) {
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     dispatch_async(dispatch_get_main_queue(), ^{
+                        NSFileManager *manager = [NSFileManager defaultManager];
+                        if ([manager fileExistsAtPath:outputFileURL.absoluteString]) {
+                            NSDictionary *attributes = [manager attributesOfItemAtPath:outputFileURL.absoluteString error:nil];
+                            unsigned long long size = [attributes fileSize];
+                            if (attributes && size == 0) {
+                                // file exists, but is empty.
+                                NSLog(@"empty");
+                            }
+                        }
                         NSData *imageData = [[NSData alloc]init];
                         imageData = [self getThumbNail:outputFileURL];
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];

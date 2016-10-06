@@ -110,13 +110,13 @@ class GlobalChannelToImageMapping: NSObject {
     
     func downloadMediaFromGCS(chanelId: String, start: Int, end:Int, operationObj: NSBlockOperation){
         localDataSource.removeAll()
-        for var i = start; i < end; i++
+        for i in start ..< end
         {
             localDataSource.append(GlobalChannelImageDict[chanelId]![i])
         }
         if localDataSource.count > 0
         {
-            for var k = 0; k < localDataSource.count; k++
+            for k in 0 ..< localDataSource.count
             {
                 if operationObj.cancelled == true{
                     return
@@ -167,7 +167,7 @@ class GlobalChannelToImageMapping: NSObject {
                 }
             }
             
-            for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++
+            for j in 0 ..< GlobalChannelImageDict[chanelId]!.count
             {
                 let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
                 for element in localDataSource
@@ -175,7 +175,7 @@ class GlobalChannelToImageMapping: NSObject {
                     let mediaIdFromLocal = element[mediaIdKey] as! String
                     if mediaIdChk == mediaIdFromLocal
                     {
-                        if let p = element[tImageKey]
+                        if element[tImageKey] != nil
                         {
                             GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
                         }
@@ -227,7 +227,7 @@ class GlobalChannelToImageMapping: NSObject {
     //add medias to channels when user capture an image
     func mapNewMediasToAllChannels(dataSourceRow: [String:AnyObject])
     {
-        for var j = 0; j < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; j++
+        for j in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
         {
             let chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][channelIdKey] as! String
             let sharedInd = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][sharedOriginalKey] as! Bool
@@ -279,7 +279,7 @@ class GlobalChannelToImageMapping: NSObject {
     // Add media from one channel to other channels
     func addMediaToChannel(channelSelectedDict: [[String:AnyObject]],  mediaDetailOfSelectedChannel : [[String:AnyObject]])
     {
-        for var i = 0; i < channelSelectedDict.count; i++
+        for i in 0 ..< channelSelectedDict.count
         {
             let selectedChanelId = channelSelectedDict[i][channelIdKey] as! String
             var chkFlag = false
@@ -312,7 +312,7 @@ class GlobalChannelToImageMapping: NSObject {
                 return time1 > time2
             })
             
-            for var k = 0; k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; k++
+            for k in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
             {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
                 if chanIdChk == selectedChanelId
@@ -389,13 +389,13 @@ class GlobalChannelToImageMapping: NSObject {
         var thumbURL : String = String()
         var mediaIdForFilePath : String = String()
         
-        for var i = 0; i < mediaIds.count; i++
+        for i in 0 ..< mediaIds.count
         {
             let selectedMediaId = mediaIds[i] as! String
             var chkFlag = false
             var indexOfJ = 0
             
-            for var j = 0; j < GlobalChannelImageDict[chanelId]!.count; j++
+            for j in 0 ..< GlobalChannelImageDict[chanelId]!.count
             {
                 indexOfJ = j
                 let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
@@ -413,7 +413,7 @@ class GlobalChannelToImageMapping: NSObject {
         if selectedIndex.count > 0
         {
             selectedIndex = selectedIndex.sort()
-            for var k = 0; k < selectedIndex.count; k++
+            for k in 0 ..< selectedIndex.count
             {
                 let indexToDelete = selectedIndex[k] - k
                 GlobalChannelImageDict[chanelId]!.removeAtIndex(indexToDelete)
@@ -425,7 +425,7 @@ class GlobalChannelToImageMapping: NSObject {
             })
         }
         
-        for var p = 0; p < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count; p++
+        for p in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
         {
             let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][channelIdKey] as! String
             if chanelId == chanIdChk
@@ -456,7 +456,7 @@ class GlobalChannelToImageMapping: NSObject {
     func deleteMediasFromAllChannels(chanelId : String,mediaIds: NSMutableArray)
     {
         let globalchannelIdList : Array = Array(GlobalChannelImageDict.keys)
-        for var i = 0; i < globalchannelIdList.count; i++
+        for i in 0 ..< globalchannelIdList.count
         {
             let globalChanelId = globalchannelIdList[i]
             deleteMediaFromParticularChannel(globalChanelId, mediaIds: mediaIds)

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
@@ -10,7 +12,7 @@
         <!--Live CamAPI List View Controller-->
         <scene sceneID="08i-fd-tao">
             <objects>
-                <viewController storyboardIdentifier="iONLiveCamAPIListViewController" id="rOn-9s-Y7v" customClass="iONLiveCamAPIListViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iONLiveCamAPIListViewController" id="rOn-9s-Y7v" customClass="iONLiveCamAPIListViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dsJ-Mh-oZZ"/>
                         <viewControllerLayoutGuide type="bottom" id="0fh-xC-USL"/>
@@ -129,7 +131,7 @@
         <!--Cam PictureAPI View Controller-->
         <scene sceneID="vDu-QR-9gO">
             <objects>
-                <viewController storyboardIdentifier="iONCamPictureAPIViewController" id="FGV-pr-1UY" customClass="iONCamPictureAPIViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iONCamPictureAPIViewController" id="FGV-pr-1UY" customClass="iONCamPictureAPIViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="VzA-XJ-wFR"/>
                         <viewControllerLayoutGuide type="bottom" id="SkW-Ij-kHF"/>
@@ -358,7 +360,7 @@
         <!--Cam PictureAPI Result View Controller-->
         <scene sceneID="PQ2-AJ-59l">
             <objects>
-                <viewController storyboardIdentifier="iONCamPictureAPIResultViewController" id="dsu-DB-qy8" customClass="iONCamPictureAPIResultViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iONCamPictureAPIResultViewController" id="dsu-DB-qy8" customClass="iONCamPictureAPIResultViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="AdP-uz-jrD"/>
                         <viewControllerLayoutGuide type="bottom" id="UIM-aP-oP0"/>
@@ -415,7 +417,7 @@
         <!--Live Cam Video View Controller-->
         <scene sceneID="tNi-Ye-Jg6">
             <objects>
-                <viewController storyboardIdentifier="iONLiveCamVideoViewController" id="kHi-vT-9c0" customClass="iONLiveCamVideoViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iONLiveCamVideoViewController" id="kHi-vT-9c0" customClass="iONLiveCamVideoViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="H2g-yv-bce"/>
                         <viewControllerLayoutGuide type="bottom" id="Ybp-vi-zvg"/>
@@ -633,7 +635,7 @@
         <!--Live Camera Status View Controller-->
         <scene sceneID="r9L-fD-Lth">
             <objects>
-                <viewController storyboardIdentifier="iONLiveCameraStatusViewController" id="ArE-83-EdV" customClass="iONLiveCameraStatusViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iONLiveCameraStatusViewController" id="ArE-83-EdV" customClass="iONLiveCameraStatusViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="fpc-yC-UOw"/>
                         <viewControllerLayoutGuide type="bottom" id="B3Z-K4-NQc"/>
@@ -828,7 +830,7 @@
         <!--Live Cam Config View Controller-->
         <scene sceneID="ne1-2V-s6A">
             <objects>
-                <viewController storyboardIdentifier="IONLiveCamConfigViewController" id="35A-za-Lra" customClass="IONLiveCamConfigViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="IONLiveCamConfigViewController" id="35A-za-Lra" customClass="IONLiveCamConfigViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="nxs-ta-VvI"/>
                         <viewControllerLayoutGuide type="bottom" id="ECG-mg-3sK"/>
@@ -881,7 +883,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SimpleTextFieldTableViewCell" id="c72-jv-Od3" customClass="SimpleTextFieldTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SimpleTextFieldTableViewCell" id="c72-jv-Od3" customClass="SimpleTextFieldTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c72-jv-Od3" id="MXl-Yt-piG">
@@ -920,7 +922,7 @@
                                             <outlet property="inputTextField" destination="Km9-uh-NF3" id="gMu-Jp-PfU"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PickerViewTableViewCell" id="4QH-LV-U5c" customClass="PickerViewTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PickerViewTableViewCell" id="4QH-LV-U5c" customClass="PickerViewTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="72" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4QH-LV-U5c" id="LEh-1q-2w4">
@@ -997,7 +999,7 @@
         <!--Cam Live Stream Status View Controller-->
         <scene sceneID="roB-PY-SYr">
             <objects>
-                <viewController storyboardIdentifier="IONCamLiveStreamStatusViewController" id="V3a-EL-FQf" customClass="IONCamLiveStreamStatusViewController" customModule="iONLive" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="IONCamLiveStreamStatusViewController" id="V3a-EL-FQf" customClass="IONCamLiveStreamStatusViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="eY8-dg-o2u"/>
                         <viewControllerLayoutGuide type="bottom" id="OIc-ZJ-oOg"/>
@@ -1032,7 +1034,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="436"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="61" id="p4S-wP-kKv" customClass="StreamPickerTableViewCell" customModule="iONLive" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="61" id="p4S-wP-kKv" customClass="StreamPickerTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="600" height="61"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p4S-wP-kKv" id="NdN-eb-Oay">
@@ -1085,15 +1087,21 @@
                                         </constraints>
                                         <state key="normal" title="Start Live Stream"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1gj-lO-SnF">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1gj-lO-SnF">
                                         <rect key="frame" x="450" y="34" width="150" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="150" id="yee-AD-fZV"/>
+                                        </constraints>
                                         <state key="normal" title="Get Live Stream Status"/>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="Aif-zj-wrI"/>
+                                    <constraint firstItem="1gj-lO-SnF" firstAttribute="firstBaseline" secondItem="gC5-KU-hfO" secondAttribute="baseline" id="HAl-p3-B7V"/>
                                     <constraint firstItem="gC5-KU-hfO" firstAttribute="centerY" secondItem="eHb-vA-hBu" secondAttribute="centerY" id="Pbi-Ro-RdF"/>
+                                    <constraint firstItem="1gj-lO-SnF" firstAttribute="baseline" secondItem="gC5-KU-hfO" secondAttribute="firstBaseline" id="TDn-Ph-7up"/>
+                                    <constraint firstItem="1gj-lO-SnF" firstAttribute="top" secondItem="eHb-vA-hBu" secondAttribute="top" constant="34" id="gpT-h5-Tto"/>
                                     <constraint firstItem="gC5-KU-hfO" firstAttribute="leading" secondItem="eHb-vA-hBu" secondAttribute="leading" id="mWO-ub-6yI"/>
                                     <constraint firstAttribute="trailing" secondItem="1gj-lO-SnF" secondAttribute="trailing" id="yHY-a6-rgy"/>
                                 </constraints>
