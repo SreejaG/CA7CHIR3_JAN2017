@@ -967,6 +967,8 @@ int totalCount;
             {
                 if (indexForSwipe != -1)
                 {
+                    if (screenNumber == 1)
+                    {
                     [activityIndicatorProfile removeFromSuperview];
                     activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
                     activityIndicatorProfile.alpha = 1.0;
@@ -976,6 +978,7 @@ int totalCount;
                     activityIndicatorProfile.color = [UIColor blueColor];
                     [activityIndicatorProfile stopAnimating];
                     [activityIndicatorProfile startAnimating];//to start animating
+                    }
                     mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
                     mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
                     mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
@@ -991,6 +994,7 @@ int totalCount;
                         userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
                         channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
                     }
+                   
                     if(screenNumber == 1 || screenNumber == 2){
                         [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
                     }
