@@ -61,7 +61,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
-            self.removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
+            
             if (GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
             {
                 self.removeOverlay()
@@ -71,10 +73,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 self.NoDatalabel.text = "No Channel Available"
                 self.view.addSubview(self.NoDatalabel)
             }
+            })
         }
         else
         {
-            self.removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
+            })
         }
     }
     
@@ -103,14 +108,18 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         newShareAvailabellabel.hidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
-            self.showOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.showOverlay()
+            })
             let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
             let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
             ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
             
         }else
         {
-            self.removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
+            })
         }
     }
     
@@ -215,12 +224,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     {
         let info = notif.object as! [String : AnyObject]
         if (info["type"] as! String == "share"){
-            pushNotificationFlag = true
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+           
+            self.pushNotificationFlag = true
             if(self.downloadCompleteFlag != "end")
             {
-                newShareAvailabellabel.hidden = true
+                self.newShareAvailabellabel.hidden = true
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.ChannelSharedTableView.reloadData()
             })
             pushNotificationFlag = false
@@ -496,7 +506,9 @@ extension ChannelsSharedController:UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        self.removeOverlay()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+        })
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell

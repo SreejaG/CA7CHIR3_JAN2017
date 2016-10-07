@@ -170,10 +170,11 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for i in 0 ..< imageDataSource.count
         {
-            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
-            if(mediaIdS != ""){
+//            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+            if imageDataSource[i][mediaIdKey] != nil
+            {
                 var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let mediaIdForFilePath = "\(self.imageDataSource[i][self.mediaIdKey] as! String)thumb"
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                 let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
                 let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)

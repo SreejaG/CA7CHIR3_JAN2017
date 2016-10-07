@@ -312,8 +312,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
                 }
             }
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
+                NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
+            })
+            
         }
         
         if(result["type"] as! String == "liveStream")

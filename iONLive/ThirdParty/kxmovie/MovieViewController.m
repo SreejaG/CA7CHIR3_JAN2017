@@ -199,6 +199,7 @@ bool tapFromDidSelectFlag;
 int orientationFlagForFullScreenMediaFlag;
 AVPlayerViewController *_AVPlayerViewController;
 int totalCount;
+UIPanGestureRecognizer *afterPan;
 
 + (void)initialize
 {
@@ -788,6 +789,7 @@ int totalCount;
 
 -(void)panGestureRecogniser:(UIPanGestureRecognizer *)recognizer
 {
+    afterPan = recognizer;
     if(pinchFlag == true && playHandleFlag == 0){
         if( imageVideoView.frame.size.height > 600)
         {
@@ -984,7 +986,7 @@ int totalCount;
                     mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
                     NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
                     timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
-                    likeCountStrChk = @"0";
+                    likeCountStrChk = @"";
                     notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
                     VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
                     SetUpView *setUpObj = [[SetUpView alloc]init];
@@ -996,6 +998,7 @@ int totalCount;
                     }
                    
                     if(screenNumber == 1 || screenNumber == 2){
+                        likeTapFlag = false;
                         [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
                     }
                     
@@ -2535,6 +2538,8 @@ int totalCount;
 -(void) successFromSetUpView:(NSString *) count
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
+        [standardDefaults setValue:count forKey:@"likeCountFlag"];
         [likeCount setText:count];
         likeFlag = count;
     });
@@ -2824,6 +2829,15 @@ int totalCount;
     return CGSizeMake(50, 46);
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    pinchFlag = false;
+    CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+    imageVideoView.transform = transform;
+    
+    pinchFlag = false;
+    CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
+    finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
+    finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
+    afterPan.view.center = finalPoint;
     
     if(indexForSwipe != (int)indexPath.row){
          orgIndex = -11;
@@ -2863,7 +2877,7 @@ int totalCount;
         mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
         NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
         timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
-        likeCountStrChk = @"0";
+        likeCountStrChk = @"";
         notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
         VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
         SetUpView *setUpObj = [[SetUpView alloc]init];
@@ -2874,6 +2888,7 @@ int totalCount;
             channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
         }
         if(screenNumber == 1 || screenNumber == 2){
+            likeTapFlag = false;
             [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
         }
         

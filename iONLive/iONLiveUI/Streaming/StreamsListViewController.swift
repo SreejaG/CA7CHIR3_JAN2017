@@ -148,8 +148,11 @@ class StreamsListViewController: UIViewController{
         {
             if(info["subType"] as! String == "useradded")
             {
-                sharedNewMediaLabel.hidden = false
-                sharedNewMediaLabel.text = "Pull to get new media"
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.sharedNewMediaLabel.hidden = false
+                    self.sharedNewMediaLabel.text = "Pull to get new media"
+                })
+               
             }
             else{
                 let channelId = info["channelId"]!
@@ -931,7 +934,9 @@ class StreamsListViewController: UIViewController{
         }
         else
         {
-            removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+                })
             if(pullToRefreshActive){
                 self.refreshControl.endRefreshing()
                 pullToRefreshActive = false
@@ -942,7 +947,9 @@ class StreamsListViewController: UIViewController{
     
     func authenticationFailureHandlerForLiveStream(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
+        })
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

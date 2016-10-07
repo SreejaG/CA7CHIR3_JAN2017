@@ -803,7 +803,7 @@ int timerCount = 0;
         
         [self initialise];
     });
-    [self enabelOrDisableButtons:1];
+      [self enabelOrDisableButtons:1];
 }
 
 -(void) initialise{
@@ -1201,7 +1201,7 @@ int timerCount = 0;
         }];
     }completion:nil];
     self.imageViewAnimate.image = nil;
-    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationOptionCurveEaseOut animations:^{
+    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationCurveEaseOut animations:^{
         snapshot.alpha = 0.0;
     }completion:nil];
 }
@@ -1317,11 +1317,10 @@ int timerCount = 0;
             NSString *documentsDirectory = [paths firstObject];
             NSString *filePath=@"";
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss_video"];
+            [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
             NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
             filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
-            NSString *outputFilePath = [filePath stringByAppendingString:@".mov"];
-            [[NSFileManager defaultManager] removeItemAtPath:outputFilePath error:nil];
+            NSString *outputFilePath = [filePath stringByAppendingString:@"_video.mov"];
             [self.movieFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFilePath] recordingDelegate:self];
         }
         else {
@@ -1517,6 +1516,7 @@ int timerCount = 0;
         }
     }
     else if (context == SessionRunningContext ) {
+        BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1584,6 +1584,7 @@ int timerCount = 0;
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
+    UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     BOOL success = YES;
     
@@ -1595,15 +1596,6 @@ int timerCount = 0;
             if ( status == PHAuthorizationStatusAuthorized ) {
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        NSFileManager *manager = [NSFileManager defaultManager];
-                        if ([manager fileExistsAtPath:outputFileURL.absoluteString]) {
-                            NSDictionary *attributes = [manager attributesOfItemAtPath:outputFileURL.absoluteString error:nil];
-                            unsigned long long size = [attributes fileSize];
-                            if (attributes && size == 0) {
-                                // file exists, but is empty.
-                                NSLog(@"empty");
-                            }
-                        }
                         NSData *imageData = [[NSData alloc]init];
                         imageData = [self getThumbNail:outputFileURL];
                         self.thumbnailImageView.image = [self thumbnaleImage:[UIImage imageWithData:imageData] scaledToFillSize:CGSizeMake(thumbnailSize, thumbnailSize)];
@@ -1955,6 +1947,11 @@ int timerCount = 0;
 
 -(NSData *)getThumbNail:(NSURL*)stringPath
 {
+    UIImage *firstImage =[[UIImage alloc] init];
+    NSURL *videoURL = [NSURL fileURLWithPath:[stringPath path]];
+    AVPlayerItem *SelectedItem = [AVPlayerItem playerItemWithURL:stringPath];
+    CMTime duration = SelectedItem.duration;
+    float seconds = CMTimeGetSeconds(duration);
     AVURLAsset *asset1 = [[AVURLAsset alloc] initWithURL:stringPath options:nil];
     AVAssetImageGenerator *generate1 = [[AVAssetImageGenerator alloc] initWithAsset:asset1];
     generate1.appliesPreferredTrackTransform = YES;
