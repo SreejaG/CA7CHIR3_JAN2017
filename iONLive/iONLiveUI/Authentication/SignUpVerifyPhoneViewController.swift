@@ -193,7 +193,7 @@ class SignUpVerifyPhoneViewController: UIViewController
                 else{
                     let deviceToken = defaults.valueForKey("deviceToken") as! String
                     let gcmRegId = "ios".stringByAppendingString(deviceToken)
-                    validateVerificationCode(userName, action: "codeValidation" , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
+                    validateVerificationCode(userName , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
                 }
             }
             else{
@@ -222,10 +222,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "sms")
+            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "sms")
         }))
         alert.addAction(UIAlertAction(title: "Send to Email", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, action: "codeGeneration", verificationMethod: "email")
+            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "email")
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
@@ -255,7 +255,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
     }
     
-    func generateVerificationCode(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String)
+    func generateVerificationCode(userName: String, location: String, mobileNumber: String, verificationMethod: String)
     {
         showOverlay()
         let userCountryCode = self.countryCodeTextField.text
@@ -271,7 +271,7 @@ class SignUpVerifyPhoneViewController: UIViewController
             timeZoneOffsetInUTC = "+\(timeOffsetStr)"
         }
         
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, action: action, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
+        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
@@ -352,10 +352,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
     }
     
-    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String)
+    func validateVerificationCode(userName: String, verificationCode: String, gcmRegId: String)
     {
         showOverlay()
-        authenticationManager.validateVerificationCode(userName, action: action, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
+        authenticationManager.validateVerificationCode(userName, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
             self.authenticationSuccessHandlerVerification(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)

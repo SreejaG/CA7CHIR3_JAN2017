@@ -73,10 +73,10 @@ class AuthenticationManager: NSObject {
     
     //verification code generation
     
-    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, action: String, verificationMethod: String, offset: String, countryCode: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, verificationMethod: String, offset: String, countryCode: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["location":location,"mobileNumber":mobileNumber,"action":action,"verificationMethod":verificationMethod,"timeZone":offset, "countryCode":countryCode], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["location":location,"mobileNumber":mobileNumber,"userName":userName,"verificationMethod":verificationMethod,"timeZone":offset, "countryCode":countryCode], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
@@ -133,10 +133,10 @@ class AuthenticationManager: NSObject {
         })
     }
     
-    func validateVerificationCode(userName: String, action: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func validateVerificationCode(userName: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["action":action,"verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
