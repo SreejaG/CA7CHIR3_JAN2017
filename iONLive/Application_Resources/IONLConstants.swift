@@ -41,7 +41,6 @@ let mediaTypeKey = "media_type"
 let progressKey = "upload_progress"
 let channelMediaIdKey = "channel_media_detail_id"
 
-
 @objc enum SnapCamSelectionMode : Int {
     
     case LiveStream = 0

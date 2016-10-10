@@ -17,6 +17,12 @@ class UrlManager {
         return Singleton.instance
     }
     
+    func getUserProfileImageBaseURL() -> String
+    {
+        let userProfileImageURL = baseUrl+"/api/v1/imageUrl/thumb/profileImage/"
+        return userProfileImageURL
+    }
+    
     func usersLoginAPIUrl() -> (String) {
         let userLoginAPI =  baseUrl+"/api/v1/session"
         return userLoginAPI
@@ -179,6 +185,12 @@ class UrlManager {
     {
         let getAllChannelsAPI = channelAPIUrl() + "/" + userName + "/" + accessToken
         return getAllChannelsAPI
+    }
+    
+    func getUserProfileImageAPIUrl(userName: String, accessToken: String) -> String
+    {
+        let getUserProfileImageAPI = baseUrl+"/api/v1/imageUrl/thumb/profileImage/" + userName + "/" + accessToken
+        return getUserProfileImageAPI
     }
     
     func getAllContactsChannelAPIUrl(channelId: String, userName: String, accessToken: String) -> String

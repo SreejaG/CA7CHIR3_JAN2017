@@ -59,10 +59,15 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     var userDetails: NSMutableDictionary = NSMutableDictionary()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    var userId : String = String()
+    var accessToken: String = String()
+    
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         initialise()
         
         NSNotificationCenter .defaultCenter() .addObserver(self, selector: #selector(EditProfileViewController.keyBoardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
@@ -88,55 +93,19 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     func initialise()
     {
         saveButton.hidden = true
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        getUserDetails(userId, token: accessToken)
+        imageForProfile = UIImage()
+        getUserDetails()
     }
     
-    func getUserDetails(userName: String, token: String)
+    func getUserDetails()
     {
         showOverlay()
-        profileManager.getUserDetails(userName, accessToken:token, success: { (response) -> () in
+        profileManager.getUserDetails(userId, accessToken:accessToken, success: { (response) -> () in
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
             return
         }
-    }
-    
-    func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
-            {
-                let fileManager = NSFileManager.defaultManager()
-                do {
-                    try fileManager.removeItemAtPath(documentsPath)
-                }
-                catch _ as NSError {
-                }
-                FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            }
-        })
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {
@@ -152,12 +121,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let responseArr = json["user"] as! [AnyObject]
-            let userDict: NSMutableDictionary = NSMutableDictionary()
-            
-            for element in responseArr{
-                userDict.setDictionary(element as! [NSObject : AnyObject])
-            }
+            var userDict: NSMutableDictionary = NSMutableDictionary()
+            userDict = json["user"] as! NSMutableDictionary
             for (key,value) in userDict
             {
                 let valueAfterNullCheck =  nullToNil(value)
@@ -196,6 +161,87 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         editProfTableView.reloadData()
     }
     
+    func setUserDetails()
+    {
+        fullNames = userDetails["full_name"] as! String
+        userName = userDetails["user_name"] as! String
+        emails = userDetails["email"] as! String
+        mobileNo = userDetails["mobile_no"] as! String
+        timeZoneInSecondsFromAPI = userDetails["user_time_zone"] as! String
+        
+        let hoursFromOffset = Int(timeZoneInSecondsFromAPI)! / 3600
+        let minutesFromOffset = (Int(timeZoneInSecondsFromAPI)! % 3600) / 60
+        var addOrMinusChk = String()
+        if timeZoneInSecondsFromAPI.hasPrefix("-"){
+            addOrMinusChk = ""
+        }
+        else{
+            addOrMinusChk = "+"
+        }
+        
+        timeZoneOffsetInUTCOriginal = "UTC\(addOrMinusChk)\(hoursFromOffset):\(minutesFromOffset)"
+        
+        let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken
+        let url: NSURL = convertStringtoURL(thumbUrl)
+        if let data = NSData(contentsOfURL: url){
+            let imageDetailsData = (data as NSData?)!
+            imageForProfile = UIImage(data: imageDetailsData)!
+        }
+        else{
+            imageForProfile = UIImage(named: "dummyUser")!
+        }
+    
+        imageForProfileOld = imageForProfile
+    
+        profileInfoOptions = [[displayNameKey:fullNames, userNameKey:userName]]
+        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"], [titleKey:timeZoneOffsetInUTCOriginal]]
+        privateInfoOptions = [[privateInfoKey:emails],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
+        
+        dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
+        editProfTableView.reloadData()
+    }
+    
+    func ltzAbbrev() -> String
+    {
+        let zoneName = NSTimeZone.localTimeZone().name
+        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
+        return timeValue!
+    }
+    
+    func  loadInitialViewController(code: String){
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+            
+            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            {
+                let fileManager = NSFileManager.defaultManager()
+                do {
+                    try fileManager.removeItemAtPath(documentsPath)
+                }
+                catch _ as NSError {
+                }
+                FileManagerViewController.sharedInstance.createParentDirectory()
+            }
+            else{
+                FileManagerViewController.sharedInstance.createParentDirectory()
+            }
+            
+            let defaults = NSUserDefaults .standardUserDefaults()
+            let deviceToken = defaults.valueForKey("deviceToken") as! String
+            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            defaults.setValue(deviceToken, forKey: "deviceToken")
+            defaults.setObject(1, forKey: "shutterActionMode");
+            
+            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.navigationBarHidden = true
+            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        })
+    }
+    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -215,59 +261,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         return searchURL
     }
     
-    func setUserDetails()
-    {
-        imageForProfile = UIImage()
-        fullNames = userDetails["full_name"] as! String
-        userName = userDetails["user_name"] as! String
-        emails = userDetails["email"] as! String
-        mobileNo = userDetails["mobile_no"] as! String
-        timeZoneInSecondsFromAPI = userDetails["user_time_zone"] as! String
-        
-        let hoursFromOffset = Int(timeZoneInSecondsFromAPI)! / 3600
-        let minutesFromOffset = (Int(timeZoneInSecondsFromAPI)! % 3600) / 60
-        var addOrMinusChk = String()
-        if timeZoneInSecondsFromAPI.hasPrefix("-"){
-            addOrMinusChk = ""
-        }
-        else{
-            addOrMinusChk = "+"
-        }
-        
-        timeZoneOffsetInUTCOriginal = "UTC\(addOrMinusChk)\(hoursFromOffset):\(minutesFromOffset)"
-        
-        let thumbUrl =  userDetails["profile_image_thumbnail"] as! String
-        if(thumbUrl != "")
-        {
-            let url: NSURL = convertStringtoURL(thumbUrl)
-            if let data = NSData(contentsOfURL: url){
-                let imageDetailsData = (data as NSData?)!
-                imageForProfile = UIImage(data: imageDetailsData)!
-            }
-            else{
-                imageForProfile = UIImage(named: "dummyUser")!
-            }
-        }
-        else{
-            imageForProfile = UIImage(named: "dummyUser")!
-        }
-        imageForProfileOld = imageForProfile
-        
-        profileInfoOptions = [[displayNameKey:fullNames, userNameKey:userName]]
-        accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"], [titleKey:timeZoneOffsetInUTCOriginal]]
-        privateInfoOptions = [[privateInfoKey:emails],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
-        
-        dataSource = [profileInfoOptions,accountInfoOptions,privateInfoOptions]
-        editProfTableView.reloadData()
-    }
-    
-    func ltzAbbrev() -> String
-    {
-        let zoneName = NSTimeZone.localTimeZone().name
-        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
-        return timeValue!
-    }
-    
+
     @IBAction func saveClicked(sender: AnyObject) {
         saveButton.hidden = true
         showOverlay()
