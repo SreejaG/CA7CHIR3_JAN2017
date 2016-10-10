@@ -248,18 +248,11 @@ class ContactDetailsViewController: UIViewController {
                 
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
-                let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
-                let thumbUrl =  nullToNil(thumbUrlBeforeNullChk) as! String
-                if(thumbUrl != "")
-                {
-                    let url: NSURL = convertStringtoURL(thumbUrl)
-                    if let data = NSData(contentsOfURL: url){
-                        let imageDetailsData = (data as NSData?)!
-                        contactImage = UIImage(data: imageDetailsData)!
-                    }
-                    else{
-                        contactImage = UIImage(named: "dummyUser")!
-                    }
+                let thumbUrl =  UrlManager.sharedInstance.getUserProfileImageBaseURL() + userName
+                let url: NSURL = convertStringtoURL(thumbUrl)
+                if let data = NSData(contentsOfURL: url){
+                    let imageDetailsData = (data as NSData?)!
+                    contactImage = UIImage(data: imageDetailsData)!
                 }
                 else{
                     contactImage = UIImage(named: "dummyUser")!

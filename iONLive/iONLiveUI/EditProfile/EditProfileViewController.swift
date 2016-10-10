@@ -181,14 +181,21 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         timeZoneOffsetInUTCOriginal = "UTC\(addOrMinusChk)\(hoursFromOffset):\(minutesFromOffset)"
         
-        let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken
-        let url: NSURL = convertStringtoURL(thumbUrl)
-        if let data = NSData(contentsOfURL: url){
-            let imageDetailsData = (data as NSData?)!
-            imageForProfile = UIImage(data: imageDetailsData)!
+        let actualImage = userDetails["actual_image"] as! String
+        if actualImage != ""
+        {
+            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken
+            let url: NSURL = convertStringtoURL(thumbUrl)
+            if let data = NSData(contentsOfURL: url){
+                let imageDetailsData = (data as NSData?)!
+                imageForProfile = UIImage(data: imageDetailsData)!
+            }
+            else{
+                imageForProfile = UIImage(named: "dummyUser")!
+            }
         }
         else{
-            imageForProfile = UIImage(named: "dummyUser")!
+           imageForProfile = UIImage(named: "dummyUser")!
         }
     
         imageForProfileOld = imageForProfile
