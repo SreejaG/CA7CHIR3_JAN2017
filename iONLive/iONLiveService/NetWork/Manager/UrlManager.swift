@@ -197,6 +197,13 @@ class UrlManager {
         return getAllChannelsAPI
     }
     
+    func updateChannelsAPIUrl(chanelId: String, userName: String, accessToken: String) -> String
+    {
+        let updateChannelsAPI = channelAPIUrl()  + "/" + chanelId  + "/" + userName + "/" + accessToken
+        return updateChannelsAPI
+    }
+
+    
     func getUserProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
         let getUserProfileImageAPI = baseUrl+"/api/v1/imageUrl/thumb/profileImage/" + userName + "/" + accessToken
