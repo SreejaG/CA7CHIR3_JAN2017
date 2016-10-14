@@ -37,7 +37,6 @@ class ContactListViewController: UIViewController
     var searchActive: Bool = false
     
     var addUserArray : NSMutableArray = NSMutableArray()
-    var deleteUserArray : NSMutableArray = NSMutableArray()
     
     @IBOutlet var contactListSearchBar: UISearchBar!
     @IBOutlet var contactListTableView: UITableView!
@@ -84,7 +83,6 @@ class ContactListViewController: UIViewController
         contactListTableView.reloadData()
         contactListTableView.layoutIfNeeded()
         addUserArray.removeAllObjects()
-        deleteUserArray.removeAllObjects()
         
         for i in 0 ..< fullDataSource.count
         {
@@ -95,20 +93,18 @@ class ContactListViewController: UIViewController
             }
         }
         
-        deleteUserArray = []
-        
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         if addUserArray.count > 0
         {
-            inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray, deleteUser: deleteUserArray)
+            inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray)
         }
     }
     
-    func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray, deleteUser:NSMutableArray){
+    func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray){
         showOverlay()
-        channelManager.inviteContactList(userName, accessToken: accessToken, channelId: channelid, adduser: addUser, deleteUser: deleteUser, success: { (response) -> () in
+        channelManager.AddContactToChannel(userName, accessToken: accessToken, channelId: channelid, adduser: addUserArray, success: { (response) -> () in
             self.authenticationSuccessHandlerInvite(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
@@ -156,7 +152,6 @@ class ContactListViewController: UIViewController
         dataSource.removeAll()
         fullDataSource.removeAll()
         addUserArray.removeAllObjects()
-        deleteUserArray.removeAllObjects()
         searchActive = false
         doneButton.hidden = true
         contactPhoneNumbers.removeAll()
