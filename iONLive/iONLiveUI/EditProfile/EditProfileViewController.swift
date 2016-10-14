@@ -100,6 +100,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                     }
 
                 }
+                else if (swipedIndexPath.section == 1 && swipedIndexPath.row == 3)
+                {
+                    synchronisingTapped()
+                }
                 else{
                     view.endEditing(true)
                     
@@ -593,6 +597,7 @@ extension EditProfileViewController:UITableViewDataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
             {
+               // print("inside")
                 var cellDataSource = dataSource[indexPath.section][indexPath.row]
                 switch indexPath.section
                 {
@@ -623,7 +628,7 @@ extension EditProfileViewController:UITableViewDataSource
                     return cell
                     
                 case 1:
-                    button.removeFromSuperview()
+                    
                     
                     let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
@@ -640,14 +645,15 @@ extension EditProfileViewController:UITableViewDataSource
                     
                     if indexPath.row == 3
                     {
+                        button.removeFromSuperview()
                         cell.accessoryType = .None
                         cell.selectionStyle = .None
                         let image = UIImage(named: "synchronising.png")
                         button = UIButton(type: UIButtonType.Custom) as UIButton
-                        button.frame = CGRectMake(cell.frame.width - 30, cell.frame.height/2 - 10, 25, 25)
+                        button.frame = CGRectMake(cell.frame.width - 35, cell.frame.height/2 - 10, 25, 25)
                         button.backgroundColor = UIColor.clearColor()
                         button.setImage(image, forState: .Normal)
-                        button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
+                      //  button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
                         cell.addSubview(button)
                     }
                     else
@@ -695,30 +701,39 @@ extension EditProfileViewController:UITableViewDataSource
     func scrollViewDidScroll(scrollView: UIScrollView) {
     }
     
-    func synchronisingTapped(sender: AnyObject)
+    func synchronisingTapped()
+    {
+        self.button.rotate360Degrees(1.0)
+        _ = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(EditProfileViewController.timerStop), userInfo: nil, repeats: false)
+
+       
+        
+    }
+    
+    func timerStop()
     {
         let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
         let timeOffsetStr = String(timeOffset)
         if timeOffsetStr.hasPrefix("-")
         {
-            timeZoneInSecondsUpdated = timeOffsetStr
+            self.timeZoneInSecondsUpdated = timeOffsetStr
         }
         else
         {
-            timeZoneInSecondsUpdated = "+\(timeOffsetStr)"
+            self.timeZoneInSecondsUpdated = "+\(timeOffsetStr)"
         }
         
-        if timeZoneInSecondsUpdated != timeZoneInSecondsFromAPI
+        if self.timeZoneInSecondsUpdated != self.timeZoneInSecondsFromAPI
         {
-            let timeZoneOffsetInGMT : String = ltzAbbrev()
+            let timeZoneOffsetInGMT : String = self.ltzAbbrev()
             let timeZoneOffsetStr = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
-            dataSource![1][3][titleKey] = timeZoneOffsetStr
-            saveButton.hidden = false
+            self.dataSource![1][3][self.titleKey] = timeZoneOffsetStr
+            self.saveButton.hidden = false
         }
         let indexPath = NSIndexPath(forRow: 3, inSection: 1)
         self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+
     }
-    
     func textFieldDidBeginEditing(textField: UITextField) {
         
         activeField = textField
@@ -855,4 +870,16 @@ extension EditProfileViewController:UITableViewDataSource
     
    
 }
-
+extension UIView {
+    func rotate360Degrees(duration: CFTimeInterval , completionDelegate: AnyObject? = nil) {
+        let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
+        rotateAnimation.fromValue = 0.0
+        rotateAnimation.toValue = CGFloat(M_PI * 2.0)
+        rotateAnimation.duration = duration
+        
+        if let delegate: AnyObject = completionDelegate {
+            rotateAnimation.delegate = delegate
+        }
+        self.layer.addAnimation(rotateAnimation, forKey: nil)
+    }
+}
