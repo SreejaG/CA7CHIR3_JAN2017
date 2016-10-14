@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		067B996B1DA227A3002B78BA /* photoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 067B996A1DA227A3002B78BA /* photoViewCell.m */; };
 		067B996E1DA2720C002B78BA /* photoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 067B996D1DA2720C002B78BA /* photoCell.xib */; };
+		068661331DAE0DB700B41CC0 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068661321DAE0DB700B41CC0 /* ResetPasswordViewController.swift */; };
 		160903EE1C6C7E66004E381D /* Connectivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 160903ED1C6C7E66004E381D /* Connectivity.m */; };
 		160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */; };
 		160903F71C6C7ED1004E381D /* EditProfile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160903F11C6C7ED1004E381D /* EditProfile.storyboard */; };
@@ -249,6 +250,7 @@
 		067B99691DA227A3002B78BA /* photoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = photoViewCell.h; sourceTree = "<group>"; };
 		067B996A1DA227A3002B78BA /* photoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = photoViewCell.m; sourceTree = "<group>"; };
 		067B996D1DA2720C002B78BA /* photoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = photoCell.xib; sourceTree = "<group>"; };
+		068661321DAE0DB700B41CC0 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		06DD833BCC68B7DCB2D38C82 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CC816436167DE7B08669471 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		160903EC1C6C7E66004E381D /* Connectivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connectivity.h; sourceTree = "<group>"; };
@@ -699,6 +701,7 @@
 				160903F31C6C7ED1004E381D /* EditProfileViewController.swift */,
 				160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */,
 				160903F51C6C7ED1004E381D /* EditProfPrivateInfoCell.swift */,
+				068661321DAE0DB700B41CC0 /* ResetPasswordViewController.swift */,
 			);
 			path = EditProfile;
 			sourceTree = "<group>";
@@ -1921,6 +1924,7 @@
 				B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */,
 				599964D51C057EF000D20FB2 /* KxAudioManager.m in Sources */,
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
+				068661331DAE0DB700B41CC0 /* ResetPasswordViewController.swift in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
 				16BFCA6F1D1A6DE700761C94 /* UIView+WebCacheOperation.m in Sources */,

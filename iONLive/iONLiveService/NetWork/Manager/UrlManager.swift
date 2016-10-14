@@ -32,7 +32,11 @@ class UrlManager {
         let userLoginAPI =  baseUrl+"/api/v1/user"
         return userLoginAPI
     }
-    
+    func resetPasswordAPIUrl() -> (String)
+    {
+        let resetPasswordAPI =  baseUrl+"/api/v1/password"
+        return resetPasswordAPI
+    }
     func contactAPIUrl() -> (String) {
         let contactAPI =  baseUrl+"/api/v1/contacts"
         return contactAPI
@@ -168,7 +172,13 @@ class UrlManager {
         let getSubscriberProfileImageAPI = usersSignUpAPIUrl() + "/" + userName + "/" + accessToken + "/" + subscriberUserName
         return getSubscriberProfileImageAPI
     }
-    
+    func getResetPasswordAPIUrl(userName: String, accessToken: String) -> String
+    {
+      let getResetPasswordAPIUrl =  resetPasswordAPIUrl() + "/" + userName + "/" + accessToken
+        print(getResetPasswordAPIUrl)
+        return getResetPasswordAPIUrl
+
+    }
     func getProfileImageUploadAPIUrl(userName: String, accessToken: String, actualImageUrl: String) -> String
     {
         let getProfileImageUploadAPI = profileImageAPIUrl() + "/" + userName + "/" + actualImageUrl + "/" + accessToken
