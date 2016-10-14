@@ -335,8 +335,9 @@ class ChannelManager: NSObject {
     
     func AddContactToChannel(userName: String, accessToken: String, channelId: String, adduser: NSMutableArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
+        let ChanelIdInt : Int = Int(channelId)!
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.channelAPIUrl(), parameters: ["userName":userName, "access_token":accessToken, "channelId":channelId, "addUser":adduser], success: { (operation, response) -> Void in
+        requestManager.httpManager().PUT(UrlManager.sharedInstance.channelAPIUrl(), parameters: ["userName":userName, "access_token":accessToken, "channelId":ChanelIdInt, "addUser":adduser], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]

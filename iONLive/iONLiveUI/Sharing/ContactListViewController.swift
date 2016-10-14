@@ -29,6 +29,10 @@ class ContactListViewController: UIViewController
     var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    var userId = String()
+    var accessToken = String()
+    
     let userNameKey = "userName"
     let profileImageKey = "profile_image"
     let subscribedKey = "sharedindicator"
@@ -44,6 +48,10 @@ class ContactListViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
         
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
@@ -92,10 +100,7 @@ class ContactListViewController: UIViewController
                 addUserArray.addObject(userId)
             }
         }
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+      
         if addUserArray.count > 0
         {
             inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray)
@@ -272,10 +277,6 @@ class ContactListViewController: UIViewController
     
     func addContactDetails(contactPhoneNumbers: NSArray)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
         contactManagers.addContactDetails(userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
             self.authenticationSuccessHandlerAdd(response)
         }) { (error, message) -> () in
@@ -292,9 +293,6 @@ class ContactListViewController: UIViewController
             status = json["status"] as! Int
             if(status >= 1)
             {
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                 getChannelContactDetails(userId, token: accessToken, channelid: channelId)
             }
         }
@@ -386,9 +384,8 @@ class ContactListViewController: UIViewController
             fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
-                let userName = element["userName"] as! String
-                let thumbUrlBeforeNullChk =  element["profile_image_thumbnail"]
-                let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
+                let userName = element["user_name"] as! String
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName 
                 dataSource.append([userNameKey:userName, profileImageKey: thumbUrl])
             }
             if(dataSource.count > 0){

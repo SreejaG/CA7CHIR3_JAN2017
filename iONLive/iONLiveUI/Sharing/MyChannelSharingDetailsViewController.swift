@@ -22,6 +22,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
     let profileImageKey = "profile_image"
     let selectionKey = "selected"
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    var userId = String()
+    var accessToken = String()
+    
     var searchActive: Bool = false
     
     @IBOutlet var inviteButton: UIButton!
@@ -118,9 +122,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         
         if((addUserArray.count > 0) || (deleteUserArray.count > 0))
         {
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray, deleteUser: deleteUserArray)
         }
     }
@@ -162,11 +163,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            let deviceToken = self.defaults.valueForKey("deviceToken") as! String
+            self.defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            self.defaults.setValue(deviceToken, forKey: "deviceToken")
+            self.defaults.setObject(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
             let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
@@ -196,6 +196,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func initialise()
     {
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
         searchDataSource.removeAll()
         fullDataSource.removeAll()
         dataSource.removeAll()
@@ -210,10 +213,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         channelId = (self.tabBarController as! MyChannelDetailViewController).channelId
         channelName = (self.tabBarController as! MyChannelDetailViewController).channelName
         totalMediaCount = (self.tabBarController as! MyChannelDetailViewController).totalMediaCount
-        
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         getChannelContactDetails(userId, token: accessToken, channelid: channelId)
     }
@@ -252,10 +251,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
             fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
-                let userName = element["userName"] as! String
-                let imageNameBeforeNullChk =  element["profile_image_thumbnail"]
-                let imageName =  nullToNil(imageNameBeforeNullChk) as! String
-                let subscriptionValue =  Int(element["sharedindicator"] as! Bool)
+                let userName = element["user_name"] as! String
+                let imageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
+                let subscriptionValue =  Int(element["sub_enable_ind"] as! Bool)
                 
                 dataSource.append([userNameKey:userName, profileImageKey: imageName, selectionKey:subscriptionValue])
             }
@@ -403,14 +401,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func generateWaytoSendAlert(ContactId: String, indexpath: Int)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the contact", preferredStyle: UIAlertControllerStyle.Alert)
         
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.deleteContactDetails(userId, token: accessToken, contactName: ContactId, channelid: self.channelId, index: indexpath)
+            self.deleteContactDetails(self.userId, token: self.accessToken, contactName: ContactId, channelid: self.channelId, index: indexpath)
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         
