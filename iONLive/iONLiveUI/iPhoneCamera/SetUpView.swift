@@ -69,7 +69,7 @@ import UIKit
         for i in 0 ..< userThumbnailImage.count
         {
             var image = UIImage()
-            let thumbUrl =  userThumbnailImage[i] as! String
+            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i] as! String)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)

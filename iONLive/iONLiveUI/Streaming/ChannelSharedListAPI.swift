@@ -7,7 +7,7 @@ class ChannelSharedListAPI: NSObject {
     let sharedMediaCount = "total_no_media_shared"
     let totalNoShared = "totalNo"
     let timeStamp = "created_time_stamp"
-    let lastUpdatedTimeStamp = "notificationTime"
+    let lastUpdatedTimeStamp = "last_updated_time_stamp"
     let usernameKey = "user_name"
     let profileImageKey = "profile_image_thumbnail"
     let liveStreamStatus = "liveChannel"
@@ -48,7 +48,7 @@ class ChannelSharedListAPI: NSObject {
     func getChannelSharedDetails(userName: String, token: String)
     {
         ChannelManager.sharedInstance.getChannelShared(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+            //self.authenticationSuccessHandler(response)
             
         }) { (error, message) -> () in
             self.authenticationFailureHandler(error, code: message)
@@ -126,17 +126,21 @@ class ChannelSharedListAPI: NSObject {
                     let username = element[usernameKey] as! String
                     let channelSubId = element[subChannelIdKey]?.stringValue
                     let liveStream = "0"
+                    let thumbID : String = (element["thumbnail_Url"]?.stringValue)!
+                    let profileImageUserName : String = (element[profileImageKey]?.stringValue)!
                     var mediaThumbUrl : String = String()
                     if liveStream == "0"
                     {
-                        let mediaThumbUrlBeforeNullChk = element["thumbnail_Url"]
+                          let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageBaseURL() + thumbID + "/" + getUserId() + "/" + getAccessTocken()
+//                        let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageBaseURL()+ element["thumbnail_Url"]?.stringValue
+                        
                         mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
                     }
                     else
                     {
                         mediaThumbUrl = "noimage"
                     }
-                    let profileImageNameBeforeNullChk =  element[profileImageKey]
+                    let profileImageNameBeforeNullChk =   UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" +  getAccessTocken() + "/" + profileImageUserName
                     let thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
                     var flag: Bool = false
                     
