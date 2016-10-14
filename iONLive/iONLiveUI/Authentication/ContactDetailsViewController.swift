@@ -11,6 +11,10 @@ class ContactDetailsViewController: UIViewController {
     var searchDataSource : [[[String:AnyObject]]]?
     var checkedMobiles : NSMutableDictionary = NSMutableDictionary()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    var userId = String()
+    var accessToken = String()
+    
     var searchActive: Bool = false
     var contactExistChk :Bool!
     
@@ -80,9 +84,6 @@ class ContactDetailsViewController: UIViewController {
             }
         }
         if(contactsArray.count > 0){
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
             showOverlay()
             contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
                 self.authenticationSuccessHandlerInvite(response)
@@ -115,11 +116,10 @@ class ContactDetailsViewController: UIViewController {
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            let deviceToken = self.defaults.valueForKey("deviceToken") as! String
+            self.defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            self.defaults.setValue(deviceToken, forKey: "deviceToken")
+            self.defaults.setObject(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
             let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
@@ -205,9 +205,9 @@ class ContactDetailsViewController: UIViewController {
         appContactsArr.removeAll()
         searchDataSource?.removeAll()
         
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
         if(contactExistChk == true){
             getContactDetails(userId, token: accessToken)
         }
@@ -248,7 +248,7 @@ class ContactDetailsViewController: UIViewController {
                 
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
-                let thumbUrl =  UrlManager.sharedInstance.getUserProfileImageBaseURL() + userName
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 let url: NSURL = convertStringtoURL(thumbUrl)
                 if let data = NSData(contentsOfURL: url){
                     let imageDetailsData = (data as NSData?)!
