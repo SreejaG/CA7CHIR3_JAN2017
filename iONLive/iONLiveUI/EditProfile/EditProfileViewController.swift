@@ -69,12 +69,44 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         initialise()
-        
+        self.editProfTableView.delegate = self
+        self.editProfTableView.dataSource = self
         NSNotificationCenter .defaultCenter() .addObserver(self, selector: #selector(EditProfileViewController.keyBoardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
+//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.dismissKeyboard))
+//        view.addGestureRecognizer(tap)
+        let tapTableView: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.tableViewTap))
+        editProfTableView.addGestureRecognizer(tapTableView)
     }
-    
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
     @IBAction func tapGestureRecognizer(sender: AnyObject) {
         view.endEditing(true)
+    }
+    
+    func tableViewTap(recognizer: UITapGestureRecognizer)
+    {
+        if recognizer.state == UIGestureRecognizerState.Ended {
+            let swipeLocation = recognizer.locationInView(self.editProfTableView)
+            if let swipedIndexPath = editProfTableView.indexPathForRowAtPoint(swipeLocation) {
+                
+                if swipedIndexPath.section == 1 && swipedIndexPath.row == 2
+                {
+                    let sharingStoryboard = UIStoryboard(name:"EditProfile", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("ResetPasswordViewController") as! ResetPasswordViewController
+                    channelItemListVC.navigationController?.navigationBarHidden = true
+                    self.presentViewController(channelItemListVC, animated: true) { () -> Void in
+                    }
+
+                }
+                else{
+                    view.endEditing(true)
+                    
+                }
+            }
+           
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -154,10 +186,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
+        if(dataSource?.count > 0)
+        {
         dataSource![0][0][displayNameKey] = fullNames
         dataSource![2][0][privateInfoKey] = emails
         dataSource![2][1][privateInfoKey] = mobileNo
         dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
+        }
         editProfTableView.reloadData()
     }
     
@@ -474,7 +509,10 @@ extension EditProfileViewController: UITableViewDelegate
             return 55.0
         }
     }
-    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    {
+               
+    }
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         let  headerCell = tableView.dequeueReusableCellWithIdentifier(EditProfileHeaderCell.identifier) as! EditProfileHeaderCell
@@ -526,7 +564,7 @@ extension EditProfileViewController: UITableViewDelegate
 
 extension EditProfileViewController:UITableViewDataSource
 {
-    
+ 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         switch section
@@ -599,6 +637,7 @@ extension EditProfileViewController:UITableViewDataSource
                         cell.borderLine.hidden = false
                         cell.selectionStyle = .Default
                     }
+                    
                     if indexPath.row == 3
                     {
                         cell.accessoryType = .None
@@ -610,6 +649,12 @@ extension EditProfileViewController:UITableViewDataSource
                         button.setImage(image, forState: .Normal)
                         button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
                         cell.addSubview(button)
+                    }
+                    else
+                    {
+                        cell.selectionStyle = .Default
+                        cell.userInteractionEnabled = true
+                        
                     }
                     
                     return cell
@@ -808,8 +853,6 @@ extension EditProfileViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-    }
+   
 }
 

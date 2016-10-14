@@ -186,7 +186,16 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     {
         alert(signUpErrorTitle, message: "Please enter your password")
     }
-    
+    func resetPassworderror()
+    {
+        alert("Password Error", message: "Please enter your password")
+
+    }
+    func failedToUpdatepassword()
+    {
+        alert("Error", message: "Failed to update password")
+ 
+    }
     func missingFullNameError()
     {
         alert("Missing Fullname", message: "Please enter your Full name")

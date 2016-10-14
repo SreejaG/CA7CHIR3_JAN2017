@@ -92,7 +92,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="567" height="100"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SzR-6K-rlO">
+                                                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SzR-6K-rlO">
                                                             <rect key="frame" x="10" y="39" width="547" height="21"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
@@ -313,7 +313,7 @@
                                     <constraint firstItem="8yW-hu-EA2" firstAttribute="leading" secondItem="dbA-00-Jla" secondAttribute="leading" id="xtt-yR-Bsh"/>
                                 </constraints>
                                 <connections>
-                                    <outletCollection property="gestureRecognizers" destination="nfm-ti-ueu" appends="YES" id="QVq-s2-vQ7"/>
+                                    <outletCollection property="gestureRecognizers" destination="nfm-ti-ueu" appends="YES" id="kWh-0w-KXB"/>
                                 </connections>
                             </view>
                         </subviews>
@@ -335,11 +335,113 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fXM-0v-0iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="nfm-ti-ueu">
                     <connections>
-                        <action selector="tapGestureRecognizer:" destination="NLI-gS-dTY" id="PbU-Q4-h5r"/>
+                        <action selector="tapGestureRecognizer:" destination="NLI-gS-dTY" id="PeV-0X-l96"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="154" y="299"/>
+        </scene>
+        <!--Reset Password View Controller-->
+        <scene sceneID="XWd-PE-rUe">
+            <objects>
+                <viewController storyboardIdentifier="ResetPasswordViewController" id="d7k-IZ-kCO" customClass="ResetPasswordViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="av4-st-iWi"/>
+                        <viewControllerLayoutGuide type="bottom" id="iMa-h3-G9c"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="88w-Jx-s0I">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qGR-60-72a" userLabel="topView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RESET PASSWORD" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pOe-0l-E25">
+                                        <rect key="frame" x="0.0" y="32" width="600" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nvZ-Cv-GX8" userLabel="backButton">
+                                        <rect key="frame" x="5" y="24" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="I2d-Ah-O90"/>
+                                            <constraint firstAttribute="height" constant="40" id="Sd4-4d-1Nx"/>
+                                        </constraints>
+                                        <state key="normal" image="white_back"/>
+                                        <connections>
+                                            <action selector="backButtonClicked:" destination="d7k-IZ-kCO" eventType="touchUpInside" id="9Ge-LD-oPs"/>
+                                            <action selector="backClicked:" destination="NLI-gS-dTY" eventType="touchUpInside" id="QUM-aY-zLB"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="nvZ-Cv-GX8" firstAttribute="leading" secondItem="qGR-60-72a" secondAttribute="leading" constant="5" id="68s-yy-Nm9"/>
+                                    <constraint firstItem="pOe-0l-E25" firstAttribute="leading" secondItem="qGR-60-72a" secondAttribute="leading" id="9m5-V7-psM"/>
+                                    <constraint firstItem="pOe-0l-E25" firstAttribute="top" secondItem="qGR-60-72a" secondAttribute="top" constant="32" id="ExA-tp-evi"/>
+                                    <constraint firstAttribute="height" constant="64" id="n9M-od-Guk"/>
+                                    <constraint firstAttribute="bottom" secondItem="pOe-0l-E25" secondAttribute="bottom" constant="11" id="nc5-rs-Fvo"/>
+                                    <constraint firstItem="nvZ-Cv-GX8" firstAttribute="top" secondItem="qGR-60-72a" secondAttribute="top" constant="24" id="rF6-C9-lho"/>
+                                    <constraint firstAttribute="trailing" secondItem="pOe-0l-E25" secondAttribute="trailing" id="vPg-Ap-EkT"/>
+                                </constraints>
+                            </view>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="New Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SUq-kb-mGN">
+                                <rect key="frame" x="36" y="138" width="437" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="AO7-j9-jNI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Re - Enter Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CWH-mK-dr8">
+                                <rect key="frame" x="36" y="193" width="437" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="C0V-MA-Kj1"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lgz-Yl-y0J">
+                                <rect key="frame" x="0.0" y="510" width="600" height="90"/>
+                                <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="aeh-tp-6Cl"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="27"/>
+                                <state key="normal" title="RESET PASSWORD">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="resetPasswordClicked:" destination="d7k-IZ-kCO" eventType="touchUpInside" id="sY1-3N-8J8"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="SUq-kb-mGN" firstAttribute="leading" secondItem="88w-Jx-s0I" secondAttribute="leadingMargin" constant="16" id="3FT-jt-0Si"/>
+                            <constraint firstAttribute="trailing" secondItem="qGR-60-72a" secondAttribute="trailing" id="9XF-j5-KEd"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="SUq-kb-mGN" secondAttribute="trailing" constant="107" id="BDi-Fl-5Vu"/>
+                            <constraint firstItem="qGR-60-72a" firstAttribute="top" secondItem="88w-Jx-s0I" secondAttribute="top" id="DAS-6N-GpM"/>
+                            <constraint firstItem="qGR-60-72a" firstAttribute="leading" secondItem="88w-Jx-s0I" secondAttribute="leading" id="MJs-Lz-MwA"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="CWH-mK-dr8" secondAttribute="trailing" constant="107" id="OPN-o1-p7E"/>
+                            <constraint firstAttribute="trailing" secondItem="Lgz-Yl-y0J" secondAttribute="trailing" id="Y2S-FM-SgN"/>
+                            <constraint firstItem="CWH-mK-dr8" firstAttribute="top" secondItem="SUq-kb-mGN" secondAttribute="bottom" constant="25" id="YZf-EG-cQI"/>
+                            <constraint firstItem="SUq-kb-mGN" firstAttribute="leading" secondItem="88w-Jx-s0I" secondAttribute="leadingMargin" constant="16" id="Z4h-vb-q58"/>
+                            <constraint firstItem="Lgz-Yl-y0J" firstAttribute="leading" secondItem="88w-Jx-s0I" secondAttribute="leading" id="aI4-5t-GYB"/>
+                            <constraint firstItem="iMa-h3-G9c" firstAttribute="top" secondItem="Lgz-Yl-y0J" secondAttribute="bottom" id="ln6-0n-Snu"/>
+                            <constraint firstItem="SUq-kb-mGN" firstAttribute="top" secondItem="qGR-60-72a" secondAttribute="bottom" constant="74" id="uN4-q0-ivL"/>
+                            <constraint firstItem="CWH-mK-dr8" firstAttribute="leading" secondItem="88w-Jx-s0I" secondAttribute="leadingMargin" constant="16" id="zRY-HL-cgd"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="reEnterPasswordTextField" destination="CWH-mK-dr8" id="Qmi-98-YVu"/>
+                        <outlet property="resetPasswordTextfield" destination="SUq-kb-mGN" id="tSB-9L-e1E"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6SM-JN-bsM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="779" y="299"/>
         </scene>
     </scenes>
     <resources>
