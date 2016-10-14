@@ -131,8 +131,8 @@ class ChannelSharedListAPI: NSObject {
                     var mediaThumbUrl : String = String()
                     if liveStream == "0"
                     {
-                          let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageBaseURL() + thumbID + "/" + getUserId() + "/" + getAccessTocken()
-//                        let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageBaseURL()+ element["thumbnail_Url"]?.stringValue
+                          let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageForMedia(thumbID, userName: getUserId(), accessToken: getAccessTocken())
+                        //                        let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getThumbImageBaseURL()+ element["thumbnail_Url"]?.stringValue
                         
                         mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
                     }

@@ -9,6 +9,11 @@ class GlobalDataChannelList: NSObject {
     var operationQueueObjInChannelList = NSOperationQueue()
     var operationInChannelList = NSBlockOperation()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    
+    var userId : String = String()
+    var accessToken : String = String()
+    
     class var sharedInstance: GlobalDataChannelList
     {
         struct Singleton
@@ -21,9 +26,8 @@ class GlobalDataChannelList: NSObject {
     
     func initialise()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         getChannelDetails(userId, token: accessToken)
     }
     
@@ -79,22 +83,22 @@ class GlobalDataChannelList: NSObject {
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             var mediaId = String()
-            var url = String()
+//            var url = String()
             if let m =  element["media_detail_id"]?.stringValue
             {
                 mediaId = m
-                let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
-                url = nullToNil(thumbUrlBeforeNullChk) as! String
+//                let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
+//                url = nullToNil(thumbUrlBeforeNullChk) as! String
             }
-            else{
-                url = "empty"
-            }
+//            else{
+//                url = "empty"
+//            }
             let channelName = element["channel_name"] as! String
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String
             let sharedBool = Int(element["channel_shared_ind"] as! Bool)
             
-            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,createdTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool, tImageURLKey: url])
+            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,createdTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool])
         }
         
         if(self.globalChannelDataSource.count > 0){
@@ -111,18 +115,19 @@ class GlobalDataChannelList: NSObject {
         for i in 0 ..< globalChannelDataSource.count
         {
             var imageForMedia : UIImage = UIImage()
-            let mediaIdForFilePath = "\(globalChannelDataSource[i][mediaIdKey] as! String)thumb"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-            let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-            if fileExistFlag == true{
-                let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                imageForMedia = mediaImageFromFile!
-            }
-            else{
-                if let mediaUrl = globalChannelDataSource[i][tImageURLKey]
-                {
-                    url = convertStringtoURL(mediaUrl as! String)
+            if let mediaIdChk = globalChannelDataSource[i][mediaIdKey]
+            {
+                let mediaIdForFilePath = "\(mediaIdChk as! String)thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                if fileExistFlag == true{
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    imageForMedia = mediaImageFromFile!
+                }
+                else{
+                    let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaIdChk as! String, userName: userId, accessToken: accessToken)
+                    url = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                         if(result != UIImage()){
                             let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
@@ -130,10 +135,10 @@ class GlobalDataChannelList: NSObject {
                             let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
                             let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
                             if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                
+                            
                             }
                             else{
-                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                            FileManagerViewController.sharedInstance.saveImageToFilePath    (mediaIdForFilePath, mediaImage: result)
                             }
                             imageForMedia = result
                         }
@@ -142,9 +147,8 @@ class GlobalDataChannelList: NSObject {
                         }
                     })
                 }
-                else{
-                    imageForMedia =  UIImage(named: "thumb12")!
-                }
+            }else{
+                imageForMedia =  UIImage(named: "thumb12")!
             }
             self.globalChannelDataSource[i][tImageKey] = imageForMedia
         }
@@ -184,6 +188,7 @@ class GlobalDataChannelList: NSObject {
     
     func autoDownloadChannelDetails()
     {
+        print(globalChannelDataSource)
         GlobalChannelToImageMapping.sharedInstance.globalData(globalChannelDataSource)
     }
     

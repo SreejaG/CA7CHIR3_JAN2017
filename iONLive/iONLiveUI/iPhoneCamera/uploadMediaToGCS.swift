@@ -144,7 +144,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func updateDataToLocalDataSource() {
         dataRowFromLocal.removeAll()
         let currentTimeStamp : String = getCurrentTimeStamp()
-        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,tImageURLKey:uploadThumbImageURLGCS,fImageURLKey:uploadFullImageOrVideoURLGCS]
+        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail]
         
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
@@ -293,9 +293,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     {
         if let json = response as? [String: AnyObject]
         {
-            let mediaId = json["mediaId"] as! String
+            let mediaId = json["mediaId"] 
             let channelWithScrollingIds = json["channelMediaDetails"] as! [[String:AnyObject]]
-            addScrollingIdsToChannels(channelWithScrollingIds, mediaId: mediaId)
+            addScrollingIdsToChannels(channelWithScrollingIds, mediaId: "\(mediaId)")
         }
     }
     

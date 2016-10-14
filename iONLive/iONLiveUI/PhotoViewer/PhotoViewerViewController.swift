@@ -872,9 +872,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func downloadVideo(index : Int)
     {
         videoDownloadIntex = index
-        let videoDownloadUrl = convertStringtoURL( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][fImageURLKey] as! String)
         
         let mediaIdForFilePath = "\( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][mediaIdKey]!)"
+        
+        let videoUrl = UrlManager.sharedInstance.getFullImageForMedia(mediaIdForFilePath, userName: userId, accessToken: accessToken)
+        let videoDownloadUrl = convertStringtoURL(videoUrl)
+        
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
         let savingPath = "\(parentPath)/\(mediaIdForFilePath)video.mov"
         
@@ -1194,10 +1197,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][mediaTypeKey] as! String == "video"
                 {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        
-                        
-                      
-
                         self.photoThumpCollectionView.alpha = 1.0
                         self.removeOverlay()
                         self.playIconInFullView.hidden = false;
@@ -1238,7 +1237,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.showOverlay()
                         })
-                        let mediaUrl =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexpaths][fImageURLKey] as! String
+                        let mediaUrl =  UrlManager.sharedInstance.getFullImageForMedia(mediaIdStr as! String, userName: userId, accessToken: accessToken)
                         if(mediaUrl != ""){
                             let url: NSURL = convertStringtoURL(mediaUrl)
                             downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
