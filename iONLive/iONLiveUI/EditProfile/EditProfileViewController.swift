@@ -223,7 +223,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let actualImage = userDetails["actual_image"] as! String
         if actualImage != ""
         {
-            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken
+             let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
             let url: NSURL = convertStringtoURL(thumbUrl)
             if let data = NSData(contentsOfURL: url){
                 let imageDetailsData = (data as NSData?)!
