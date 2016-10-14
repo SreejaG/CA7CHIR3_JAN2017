@@ -220,8 +220,8 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let notifType = element["notification_type"] as! String
                     if(notifType.lowercaseString == "likes"){
-                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
-                        mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+//                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
+                        mediaThumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
                     }
                     else{
                         mediaThumbUrl = "nomedia"
