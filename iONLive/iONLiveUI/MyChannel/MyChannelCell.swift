@@ -7,6 +7,9 @@ class MyChannelCell: UITableViewCell {
     @IBOutlet weak var channelHeadImageView: UIImageView!
     @IBOutlet weak var channelItemCount: UILabel!
     @IBOutlet weak var channelNameLabel: UILabel!
+    @IBOutlet var editChanelNameTextField: UITextField!
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         channelNameLabel.numberOfLines = 1
@@ -17,5 +20,9 @@ class MyChannelCell: UITableViewCell {
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
+    }
+    
+    @IBAction func edited(sender: AnyObject) {
+        NSUserDefaults.standardUserDefaults().setValue(editChanelNameTextField.text, forKey: "editedValue")
     }
 }

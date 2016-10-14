@@ -129,7 +129,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     func InvalidChannelEnteredError()
     {
-        alert("Invalid Channel", message: "Channel Name must contain atmost 15 characters")
+        alert("Invalid Channel", message: "Channel Name must contain atleast 3 characters and atmost 15 characters")
     }
     
     func noNumberInPassword()

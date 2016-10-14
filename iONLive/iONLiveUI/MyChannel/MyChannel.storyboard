@@ -30,6 +30,20 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="erT-Fg-YzP">
+                                                <rect key="frame" x="10" y="27" width="54" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="32" id="pdW-N2-jhd"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                                <state key="normal" title="Cancel">
+                                                    <color key="titleColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didTapCancelButton:" destination="mkf-lJ-34S" eventType="touchUpInside" id="gzg-Mf-8bN"/>
+                                                    <action selector="didTapChanelUpdateCancel:" destination="HHn-oS-sje" eventType="touchUpInside" id="uyG-TK-h0x"/>
+                                                </connections>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Vq-AC-s1A" userLabel="BackButton">
                                                 <rect key="frame" x="10" y="22" width="40" height="40"/>
                                                 <constraints>
@@ -39,6 +53,20 @@
                                                 <state key="normal" image="snapCamMode"/>
                                                 <connections>
                                                     <action selector="didtapBackButton:" destination="HHn-oS-sje" eventType="touchUpInside" id="v90-EP-Myq"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vDV-eh-16s">
+                                                <rect key="frame" x="552" y="27" width="38" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="32" id="HQa-BJ-NXT"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                                <state key="normal" title="Save">
+                                                    <color key="titleColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didTapCancelButton:" destination="mkf-lJ-34S" eventType="touchUpInside" id="Ubx-MS-pw4"/>
+                                                    <action selector="didTapChannelUpdateSave:" destination="HHn-oS-sje" eventType="touchUpInside" id="v8S-aW-2li"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sye-VS-ziC" userLabel="PlusButton">
@@ -67,15 +95,21 @@
                                         <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstItem="Sye-VS-ziC" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="22" id="02O-od-bPN"/>
+                                            <constraint firstAttribute="trailing" secondItem="vDV-eh-16s" secondAttribute="trailing" constant="10" id="8fm-4K-7bK"/>
                                             <constraint firstItem="Fqm-1a-Wea" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="32" id="EQV-6L-Bt5"/>
+                                            <constraint firstAttribute="bottom" secondItem="vDV-eh-16s" secondAttribute="bottom" constant="5" id="Fat-NI-CMH"/>
                                             <constraint firstAttribute="trailing" secondItem="Fqm-1a-Wea" secondAttribute="trailing" id="Hvx-0b-HBy"/>
+                                            <constraint firstItem="vDV-eh-16s" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="27" id="JDW-WC-rE3"/>
                                             <constraint firstAttribute="height" constant="64" id="JcU-1O-fDy"/>
                                             <constraint firstItem="4Vq-AC-s1A" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="22" id="Q5o-ik-UFu"/>
                                             <constraint firstItem="Sye-VS-ziC" firstAttribute="leading" secondItem="fp1-85-0Vm" secondAttribute="trailing" constant="-8" id="Uas-oe-aVN"/>
                                             <constraint firstAttribute="trailing" secondItem="Sye-VS-ziC" secondAttribute="trailing" constant="10" id="cZb-NV-igS"/>
                                             <constraint firstItem="fp1-85-0Vm" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="22" id="fbM-WJ-0IV"/>
+                                            <constraint firstAttribute="bottom" secondItem="erT-Fg-YzP" secondAttribute="bottom" constant="5" id="gQ4-gU-sST"/>
                                             <constraint firstItem="Fqm-1a-Wea" firstAttribute="leading" secondItem="eNB-PM-gfn" secondAttribute="leading" id="gVs-rw-3RL"/>
                                             <constraint firstItem="4Vq-AC-s1A" firstAttribute="leading" secondItem="eNB-PM-gfn" secondAttribute="leading" constant="10" id="gp8-rw-Hn0"/>
+                                            <constraint firstItem="erT-Fg-YzP" firstAttribute="top" secondItem="eNB-PM-gfn" secondAttribute="top" constant="27" id="oRs-vS-8CL"/>
+                                            <constraint firstItem="erT-Fg-YzP" firstAttribute="leading" secondItem="eNB-PM-gfn" secondAttribute="leading" constant="10" id="rqN-8T-kmj"/>
                                         </constraints>
                                     </view>
                                     <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XKO-cD-U5I">
@@ -104,6 +138,7 @@
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="jfD-0G-DsL">
                                                             <rect key="frame" x="20" y="3" width="60" height="65"/>
+                                                            <gestureRecognizers/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="60" id="K3K-Qu-Q06"/>
                                                                 <constraint firstAttribute="height" constant="65" id="epl-C2-XFr"/>
@@ -111,10 +146,20 @@
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Day" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yxi-xu-qG8">
                                                             <rect key="frame" x="100" y="24" width="62" height="22"/>
+                                                            <gestureRecognizers/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3iY-xC-zMj">
+                                                            <rect key="frame" x="100" y="18" width="200" height="30"/>
+                                                            <color key="tintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <textInputTraits key="textInputTraits"/>
+                                                            <connections>
+                                                                <action selector="edited:" destination="2QT-r2-aX3" eventType="editingChanged" id="rwT-M5-M0Y"/>
+                                                            </connections>
+                                                        </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z57-tg-fjH">
                                                             <rect key="frame" x="100" y="51" width="8" height="12"/>
                                                             <constraints>
@@ -135,10 +180,12 @@
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <gestureRecognizers/>
                                                 <connections>
                                                     <outlet property="channelHeadImageView" destination="jfD-0G-DsL" id="miP-LA-s0r"/>
                                                     <outlet property="channelItemCount" destination="z57-tg-fjH" id="m3B-wB-FVU"/>
                                                     <outlet property="channelNameLabel" destination="Yxi-xu-qG8" id="1tR-dH-RhR"/>
+                                                    <outlet property="editChanelNameTextField" destination="3iY-xC-zMj" id="69C-63-YYh"/>
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="gek-0N-A2c">
@@ -260,8 +307,12 @@
                         <outlet property="SearchBarBottomConstraint" destination="KQe-hI-32S" id="w2A-3O-xgR"/>
                         <outlet property="addChannelView" destination="d4y-o6-8l1" id="WcZ-XJ-dos"/>
                         <outlet property="addChannelViewTopConstraint" destination="KQe-hI-32S" id="TR5-od-oU1"/>
+                        <outlet property="backButton" destination="4Vq-AC-s1A" id="lOb-C4-KfZ"/>
+                        <outlet property="channelAddButton" destination="Sye-VS-ziC" id="Nl0-Rz-NDX"/>
                         <outlet property="channelCreateButton" destination="fcj-dV-r7b" id="bnT-yu-xEw"/>
                         <outlet property="channelTextField" destination="50o-xT-MdG" id="Q7M-tR-8Ah"/>
+                        <outlet property="channelUpdateCancelButton" destination="erT-Fg-YzP" id="2iy-a2-ZlC"/>
+                        <outlet property="channelUpdateSaveButton" destination="vDV-eh-16s" id="hqb-Y3-Oaz"/>
                         <outlet property="myChannelSearchBar" destination="XKO-cD-U5I" id="htB-Lq-una"/>
                         <outlet property="myChannelTableView" destination="sVZ-HZ-JoX" id="wBu-62-dsr"/>
                         <outlet property="myChannelTableViewTopConstraint" destination="3mG-Ed-K3s" id="trx-YP-2eU"/>
