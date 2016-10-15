@@ -560,7 +560,7 @@
                                                                 <constraint firstAttribute="height" constant="12" id="31y-86-Y7s"/>
                                                                 <constraint firstAttribute="width" constant="100" id="NOq-iw-7Wl"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>

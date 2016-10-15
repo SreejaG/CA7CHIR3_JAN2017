@@ -21,6 +21,16 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y62-6N-UtC">
                                 <rect key="frame" x="0.0" y="64" width="600" height="451"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CVh-hM-tBf">
+                                <rect key="frame" x="5" y="500" width="100" height="12"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="12" id="Jt1-sV-m0t"/>
+                                    <constraint firstAttribute="width" constant="100" id="rcW-go-lfX"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e64-wp-j2s" userLabel="TopView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
                                 <subviews>
@@ -132,13 +142,13 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                                 </imageView>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="m5T-pj-pPH">
-                                                    <rect key="frame" x="3" y="28" width="10" height="10"/>
+                                                    <rect key="frame" x="1" y="29" width="10" height="10"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="10" id="yIv-Bx-L8A"/>
                                                     </constraints>
                                                 </imageView>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CloudIcon" translatesAutoresizingMaskIntoConstraints="NO" id="6HG-oF-4JZ">
-                                                    <rect key="frame" x="2" y="2" width="12" height="12"/>
+                                                    <rect key="frame" x="2" y="2" width="12" height="11"/>
                                                 </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
                                                     <rect key="frame" x="0.0" y="41" width="42" height="2"/>
@@ -148,18 +158,18 @@
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="bottomMargin" secondItem="tfd-dS-C7Z" secondAttribute="bottom" constant="-8" id="2fc-zl-QYI"/>
-                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-5" id="3w7-V9-ZN0"/>
+                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-7" id="3w7-V9-ZN0"/>
                                             <constraint firstAttribute="bottom" secondItem="txC-iS-gZe" secondAttribute="bottom" id="8ss-U5-cge"/>
                                             <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="txC-iS-gZe" secondAttribute="bottom" constant="-2" id="9SL-cT-7BJ"/>
-                                            <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="m5T-pj-pPH" secondAttribute="bottom" constant="3" id="9wg-XJ-Qdx"/>
+                                            <constraint firstItem="tfd-dS-C7Z" firstAttribute="top" secondItem="m5T-pj-pPH" secondAttribute="bottom" constant="2" id="9wg-XJ-Qdx"/>
                                             <constraint firstAttribute="trailing" secondItem="txC-iS-gZe" secondAttribute="trailing" id="B5m-C5-YKu"/>
                                             <constraint firstItem="tfd-dS-C7Z" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-8" id="BQp-tg-J7q"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leading" id="D5g-s7-n6b"/>
                                             <constraint firstItem="6HG-oF-4JZ" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-6" id="JnK-yf-xo3"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="top" id="amQ-Ca-65u"/>
-                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="top" secondItem="6HG-oF-4JZ" secondAttribute="bottom" constant="14" id="bWm-tN-79X"/>
+                                            <constraint firstItem="m5T-pj-pPH" firstAttribute="top" secondItem="6HG-oF-4JZ" secondAttribute="bottom" constant="16" id="bWm-tN-79X"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
-                                            <constraint firstItem="6HG-oF-4JZ" firstAttribute="centerX" secondItem="m5T-pj-pPH" secondAttribute="centerX" id="iSg-97-Qhv"/>
+                                            <constraint firstItem="6HG-oF-4JZ" firstAttribute="centerX" secondItem="m5T-pj-pPH" secondAttribute="centerX" constant="2" id="iSg-97-Qhv"/>
                                             <constraint firstItem="6HG-oF-4JZ" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="topMargin" constant="-6" id="szB-Ee-QCG"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="6HG-oF-4JZ" secondAttribute="trailing" constant="21" id="z0E-28-Mz6"/>
                                         </constraints>
@@ -199,6 +209,7 @@
                         <constraints>
                             <constraint firstItem="bjf-zC-TWq" firstAttribute="centerY" secondItem="GmU-4f-pJO" secondAttribute="centerY" id="1cP-nB-Mrz"/>
                             <constraint firstItem="x1k-wQ-7XO" firstAttribute="top" secondItem="Ncu-eZ-Tvl" secondAttribute="bottom" id="1us-Ly-ZrQ"/>
+                            <constraint firstItem="QIE-GV-Vdt" firstAttribute="top" secondItem="CVh-hM-tBf" secondAttribute="bottom" constant="3" id="4sF-el-Ume"/>
                             <constraint firstAttribute="trailingMargin" secondItem="6H3-Qn-BdG" secondAttribute="trailing" constant="-20" id="6zA-4W-jlN"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="Deu-dI-uIV"/>
                             <constraint firstItem="e64-wp-j2s" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" id="E4l-ug-KYa"/>
@@ -209,6 +220,7 @@
                             <constraint firstItem="6H3-Qn-BdG" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leadingMargin" constant="-20" id="UAv-fP-gWz"/>
                             <constraint firstItem="QIE-GV-Vdt" firstAttribute="top" secondItem="y62-6N-UtC" secondAttribute="bottom" id="XIb-Er-jR9"/>
                             <constraint firstItem="e64-wp-j2s" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="top" id="XSy-xg-gCY"/>
+                            <constraint firstItem="CVh-hM-tBf" firstAttribute="leading" secondItem="GmU-4f-pJO" secondAttribute="leading" constant="5" id="diB-JL-K3d"/>
                             <constraint firstAttribute="trailing" secondItem="Ncu-eZ-Tvl" secondAttribute="trailing" id="fiG-UJ-HXX"/>
                             <constraint firstItem="6H3-Qn-BdG" firstAttribute="top" secondItem="GmU-4f-pJO" secondAttribute="topMargin" id="hFC-ta-0Z8"/>
                             <constraint firstItem="Ncu-eZ-Tvl" firstAttribute="top" secondItem="QIE-GV-Vdt" secondAttribute="bottom" id="jxM-DN-VGY"/>
@@ -230,6 +242,7 @@
                         <outlet property="mediaTimeLabel" destination="tuh-W8-1lF" id="ZsN-OO-gdr"/>
                         <outlet property="photoThumpCollectionView" destination="QIE-GV-Vdt" id="NRF-PJ-s44"/>
                         <outlet property="playIconInFullView" destination="bjf-zC-TWq" id="cPx-GS-lVq"/>
+                        <outlet property="videoDurationLabel" destination="CVh-hM-tBf" id="Fer-m3-C8C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VAf-h9-4f9" userLabel="First Responder" sceneMemberID="firstResponder"/>

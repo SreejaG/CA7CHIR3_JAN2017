@@ -28,6 +28,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     @IBOutlet var addToButton: UIButton!
     @IBOutlet var deletButton: UIButton!
     
+    @IBOutlet var videoDurationLabel: UILabel!
+    
     static let identifier = "PhotoViewerViewController"
     
     let imageUploadManger = ImageUpload.sharedInstance
@@ -86,6 +88,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.fullScrenImageView.image = UIImage()
         self.fullScreenZoomView.image = UIImage()
         playHandleflag = 0
+        videoDurationLabel.hidden = true
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
@@ -1165,6 +1168,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.photoThumpCollectionView.alpha = 1.0
                         self.removeOverlay()
+                        self.videoDurationLabel.hidden = false
+                        self.view.bringSubviewToFront(self.videoDurationLabel)
+                        self.videoDurationLabel.text = ""
+                        if let vDuration =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![indexpaths][videoDurationKey]
+                        {
+                            self.videoDurationLabel.text = vDuration as? String
+                        }
                         self.playIconInFullView.hidden = false;
                         self.fullScrenImageView.contentMode = .ScaleAspectFill
                         if(gestureIdentifier==1||gestureIdentifier==2)
@@ -1248,6 +1258,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         }
                         self.playIconInFullView.hidden = true;
                         self.fullScreenScrollView.hidden=false;
+                        self.videoDurationLabel.hidden = true
                     })
                 }
             }
