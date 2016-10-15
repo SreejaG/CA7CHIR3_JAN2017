@@ -1067,31 +1067,18 @@ class StreamsListViewController: UIViewController{
         getProfileImageSelectedIndex(indexPathRow)
     }
     
+//    func getProfileImage(userId: String)
+//    {
+//        
+//    }
+    var profileImageUserForSelectedIndex : UIImage = UIImage()
+
     func getProfileImageSelectedIndex(indexpathRow: Int)
     {
         if(mediaAndLiveArray.count > 0)
         {
             let subUserName = mediaAndLiveArray[indexpathRow][userIdKey] as! String
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
-                self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
-                }, failure: { (error, message) -> () in
-                    self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
-                    return
-            })
-            
-        }
-    }
-    
-    var profileImageUserForSelectedIndex : UIImage = UIImage()
-    
-    func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
-    {
-        if let json = response as? [String: AnyObject]
-        {
-            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
+            let profileImageNameBeforeNullChk =  UrlManager.sharedInstance.getProfileURL(subUserName)
             let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
             if(profileImageName != "")
             {
@@ -1113,6 +1100,44 @@ class StreamsListViewController: UIViewController{
             profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         }
         getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
+
+//            profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+//                self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
+//                }, failure: { (error, message) -> () in
+//                    self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
+//                    return
+//            })
+//            
+//        }
+    }
+    
+    
+    func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
+    {
+      //  if let json = response as? [String: AnyObject]
+      //  {
+//            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
+//            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
+//            if(profileImageName != "")
+//            {
+//                let url: NSURL = self.convertStringtoURL(profileImageName)
+//                if let data = NSData(contentsOfURL: url){
+//                    let imageDetailsData = (data as NSData?)!
+//                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
+//                }
+//                else{
+//                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//                }
+//            }
+//            else{
+//                profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//            }
+//            
+//        }
+//        else{
+//            profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//        }
+       // getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
     }
     
     func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int)

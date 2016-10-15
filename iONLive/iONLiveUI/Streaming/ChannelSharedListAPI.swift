@@ -138,12 +138,13 @@ class ChannelSharedListAPI: NSObject {
                     {
                         mediaThumbUrl = "noimage"
                     }
-                    
-                    if("\(profileImageUserName)" != "")
+//                    
+                   if("\(profileImageUserName)" != "")
                     {
                         let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(profileImageUserName as! String)
+                    print(profileImageNameBeforeNullChk)
                           thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
-                    }
+                   }
                     var flag: Bool = false
                     
                     if(mediaShared.count > 0)

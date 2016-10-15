@@ -44,7 +44,7 @@ import UIKit
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
-//                self.setChannelDetails()
+                self.setChannelDetails()
             })
         }
         else
@@ -125,47 +125,67 @@ import UIKit
             obj.successFromSetUpView(count)
         }
     }
-    
+    var profileImageUserForSelectedIndex : UIImage = UIImage()
+
     func getProfileImageSelectedIndex(userIdKey: String ,objects: MovieViewController)
     {
-        let subUserName = userIdKey
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
-            self.successHandlerForProfileImage(response,obj: objects)
-            }, failure: { (error, message) -> () in
-                self.failureHandlerForprofileImage(error, code: message,obj:objects)
-        })
-    }
-    
-    var profileImageUserForSelectedIndex : UIImage = UIImage()
-    func successHandlerForProfileImage(response:AnyObject?,obj: MovieViewController)
-    {
-        if let json = response as? [String: AnyObject]
+//        let subUserName = userIdKey
+//        let defaults = NSUserDefaults .standardUserDefaults()
+//        let userId = defaults.valueForKey(userLoginIdKey) as! String
+//        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+//        profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
+//            self.successHandlerForProfileImage(response,obj: objects)
+//            }, failure: { (error, message) -> () in
+//                self.failureHandlerForprofileImage(error, code: message,obj:objects)
+//        })
+//        
+        let profileImageNameBeforeNullChk =  UrlManager.sharedInstance.getProfileURL(userIdKey)
+        let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
+        if(profileImageName != "")
         {
-            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
-            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
-            if(profileImageName != "")
-            {
-                let url: NSURL = self.convertStringtoURL(profileImageName)
-                if let data = NSData(contentsOfURL: url){
-                    let imageDetailsData = (data as NSData?)!
-                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
-                }
-                else{
-                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
-                }
+            let url: NSURL = self.convertStringtoURL(profileImageName)
+            if let data = NSData(contentsOfURL: url){
+                let imageDetailsData = (data as NSData?)!
+                profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
             }
             else{
                 profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
             }
-            
         }
         else{
             profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         }
-        obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
+   
+       objects.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
+
+    }
+
+    func successHandlerForProfileImage(response:AnyObject?,obj: MovieViewController)
+    {
+//        if let json = response as? [String: AnyObject]
+//        {
+//            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
+//            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
+//            if(profileImageName != "")
+//            {
+//                let url: NSURL = self.convertStringtoURL(profileImageName)
+//                if let data = NSData(contentsOfURL: url){
+//                    let imageDetailsData = (data as NSData?)!
+//                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
+//                }
+//                else{
+//                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//                }
+//            }
+//            else{
+//                profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//            }
+//            
+//        }
+//        else{
+//            profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+//        }
+//        obj.successFromSetUpViewProfileImage(profileImageUserForSelectedIndex)
     }
     
     func nullToNil(value : AnyObject?) -> AnyObject? {

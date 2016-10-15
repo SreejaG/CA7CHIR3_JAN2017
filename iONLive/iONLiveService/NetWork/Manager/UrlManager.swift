@@ -49,7 +49,7 @@ class UrlManager : NSObject {
     }
     func getProfileURL(userId: String) -> (String)
     {
-        let profileUrl = getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() +  userId
+        let profileUrl = getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + userId
         return profileUrl
     }
     func getMediaURL(mediaId : String) -> (String)
