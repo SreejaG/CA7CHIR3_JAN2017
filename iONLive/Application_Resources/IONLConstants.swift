@@ -40,6 +40,7 @@ let notifTypeKey = "notification_type"
 let mediaTypeKey = "media_type"
 let progressKey = "upload_progress"
 let channelMediaIdKey = "channel_media_detail_id"
+let videoDurationKey = "videoDuration"
 
 @objc enum SnapCamSelectionMode : Int {
     

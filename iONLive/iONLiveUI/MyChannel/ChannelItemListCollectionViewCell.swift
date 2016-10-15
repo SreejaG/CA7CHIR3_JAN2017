@@ -9,7 +9,7 @@ class ChannelItemListCollectionViewCell: UICollectionViewCell {
     @IBOutlet var tickButton: UIButton!
     @IBOutlet var videoView: UIView!
     @IBOutlet var videoPlayIcon: UIImageView!
-    
+    @IBOutlet var videoDurationLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
     }

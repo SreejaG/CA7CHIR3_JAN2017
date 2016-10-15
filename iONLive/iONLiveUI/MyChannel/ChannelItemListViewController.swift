@@ -462,6 +462,10 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             if mediaType == "video"
             {
                 cell.videoView.hidden = false
+                if let vDuration =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][videoDurationKey]
+                {
+                    cell.videoDurationLabel.text = vDuration as? String
+                }
             }
             else{
                 cell.videoView.hidden = true

@@ -83,16 +83,13 @@ class GlobalDataChannelList: NSObject {
         for element in channelDetailsDict{
             let channelId = element["channel_detail_id"]?.stringValue
             var mediaId = String()
-//            var url = String()
-            if let m =  element["media_detail_id"]?.stringValue
+            if let m =  element["latest_thumbnail_id"]?.stringValue
             {
                 mediaId = m
-//                let thumbUrlBeforeNullChk = element["thumbnail_Url"] as! String
-//                url = nullToNil(thumbUrlBeforeNullChk) as! String
             }
-//            else{
-//                url = "empty"
-//            }
+            else{
+                mediaId = ""
+            }
             let channelName = element["channel_name"] as! String
             let mediaSharedCount = element["total_no_media_shared"]?.stringValue
             let createdTime = element["last_updated_time_stamp"] as! String

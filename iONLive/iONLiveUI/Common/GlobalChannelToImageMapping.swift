@@ -95,11 +95,18 @@ class GlobalChannelToImageMapping: NSObject {
 //                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
 //                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
+                var vDuration = String()
+                if(mediaType == "video"){
+                    vDuration = responseArr[index].valueForKey("video_duration") as! String
+                }
+                else{
+                    vDuration = ""
+                }
 //                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
 //                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0])
+                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
             }
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
@@ -127,7 +134,9 @@ class GlobalChannelToImageMapping: NSObject {
                     return
                 }
                 var imageForMedia : UIImage = UIImage()
-                let mediaId = String(localDataSource[k][mediaIdKey]!)
+                if let mediaIdChk = localDataSource[k][mediaIdKey]
+                {
+                let mediaId = String(mediaIdChk)
                 let mediaIdForFilePath = "\(mediaId)thumb"
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                 let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
@@ -162,6 +171,10 @@ class GlobalChannelToImageMapping: NSObject {
                     else{
                         imageForMedia = UIImage(named: "thumb12")!
                     }
+                }
+                }
+                else{
+                    imageForMedia = UIImage(named: "thumb12")!
                 }
                 if localDataSource.count > 0
                 {

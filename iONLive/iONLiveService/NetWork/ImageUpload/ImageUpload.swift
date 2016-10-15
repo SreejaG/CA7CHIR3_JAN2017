@@ -64,10 +64,19 @@ class ImageUpload: NSObject {
         })
     }
     
-    func getSignedURL(userName: String, accessToken: String,  mediaType : String ,success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getSignedURL(userName: String, accessToken: String,  mediaType : String, videoDuration: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
+        var params = NSMutableDictionary()
+        if(mediaType == "video")
+        {
+            params = ["userName":userName, "access_token":accessToken ,"mediaType": mediaType, "videoDuration": videoDuration]
+        }
+        else{
+            params = ["userName":userName, "access_token":accessToken ,"mediaType": mediaType]
+        }
+        
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.gesMediaObjectCreationUrl(), parameters: ["userName":userName, "access_token":accessToken ,"mediaType": mediaType] , success: { (operation, response) -> Void in
+        requestManager.httpManager().POST(UrlManager.sharedInstance.gesMediaObjectCreationUrl(), parameters: params , success: { (operation, response) -> Void in
             
             if var responseObject = response as? [String:AnyObject]
             {

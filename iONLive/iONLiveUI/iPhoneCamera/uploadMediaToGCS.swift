@@ -64,7 +64,13 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //get signed url from cloud
     func getSignedURLFromCloud(){
-        self.imageUploadManager.getSignedURL(userId, accessToken: accessToken, mediaType: media, success: { (response) -> () in
+        if(media == "video"){
+            
+        }
+        else{
+            videoDuration = ""
+        }
+        self.imageUploadManager.getSignedURL(userId, accessToken: accessToken, mediaType: media, videoDuration: videoDuration, success: { (response) -> () in
             self.authenticationSuccessHandlerSignedURL(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
@@ -144,7 +150,14 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func updateDataToLocalDataSource() {
         dataRowFromLocal.removeAll()
         let currentTimeStamp : String = getCurrentTimeStamp()
-        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail]
+        if(media == "video"){
+           
+        }
+        else{
+            videoDuration = ""
+        }
+        
+        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:videoDuration]
         
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
