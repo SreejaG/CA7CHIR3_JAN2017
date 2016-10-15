@@ -1,8 +1,7 @@
 
 import UIKit
 import Foundation
-
-class UrlManager : NSObject  {
+class UrlManager : NSObject {
     
     let baseUrl = "http://104.196.159.90:3000"; //IR3 Instance
     
@@ -48,8 +47,29 @@ class UrlManager : NSObject  {
         let getFullImageForMedia = getMediaFullImageBaseURL() + mediaId + "/" + userName + "/" + accessToken
         return getFullImageForMedia
     }
+    func getProfileURL(userId: String) -> (String)
+    {
+        let profileUrl = getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() +  userId
+        return profileUrl
+    }
+    func getMediaURL(mediaId : String) -> (String)
+    {
+        let mediaUrl =   getThumbImageBaseURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
+        return mediaUrl
+    }
     
+    func getMediaFullImageBaseStreamURL() -> (String)
+    {
+        let getMediaFullImageBaseURL = baseUrl+"/api/v1/imageUrl/"
+        return getMediaFullImageBaseURL
+    }
     
+    func getFullImageForStreamMedia(mediaId : String) -> (String)
+    {
+        let getFullImageForMedia = getMediaFullImageBaseStreamURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
+        print(getFullImageForMedia)
+        return getFullImageForMedia
+    }
     func usersLoginAPIUrl() -> (String) {
         let userLoginAPI =  baseUrl+"/api/v1/session"
         return userLoginAPI

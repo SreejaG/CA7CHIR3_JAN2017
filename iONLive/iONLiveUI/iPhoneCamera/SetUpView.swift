@@ -69,7 +69,7 @@ import UIKit
         for i in 0 ..< userThumbnailImage.count
         {
             var image = UIImage()
-            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i] as! String)
+            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
@@ -202,7 +202,7 @@ import UIKit
     {
         if let json = response as? [String: AnyObject]
         {
-            likeCountSelectedIndex = json["likeCount"] as! String
+            likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
         obj.successFromSetUpView("\(likeCountSelectedIndex)")
         
