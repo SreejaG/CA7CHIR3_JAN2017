@@ -54,7 +54,7 @@ class UrlManager : NSObject {
     }
     func getMediaURL(mediaId : String) -> (String)
     {
-        let mediaUrl =   getThumbImageBaseURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
+        let mediaUrl =   getMediaThumbImageBaseURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
         return mediaUrl
     }
     
