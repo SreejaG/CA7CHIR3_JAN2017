@@ -443,6 +443,12 @@
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Live_now_off_mode" translatesAutoresizingMaskIntoConstraints="NO" id="jmg-ML-qEZ">
                                                                     <rect key="frame" x="2" y="88" width="10" height="10"/>
                                                                 </imageView>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kvi-zS-ojG">
+                                                                    <rect key="frame" x="15" y="85" width="100" height="15"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
                                                             </subviews>
                                                         </view>
                                                     </subviews>
@@ -462,6 +468,7 @@
                                                     <outlet property="channelItemImageView" destination="T7N-Ob-zkJ" id="UjP-tX-bDW"/>
                                                     <outlet property="selectionView" destination="jwy-pD-Wuy" id="yIE-7M-Q1w"/>
                                                     <outlet property="tickButton" destination="dfh-US-JSR" id="n6l-Cy-HEb"/>
+                                                    <outlet property="videoDurationLabel" destination="Kvi-zS-ojG" id="624-le-Lfb"/>
                                                     <outlet property="videoPlayIcon" destination="jmg-ML-qEZ" id="P04-7d-Nlf"/>
                                                     <outlet property="videoView" destination="JrT-9P-d3y" id="vuf-rb-kKd"/>
                                                 </connections>

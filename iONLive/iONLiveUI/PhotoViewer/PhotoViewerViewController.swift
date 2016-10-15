@@ -346,18 +346,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func handleDoubleTap(recognizer: UITapGestureRecognizer) {
-        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
-        {
-            let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
-            
-            if mediaType != "video"
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
             {
-                if (fullScreenScrollView.zoomScale > fullScreenScrollView.minimumZoomScale) {
-                    fullScreenScrollView.setZoomScale(fullScreenScrollView.minimumZoomScale, animated: true)
-                } else {
-                    let zoomRect = self.zoomRectForScale(fullScreenScrollView.minimumZoomScale+1, center: recognizer.locationInView(recognizer.view))
-                    self.fullScreenScrollView.zoomToRect(zoomRect, animated: true);
-                    
+                let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
+                
+                if mediaType != "video"
+                {
+                    if (fullScreenScrollView.zoomScale > fullScreenScrollView.minimumZoomScale) {
+                        fullScreenScrollView.setZoomScale(fullScreenScrollView.minimumZoomScale, animated: true)
+                    } else {
+                        let zoomRect = self.zoomRectForScale(fullScreenScrollView.minimumZoomScale+1, center: recognizer.locationInView(recognizer.view))
+                        self.fullScreenScrollView.zoomToRect(zoomRect, animated: true);
+                        
+                    }
                 }
             }
         }

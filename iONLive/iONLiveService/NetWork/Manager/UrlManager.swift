@@ -38,13 +38,13 @@ class UrlManager : NSObject {
     
     func getMediaFullImageBaseURL() -> (String)
     {
-        let getMediaFullImageBaseURL = baseUrl+"/api/v1/imageUrl/"
+        let getMediaFullImageBaseURL = baseUrl+"/api/v1/imageUrl/media/"
         return getMediaFullImageBaseURL
     }
     
     func getFullImageForMedia(mediaId : String, userName: String, accessToken: String) -> (String)
     {
-        let getFullImageForMedia = getMediaThumbImageBaseURL() + mediaId + "/" + userName + "/" + accessToken
+        let getFullImageForMedia = getMediaFullImageBaseURL() + mediaId + "/" + userName + "/" + accessToken
         return getFullImageForMedia
     }
     func getProfileURL(userId: String) -> (String)
