@@ -150,4 +150,35 @@ class FileManagerViewController: UIViewController {
         let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
         return differenceString
     }
+    
+    func getVideoDurationInProperFormat(duration: String) -> String {
+        let durationSplitArr = duration.characters.split{$0 == ":"}.map(String.init)
+        var hourDuration = String()
+        var minuteDuration = String()
+        if(durationSplitArr[0] == "00")
+        {
+            hourDuration = durationSplitArr[1] + ":" + durationSplitArr[2]
+            var hourDurationSplitArr = hourDuration.characters.split{$0 == ":"}.map(String.init)
+            if(hourDurationSplitArr[0] == "00")
+            {
+                minuteDuration = "0"
+            }
+            else if(hourDurationSplitArr[0].hasPrefix("0")) {
+                minuteDuration = String(hourDurationSplitArr[0].characters.dropFirst())
+            }
+            else{
+                minuteDuration = hourDurationSplitArr[0]
+            }
+            hourDuration = minuteDuration + ":" + durationSplitArr[2]
+        }
+        else if(durationSplitArr[0].hasPrefix("0"))
+        {
+            minuteDuration = String(durationSplitArr[0].characters.dropFirst())
+            hourDuration = minuteDuration + ":" + durationSplitArr[1] + ":" + durationSplitArr[2]
+        }
+        else{
+            hourDuration = duration
+        }
+        return hourDuration
+    }
 }

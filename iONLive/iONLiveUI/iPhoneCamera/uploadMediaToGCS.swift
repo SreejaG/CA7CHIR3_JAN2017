@@ -150,14 +150,15 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func updateDataToLocalDataSource() {
         dataRowFromLocal.removeAll()
         let currentTimeStamp : String = getCurrentTimeStamp()
+        var duration = String()
         if(media == "video"){
-           
+           duration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDuration)
         }
         else{
-            videoDuration = ""
+            duration = ""
         }
         
-        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:videoDuration]
+        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:duration]
         
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }
