@@ -26,6 +26,5 @@ class MyChannelDetailViewController: UITabBarController {
     }
     
     override func viewWillDisappear(animated: Bool) {
-        
     }
 }

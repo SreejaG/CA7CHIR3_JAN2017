@@ -37,7 +37,6 @@ class GlobalDataChannelList: NSObject {
             self.authenticationSuccessHandler(response)
         }) { (error, message) -> () in
             self.authenticationFailureHandlerChannel(error, code: message)
-            
         }
     }
     

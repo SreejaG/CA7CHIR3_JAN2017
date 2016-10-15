@@ -72,15 +72,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         self.editProfTableView.delegate = self
         self.editProfTableView.dataSource = self
         NSNotificationCenter .defaultCenter() .addObserver(self, selector: #selector(EditProfileViewController.keyBoardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
-//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.dismissKeyboard))
-//        view.addGestureRecognizer(tap)
         let tapTableView: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.tableViewTap))
         editProfTableView.addGestureRecognizer(tapTableView)
     }
+    
     func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
     }
+    
     @IBAction func tapGestureRecognizer(sender: AnyObject) {
         view.endEditing(true)
     }
@@ -98,7 +97,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                     channelItemListVC.navigationController?.navigationBarHidden = true
                     self.presentViewController(channelItemListVC, animated: true) { () -> Void in
                     }
-
+                    
                 }
                 else if (swipedIndexPath.section == 1 && swipedIndexPath.row == 3)
                 {
@@ -106,10 +105,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 }
                 else{
                     view.endEditing(true)
-                    
                 }
             }
-           
         }
     }
     
@@ -118,7 +115,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         self.editProfTableView.backgroundView = nil
         self.editProfTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
         addKeyboardObservers()
-        
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -192,10 +188,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
         if(dataSource?.count > 0)
         {
-        dataSource![0][0][displayNameKey] = fullNames
-        dataSource![2][0][privateInfoKey] = emails
-        dataSource![2][1][privateInfoKey] = mobileNo
-        dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
+            dataSource![0][0][displayNameKey] = fullNames
+            dataSource![2][0][privateInfoKey] = emails
+            dataSource![2][1][privateInfoKey] = mobileNo
+            dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
         }
         editProfTableView.reloadData()
     }
@@ -223,7 +219,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let actualImage = userDetails["actual_image"] as! String
         if actualImage != ""
         {
-             let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
             let url: NSURL = convertStringtoURL(thumbUrl)
             if let data = NSData(contentsOfURL: url){
                 let imageDetailsData = (data as NSData?)!
@@ -234,11 +230,11 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
         }
         else{
-           imageForProfile = UIImage(named: "dummyUser")!
+            imageForProfile = UIImage(named: "dummyUser")!
         }
-    
+        
         imageForProfileOld = imageForProfile
-    
+        
         profileInfoOptions = [[displayNameKey:fullNames, userNameKey:userName]]
         accountInfoOptions = [[titleKey:"Upgrade to Premium Account"], [titleKey:"Status"], [titleKey:"Reset Password"], [titleKey:timeZoneOffsetInUTCOriginal]]
         privateInfoOptions = [[privateInfoKey:emails],/*[titleKey:location],*/[privateInfoKey:mobileNo]]
@@ -307,7 +303,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         return searchURL
     }
     
-
     @IBAction func saveClicked(sender: AnyObject) {
         saveButton.hidden = true
         showOverlay()
@@ -342,6 +337,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             self.navigationController?.popViewControllerAnimated(false)
         }
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -515,7 +511,7 @@ extension EditProfileViewController: UITableViewDelegate
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-               
+        
     }
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
@@ -568,7 +564,7 @@ extension EditProfileViewController: UITableViewDelegate
 
 extension EditProfileViewController:UITableViewDataSource
 {
- 
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         switch section
@@ -597,7 +593,6 @@ extension EditProfileViewController:UITableViewDataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
             {
-               // print("inside")
                 var cellDataSource = dataSource[indexPath.section][indexPath.row]
                 switch indexPath.section
                 {
@@ -653,7 +648,6 @@ extension EditProfileViewController:UITableViewDataSource
                         button.frame = CGRectMake(cell.frame.width - 35, cell.frame.height/2 - 10, 25, 25)
                         button.backgroundColor = UIColor.clearColor()
                         button.setImage(image, forState: .Normal)
-                      //  button.addTarget(self, action: #selector(EditProfileViewController.synchronisingTapped(_:)), forControlEvents:.TouchUpInside)
                         cell.addSubview(button)
                     }
                     else
@@ -705,9 +699,6 @@ extension EditProfileViewController:UITableViewDataSource
     {
         self.button.rotate360Degrees(1.0)
         _ = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(EditProfileViewController.timerStop), userInfo: nil, repeats: false)
-
-       
-        
     }
     
     func timerStop()
@@ -732,7 +723,7 @@ extension EditProfileViewController:UITableViewDataSource
         }
         let indexPath = NSIndexPath(forRow: 3, inSection: 1)
         self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-
+        
     }
     func textFieldDidBeginEditing(textField: UITextField) {
         
@@ -867,9 +858,8 @@ extension EditProfileViewController:UITableViewDataSource
             return 0
         }
     }
-    
-   
 }
+
 extension UIView {
     func rotate360Degrees(duration: CFTimeInterval , completionDelegate: AnyObject? = nil) {
         let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")

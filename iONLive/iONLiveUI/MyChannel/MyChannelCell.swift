@@ -9,7 +9,6 @@ class MyChannelCell: UITableViewCell {
     @IBOutlet weak var channelNameLabel: UILabel!
     @IBOutlet var editChanelNameTextField: UITextField!
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         channelNameLabel.numberOfLines = 1
@@ -19,7 +18,6 @@ class MyChannelCell: UITableViewCell {
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
     }
     
     @IBAction func edited(sender: AnyObject) {

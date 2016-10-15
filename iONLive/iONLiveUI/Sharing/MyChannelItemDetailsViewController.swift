@@ -9,7 +9,6 @@ class MyChannelItemDetailsViewController: UIViewController {
     var operationQueueObjInSharingImageList = NSOperationQueue()
     var operationInSharingImageList = NSBlockOperation()
     
-    
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
     

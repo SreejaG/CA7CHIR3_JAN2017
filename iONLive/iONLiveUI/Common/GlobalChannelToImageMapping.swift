@@ -92,8 +92,6 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let channelMediaDetailId = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-//                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
-//                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 var vDuration = String()
                 if(mediaType == "video"){
@@ -103,8 +101,6 @@ class GlobalChannelToImageMapping: NSObject {
                 else{
                     vDuration = ""
                 }
-//                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
-//                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
                 imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
@@ -263,13 +259,8 @@ class GlobalChannelToImageMapping: NSObject {
                         let time2 = Int(p2[mediaIdKey] as! String)
                         return time1 > time2
                     })
-                
-//                    let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
-                    
                     let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
-                    
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                     
                     if chanName == "Archive"
@@ -338,10 +329,8 @@ class GlobalChannelToImageMapping: NSObject {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
                 if chanIdChk == selectedChanelId
                 {
-//                    let thumbURL = GlobalChannelImageDict[selectedChanelId]![0][tImageURLKey] as! String
                     let mediaIdForFilePath = "\(GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String)thumb"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageURLKey] = thumbURL
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }
             }
@@ -452,12 +441,9 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 if GlobalChannelImageDict[chanelId]!.count > 0
                 {
-                 //   thumbURL = GlobalChannelImageDict[chanelId]![0][tImageURLKey] as! String
                     mediaIdForFilePath = "\(GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String)thumb"
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = thumbURL
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }else{
-                 //   GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = "empty"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
                 }
                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[chanelId]!.count)"

@@ -14,12 +14,12 @@ class ChannelItemListViewController: UIViewController {
     @IBOutlet var backButton: UIButton!
     
     @IBOutlet var bottomView: UIView!
+    
     static let identifier = "ChannelItemListViewController"
     
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
-    
     let cameraController = IPhoneCameraViewController()
     
     var operationQueueObjInChannelImageList = NSOperationQueue()
@@ -85,7 +85,6 @@ class ChannelItemListViewController: UIViewController {
                     let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
                     totalCount = filteredData.count
                 }
-                
                 if totalCount > 0
                 {
                     selectionButton.hidden = false
@@ -333,8 +332,6 @@ class ChannelItemListViewController: UIViewController {
         }
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)
-            
-            
             showOverlay()
             selectionButton.hidden = true
             imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: selected, channelId: channelIds, success: { (response) -> () in
@@ -543,7 +540,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             {
                 self.showOverlay()
                 self.channelItemCollectionView.alpha = 0.4
-             
+                
                 var imageForProfile : UIImage = UIImage()
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                 let savingPath = "\(parentPath)/\(userId)Profile"
