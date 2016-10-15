@@ -160,6 +160,7 @@ static NSMutableDictionary * gHistory;
     NSInputStream *inputStream;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
+    UrlManager *urlManager;
     
 }
 
@@ -217,8 +218,7 @@ UIPanGestureRecognizer *afterPan;
     return obj1;
 }
 
-+ (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
-                             channelName: (NSString *) channelname
++ (id) movieViewControllerWithImageVideo:(NSString *) channelname
                                channelId: (NSString *) channelId
                                 userName: (NSString *) username
                                mediaType: (NSString *) mediaType
@@ -231,7 +231,7 @@ UIPanGestureRecognizer *afterPan;
                            selectedItem : (int) selectedItem
                            pageIndicator:(int)pageIndicator
 {
-    obj1 = [[MovieViewController alloc]initWithImageVideo:mediaUrl channelName:channelname channelId: channelId userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr selectedItem:selectedItem pageIndicator: pageIndicator];
+    obj1 = [[MovieViewController alloc]initWithImageVideo:channelname channelId: channelId userName:username mediaType:mediaType profileImage:profileImage VideoImageUrl:VideoImageUrl notifType:notifType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr selectedItem:selectedItem pageIndicator: pageIndicator];
     return obj1;
 }
 
@@ -296,8 +296,7 @@ UIPanGestureRecognizer *afterPan;
     return self;
 }
 
-- (id) initWithImageVideo: (NSString *) mediaUrl
-              channelName: (NSString *) channelname
+- (id) initWithImageVideo: (NSString *) channelname
                 channelId: (NSString *) channelId
                  userName: (NSString *) username
                 mediaType: (NSString *) mediaType
@@ -383,24 +382,25 @@ UIPanGestureRecognizer *afterPan;
             SetUpView *setUpObj = [[SetUpView alloc]init];
             totalCount = (int)[setUpObj getMediaCount:channelIdSelected];
         }
-        [self setGUIChanges:mediaUrl mediaType:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
+        
+        [self setGUIChanges:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl];
     }
     return self;
 }
 
 
--(void) setGUIChanges:(NSString *) mediaUrl
-            mediaType: (NSString *) mediaType
+-(void) setGUIChanges: (NSString *) mediaType
               mediaId: (NSString *) mediaId
              timeDiff: (NSString *) timeDiff
          likeCountStr: (NSString *) likeCountStr
             notifType: (NSString *) notifType
         VideoImageUrl: (UIImage *) VideoImageUrl
 {
+    urlManager = [UrlManager sharedInstance];
     [self setUpDefaultValues];
     [self setUpViewForImageVideo];
     likeCount.text = likeCountStr;
-    
+
     if([mediaType  isEqual: @"live"]){
         typeMedia.textColor = [UIColor redColor];
         typeMedia.text = mediaType;
@@ -413,7 +413,7 @@ UIPanGestureRecognizer *afterPan;
     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     [standardDefaults setValue:likeCountStr forKey:@"likeCountFlag"];
     
-    mediaUrlForReplay = mediaUrl;
+    mediaUrlForReplay = [urlManager getFullImageForMedia:mediaId userName:userId accessToken:accessToken];
     notificationTypes = notifType;
     notificationType = @"LIKE";
     mediaDetailId = mediaId;
@@ -452,7 +452,7 @@ UIPanGestureRecognizer *afterPan;
     else{
         videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
-        [self setUpImageVideo:mediaType mediaUrl:mediaUrl mediaDetailId:mediaDetailId];
+        [self setUpImageVideo:mediaType mediaUrl:mediaUrlForReplay mediaDetailId:mediaDetailId];
     }
 }
 
@@ -919,15 +919,16 @@ UIPanGestureRecognizer *afterPan;
             {
                 if (indexForSwipe != -1)
                 {
-                    mediaURLChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
+//                    GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
                     mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
                     mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
+//                    mediaURLChk = [urlManager getFullImageForMedia:mediaIdChk userName:userId accessToken:accessToken];
                     NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
                     timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
                     likeCountStrChk = @"0";
                     notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
                     VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
-                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                    [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
                 }
                 else{
                     swipeFlag = false;
@@ -981,7 +982,7 @@ UIPanGestureRecognizer *afterPan;
                     [activityIndicatorProfile stopAnimating];
                     [activityIndicatorProfile startAnimating];//to start animating
                     }
-                    mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
+//                    mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
                     mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
                     mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
                     NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
@@ -1002,7 +1003,7 @@ UIPanGestureRecognizer *afterPan;
                         [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
                     }
                     
-                    [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+                    [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
                 }
                 else{
                     swipeFlag = false;
@@ -2860,7 +2861,7 @@ UIPanGestureRecognizer *afterPan;
     
     if(screenNumber == 0)
     {
-        mediaURLChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
+//        mediaURLChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
         mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
         mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
         NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
@@ -2868,11 +2869,11 @@ UIPanGestureRecognizer *afterPan;
         likeCountStrChk = @"0";
         notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
         VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
-        [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+        [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
     }
     else
     {
-        mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
+//        mediaURLChk = streamORChannelDict[indexForSwipe][@"actualImage"];
         mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
         mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
         NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
@@ -2892,7 +2893,7 @@ UIPanGestureRecognizer *afterPan;
             [setUpObj getLikeCount:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
         }
         
-        [self setGUIChanges:mediaURLChk mediaType:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
+        [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk];
     }
 }
 

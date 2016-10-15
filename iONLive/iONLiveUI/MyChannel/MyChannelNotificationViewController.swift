@@ -30,12 +30,15 @@ class MyChannelNotificationViewController: UIViewController {
     var operationQueueObjInNotif = NSOperationQueue()
     var operationInNotif = NSBlockOperation()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    var userId = String()
+    var accessToken = String()
     
     @IBOutlet var notifImage: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let defaults = NSUserDefaults .standardUserDefaults()
+       
         if let notifFlag = defaults.valueForKey("notificationArrived")
         {
             if notifFlag as! String == "0"
@@ -76,11 +79,12 @@ class MyChannelNotificationViewController: UIViewController {
         channelDataSource.removeAll()
         mediaDataSource.removeAll()
         fulldataSource.removeAll()
-        let defaults = NSUserDefaults .standardUserDefaults()
+        
         defaults.setValue("0", forKey: "notificationFlag")
         
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
         getNotificationDetails(userId, token: accessToken)
     }
     
@@ -216,15 +220,15 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let notifType = element["notification_type"] as! String
                     if(notifType.lowercaseString == "likes"){
-                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
-                        mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+//                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
+                        mediaThumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
                     }
                     else{
                         mediaThumbUrl = "nomedia"
                     }
+                    let userName = element["userName"] as! String
                     
-                    let profileImageNameBeforeNullChk =  element["profile_image_thumbnail"]
-                    let profileImageName = nullToNil(profileImageNameBeforeNullChk) as! String
+                    let profileImageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                     
                     let notTime = element["created_time_stamp"] as! String
                     let timeDiff = getTimeDifference(notTime)

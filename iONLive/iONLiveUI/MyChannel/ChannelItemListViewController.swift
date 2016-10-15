@@ -21,7 +21,6 @@ class ChannelItemListViewController: UIViewController {
     let channelManager = ChannelManager.sharedInstance
     
     let cameraController = IPhoneCameraViewController()
-    let defaults = NSUserDefaults .standardUserDefaults()
     
     var operationQueueObjInChannelImageList = NSOperationQueue()
     var operationInChannelImageList = NSBlockOperation()
@@ -41,6 +40,7 @@ class ChannelItemListViewController: UIViewController {
     
     var channelId:String!
     var channelName:String!
+    
     var userId : String = String()
     var accessToken: String = String()
     
@@ -51,9 +51,13 @@ class ChannelItemListViewController: UIViewController {
     
     var NoDatalabelFormyChanelImageList : UILabel = UILabel()
     
+    let defaults = NSUserDefaults.standardUserDefaults()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         bottomView.hidden = true
         deleteButton.hidden = true
         addButton.hidden = true
@@ -228,11 +232,10 @@ class ChannelItemListViewController: UIViewController {
                 FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            let deviceToken = self.defaults.valueForKey("deviceToken") as! String
+            self.defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            self.defaults.setValue(deviceToken, forKey: "deviceToken")
+            self.defaults.setObject(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
             let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
@@ -330,9 +333,7 @@ class ChannelItemListViewController: UIViewController {
         }
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            
             
             showOverlay()
             selectionButton.hidden = true
@@ -538,8 +539,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             {
                 self.showOverlay()
                 self.channelItemCollectionView.alpha = 0.4
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
+             
                 var imageForProfile : UIImage = UIImage()
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                 let savingPath = "\(parentPath)/\(userId)Profile"
@@ -558,8 +558,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 let index = Int32(indexPath.row)
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][fImageURLKey] as! String, channelName: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0) as! MovieViewController
+                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0) as! MovieViewController
                     self.presentViewController(vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemCollectionView.alpha = 1.0

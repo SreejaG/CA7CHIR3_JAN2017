@@ -1,4 +1,5 @@
 
+import UIKit
 import Foundation
 class UrlManager : NSObject {
     
@@ -22,10 +23,29 @@ class UrlManager : NSObject {
         let userProfileImageURL = baseUrl+"/api/v1/imageUrl/thumb/profileImage/"
         return userProfileImageURL
     }
-    func getThumbImageBaseURL() -> (String)
+    
+    func getMediaThumbImageBaseURL() -> (String)
     {
-        let getThumbImageBaseURL = baseUrl+"/api/v1/imageUrl/thumb/media/"
-        return getThumbImageBaseURL
+        let getMediaThumbImageBaseURL = baseUrl+"/api/v1/imageUrl/thumb/media/"
+        return getMediaThumbImageBaseURL
+    }
+    
+    func getThumbImageForMedia(mediaId : String, userName: String, accessToken: String) -> (String)
+    {
+        let getThumbImageForMedia = getMediaThumbImageBaseURL() + mediaId + "/" + userName + "/" + accessToken
+        return getThumbImageForMedia
+    }
+    
+    func getMediaFullImageBaseURL() -> (String)
+    {
+        let getMediaFullImageBaseURL = baseUrl+"/api/v1/imageUrl/"
+        return getMediaFullImageBaseURL
+    }
+    
+    func getFullImageForMedia(mediaId : String, userName: String, accessToken: String) -> (String)
+    {
+        let getFullImageForMedia = getMediaThumbImageBaseURL() + mediaId + "/" + userName + "/" + accessToken
+        return getFullImageForMedia
     }
     func getProfileURL(userId: String) -> (String)
     {
@@ -79,6 +99,11 @@ class UrlManager : NSObject {
         return channelAPI
     }
     
+    func channelOwnerAPIUrl() -> String{
+        let channelOwnerAPI = baseUrl+"/api/v1/media/owner"
+        return channelOwnerAPI
+    }
+    
     func profileImageAPIUrl() -> String{
         let profileImageAPI = baseUrl+"/api/v1/profileImage"
         return profileImageAPI
@@ -98,6 +123,12 @@ class UrlManager : NSObject {
     {
         let getchannelMediaDetailsAPI = baseUrl+"/api/v1/media" + "/" + channelId + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
         return getchannelMediaDetailsAPI
+    }
+    
+    func getOwnerChannelMediaDetails(channelId : String, userName: String, accessToken: String , limit : String , offset : String) -> String
+    {
+        let getOwnerChannelMediaDetailsAPI = channelOwnerAPIUrl() + "/" + channelId + "/"  + userName + "/" + accessToken + "/" + limit + "/" + offset
+        return getOwnerChannelMediaDetailsAPI
     }
     
     func getSubscribedChannelMediaDetails(userName: String, accessToken: String , limit : String , offset : String) -> String

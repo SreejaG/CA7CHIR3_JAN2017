@@ -44,7 +44,7 @@ import UIKit
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
-                self.setChannelDetails()
+//                self.setChannelDetails()
             })
         }
         else

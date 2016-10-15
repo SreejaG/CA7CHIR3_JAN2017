@@ -149,6 +149,34 @@ class ImageUpload: NSObject {
         })
     }
     
+    func getOwnerChannelMediaDetails(channelId : String , userName: String, accessToken: String, limit: String, offset: String , success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    {
+        let requestManager = RequestManager.sharedInstance
+        requestManager.httpManager().GET(UrlManager.sharedInstance.getOwnerChannelMediaDetails(channelId, userName: userName, accessToken: accessToken, limit: limit, offset: offset), parameters: nil, success: { (operation, response) -> Void in
+            //Get and parse the response
+            if let responseObject = response as? [String:AnyObject]
+            {
+                success?(response: responseObject)
+            }
+            else
+            {
+                //The response did not match the form we expected, error/fail
+                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+            }
+            
+            }, failure: { (operation, error) -> Void in
+                
+                var failureErrorCode:String = ""
+                //get the error code from API if any
+                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
+                {
+                    failureErrorCode = errorCode
+                }
+                //The credentials were wrong or the network call failed
+                failure?(error: error, code:failureErrorCode)
+        })
+    }
+    
     func getSubscribedChannelMediaDetails(userName: String, accessToken: String, limit: String, offset: String , success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance

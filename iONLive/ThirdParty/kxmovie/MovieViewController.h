@@ -14,8 +14,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                parameters: (NSDictionary *) parameters
                                 liveVideo:(BOOL) live;
 
-+ (id) movieViewControllerWithImageVideo: (NSString *) mediaUrl
-                             channelName: (NSString *) channelName
++ (id) movieViewControllerWithImageVideo: (NSString *) channelName
                                channelId: (NSString *) channelId
                                 userName: (NSString *) userName
                                mediaType: (NSString *) mediaType

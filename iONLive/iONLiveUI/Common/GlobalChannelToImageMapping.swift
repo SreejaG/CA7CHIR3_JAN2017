@@ -15,6 +15,12 @@ class GlobalChannelToImageMapping: NSObject {
     
     var dataSourceCount : Int = 0
     var filteredcount : Int = Int()
+    
+    let defaults = NSUserDefaults .standardUserDefaults()
+    
+    var userId : String = String()
+    var accessToken : String = String()
+    
     class var sharedInstance: GlobalChannelToImageMapping
     {
         struct Singleton
@@ -55,9 +61,8 @@ class GlobalChannelToImageMapping: NSObject {
     }
     
     func initialise(totalMediaCount : Int, channelid : String){
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         let startValue = "0"
         let endValue = String(totalMediaCount)
         channelDetailId = channelid
@@ -69,7 +74,7 @@ class GlobalChannelToImageMapping: NSObject {
             NSNotificationCenter.defaultCenter().postNotificationName("success", object: channelDetailId)
         }
         else{
-            ImageUpload.sharedInstance.getChannelMediaDetails(channelid , userName: userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) -> () in
+            ImageUpload.sharedInstance.getOwnerChannelMediaDetails(channelid , userName: userId, accessToken: accessToken, limit: endValue, offset: startValue, success: { (response) -> () in
                 self.authenticationSuccessHandler(response,id: channelid)
             }) { (error, message) -> () in
                 return
@@ -87,14 +92,14 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let channelMediaDetailId = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
-                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
+//                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
+//                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
-                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
+//                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
+//                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0, tImageURLKey:mediaUrl,fImageURLKey:actualUrl])
+                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0])
             }
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
@@ -132,7 +137,7 @@ class GlobalChannelToImageMapping: NSObject {
                     imageForMedia = mediaImageFromFile!
                 }
                 else{
-                    let mediaUrl = localDataSource[k][tImageURLKey] as! String
+                    let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
                     if(mediaUrl != ""){
                         let url: NSURL = convertStringtoURL(mediaUrl)
                         downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -244,12 +249,14 @@ class GlobalChannelToImageMapping: NSObject {
                         let time2 = Int(p2[mediaIdKey] as! String)
                         return time1 > time2
                     })
+                
+//                    let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
                     
-                    let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
-                    let mediaIdForFilePath = "\(GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String)thumb"
+                    let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath, thumbURL: thumbURL)
+                    
+//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                     
                     if chanName == "Archive"
                     {
@@ -317,11 +324,11 @@ class GlobalChannelToImageMapping: NSObject {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
                 if chanIdChk == selectedChanelId
                 {
-                    let thumbURL = GlobalChannelImageDict[selectedChanelId]![0][tImageURLKey] as! String
+//                    let thumbURL = GlobalChannelImageDict[selectedChanelId]![0][tImageURLKey] as! String
                     let mediaIdForFilePath = "\(GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String)thumb"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageURLKey] = thumbURL
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath, thumbURL: thumbURL)
+//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageURLKey] = thumbURL
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }
             }
         }
@@ -332,10 +339,11 @@ class GlobalChannelToImageMapping: NSObject {
         })
     }
     
-    func downloadLatestMedia(mediaIdForFilePath: String, thumbURL : String) -> UIImage
+    func downloadLatestMedia(mediaId: String) -> UIImage
     {
         var imageForMedia : UIImage = UIImage()
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+        let mediaIdForFilePath = "\(mediaId)thumb"
         let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
         let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
         if fileExistFlag == true{
@@ -343,27 +351,26 @@ class GlobalChannelToImageMapping: NSObject {
             imageForMedia = mediaImageFromFile!
         }
         else{
-            if(thumbURL != ""){
-                let url = convertStringtoURL(thumbURL)
-                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                    if(result != UIImage()){
-                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                            
-                        }
-                        else{
-                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                        }
-                        imageForMedia = result
+            let thumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
+            let url = convertStringtoURL(thumbUrl)
+            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                if(result != UIImage()){
+                    let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                        
                     }
                     else{
-                        imageForMedia =  UIImage(named: "thumb12")!
+                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
                     }
-                })
-            }
+                    imageForMedia = result
+                }
+                else{
+                    imageForMedia =  UIImage(named: "thumb12")!
+                }
+            })
         }
         return imageForMedia
     }
@@ -386,7 +393,6 @@ class GlobalChannelToImageMapping: NSObject {
     func deleteMediaFromParticularChannel(chanelId : String,mediaIds: NSMutableArray)
     {
         var selectedIndex : [Int] = [Int]()
-        var thumbURL : String = String()
         var mediaIdForFilePath : String = String()
         
         for i in 0 ..< mediaIds.count
@@ -432,12 +438,12 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 if GlobalChannelImageDict[chanelId]!.count > 0
                 {
-                    thumbURL = GlobalChannelImageDict[chanelId]![0][tImageURLKey] as! String
+                 //   thumbURL = GlobalChannelImageDict[chanelId]![0][tImageURLKey] as! String
                     mediaIdForFilePath = "\(GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String)thumb"
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = thumbURL
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath, thumbURL: thumbURL)
+//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = thumbURL
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }else{
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = "empty"
+                 //   GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = "empty"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
                 }
                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[chanelId]!.count)"
