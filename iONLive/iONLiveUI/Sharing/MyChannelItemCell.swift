@@ -7,7 +7,7 @@ class MyChannelItemCell: UICollectionViewCell
     
     @IBOutlet var channelImageView: UIImageView!
     @IBOutlet var videoPlayIcon: UIImageView!
-
+    @IBOutlet var videoDurationLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
     }

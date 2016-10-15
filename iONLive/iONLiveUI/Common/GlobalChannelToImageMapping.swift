@@ -97,7 +97,8 @@ class GlobalChannelToImageMapping: NSObject {
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 var vDuration = String()
                 if(mediaType == "video"){
-                    vDuration = responseArr[index].valueForKey("video_duration") as! String
+                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
+                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
                 }
                 else{
                     vDuration = ""
