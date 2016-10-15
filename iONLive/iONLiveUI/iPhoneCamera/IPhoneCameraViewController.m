@@ -887,7 +887,9 @@ int timerCount = 0;
     NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     [[NSUserDefaults standardUserDefaults] setObject:mediaSharedCount forKey:@"mediaSharedCount"] ;
-    
+    NSString * latestMediaURL = [[UrlManager sharedInstance] getMediaURL:[NSString stringWithFormat:@"%@",latestCapturedMediaThumbnail]];
+    NSString * latestSharedURL = [[UrlManager sharedInstance] getMediaURL:[NSString stringWithFormat:@"%@",latestSharedMediaThumbnail]];
+    NSLog(@"%@", latestSharedURL);
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
         if(userImages.count > 0){
@@ -922,7 +924,9 @@ int timerCount = 0;
     
     if(takePictureFlag == false){
         dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestCapturedMediaThumbnail]];
+            
+           
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestMediaURL]];
             
             if ( data == nil ){
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -951,7 +955,7 @@ int timerCount = 0;
     if([mediaSharedCount  isEqual: @"0"])
     {
         dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedURL]];
             if ( data == nil )
                 return;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -978,7 +982,7 @@ int timerCount = 0;
             _countLabel.hidden= true;
             [self.view bringSubviewToFront:self.latestSharedMediaImage];
             dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedMediaThumbnail]];
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestSharedURL]];
                 if ( data == nil )
                     return;
                 dispatch_async(dispatch_get_main_queue(), ^{

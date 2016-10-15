@@ -128,26 +128,30 @@ class SharedChannelDetailsAPI: NSObject {
             let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
+                
+                print(responseArr)
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
+              //  let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
+               // let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
                 let infiniteScrollId  = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-                var notificationType : String = String()
+                var notificationType : String = " likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
-                {
-                    if notifType != ""
-                    {
-                        notificationType = notifType.lowercaseString
-                    }
-                    else{
-                        notificationType = "shared"
-                    }
-                }
-                else{
-                    notificationType = "shared"
-                }
+//                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
+//                {
+//                    if notifType != ""
+//                    {
+//                        notificationType = notifType.lowercaseString
+//                    }
+//                    else{
+//                        notificationType = "shared"
+//                    }
+//                }
+//                else{
+//                    notificationType = "shared"
+//                }
+                let actualUrl =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
+                let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time])
             }
             
@@ -156,28 +160,29 @@ class SharedChannelDetailsAPI: NSObject {
             for liveIndex in 0  ..< responseArrLive.count 
             {
                 let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
-                let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
+              //  let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
                 let mediaId = responseArrLive[liveIndex].valueForKey("live_stream_detail_id")?.stringValue
                 let dateFormatter = NSDateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 dateFormatter.timeZone = NSTimeZone(name: "UTC")
                 let currentDate = dateFormatter.stringFromDate(NSDate())
-                var notificationType : String = String()
+                var notificationType : String = ""
                 
-                if let notifType =   responseArrLive[liveIndex]["notification_type"] as? String
-                {
-                    if notifType != ""
-                    {
-                        notificationType = notifType.lowercaseString
-                    }
-                    else{
-                        notificationType = "shared"
-                    }
-                }
-                else{
-                    notificationType = "shared"
-                }
-                
+//                if let notifType =   responseArrLive[liveIndex]["notification_type"] as? String
+//                {
+//                    if notifType != ""
+//                    {
+//                        notificationType = notifType.lowercaseString
+//                    }
+//                    else{
+//                        notificationType = "shared"
+//                    }
+//                }
+//                else{
+//                    notificationType = "shared"
+//                }
+                let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
+
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in

@@ -67,31 +67,32 @@ class GlobalStreamList: NSObject {
             for index in 0 ..< responseArr.count
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyMedia")
+                print(responseArr)
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let userid = responseArr[index].valueForKey(userIdKey) as! String
                 let time = responseArr[index].valueForKey("last_updated_time_stamp") as! String
                 let channelName =  responseArr[index].valueForKey("channel_name") as! String
-                let channelIdSelected =  responseArr[index].valueForKey("ch_detail_id")?.stringValue
-                var notificationType : String = String()
-                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
-                {
-                    if notifType != ""
-                    {
-                        notificationType = notifType.lowercaseString
-                    }
-                    else{
-                        notificationType = "shared"
-                    }
-                }
-                else{
-                    notificationType = "shared"
-                }
-                
-                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
+                let channelIdSelected =  responseArr[index].valueForKey("channel_detail_id")?.stringValue
+                let notificationType : String = "likes"
+//                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
+//                {
+//                    if notifType != ""
+//                    {
+//                        notificationType = notifType.lowercaseString
+//                    }
+//                    else{
+//                        notificationType = "shared"
+//                    }
+//                }
+//                else{
+//                    notificationType = "shared"
+//                }
+               
+                let actualUrlBeforeNullChk =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
                 let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 
-                let mediaUrlBeforeNullChk =  responseArr[index].valueForKey("thumbnail_name_SignedUrl")
+                let mediaUrlBeforeNullChk =  UrlManager.sharedInstance.getMediaURL(mediaId!)
                 let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let pulltorefreshId = responseArr[index].valueForKey(pullTorefreshKey)?.stringValue
                 imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time])

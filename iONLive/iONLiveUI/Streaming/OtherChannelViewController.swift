@@ -523,7 +523,7 @@ class OtherChannelViewController: UIViewController  {
     {
         if let json = response as? [String: AnyObject]
         {
-            likeCountSelectedIndex = json["likeCount"] as! String
+            likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
         loadmovieViewController(indexpathRow, likeCount: likeCountSelectedIndex)
     }

@@ -41,6 +41,21 @@ let mediaTypeKey = "media_type"
 let progressKey = "upload_progress"
 let channelMediaIdKey = "channel_media_detail_id"
 
+// channel page
+
+let ch_channelIdkey = "ch_detail_id"
+let ch_channelNameKey = "channel_name"
+let sharedMediaCount = "total_no_media_shared"
+let totalNoShared = "totalNo"
+let timeStamp = "created_time_stamp"
+let lastUpdatedTimeStamp = "last_updated_time_stamp"
+let usernameKey = "user_name"
+let profileImageKey = "profile_image_thumbnail"
+let liveStreamStatus = "liveChannel"
+let isWatched = "isWatched"
+let streamTockenKey = "wowza_stream_token"
+let mediaImageKey = "mediaImage"
+let thumbImageKey = "thumbImage"
 @objc enum SnapCamSelectionMode : Int {
     
     case LiveStream = 0

@@ -986,23 +986,23 @@ class StreamsListViewController: UIViewController{
                     let channelname = element[channelNameKey] as! String
                     let mediaId = element["live_stream_detail_id"]?.stringValue
                     let pulltorefresh = element["channel_live_stream_detail_id"]?.stringValue
-                    var notificationType : String = String()
-                    
-                    if let notifType =  element["notification_type"] as? String
-                    {
-                        if notifType != ""
-                        {
-                            notificationType = notifType.lowercaseString
-                        }
-                        else{
-                            notificationType = "shared"
-                        }
-                    }
-                    else{
-                        notificationType = "shared"
-                    }
+                    let notificationType : String = ""
+//                    if let notifType =  element["notification_type"] as? String
+//                    {
+//                        if notifType != ""
+//                        {
+//                            notificationType = notifType.lowercaseString
+//                        }
+//                        else{
+//                            notificationType = "shared"
+//                        }
+//                    }
+//                    else{
+//                        notificationType = "shared"
+//                    }
+                    let thumbUrlBeforeNullChk =  UrlManager.sharedInstance.getMediaURL(mediaId!)
                     var imageForMedia : UIImage = UIImage()
-                    let thumbUrlBeforeNullChk = element["live_stream_signedUrl"]
+                    //let thumbUrlBeforeNullChk = element["live_stream_signedUrl"]
                     let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
                     if(thumbUrl != ""){
                         let url: NSURL = convertStringtoURL(thumbUrl)
@@ -1145,7 +1145,7 @@ class StreamsListViewController: UIViewController{
     {
         if let json = response as? [String: AnyObject]
         {
-            likeCountSelectedIndex = json["likeCount"] as! String
+            likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
         loadmovieViewController(indexpathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
     }
