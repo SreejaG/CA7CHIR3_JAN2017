@@ -69,6 +69,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaTypeSelected : String = String()
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
+    var customView = CustomInfiniteIndicator()
+    
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
             static let instance = PhotoViewerViewController()
@@ -128,6 +130,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.deletButton.hidden = false
                     self.photoThumpCollectionView.reloadData()
                 })
+                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
+                    if(totalCount < 10){
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.photoThumpCollectionView.userInteractionEnabled = false
+                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 10, 20, 20))
+                            self.photoThumpCollectionView.addSubview(self.customView)
+                            self.customView.startAnimating()
+                        })
+                    }
+                }
             }
             else if totalCount <= 0
             {
@@ -449,6 +461,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.photoThumpCollectionView.userInteractionEnabled = true
+            self.customView.stopAnimationg()
+            self.customView.removeFromSuperview()
             self.addToButton.hidden = false
             self.deletButton.hidden = false
             self.photoThumpCollectionView.reloadData()
