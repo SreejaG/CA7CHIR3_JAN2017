@@ -103,6 +103,15 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alert("Re-enter Password Empty", message: "Please Re-enter your password")
     }
     
+    func probelmTitleEmpty ()
+    {
+        alert("Problem Title Empty", message: "Please enter a Title for Problem")
+    }
+    
+    func descOfProblemEmpty()
+    {
+        alert("Description Empty", message: "Please enter a brief Description")
+    }
     
     func signUpError() {
         alert(signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")

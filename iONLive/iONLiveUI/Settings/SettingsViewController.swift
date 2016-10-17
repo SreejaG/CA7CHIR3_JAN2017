@@ -169,7 +169,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         let  headerCell = tableView.dequeueReusableCellWithIdentifier("SettingsHeaderTableViewCell") as! SettingsHeaderTableViewCell
-        
+        headerCell.userInteractionEnabled = false
         switch (section) {
         case 0:
             headerCell.headerTitle.text = "CAMERA"
@@ -231,9 +231,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsTableViewCell", forIndexPath:indexPath) as! SettingsTableViewCell
                 cell.titleLabel.text = cellDataSource[optionTitle]
                 cell.accessryLabel.text = cellDataSource[accessryText]
-                if((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9))
+                if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)))
                 {
-                    
+                    cell.backgroundColor = UIColor.clearColor()
+                    cell.userInteractionEnabled = true
                 }
                 else{
                     cell.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
@@ -295,9 +296,29 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             default:
                 break
             }
+        case 2:
+            switch indexPath.row
+            {
+            case 0:
+                loadEditProfileView()
+                break
+            case 1:
+                loadReportProblemView()
+                break
+            default:
+                break
+            }
+
         default:
             break
         }
+    }
+    
+    func loadReportProblemView()
+    {
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let reportVC = storyBoard.instantiateViewControllerWithIdentifier(ReportAProblemViewController.identifier) as! ReportAProblemViewController
+        self.navigationController?.pushViewController(reportVC, animated: true)
     }
     
     func loadEditProfileView()

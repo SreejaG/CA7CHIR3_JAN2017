@@ -624,6 +624,134 @@
             </objects>
             <point key="canvasLocation" x="1711" y="159"/>
         </scene>
+        <!--ReportA Problem View Controller-->
+        <scene sceneID="sRU-Gi-jJn">
+            <objects>
+                <viewController storyboardIdentifier="ReportAProblemViewController" id="Hr9-wx-z2w" customClass="ReportAProblemViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="5lp-Mz-Cea"/>
+                        <viewControllerLayoutGuide type="bottom" id="WzZ-ZT-OO4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Tar-Zp-VFk">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="azF-P9-lvB" userLabel="mainView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder=" Problem" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fGO-fM-H1u">
+                                        <rect key="frame" x="40" y="120" width="520" height="36"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="36" id="eEu-lY-lt0"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                    </textField>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Ai-WP-ANw" userLabel="TopView">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pyV-IQ-gVm">
+                                                <rect key="frame" x="5" y="24" width="40" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="40" id="EyM-pE-fTm"/>
+                                                    <constraint firstAttribute="height" constant="40" id="S6v-Ka-23m"/>
+                                                </constraints>
+                                                <state key="normal" image="white_back"/>
+                                                <connections>
+                                                    <action selector="backButtonClicked:" destination="6V6-yG-NJE" eventType="touchUpInside" id="O8A-E0-yng"/>
+                                                    <action selector="didTapBackButton:" destination="0Ke-Fa-xIi" eventType="touchUpInside" id="5wY-of-k95"/>
+                                                    <action selector="didTapBackButton:" destination="Hr9-wx-z2w" eventType="touchUpInside" id="a6G-7P-Xwa"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="REPORT A PROBLEM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EXF-jt-Hxe">
+                                                <rect key="frame" x="0.0" y="32" width="600" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NuF-bJ-RVC">
+                                                <rect key="frame" x="536" y="27" width="54" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="32" id="JUW-Co-aGl"/>
+                                                    <constraint firstAttribute="width" constant="54" id="h5Q-Hf-o1m"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                                <state key="normal" title="Done">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="didTapSaveButton:" destination="Hr9-wx-z2w" eventType="touchUpInside" id="L7M-z7-ozt"/>
+                                                    <action selector="doneClicked:" destination="6V6-yG-NJE" eventType="touchUpInside" id="i9N-pO-w2y"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="NuF-bJ-RVC" secondAttribute="trailing" constant="10" id="0F2-WA-Qp8"/>
+                                            <constraint firstItem="EXF-jt-Hxe" firstAttribute="leading" secondItem="5Ai-WP-ANw" secondAttribute="leading" id="HHi-9Y-TNa"/>
+                                            <constraint firstAttribute="bottom" secondItem="pyV-IQ-gVm" secondAttribute="bottom" id="JCa-hI-vjd"/>
+                                            <constraint firstAttribute="bottom" secondItem="EXF-jt-Hxe" secondAttribute="bottom" constant="11" id="JDX-tY-JCi"/>
+                                            <constraint firstItem="NuF-bJ-RVC" firstAttribute="top" secondItem="5Ai-WP-ANw" secondAttribute="top" constant="27" id="PEB-AE-34K"/>
+                                            <constraint firstAttribute="height" constant="64" id="XkH-4J-S4i"/>
+                                            <constraint firstAttribute="bottom" secondItem="NuF-bJ-RVC" secondAttribute="bottom" constant="5" id="cNz-uG-2ik"/>
+                                            <constraint firstAttribute="trailing" secondItem="EXF-jt-Hxe" secondAttribute="trailing" id="cT7-xj-SC9"/>
+                                            <constraint firstItem="pyV-IQ-gVm" firstAttribute="leading" secondItem="5Ai-WP-ANw" secondAttribute="leading" constant="5" id="lZC-ZV-kH6"/>
+                                            <constraint firstItem="pyV-IQ-gVm" firstAttribute="top" secondItem="5Ai-WP-ANw" secondAttribute="top" constant="24" id="lr7-6l-hUI"/>
+                                            <constraint firstItem="EXF-jt-Hxe" firstAttribute="top" secondItem="5Ai-WP-ANw" secondAttribute="top" constant="32" id="p4P-wI-t12"/>
+                                        </constraints>
+                                    </view>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pfY-ek-Kao">
+                                        <rect key="frame" x="40" y="174" width="520" height="179"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="179" id="4ba-d5-lmp"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
+                                    </textView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="pfY-ek-Kao" secondAttribute="trailing" constant="40" id="0db-qs-7QQ"/>
+                                    <constraint firstItem="pfY-ek-Kao" firstAttribute="top" secondItem="fGO-fM-H1u" secondAttribute="bottom" constant="18" id="E5W-5s-VBA"/>
+                                    <constraint firstItem="fGO-fM-H1u" firstAttribute="top" secondItem="5Ai-WP-ANw" secondAttribute="bottom" constant="56" id="GPT-8D-0eq"/>
+                                    <constraint firstItem="pfY-ek-Kao" firstAttribute="leading" secondItem="azF-P9-lvB" secondAttribute="leading" constant="40" id="Icb-18-yjo"/>
+                                    <constraint firstItem="5Ai-WP-ANw" firstAttribute="leading" secondItem="azF-P9-lvB" secondAttribute="leading" id="LLB-n3-8eU"/>
+                                    <constraint firstItem="fGO-fM-H1u" firstAttribute="leading" secondItem="azF-P9-lvB" secondAttribute="leading" constant="40" id="RY9-x9-Ch3"/>
+                                    <constraint firstAttribute="trailing" secondItem="5Ai-WP-ANw" secondAttribute="trailing" id="dSS-iD-I6X"/>
+                                    <constraint firstAttribute="trailing" secondItem="fGO-fM-H1u" secondAttribute="trailing" constant="40" id="gS8-A5-eDC"/>
+                                    <constraint firstItem="5Ai-WP-ANw" firstAttribute="top" secondItem="azF-P9-lvB" secondAttribute="top" id="h2r-5u-dIQ"/>
+                                </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="KRZ-73-nsA" appends="YES" id="UG3-dW-x5Q"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="azF-P9-lvB" secondAttribute="trailing" id="BEM-PG-dO2"/>
+                            <constraint firstItem="azF-P9-lvB" firstAttribute="leading" secondItem="Tar-Zp-VFk" secondAttribute="leading" id="fNX-k1-6Qm"/>
+                            <constraint firstItem="WzZ-ZT-OO4" firstAttribute="top" secondItem="azF-P9-lvB" secondAttribute="bottom" id="oBo-2o-Z0b"/>
+                            <constraint firstItem="azF-P9-lvB" firstAttribute="top" secondItem="Tar-Zp-VFk" secondAttribute="top" id="zOi-bB-xNz"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="descTextView" destination="pfY-ek-Kao" id="Lkl-zj-obF"/>
+                        <outlet property="probelmTitle" destination="fGO-fM-H1u" id="lLW-Fd-sOG"/>
+                        <outlet property="saveButton" destination="NuF-bJ-RVC" id="n2t-kJ-793"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BqY-97-4He" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="KRZ-73-nsA">
+                    <connections>
+                        <action selector="gestureTapped:" destination="Hr9-wx-z2w" id="OyZ-8w-WzM"/>
+                        <outlet property="delegate" destination="Hr9-wx-z2w" id="9or-yD-e9j"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2327" y="153"/>
+        </scene>
         <!--Delete Media Settings View Controller-->
         <scene sceneID="4RC-jV-UkD">
             <objects>

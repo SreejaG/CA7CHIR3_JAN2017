@@ -89,6 +89,12 @@ class UrlManager : NSObject {
         return contactAPI
     }
     
+    func reportProblemAPIUrl() -> (String)
+    {
+        let reportProblemApi = baseUrl + "/api/v1/reportproblem"
+        return reportProblemApi
+    }
+    
     func liveStreamingAPIUrl() -> String{
         let liveStreamingAPI = baseUrl+"/api/v1/livestream"
         return liveStreamingAPI

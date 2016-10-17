@@ -329,7 +329,7 @@ class GlobalChannelToImageMapping: NSObject {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
                 if chanIdChk == selectedChanelId
                 {
-                    let mediaIdForFilePath = "\(GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String)thumb"
+                    let mediaIdForFilePath = GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }
@@ -441,7 +441,7 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 if GlobalChannelImageDict[chanelId]!.count > 0
                 {
-                    mediaIdForFilePath = "\(GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String)thumb"
+                    mediaIdForFilePath = GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }else{
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
