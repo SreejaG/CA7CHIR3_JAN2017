@@ -133,6 +133,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
                     if(totalCount < 10){
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.deletButton.userInteractionEnabled = false
+                            self.addToButton.userInteractionEnabled = false
                             self.photoThumpCollectionView.userInteractionEnabled = false
                             self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 10, 20, 20))
                             self.photoThumpCollectionView.addSubview(self.customView)
@@ -465,6 +467,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             self.photoThumpCollectionView.userInteractionEnabled = true
+            self.deletButton.userInteractionEnabled = true
+            self.addToButton.userInteractionEnabled = true
+
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.addToButton.hidden = false

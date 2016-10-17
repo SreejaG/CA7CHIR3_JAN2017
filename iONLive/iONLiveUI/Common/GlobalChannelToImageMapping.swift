@@ -130,54 +130,56 @@ class GlobalChannelToImageMapping: NSObject {
                 if operationObj.cancelled == true{
                     return
                 }
-                var imageForMedia : UIImage = UIImage()
-                if let mediaIdChk = localDataSource[k][mediaIdKey]
-                {
-                let mediaId = String(mediaIdChk)
-                let mediaIdForFilePath = "\(mediaId)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            
-                            if(result != UIImage()){
-                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                }
-                                else{
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                }
-                                imageForMedia = result
+                if(k < localDataSource.count){
+                    var imageForMedia : UIImage = UIImage()
+                    if let mediaIdChk = localDataSource[k][mediaIdKey]
+                    {
+                        let mediaId = String(mediaIdChk)
+                        let mediaIdForFilePath = "\(mediaId)thumb"
+                        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                        let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                        if fileExistFlag == true{
+                            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                            imageForMedia = mediaImageFromFile!
+                        }
+                        else{
+                            let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
+                            if(mediaUrl != ""){
+                                let url: NSURL = convertStringtoURL(mediaUrl)
+                                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                    
+                                    if(result != UIImage()){
+                                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        }
+                                        else{
+                                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                        }
+                                        imageForMedia = result
+                                    }
+                                    else{
+                                        imageForMedia = UIImage(named: "thumb12")!
+                                    }
+                                })
                             }
                             else{
                                 imageForMedia = UIImage(named: "thumb12")!
                             }
-                        })
+                        }
                     }
                     else{
                         imageForMedia = UIImage(named: "thumb12")!
                     }
-                }
-                }
-                else{
-                    imageForMedia = UIImage(named: "thumb12")!
-                }
-                if localDataSource.count > 0
-                {
-                    if k < localDataSource.count
+                    if localDataSource.count > 0
                     {
-                        localDataSource[k][tImageKey] = imageForMedia
+                        if k < localDataSource.count
+                        {
+                            localDataSource[k][tImageKey] = imageForMedia
+                        }
                     }
                 }
             }
