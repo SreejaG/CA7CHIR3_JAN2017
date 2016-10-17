@@ -104,7 +104,10 @@ import UIKit
             objects.successFromSetUpView(count)
         }
     }
-    
+    func callDelete(obj:MovieViewController, mediaId : NSString)
+    {
+        obj.checkToCloseViewWhileMediaDelete( mediaId as String)
+    }
     func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {
         let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String
@@ -112,10 +115,18 @@ import UIKit
         {
             status = json["status"] as! Int
             let IsLikeSuccess = json["userLikeCountIndicator"] as! String
-            var countint : Int = Int(count)!
-            if(IsLikeSuccess == "TRUE"){
-                countint = countint + 1
+            var countint : Int = Int()
+            if (count != "")
+            {
+                 countint  = Int(count)!
+                if(IsLikeSuccess == "TRUE"){
+                    countint = countint + 1
+                }
             }
+            else{
+                countint = 0
+            }
+         print("liked Count ----\(countint)")
             NSUserDefaults.standardUserDefaults().setValue("\(countint)", forKey: "likeCountFlag")
             obj.successFromSetUpView("\(countint)")
         }

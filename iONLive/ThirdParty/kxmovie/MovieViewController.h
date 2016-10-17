@@ -31,6 +31,8 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) closeView;
 -(void) mediaDeletedErrorMessage;
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
+-(void) checkToCloseViewWhileMediaDelete :(NSString *)mediaId;
+
 @property (readonly) BOOL playing;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;

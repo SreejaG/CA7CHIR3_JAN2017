@@ -131,28 +131,24 @@ class SharedChannelDetailsAPI: NSObject {
                 
                 print(responseArr)
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-              //  let mediaUrl = responseArr[index].valueForKey("thumbnail_name_SignedUrl") as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-               // let actualUrl =  responseArr[index].valueForKey("gcs_object_name_SignedUrl") as! String
                 let infiniteScrollId  = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
                 var notificationType : String = " likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
-//                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
-//                {
-//                    if notifType != ""
-//                    {
-//                        notificationType = notifType.lowercaseString
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
-//                }
-//                else{
-//                    notificationType = "shared"
-//                }
                 let actualUrl =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
                 let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time])
+                
+                var vDuration = String()
+                
+                if(mediaType == "video"){
+                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
+                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
+                }
+                else{
+                    vDuration = ""
+                }
+              
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time,videoDurationKey:vDuration])
             }
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
@@ -160,29 +156,15 @@ class SharedChannelDetailsAPI: NSObject {
             for liveIndex in 0  ..< responseArrLive.count 
             {
                 let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
-              //  let mediaUrl = responseArrLive[liveIndex].valueForKey("signedUrl") as! String
                 let mediaId = responseArrLive[liveIndex].valueForKey("live_stream_detail_id")?.stringValue
                 let dateFormatter = NSDateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 dateFormatter.timeZone = NSTimeZone(name: "UTC")
                 let currentDate = dateFormatter.stringFromDate(NSDate())
                 var notificationType : String = ""
-                
-//                if let notifType =   responseArrLive[liveIndex]["notification_type"] as? String
-//                {
-//                    if notifType != ""
-//                    {
-//                        notificationType = notifType.lowercaseString
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
-//                }
-//                else{
-//                    notificationType = "shared"
-//                }
                 let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
-
+                var vDuration = String()
+                vDuration = ""
                 if(mediaUrl != ""){
                     let url: NSURL = convertStringtoURL(mediaUrl)
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
@@ -190,11 +172,11 @@ class SharedChannelDetailsAPI: NSObject {
                         {
                             if (self.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String != "live")
                             {
-                                self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate], atIndex: 0)
+                                self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
                             }
                         }
                         else{
-                            self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate], atIndex: 0)
+                            self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
                         }
                         NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
                     })
@@ -246,6 +228,11 @@ class SharedChannelDetailsAPI: NSObject {
                 {
                     mediaImage = mediaImage1
                 }
+                else{
+                    
+                    mediaImage = UIImage(named: "thumb12")!
+                }
+
                 completion(result: mediaImage)
             }
             else
@@ -309,7 +296,7 @@ class SharedChannelDetailsAPI: NSObject {
             {
                 if(i < imageDataSource.count)
                 {
-                    self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                    self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String,                videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
                 }
             }
         }

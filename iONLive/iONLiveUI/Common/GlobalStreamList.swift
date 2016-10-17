@@ -75,6 +75,16 @@ class GlobalStreamList: NSObject {
                 let channelName =  responseArr[index].valueForKey("channel_name") as! String
                 let channelIdSelected =  responseArr[index].valueForKey("channel_detail_id")?.stringValue
                 let notificationType : String = "likes"
+                var vDuration = String()
+
+                if(mediaType == "video"){
+                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
+                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
+                }
+                else{
+                    vDuration = ""
+                }
+               
 //                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
 //                {
 //                    if notifType != ""
@@ -95,7 +105,7 @@ class GlobalStreamList: NSObject {
                 let mediaUrlBeforeNullChk =  UrlManager.sharedInstance.getMediaURL(mediaId!)
                 let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let pulltorefreshId = responseArr[index].valueForKey(pullTorefreshKey)?.stringValue
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time])
+                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time,videoDurationKey:vDuration])
             }
             if(imageDataSource.count > 0){
                 operation2 = NSBlockOperation (block: {
@@ -150,11 +160,17 @@ class GlobalStreamList: NSObject {
     {
         var mediaImage : UIImage = UIImage()
         do {
+            
+            
             let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
             if let imageData = data as NSData? {
                 if let mediaImage1 = UIImage(data: imageData)
                 {
                     mediaImage = mediaImage1
+                }
+                else{
+                        
+                    mediaImage = UIImage(named: "thumb12")!
                 }
                 completion(result: mediaImage)
             }
@@ -172,6 +188,8 @@ class GlobalStreamList: NSObject {
         for i in 0 ..< imageDataSource.count
         {
 //            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
+            if imageDataSource.count > 0 && imageDataSource.count > i
+            {
             if imageDataSource[i][mediaIdKey] != nil
             {
                 var imageForMedia : UIImage = UIImage()
@@ -184,7 +202,7 @@ class GlobalStreamList: NSObject {
                     imageForMedia = mediaImageFromFile!
                     if(self.imageDataSource.count > 0)
                     {
-                        self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                        self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
                     }
                 }
                 else{
@@ -205,7 +223,7 @@ class GlobalStreamList: NSObject {
                                         imageForMedia = result
                                         if(self.imageDataSource.count > 0)
                                         {
-                                            self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String])
+                                            self.GlobalStreamDataSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.thumbImageKey:imageForMedia ,self.streamTockenKey:"",self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,self.userIdKey:self.imageDataSource[i][self.userIdKey]!,self.notificationKey:self.imageDataSource[i][self.notificationKey]!,self.timestamp :self.imageDataSource[i][self.timestamp]!,self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.channelNameKey:self.imageDataSource[i][self.channelNameKey]!,self.channelIdkey:self.imageDataSource[i][self.channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
                                         }
                                         
                                         FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
@@ -220,6 +238,7 @@ class GlobalStreamList: NSObject {
                     }
                 }
             }
+        }
         }
         if(GlobalStreamDataSource.count > 0){
             GlobalStreamDataSource.sortInPlace({ p1, p2 in

@@ -42,16 +42,18 @@ class OtherChannelViewController: UIViewController  {
     var scrollObj = UIScrollView()
     var NoDatalabel : UILabel = UILabel()
     var liveStreamFlag : Bool = false
-    
+    var vc : MovieViewController = MovieViewController()
+
     @IBOutlet weak var notificationLabel: UILabel!
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
+            NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectDeleted), name: "DeletedObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.checkCountIncrementInSelectedChannel), name: "CountIncrementedPushNotification", object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.dismissFullView), name: "ViewMediaDeleted", object:nil)
         self.notificationLabel.hidden = true
         self.refreshControl = UIRefreshControl()
         self.channelItemsCollectionView.alwaysBounceVertical = true
@@ -79,10 +81,20 @@ class OtherChannelViewController: UIViewController  {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+     //   NSNotificationCenter.defaultCenter().removeObserver(self)
         channelItemsCollectionView.alpha = 1.0
     }
-    
+    func dismissFullView(notif: NSNotification)
+    {
+        let mediaId = notif.object as! String
+        let obj : SetUpView = SetUpView()
+      //  vc.mediaDeletedErrorMessage()
+        obj.callDelete(vc, mediaId: mediaId)
+        dispatch_async(dispatch_get_main_queue()) {
+         //   self.channelItemsCollectionView.reloadData()
+        }
+        
+    }
     func pushNotificationUpdateStream(notif: NSNotification)
     {
         let info = notif.object as! [String : AnyObject]
@@ -252,6 +264,11 @@ class OtherChannelViewController: UIViewController  {
                 self.NoDatalabel.textAlignment = NSTextAlignment.Center
                 self.NoDatalabel.text = "No Media Available"
                 self.view.addSubview(self.NoDatalabel)
+            }
+            if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count < 27)
+            {
+                self.showOverlay()
+                self.getInfinteScrollData()
             }
             if(self.pullToRefreshActive)
             {
@@ -436,6 +453,11 @@ class OtherChannelViewController: UIViewController  {
             let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
             SharedChannelDetailsAPI.sharedInstance.infiniteScroll(channelId, selectedChannelName: channelName, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
         }
+        else{
+            self.downloadCompleteFlag = "end"
+            removeOverlay()
+        }
+
     }
     
     func getPullToRefreshData()
@@ -543,7 +565,7 @@ class OtherChannelViewController: UIViewController  {
             let dateString = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow]["createdTime"] as! String
             let index = Int32 (indexPathRow)
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            let vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
+            vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }
@@ -553,7 +575,7 @@ class OtherChannelViewController: UIViewController  {
             if streamTocken != ""
             {
                 let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
-                let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! UIViewController
+                 vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! MovieViewController
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }
             }
@@ -591,8 +613,9 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 let imageData =  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][thumbImageKey] as! UIImage
                 if mediaType == "video"
                 {
+                    let vDuration  = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][videoDurationKey] as! String
                     cell.detailLabel.hidden = false
-                    cell.detailLabel.text = ""
+                    cell.detailLabel.text = vDuration
                     cell.videoView.hidden = false
                     cell.videoView.image = UIImage(named: "Live_now_off_mode")
                     let imageToConvert: UIImage = imageData

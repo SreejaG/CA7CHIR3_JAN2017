@@ -161,6 +161,11 @@ class GlobalDataChannelList: NSObject {
                 {
                     mediaImage = mediaImage1
                 }
+                else{
+                    
+                    mediaImage = UIImage(named: "thumb12")!
+                }
+
                 completion(result: mediaImage)
             }
             else

@@ -1644,7 +1644,26 @@ UIPanGestureRecognizer *afterPan;
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
-
+-(void) checkToCloseViewWhileMediaDelete : (NSString *)mediaId
+{
+    //  NSString * mediaId = notification.object;
+    if(mediaId == mediaDetailId)
+    {
+        if(downloadTask.state == 0)
+        {
+            [downloadTask cancel];
+            
+        }
+        [_moviePlayer stop];
+        _moviePlayer = nil;
+        [self removeOverlay];
+        [self dismissViewControllerAnimated:true
+                                 completion:^{
+                                     
+                                 }];
+    }
+    
+}
 #pragma mark - gesture recognizer
 
 -(void) addTapGestures
@@ -2515,11 +2534,11 @@ UIPanGestureRecognizer *afterPan;
     [self addHeart];
     NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
     likeFlag = [standardDefaults valueForKey:@"likeCountFlag"];
-    if([notificationTypes isEqual: @"likes"])
-    {
-        likeTapFlag = true;
-    }
-    else{
+//    if([notificationTypes isEqual: @"likes"])
+//    {
+//        likeTapFlag = true;
+//    }
+//    else{
         if(likeTapFlag == false){
             likeTapFlag = true;
             NSString *type;
@@ -2533,7 +2552,7 @@ UIPanGestureRecognizer *afterPan;
             SetUpView *setUpObj = [[SetUpView alloc]init];
             [setUpObj setMediaLikes:userId accessToken:accessToken notifType:notificationType mediaDetailId:mediaDetailId channelId:channelIdSelected objects:obj1 typeMedia:type];
         }
-    }
+    //}
 }
 
 -(void) successFromSetUpView:(NSString *) count

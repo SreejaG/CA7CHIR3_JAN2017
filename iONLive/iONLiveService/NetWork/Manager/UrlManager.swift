@@ -8,7 +8,8 @@ class UrlManager : NSObject {
     //  let baseUrl = "http://104.196.113.247:3000"; //Production
     
     // let baseUrl = "http://104.197.92.137:3000"; //Developer
-    
+   // let baseUrl = "http://192.168.18.89:3000"; //Local
+
     let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
@@ -57,13 +58,21 @@ class UrlManager : NSObject {
         let mediaUrl =   getMediaThumbImageBaseURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
         return mediaUrl
     }
-    
+    func getLiveThumbUrlApi(liveStreamId: String) ->(String)
+    {
+        let getLiveThumbUrlApi =   getLiveThumbUrl() + liveStreamId + "/" + getUserId() + "/" + getAccessTocken()
+        return getLiveThumbUrlApi
+    }
     func getMediaFullImageBaseStreamURL() -> (String)
     {
         let getMediaFullImageBaseURL = baseUrl+"/api/v1/imageUrl/"
         return getMediaFullImageBaseURL
     }
-    
+    func getLiveThumbUrl() -> (String)
+    {
+        let getLiveThumbUrl = baseUrl+"/api/v1/imageUrl/thumb/live/"
+        return getLiveThumbUrl
+    }
     func getFullImageForStreamMedia(mediaId : String) -> (String)
     {
         let getFullImageForMedia = getMediaFullImageBaseStreamURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
