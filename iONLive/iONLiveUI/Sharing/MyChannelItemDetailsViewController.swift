@@ -14,6 +14,8 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     let cameraController = IPhoneCameraViewController()
     
+    var customView = CustomInfiniteIndicator()
+    
     var loadingOverlay: UIView?
     
     var lastContentOffset: CGPoint = CGPoint()
@@ -58,6 +60,9 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.viewWillDisappear(true)
         operationInSharingImageList.cancel()
         self.channelItemsCollectionView.alpha = 1.0
+        customView.stopAnimationg()
+        customView.removeFromSuperview()
+        self.channelItemsCollectionView.userInteractionEnabled = true
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -110,6 +115,16 @@ class MyChannelItemDetailsViewController: UIViewController {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.channelItemsCollectionView.reloadData()
                     })
+                    if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
+                        if(totalCount < 15){
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                self.channelItemsCollectionView.userInteractionEnabled = false
+                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2, self.channelItemsCollectionView.layer.frame.height - 100, 24, 24))
+                                self.channelItemsCollectionView.addSubview(self.customView)
+                                self.customView.startAnimating()
+                            })
+                        }
+                    }
                 }
                 else if totalCount <= 0
                 {
@@ -184,6 +199,9 @@ class MyChannelItemDetailsViewController: UIViewController {
         totalCount = filteredData.count
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemsCollectionView.userInteractionEnabled = true
+            self.customView.stopAnimationg()
+            self.customView.removeFromSuperview()
             self.removeOverlay()
             self.scrollObjSharing.finishInfiniteScroll()
             self.scrollObjSharing = UIScrollView()

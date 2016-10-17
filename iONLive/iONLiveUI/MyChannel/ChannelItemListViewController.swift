@@ -166,6 +166,8 @@ class ChannelItemListViewController: UIViewController {
         operationInChannelImageList.cancel()
         removeOverlay()
         self.channelItemCollectionView.alpha = 1.0
+        customView.stopAnimationg()
+        customView.removeFromSuperview()
         channelItemCollectionView.userInteractionEnabled = true
     }
     

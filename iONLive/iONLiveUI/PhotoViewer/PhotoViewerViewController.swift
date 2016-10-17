@@ -211,6 +211,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         operationInMyMediaList.cancel()
+        customView.stopAnimationg()
+        customView.removeFromSuperview()
+        self.photoThumpCollectionView.userInteractionEnabled = true
         NSNotificationCenter.defaultCenter().removeObserver(UIDeviceOrientationDidChangeNotification)
         NSNotificationCenter.defaultCenter().removeObserver(AVPlayerItemDidPlayToEndTimeNotification)
         if ((playHandleflag == 1) && (willEnterFlag == 1))
