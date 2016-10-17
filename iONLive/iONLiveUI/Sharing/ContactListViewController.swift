@@ -48,7 +48,7 @@ class ContactListViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
@@ -100,7 +100,7 @@ class ContactListViewController: UIViewController
                 addUserArray.addObject(userId)
             }
         }
-      
+        
         if addUserArray.count > 0
         {
             inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray)
@@ -385,7 +385,7 @@ class ContactListViewController: UIViewController
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
                 let userName = element["user_name"] as! String
-                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName 
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 dataSource.append([userNameKey:userName, profileImageKey: thumbUrl])
             }
             if(dataSource.count > 0){

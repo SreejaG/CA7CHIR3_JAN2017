@@ -9,8 +9,8 @@ class AddChannelViewController: UIViewController {
     @IBOutlet weak var tableViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet var channelCreateButton: UIView!
     @IBOutlet var channelTextField: UITextField!
-    
     @IBOutlet var addChannelTableView: UITableView!
+    
     var userId : String!
     var accessToken : String!
     

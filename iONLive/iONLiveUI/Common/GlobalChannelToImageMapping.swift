@@ -92,8 +92,6 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let channelMediaDetailId = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-//                let mediaUrlBeforeNullChk = responseArr[index].valueForKey("thumbnail_name_SignedUrl")
-//                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 var vDuration = String()
                 if(mediaType == "video"){
@@ -103,8 +101,6 @@ class GlobalChannelToImageMapping: NSObject {
                 else{
                     vDuration = ""
                 }
-//                let actualUrlBeforeNullChk =  responseArr[index].valueForKey("gcs_object_name_SignedUrl")
-//                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
                 imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
@@ -134,54 +130,56 @@ class GlobalChannelToImageMapping: NSObject {
                 if operationObj.cancelled == true{
                     return
                 }
-                var imageForMedia : UIImage = UIImage()
-                if let mediaIdChk = localDataSource[k][mediaIdKey]
-                {
-                let mediaId = String(mediaIdChk)
-                let mediaIdForFilePath = "\(mediaId)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                }
-                else{
-                    let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
-                    if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                            
-                            if(result != UIImage()){
-                                let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                }
-                                else{
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
-                                }
-                                imageForMedia = result
+                if(k < localDataSource.count){
+                    var imageForMedia : UIImage = UIImage()
+                    if let mediaIdChk = localDataSource[k][mediaIdKey]
+                    {
+                        let mediaId = String(mediaIdChk)
+                        let mediaIdForFilePath = "\(mediaId)thumb"
+                        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                        let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                        if fileExistFlag == true{
+                            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                            imageForMedia = mediaImageFromFile!
+                        }
+                        else{
+                            let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
+                            if(mediaUrl != ""){
+                                let url: NSURL = convertStringtoURL(mediaUrl)
+                                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                    
+                                    if(result != UIImage()){
+                                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        }
+                                        else{
+                                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                        }
+                                        imageForMedia = result
+                                    }
+                                    else{
+                                        imageForMedia = UIImage(named: "thumb12")!
+                                    }
+                                })
                             }
                             else{
                                 imageForMedia = UIImage(named: "thumb12")!
                             }
-                        })
+                        }
                     }
                     else{
                         imageForMedia = UIImage(named: "thumb12")!
                     }
-                }
-                }
-                else{
-                    imageForMedia = UIImage(named: "thumb12")!
-                }
-                if localDataSource.count > 0
-                {
-                    if k < localDataSource.count
+                    if localDataSource.count > 0
                     {
-                        localDataSource[k][tImageKey] = imageForMedia
+                        if k < localDataSource.count
+                        {
+                            localDataSource[k][tImageKey] = imageForMedia
+                        }
                     }
                 }
             }
@@ -267,13 +265,8 @@ class GlobalChannelToImageMapping: NSObject {
                         let time2 = Int(p2[mediaIdKey] as! String)
                         return time1 > time2
                     })
-                
-//                    let thumbURL = GlobalChannelImageDict[chanId]![0][tImageURLKey] as! String
-                    
                     let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
-                    
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageURLKey] = thumbURL
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                     
                     if chanName == "Archive"
@@ -342,10 +335,8 @@ class GlobalChannelToImageMapping: NSObject {
                 let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
                 if chanIdChk == selectedChanelId
                 {
-//                    let thumbURL = GlobalChannelImageDict[selectedChanelId]![0][tImageURLKey] as! String
-                    let mediaIdForFilePath = "\(GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String)thumb"
+                    let mediaIdForFilePath = GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageURLKey] = thumbURL
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }
             }
@@ -456,12 +447,9 @@ class GlobalChannelToImageMapping: NSObject {
             {
                 if GlobalChannelImageDict[chanelId]!.count > 0
                 {
-                 //   thumbURL = GlobalChannelImageDict[chanelId]![0][tImageURLKey] as! String
-                    mediaIdForFilePath = "\(GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String)thumb"
-//                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = thumbURL
+                    mediaIdForFilePath = GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }else{
-                 //   GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageURLKey] = "empty"
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
                 }
                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[chanelId]!.count)"

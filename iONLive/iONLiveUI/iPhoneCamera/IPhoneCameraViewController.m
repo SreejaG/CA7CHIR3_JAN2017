@@ -1365,8 +1365,9 @@ int timerCount = 0;
         _noDataFound.text = @"Initializing Stream";
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
+         [self setUpInitialBlurView];
     });
-    [self setUpInitialBlurView];
+   
 }
 
 #pragma mark : VCSessionState Delegate
@@ -1382,12 +1383,12 @@ int timerCount = 0;
             break;
         case VCSessionStateEnded:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+            [self setCameraImage];
             break;
         case VCSessionStateError:
             [[NSUserDefaults standardUserDefaults] setValue:false forKey:@"StartedStreaming"];
-            [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
             [liveStreaming stopStreamingClicked];
+            [self setCameraImage];
             break;
         default:
             [self hidingView];
@@ -1400,6 +1401,13 @@ int timerCount = 0;
             });
             break;
     }
+}
+
+-(void) setCameraImage
+{
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [_iphoneCameraButton setImage:[UIImage imageNamed:@"iphone"] forState:UIControlStateNormal];
+    });
 }
 
 -(void)hideProgressBar

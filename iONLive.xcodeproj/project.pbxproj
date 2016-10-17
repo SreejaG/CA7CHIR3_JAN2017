@@ -221,6 +221,8 @@
 		B222EA571D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
+		B28C91531DB2577D005EBBF5 /* ReportAProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */; };
+		B2AD95DE1DB49C4D00E25B29 /* ReportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */; };
 		B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */; };
 		B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */; };
 		B2AFC6B21D50DB4000EFA78C /* GlobalStreamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */; };
@@ -627,6 +629,8 @@
 		B222EA561D38C368002631A0 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
+		B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportAProblemViewController.swift; sourceTree = "<group>"; };
+		B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportManager.swift; sourceTree = "<group>"; };
 		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
 		B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedChannelDetailsAPI.swift; sourceTree = "<group>"; };
 		B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalStreamList.swift; sourceTree = "<group>"; };
@@ -835,6 +839,7 @@
 				16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */,
 				16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */,
 				16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */,
+				B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1554,6 +1559,7 @@
 		59BC3FAA1BFF895700710905 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				B2AD95DC1DB4969C00E25B29 /* Report Problem */,
 				169A00111C9FB20A00454F01 /* Contacts */,
 				165E50AA1C993DBB003718A4 /* GoogleDrive */,
 				16B457C11C86C0BA009D36A9 /* Channel */,
@@ -1597,6 +1603,14 @@
 				B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */,
 			);
 			name = Scroll;
+			sourceTree = "<group>";
+		};
+		B2AD95DC1DB4969C00E25B29 /* Report Problem */ = {
+			isa = PBXGroup;
+			children = (
+				B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */,
+			);
+			name = "Report Problem";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1794,6 +1808,7 @@
 			files = (
 				1614A2A01C9FC2FD008A5B07 /* contactManager.swift in Sources */,
 				59BC3F5A1BFF848600710905 /* AFHTTPRequestOperation.m in Sources */,
+				B28C91531DB2577D005EBBF5 /* ReportAProblemViewController.swift in Sources */,
 				16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */,
 				16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */,
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
@@ -1809,6 +1824,7 @@
 				165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */,
 				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
 				59BC3F611BFF848600710905 /* AFURLResponseSerialization.m in Sources */,
+				B2AD95DE1DB49C4D00E25B29 /* ReportManager.swift in Sources */,
 				166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
 				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,

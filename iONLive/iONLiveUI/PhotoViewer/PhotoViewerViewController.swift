@@ -28,13 +28,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     @IBOutlet var addToButton: UIButton!
     @IBOutlet var deletButton: UIButton!
     
+    @IBOutlet var videoDurationLabel: UILabel!
+    
     static let identifier = "PhotoViewerViewController"
     
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
-    //var moviePlayer : MPMoviePlayerController!
     let defaults = NSUserDefaults .standardUserDefaults()
     
     private var downloadTask: NSURLSessionDownloadTask?
@@ -68,6 +69,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     var mediaTypeSelected : String = String()
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
+    var customView = CustomInfiniteIndicator()
+    
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
             static let instance = PhotoViewerViewController()
@@ -87,6 +90,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.fullScrenImageView.image = UIImage()
         self.fullScreenZoomView.image = UIImage()
         playHandleflag = 0
+        videoDurationLabel.hidden = true
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
@@ -126,6 +130,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.deletButton.hidden = false
                     self.photoThumpCollectionView.reloadData()
                 })
+                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
+                    if(totalCount < 10){
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.deletButton.userInteractionEnabled = false
+                            self.addToButton.userInteractionEnabled = false
+                            self.photoThumpCollectionView.userInteractionEnabled = false
+                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 10, 20, 20))
+                            self.photoThumpCollectionView.addSubview(self.customView)
+                            self.customView.startAnimating()
+                        })
+                    }
+                }
             }
             else if totalCount <= 0
             {
@@ -183,14 +199,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if (self.mediaTypeSelected == "video")
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-
+                
                 self.fullScrenImageView.image = self.setOrientationForVideo()
                 self.fullScreenZoomView.image = self.setOrientationForVideo()
             })
         }
-     //   NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.doneButtonClickedToExit(_:)), name: MPMoviePlayerDidExitFullscreenNotification, object: self.moviePlayer)
-        
-    //    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.moviePlayerWillenterFullScreen), name: MPMoviePlayerWillEnterFullscreenNotification, object: self.moviePlayer)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
         
@@ -200,6 +213,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
         operationInMyMediaList.cancel()
+        customView.stopAnimationg()
+        customView.removeFromSuperview()
+        self.photoThumpCollectionView.userInteractionEnabled = true
         NSNotificationCenter.defaultCenter().removeObserver(UIDeviceOrientationDidChangeNotification)
         NSNotificationCenter.defaultCenter().removeObserver(AVPlayerItemDidPlayToEndTimeNotification)
         if ((playHandleflag == 1) && (willEnterFlag == 1))
@@ -208,7 +224,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         else if (playHandleflag == 1)
         {
             playHandleflag = 0
-           // self.moviePlayer .stop()
             NSNotificationCenter.defaultCenter().removeObserver(self)
         }
         if(downloadTask?.state == .Running)
@@ -239,77 +254,77 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     func orientaionChanged(notification:NSNotification)
     {
         var orientedImage = Orgimage
-   dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        if(self.Orgimage != nil && self.totalCount > 0){
-            let viewController: UIViewController = (self.navigationController?.visibleViewController)!
-            if(viewController.restorationIdentifier == "PhotoViewerViewController"){
-                if(self.mediaTypeSelected != "video")
-                {
-                    let transition : CATransition = CATransition()
-                    transition.duration = 0.3;
-                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                    transition.type = kCATransitionFade;
-                    transition.delegate = self;
-                    self.fullScrenImageView.layer.addAnimation(transition, forKey: nil)
-                    
-                    let device: UIDevice = notification.object as! UIDevice
-                    switch device.orientation {
-                    case .Portrait,.PortraitUpsideDown:
-                        self.orientationFlag = 1;
-                        if self.Orgimage!.size.width > self.Orgimage!.size.height
-                        {
-                            self.fullScrenImageView.contentMode = .ScaleAspectFit
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if(self.Orgimage != nil && self.totalCount > 0){
+                let viewController: UIViewController = (self.navigationController?.visibleViewController)!
+                if(viewController.restorationIdentifier == "PhotoViewerViewController"){
+                    if(self.mediaTypeSelected != "video")
+                    {
+                        let transition : CATransition = CATransition()
+                        transition.duration = 0.3;
+                        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                        transition.type = kCATransitionFade;
+                        transition.delegate = self;
+                        self.fullScrenImageView.layer.addAnimation(transition, forKey: nil)
+                        
+                        let device: UIDevice = notification.object as! UIDevice
+                        switch device.orientation {
+                        case .Portrait,.PortraitUpsideDown:
+                            self.orientationFlag = 1;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFill
+                            }
+                            orientedImage = self.Orgimage
+                            break;
+                        case .LandscapeLeft:
+                            self.orientationFlag = 2;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Right)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Down)
+                            }
+                            break;
+                        case .LandscapeRight:
+                            self.orientationFlag = 3;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Left)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .ScaleAspectFit
+                                orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
+                                    orientation: .Up)
+                            }
+                            break;
+                        default:
+                            self.orientationFlag = 1
+                            break;
                         }
-                        else{
-                            self.fullScrenImageView.contentMode = .ScaleAspectFill
-                        }
-                        orientedImage = self.Orgimage
-                        break;
-                    case .LandscapeLeft:
-                        self.orientationFlag = 2;
-                        if self.Orgimage!.size.width > self.Orgimage!.size.height
-                        {
-                            self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
-                                                    orientation: .Right)
-                        }
-                        else{
-                            self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
-                                                    orientation: .Down)
-                        }
-                        break;
-                    case .LandscapeRight:
-                        self.orientationFlag = 3;
-                        if self.Orgimage!.size.width > self.Orgimage!.size.height
-                        {
-                            self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
-                                                    orientation: .Left)
-                        }
-                        else{
-                            self.fullScrenImageView.contentMode = .ScaleAspectFit
-                            orientedImage = UIImage(CGImage: self.Orgimage!.CGImage!, scale: CGFloat(1.0),
-                                                    orientation: .Up)
-                        }
-                        break;
-                    default:
-                        self.orientationFlag = 1
-                        break;
+                        
                     }
+                    else{
+                        orientedImage = self.setOrientationForVideo()
+                    }
+                    self.fullScrenImageView.image = orientedImage! as UIImage
+                    self.fullScreenZoomView.image = orientedImage! as UIImage
                     
                 }
-                else{
-                    orientedImage = self.setOrientationForVideo()
-                }
-                self.fullScrenImageView.image = orientedImage! as UIImage
-                self.fullScreenZoomView.image = orientedImage! as UIImage
-            
             }
-        }
         })
     }
- 
+    
     func downloadImagesFromGlobalChannelImageMapping(limit:Int)  {
         operationInMyMediaList.cancel()
         let start = totalCount
@@ -334,7 +349,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
         }
         GlobalChannelToImageMapping.sharedInstance.setFilteredCount(end)
-
+        
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
@@ -422,7 +437,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
                 if mediaType == "video"
                 {
-                   // playIconInFullView.hidden = true
                     downloadVideo(selectedItem)
                 }
             }
@@ -452,6 +466,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.photoThumpCollectionView.userInteractionEnabled = true
+            self.deletButton.userInteractionEnabled = true
+            self.addToButton.userInteractionEnabled = true
+
+            self.customView.stopAnimationg()
+            self.customView.removeFromSuperview()
             self.addToButton.hidden = false
             self.deletButton.hidden = false
             self.photoThumpCollectionView.reloadData()
@@ -536,12 +556,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 if (playHandleflag == 1)
                 {
                     playHandleflag = 0
-                  //  self.moviePlayer.stop()
-                  //  self.moviePlayer.view.removeFromSuperview()
                     playIconInFullView.hidden = false
                     self.view.userInteractionEnabled = true
                 }
-                
                 downloadTask?.cancel()
                 fullScrenImageView.alpha = 1.0
                 progressLabelDownload?.removeFromSuperview()
@@ -614,15 +631,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         })
     }
     
-//    func moviePlayerWillenterFullScreen(notif:NSNotification)
-//    {
-//        willEnterFlag = 1
-//        let fullScreenController = notif.object as! MPMoviePlayerController
-//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//            fullScreenController.scalingMode = MPMovieScalingMode.AspectFit
-//        })
-//    }
-    
     func initialise()
     {
         fullScreenZoomView.userInteractionEnabled = true
@@ -648,8 +656,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-           // self.moviePlayer.stop()
-           // self.moviePlayer.view.removeFromSuperview()
         }
         
         progressLabelDownload?.removeFromSuperview()
@@ -977,7 +983,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         {
             fullScrenImageView.alpha = 1.0
             self.playIconInFullView.hidden = false
-
+            
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
         }
@@ -992,45 +998,43 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let url = NSURL(fileURLWithPath: savingPath)
             let writeFlag = imageData.writeToURL(url, atomically: true)
             if(writeFlag){
-              //  NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinish(_:)), name: MPMoviePlayerPlaybackDidFinishNotification, object: self.moviePlayer)
-                    videoDownloadIntex = 0
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.view.userInteractionEnabled = true
-                        self.fullScrenImageView.userInteractionEnabled = true
-                        self.playHandleflag = 1
-                            self.view.userInteractionEnabled = true
-                            self.fullScrenImageView.userInteractionEnabled = true
-                            self.playHandleflag = 1
-                            let player1 = AVPlayer(URL: url)
-                            if #available(iOS 9.0, *) {
-                                self.playerViewController.delegate = self
-                            } else {
-                                // Fallback on earlier versions
-                            }
-                            self.playerViewController.view.frame = CGRectMake(0, 64, 320, 420)
-                            self.playerViewController.showsPlaybackControls = true
-                            player1.actionAtItemEnd = .None
-                            
-                            if #available(iOS 9.0, *) {
-                                self.playerViewController.allowsPictureInPicturePlayback = true
-                            } else {
-                                // Fallback on earlier versions
-                            }
-                            self.playerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
-                            self.playerViewController.player = player1
-                            self.presentViewController(self.playerViewController, animated: true, completion: {
-                            self.playerViewController.player!.play()
-                            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
-                        })
-
+                videoDownloadIntex = 0
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.view.userInteractionEnabled = true
+                    self.fullScrenImageView.userInteractionEnabled = true
+                    self.playHandleflag = 1
+                    self.view.userInteractionEnabled = true
+                    self.fullScrenImageView.userInteractionEnabled = true
+                    self.playHandleflag = 1
+                    let player1 = AVPlayer(URL: url)
+                    if #available(iOS 9.0, *) {
+                        self.playerViewController.delegate = self
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                    self.playerViewController.view.frame = CGRectMake(0, 64, 320, 420)
+                    self.playerViewController.showsPlaybackControls = true
+                    player1.actionAtItemEnd = .None
+                    
+                    if #available(iOS 9.0, *) {
+                        self.playerViewController.allowsPictureInPicturePlayback = true
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                    self.playerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+                    self.playerViewController.player = player1
+                    self.presentViewController(self.playerViewController, animated: true, completion: {
+                        self.playerViewController.player!.play()
+                        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
                     })
+                    
+                })
             }
         }
     }
     
     func playerDidFinish(notif:NSNotification)
     {
-        //self.moviePlayer.view.removeFromSuperview()
         playIconInFullView.hidden = false
         self.view.userInteractionEnabled = true
     }
@@ -1084,8 +1088,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-           // self.moviePlayer.stop()
-           // self.moviePlayer.view.removeFromSuperview()
         }
         
         progressLabelDownload?.removeFromSuperview()
@@ -1144,9 +1146,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         else if(playHandleflag == 1)
         {
             playHandleflag = 0;
-           // moviePlayer.stop()
-          //  moviePlayer.view.removeFromSuperview()
-            
             playIconInFullView.hidden = false
             self.view.userInteractionEnabled = true
         }
@@ -1155,40 +1154,31 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     {
         getCurrentOrientaion()
         var orientedImage : UIImage = UIImage()
-       // let device: UIDevice = notification.object as! UIDevice
-     //   dispatch_async(dispatch_get_main_queue(), { () -> Void in
-
         switch self.orientationFlag {
         case 1:
-            //orientationFlag = 1;
             self.fullScrenImageView.contentMode = .ScaleAspectFill
-           // orientedImage = UIImage(CGImage: self.videoThumbImage.CGImage!, scale: CGFloat(1.0),
-             //                       orientation: .Down)
             orientedImage = self.videoThumbImage;
             self.playIconInFullView.image = UIImage(named: "Circled Play")
             break;
         case 2:
-          //  orientationFlag = 2;
             self.fullScrenImageView.contentMode = .ScaleAspectFit
             orientedImage = UIImage(CGImage: self.videoThumbImage.CGImage!, scale: CGFloat(1.0),
                                     orientation: .Right)
             self.playIconInFullView.image = UIImage(CGImage:  UIImage(named: "Circled Play")!.CGImage!, scale: CGFloat(1.0),
-                                               orientation: .Right)
+                                                    orientation: .Right)
             
             break;
         case 3:
-           // orientationFlag = 3;
             self.fullScrenImageView.contentMode = .ScaleAspectFit
             orientedImage = UIImage(CGImage: self.videoThumbImage.CGImage!, scale: CGFloat(1.0),
                                     orientation: .Left)
             self.playIconInFullView.image =   UIImage(CGImage:  UIImage(named: "Circled Play")!.CGImage!, scale: CGFloat(1.0),
-                                                 orientation: .Left)
+                                                      orientation: .Left)
             
             break;
         default:
             break;
         }
-           // })
         return orientedImage
     }
     func downloadFullImageWhenTapThumb(imageDict: [String:AnyObject], indexpaths : Int ,gestureIdentifier:Int) {
@@ -1206,6 +1196,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.photoThumpCollectionView.alpha = 1.0
                         self.removeOverlay()
+                        self.videoDurationLabel.hidden = false
+                        self.view.bringSubviewToFront(self.videoDurationLabel)
+                        self.videoDurationLabel.text = ""
+                        if let vDuration =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![indexpaths][videoDurationKey]
+                        {
+                            self.videoDurationLabel.text = vDuration as? String
+                        }
                         self.playIconInFullView.hidden = false;
                         self.fullScrenImageView.contentMode = .ScaleAspectFill
                         if(gestureIdentifier==1||gestureIdentifier==2)
@@ -1222,7 +1219,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             self.fullScrenImageView.layer.addAnimation(animation, forKey: "imageTransition")
                         }
                         self.videoThumbImage = fullImage as! UIImage
-
+                        
                         self.fullScrenImageView.image = (self.setOrientationForVideo())
                         self.fullScreenZoomView.image = (self.setOrientationForVideo())
                         
@@ -1289,6 +1286,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         }
                         self.playIconInFullView.hidden = true;
                         self.fullScreenScrollView.hidden=false;
+                        self.videoDurationLabel.hidden = true
                     })
                 }
             }
@@ -1304,7 +1302,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.getCurrentOrientaion()
         self.Orgimage = image
         var orientedImage = UIImage()
-
+        
         switch self.orientationFlag
         {
         case 1:
@@ -1353,7 +1351,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
         return orientedImage
-
+        
     }
     func  loadInitialViewController(code: String){
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -1458,8 +1456,6 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if (playHandleflag == 1)
         {
             playHandleflag = 0
-           // self.moviePlayer.stop()
-           // self.moviePlayer.view.removeFromSuperview()
         }
         self.selectedItem = indexPath.row
         

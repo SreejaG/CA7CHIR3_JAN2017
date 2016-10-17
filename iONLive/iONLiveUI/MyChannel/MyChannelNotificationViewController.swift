@@ -38,7 +38,7 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         if let notifFlag = defaults.valueForKey("notificationArrived")
         {
             if notifFlag as! String == "0"
@@ -220,7 +220,6 @@ class MyChannelNotificationViewController: UIViewController {
                     
                     let notifType = element["notification_type"] as! String
                     if(notifType.lowercaseString == "likes"){
-//                        let mediaThumbUrlBeforeNullChk =  element["thumbnail_name_SignedUrl"]
                         mediaThumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
                     }
                     else{

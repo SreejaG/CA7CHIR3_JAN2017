@@ -20,11 +20,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     @IBOutlet var channelTextField: UITextField!
     
     @IBOutlet var channelUpdateSaveButton: UIButton!
-    
     @IBOutlet var channelUpdateCancelButton: UIButton!
-    
     @IBOutlet var channelAddButton: UIButton!
-    
     @IBOutlet var backButton: UIButton!
     
     static let identifier = "MyChannelViewController"
@@ -35,24 +32,30 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     var gestureRecognizer = UIGestureRecognizer()
     var longPressRecognizer : UILongPressGestureRecognizer = UILongPressGestureRecognizer()
     
+    let defaults = NSUserDefaults .standardUserDefaults()
+    
     var loadingOverlay: UIView?
     
     var searchActive : Bool = false
     var longPressFlag : Bool = false
     var searchFlagForUpdateChannel : Bool = false
+    
     var longPressIndexPathRow : Int = Int()
+    
     var cellChannelUpdatedNameStr = String()
     
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     override func viewDidLoad() {
-        NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
         super.viewDidLoad()
+        
+        defaults.setValue("", forKey: "editedValue")
+        
         channelUpdateSaveButton.hidden = true
         channelUpdateCancelButton.hidden = true
         searchFlagForUpdateChannel = false
         longPressIndexPathRow = -1
-        let defaults = NSUserDefaults .standardUserDefaults()
+        
         if let notifFlag = defaults.valueForKey("notificationArrived")
         {
             if notifFlag as! String == "0"
@@ -193,7 +196,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         self.myChannelTableView.reloadData()
     }
     
-    
     @IBAction func didTapChannelUpdateSave(sender: AnyObject) {
         let indexPath = NSIndexPath(forRow:longPressIndexPathRow, inSection:0)
         let cell : MyChannelCell? = self.myChannelTableView.cellForRowAtIndexPath(indexPath) as! MyChannelCell?
@@ -218,7 +220,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             }
             else{
                 if(longPressIndexPathRow < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
-                chanelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[longPressIndexPathRow][channelIdKey] as! String
+                    chanelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[longPressIndexPathRow][channelIdKey] as! String
                 }
             }
             if(chanelId != ""){
@@ -248,12 +250,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                 {
                     if(GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String == chaId)
                     {
-                         GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] = cellChannelUpdatedNameStr
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] = cellChannelUpdatedNameStr
                     }
                 }
             }
             else{
-                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[self.longPressIndexPathRow][channelNameKey] = self.cellChannelUpdatedNameStr
+                GlobalDataChannelList.sharedInstance.globalChannelDataSource[self.longPressIndexPathRow][channelNameKey] = self.cellChannelUpdatedNameStr
             }
             myChannelSearchBar.text! = ""
             searchDataSource.removeAll()
@@ -293,7 +295,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             })
         }
     }
-
+    
     func  showviewWithNewConstraints()
     {
         addChannelView.hidden = false
@@ -601,7 +603,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         
         self.presentViewController(alert, animated: true, completion: nil)
     }
-
 }
 
 extension MyChannelViewController: UITableViewDelegate
@@ -696,12 +697,12 @@ extension MyChannelViewController:UITableViewDataSource
             return UITableViewCell()
         }
     }
-
+    
     func handleChannelLongPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
         let longPressLocation = longPressGestureRecognizer.locationInView(self.myChannelTableView)
         if let longPressIndexPath = self.myChannelTableView.indexPathForRowAtPoint(longPressLocation) {
             var chanelNameChk = String()
-          
+            
             if(longPressFlag == false){
                 longPressFlag = true
                 longPressIndexPathRow = longPressIndexPath.row
@@ -776,9 +777,9 @@ extension MyChannelViewController:UITableViewDataSource
         if(addChannelView.hidden)
         {
             if(longPressFlag == false){
-            myChannelSearchBar.hidden = false
-            addChannelView.hidden = true
-            myChannelTableViewTopConstraint.constant = -90
+                myChannelSearchBar.hidden = false
+                addChannelView.hidden = true
+                myChannelTableViewTopConstraint.constant = -90
             }
         }
     }
@@ -796,20 +797,12 @@ extension MyChannelViewController:UITableViewDataSource
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-    //    searchActive = false
-    //    searchFlagForUpdateChannel = false
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-//        searchActive = false;
-//        searchFlagForUpdateChannel = false
-
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-//        searchActive = false;
-//        searchFlagForUpdateChannel = false
-
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
