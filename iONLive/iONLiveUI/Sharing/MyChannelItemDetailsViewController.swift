@@ -119,7 +119,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                         if(totalCount < 15){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.channelItemsCollectionView.userInteractionEnabled = false
-                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2, self.channelItemsCollectionView.layer.frame.height - 100, 24, 24))
+                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemsCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
                             })
@@ -161,7 +161,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func createScrollViewAnimations()  {
-        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
         channelItemsCollectionView.infiniteScrollIndicatorMargin = 50
         channelItemsCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
             if self!.totalCount > 0

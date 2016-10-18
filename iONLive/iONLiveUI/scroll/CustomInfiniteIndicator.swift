@@ -12,7 +12,7 @@ private let rotationAnimationKey = "rotation"
 
 class CustomInfiniteIndicator: UIView {
     
-    var thickness: CGFloat = 2
+    var thickness: CGFloat = 4
     var outerColor = UIColor.grayColor().colorWithAlphaComponent(0.2)
     
     lazy var innerColor: UIColor = {
@@ -106,7 +106,7 @@ class CustomInfiniteIndicator: UIView {
     private func animation() -> CABasicAnimation {
         let animation = CABasicAnimation(keyPath: "transform.rotation")
         animation.toValue = NSNumber(double: M_PI * 2)
-        animation.duration = 1
+        animation.duration = 0.7
         animation.repeatCount = Float.infinity
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         

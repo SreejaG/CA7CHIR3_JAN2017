@@ -136,7 +136,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             self.deletButton.userInteractionEnabled = false
                             self.addToButton.userInteractionEnabled = false
                             self.photoThumpCollectionView.userInteractionEnabled = false
-                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 10, 20, 20))
+                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 12, 30, 30))
                             self.photoThumpCollectionView.addSubview(self.customView)
                             self.customView.startAnimating()
                         })

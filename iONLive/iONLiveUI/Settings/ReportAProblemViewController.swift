@@ -57,9 +57,9 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
         probelmTitle.resignFirstResponder()
         if probelmTitle.text!.isEmpty
         {
-            ErrorManager.sharedInstance.descOfProblemEmpty()
+            ErrorManager.sharedInstance.probelmTitleEmpty()
         }
-        else if descTextView.text!.isEmpty
+        else if(descTextView.text!.isEmpty || descTextView.text == "Description")
         {
             ErrorManager.sharedInstance.descOfProblemEmpty()
         }
