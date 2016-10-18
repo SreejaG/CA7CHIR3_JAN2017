@@ -36,6 +36,8 @@ class MyChannelNotificationViewController: UIViewController {
     
     @IBOutlet var notifImage: UIButton!
     
+    var NoDatalabelFormyChanelImageList : UILabel = UILabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -252,6 +254,9 @@ class MyChannelNotificationViewController: UIViewController {
                     self.operationQueueObjInNotif.addOperation(operationInNotif)
                 }
             }
+            else{
+                addNoDataLabel()
+            }
         }
         else
         {
@@ -259,6 +264,14 @@ class MyChannelNotificationViewController: UIViewController {
         }
     }
     
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList.text = "No Notifications Available"
+        self.view.addSubview(self.NoDatalabelFormyChanelImageList)
+    }
+
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         fulldataSource.removeAll()
         for i in 0 ..< dataSource.count
