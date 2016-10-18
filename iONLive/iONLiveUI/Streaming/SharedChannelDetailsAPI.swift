@@ -162,7 +162,7 @@ class SharedChannelDetailsAPI: NSObject {
                 dateFormatter.timeZone = NSTimeZone(name: "UTC")
                 let currentDate = dateFormatter.stringFromDate(NSDate())
                 var notificationType : String = ""
-                let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
+                let mediaUrl =  UrlManager.sharedInstance.getLiveThumbUrlApi(mediaId!)
                 var vDuration = String()
                 vDuration = ""
                 if(mediaUrl != ""){
