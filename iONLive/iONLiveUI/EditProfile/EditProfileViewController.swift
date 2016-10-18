@@ -37,6 +37,8 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     var cellSection = Int()
     
+    var photoTakenFlag : Bool = false
+    
     @IBOutlet weak var tableViewBottomConstaint: NSLayoutConstraint!
     
     @IBOutlet weak var saveButton: UIButton!
@@ -124,6 +126,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func initialise()
     {
+        photoTakenFlag = false
         saveButton.hidden = true
         imageForProfile = UIImage()
         getUserDetails()
@@ -305,8 +308,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     @IBAction func saveClicked(sender: AnyObject) {
         saveButton.hidden = true
-        showOverlay()
-        getSignedUrl()
+        if(photoTakenFlag == false){
+            updateProfileDetails()
+        }
+        else{
+            showOverlay()
+            getSignedUrl()
+        }
     }
     
     func generateWaytoSendAlert()
@@ -315,8 +323,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
             self.saveButton.hidden = true
-            self.showOverlay()
-            self.getSignedUrl()
+            if(self.photoTakenFlag == true){
+                self.showOverlay()
+                self.getSignedUrl()
+            }
+            else{
+                self.updateProfileDetails()
+            }
+           
         }))
         alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: {
             (action) -> Void in
@@ -377,6 +391,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                     if(result == "Success"){
                         self.removeOverlay()
                         self.imageForProfileOld = self.imageForProfile
+                        let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                        }))
+                        self.presentViewController(alert, animated: true, completion: nil)
                     }
                     else{
                         self.removeOverlay()
@@ -437,9 +455,22 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             self.fullNames = self.fullName
             self.mobileNo = self.mobNo
             self.emails = self.email
-            self.timeZoneOffsetInUTCOriginal = self.timeZoneOffsetInUTCUpdated
-            self.timeZoneInSecondsFromAPI = self.timeZoneInSecondsUpdated
+            if(self.timeZoneOffsetInUTCUpdated != ""){
+                self.timeZoneOffsetInUTCOriginal = self.timeZoneOffsetInUTCUpdated
+            }
+            if(self.timeZoneInSecondsUpdated != ""){
+                self.timeZoneInSecondsFromAPI = self.timeZoneInSecondsUpdated
+            }
+            if(self.photoTakenFlag == false){
+                let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+            self.photoTakenFlag = false
+            
         }) { (error, message) in
+            self.photoTakenFlag = false
             self.authenticationFailureHandler(error, code: message)
             return
         }
@@ -842,6 +873,7 @@ extension EditProfileViewController:UITableViewDataSource
         self.dismissViewControllerAnimated(true, completion: { () -> Void in
             
         })
+        photoTakenFlag = true
         imageForProfile = image
         saveButton.hidden = false
         editProfTableView.reloadData()
