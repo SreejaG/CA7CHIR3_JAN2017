@@ -90,7 +90,7 @@ import UIKit
             }
             userImages.append(image)
         }
-        
+        print(userImages)
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
