@@ -393,6 +393,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                         self.imageForProfileOld = self.imageForProfile
                         let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                            self.navigationController?.popViewControllerAnimated(false)
                         }))
                         self.presentViewController(alert, animated: true, completion: nil)
                     }
@@ -464,6 +465,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             if(self.photoTakenFlag == false){
                 let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                    self.navigationController?.popViewControllerAnimated(false)
                 }))
                 self.presentViewController(alert, animated: true, completion: nil)
             }
