@@ -452,6 +452,13 @@ int timerCount = 0;
                     self.thumbnailImageView.image = img;
                 });
             }
+            else{
+                img = [UIImage imageNamed:@"thumb12"];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.thumbnailImageView.image = img;
+                });
+
+            }
         }
     }
 }
@@ -526,7 +533,7 @@ int timerCount = 0;
                     {
                         if([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive){
                             
-                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error"                                                                message:@""
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Syncing Error Timer"                                                                message:@""
                                                                            delegate:self
                                                                   cancelButtonTitle:@"Retry"
                                                                   otherButtonTitles:@"Exit App",nil];
@@ -933,6 +940,17 @@ int timerCount = 0;
                     [self updateThumbnails];
                 });
             }
+            else if ([UIImage imageWithData: data] == nil)
+            {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                    self.thumbnailImageView.image = [UIImage imageNamed:@"thumb12"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                         [self updateThumbnails];
+                     });
+                    
+                 });
+
+            }
             else{
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if([latestCapturedMediaType  isEqual: @"video"])
@@ -942,8 +960,10 @@ int timerCount = 0;
                     else{
                         self.playiIconView.hidden = YES;
                     }
-                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+
                     self.thumbnailImageView.image = [UIImage imageWithData: data];
+                          });
                 });
             }
         });
