@@ -97,7 +97,7 @@ class ChannelItemListViewController: UIViewController {
                         if(totalCount < 15){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.channelItemCollectionView.userInteractionEnabled = false
-                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2, self.channelItemCollectionView.layer.frame.height - 100, 24, 24))
+                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
                             })
@@ -182,7 +182,7 @@ class ChannelItemListViewController: UIViewController {
     func createScrollViewAnimations()  {
         customView.stopAnimationg()
         customView.removeFromSuperview()
-        channelItemCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        channelItemCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
         channelItemCollectionView.infiniteScrollIndicatorMargin = 50
         channelItemCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
             if self!.totalCount > 0
@@ -327,6 +327,7 @@ class ChannelItemListViewController: UIViewController {
     }
     
     @IBAction func didTapCancelButton(sender: AnyObject) {
+        removeOverlay()
         selected.removeAllObjects()
         selectedArray.removeAll()
         channelTitleLabel.text = channelName.uppercaseString
@@ -389,7 +390,7 @@ class ChannelItemListViewController: UIViewController {
                         if(totalCount < 15){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                  self.channelItemCollectionView.userInteractionEnabled = false
-                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2, self.channelItemCollectionView.layer.frame.height - 100, 24, 24))
+                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
                             })
