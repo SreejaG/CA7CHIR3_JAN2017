@@ -131,7 +131,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.photoThumpCollectionView.reloadData()
                 })
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
-                    if(totalCount < 10){
+                    if(totalCount < 9){
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.deletButton.userInteractionEnabled = false
                             self.addToButton.userInteractionEnabled = false
