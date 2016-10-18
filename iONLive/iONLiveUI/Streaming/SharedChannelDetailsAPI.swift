@@ -257,7 +257,7 @@ class SharedChannelDetailsAPI: NSObject {
         for i in 0 ..< imageDataSource.count
         {
             var imageForMedia : UIImage = UIImage()
-            if(imageDataSource.count > 0)
+            if(imageDataSource.count > 0 && imageDataSource.count > i)
             {
                 let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()

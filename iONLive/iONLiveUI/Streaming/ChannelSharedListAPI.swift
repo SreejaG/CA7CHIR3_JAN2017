@@ -245,7 +245,7 @@ class ChannelSharedListAPI: NSObject {
         {
             var mediaImage : UIImage?
             var profileImage : UIImage?
-            if(dataSource.count > 0)
+            if(dataSource.count > 0 && dataSource.count > i)
             {
                 let profileImageName = dataSource[i][profileImageKey] as! String
                 if(profileImageName != "")

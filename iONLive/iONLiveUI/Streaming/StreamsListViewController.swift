@@ -50,6 +50,7 @@ class StreamsListViewController: UIViewController{
     var selectedMediaId : String = String()
     var isMovieView : Bool = false
     var vc : MovieViewController = MovieViewController()
+    var customView = CustomInfiniteIndicator()
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -287,10 +288,17 @@ class StreamsListViewController: UIViewController{
                 }
                 if(subIdArray.count > 0)
                 {
-                    showOverlay()
+                   
+                  //  showOverlay()
                     let subid = subIdArray.minElement()!
                     self.downloadCompleteFlagStream = "start"
                     GlobalStreamList.sharedInstance.getMediaByOffset("\(subid)")
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.streamListCollectionView.userInteractionEnabled = false
+                        self.customView  = CustomInfiniteIndicator(frame: CGRectMake(self.streamListCollectionView.layer.frame.width/2 - 20, self.streamListCollectionView.layer.frame.height - 100, 40, 40))
+                        self.streamListCollectionView.addSubview(self.customView)
+                        self.customView.startAnimating()
+                    })
                 }
             }
         }
@@ -832,6 +840,12 @@ class StreamsListViewController: UIViewController{
                 }
             })
         }
+         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.streamListCollectionView.userInteractionEnabled = true
+            self.customView.stopAnimationg()
+            self.customView.removeFromSuperview()
+        })
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -1141,46 +1155,7 @@ class StreamsListViewController: UIViewController{
             profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         }
         getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
-
-//            profileManager.getSubUserProfileImage(userId, accessToken: accessToken, subscriberUserName: subUserName, success: { (response) in
-//                self.successHandlerForProfileImage(response,indexpathRow: indexpathRow)
-//                }, failure: { (error, message) -> () in
-//                    self.failureHandlerForprofileImage(error, code: message,indexPathRow:indexpathRow)
-//                    return
-//            })
-//            
-//        }
     }
-    
-    
-    func successHandlerForProfileImage(response:AnyObject?,indexpathRow:Int)
-    {
-      //  if let json = response as? [String: AnyObject]
-      //  {
-//            let profileImageNameBeforeNullChk = json["profile_image_thumbnail"]
-//            let profileImageName = self.nullToNil(profileImageNameBeforeNullChk) as! String
-//            if(profileImageName != "")
-//            {
-//                let url: NSURL = self.convertStringtoURL(profileImageName)
-//                if let data = NSData(contentsOfURL: url){
-//                    let imageDetailsData = (data as NSData?)!
-//                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData)!
-//                }
-//                else{
-//                    profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
-//                }
-//            }
-//            else{
-//                profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
-//            }
-//            
-//        }
-//        else{
-//            profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
-//        }
-       // getLikeCountForSelectedIndex(indexpathRow,profile: profileImageUserForSelectedIndex)
-    }
-    
     func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int)
     {
         profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
