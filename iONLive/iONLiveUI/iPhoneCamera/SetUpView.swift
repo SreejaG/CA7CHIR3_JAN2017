@@ -70,6 +70,7 @@ import UIKit
         {
             var image = UIImage()
             let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
+            print(thumbUrl)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
