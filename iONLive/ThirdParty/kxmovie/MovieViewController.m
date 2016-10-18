@@ -638,6 +638,7 @@ UIPanGestureRecognizer *afterPan;
     
     if((indexForSwipe == orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
     {
+        [self removeOverlay];
         [self showOverlay];
     }
     orientationFlagForFullScreenMediaFlag = [self getFullscreenMediaOrientation];
@@ -744,12 +745,13 @@ UIPanGestureRecognizer *afterPan;
 -(void) showOverlay
 {
     imageVideoView.userInteractionEnabled = false;
+    [self.view bringSubviewToFront:topView];
     IONLLoadingView *loadingOverlayController = [[IONLLoadingView alloc]initWithNibName:@"IONLLoadingOverlay" bundle:nil];
     loadingOverlayController.view.frame = CGRectMake(0, 0, imageVideoView.frame.size.width,imageVideoView.frame.size.height + heartView.frame.size.height);
     [loadingOverlayController startLoading];
     loadingOverlay = [[UIView alloc]init];
     loadingOverlay = loadingOverlayController.view;
-    [self.view addSubview:loadingOverlay];
+    [imageVideoView addSubview:loadingOverlay];
 }
 
 -(void) removeOverlay{
