@@ -94,7 +94,7 @@ class ChannelItemListViewController: UIViewController {
                         self.channelItemCollectionView.reloadData()
                     })
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
-                        if(totalCount < 15){
+                        if(totalCount < 18){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.channelItemCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
@@ -387,7 +387,7 @@ class ChannelItemListViewController: UIViewController {
             else{
                 if(selected.count > 3){
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
-                        if(totalCount < 15){
+                        if(totalCount < 18){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                  self.channelItemCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
