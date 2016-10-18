@@ -43,6 +43,7 @@ class OtherChannelViewController: UIViewController  {
     var NoDatalabel : UILabel = UILabel()
     var liveStreamFlag : Bool = false
     var vc : MovieViewController = MovieViewController()
+    var customView = CustomInfiniteIndicator()
 
     @IBOutlet weak var notificationLabel: UILabel!
     override func viewDidLoad()
@@ -83,6 +84,8 @@ class OtherChannelViewController: UIViewController  {
         super.viewWillDisappear(true)
      //   NSNotificationCenter.defaultCenter().removeObserver(self)
         channelItemsCollectionView.alpha = 1.0
+        self.customView.removeFromSuperview()
+
     }
     func dismissFullView(notif: NSNotification)
     {
@@ -207,7 +210,7 @@ class OtherChannelViewController: UIViewController  {
     }
     
     func createScrollViewAnimations()  {
-        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
         channelItemsCollectionView.infiniteScrollIndicatorMargin = 50
         channelItemsCollectionView.addInfiniteScrollWithHandler {  (scrollView) -> Void in
             
@@ -265,10 +268,20 @@ class OtherChannelViewController: UIViewController  {
                 self.NoDatalabel.text = "No Media Available"
                 self.view.addSubview(self.NoDatalabel)
             }
-            if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count < 27)
+            if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count < 18 && SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count != 0)
             {
-                self.showOverlay()
+               // self.showOverlay()
+                
+                
                 self.getInfinteScrollData()
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.customView.removeFromSuperview()
+                    self.channelItemsCollectionView.userInteractionEnabled = false
+                    self.customView  = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
+                    self.channelItemsCollectionView.addSubview(self.customView)
+                    self.customView.startAnimating()
+                })
+
             }
             if(self.pullToRefreshActive)
             {
@@ -319,6 +332,12 @@ class OtherChannelViewController: UIViewController  {
                 }
             })
         }
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.channelItemsCollectionView.userInteractionEnabled = true
+            self.customView.stopAnimationg()
+            self.customView.removeFromSuperview()
+        })
     }
     
     @IBAction func backClicked(sender: AnyObject)

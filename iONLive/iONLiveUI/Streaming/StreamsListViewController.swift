@@ -103,13 +103,14 @@ class StreamsListViewController: UIViewController{
         super.viewWillDisappear(true)
         NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
         GlobalStreamList.sharedInstance.cancelOperationQueue()
+        self.customView.removeFromSuperview()
     }
     func closeMovieView(notif : NSNotification)
     {
         vc.closeView()
     }
     func createScrollViewAnimations()  {
-        streamListCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 24, 24))
+        streamListCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
         streamListCollectionView.infiniteScrollIndicatorMargin = 50
         streamListCollectionView.addInfiniteScrollWithHandler {  (scrollView) -> Void in
             if(!self.pullToRefreshActive)
@@ -273,7 +274,7 @@ class StreamsListViewController: UIViewController{
     }
     func getMediaWhileDeleted()
     {
-        if(mediaAndLiveArray.count <  15)
+        if(mediaAndLiveArray.count <  18 && mediaAndLiveArray.count != 0)
         {
             
             
@@ -294,6 +295,7 @@ class StreamsListViewController: UIViewController{
                     self.downloadCompleteFlagStream = "start"
                     GlobalStreamList.sharedInstance.getMediaByOffset("\(subid)")
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.customView.removeFromSuperview()
                         self.streamListCollectionView.userInteractionEnabled = false
                         self.customView  = CustomInfiniteIndicator(frame: CGRectMake(self.streamListCollectionView.layer.frame.width/2 - 20, self.streamListCollectionView.layer.frame.height - 100, 40, 40))
                         self.streamListCollectionView.addSubview(self.customView)
