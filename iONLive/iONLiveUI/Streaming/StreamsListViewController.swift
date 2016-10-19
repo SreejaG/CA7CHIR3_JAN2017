@@ -2,16 +2,6 @@
 import UIKit
 
 class StreamsListViewController: UIViewController{
-    
-    let streamTockenKey = "wowza_stream_token"
-    let imageKey = "image"
-    let typeKey = "type"
-    let imageType = "imageType"
-    let timestamp = "last_updated_time_stamp"
-    let channelIdkey = "ch_detail_id"
-    let channelNameKey = "channel_name"
-    let notificationKey = "notification"
-    let userIdKey = "user_name"
     static let identifier = "StreamsListViewController"
     let imageUploadManger = ImageUpload.sharedInstance
     let profileManager = ProfileManager.sharedInstance
@@ -21,18 +11,11 @@ class StreamsListViewController: UIViewController{
     var firstTap : Int = 0
     var offset: String = "0"
     var offsetToInt : Int = Int()
-    let isWatched = "isWatched"
-    let actualImageKey = "actualImage"
     var loadingOverlay: UIView?
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var fullImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var mediaAndLiveArray:[[String:AnyObject]] = [[String:AnyObject]]()
     let cameraController = IPhoneCameraViewController()
-    let mediaUrlKey = "mediaUrl"
-    let mediaIdKey = "mediaId"
-    let mediaTypeKey = "mediaType"
-    let timeKey = ""
-    let thumbImageKey = "thumbImage"
     var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
     var tapCount : Int = 0
     let livestreamingManager = LiveStreamingManager()
@@ -51,6 +34,8 @@ class StreamsListViewController: UIViewController{
     var isMovieView : Bool = false
     var vc : MovieViewController = MovieViewController()
     var customView = CustomInfiniteIndicator()
+    let isWatched = "isWatched"
+
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,7 +156,7 @@ class StreamsListViewController: UIViewController{
         
         for i in 0  ..< mediaAndLiveArray.count 
         {
-            let channelIdValue = mediaAndLiveArray[i][self.channelIdkey] as! String
+            let channelIdValue = mediaAndLiveArray[i][channelIdkey] as! String
             if ( channelIdValue == "\(channelId)")
             {
                 selectedArray.append(i)
@@ -204,7 +189,7 @@ class StreamsListViewController: UIViewController{
         
         for i in 0  ..< GlobalStreamList.sharedInstance.GlobalStreamDataSource.count 
         {
-            let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.channelIdkey] as! String
+            let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][channelIdkey] as! String
             if (channelIdValue == "\(channelId)")
             {
                 selectedArray.append(i)
@@ -249,7 +234,7 @@ class StreamsListViewController: UIViewController{
         for (index, element) in mediaAndLiveArray.enumerate() {
             if element[channelIdkey] as? String == "\(channelId)"
             {
-                if(element[mediaIdKey] as? String == "\(livStreamId)")
+                if(element[stream_mediaIdKey] as? String == "\(livStreamId)")
                 {
                     removeIndex = index
                     checkFlag = true
@@ -276,8 +261,6 @@ class StreamsListViewController: UIViewController{
     {
         if(mediaAndLiveArray.count <  18 && mediaAndLiveArray.count != 0)
         {
-            
-            
             if(!self.pullToRefreshActive)
             {
                 let sortList : Array = self.mediaAndLiveArray
@@ -289,7 +272,6 @@ class StreamsListViewController: UIViewController{
                 }
                 if(subIdArray.count > 0)
                 {
-                   
                   //  showOverlay()
                     let subid = subIdArray.minElement()!
                     self.downloadCompleteFlagStream = "start"
@@ -324,7 +306,6 @@ class StreamsListViewController: UIViewController{
         }
         var  checkFlag : Bool = false
         var index : Int =  Int()
-        
         for i in 0  ..< selectedArray.count
         {
             let channelId = selectedArray[i][channelIdkey]!
@@ -366,10 +347,7 @@ class StreamsListViewController: UIViewController{
             self.removeDataFromGlobal(channelId, mediaArrayData: mediaArrayData)
             self.deleteFromOtherChannelIfExist(mediaArrayData)
         }
-        
-     
     }
-    
     func removeDataFromGlobal(channelId : Int , mediaArrayData : NSArray)
     {
         var selectedArray :[Int] = [Int]()
@@ -379,13 +357,13 @@ class StreamsListViewController: UIViewController{
             var removeIndex : Int = Int()
             for i in 0  ..< GlobalStreamList.sharedInstance.GlobalStreamDataSource.count
             {
-                let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.channelIdkey] as! String
+                let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][channelIdkey] as! String
                 
                 if ( channelIdValue == "\(channelId)")
                 {
                     if(i < GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
                     {
-                        let mediaIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.mediaIdKey] as! String
+                        let mediaIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][stream_mediaIdKey] as! String
                         
                         if( mediaIdValue == "\(mediaArrayData[mediaArrayCount])" )
                         {
@@ -452,7 +430,7 @@ class StreamsListViewController: UIViewController{
                 if(i < SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count)
                 {
                     var  count : Int = 0
-                    let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[i][self.mediaIdKey] as! String
+                    let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[i][stream_mediaIdKey] as! String
                     
                     for mediaArrayCount in 0  ..< mediaArrayData.count 
                     {
@@ -491,7 +469,7 @@ class StreamsListViewController: UIViewController{
             
             for i in 0  ..< GlobalStreamList.sharedInstance.GlobalStreamDataSource.count 
             {
-                let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.channelIdkey] as! String
+                let channelIdValue = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][channelIdkey] as! String
                 var foundFlag : Bool = false
                 
                 if ( channelIdValue == "\(channel)")
@@ -499,7 +477,7 @@ class StreamsListViewController: UIViewController{
                     if(i < GlobalStreamList.sharedInstance.GlobalStreamDataSource.count)
                     {
                         var  count : Int = 0
-                        let mediaId = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][self.mediaIdKey] as! String
+                        let mediaId = GlobalStreamList.sharedInstance.GlobalStreamDataSource[i][stream_mediaIdKey] as! String
                         
                         for mediaArrayCount in 0  ..< mediaArrayData.count
                         {
@@ -538,14 +516,14 @@ class StreamsListViewController: UIViewController{
             let channel = channelIdArray[j] as! Int
             for i in 0  ..< mediaAndLiveArray.count 
             {
-                let channelIdValue = mediaAndLiveArray[i][self.channelIdkey] as! String
+                let channelIdValue = mediaAndLiveArray[i][channelIdkey] as! String
                 var foundFlag : Bool = false
                 var  count : Int = 0
                 if (channelIdValue == "\(channel)")
                 {
                     if(i < mediaAndLiveArray.count)
                     {
-                        let mediaId = mediaAndLiveArray[i][self.mediaIdKey] as! String
+                        let mediaId = mediaAndLiveArray[i][stream_mediaIdKey] as! String
                         for mediaArrayCount in 0  ..< mediaArrayData.count
                         {
                             if("\(mediaArrayData[mediaArrayCount])" == selectedMediaId)
@@ -630,7 +608,7 @@ class StreamsListViewController: UIViewController{
             {
                 if(i < mediaAndLiveArray.count)
                 {
-                    let mediaIdValue = mediaAndLiveArray[i][mediaTypeKey] as! String
+                    let mediaIdValue = mediaAndLiveArray[i][stream_mediaTypeKey] as! String
                     if(mediaIdValue == "live" )
                     {
                         foundFlag = true
@@ -676,7 +654,7 @@ class StreamsListViewController: UIViewController{
                 {
                     if(i < mediaAndLiveArray.count)
                     {
-                        let mediaIdValue = mediaAndLiveArray[i][mediaIdKey] as! String
+                        let mediaIdValue = mediaAndLiveArray[i][stream_mediaIdKey] as! String
                         if("\(mediaData[mediaArrayCount])" == selectedMediaId)
                         {
                             if isMovieView
@@ -789,6 +767,8 @@ class StreamsListViewController: UIViewController{
             }
             self.streamListCollectionView.reloadData()
         })
+        print(mediaAndLiveArray)
+        print(GlobalStreamList)
     }
     
     func streamUpdate(notif: NSNotification)
@@ -1003,10 +983,8 @@ class StreamsListViewController: UIViewController{
     
     func authenticationFailureHandlerForLiveStream(error: NSError?, code: String)
     {
-//        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//            self.removeOverlay()
-//        })
         if !self.requestManager.validConnection() {
+            self.removeOverlay()
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
@@ -1014,9 +992,12 @@ class StreamsListViewController: UIViewController{
                 loadInitialViewController(code)
             }
             else{
+                self.removeOverlay()
             }
         }
         else{
+            self.removeOverlay()
+
         }
     }
     
@@ -1035,31 +1016,16 @@ class StreamsListViewController: UIViewController{
             let responseArrLive = json["liveStreams"] as! [[String:AnyObject]]
             if (responseArrLive.count != 0)
             {
-                print(responseArrLive)
                 for element in responseArrLive{
-                    let stremTockn = element[streamTockenKey] as! String
+                    let stremTockn = element[stream_streamTockenKey] as! String
                     let userId = element[userIdKey] as! String
                     let channelIdSelected = element["channel_detail_id"]?.stringValue
-                    let channelname = element[channelNameKey] as! String
+                    let channelname = element[stream_channelNameKey] as! String
                     let mediaId = element["live_stream_detail_id"]?.stringValue
                     let pulltorefresh = element["channel_live_stream_detail_id"]?.stringValue
                     let notificationType : String = ""
-//                    if let notifType =  element["notification_type"] as? String
-//                    {
-//                        if notifType != ""
-//                        {
-//                            notificationType = notifType.lowercaseString
-//                        }
-//                        else{
-//                            notificationType = "shared"
-//                        }
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
                     let thumbUrlBeforeNullChk =  UrlManager.sharedInstance.getLiveThumbUrlApi(mediaId!)
                     var imageForMedia : UIImage = UIImage()
-                    //let thumbUrlBeforeNullChk = element["live_stream_signedUrl"]
                     let thumbUrl = nullToNil(thumbUrlBeforeNullChk) as! String
                     if(thumbUrl != ""){
                         let url: NSURL = convertStringtoURL(thumbUrl)
@@ -1072,12 +1038,11 @@ class StreamsListViewController: UIViewController{
                     else{
                         imageForMedia = UIImage(named: "thumb12")!
                     }
-                    
                     let dateFormatter = NSDateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                     dateFormatter.timeZone = NSTimeZone(name: "UTC")
                     let currentDate = dateFormatter.stringFromDate(NSDate())
-                    liveStreamSource.append([self.mediaIdKey:mediaId!, self.mediaUrlKey:"", self.timestamp :currentDate,self.thumbImageKey:imageForMedia ,self.streamTockenKey:stremTockn,self.actualImageKey:"",self.userIdKey:userId,self.notificationKey:notificationType,self.mediaTypeKey:"live",self.timeKey:currentDate,self.channelNameKey:channelname, self.channelIdkey: channelIdSelected!,"createdTime":currentDate,pullTorefreshKey :pulltorefresh!])
+                    liveStreamSource.append([stream_mediaIdKey:mediaId!, mediaUrlKey:"", timestamp :currentDate,stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:stremTockn,actualImageKey:"",userIdKey:userId,notificationKey:notificationType,stream_mediaTypeKey:"live",timeKey:currentDate,stream_channelNameKey:channelname, channelIdkey: channelIdSelected!,"createdTime":currentDate,pullTorefreshKey :pulltorefresh!])
                 }
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if(self.mediaAndLiveArray.count == 0)
@@ -1165,12 +1130,12 @@ class StreamsListViewController: UIViewController{
     }
     
     func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage)  {
-        let mediaId = mediaAndLiveArray[indexpathRow][mediaIdKey] as! String
+        let mediaId = mediaAndLiveArray[indexpathRow][stream_mediaIdKey] as! String
         getLikeCount(mediaId, indexpathRow: indexpathRow, profile: profile)
     }
     
     func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
-        let mediaTypeSelected : String = mediaAndLiveArray[indexpathRow][mediaTypeKey] as! String
+        let mediaTypeSelected : String = mediaAndLiveArray[indexpathRow][stream_mediaTypeKey] as! String
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -1204,23 +1169,23 @@ class StreamsListViewController: UIViewController{
         self.removeOverlay()
         streamListCollectionView.alpha = 1.0
         let index = Int32(indexPathRow)
-        let type = mediaAndLiveArray[indexPathRow][mediaTypeKey] as! String
+        let type = mediaAndLiveArray[indexPathRow][stream_mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
             isMovieView = true
-            selectedMediaId = mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String
+            selectedMediaId = mediaAndLiveArray[indexPathRow][stream_mediaIdKey] as! String
             let dateString = mediaAndLiveArray[indexPathRow]["createdTime"] as! String
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount, selectedItem: index,pageIndicator: 1) as! MovieViewController
+            vc = MovieViewController.movieViewControllerWithImageVideo(mediaAndLiveArray[indexPathRow][stream_channelNameKey] as! String,channelId: mediaAndLiveArray[indexPathRow][channelIdkey] as! String, userName: mediaAndLiveArray[indexPathRow][userIdKey] as! String, mediaType:mediaAndLiveArray[indexPathRow][stream_mediaTypeKey] as! String, profileImage: profileImage, videoImageUrl:mediaAndLiveArray[indexPathRow][mediaUrlKey] as! UIImage, notifType: mediaAndLiveArray[indexPathRow][notificationKey] as! String, mediaId: mediaAndLiveArray[indexPathRow][stream_mediaIdKey] as! String,timeDiff:imageTakenTime,likeCountStr:likeCount, selectedItem: index,pageIndicator: 1) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }
         else
         {
-            let streamTocken = mediaAndLiveArray[indexPathRow][self.streamTockenKey] as! String
+            let streamTocken = mediaAndLiveArray[indexPathRow][stream_streamTockenKey] as! String
             if streamTocken != ""
             {
-                let parameters : NSDictionary = ["channelName": mediaAndLiveArray[indexPathRow][self.channelNameKey] as! String, "userName":mediaAndLiveArray[indexPathRow][self.userIdKey] as! String, "mediaType":mediaAndLiveArray[indexPathRow][self.mediaTypeKey] as! String, "profileImage":profileImage, "notifType":mediaAndLiveArray[indexPathRow][self.notificationKey] as! String, "mediaId":mediaAndLiveArray[indexPathRow][self.mediaIdKey] as! String,"channelId":mediaAndLiveArray[indexPathRow][self.channelIdkey] as! String,"likeCount":likeCount ]
+                let parameters : NSDictionary = ["channelName": mediaAndLiveArray[indexPathRow][stream_channelNameKey] as! String, "userName":mediaAndLiveArray[indexPathRow][userIdKey] as! String, "mediaType":mediaAndLiveArray[indexPathRow][stream_mediaTypeKey] as! String, "profileImage":profileImage, "notifType":mediaAndLiveArray[indexPathRow][notificationKey] as! String, "mediaId":mediaAndLiveArray[indexPathRow][stream_mediaIdKey] as! String,"channelId":mediaAndLiveArray[indexPathRow][channelIdkey] as! String,"likeCount":likeCount ]
                 vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false)  as! MovieViewController
                 
                 
@@ -1257,9 +1222,9 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
         {
             if mediaAndLiveArray.count > indexPath.row
             {
-                let type = mediaAndLiveArray[indexPath.row][mediaTypeKey] as! String
+                let type = mediaAndLiveArray[indexPath.row][stream_mediaTypeKey] as! String
                 
-                if let imageThumb = mediaAndLiveArray[indexPath.row][thumbImageKey] as? UIImage
+                if let imageThumb = mediaAndLiveArray[indexPath.row][stream_thumbImageKey] as? UIImage
                 {
                     
                     if type == "video"

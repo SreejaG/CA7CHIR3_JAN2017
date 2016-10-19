@@ -60,6 +60,26 @@ let thumbImageKey = "thumbImage"
 let liveChannelKey = "liveChannels"
 let subscribedChannelsKey = "subscribedChannels"
 let latest_thumbnail_idKey = "latest_thumbnail_id"
+
+// Stream & Other channel keys
+let actualImageKey = "actualImage"
+let userIdKey = "user_name"
+let mediaUrlKey = "mediaUrl"
+let stream_mediaIdKey = "mediaId"
+let stream_mediaTypeKey = "mediaType"
+let timeKey = ""
+let stream_thumbImageKey = "thumbImage"
+let stream_streamTockenKey = "wowza_stream_token"
+let imageKey = "image"
+let typeKey = "type"
+let imageType = "imageType"
+let timestamp = "last_updated_time_stamp"
+let channelIdkey = "ch_detail_id"
+let stream_channelNameKey = "channel_name"
+let notificationKey = "notification"
+
+
+
 @objc enum SnapCamSelectionMode : Int {
     
     case LiveStream = 0

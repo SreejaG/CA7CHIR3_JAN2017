@@ -6,10 +6,6 @@ class OtherChannelViewController: UIViewController  {
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     static let identifier = "OtherChannelViewController"
-    let channelIdkey = "ch_detail_id"
-    let notificationKey = "notification"
-    let channelNameKey = "channel_name"
-    let userIdKey = "user_name"
     var lastContentOffset: CGPoint = CGPoint()
     var totalMediaCount: String = String()
     var channelId:String!
@@ -22,18 +18,12 @@ class OtherChannelViewController: UIViewController  {
     var loadingOverlay: UIView?
     var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
     let cameraController = IPhoneCameraViewController()
-    let streamTockenKey = "wowza_stream_token"
     var refreshControl:UIRefreshControl!
-    let mediaUrlKey = "mediaUrl"
-    let mediaIdKey = "mediaId"
-    let mediaTypeKey = "mediaType"
     var limit : Int = Int()
     var fixedLimit : Int =  0
     var isLimitReached : Bool = true
     var currentLimit : Int = 0
     var limitMediaCount : Int = Int()
-    let thumbImageKey = "thumbImage"
-    let actualImageKey = "actualImage"
     var downloadCompleteFlag : String = "start"
     var pullToRefreshActive = false
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
@@ -188,7 +178,7 @@ class OtherChannelViewController: UIViewController  {
     {
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
-            let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
+            let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String
             if(type == "live")
             {
                 
@@ -343,7 +333,6 @@ class OtherChannelViewController: UIViewController  {
     @IBAction func backClicked(sender: AnyObject)
     {
         self.setMediaimage()
-        SharedChannelDetailsAPI.sharedInstance.cancelOpratn()
         NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "SelectedTab")
         let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
         let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
@@ -435,7 +424,7 @@ class OtherChannelViewController: UIViewController  {
         {
             if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
             {
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][thumbImageKey] as! UIImage
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][stream_thumbImageKey] as! UIImage
             }
         }
         else{
@@ -483,7 +472,7 @@ class OtherChannelViewController: UIViewController  {
     {
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count >= 2)
         {
-            let type  = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][mediaTypeKey] as! String
+            let type  = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String
             if type != "live"
             {
                 let sortList : Array = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource
@@ -541,7 +530,7 @@ class OtherChannelViewController: UIViewController  {
     }
     
     func getLikeCountForSelectedIndex(indexpathRow:Int)  {
-        let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][mediaIdKey] as! String
+        let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaIdKey] as! String
         getLikeCount(mediaId, indexpathRow: indexpathRow)
     }
     
@@ -549,7 +538,7 @@ class OtherChannelViewController: UIViewController  {
         let defaults = NSUserDefaults .standardUserDefaults()
         let userId = defaults.valueForKey(userLoginIdKey) as! String
         let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        let mediaTypeSelected : String = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][mediaTypeKey] as! String
+        let mediaTypeSelected : String = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaTypeKey] as! String
         channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
             self.successHandlerForMediaCount(response,indexpathRow:indexpathRow)
             }, failure: { (error, message) -> () in
@@ -578,22 +567,22 @@ class OtherChannelViewController: UIViewController  {
     func loadmovieViewController(indexPathRow:Int,likeCount:String) {
         self.removeOverlay()
         channelItemsCollectionView.alpha = 1.0
-        let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][mediaTypeKey] as! String
+        let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
             let dateString = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow]["createdTime"] as! String
             let index = Int32 (indexPathRow)
             let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
+            vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
             self.presentViewController(vc, animated: false) { () -> Void in
             }
         }
         else
         {
-            let streamTocken = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.streamTockenKey] as! String
+            let streamTocken = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][ stream_streamTockenKey] as! String
             if streamTocken != ""
             {
-                let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][self.mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
+                let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
                  vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! MovieViewController
                 self.presentViewController(vc, animated: false) { () -> Void in
                 }
@@ -628,8 +617,8 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         {
             if indexPath.row < SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count
             {
-                let mediaType = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][mediaTypeKey] as! String
-                let imageData =  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][thumbImageKey] as! UIImage
+                let mediaType = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][stream_mediaTypeKey] as! String
+                let imageData =  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][stream_thumbImageKey] as! UIImage
                 if mediaType == "video"
                 {
                     let vDuration  = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][videoDurationKey] as! String
