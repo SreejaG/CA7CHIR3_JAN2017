@@ -90,20 +90,20 @@ class GlobalChannelToImageMapping: NSObject {
             let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
-                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let channelMediaDetailId = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-                let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
+                let mediaId = responseArr[index].valueForKey(mediaIdKey)?.stringValue
+                let channelMediaDetailId = responseArr[index].valueForKey(channelMediaIdKey)?.stringValue
+                let mediaType =  responseArr[index].valueForKey(mediaTypeKey) as! String
                 var vDuration = String()
                 if(mediaType == "video"){
-                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
+                    let videoDurationStr = responseArr[index].valueForKey(videoDurationKey) as! String
                     vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
                 }
                 else{
                     vDuration = ""
                 }
                 let notificationType : String = "likes"
-                let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, createdTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
+                let time = responseArr[index].valueForKey(mediaCreatedTimeKey) as! String
+                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, mediaCreatedTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
             }
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
@@ -267,6 +267,7 @@ class GlobalChannelToImageMapping: NSObject {
                     })
                     let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][latestMediaIdKey] = mediaIdForFilePath
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                     
                     if chanName == "Archive"
@@ -286,8 +287,8 @@ class GlobalChannelToImageMapping: NSObject {
             }
         }
         GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeKey] as! String
-            let time2 = p2[createdTimeKey] as! String
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
         
@@ -337,13 +338,14 @@ class GlobalChannelToImageMapping: NSObject {
                 {
                     let mediaIdForFilePath = GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][latestMediaIdKey] = mediaIdForFilePath
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }
             }
         }
         GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeKey] as! String
-            let time2 = p2[createdTimeKey] as! String
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
     }
@@ -448,17 +450,19 @@ class GlobalChannelToImageMapping: NSObject {
                 if GlobalChannelImageDict[chanelId]!.count > 0
                 {
                     mediaIdForFilePath = GlobalChannelImageDict[chanelId]![0][mediaIdKey] as! String
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][latestMediaIdKey] = mediaIdForFilePath
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
                 }else{
                     GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][latestMediaIdKey] = ""
                 }
                 GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[chanelId]!.count)"
             }
         }
         
         GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeKey] as! String
-            let time2 = p2[createdTimeKey] as! String
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
     }

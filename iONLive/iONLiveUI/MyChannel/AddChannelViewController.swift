@@ -192,12 +192,12 @@ class AddChannelViewController: UIViewController {
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
             let localDateStr = dateFormatter.stringFromDate(NSDate())
             
-            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", createdTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
+            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", ChannelCreatedTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
             
             let imageData = [[String:AnyObject]]()
             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
             
-            fulldataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", createdTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
+            fulldataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", ChannelCreatedTimeKey: localDateStr,sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
             
             addChannelTableView.reloadData()
         }

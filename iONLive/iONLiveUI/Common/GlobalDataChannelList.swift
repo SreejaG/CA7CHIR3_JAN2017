@@ -80,21 +80,21 @@ class GlobalDataChannelList: NSObject {
     {
         globalChannelDataSource.removeAll()
         for element in channelDetailsDict{
-            let channelId = element["channel_detail_id"]?.stringValue
+            let channelId = element[channelIdKey]?.stringValue
             var mediaId = String()
-            if let m =  element["latest_thumbnail_id"]?.stringValue
+            if let m =  element[latestMediaIdKey]?.stringValue
             {
                 mediaId = m
             }
             else{
                 mediaId = ""
             }
-            let channelName = element["channel_name"] as! String
-            let mediaSharedCount = element["total_no_media_shared"]?.stringValue
-            let createdTime = element["last_updated_time_stamp"] as! String
-            let sharedBool = Int(element["channel_shared_ind"] as! Bool)
+            let channelName = element[channelNameKey] as! String
+            let mediaSharedCount = element[totalMediaKey]?.stringValue
+            let createdTime = element[ChannelCreatedTimeKey] as! String
+            let sharedBool = Int(element[chanelSharedIndicatorKey] as! Bool)
             
-            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,createdTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool])
+            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,ChannelCreatedTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool])
         }
         
         if(self.globalChannelDataSource.count > 0){
@@ -181,8 +181,8 @@ class GlobalDataChannelList: NSObject {
     
     func sortChannelList(){
         globalChannelDataSource.sortInPlace({ p1, p2 in
-            let time1 = p1[createdTimeKey] as! String
-            let time2 = p2[createdTimeKey] as! String
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)

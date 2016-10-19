@@ -599,7 +599,7 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                     imageForProfile =  UIImage(named: "dummyUser")!
                 }
                 
-                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][createdTimeKey] as! String
+                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
                 
                 let index = Int32(indexPath.row)

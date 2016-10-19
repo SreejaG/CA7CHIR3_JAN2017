@@ -25,10 +25,12 @@ let vowzaIp = "104.196.159.90" //IR3
 
 let channelIdKey = "channel_detail_id"
 let channelNameKey = "channel_name"
-let totalMediaKey = "total_media_count"
-let createdTimeKey = "created_timeStamp"
+let totalMediaKey = "total_no_media_shared"
+let ChannelCreatedTimeKey = "last_updated_time_stamp"
 let sharedOriginalKey = "orgSelected"
 let sharedTemporaryKey = "tempSelected"
+let chanelSharedIndicatorKey = "channel_shared_ind"
+let latestMediaIdKey = "latest_thumbnail_id"
 
 //media details
 
@@ -37,10 +39,11 @@ let tImageKey = "thumbImage"
 let tImageURLKey = "thumbImage_URL"
 let fImageURLKey = "fullImage_URL"
 let notifTypeKey = "notification_type"
-let mediaTypeKey = "media_type"
+let mediaTypeKey = "gcs_object_type"
 let progressKey = "upload_progress"
 let channelMediaIdKey = "channel_media_detail_id"
-let videoDurationKey = "videoDuration"
+let videoDurationKey = "video_duration"
+let mediaCreatedTimeKey = "created_time_stamp"
 
 // channel page
 
