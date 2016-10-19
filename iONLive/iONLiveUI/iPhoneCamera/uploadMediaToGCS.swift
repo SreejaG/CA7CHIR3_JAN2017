@@ -158,7 +158,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             duration = ""
         }
         
-        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",createdTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:duration]
+        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",mediaCreatedTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:duration]
         
         mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
     }

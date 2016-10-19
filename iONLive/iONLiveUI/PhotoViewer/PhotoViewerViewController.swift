@@ -805,7 +805,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
             dateFormatter.timeZone = NSTimeZone(name: "UTC")
-            let fromdate = dateFormatter.dateFromString(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][createdTimeKey] as! String)
+            let fromdate = dateFormatter.dateFromString(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![index][mediaCreatedTimeKey] as! String)
             var dateForDisplay : String
             if(fromdate != nil){
                 let dateStr = dateFormatter.stringFromDate(NSDate())

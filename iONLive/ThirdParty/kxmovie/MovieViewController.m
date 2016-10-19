@@ -921,11 +921,9 @@ UIPanGestureRecognizer *afterPan;
             {
                 if (indexForSwipe != -1)
                 {
-//                    GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"fullImage_URL"];
-                    mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_type"];
+                    mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"gcs_object_type"];
                     mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
-//                    mediaURLChk = [urlManager getFullImageForMedia:mediaIdChk userName:userId accessToken:accessToken];
-                    NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_timeStamp"];
+                    NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_time_stamp"];
                     timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifference:createdTime];
                     likeCountStrChk = @"0";
                     notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
