@@ -11,6 +11,7 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     
     @IBOutlet weak var cloudIcon: UIImageView!
         
+    @IBOutlet var reloadMedia: UIImageView!
     func ProgresviewUpdate (value : Float)
     {
         progressView.progress = value

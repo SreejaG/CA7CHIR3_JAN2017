@@ -23,6 +23,8 @@ class MySharedChannelsViewController: UIViewController {
     
     var loadingOverlay: UIView?
     
+    var NoDatalabelFormyChanelImageList : UILabel = UILabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(_:)), name: "refreshMySharedChannelTableView", object: nil)
@@ -44,6 +46,10 @@ class MySharedChannelsViewController: UIViewController {
             removeOverlay()
             createChannelDataSource()
         }
+        else{
+            removeOverlay()
+            addNoDataLabel()
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -58,6 +64,14 @@ class MySharedChannelsViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList.text = "No Channel Available"
+        self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
     
     func removeActivityIndicator(notif : NSNotification){

@@ -29,6 +29,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     let requestManager = RequestManager.sharedInstance
     let channelManager = ChannelManager.sharedInstance
     
+    var NoDatalabelFormyChanelImageList : UILabel = UILabel()
+    
     var gestureRecognizer = UIGestureRecognizer()
     var longPressRecognizer : UILongPressGestureRecognizer = UILongPressGestureRecognizer()
     
@@ -78,6 +80,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             removeOverlay()
             self.myChannelTableView.reloadData()
         }
+        else{
+            removeOverlay()
+            addNoDataLabel()
+        }
         
         initialise()
         hideView(0)
@@ -99,6 +105,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList.text = "No Channel Available"
+        self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
     
     func hideView(constraintConstant: CGFloat)

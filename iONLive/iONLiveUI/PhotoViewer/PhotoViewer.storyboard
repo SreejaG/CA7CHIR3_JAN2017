@@ -150,6 +150,13 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CloudIcon" translatesAutoresizingMaskIntoConstraints="NO" id="6HG-oF-4JZ">
                                                     <rect key="frame" x="2" y="2" width="12" height="11"/>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ReloadMedia" translatesAutoresizingMaskIntoConstraints="NO" id="Hzj-oQ-Wz0">
+                                                    <rect key="frame" x="9" y="10" width="25" height="25"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="25" id="RAg-Vz-dHG"/>
+                                                        <constraint firstAttribute="width" constant="25" id="Wd0-Or-966"/>
+                                                    </constraints>
+                                                </imageView>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tfd-dS-C7Z">
                                                     <rect key="frame" x="0.0" y="41" width="42" height="2"/>
                                                 </progressView>
@@ -167,8 +174,10 @@
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leading" id="D5g-s7-n6b"/>
                                             <constraint firstItem="6HG-oF-4JZ" firstAttribute="leading" secondItem="L2p-5p-IUd" secondAttribute="leadingMargin" constant="-6" id="JnK-yf-xo3"/>
                                             <constraint firstItem="txC-iS-gZe" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="top" id="amQ-Ca-65u"/>
+                                            <constraint firstItem="Hzj-oQ-Wz0" firstAttribute="centerY" secondItem="L2p-5p-IUd" secondAttribute="centerY" constant="1" id="bVb-kE-qOr"/>
                                             <constraint firstItem="m5T-pj-pPH" firstAttribute="top" secondItem="6HG-oF-4JZ" secondAttribute="bottom" constant="16" id="bWm-tN-79X"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="tfd-dS-C7Z" secondAttribute="trailing" constant="-7" id="e3p-xl-EEc"/>
+                                            <constraint firstItem="Hzj-oQ-Wz0" firstAttribute="centerX" secondItem="L2p-5p-IUd" secondAttribute="centerX" id="g2j-oD-TIy"/>
                                             <constraint firstItem="6HG-oF-4JZ" firstAttribute="centerX" secondItem="m5T-pj-pPH" secondAttribute="centerX" constant="2" id="iSg-97-Qhv"/>
                                             <constraint firstItem="6HG-oF-4JZ" firstAttribute="top" secondItem="L2p-5p-IUd" secondAttribute="topMargin" constant="-6" id="szB-Ee-QCG"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="6HG-oF-4JZ" secondAttribute="trailing" constant="21" id="z0E-28-Mz6"/>
@@ -177,6 +186,7 @@
                                             <outlet property="cloudIcon" destination="6HG-oF-4JZ" id="wlA-QI-5DP"/>
                                             <outlet property="playIcon" destination="m5T-pj-pPH" id="HwH-qg-zCK"/>
                                             <outlet property="progressView" destination="tfd-dS-C7Z" id="4LC-Sc-iud"/>
+                                            <outlet property="reloadMedia" destination="Hzj-oQ-Wz0" id="4g4-Qo-LXd"/>
                                             <outlet property="thumbImageView" destination="txC-iS-gZe" id="cgs-G7-TDY"/>
                                         </connections>
                                     </collectionViewCell>
@@ -254,5 +264,6 @@
         <image name="Circled Play" width="25" height="25"/>
         <image name="CloudIcon" width="512" height="512"/>
         <image name="Live_now_off_mode" width="26" height="26"/>
+        <image name="ReloadMedia" width="100" height="100"/>
     </resources>
 </document>

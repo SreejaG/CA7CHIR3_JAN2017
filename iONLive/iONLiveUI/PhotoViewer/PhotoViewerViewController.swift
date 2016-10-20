@@ -70,7 +70,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
     var customView = CustomInfiniteIndicator()
-    
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
             static let instance = PhotoViewerViewController()
@@ -171,7 +170,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
-        self.view.addGestureRecognizer(doubleTap)
+        self.fullScrenImageView.addGestureRecognizer(doubleTap)
+        
+        let doubleTap1 = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
+        doubleTap1.numberOfTapsRequired = 2
+        self.fullScreenZoomView.addGestureRecognizer(doubleTap1)
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
@@ -204,6 +207,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.fullScreenZoomView.image = self.setOrientationForVideo()
             })
         }
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.photoThumpCollectionView.reloadData()
+        })
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
         
@@ -319,7 +326,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     }
                     self.fullScrenImageView.image = orientedImage! as UIImage
                     self.fullScreenZoomView.image = orientedImage! as UIImage
-                    
                 }
             }
         })
@@ -349,7 +355,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
         }
         GlobalChannelToImageMapping.sharedInstance.setFilteredCount(end)
-        
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
@@ -393,23 +398,25 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func scrollViewWillBeginZooming(scrollView: UIScrollView, withView views: UIView?) {
-        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
-        {
-            if(fullScreenZoomView.hidden==true)
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
             {
-                downloadingFlag = true
-                fullScreenZoomView.hidden = false
-                fullScrenImageView.alpha = 0.0
-                TopView.hidden = true
-                BottomView.hidden = true
-                photoThumpCollectionView.hidden = true
-                playIconInFullView.hidden = true
-                scrollView.scrollEnabled=true;
-                fullScrenImageView.userInteractionEnabled = false
-                self.view.bringSubviewToFront(photoThumpCollectionView)
-                self.view.bringSubviewToFront(playIconInFullView)
-                self.view.bringSubviewToFront(TopView)
-                self.view.bringSubviewToFront(BottomView)
+                if(fullScreenZoomView.hidden==true)
+                {
+                    downloadingFlag = true
+                    fullScreenZoomView.hidden = false
+                    fullScrenImageView.alpha = 0.0
+                    TopView.hidden = true
+                    BottomView.hidden = true
+                    photoThumpCollectionView.hidden = true
+                    playIconInFullView.hidden = true
+                    scrollView.scrollEnabled=true;
+                    fullScrenImageView.userInteractionEnabled = false
+                    self.view.bringSubviewToFront(photoThumpCollectionView)
+                    self.view.bringSubviewToFront(playIconInFullView)
+                    self.view.bringSubviewToFront(TopView)
+                    self.view.bringSubviewToFront(BottomView)
+                }
             }
         }
     }
@@ -431,13 +438,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     }
     
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
-        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
-            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
-            {
-                let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
-                if mediaType == "video"
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
+            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
+                if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
                 {
-                    downloadVideo(selectedItem)
+                    let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
+                    if mediaType == "video"
+                    {
+                        downloadVideo(selectedItem)
+                    }
                 }
             }
         }
@@ -469,7 +478,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.photoThumpCollectionView.userInteractionEnabled = true
             self.deletButton.userInteractionEnabled = true
             self.addToButton.userInteractionEnabled = true
-
+            
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.addToButton.hidden = false
@@ -528,7 +537,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     
                     mediaImage = UIImage(named: "thumb12")!
                 }
-
+                
                 completion(result: mediaImage)
             }
             else
@@ -543,78 +552,81 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
-        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count == 0
+        if (GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0)
         {
-        }
-        else
-        {
-            if totalCount > 0
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count == 0
             {
-                swipeFlag = true
-                self.removeOverlay()
-                fullScrenImageView.userInteractionEnabled = true
-                if (playHandleflag == 1)
+            }
+            else
+            {
+                if totalCount > 0
                 {
-                    playHandleflag = 0
-                    playIconInFullView.hidden = false
-                    self.view.userInteractionEnabled = true
-                }
-                downloadTask?.cancel()
-                fullScrenImageView.alpha = 1.0
-                progressLabelDownload?.removeFromSuperview()
-                progressViewDownload?.removeFromSuperview()
-                progressLabelDownload?.text=" ";
-                progressViewDownload?.hidden=true;
-                progressLabelDownload?.hidden=true;
-                
-                if let swipeGesture = gesture as? UISwipeGestureRecognizer
-                {
-                    switch swipeGesture.direction
+                    swipeFlag = true
+                    self.removeOverlay()
+                    fullScrenImageView.userInteractionEnabled = true
+                    if (playHandleflag == 1)
                     {
-                    case UISwipeGestureRecognizerDirection.Left:
-                        if(selectedItem < totalCount - 1)
+                        playHandleflag = 0
+                        playIconInFullView.hidden = false
+                        self.view.userInteractionEnabled = true
+                    }
+                    downloadTask?.cancel()
+                    fullScrenImageView.alpha = 1.0
+                    progressLabelDownload?.removeFromSuperview()
+                    progressViewDownload?.removeFromSuperview()
+                    progressLabelDownload?.text=" ";
+                    progressViewDownload?.hidden=true;
+                    progressLabelDownload?.hidden=true;
+                    
+                    if let swipeGesture = gesture as? UISwipeGestureRecognizer
+                    {
+                        switch swipeGesture.direction
                         {
-                            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                            dispatch_async(backgroundQueue, {
-                                self.selectedItem = self.selectedItem+1
-                                let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
-                                self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
-                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                    self.removeOverlay()
-                                    self.setLabelValue(self.selectedItem)
-                                    self.photoThumpCollectionView.reloadData()
+                        case UISwipeGestureRecognizerDirection.Left:
+                            if(selectedItem < totalCount - 1)
+                            {
+                                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                                dispatch_async(backgroundQueue, {
+                                    self.selectedItem = self.selectedItem+1
+                                    let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
+                                    self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier:1)
+                                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                        self.removeOverlay()
+                                        self.setLabelValue(self.selectedItem)
+                                        self.photoThumpCollectionView.reloadData()
+                                    })
                                 })
-                            })
-                        }
-                        else if(selectedItem == totalCount - 1)
-                        {
-                            self.removeOverlay()
-                        }
-                        
-                    case UISwipeGestureRecognizerDirection.Right:
-                        if(selectedItem != 0)
-                        {
-                            let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                            dispatch_async(backgroundQueue, {
-                                self.selectedItem = self.selectedItem - 1
-                                let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
-                                self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
-                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                    self.removeOverlay()
-                                    self.setLabelValue(self.selectedItem)
-                                    self.photoThumpCollectionView.reloadData()
+                            }
+                            else if(selectedItem == totalCount - 1)
+                            {
+                                self.removeOverlay()
+                            }
+                            
+                        case UISwipeGestureRecognizerDirection.Right:
+                            if(selectedItem != 0)
+                            {
+                                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                                dispatch_async(backgroundQueue, {
+                                    self.selectedItem = self.selectedItem - 1
+                                    let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem]
+                                    self.downloadFullImageWhenTapThumb(dict, indexpaths: self.selectedItem,gestureIdentifier: 2)
+                                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                        self.removeOverlay()
+                                        self.setLabelValue(self.selectedItem)
+                                        self.photoThumpCollectionView.reloadData()
+                                    })
                                 })
-                            })
+                            }
+                            else if(self.selectedItem == 0)
+                            {
+                                self.removeOverlay()
+                            }
+                            
+                        default:
+                            break
                         }
-                        else if(selectedItem == 0)
-                        {
-                            self.removeOverlay()
-                        }
-                        
-                    default:
-                        break
                     }
                 }
             }
@@ -1048,16 +1060,20 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         dictMediaId = dict[mediaIdKey] as! String
         dictProgress = dict[progressKey] as! Float
         
-        for i in 0 ..<  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
-        {
-            let mediaIdFromData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][mediaIdKey] as! String
-            
-            if(mediaIdFromData == dictMediaId){
-                GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][progressKey] = dictProgress
+        if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
+            for i in 0 ..<  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+            {
+                if(i < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count){
+                    let mediaIdFromData =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][mediaIdKey] as! String
+                    
+                    if(mediaIdFromData == dictMediaId){
+                        GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![i][progressKey] = dictProgress
+                    }
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.photoThumpCollectionView.reloadData()
+                    })
+                }
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.photoThumpCollectionView.reloadData()
-            })
         }
     }
     
@@ -1435,14 +1451,22 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 cell.thumbImageView.image = (thumpImage as! UIImage)
                 
                 let progress =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
-                if((progress == 1.0) || (progress == 0.0))
+                if(progress == 3.0 || progress == 3)
                 {
                     cell.progressView.hidden = true
                     cell.cloudIcon.hidden = false
-                }else{
+                    cell.reloadMedia.hidden = true
+                }
+                else if(progress == 2.0 || progress == 2 || progress == 4.0 || progress == 4){
+                    cell.progressView.hidden = true
+                    cell.cloudIcon.hidden = true
+                    cell.reloadMedia.hidden = false
+                }
+                else{
                     cell.progressView.progress = progress
                     cell.progressView.hidden = false
                     cell.cloudIcon.hidden = true
+                    cell.reloadMedia.hidden = true
                 }
             }
         }
@@ -1451,6 +1475,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoThumbCollectionViewCell", forIndexPath: indexPath) as! PhotoThumbCollectionViewCell
+        cell.rotate360Degrees(2.0)
         swipeFlag = false
         
         if (playHandleflag == 1)
@@ -1483,12 +1509,44 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
             let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
             
+            let progres = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
+            if(progres == 2.0 || progres == 2){
+                uploadFailedImagesOnClick(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
+            }
+            else if(progres == 4.0 || progres == 4){
+                MappingFailedImagesOnClick(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
+            }
+            
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
             dispatch_async(backgroundQueue, {
                 self.downloadFullImageWhenTapThumb(dict, indexpaths: indexPath.row ,gestureIdentifier:0)
             })
         }
+    }
+    
+    func uploadFailedImagesOnClick(mediaIDClick: String)
+    {
+        if(GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict.count > 0){
+            for j in 0 ..< GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict.count
+            {
+                let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaIdKey] as! String
+                if mediaIdChk == mediaIDClick
+                {
+                    let thumbToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][tImageURLKey] as! String
+                    let fullToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][fImageURLKey] as! String
+                    let mediaTypeToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaTypeKey] as! String
+                    let uploadMediaObj = uploadMediaToGCS()
+                    uploadMediaObj.setGlobalValuesForUploading(mediaIdChk, thumbURL: thumbToUpload, fullURL: fullToUpload, mediaType: mediaTypeToUpload)
+                }
+            }
+        }
+    }
+    
+    func MappingFailedImagesOnClick(mediaIDClick: String)
+    {
+        let uploadMediaObj = uploadMediaToGCS()
+        uploadMediaObj.setGlobalValuesForMapping(mediaIDClick)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
