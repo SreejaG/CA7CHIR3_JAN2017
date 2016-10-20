@@ -12,26 +12,10 @@ class SharedChannelDetailsAPI: NSObject {
         return Singleton.instance
     }
     var operationQueue = NSOperationQueue()
-    
     var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var selectedSharedChannelMediaSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    let mediaUrlKey = "mediaUrl"
-    let mediaIdKey = "mediaId"
-    let mediaTypeKey = "mediaType"
-    let streamTockenKey = "wowza_stream_token"
-    let channelIdkey = "ch_detail_id"
-    let notificationKey = "notification"
-    let channelNameKey = "channel_name"
-    let userIdKey = "user_name"
-    let thumbImageKey = "thumbImage"
-    let actualImageKey = "actualImage"
     var userName:String!
     var channelName :String = String()
-    
-    func cancelOpratn()
-    {
-    }
-    
     func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , sharedCount : String)
     {
         if(channelName != "")
@@ -148,7 +132,7 @@ class SharedChannelDetailsAPI: NSObject {
                     vDuration = ""
                 }
               
-                imageDataSource.append([mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time,videoDurationKey:vDuration])
+                imageDataSource.append([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time,videoDurationKey:vDuration])
             }
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
@@ -170,13 +154,13 @@ class SharedChannelDetailsAPI: NSObject {
                     downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
                         if(self.selectedSharedChannelMediaSource.count > 0)
                         {
-                            if (self.selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String != "live")
+                            if (self.selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String != "live")
                             {
-                                self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
+                                self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
                             }
                         }
                         else{
-                            self.selectedSharedChannelMediaSource.insert([self.mediaIdKey:mediaId!, self.mediaUrlKey:mediaUrl, self.thumbImageKey:result ,self.streamTockenKey:streamTocken,self.actualImageKey:mediaUrl,self.notificationKey:notificationType,self.mediaTypeKey:"live",infiniteScrollIdKey: "", self.userIdKey:self.userName, self.channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
+                            self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl,stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
                         }
                         NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
                     })
@@ -259,7 +243,7 @@ class SharedChannelDetailsAPI: NSObject {
             var imageForMedia : UIImage = UIImage()
             if(imageDataSource.count > 0 && imageDataSource.count > i)
             {
-                let mediaIdForFilePath = "\(imageDataSource[i][mediaIdKey] as! String)thumb"
+                let mediaIdForFilePath = "\(imageDataSource[i][stream_mediaIdKey] as! String)thumb"
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
                 let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
                 let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
@@ -296,7 +280,7 @@ class SharedChannelDetailsAPI: NSObject {
             {
                 if(i < imageDataSource.count)
                 {
-                    self.selectedSharedChannelMediaSource.append([self.mediaIdKey:self.imageDataSource[i][self.mediaIdKey]!, self.mediaUrlKey:imageForMedia, self.mediaTypeKey:self.imageDataSource[i][self.mediaTypeKey]!,self.thumbImageKey:imageForMedia,self.actualImageKey:self.imageDataSource[i][self.actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,self.streamTockenKey:"",self.notificationKey:self.imageDataSource[i][self.notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String,                videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
+                    self.selectedSharedChannelMediaSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_thumbImageKey:imageForMedia,actualImageKey:self.imageDataSource[i][actualImageKey]!,infiniteScrollIdKey: self.imageDataSource[i][infiniteScrollIdKey]!,stream_streamTockenKey:"",notificationKey:self.imageDataSource[i][notificationKey]!,"createdTime":self.imageDataSource[i]["createdTime"] as! String,                videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
                 }
             }
         }
@@ -305,7 +289,7 @@ class SharedChannelDetailsAPI: NSObject {
         {
             if(selectedSharedChannelMediaSource.count > 0)
             {
-                let type = selectedSharedChannelMediaSource[0][self.mediaTypeKey] as! String
+                let type = selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String
                 if type == "live"
                 {
                     let dateFormatter = NSDateFormatter()
