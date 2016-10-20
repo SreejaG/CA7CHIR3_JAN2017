@@ -218,6 +218,7 @@
                     </view>
                     <connections>
                         <outlet property="logInBottomConstraint" destination="EEj-gn-i56" id="U8d-OT-SJc"/>
+                        <outlet property="loginButton" destination="6Yj-g9-NzQ" id="ggM-Fh-sX6"/>
                         <outlet property="passwordTextField" destination="6L9-gB-pXi" id="xJR-ae-RUf"/>
                         <outlet property="userNameTextfield" destination="rVX-k5-l02" id="WJs-NH-yNy"/>
                     </connections>
