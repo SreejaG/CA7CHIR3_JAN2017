@@ -9,6 +9,8 @@ class GlobalChannelToImageMapping: NSObject {
     var channelImageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var localDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
     var dummy: [[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaUploadFailedDict: [[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaMappingFailedDict: [String] = [String]()
     
     var channelId : String!
     var channelDetailId : String = String()
@@ -103,7 +105,7 @@ class GlobalChannelToImageMapping: NSObject {
                 }
                 let notificationType : String = "likes"
                 let time = responseArr[index].valueForKey(mediaCreatedTimeKey) as! String
-                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, mediaCreatedTimeKey:time, progressKey:0.0,videoDurationKey:vDuration])
+                imageDataSource.append([mediaIdKey:mediaId!,channelMediaIdKey:channelMediaDetailId!,mediaTypeKey:mediaType, notifTypeKey:notificationType, mediaCreatedTimeKey:time, progressKey:3.0,videoDurationKey:vDuration])
             }
             if(imageDataSource.count > 0){
                 imageDataSource.sortInPlace({ p1, p2 in
@@ -200,6 +202,7 @@ class GlobalChannelToImageMapping: NSObject {
                 }
             }
             localDataSource.removeAll()
+            print(GlobalChannelImageDict)
             NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
         }
     }
@@ -486,5 +489,46 @@ class GlobalChannelToImageMapping: NSObject {
     func setFilteredCount( count : Int)
     {
         self.filteredcount = count
+    }
+    
+    func setFailedUploadMediaDetails(mediaId: String, thumbURL: String, fullURL: String, mediaType: String) {
+        var chkFlag = false
+        if(mediaUploadFailedDict.count > 0){
+            for j in 0 ..< mediaUploadFailedDict.count
+            {
+                let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
+                if mediaIdChk == mediaId
+                {
+                    chkFlag = true
+                    break
+                }
+            }
+            if(chkFlag == false){
+                mediaUploadFailedDict.append([mediaIdKey:mediaId, tImageURLKey:thumbURL, fImageURLKey:fullURL, mediaTypeKey: mediaType])
+            }
+        }
+        else{
+           mediaUploadFailedDict.append([mediaIdKey:mediaId, tImageURLKey:thumbURL, fImageURLKey:fullURL, mediaTypeKey: mediaType])
+        }
+    }
+    
+    func removeUploadSuccessMediaDetails(mediaId: String)  {
+        var chkFlag = false
+        var indexChk = 0
+        if(mediaUploadFailedDict.count > 0){
+            for j in 0 ..< mediaUploadFailedDict.count
+            {
+                let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
+                if mediaIdChk == mediaId
+                {
+                    chkFlag = true
+                    indexChk = j
+                    break
+                }
+            }
+            if(chkFlag == true){
+               mediaUploadFailedDict.removeAtIndex(indexChk)
+            }
+        }
     }
 }

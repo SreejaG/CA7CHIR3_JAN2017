@@ -70,11 +70,41 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         else{
             videoDuration = ""
         }
+        userId = defaults.valueForKey(userLoginIdKey) as! String
+        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         self.imageUploadManager.getSignedURL(userId, accessToken: accessToken, mediaType: media, videoDuration: videoDuration, success: { (response) -> () in
             self.authenticationSuccessHandlerSignedURL(response)
             }, failure: { (error, message) -> () in
                 self.authenticationFailureHandler(error, code: message)
         })
+    }
+    
+    func setGlobalValuesForUploading(MediaIDGlob: String, thumbURL: String, fullURL: String, mediaType: String){
+        self.mediaId = MediaIDGlob
+        self.media = mediaType
+        self.uploadFullImageOrVideoURLGCS = fullURL
+        self.uploadThumbImageURLGCS = thumbURL
+        let mediaIdForFilePath = "\(MediaIDGlob)full"
+        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+        let savingPathfull = "\(parentPath)/\(mediaIdForFilePath)"
+        let fileExistFlagFull = FileManagerViewController.sharedInstance.fileExist(savingPathfull)
+        if fileExistFlagFull == true{
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPathfull)
+            self.imageFromDB =  mediaImageFromFile!
+        }
+        let mediaIdForFilePaththumb = "\(MediaIDGlob)thumb"
+        let savingPaththumb = "\(parentPath)/\(mediaIdForFilePaththumb)"
+        let fileExistFlagthumb = FileManagerViewController.sharedInstance.fileExist(savingPaththumb)
+        if fileExistFlagthumb == true{
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPaththumb)
+            self.imageAfterConversionThumbnail =  mediaImageFromFile!
+        }
+        startUploadingToGCS()
+    }
+    
+    func setGlobalValuesForMapping(MediaIDGlob : String)  {
+        self.mediaId = MediaIDGlob
+        mapMediaToDefaultChannels()
     }
     
     func authenticationSuccessHandlerSignedURL(response:AnyObject?)
@@ -152,7 +182,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         let currentTimeStamp : String = getCurrentTimeStamp()
         var duration = String()
         if(media == "video"){
-           duration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDuration)
+            duration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDuration)
         }
         else{
             duration = ""
@@ -180,17 +210,20 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 if(result == "Success"){
                     self.uploadThumbImageToGCS({(result) -> Void in
                         self.deleteDataFromDB()
-                        self.imageAfterConversionThumbnail = UIImage()
                         self.imageFromDB = UIImage()
                         if(result == "Success"){
+                            self.imageAfterConversionThumbnail = UIImage()
+                            GlobalChannelToImageMapping.sharedInstance.removeUploadSuccessMediaDetails(self.mediaId)
                             self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
                             self.mapMediaToDefaultChannels()
                         }
                         else{
+                            GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
                         }
                     })
                 }
                 else{
+                    GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
                 }
             })
         })
@@ -210,6 +243,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
                 
                 if error != nil {
+                    self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
                     completion(result:"Failed")
                 }
                 else {
@@ -231,6 +265,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
                     imageOrVideoData = NSData()
                     if error != nil {
+                        self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
                         completion(result:"Failed")
                     }
                     else {
@@ -256,6 +291,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         request.HTTPBody = imageData
         let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
             if error != nil {
+                self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
                 completion(result:"Failed")
             }
             else {
@@ -296,20 +332,47 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //after uploading map media to channels
     func mapMediaToDefaultChannels(){
-        imageUploadManager.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
-            self.authenticationSuccessHandlerAfterMapping(response)
-            }, failure: { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
-        })
+        if self.requestManager.validConnection() {
+            userId = defaults.valueForKey(userLoginIdKey) as! String
+            accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            imageUploadManager.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
+                self.authenticationSuccessHandlerAfterMapping(response)
+                }, failure: { (error, message) -> () in
+                    self.authenticationFailureHandlerMapping(error, code: message)
+            })
+        }
+        else{
+            self.updateProgressToDefault(4.0, mediaIds: mediaId)
+        }
     }
     
     func authenticationSuccessHandlerAfterMapping(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
         {
-            let mediaId = json["mediaId"] 
+            let mediaId = json["mediaId"]
             let channelWithScrollingIds = json["channelMediaDetails"] as! [[String:AnyObject]]
+            self.updateProgressToDefault(3.0, mediaIds: "\(mediaId!)")
             addScrollingIdsToChannels(channelWithScrollingIds, mediaId: "\(mediaId)")
+        }
+    }
+    
+    func authenticationFailureHandlerMapping(error: NSError?, code: String)
+    {
+        self.updateProgressToDefault(4.0, mediaIds: mediaId)
+        if !self.requestManager.validConnection() {
+            ErrorManager.sharedInstance.noNetworkConnection()
+        }
+        else if code.isEmpty == false {
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                
+            }
+            else{
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            }
+        }
+        else{
+            ErrorManager.sharedInstance.inValidResponseError()
         }
     }
     
