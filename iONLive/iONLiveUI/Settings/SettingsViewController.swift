@@ -1,7 +1,7 @@
 
 import UIKit
 
-class SettingsViewController: UIViewController, UIGestureRecognizerDelegate {
+class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,toggleCellDelegate {
     
     let optionTitle = "optionTitle"
     let optionType = "optionType"
@@ -157,6 +157,24 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate {
         pickerFullView.hidden = true
         self.settingsTableView.userInteractionEnabled = true
     }
+    
+   // #pragma mark - toggleCellDelegate
+    
+    func didChangeSwitchState(toggleCell:SettingsToggleTableViewCell , isOn: Bool) {
+        let indexPath = self.settingsTableView.indexPathForCell(toggleCell)
+        print(indexPath?.row )
+        
+        switch indexPath!.row {
+        case 7:
+            
+            break;
+        case 4:
+            break;
+        default:
+            break;
+        }
+        print(isOn)
+    }
 }
 
 extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
@@ -223,7 +241,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
                 cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
-                cell.userInteractionEnabled = false
+                //                [cell.toggleCellSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
+                cell.userInteractionEnabled = true
+                cell.cellDelegate = self
                 return cell
             }
             else
@@ -312,6 +332,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         default:
             break
         }
+    }
+    func updateSwitchAtIndexPath(toggleSwitch: UISwitch)
+    {
+        print(toggleSwitch.tag)
     }
     
     func loadReportProblemView()

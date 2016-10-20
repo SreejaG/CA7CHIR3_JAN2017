@@ -312,6 +312,9 @@
                                                                 <constraint firstAttribute="width" constant="49" id="9Lx-Z1-qAh"/>
                                                                 <constraint firstAttribute="height" constant="27" id="v70-V9-wbr"/>
                                                             </constraints>
+                                                            <connections>
+                                                                <action selector="changedSwitch:" destination="kcp-h3-pSn" eventType="valueChanged" id="HZq-Qz-6nR"/>
+                                                            </connections>
                                                         </switch>
                                                     </subviews>
                                                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>

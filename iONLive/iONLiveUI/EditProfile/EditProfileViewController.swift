@@ -97,7 +97,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                     let sharingStoryboard = UIStoryboard(name:"EditProfile", bundle: nil)
                     let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("ResetPasswordViewController") as! ResetPasswordViewController
                     channelItemListVC.navigationController?.navigationBarHidden = true
-                    self.presentViewController(channelItemListVC, animated: true) { () -> Void in
+                    self.presentViewController(channelItemListVC, animated: false) { () -> Void in
                     }
                     
                 }
