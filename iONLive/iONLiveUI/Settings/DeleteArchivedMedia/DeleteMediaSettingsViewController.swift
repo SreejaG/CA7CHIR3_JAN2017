@@ -1,16 +1,10 @@
-//
-//  DeleteMediaSettingsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/24/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class DeleteMediaSettingsViewController: UIViewController{
     
     static let identifier = "DeleteMediaSettingsViewController"
+    
     @IBOutlet weak var deleteMediaSettingsTableView: UITableView!
     
     var dataSource = ["Never","After 30 Days","After 7 Days"]
@@ -19,10 +13,21 @@ class DeleteMediaSettingsViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        {
+            let value = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
+            selectedOption = FileManagerViewController.sharedInstance.getArchiveDeleteLongString(value)
+        }
+        else{
+            selectedOption = "Never"
+        }
+        deleteMediaSettingsTableView.reloadData()
     }
     
     @IBAction func didTapBackButton(sender: AnyObject)
     {
+        let value = FileManagerViewController.sharedInstance.getArchiveDeleteShortString(selectedOption)
+        NSUserDefaults.standardUserDefaults().setValue(value, forKey: "archiveMediaDeletion")
         self.navigationController?.popViewControllerAnimated(true)
     }
     
@@ -85,7 +90,7 @@ extension DeleteMediaSettingsViewController:UITableViewDataSource
         {
             return dataSource.count
         }
-       else
+        else
         {
             return 0
         }

@@ -150,7 +150,35 @@ class FileManagerViewController: UIViewController {
         return retResolution
     }
 
+    func getArchiveDeleteShortString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "After 7 Days"){
+            retResolution = "7 Days"
+        }
+        else if(resolution == "After 30 Days"){
+            retResolution = "30 Days"
+        }
+        else if(resolution == "Never"){
+            retResolution = "Never"
+        }
+        return retResolution
+    }
     
+    func getArchiveDeleteLongString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "7 Days"){
+            retResolution = "After 7 Days"
+        }
+        else if(resolution == "30 Days"){
+            retResolution = "After 30 Days"
+        }
+        else if(resolution == "Never"){
+            retResolution = "Never"
+        }
+        return retResolution
+    }
     
     func yearsFrom(date:NSDate, todate:NSDate) -> Int{
         return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year

@@ -47,20 +47,33 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         self.settingsTableView.backgroundView = nil
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
         backbutton.hidden = true
-        
-        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
-        {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
-        }
-        else{
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-        }
-        settingsTableView.reloadData()
+        reloadTableData()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+    }
+    
+    func reloadTableData(){
+        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        {
+            let archiveConstant = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
+            dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:archiveConstant]
+        }
+        else{
+            dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"]
+        }
+        
+        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
+        {
+            let liveResolutionConstant = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
+            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:liveResolutionConstant]
+        }
+        else{
+            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
+        }
+        
+        settingsTableView.reloadData()
     }
     
     @IBAction func doneClicked(sender: AnyObject) {
