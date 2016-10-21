@@ -7,6 +7,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var logInBottomConstraint: NSLayoutConstraint!
     
+    @IBOutlet var loginButton: UIButton!
     var loadingOverlay: UIView?
     
     let requestManager = RequestManager.sharedInstance
@@ -16,6 +17,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginButton.hidden = true
         initialise()
     }
     
@@ -44,6 +46,10 @@ class LoginViewController: UIViewController {
         passwordTextField.secureTextEntry = true
         userNameTextfield.delegate = self
         passwordTextField.delegate = self
+        
+        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        passwordTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        
         addObserver()
     }
     
@@ -51,6 +57,36 @@ class LoginViewController: UIViewController {
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+    }
+    
+    func textFieldDidChange(textField: UITextField)
+    {
+        if(userNameTextfield.text!.isEmpty || passwordTextField.text!.isEmpty)
+        {
+            loginButton.hidden = true
+        }
+        else{
+            let chrSet = NSCharacterSet.whitespaceCharacterSet()
+            
+            if((userNameTextfield.text?.characters.count < 5) || (userNameTextfield.text?.characters.count > 15))
+            {
+                loginButton.hidden = true
+            }
+            else if userNameTextfield.text!.rangeOfCharacterFromSet(chrSet) != nil {
+                loginButton.hidden = true
+            }
+            else if((passwordTextField.text?.characters.count < 8) || (passwordTextField.text?.characters.count > 40))
+            {
+                loginButton.hidden = true
+            }
+            else if(!isPasswordNumberExist(passwordTextField.text!))
+            {
+                loginButton.hidden = true
+            }
+            else{
+                loginButton.hidden = false
+            }
+        }
     }
     
     //PRAGMA MARK:- keyboard notification handler
@@ -281,6 +317,12 @@ class LoginViewController: UIViewController {
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
+    
+    func isPasswordNumberExist(password:String) -> Bool {
+        let regex = try? NSRegularExpression(pattern: ".*\\d+.*", options: .CaseInsensitive)
+        let val : Bool = regex?.firstMatchInString(password, options: [], range: NSMakeRange(0, password.characters.count)) != nil
+        return val
+    }
 }
 
 extension LoginViewController:UITextFieldDelegate{
@@ -294,6 +336,13 @@ extension LoginViewController:UITextFieldDelegate{
     {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        if(userNameTextfield.text!.isEmpty || passwordTextField.text!.isEmpty)
+        {
+            loginButton.hidden = true
+        }
     }
 }
 
