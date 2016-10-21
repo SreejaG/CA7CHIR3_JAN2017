@@ -1190,12 +1190,17 @@ int timerCount = 0;
                                 self.imageViewAnimate.image = [UIImage imageWithData:imageData];
                                 
                                 [self cameraAnimation];
-                                
-                                [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
-                                 {
-                                 } failure:^(NSError *error)
-                                 {
-                                 }];
+                                NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
+                                if (isSave != 0)
+                                {
+                                    [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
+                                     {
+                                     } failure:^(NSError *error)
+                                     {
+                                     }];
+                                }
+
+                               
                                 [self saveImage:imageData];
                                 [self loaduploadManagerForImage];
                             });
@@ -1653,11 +1658,18 @@ int timerCount = 0;
                             NSString* result = [dateFormatter stringFromDate:d];
                             [self saveImage:imageData];
                             [self moveVideoToDocumentDirectory:outputFileURL videoDuration:result];
-                            [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
-                             {
-                             } failure:^(NSError *error)
-                             {
-                             }];
+                            
+                            NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
+                            if (isSave != 0)
+                            {
+                                [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
+                                 {
+                                 } failure:^(NSError *error)
+                                 {
+                                 }];
+                            }
+
+                           
                         }
                     });
                     if ([PHAssetResourceCreationOptions class] ) {

@@ -126,8 +126,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         defaults.setValue("0", forKey: "notificationFlag")
         var controller : UIViewController = UIViewController()
         NSUserDefaults.standardUserDefaults().setObject(1, forKey: "shutterActionMode");
-        NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
-        
+        if (NSUserDefaults.standardUserDefaults().objectForKey("flashMode") == nil)
+        {
+            NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
+        }
+        if (NSUserDefaults.standardUserDefaults().objectForKey("SaveToCameraRoll") == nil)
+        {
+            NSUserDefaults.standardUserDefaults().setObject(1, forKey: "SaveToCameraRoll")
+        }
         //Auto login check
         if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
         {

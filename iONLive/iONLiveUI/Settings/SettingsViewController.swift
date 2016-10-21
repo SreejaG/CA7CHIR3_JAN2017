@@ -166,9 +166,26 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         
         switch indexPath!.row {
         case 7:
-            
+            if isOn
+            {
+                NSUserDefaults.standardUserDefaults().setObject(1, forKey: "SaveToCameraRoll")
+            }
+            else{
+                
+                NSUserDefaults.standardUserDefaults().setObject(0, forKey: "SaveToCameraRoll")
+
+            }
             break;
         case 4:
+            if isOn
+            {
+                NSUserDefaults.standardUserDefaults().setObject(1, forKey: "flashMode")
+            }
+            else{
+                NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
+                
+            }
+
             break;
         default:
             break;
@@ -240,9 +257,33 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             {
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
-                cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+             //  cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+                cell.backgroundColor = UIColor.clearColor()
                 //                [cell.toggleCellSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
                 cell.userInteractionEnabled = true
+                if indexPath.row == 4 || indexPath.row == 7
+                {
+                    cell.backgroundColor = UIColor.clearColor()
+
+                    var switchStatus : Int = Int()
+                    if indexPath.row == 4
+                    {
+                        switchStatus = NSUserDefaults.standardUserDefaults().integerForKey("flashMode")
+                    }
+                    else if indexPath.row == 7{
+                        switchStatus =  NSUserDefaults.standardUserDefaults().integerForKey("SaveToCameraRoll")
+                        
+                    }
+                    if switchStatus == 0
+                    {
+                        cell.toggleCellSwitch.setOn(false, animated: false)
+                    }
+                    else{
+                        cell.toggleCellSwitch.setOn(true, animated: false)
+
+                    }
+                }
+                
                 cell.cellDelegate = self
                 return cell
             }
