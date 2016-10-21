@@ -6,8 +6,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextfield: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var logInBottomConstraint: NSLayoutConstraint!
-    
     @IBOutlet var loginButton: UIButton!
+    
     var loadingOverlay: UIView?
     
     let requestManager = RequestManager.sharedInstance
@@ -66,20 +66,21 @@ class LoginViewController: UIViewController {
             loginButton.hidden = true
         }
         else{
-            let chrSet = NSCharacterSet.whitespaceCharacterSet()
+            let whiteChrSet = NSCharacterSet.whitespaceCharacterSet()
+            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
             
             if((userNameTextfield.text?.characters.count < 5) || (userNameTextfield.text?.characters.count > 15))
             {
                 loginButton.hidden = true
             }
-            else if userNameTextfield.text!.rangeOfCharacterFromSet(chrSet) != nil {
+            else if userNameTextfield.text!.rangeOfCharacterFromSet(whiteChrSet) != nil {
                 loginButton.hidden = true
             }
             else if((passwordTextField.text?.characters.count < 8) || (passwordTextField.text?.characters.count > 40))
             {
                 loginButton.hidden = true
             }
-            else if(!isPasswordNumberExist(passwordTextField.text!))
+            else if passwordTextField.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
             {
                 loginButton.hidden = true
             }
@@ -139,38 +140,31 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginClicked(sender: AnyObject)
     {
-        if userNameTextfield.text!.isEmpty
+        //        if userNameTextfield.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.loginNoEmailEnteredError()
+        //        }
+        //        else if passwordTextField.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
+        //        }
+        //        else
+        //        {
+        if let deviceToken = defaults.valueForKey("deviceToken")
         {
-            ErrorManager.sharedInstance.loginNoEmailEnteredError()
+            let gcmRegId = "ios".stringByAppendingString(deviceToken as! String)
+            
+            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
         }
-        else if passwordTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
-        }
-        else
-        {
-            if let deviceToken = defaults.valueForKey("deviceToken")
-            {
-                let gcmRegId = "ios".stringByAppendingString(deviceToken as! String)
-                
-                self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
+        else{
+            if !self.requestManager.validConnection() {
+                ErrorManager.sharedInstance.noNetworkConnection()
             }
             else{
-                if !self.requestManager.validConnection() {
-                    ErrorManager.sharedInstance.noNetworkConnection()
-                }
-                else{
-                    ErrorManager.sharedInstance.installFailure()
-                }
+                ErrorManager.sharedInstance.installFailure()
             }
         }
-    }
-    
-    //PRAGMA MARK:- Helper functions
-    
-    func isEmail(email:String) -> Bool {
-        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
-        return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
+        //        }
     }
     
     //Loading Overlay Methods
@@ -187,7 +181,6 @@ class LoginViewController: UIViewController {
     }
     
     //PRAGMA MARK:- API handlers
-    
     func loginUser(email: String, password: String, gcmRegistrationId: String, withLoginButton: Bool)
     {
         showOverlay()
@@ -317,12 +310,6 @@ class LoginViewController: UIViewController {
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
-    
-    func isPasswordNumberExist(password:String) -> Bool {
-        let regex = try? NSRegularExpression(pattern: ".*\\d+.*", options: .CaseInsensitive)
-        let val : Bool = regex?.firstMatchInString(password, options: [], range: NSMakeRange(0, password.characters.count)) != nil
-        return val
-    }
 }
 
 extension LoginViewController:UITextFieldDelegate{
@@ -336,13 +323,6 @@ extension LoginViewController:UITextFieldDelegate{
     {
         textField.resignFirstResponder()
         return true
-    }
-    
-    func textFieldDidBeginEditing(textField: UITextField) {
-        if(userNameTextfield.text!.isEmpty || passwordTextField.text!.isEmpty)
-        {
-            loginButton.hidden = true
-        }
     }
 }
 

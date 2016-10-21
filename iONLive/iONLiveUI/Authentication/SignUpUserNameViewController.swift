@@ -15,14 +15,18 @@ class SignUpUserNameViewController: UIViewController {
     @IBOutlet weak var userNameTextfield: UITextField!
     @IBOutlet weak var continueBottomConstraint: NSLayoutConstraint!
     
+    
+    @IBOutlet var continuButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
+        continuButton.hidden = true
         initialise()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.navigationController?.navigationBarHidden = false
+        userNameTextfield.becomeFirstResponder()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -44,7 +48,9 @@ class SignUpUserNameViewController: UIViewController {
         userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
         userNameTextfield.delegate = self
         userNameTextfield.keyboardType = .NamePhonePad
-        userNameTextfield.becomeFirstResponder()
+        
+        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        
         addObserver()
     }
     
@@ -82,6 +88,27 @@ class SignUpUserNameViewController: UIViewController {
         }
     }
     
+    func textFieldDidChange(textField: UITextField)
+    {
+        if( userNameTextfield.text!.isEmpty)
+        {
+            continuButton.hidden = true
+        }
+        else{
+            let whiteChrSet = NSCharacterSet.whitespaceCharacterSet()
+            if((userNameTextfield.text?.characters.count < 5) || (userNameTextfield.text?.characters.count > 15))
+            {
+                continuButton.hidden = true
+            }
+            else if userNameTextfield.text!.rangeOfCharacterFromSet(whiteChrSet) != nil {
+                continuButton.hidden = true
+            }
+            else{
+                continuButton.hidden = false
+            }
+        }
+    }
+    
     //PRAGMA MARK:- IBActions
     
     @IBAction func tapGestureRecognized(sender: AnyObject) {
@@ -90,31 +117,31 @@ class SignUpUserNameViewController: UIViewController {
     
     @IBAction func userNameContinueButtonClicked(sender: AnyObject)
     {
-        if userNameTextfield.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.signUpNoUsernameEnteredError()
-        }
-        else
-        {
-            let text = userNameTextfield.text
-            let chrSet = NSCharacterSet.whitespaceCharacterSet()
-            if((text?.characters.count < 5) || (text?.characters.count > 15))
-            {
-                ErrorManager.sharedInstance.InvalidUsernameEnteredError()
-                userNameTextfield.text = ""
-                userNameTextfield.becomeFirstResponder()
-                return
-            }
-            else if text!.rangeOfCharacterFromSet(chrSet) != nil {
-                ErrorManager.sharedInstance.noSpaceInUsername()
-                userNameTextfield.text = ""
-                userNameTextfield.becomeFirstResponder()
-                return
-            }
-            else{
-                signUpUser(email, password: password, userName: self.userNameTextfield.text!)
-            }
-        }
+        //        if userNameTextfield.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.signUpNoUsernameEnteredError()
+        //        }
+        //        else
+        //        {
+        //            let text = userNameTextfield.text
+        //            let chrSet = NSCharacterSet.whitespaceCharacterSet()
+        //            if((text?.characters.count < 5) || (text?.characters.count > 15))
+        //            {
+        //                ErrorManager.sharedInstance.InvalidUsernameEnteredError()
+        //                userNameTextfield.text = ""
+        //                userNameTextfield.becomeFirstResponder()
+        //                return
+        //            }
+        //            else if text!.rangeOfCharacterFromSet(chrSet) != nil {
+        //                ErrorManager.sharedInstance.noSpaceInUsername()
+        //                userNameTextfield.text = ""
+        //                userNameTextfield.becomeFirstResponder()
+        //                return
+        //            }
+        //            else{
+        signUpUser(email, password: password, userName: self.userNameTextfield.text!)
+        //            }
+        //        }
     }
     
     func loadVerifyPhoneView()

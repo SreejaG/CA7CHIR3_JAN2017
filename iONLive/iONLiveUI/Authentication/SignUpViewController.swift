@@ -6,6 +6,7 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwdTextField: UITextField!
     @IBOutlet weak var signUpBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var continueButton: UIButton!
     
     var loadingOverlay: UIView?
     
@@ -14,6 +15,7 @@ class SignUpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        continueButton.hidden = true
         initialise()
     }
     
@@ -47,6 +49,10 @@ class SignUpViewController: UIViewController {
         emailTextfield.delegate = self
         passwdTextField.delegate = self
         passwdTextField.tag = 10
+        
+        emailTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        passwdTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        
         addObserver()
     }
     
@@ -84,6 +90,33 @@ class SignUpViewController: UIViewController {
         }
     }
     
+    func textFieldDidChange(textField: UITextField)
+    {
+        if(emailTextfield.text!.isEmpty || passwdTextField.text!.isEmpty)
+        {
+            continueButton.hidden = true
+        }
+        else{
+            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
+            
+            if(isEmail(self.emailTextfield.text!) as Bool! == false)
+            {
+                continueButton.hidden = true
+            }
+            else if((passwdTextField.text?.characters.count < 8) || (passwdTextField.text?.characters.count > 40))
+            {
+                continueButton.hidden = true
+            }
+            else if passwdTextField.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            {
+                continueButton.hidden = true
+            }
+            else{
+                continueButton.hidden = false
+            }
+        }
+    }
+    
     //PRAGMA MARK:- IBActions
     
     @IBAction func tapGestureRecognized(sender: AnyObject) {
@@ -92,49 +125,51 @@ class SignUpViewController: UIViewController {
     
     @IBAction func signUpClicked(sender: AnyObject)
     {
-        if emailTextfield.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
-        }
-        else if passwdTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.signUpNoPasswordEnteredError()
-        }
-        else
-        {
-            validateEmail()
-        }
+        //        if emailTextfield.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
+        //        }
+        //        else if passwdTextField.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.signUpNoPasswordEnteredError()
+        //        }
+        //        else
+        //        {
+        //            validateEmail()
+        //        }
+        
+        loadUserNameView()
     }
     
-    func validateEmail(){
-        let isEmailValid = isEmail(self.emailTextfield.text!) as Bool!
-        if isEmailValid == false
-        {
-            ErrorManager.sharedInstance.loginInvalidEmail()
-            return
-        }
-        else
-        {
-            let text = passwdTextField.text
-            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-            if((text?.characters.count < 8) || (text?.characters.count > 40))
-            {
-                ErrorManager.sharedInstance.InvalidPwdEnteredError()
-                passwdTextField.text = ""
-                passwdTextField.becomeFirstResponder()
-                return
-            }
-            else if text!.rangeOfCharacterFromSet(chrSet) == nil {
-                ErrorManager.sharedInstance.noNumberInPassword()
-                passwdTextField.text = ""
-                passwdTextField.becomeFirstResponder()
-                return
-            }
-            else{
-                loadUserNameView()
-            }
-        }
-    }
+    //    func validateEmail(){
+    //        let isEmailValid = isEmail(self.emailTextfield.text!) as Bool!
+    //        if isEmailValid == false
+    //        {
+    //            ErrorManager.sharedInstance.loginInvalidEmail()
+    //            return
+    //        }
+    //        else
+    //        {
+    //            let text = passwdTextField.text
+    //            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
+    //            if((text?.characters.count < 8) || (text?.characters.count > 40))
+    //            {
+    //                ErrorManager.sharedInstance.InvalidPwdEnteredError()
+    //                passwdTextField.text = ""
+    //                passwdTextField.becomeFirstResponder()
+    //                return
+    //            }
+    //            else if text!.rangeOfCharacterFromSet(chrSet) == nil {
+    //                ErrorManager.sharedInstance.noNumberInPassword()
+    //                passwdTextField.text = ""
+    //                passwdTextField.becomeFirstResponder()
+    //                return
+    //            }
+    //            else{
+    //                loadUserNameView()
+    //            }
+    //        }
+    //    }
     
     func loadUserNameView()
     {

@@ -353,6 +353,7 @@
                         </connections>
                     </view>
                     <connections>
+                        <outlet property="continueButton" destination="Xad-Mx-NRf" id="lxe-4u-JwQ"/>
                         <outlet property="emailTextfield" destination="sB4-o9-fdq" id="3af-no-g6a"/>
                         <outlet property="passwdTextField" destination="90Z-2B-bVM" id="WL3-xz-dQy"/>
                         <outlet property="signUpBottomConstraint" destination="JJT-Bb-Qdc" id="Ecs-nG-nFI"/>
@@ -455,6 +456,7 @@
                         </connections>
                     </view>
                     <connections>
+                        <outlet property="continuButton" destination="xzN-pU-YVg" id="hRh-oD-Ef4"/>
                         <outlet property="continueBottomConstraint" destination="Z1w-Of-C8i" id="ADr-Mm-NNa"/>
                         <outlet property="userNameTextfield" destination="yEq-N0-Utr" id="Zrb-he-nJD"/>
                     </connections>
@@ -588,7 +590,7 @@
                                                 </constraints>
                                             </view>
                                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kNe-dP-v8p" customClass="CountryPicker" customModule="CA7CH" customModuleProvider="target">
-                                                <rect key="frame" x="79" y="239" width="442" height="186"/>
+                                                <rect key="frame" x="79" y="261" width="442" height="186"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="442" id="7Ew-Or-p1i"/>
                                                     <constraint firstAttribute="height" constant="186" id="moO-XS-Xk3"/>
@@ -598,7 +600,7 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="HY9-hv-Qfr" secondAttribute="trailing" id="MMN-pQ-Wg2"/>
-                                            <constraint firstItem="kNe-dP-v8p" firstAttribute="centerY" secondItem="uq9-W6-I4r" secondAttribute="centerY" constant="87" id="dbJ-7j-M2D"/>
+                                            <constraint firstItem="kNe-dP-v8p" firstAttribute="centerY" secondItem="uq9-W6-I4r" secondAttribute="centerY" constant="109" id="dbJ-7j-M2D"/>
                                             <constraint firstItem="HY9-hv-Qfr" firstAttribute="leading" secondItem="uq9-W6-I4r" secondAttribute="leading" id="i6s-HB-FPY"/>
                                             <constraint firstItem="HY9-hv-Qfr" firstAttribute="top" secondItem="uq9-W6-I4r" secondAttribute="top" id="kpo-qd-oiW"/>
                                             <constraint firstAttribute="bottom" secondItem="HY9-hv-Qfr" secondAttribute="bottom" constant="239" id="nRF-SD-DTa"/>
@@ -631,6 +633,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="continuButton" destination="J0C-1T-2P9" id="Ze2-kH-M87"/>
                         <outlet property="continueBottomConstraint" destination="3VS-34-WO4" id="9lZ-yj-89L"/>
                         <outlet property="countryCodeTextField" destination="MwP-u0-nSR" id="rTl-cc-ABR"/>
                         <outlet property="countryPicker" destination="kNe-dP-v8p" id="PmQ-BD-Fat"/>
@@ -1094,6 +1097,7 @@
                     <connections>
                         <outlet property="newPwdText" destination="q60-i9-yil" id="Fo5-0V-ixe"/>
                         <outlet property="reEnterPwdText" destination="2Sb-1i-cjz" id="aHc-3d-g5s"/>
+                        <outlet property="resetButton" destination="q75-3F-Zgz" id="XSc-NE-VCE"/>
                         <outlet property="resetPasswdBottomConstraint" destination="FxL-LP-pRM" id="KMy-w2-7RK"/>
                     </connections>
                 </viewController>

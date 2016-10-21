@@ -21,33 +21,25 @@ class SignUpVerifyPhoneViewController: UIViewController
     var verificationCode = ""
     
     @IBOutlet weak var countryTextField: UITextField!
-    
     @IBOutlet weak var mobileNumberTextField: UITextField!
-    
     @IBOutlet weak var continueBottomConstraint: NSLayoutConstraint!
-    
     @IBOutlet var countryPicker: CountryPicker!
-    
     @IBOutlet var countrySelectionButton: UIButton!
+    @IBOutlet var continuButton: UIButton!
+    
     @IBAction func selectCountryCode(sender: AnyObject) {
-        self.countryPicker.hidden = false
-        countryCodeTextField.resignFirstResponder()
-        mobileNumberTextField.resignFirstResponder()
-        verificationCodeTextField.resignFirstResponder()
-        countryName = "United States"
-        self.countryTextField.text = "US" + " - " + "United States"
-        self.countryCodeTextField.text = "+1"
-        CountryPhoneCode = "+1"
+        initialiseCountryPicker()
     }
     
     @IBOutlet weak var topConstaintDescriptionLabel: NSLayoutConstraint!
-    
     @IBOutlet var countryCodeTextField: UITextField!
-    
     @IBOutlet weak var verificationCodeTextField: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         countryPicker.selectRow(230, inComponent: 0, animated: true)
+        continuButton.hidden = true
+        initialiseCountryPicker()
         initialise()
     }
     
@@ -95,12 +87,66 @@ class SignUpVerifyPhoneViewController: UIViewController
         verificationCode = ""
         mobileNumberTextField.delegate = self
         countryCodeTextField.delegate = self
-        self.countryPicker.hidden = true
-        addObserver()
+        verificationCodeTextField.delegate = self
+        //        self.countryPicker.hidden = true
         countryTextField.autocorrectionType = .No
         mobileNumberTextField.autocorrectionType = .No
         countryCodeTextField.autocorrectionType = .No
         verificationCodeTextField.autocorrectionType = .No
+        
+        countryTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        countryCodeTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        mobileNumberTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        verificationCodeTextField.addTarget(self, action: #selector(self.verificationTextChange), forControlEvents: .EditingChanged)
+        
+        addObserver()
+    }
+    
+    func initialiseCountryPicker()  {
+        self.countryPicker.hidden = false
+        countryCodeTextField.resignFirstResponder()
+        mobileNumberTextField.resignFirstResponder()
+        verificationCodeTextField.resignFirstResponder()
+        countryName = "United States"
+        self.countryTextField.text = "US" + " - " + "United States"
+        self.countryCodeTextField.text = "+1"
+        CountryPhoneCode = "+1"
+    }
+    
+    func textFieldDidChange(textField: UITextField)
+    {
+        if(countryTextField.text!.isEmpty || countryCodeTextField.text!.isEmpty || mobileNumberTextField.text!.isEmpty)
+        {
+            continuButton.hidden = true
+        }
+        else if(countryCodeTextField.text?.characters.count < 2)
+        {
+            continuButton.hidden = true
+        }
+        else if(mobileNumberTextField.text?.characters.count < 4)
+        {
+            continuButton.hidden = true
+        }
+        else{
+            continuButton.hidden = false
+        }
+    }
+    
+    func verificationTextChange(textField: UITextField)
+    {
+        countryPicker.hidden = true
+        if(verificationCodeTextField.text!.isEmpty)
+        {
+            continuButton.hidden = true
+        }
+        else if(verificationCodeTextField.text?.characters.count != 6)
+        {
+            continuButton.hidden = true
+        }
+        else
+        {
+            continuButton.hidden = false
+        }
     }
     
     func checkVerificationCodeVisiblty()
@@ -134,7 +180,6 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func keyboardDidShow(notification: NSNotification)
     {
-        
         let info = notification.userInfo!
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         self.view.layoutIfNeeded()
@@ -167,44 +212,49 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     @IBAction func verifyPhoneContinueButtonClicked(sender: AnyObject)
     {
-        if countryTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.emptyCountryError()
-        }
-        else if mobileNumberTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.emptyMobileError()
-        }
-        else if countryCodeTextField.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.emptyCodeError()
-        }
-        else
-        {
-            if(verificationCode != ""){
-                if verificationCodeTextField.text!.isEmpty
-                {
-                    ErrorManager.sharedInstance.signUpNoCodeEnteredError()
-                }
-                else if((userName == "invalid") && (email == "invalid"))
-                {
-                    loadForgotPasswordView()
-                }
-                else{
-                    let deviceToken = defaults.valueForKey("deviceToken") as! String
-                    let gcmRegId = "ios".stringByAppendingString(deviceToken)
-                    validateVerificationCode(userName , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
-                }
+        //        if countryTextField.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.emptyCountryError()
+        //        }
+        //        else if mobileNumberTextField.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.emptyMobileError()
+        //        }
+        //        else if countryCodeTextField.text!.isEmpty
+        //        {
+        //            ErrorManager.sharedInstance.emptyCodeError()
+        //        }
+        //        else
+        //        {
+        if(verificationCode != ""){
+            //                if verificationCodeTextField.text!.isEmpty
+            //                {
+            //                    ErrorManager.sharedInstance.signUpNoCodeEnteredError()
+            //                }
+            //                else
+            if((userName == "invalid") && (email == "invalid"))
+            {
+                loadForgotPasswordView()
             }
             else{
-                if((userName == "invalid") && (email == "invalid")){
-                    generateWaytoSendAlertForResetPassword()
-                }
-                else{
-                    generateWaytoSendAlert()
-                }
+                let deviceToken = defaults.valueForKey("deviceToken") as! String
+                let gcmRegId = "ios".stringByAppendingString(deviceToken)
+                validateVerificationCode(userName , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
             }
         }
+        else{
+            if((userName == "invalid") && (email == "invalid")){
+                continuButton.hidden = true
+                view.endEditing(true)
+                generateWaytoSendAlertForResetPassword()
+            }
+            else{
+                continuButton.hidden = true
+                view.endEditing(true)
+                generateWaytoSendAlert()
+            }
+        }
+        //        }
     }
     
     func  loadForgotPasswordView(){
@@ -228,7 +278,10 @@ class SignUpVerifyPhoneViewController: UIViewController
             self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "email")
         }))
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
+            self.continuButton.hidden = false
+            self.mobileNumberTextField.becomeFirstResponder()
+        }))
         
         self.presentViewController(alert, animated: true, completion: nil)
     }
@@ -240,7 +293,11 @@ class SignUpVerifyPhoneViewController: UIViewController
         alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
             self.generateVerificationCodeForResetPassword(self.countryCodeTextField.text! + self.mobileNumberTextField.text!)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
+            self.continuButton.hidden = false
+            self.mobileNumberTextField.becomeFirstResponder()
+        }))
+        
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
@@ -335,6 +392,8 @@ class SignUpVerifyPhoneViewController: UIViewController
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
+        self.continuButton.hidden = false
+        self.mobileNumberTextField.becomeFirstResponder()
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

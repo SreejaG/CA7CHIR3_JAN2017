@@ -1,11 +1,13 @@
 
 import UIKit
 
-class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
+class ForgotPasswordViewController: UIViewController{
     
     static let identifier = "ForgotPasswordViewController"
     
     @IBOutlet weak var resetPasswdBottomConstraint: NSLayoutConstraint!
+    
+    @IBOutlet var resetButton: UIButton!
     
     var verificationCode : String!
     var mobileNumber : String!
@@ -19,6 +21,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        resetButton.hidden = true
         initialise()
     }
     
@@ -38,12 +41,16 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         reEnterPwdText.attributedPlaceholder = NSAttributedString(string: "Re-enter Password",
                                                                   attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
         reEnterPwdText.autocorrectionType = UITextAutocorrectionType.No
-        addObserver()
         newPwdText.becomeFirstResponder()
         newPwdText.secureTextEntry = true
         newPwdText.delegate = self
         reEnterPwdText.secureTextEntry = true
         reEnterPwdText.delegate = self
+        
+        newPwdText.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        reEnterPwdText.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        
+        addObserver()
     }
     
     func addObserver()
@@ -79,12 +86,35 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
         }
     }
     
-    // PRAGMA MARK:- textField delegates
-    
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldDidChange(textField: UITextField)
     {
-        textField.resignFirstResponder()
-        return true
+        if(newPwdText.text!.isEmpty || reEnterPwdText.text!.isEmpty)
+        {
+            resetButton.hidden = true
+        }
+        else{
+            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
+            
+            if((newPwdText.text?.characters.count < 8) || (newPwdText.text?.characters.count > 40))
+            {
+                resetButton.hidden = true
+            }
+            if((reEnterPwdText.text?.characters.count < 8) || (reEnterPwdText.text?.characters.count > 40))
+            {
+                resetButton.hidden = true
+            }
+            else if newPwdText.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            {
+                resetButton.hidden = true
+            }
+            else if reEnterPwdText.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            {
+                resetButton.hidden = true
+            }
+            else{
+                resetButton.hidden = false
+            }
+        }
     }
     
     //PRAGMA MARK:- IBActions
@@ -96,28 +126,29 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
     @IBAction func didTapResetButton(sender: AnyObject) {
         let newPaswrd = newPwdText.text
         let confirmPaswrd = reEnterPwdText.text
-        if newPwdText.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.newPaswrdEmpty()
-        }
-        else if reEnterPwdText.text!.isEmpty
-        {
-            ErrorManager.sharedInstance.confirmPaswrdEmpty()
-        }
-        else if(newPaswrd != confirmPaswrd){
+//        if newPwdText.text!.isEmpty
+//        {
+//            ErrorManager.sharedInstance.newPaswrdEmpty()
+//        }
+//        else if reEnterPwdText.text!.isEmpty
+//        {
+//            ErrorManager.sharedInstance.confirmPaswrdEmpty()
+//        }
+//        else
+        if(newPaswrd != confirmPaswrd){
             ErrorManager.sharedInstance.passwordMismatch()
         }
-        else{
-            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-            if((newPaswrd?.characters.count < 8) || (newPaswrd?.characters.count > 40) || (confirmPaswrd?.characters.count < 8) || (confirmPaswrd?.characters.count > 40))
-            {
-                ErrorManager.sharedInstance.InvalidPwdEnteredError()
-                return
-            }
-            else if((newPaswrd!.rangeOfCharacterFromSet(chrSet) == nil) || (confirmPaswrd!.rangeOfCharacterFromSet(chrSet) == nil)) {
-                ErrorManager.sharedInstance.noNumberInPassword()
-                return
-            }
+//        else{
+//            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
+//            if((newPaswrd?.characters.count < 8) || (newPaswrd?.characters.count > 40) || (confirmPaswrd?.characters.count < 8) || (confirmPaswrd?.characters.count > 40))
+//            {
+//                ErrorManager.sharedInstance.InvalidPwdEnteredError()
+//                return
+//            }
+//            else if((newPaswrd!.rangeOfCharacterFromSet(chrSet) == nil) || (confirmPaswrd!.rangeOfCharacterFromSet(chrSet) == nil)) {
+//                ErrorManager.sharedInstance.noNumberInPassword()
+//                return
+//            }
             else{
                 showOverlay()
                 authenticationManager.resetPassword(mobileNumber, newPassword: newPaswrd!, verificationCode: verificationCode, success: { (response) in
@@ -127,7 +158,7 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
                         return
                 })
             }
-        }
+//        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -208,5 +239,19 @@ class ForgotPasswordViewController: UIViewController , UITextFieldDelegate{
                 
             }
         })
+    }
+}
+
+extension ForgotPasswordViewController : UITextFieldDelegate{
+    
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        textField.layoutIfNeeded()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true
     }
 }
