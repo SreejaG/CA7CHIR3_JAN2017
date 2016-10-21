@@ -266,7 +266,7 @@ class StreamsListViewController: UIViewController{
                 let sortList : Array = self.mediaAndLiveArray
                 var subIdArray : [Int] = [Int]()
                 
-                for(var i = 0 ; i < sortList.count ; i++)
+                for i in 0  ..< sortList.count 
                 {
                     subIdArray.append(Int(sortList[i]["channel_media_detail_id"] as! String)!)
                 }
