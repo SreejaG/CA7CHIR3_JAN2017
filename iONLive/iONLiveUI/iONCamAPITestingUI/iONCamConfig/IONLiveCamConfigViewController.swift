@@ -32,11 +32,9 @@ class IONLiveCamConfigViewController: UIViewController {
     
     func iONLiveCamGetConfigSuccessHandler(response:AnyObject?)
     {
-        print("entered config")
         
         if let json = response as? [String: AnyObject]
         {
-            print("success")
             if json["quality"] != nil
             {
              //   let intVal = quality as! Int

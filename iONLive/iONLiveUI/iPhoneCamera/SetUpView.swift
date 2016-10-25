@@ -39,7 +39,6 @@ import UIKit
     {
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelDetails = json as NSDictionary
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -70,7 +69,6 @@ import UIKit
         {
             var image = UIImage()
             let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
-            print(thumbUrl)
             if(thumbUrl != "")
             {
                 let url: NSURL = convertStringtoURL(thumbUrl)
@@ -90,7 +88,6 @@ import UIKit
             }
             userImages.append(image)
         }
-        print(userImages)
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
@@ -127,7 +124,6 @@ import UIKit
             else{
                 countint = 0
             }
-         print("liked Count ----\(countint)")
             NSUserDefaults.standardUserDefaults().setValue("\(countint)", forKey: "likeCountFlag")
             obj.successFromSetUpView("\(countint)")
         }

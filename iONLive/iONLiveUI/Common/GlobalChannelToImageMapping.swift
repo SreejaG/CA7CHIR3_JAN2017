@@ -202,7 +202,6 @@ class GlobalChannelToImageMapping: NSObject {
                 }
             }
             localDataSource.removeAll()
-            print(GlobalChannelImageDict)
             NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
         }
     }

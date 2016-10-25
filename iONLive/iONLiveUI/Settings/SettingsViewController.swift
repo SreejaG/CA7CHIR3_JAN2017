@@ -309,7 +309,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     }
     func updateSwitchAtIndexPath(toggleSwitch: UISwitch)
     {
-        print(toggleSwitch.tag)
     }
     
     func loadReportProblemView()

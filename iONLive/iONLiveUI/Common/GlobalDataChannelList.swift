@@ -191,7 +191,6 @@ class GlobalDataChannelList: NSObject {
     
     func autoDownloadChannelDetails()
     {
-        print(globalChannelDataSource)
         GlobalChannelToImageMapping.sharedInstance.globalData(globalChannelDataSource)
     }
     

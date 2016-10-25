@@ -270,7 +270,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let result = userInfo["messageFrom"] as! NSDictionary
         let defaults = NSUserDefaults .standardUserDefaults()
         var checkFlag : Bool = false
-        print(result)
         if( application.applicationState == .Inactive )
         {
             checkFlag = true
@@ -382,7 +381,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][timeStamp] = currentDate
             let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
             let totalCount = filteredData.count
-            print(totalCount)
             let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList]
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(indexOfChannelList)
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)

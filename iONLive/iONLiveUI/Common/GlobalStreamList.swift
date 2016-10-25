@@ -51,7 +51,6 @@ class GlobalStreamList: NSObject {
             for index in 0 ..< responseArr.count
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyMedia")
-                print(responseArr)
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let userid = responseArr[index].valueForKey(userIdKey) as! String
@@ -91,7 +90,6 @@ class GlobalStreamList: NSObject {
                 let pulltorefreshId = responseArr[index].valueForKey(pullTorefreshKey)?.stringValue
                 imageDataSource.append([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,stream_channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time,videoDurationKey:vDuration])
             }
-            print(imageDataSource)
             if(imageDataSource.count > 0){
                 operation2 = NSBlockOperation (block: {
                     self.downloadMediaFromGCS()
@@ -225,7 +223,6 @@ class GlobalStreamList: NSObject {
             }
         }
         }
-        print(GlobalStreamDataSource)
         if(GlobalStreamDataSource.count > 0){
             GlobalStreamDataSource.sortInPlace({ p1, p2 in
                 let time1 = p1[timestamp] as! String

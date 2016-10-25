@@ -77,7 +77,6 @@ class ChannelSharedListAPI: NSObject {
                     if("\(profileImageUserName)" != "")
                     {
                         let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(profileImageUserName as! String)
-                        print(profileImageNameBeforeNullChk)
                         thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
                     }
 
@@ -113,7 +112,6 @@ class ChannelSharedListAPI: NSObject {
             {
                 NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyShare")
                 for element in responseArr{
-                    print(element)
 
                     let channelId = element[ch_channelIdkey]?.stringValue
                     let channelName = element[ch_channelNameKey] as! String
@@ -129,12 +127,10 @@ class ChannelSharedListAPI: NSObject {
                     if liveStream == "0"
                     {
                         
-                        print(thumbID)
                         if("\(thumbID!)" != "")
                         {
                             let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getMediaURL("\(thumbID!)" )
                             mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
-                            print(mediaThumbUrl)
                         }
                         else{
                             mediaThumbUrl = "noimage"
@@ -149,7 +145,6 @@ class ChannelSharedListAPI: NSObject {
                    if("\(profileImageUserName)" != "")
                     {
                         let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(profileImageUserName as! String)
-                    print(profileImageNameBeforeNullChk)
                           thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
                    }
                     var flag: Bool = false
