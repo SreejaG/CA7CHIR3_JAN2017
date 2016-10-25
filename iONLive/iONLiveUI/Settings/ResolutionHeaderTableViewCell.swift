@@ -1,9 +1,9 @@
 
 import UIKit
 
-class DeleteMediaSettingsHeaderCell: UITableViewCell {
+class ResolutionHeaderTableViewCell: UITableViewCell {
 
-    static let identifier = "DeleteMediaSettingsHeaderCell"
+    static let identifier = "ResolutionHeaderTableViewCell"
     
     @IBOutlet weak var topBorder: UILabel!
     @IBOutlet weak var bottomBorder: UILabel!
@@ -12,9 +12,8 @@ class DeleteMediaSettingsHeaderCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
 }

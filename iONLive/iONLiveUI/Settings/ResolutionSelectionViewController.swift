@@ -1,42 +1,41 @@
 
 import UIKit
 
-class DeleteMediaSettingsViewController: UIViewController{
+class ResolutionSelectionViewController: UIViewController {
     
-    static let identifier = "DeleteMediaSettingsViewController"
+    static let identifier = "ResolutionSelectionViewController"
     
-    @IBOutlet weak var deleteMediaSettingsTableView: UITableView!
+    @IBOutlet var resolutionTableView: UITableView!
     
-    var dataSource = ["Never","After 30 Days","After 7 Days"]
-    
+    var liveResolutions = ["352x240 (240p)","480x360 (360p)","850x480 (480p)","1280x720 (720p)","1920x1080 (1080p)"]
     var selectedOption:String = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
         {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
-            selectedOption = FileManagerViewController.sharedInstance.getArchiveDeleteLongString(value)
+            let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
+            selectedOption = FileManagerViewController.sharedInstance.getLiveResolutionLongString(value)
         }
         else{
-            selectedOption = "Never"
+            selectedOption = "1280x720 (720p)"
         }
-        deleteMediaSettingsTableView.reloadData()
-    }
-    
-    @IBAction func didTapBackButton(sender: AnyObject)
-    {
-        let value = FileManagerViewController.sharedInstance.getArchiveDeleteShortString(selectedOption)
-        NSUserDefaults.standardUserDefaults().setValue(value, forKey: "archiveMediaDeletion")
-        self.navigationController?.popViewControllerAnimated(true)
+        resolutionTableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    @IBAction func didTapBackButton(sender: AnyObject)
+    {
+        let value = FileManagerViewController.sharedInstance.getLiveResolutionShortString(selectedOption)
+        NSUserDefaults.standardUserDefaults().setValue(value, forKey: "liveResolution")
+        self.navigationController?.popViewControllerAnimated(true)
+    }
 }
 
-extension DeleteMediaSettingsViewController: UITableViewDelegate
+extension ResolutionSelectionViewController: UITableViewDelegate
 {
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
@@ -45,7 +44,7 @@ extension DeleteMediaSettingsViewController: UITableViewDelegate
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(DeleteMediaSettingsHeaderCell.identifier) as! DeleteMediaSettingsHeaderCell
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ResolutionHeaderTableViewCell.identifier) as! ResolutionHeaderTableViewCell
         headerCell.topBorder.hidden = false
         headerCell.bottomBorder.hidden = false
         
@@ -57,7 +56,7 @@ extension DeleteMediaSettingsViewController: UITableViewDelegate
             break
         case 1:
             headerCell.bottomBorder.hidden = true
-            headerCell.headerTitleLabel.text = "Archieved Media is stored on the Catch Cloud."
+            headerCell.headerTitleLabel.text = ""
             break
         default:
             break
@@ -76,8 +75,7 @@ extension DeleteMediaSettingsViewController: UITableViewDelegate
     }
 }
 
-
-extension DeleteMediaSettingsViewController:UITableViewDataSource
+extension ResolutionSelectionViewController:UITableViewDataSource
 {
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
@@ -88,7 +86,7 @@ extension DeleteMediaSettingsViewController:UITableViewDataSource
     {
         if section == 0
         {
-            return dataSource.count
+            return liveResolutions.count
         }
         else
         {
@@ -98,13 +96,13 @@ extension DeleteMediaSettingsViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if dataSource.count > indexPath.row
+        if liveResolutions.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(DeleteMediaOptionCell.identifier, forIndexPath:indexPath) as! DeleteMediaOptionCell
-            cell.mediaDeleteOptionLabel.text = dataSource[indexPath.row]
+            let cell = tableView.dequeueReusableCellWithIdentifier(ResolutionTableViewCell.identifier, forIndexPath:indexPath) as! ResolutionTableViewCell
+            cell.resolutionLabel.text = liveResolutions[indexPath.row]
             cell.selectionStyle = .None
             
-            if selectedOption == dataSource[indexPath.row]
+            if selectedOption == liveResolutions[indexPath.row]
             {
                 cell.selectionImageView.hidden = false
             }
@@ -119,10 +117,10 @@ extension DeleteMediaSettingsViewController:UITableViewDataSource
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        if dataSource.count > indexPath.row
+        if liveResolutions.count > indexPath.row
         {
-            selectedOption = dataSource[indexPath.row]
-            deleteMediaSettingsTableView.reloadData()
+            selectedOption = liveResolutions[indexPath.row]
+            resolutionTableView.reloadData()
         }
     }
 }

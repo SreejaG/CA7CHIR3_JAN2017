@@ -15,23 +15,13 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
     var supportOptions = [[String:String]]()
     
     var dataSource:[[[String:String]]]?
-    var resValue = String()
-    
-    var liveResolutions : [String] = [String]()
     
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var backbutton: UIButton!
-    @IBOutlet var pickerFullView: UIView!
     @IBOutlet weak var settingsTableView: UITableView!
-    
-    @IBOutlet var pickerUIView: UIView!
-    
-    @IBOutlet var pickerView: UIPickerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        liveResolutions = ["352x240 (240p)","480x360 (360p)","850x480 (480p)","1280x720 (720p)","1920x1080 (1080p)", "Cancel"]
         
         cameraOptions = [[optionTitle:"Upload to wifi", optionType : toggleCell, accessryText:""],[optionTitle:"Vivid Mode", optionType : toggleCell, accessryText:""],[optionTitle:"Time Lapse", optionType : normalCell, accessryText:""],[optionTitle:"Media Capture Quality", optionType : normalCell, accessryText:"HD"],[optionTitle:"Camera LED", optionType : toggleCell, accessryText: ""],[optionTitle:"Program Camera Button", optionType : normalCell, accessryText: ""],
                          [optionTitle:"Software Updates", optionType : normalCell, accessryText: ""],[optionTitle:"Save to Camera Roll", optionType : toggleCell, accessryText: ""],[optionTitle:"Get Snapcam! ", optionType : normalCell, accessryText: ""],[optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]]
@@ -40,42 +30,53 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         
         supportOptions = [[optionTitle:"Help Center ", optionType : normalCell, accessryText:""],[optionTitle:"Report a Problem", optionType : normalCell, accessryText:""]]
         
-        
         dataSource = [cameraOptions,accountOptions,supportOptions]
         
         if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
         {
             let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
-            resValue = value
         }
         else{
             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-            resValue = "720p"
         }
-        
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         self.settingsTableView.backgroundView = nil
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-        
-        pickerFullView.hidden = true
-        pickerUIView.layer.cornerRadius = 10
         backbutton.hidden = true
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(SettingsViewController.selectResolution))
-        tap.delegate = self
-        self.pickerView.addGestureRecognizer(tap)
+        reloadTableData()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
     }
     
+    func reloadTableData(){
+        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        {
+            let archiveConstant = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
+            dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:archiveConstant]
+        }
+        else{
+            dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"]
+        }
+        
+        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
+        {
+            let liveResolutionConstant = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
+            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:liveResolutionConstant]
+        }
+        else{
+            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
+        }
+        
+        settingsTableView.reloadData()
+    }
+    
     @IBAction func doneClicked(sender: AnyObject) {
-        NSUserDefaults.standardUserDefaults().setValue(resValue, forKey: "liveResolution")
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         self.navigationController?.navigationBarHidden = true
@@ -94,67 +95,10 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         return true
     }
     
-    
-    func selectResolution(tapGestureObj: UITapGestureRecognizer) {
-        let row = self.pickerView.selectedRowInComponent(0)
-        if(row == 0)
-        {
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"240p"]
-            resValue = "240p"
-        }
-        else if(row == 1)
-        {
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"360p"]
-            resValue = "360p"
-        }
-        else if(row == 2)
-        {
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"480p"]
-            resValue = "480p"
-        }
-        else if(row == 3)
-        {
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-            resValue = "720p"
-        }
-        else if(row == 4){
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"1080p"]
-            resValue = "1080p"
-        }
-        else if(row == 5)
-        {
-            if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
-            {
-                let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
-                dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
-            }
-            else{
-                dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-                resValue = "720p"
-            }
-        }
-        doneButton.hidden = false
-        backbutton.hidden = true
-        settingsTableView.reloadData()
-        pickerFullView.hidden = true
-        self.settingsTableView.userInteractionEnabled = true
-    }
-    
-    
     @IBAction func backButtonClicked(sender: AnyObject) {
-        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
-        {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
-        }
-        else{
-            dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:"720p"]
-            resValue = "720p"
-        }
         doneButton.hidden = false
         backbutton.hidden = true
         settingsTableView.reloadData()
-        pickerFullView.hidden = true
         self.settingsTableView.userInteractionEnabled = true
     }
     
@@ -162,7 +106,6 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
     
     func didChangeSwitchState(toggleCell:SettingsToggleTableViewCell , isOn: Bool) {
         let indexPath = self.settingsTableView.indexPathForCell(toggleCell)
-        print(indexPath?.row )
         
         switch indexPath!.row {
         case 7:
@@ -171,9 +114,7 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
                 NSUserDefaults.standardUserDefaults().setObject(1, forKey: "SaveToCameraRoll")
             }
             else{
-                
                 NSUserDefaults.standardUserDefaults().setObject(0, forKey: "SaveToCameraRoll")
-
             }
             break;
         case 4:
@@ -183,14 +124,11 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
             }
             else{
                 NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
-                
             }
-
             break;
         default:
             break;
         }
-        print(isOn)
     }
 }
 
@@ -236,7 +174,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
         var cellDataSource:[String:String]?
@@ -257,10 +194,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             {
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
-             //  cell.contentView.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
                 cell.backgroundColor = UIColor.clearColor()
-                //                [cell.toggleCellSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
                 cell.userInteractionEnabled = true
+                cell.selectionStyle = .None
                 if indexPath.row == 4 || indexPath.row == 7
                 {
                     cell.backgroundColor = UIColor.clearColor()
@@ -272,7 +208,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                     }
                     else if indexPath.row == 7{
                         switchStatus =  NSUserDefaults.standardUserDefaults().integerForKey("SaveToCameraRoll")
-                        
                     }
                     if switchStatus == 0
                     {
@@ -280,10 +215,8 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                     }
                     else{
                         cell.toggleCellSwitch.setOn(true, animated: false)
-
                     }
                 }
-                
                 cell.cellDelegate = self
                 return cell
             }
@@ -292,7 +225,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsTableViewCell", forIndexPath:indexPath) as! SettingsTableViewCell
                 cell.titleLabel.text = cellDataSource[optionTitle]
                 cell.accessryLabel.text = cellDataSource[accessryText]
-                if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)))
+                if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)) || ((indexPath.section == 1) && (indexPath.row == 1)))
                 {
                     cell.backgroundColor = UIColor.clearColor()
                     cell.userInteractionEnabled = true
@@ -337,7 +270,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 //    loadProgramCameraButtonView()
                 break
             case 9:
-                loadPickerView()
+                loadLiveStreamView()
                 break
             default:
                 break
@@ -349,7 +282,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 loadEditProfileView()
                 break
             case 1:
-                //  loadDeleteMediaOptionsView()
+                loadDeleteMediaOptionsView()
                 break
             case 2:
                 //   loadConnectAccountView()
@@ -414,13 +347,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
     
-    func loadPickerView()  {
-        pickerFullView.hidden = false
-        doneButton.hidden = true
-        self.settingsTableView.userInteractionEnabled = false
-        self.view.bringSubviewToFront(self.pickerUIView)
-    }
-    
     func loadProgramCameraButtonView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
@@ -428,28 +354,11 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
     
+    func loadLiveStreamView()
+    {
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let LiveStreamVC = storyBoard.instantiateViewControllerWithIdentifier(ResolutionSelectionViewController.identifier) as! ResolutionSelectionViewController
+        self.navigationController?.pushViewController(LiveStreamVC, animated: true)
+    }
 }
 
-extension SettingsViewController : UIPickerViewDelegate{
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return liveResolutions.count
-    }
-    
-    func pickerView(pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-        return 36.0
-    }
-    
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let titleData = liveResolutions[row]
-        let myTitle = NSAttributedString(string: titleData, attributes: [NSFontAttributeName:UIFont(name: "Georgia", size: 15.0)!,NSForegroundColorAttributeName:UIColor.blackColor()])
-        return myTitle.string
-    }
-    
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
-    {
-    }
-}

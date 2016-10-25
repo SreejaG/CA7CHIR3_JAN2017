@@ -108,6 +108,78 @@ class FileManagerViewController: UIViewController {
         return mediaDeleteFlag
     }
     
+    func getLiveResolutionShortString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "352x240 (240p)"){
+            retResolution = "240p"
+        }
+        else if(resolution == "480x360 (360p)"){
+             retResolution = "360p"
+        }
+        else if(resolution == "850x480 (480p)"){
+             retResolution = "480p"
+        }
+        else if(resolution == "1280x720 (720p)"){
+             retResolution = "720p"
+        }
+        else if(resolution == "1920x1080 (1080p)"){
+             retResolution = "1080p"
+        }
+        return retResolution
+    }
+    
+    func getLiveResolutionLongString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "240p"){
+            retResolution = "352x240 (240p)"
+        }
+        else if(resolution == "360p"){
+            retResolution = "480x360 (360p)"
+        }
+        else if(resolution == "480p"){
+            retResolution = "850x480 (480p)"
+        }
+        else if(resolution == "720p"){
+            retResolution = "1280x720 (720p)"
+        }
+        else if(resolution == "1080p"){
+            retResolution = "1920x1080 (1080p)"
+        }
+        return retResolution
+    }
+
+    func getArchiveDeleteShortString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "After 7 Days"){
+            retResolution = "7 Days"
+        }
+        else if(resolution == "After 30 Days"){
+            retResolution = "30 Days"
+        }
+        else if(resolution == "Never"){
+            retResolution = "Never"
+        }
+        return retResolution
+    }
+    
+    func getArchiveDeleteLongString(resolution: String) -> String
+    {
+        var retResolution = String()
+        if(resolution == "7 Days"){
+            retResolution = "After 7 Days"
+        }
+        else if(resolution == "30 Days"){
+            retResolution = "After 30 Days"
+        }
+        else if(resolution == "Never"){
+            retResolution = "Never"
+        }
+        return retResolution
+    }
+    
     func yearsFrom(date:NSDate, todate:NSDate) -> Int{
         return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
     }

@@ -228,6 +228,9 @@
 		B2AFC6B21D50DB4000EFA78C /* GlobalStreamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6B11D50DB4000EFA78C /* GlobalStreamList.swift */; };
 		B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */; };
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
+		B2C443F41DBA17780086ED8E /* ResolutionSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C443F31DBA17780086ED8E /* ResolutionSelectionViewController.swift */; };
+		B2C443F61DBA19B30086ED8E /* ResolutionHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C443F51DBA19B30086ED8E /* ResolutionHeaderTableViewCell.swift */; };
+		B2C443F81DBA19C30086ED8E /* ResolutionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C443F71DBA19C30086ED8E /* ResolutionTableViewCell.swift */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -637,6 +640,9 @@
 		B2B4E83A1D910795001E62E9 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		B2C223DA1D264785001C8516 /* uploadMediaToGCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uploadMediaToGCS.swift; sourceTree = "<group>"; };
 		B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaBeforeUploadComplete.swift; sourceTree = "<group>"; };
+		B2C443F31DBA17780086ED8E /* ResolutionSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResolutionSelectionViewController.swift; sourceTree = "<group>"; };
+		B2C443F51DBA19B30086ED8E /* ResolutionHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResolutionHeaderTableViewCell.swift; sourceTree = "<group>"; };
+		B2C443F71DBA19C30086ED8E /* ResolutionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResolutionTableViewCell.swift; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -699,8 +705,8 @@
 		160903EF1C6C7ED1004E381D /* EditProfile */ = {
 			isa = PBXGroup;
 			children = (
-				160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */,
 				160903F21C6C7ED1004E381D /* EditProfileHeaderCell.swift */,
+				160903F01C6C7ED1004E381D /* EditProfAccountInfoCell.swift */,
 				160903F11C6C7ED1004E381D /* EditProfile.storyboard */,
 				160903F31C6C7ED1004E381D /* EditProfileViewController.swift */,
 				160903F41C6C7ED1004E381D /* EditProfPersonalInfoCell.swift */,
@@ -827,6 +833,7 @@
 		164989ED1C0D5C0F007C912C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				B2C443F21DBA17120086ED8E /* LiveStreamResolution */,
 				166796B21C31070000543D7A /* ProgramCameraButton */,
 				166796A91C30FF6200543D7A /* ConnectAccount */,
 				1671A4751C2BAC9B00C2E0B0 /* DeleteMediaSettings */,
@@ -1613,6 +1620,16 @@
 			name = "Report Problem";
 			sourceTree = "<group>";
 		};
+		B2C443F21DBA17120086ED8E /* LiveStreamResolution */ = {
+			isa = PBXGroup;
+			children = (
+				B2C443F31DBA17780086ED8E /* ResolutionSelectionViewController.swift */,
+				B2C443F51DBA19B30086ED8E /* ResolutionHeaderTableViewCell.swift */,
+				B2C443F71DBA19C30086ED8E /* ResolutionTableViewCell.swift */,
+			);
+			name = LiveStreamResolution;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1891,6 +1908,7 @@
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
 				16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
+				B2C443F41DBA17780086ED8E /* ResolutionSelectionViewController.swift in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				16BFCA611D1A6DE700761C94 /* NSData+ImageContentType.m in Sources */,
 				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
@@ -1949,6 +1967,7 @@
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,
 				16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */,
+				B2C443F61DBA19B30086ED8E /* ResolutionHeaderTableViewCell.swift in Sources */,
 				16BFCA601D1A6DE700761C94 /* MKAnnotationView+WebCache.m in Sources */,
 				168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */,
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
@@ -1983,6 +2002,7 @@
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
+				B2C443F81DBA19C30086ED8E /* ResolutionTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

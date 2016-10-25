@@ -117,7 +117,7 @@ class SharedChannelDetailsAPI: NSObject {
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let infiniteScrollId  = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
-                var notificationType : String = " likes"
+                let notificationType : String = " likes"
                 let time = responseArr[index].valueForKey("created_time_stamp") as! String
                 let actualUrl =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
                 let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
@@ -145,7 +145,7 @@ class SharedChannelDetailsAPI: NSObject {
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 dateFormatter.timeZone = NSTimeZone(name: "UTC")
                 let currentDate = dateFormatter.stringFromDate(NSDate())
-                var notificationType : String = ""
+                let notificationType : String = ""
                 let mediaUrl =  UrlManager.sharedInstance.getLiveThumbUrlApi(mediaId!)
                 var vDuration = String()
                 vDuration = ""
