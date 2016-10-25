@@ -1078,6 +1078,7 @@ class StreamsListViewController: UIViewController{
     {
         SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
         SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
+     // self.navigationController?.popViewControllerAnimated(false);
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
         let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
         iPhoneCameraVC.navigationController?.navigationBarHidden = true
@@ -1197,6 +1198,9 @@ class StreamsListViewController: UIViewController{
                 ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
             }
         }
+    }
+    deinit {
+        print("streamlistview controller deinit")
     }
 }
 

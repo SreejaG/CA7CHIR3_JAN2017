@@ -5,7 +5,7 @@ class SnapCamSelectViewController: UIViewController {
     
     static let identifier = "SnapCamSelectViewController"
     @IBOutlet weak var snapCamSettingsTableView: UITableView!
-    var streamingDelegate:StreamingProtocol?
+    weak var streamingDelegate:StreamingProtocol?
     var snapCamMode : SnapCamSelectionMode = SnapCamSelectionMode()
     var toggleSnapCamIPhoneMode:SnapCamSelectionMode = .SnapCam
     
@@ -24,7 +24,7 @@ class SnapCamSelectViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadDefaults()
+       loadDefaults()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -87,6 +87,10 @@ class SnapCamSelectViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    deinit {
+        print("snapcamviewcontroller deinit")
+    }
+
 }
 
 //PRAGMA MARK:- TableView datasource, delegates
@@ -142,12 +146,12 @@ extension SnapCamSelectViewController:UITableViewDelegate
             break
             
         default :
-            
-            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-            let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-            self.presentViewController(navController, animated: false) { () -> Void in
-            }
+            self.dismissViewControllerAnimated(false, completion: nil)
+//            let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+//            let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//            self.presentViewController(navController, animated: false) { () -> Void in
+//            }
             break;
         }
     }
@@ -259,12 +263,13 @@ extension SnapCamSelectViewController
     
     func loadCameraViewController()
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
-        }
+        self.dismissViewControllerAnimated(false, completion: nil)
+//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+//        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+//        navController.navigationBarHidden = true
+//        self.presentViewController(navController, animated: false) { () -> Void in
+//        }
     }
     
     func loadAPITestView()
@@ -435,12 +440,15 @@ extension SnapCamSelectViewController
     
     @IBAction func snapcamButtonClicked(sender: AnyObject)
     {
-        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
-        }
+        self.dismissViewControllerAnimated(false, completion: nil)
+        
+               
+//        let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
+//        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+////        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
+////        navController.navigationBarHidden = true
+//        self.presentViewController(iPhoneCameraViewController, animated: false) { () -> Void in
+//        }
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {

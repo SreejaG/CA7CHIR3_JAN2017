@@ -38,7 +38,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 }
 
 //For CA7CH specific album in phone
-@property (strong,nonatomic) ALAssetsLibrary *assetsLibrary;
+@property (weak,nonatomic) ALAssetsLibrary *assetsLibrary;
 
 //Video Core Session
 @property (nonatomic, retain) VCSimpleSession* liveSteamSession;
@@ -122,6 +122,7 @@ int timerCount = 0;
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+   
     if([self isStreamStarted]){
         [liveStreaming stopStreamingClicked];
         [_liveSteamSession endRtmpSession];
@@ -1830,6 +1831,42 @@ int timerCount = 0;
 
 -(void) settingsPageView{
     
+    if([self isStreamStarted]){
+        [liveStreaming stopStreamingClicked];
+        [_liveSteamSession endRtmpSession];
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"shutterActionMode"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"StartedStreaming"];
+    }
+    
+    if(self.sessionQueue != nil){
+        dispatch_async( self.sessionQueue, ^{
+            if ( self.setupResult == AVCamSetupResultSuccess ) {
+                [self.session stopRunning];
+                [self removeObservers:@"remove" completion:^{
+                    
+                }];
+            }
+        });
+    }
+    else{
+        if ( self.setupResult == AVCamSetupResultSuccess ) {
+            [self.session stopRunning];
+            [self removeObservers:@"remove" completion:^{
+                
+            }];
+        }
+    }
+    
+    if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+    }else {
+        [self.videoDeviceInput.device lockForConfiguration:nil];
+        [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+        [self.videoDeviceInput.device unlockForConfiguration];
+    }
+    
+    takePictureFlag = false;
+    [self stopTimer];
+
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
@@ -1914,8 +1951,11 @@ int timerCount = 0;
     UIStoryboard *streamingStoryboard = [UIStoryboard storyboardWithName:@"Streaming" bundle:nil];
     StreamsGalleryViewController *streamsGalleryViewController = [streamingStoryboard instantiateViewControllerWithIdentifier:@"StreamsGalleryViewController"];
     [self.navigationController pushViewController:streamsGalleryViewController animated:false];
+    
 }
-
+-(void) deinit {
+    NSLog(@"iphonecamera deinit");
+}
 #pragma mark :- StreamingProtocol delegates
 
 -(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
