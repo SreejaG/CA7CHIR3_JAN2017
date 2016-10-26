@@ -80,6 +80,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad()
     {
         super.viewDidLoad()
+      
         getCurrentOrientaion()
         selectedItem = 0
         self.photoThumpCollectionView.alwaysBounceHorizontal = true

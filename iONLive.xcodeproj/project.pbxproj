@@ -222,6 +222,9 @@
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
 		B28C91531DB2577D005EBBF5 /* ReportAProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */; };
+		B29946151DC085CB00BD58B7 /* AppInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946141DC085CB00BD58B7 /* AppInfoViewController.swift */; };
+		B29946171DC08A9100BD58B7 /* AppInfoHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946161DC08A9100BD58B7 /* AppInfoHeaderTableViewCell.swift */; };
+		B29946191DC08A9F00BD58B7 /* AppInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946181DC08A9F00BD58B7 /* AppInfoTableViewCell.swift */; };
 		B2AD95DE1DB49C4D00E25B29 /* ReportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */; };
 		B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */; };
 		B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */; };
@@ -633,6 +636,9 @@
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
 		B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportAProblemViewController.swift; sourceTree = "<group>"; };
+		B29946141DC085CB00BD58B7 /* AppInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoViewController.swift; sourceTree = "<group>"; };
+		B29946161DC08A9100BD58B7 /* AppInfoHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoHeaderTableViewCell.swift; sourceTree = "<group>"; };
+		B29946181DC08A9F00BD58B7 /* AppInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoTableViewCell.swift; sourceTree = "<group>"; };
 		B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportManager.swift; sourceTree = "<group>"; };
 		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
 		B2AFC6AE1D50DAB400EFA78C /* SharedChannelDetailsAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedChannelDetailsAPI.swift; sourceTree = "<group>"; };
@@ -833,6 +839,7 @@
 		164989ED1C0D5C0F007C912C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				B29946131DC085A900BD58B7 /* App Info */,
 				B2C443F21DBA17120086ED8E /* LiveStreamResolution */,
 				166796B21C31070000543D7A /* ProgramCameraButton */,
 				166796A91C30FF6200543D7A /* ConnectAccount */,
@@ -1612,6 +1619,16 @@
 			name = Scroll;
 			sourceTree = "<group>";
 		};
+		B29946131DC085A900BD58B7 /* App Info */ = {
+			isa = PBXGroup;
+			children = (
+				B29946141DC085CB00BD58B7 /* AppInfoViewController.swift */,
+				B29946161DC08A9100BD58B7 /* AppInfoHeaderTableViewCell.swift */,
+				B29946181DC08A9F00BD58B7 /* AppInfoTableViewCell.swift */,
+			);
+			name = "App Info";
+			sourceTree = "<group>";
+		};
 		B2AD95DC1DB4969C00E25B29 /* Report Problem */ = {
 			isa = PBXGroup;
 			children = (
@@ -1881,6 +1898,7 @@
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
+				B29946191DC08A9F00BD58B7 /* AppInfoTableViewCell.swift in Sources */,
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */,
 				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController.swift in Sources */,
@@ -1909,6 +1927,7 @@
 				16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				B2C443F41DBA17780086ED8E /* ResolutionSelectionViewController.swift in Sources */,
+				B29946151DC085CB00BD58B7 /* AppInfoViewController.swift in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
 				16BFCA611D1A6DE700761C94 /* NSData+ImageContentType.m in Sources */,
 				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
@@ -1992,6 +2011,7 @@
 				B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */,
 				165B77E11C4CEA4500BDB02F /* iONLiveCamAPIListViewController.swift in Sources */,
 				16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */,
+				B29946171DC08A9100BD58B7 /* AppInfoHeaderTableViewCell.swift in Sources */,
 				164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */,
 				167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */,
 				162ABFFD1C32815700625C89 /* ChannelItemListCollectionViewCell.swift in Sources */,
