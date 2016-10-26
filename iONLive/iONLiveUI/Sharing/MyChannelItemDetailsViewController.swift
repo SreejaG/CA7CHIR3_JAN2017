@@ -325,7 +325,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
             {
                 let defaults = NSUserDefaults .standardUserDefaults()
                 let userId = defaults.valueForKey(userLoginIdKey) as! String
-                
+                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
                 self.showOverlay()
                 
                 self.channelItemsCollectionView.alpha = 0.4
@@ -338,7 +338,9 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                     imageForProfile = mediaImageFromFile!
                 }
                 else{
-                    imageForProfile =  UIImage(named: "dummyUser")!
+                    let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
+                    imageForProfile = mediaImageFromFile
                 }
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)

@@ -1,21 +1,14 @@
 
 import UIKit
 
-class ContactListTableViewCell: UITableViewCell {
+class Ca7chContactsTableViewCell: UITableViewCell {
 
-    static let identifier = "ContactListTableViewCell"
+    static let identifier = "Ca7chContactsTableViewCell"
     
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
-    
-    var loadingOverlay: UIView?
-    
-    @IBAction func contactSharingButtonClicked(sender: AnyObject) {
-        let tag = sender.tag
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshContactListTableView", object:tag)
-    }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         contactProfileImage.layer.cornerRadius = contactProfileImage.frame.size.width/2
@@ -24,6 +17,11 @@ class ContactListTableViewCell: UITableViewCell {
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+    
+    @IBAction func Ca7chContactsSharingButtonClicked(sender: AnyObject) {
+        let tag = sender.tag
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshCa7chContactsListTableView", object:tag)
     }
 
 }

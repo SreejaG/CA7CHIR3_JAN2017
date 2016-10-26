@@ -596,7 +596,9 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                     imageForProfile = mediaImageFromFile!
                 }
                 else{
-                    imageForProfile =  UIImage(named: "dummyUser")!
+                     let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
+                     imageForProfile = mediaImageFromFile
                 }
                 
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
