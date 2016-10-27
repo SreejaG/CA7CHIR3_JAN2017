@@ -12,7 +12,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     let channelManager = ChannelManager.sharedInstance
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-//    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     var addUserArray : NSMutableArray = NSMutableArray()
@@ -35,6 +34,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     @IBOutlet var channelTitleLabel: UILabel!
     @IBOutlet var contactSearchBar: UISearchBar!
     @IBOutlet var contactTableView: UITableView!
+    @IBOutlet var tableViewBottomConstraint: NSLayoutConstraint!
     
     var NoContactsAddedList : UILabel = UILabel()
     
@@ -62,6 +62,30 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
+    }
+    
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableViewBottomConstraint.constant == 49
+        {
+            self.tableViewBottomConstraint.constant = keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableViewBottomConstraint.constant != 49
+        {
+            self.tableViewBottomConstraint.constant = 49
+        }
     }
     
     @IBAction func gestureTapped(sender: AnyObject) {
@@ -206,6 +230,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
     {
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        
+        addKeyboardObservers()
         
         searchDataSource.removeAll()
         dataSource.removeAll()

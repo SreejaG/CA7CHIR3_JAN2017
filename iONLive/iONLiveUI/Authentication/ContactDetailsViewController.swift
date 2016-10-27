@@ -36,6 +36,8 @@ class ContactDetailsViewController: UIViewController {
     
     @IBOutlet var contactTableView: UITableView!
     
+    @IBOutlet var tableBottomConstraint: NSLayoutConstraint!
+    
     @IBAction func gestureTapped(sender: AnyObject) {
         view.endEditing(true)
         self.contactSearchBar.text = ""
@@ -64,6 +66,30 @@ class ContactDetailsViewController: UIViewController {
         self.navigationController?.navigationBarHidden = true
         self.contactTableView.backgroundView = nil
         self.contactTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
+    }
+    
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableBottomConstraint.constant == 0
+        {
+            self.tableBottomConstraint.constant = self.tableBottomConstraint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableBottomConstraint.constant != 0
+        {
+            self.tableBottomConstraint.constant = 0
+        }
     }
     
     @IBAction func didTapDoneButton(sender: AnyObject) {
@@ -218,6 +244,8 @@ class ContactDetailsViewController: UIViewController {
         dataSource?.removeAll()
         appContactsArr.removeAll()
         searchDataSource?.removeAll()
+        
+        addKeyboardObservers()
         
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String

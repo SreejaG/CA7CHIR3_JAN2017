@@ -77,6 +77,8 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    
+    
     @IBAction func inviteContacts(sender: AnyObject) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
         let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(OtherContactListViewController.identifier) as! OtherContactListViewController

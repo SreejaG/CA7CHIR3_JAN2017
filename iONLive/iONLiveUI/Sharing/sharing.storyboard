@@ -232,7 +232,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-435" y="140"/>
+            <point key="canvasLocation" x="-491" y="164"/>
         </scene>
         <!--Sharing with-->
         <scene sceneID="Jpb-s7-ASE">
@@ -448,6 +448,7 @@
                         <outlet property="contactTableView" destination="6Bl-lb-Srn" id="iOK-pN-POd"/>
                         <outlet property="doneButton" destination="z6L-Rp-cIi" id="SXP-Qp-Xqn"/>
                         <outlet property="inviteButton" destination="4c9-I9-kUP" id="QzC-9S-G7o"/>
+                        <outlet property="tableViewBottomConstraint" destination="L72-a3-bkJ" id="rcp-om-Ji1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WrD-J8-U64" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -465,7 +466,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="946" y="631"/>
+            <point key="canvasLocation" x="857" y="539"/>
         </scene>
         <!--All-->
         <scene sceneID="EtW-s8-2ql">
@@ -618,7 +619,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x2f-sH-72p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="925" y="-327"/>
+            <point key="canvasLocation" x="857" y="-115"/>
         </scene>
         <!--Contact List View Controller-->
         <scene sceneID="GxG-tx-5og">
@@ -815,6 +816,7 @@
                         <outlet property="contactListSearchBar" destination="e2e-yI-WeA" id="p1f-wM-l33"/>
                         <outlet property="contactListTableView" destination="JdV-kO-Abg" id="6LQ-h3-zxT"/>
                         <outlet property="doneButton" destination="eAQ-Cb-F0f" id="vWD-r9-gpz"/>
+                        <outlet property="tableViewBottomConstraint" destination="hQZ-lq-Ta1" id="fer-kr-BdD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TpQ-1S-nuY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -824,7 +826,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1418" y="35"/>
+            <point key="canvasLocation" x="1492" y="133"/>
         </scene>
         <!--Other Contact List View Controller-->
         <scene sceneID="G7i-E5-5rp">
@@ -1020,6 +1022,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="ca7chTableBottomConstraint" destination="8Eg-ux-vBJ" id="ffM-ax-b8s"/>
                         <outlet property="ca7chTableView" destination="2Is-fa-4wz" id="oc5-zg-TvT"/>
                         <outlet property="contactListSearchBar" destination="keJ-zm-yBB" id="HLN-Pr-BfY"/>
                         <outlet property="doneButton" destination="S5X-M9-uS4" id="OaD-g6-daD"/>
@@ -1032,7 +1035,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="2037" y="35"/>
+            <point key="canvasLocation" x="2163" y="133"/>
         </scene>
         <!--My Channel Detail View Controller-->
         <scene sceneID="3un-VQ-zYD">
@@ -1055,7 +1058,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eIP-6l-TFu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="249" y="15"/>
+            <point key="canvasLocation" x="141" y="164"/>
         </scene>
     </scenes>
     <resources>

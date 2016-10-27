@@ -44,6 +44,7 @@ class OtherContactListViewController: UIViewController {
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var contactListSearchBar: UISearchBar!
     @IBOutlet var ca7chTableView: UITableView!
+    @IBOutlet var ca7chTableBottomConstraint: NSLayoutConstraint!
     
     let userNameKey = "userName"
     let profileImageKey = "profileImage"
@@ -65,6 +66,30 @@ class OtherContactListViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if ca7chTableBottomConstraint.constant == 0
+        {
+            self.ca7chTableBottomConstraint.constant = self.ca7chTableBottomConstraint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if ca7chTableBottomConstraint.constant != 0
+        {
+            self.ca7chTableBottomConstraint.constant = 0
+        }
+    }
+
     func initialise()
     {
         ca7chContactSource.removeAll()
@@ -78,6 +103,8 @@ class OtherContactListViewController: UIViewController {
         doneButton.hidden = true
         
         searchActive = false
+        
+        addKeyboardObservers()
         
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String

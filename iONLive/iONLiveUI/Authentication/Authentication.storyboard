@@ -963,6 +963,7 @@
                         <outlet property="contactSearchBar" destination="sEC-nH-Mvq" id="8xJ-hL-abX"/>
                         <outlet property="contactTableView" destination="Oa1-nu-F1Y" id="itt-0i-lo3"/>
                         <outlet property="doneButton" destination="5OP-cg-Yjs" id="ybU-Q7-sg1"/>
+                        <outlet property="tableBottomConstraint" destination="SNH-Hn-kbi" id="m8J-MT-MZv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xaw-Wp-dSh" userLabel="First Responder" sceneMemberID="firstResponder"/>
