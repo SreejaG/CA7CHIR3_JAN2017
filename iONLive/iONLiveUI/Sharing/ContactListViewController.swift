@@ -26,7 +26,7 @@ class ContactListViewController: UIViewController
     let contactManagers = contactManager.sharedInstance
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+//    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let defaults = NSUserDefaults .standardUserDefaults()
@@ -34,9 +34,10 @@ class ContactListViewController: UIViewController
     var accessToken = String()
     
     let userNameKey = "userName"
-    let profileImageKey = "profile_image"
+    let profileImageKey = "profileImage"
     let subscribedKey = "sharedindicator"
     let selectionKey = "selected"
+    let profileImageUrlKey = "profile_image_URL"
     
     var searchActive: Bool = false
     
@@ -93,12 +94,12 @@ class ContactListViewController: UIViewController
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            for i in 0 ..< fullDataSource.count
+            for i in 0 ..< dataSource.count
             {
-                if i < fullDataSource.count
+                if i < dataSource.count
                 {
-                    let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
-                    fullDataSource[i]["tempSelected"] = selectionValue
+                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                    dataSource[i]["tempSelected"] = selectionValue
                 }
             }
             contactListTableView.reloadData()
@@ -122,12 +123,12 @@ class ContactListViewController: UIViewController
         contactListTableView.layoutIfNeeded()
         addUserArray.removeAllObjects()
         
-        for i in 0 ..< fullDataSource.count
+        for i in 0 ..< dataSource.count
         {
-            if i < fullDataSource.count
+            if i < dataSource.count
             {
-                let userId = fullDataSource[i][userNameKey] as! String
-                let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
+                let userId = dataSource[i][userNameKey] as! String
+                let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
                 if(selectionValue == 1){
                     addUserArray.addObject(userId)
                 }
@@ -188,7 +189,6 @@ class ContactListViewController: UIViewController
     {
         searchDataSource.removeAll()
         dataSource.removeAll()
-        fullDataSource.removeAll()
         addUserArray.removeAllObjects()
         searchActive = false
         doneButton.hidden = true
@@ -364,12 +364,12 @@ class ContactListViewController: UIViewController
         {
             let status = json["status"] as! Int
             if(status == 1){
-                for i in 0 ..< fullDataSource.count
+                for i in 0 ..< dataSource.count
                 {
-                    if i < fullDataSource.count
+                    if i < dataSource.count
                     {
-                        let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
-                        fullDataSource[i]["orgSelected"] = selectionValue
+                        let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+                        dataSource[i]["orgSelected"] = selectionValue
                     }
                 }
                 loadMychannelDetailController()
@@ -417,13 +417,14 @@ class ContactListViewController: UIViewController
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
-            fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
                 let userName = element["user_name"] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                dataSource.append([userNameKey:userName, profileImageKey: thumbUrl])
+                let profileImage = UIImage(named: "dummyUser")
+                dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!])
             }
+            
             if(dataSource.count > 0){
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -463,7 +464,7 @@ class ContactListViewController: UIViewController
             if i < dataSource.count
             {
                 var profileImage : UIImage?
-                let profileImageName = dataSource[i][profileImageKey] as! String
+                let profileImageName = dataSource[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
                     profileImage = createProfileImage(profileImageName)
@@ -471,7 +472,7 @@ class ContactListViewController: UIViewController
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-                self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!,"tempSelected": 0, "orgSelected" : 0])
+                dataSource[i][profileImageKey] = profileImage
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     self.removeOverlay()
                     self.contactListTableView.reloadData()
@@ -499,12 +500,12 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        for i in 0 ..< fullDataSource.count
+        for i in 0 ..< dataSource.count
         {
-            if i < fullDataSource.count
+            if i < dataSource.count
             {
-                let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
-                fullDataSource[i]["tempSelected"] = selectionValue
+                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                dataSource[i]["tempSelected"] = selectionValue
             }
         }
         contactListTableView.reloadData()
@@ -529,14 +530,14 @@ class ContactListViewController: UIViewController
                 }
                 
                 let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-                for i in 0 ..< fullDataSource.count
+                for i in 0 ..< dataSource.count
                 {
-                    if i < fullDataSource.count
+                    if i < dataSource.count
                     {
-                        let dataSourceUserId = fullDataSource[i][userNameKey] as! String
+                        let dataSourceUserId = dataSource[i][userNameKey] as! String
                         if(selecteduserId == dataSourceUserId)
                         {
-                            fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                            dataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
                         }
                     }
                 }
@@ -544,13 +545,13 @@ class ContactListViewController: UIViewController
         }
         else
         {
-            if(indexpath < fullDataSource.count){
-                let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+            if(indexpath < dataSource.count){
+                let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
                 if(selectedValue == 1){
-                    fullDataSource[indexpath]["tempSelected"] = 0
+                    dataSource[indexpath]["tempSelected"] = 0
                 }
                 else{
-                    fullDataSource[indexpath]["tempSelected"] = 1
+                    dataSource[indexpath]["tempSelected"] = 1
                 }
             }
         }
@@ -601,7 +602,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
         else{
-            return fullDataSource.count > 0 ? (fullDataSource.count) : 0
+            return dataSource.count > 0 ? (dataSource.count) : 0
         }
     }
     
@@ -615,7 +616,7 @@ extension ContactListViewController:UITableViewDelegate,UITableViewDataSource
             dataSourceTmp = searchDataSource
         }
         else{
-            dataSourceTmp = fullDataSource
+            dataSourceTmp = dataSource
         }
         
         if dataSourceTmp?.count > 0
@@ -676,14 +677,14 @@ extension ContactListViewController: UISearchBarDelegate{
         
         if contactListSearchBar.text!.isEmpty
         {
-            searchDataSource = fullDataSource
+            searchDataSource = dataSource
             contactListSearchBar.resignFirstResponder()
             self.contactListTableView.reloadData()
         }
         else{
-            if fullDataSource.count > 0
+            if dataSource.count > 0
             {
-                for element in fullDataSource{
+                for element in dataSource{
                     let tmp: String = (element[userNameKey]?.lowercaseString)!
                     if(tmp.containsString(searchText.lowercaseString))
                     {

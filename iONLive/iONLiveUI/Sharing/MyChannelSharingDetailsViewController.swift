@@ -278,6 +278,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
+        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -289,6 +290,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let profileImage = UIImage(named: "dummyUser")
                 dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue, profileImageKey: profileImage!])
             }
+            contactTableView.reloadData()
             if(dataSource.count > 0){
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -325,11 +327,16 @@ class MyChannelSharingDetailsViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
+        var localArray = [[String:AnyObject]]()
         for i in 0 ..< dataSource.count
         {
-            if(i < dataSource.count){
+            localArray.append(dataSource[i])
+        }
+        for i in 0 ..< localArray.count
+        {
+            if(i < localArray.count){
                 var profileImage : UIImage?
-                let profileImageName = dataSource[i][profileImageUrlKey] as! String
+                let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
                     profileImage = createProfileImage(profileImageName)
@@ -337,14 +344,31 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-                
-                self.dataSource[i][profileImageKey] = profileImage
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.removeOverlay()
-                    self.contactTableView.reloadData()
-                })
+                localArray[i][profileImageKey] = profileImage
             }
         }
+        for j in 0 ..< dataSource.count
+        {
+            if j < dataSource.count
+            {
+                let userChk = dataSource[j][userNameKey] as! String
+                for element in localArray
+                {
+                    let userLocalChk = element[userNameKey] as! String
+                    if userChk == userLocalChk
+                    {
+                        if element[profileImageKey] != nil
+                        {
+                            dataSource[j][profileImageKey] = element[profileImageKey] as! UIImage
+                        }
+                    }
+                }
+            }
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.contactTableView.reloadData()
+            })
+        }
+        localArray.removeAll()
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
@@ -513,6 +537,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
         let  headerCell = tableView.dequeueReusableCellWithIdentifier("contactHeaderTableViewCell") as! contactHeaderTableViewCell
         
         headerCell.contactHeaderTitle.text = "SHARING WITH"
+        headerCell.userInteractionEnabled = false
         return headerCell
     }
     
@@ -569,15 +594,15 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            var deletedUserId : String = String()
-            if(searchActive){
-                deletedUserId = self.searchDataSource[indexPath.row][self.userNameKey]! as! String
-            }
-            else{
-                deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
-            }
-            generateWaytoSendAlert(deletedUserId, indexpath: indexPath.row)
+            if (editingStyle == UITableViewCellEditingStyle.Delete) {
+                var deletedUserId : String = String()
+                if(searchActive){
+                    deletedUserId = self.searchDataSource[indexPath.row][self.userNameKey]! as! String
+                }
+                else{
+                    deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
+                }
+                generateWaytoSendAlert(deletedUserId, indexpath: indexPath.row)
         }
     }
 }
