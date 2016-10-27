@@ -230,8 +230,6 @@
 		B299465B1DC0B39800BD58B7 /* ResolutionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946581DC0B39800BD58B7 /* ResolutionTableViewCell.swift */; };
 		B29946601DC0B3D900BD58B7 /* Ca7chContactsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B299465D1DC0B3D900BD58B7 /* Ca7chContactsHeaderTableViewCell.swift */; };
 		B29946611DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B299465E1DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift */; };
-		B29946641DC0D58300BD58B7 /* phoneContactsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946631DC0D58300BD58B7 /* phoneContactsHeaderTableViewCell.swift */; };
-		B29946661DC0D59200BD58B7 /* phoneContactsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946651DC0D59200BD58B7 /* phoneContactsTableViewCell.swift */; };
 		B29946681DC0E42C00BD58B7 /* OtherContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946671DC0E42C00BD58B7 /* OtherContactListViewController.swift */; };
 		B2AD95DE1DB49C4D00E25B29 /* ReportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */; };
 		B2AFC6AF1D50DAB400EFA78C /* ChannelSharedListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */; };
@@ -649,8 +647,6 @@
 		B29946581DC0B39800BD58B7 /* ResolutionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResolutionTableViewCell.swift; sourceTree = "<group>"; };
 		B299465D1DC0B3D900BD58B7 /* Ca7chContactsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ca7chContactsHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		B299465E1DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ca7chContactsTableViewCell.swift; sourceTree = "<group>"; };
-		B29946631DC0D58300BD58B7 /* phoneContactsHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = phoneContactsHeaderTableViewCell.swift; sourceTree = "<group>"; };
-		B29946651DC0D59200BD58B7 /* phoneContactsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = phoneContactsTableViewCell.swift; sourceTree = "<group>"; };
 		B29946671DC0E42C00BD58B7 /* OtherContactListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherContactListViewController.swift; sourceTree = "<group>"; };
 		B2AD95DD1DB49C4D00E25B29 /* ReportManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportManager.swift; sourceTree = "<group>"; };
 		B2AFC6AD1D50DAB400EFA78C /* ChannelSharedListAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSharedListAPI.swift; sourceTree = "<group>"; };
@@ -1656,8 +1652,6 @@
 				B29946671DC0E42C00BD58B7 /* OtherContactListViewController.swift */,
 				B299465D1DC0B3D900BD58B7 /* Ca7chContactsHeaderTableViewCell.swift */,
 				B299465E1DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift */,
-				B29946631DC0D58300BD58B7 /* phoneContactsHeaderTableViewCell.swift */,
-				B29946651DC0D59200BD58B7 /* phoneContactsTableViewCell.swift */,
 			);
 			path = ContactInvitaion;
 			sourceTree = "<group>";
@@ -2008,7 +2002,6 @@
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
 				068661331DAE0DB700B41CC0 /* ResetPasswordViewController.swift in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
-				B29946641DC0D58300BD58B7 /* phoneContactsHeaderTableViewCell.swift in Sources */,
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
 				16BFCA6F1D1A6DE700761C94 /* UIView+WebCacheOperation.m in Sources */,
 				1678D00E1CF4246B0021D805 /* SwiftAlertView.swift in Sources */,
@@ -2049,7 +2042,6 @@
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
-				B29946661DC0D59200BD58B7 /* phoneContactsTableViewCell.swift in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

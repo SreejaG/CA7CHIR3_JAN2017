@@ -1531,14 +1531,17 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         if(GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict.count > 0){
             for j in 0 ..< GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict.count
             {
-                let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaIdKey] as! String
-                if mediaIdChk == mediaIDClick
+                if j < GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict.count
                 {
-                    let thumbToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][tImageURLKey] as! String
-                    let fullToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][fImageURLKey] as! String
-                    let mediaTypeToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaTypeKey] as! String
-                    let uploadMediaObj = uploadMediaToGCS()
-                    uploadMediaObj.setGlobalValuesForUploading(mediaIdChk, thumbURL: thumbToUpload, fullURL: fullToUpload, mediaType: mediaTypeToUpload)
+                    let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaIdKey] as! String
+                    if mediaIdChk == mediaIDClick
+                    {
+                        let thumbToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][tImageURLKey] as! String
+                        let fullToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][fImageURLKey] as! String
+                        let mediaTypeToUpload = GlobalChannelToImageMapping.sharedInstance.mediaUploadFailedDict[j][mediaTypeKey] as! String
+                        let uploadMediaObj = uploadMediaToGCS()
+                        uploadMediaObj.setGlobalValuesForUploading(mediaIdChk, thumbURL: thumbToUpload, fullURL: fullToUpload, mediaType: mediaTypeToUpload)
+                    }
                 }
             }
         }

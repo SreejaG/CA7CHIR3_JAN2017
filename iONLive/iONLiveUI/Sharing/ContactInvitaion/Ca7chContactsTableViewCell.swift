@@ -8,7 +8,9 @@ class Ca7chContactsTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
-
+    
+    var section : Int = Int()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         contactProfileImage.layer.cornerRadius = contactProfileImage.frame.size.width/2
@@ -21,7 +23,8 @@ class Ca7chContactsTableViewCell: UITableViewCell {
     
     @IBAction func Ca7chContactsSharingButtonClicked(sender: AnyObject) {
         let tag = sender.tag
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshCa7chContactsListTableView", object:tag)
+        let dict = ["sectionKey": section,"rowKey":tag]
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshCa7chContactsListTableView", object:dict)
     }
 
 }

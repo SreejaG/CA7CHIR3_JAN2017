@@ -170,58 +170,57 @@ class GlobalStreamList: NSObject {
     func downloadMediaFromGCS(){
         for i in 0 ..< imageDataSource.count
         {
-//            let mediaIdS = "\(imageDataSource[i][mediaIdKey] as! String)"
             if imageDataSource.count > 0 && imageDataSource.count > i
             {
-            if imageDataSource[i][stream_mediaIdKey] != nil
-            {
-                var imageForMedia : UIImage = UIImage()
-                let mediaIdForFilePath = "\(self.imageDataSource[i][stream_mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
-                    imageForMedia = mediaImageFromFile!
-                    if(self.imageDataSource.count > 0)
-                    {
-                        self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia,stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
+                if imageDataSource[i][stream_mediaIdKey] != nil
+                {
+                    var imageForMedia : UIImage = UIImage()
+                    let mediaIdForFilePath = "\(self.imageDataSource[i][stream_mediaIdKey] as! String)thumb"
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
+                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                    if fileExistFlag == true{
+                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                        imageForMedia = mediaImageFromFile!
+                        if(self.imageDataSource.count > 0)
+                        {
+                            self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia,stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
+                        }
                     }
-                }
-                else{
-                    if(imageDataSource.count > 0)
-                    {
-                        let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
-                        if(mediaUrl != ""){
-                            let url: NSURL = convertStringtoURL(mediaUrl)
-                            downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
-                                if(result != UIImage()){
-                                    let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                    else{
+                        if(imageDataSource.count > 0)
+                        {
+                            let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
+                            if(mediaUrl != ""){
+                                let url: NSURL = convertStringtoURL(mediaUrl)
+                                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                    if(result != UIImage()){
+                                        let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
+                                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        }
+                                        else{
+                                            imageForMedia = result
+                                            if(self.imageDataSource.count > 0)
+                                            {
+                                                self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia, stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
+                                            }
+                                            
+                                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                        }
+                                        imageForMedia = result
                                     }
                                     else{
-                                        imageForMedia = result
-                                        if(self.imageDataSource.count > 0)
-                                        {
-                                            self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia, stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
-                                        }
-                                        
-                                        FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                        imageForMedia = UIImage(named: "thumb12")!
                                     }
-                                    imageForMedia = result
-                                }
-                                else{
-                                    imageForMedia = UIImage(named: "thumb12")!
-                                }
-                            })
+                                })
+                            }
                         }
                     }
                 }
             }
-        }
         }
         if(GlobalStreamDataSource.count > 0){
             GlobalStreamDataSource.sortInPlace({ p1, p2 in

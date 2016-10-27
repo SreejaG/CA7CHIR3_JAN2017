@@ -211,9 +211,12 @@ class AddChannelViewController: UIViewController {
         localChannelDict.removeAll()
         for i in 0 ..< selectedArray.count
         {
-            let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey] as! String
-            localChannelDict.append(fulldataSource[selectedArray[i]])
-            channelSelected.addObject(channelSelectedId)
+            if(i < selectedArray.count)
+            {
+                let channelSelectedId = fulldataSource[selectedArray[i]][channelIdKey] as! String
+                localChannelDict.append(fulldataSource[selectedArray[i]])
+                channelSelected.addObject(channelSelectedId)
+            }
         }
         if channelSelected.count > 0
         {

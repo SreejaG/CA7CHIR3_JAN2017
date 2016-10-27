@@ -289,9 +289,12 @@ class ChannelItemListViewController: UIViewController {
     @IBAction func didTapAddtoButton(sender: AnyObject) {
         for i in 0 ..< selectedArray.count
         {
-            let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
-            selected.addObject(mediaSelectedId!)
-            addToDict.append(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]])
+            if i < selectedArray.count
+            {
+                let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
+                selected.addObject(mediaSelectedId!)
+                addToDict.append(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]])
+            }
         }
         
         let channelStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
@@ -349,8 +352,10 @@ class ChannelItemListViewController: UIViewController {
         operationInChannelImageList.cancel()
         for i in 0 ..< selectedArray.count
         {
-            let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
-            selected.addObject(mediaSelectedId!)
+            if(i < selectedArray.count){
+                let mediaSelectedId = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![selectedArray[i]][mediaIdKey]
+                selected.addObject(mediaSelectedId!)
+            }
         }
         if(selected.count > 0){
             channelIds.append(Int(channelId)!)

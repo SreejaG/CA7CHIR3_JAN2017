@@ -12,15 +12,17 @@ class MyChannelSharingDetailsViewController: UIViewController {
     let channelManager = ChannelManager.sharedInstance
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+//    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     var addUserArray : NSMutableArray = NSMutableArray()
     var deleteUserArray : NSMutableArray = NSMutableArray()
     
     let userNameKey = "userName"
-    let profileImageKey = "profile_image"
+    let profileImageKey = "profileImage"
+    let subscribedKey = "sharedindicator"
     let selectionKey = "selected"
+    let profileImageUrlKey = "profile_image_URL"
     
     let defaults = NSUserDefaults .standardUserDefaults()
     var userId = String()
@@ -75,10 +77,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if(doneButton.hidden == false){
             inviteButton.hidden = false
             doneButton.hidden = true
-            for i in 0 ..< fullDataSource.count
+            for i in 0 ..< dataSource.count
             {
-                let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
-                fullDataSource[i]["tempSelected"] = selectionValue
+                if(i < dataSource.count){
+                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                    dataSource[i]["tempSelected"] = selectionValue
+                }
             }
             contactTableView.reloadData()
         }
@@ -108,15 +112,17 @@ class MyChannelSharingDetailsViewController: UIViewController {
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
         
-        for i in 0 ..< fullDataSource.count
+        for i in 0 ..< dataSource.count
         {
-            let userId = fullDataSource[i][userNameKey] as! String
-            let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
-            if(selectionValue == 1){
-                addUserArray.addObject(userId)
-            }
-            else{
-                deleteUserArray.addObject(userId)
+            if(i < dataSource.count){
+                let userId = dataSource[i][userNameKey] as! String
+                let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+                if(selectionValue == 1){
+                    addUserArray.addObject(userId)
+                }
+                else{
+                    deleteUserArray.addObject(userId)
+                }
             }
         }
         
@@ -184,10 +190,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                for i in 0 ..< fullDataSource.count
+                for i in 0 ..< dataSource.count
                 {
-                    let selectionValue : Int = fullDataSource[i]["tempSelected"] as! Int
-                    fullDataSource[i]["orgSelected"] = selectionValue
+                    if(i < dataSource.count){
+                        let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+                        dataSource[i]["orgSelected"] = selectionValue
+                    }
                 }
                 contactTableView.reloadData()
             }
@@ -200,7 +208,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
         searchDataSource.removeAll()
-        fullDataSource.removeAll()
         dataSource.removeAll()
         addUserArray.removeAllObjects()
         deleteUserArray.removeAllObjects()
@@ -248,14 +255,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
-            fullDataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
                 let userName = element["user_name"] as! String
                 let imageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 let subscriptionValue =  Int(element["sub_enable_ind"] as! Bool)
-                
-                dataSource.append([userNameKey:userName, profileImageKey: imageName, selectionKey:subscriptionValue])
+                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue])
             }
             if(dataSource.count > 0){
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
@@ -295,22 +300,23 @@ class MyChannelSharingDetailsViewController: UIViewController {
     func downloadMediaFromGCS(){
         for i in 0 ..< dataSource.count
         {
-            var profileImage : UIImage?
-            let profileImageName = dataSource[i][profileImageKey] as! String
-            if(profileImageName != "")
-            {
-                profileImage = createProfileImage(profileImageName)
+            if(i < dataSource.count){
+                var profileImage : UIImage?
+                let profileImageName = dataSource[i][profileImageUrlKey] as! String
+                if(profileImageName != "")
+                {
+                    profileImage = createProfileImage(profileImageName)
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                
+                self.dataSource[i][profileImageKey] = profileImage
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.removeOverlay()
+                    self.contactTableView.reloadData()
+                })
             }
-            else{
-                profileImage = UIImage(named: "dummyUser")
-            }
-            
-            let channelSharedBool = self.dataSource[i][self.selectionKey] as! Int
-            self.fullDataSource.append([self.userNameKey:self.dataSource[i][self.userNameKey]!, self.profileImageKey: profileImage!,"tempSelected": channelSharedBool, "orgSelected": channelSharedBool])
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.contactTableView.reloadData()
-            })
         }
     }
     
@@ -333,10 +339,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
         }
         
-        for i in 0 ..< fullDataSource.count
+        for i in 0 ..< dataSource.count
         {
-            let selectionValue : Int = fullDataSource[i]["orgSelected"] as! Int
-            fullDataSource[i]["tempSelected"] = selectionValue
+            if(i < dataSource.count){
+                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                dataSource[i]["tempSelected"] = selectionValue
+            }
         }
         contactTableView.reloadData()
     }
@@ -362,25 +370,27 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 }
                 
                 let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-                for i in 0 ..< fullDataSource.count
+                for i in 0 ..< dataSource.count
                 {
-                    let dataSourceUserId = fullDataSource[i][userNameKey] as! String
-                    if(selecteduserId == dataSourceUserId)
-                    {
-                        fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                    if(i < dataSource.count){
+                        let dataSourceUserId = dataSource[i][userNameKey] as! String
+                        if(selecteduserId == dataSourceUserId)
+                        {
+                            dataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                        }
                     }
                 }
             }
         }
         else
         {
-            if(indexpath < fullDataSource.count){
-                let selectedValue =  fullDataSource[indexpath]["tempSelected"] as! Int
+            if(indexpath < dataSource.count){
+                let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
                 if(selectedValue == 1){
-                    fullDataSource[indexpath]["tempSelected"] = 0
+                    dataSource[indexpath]["tempSelected"] = 0
                 }
                 else{
-                    fullDataSource[indexpath]["tempSelected"] = 1
+                    dataSource[indexpath]["tempSelected"] = 1
                 }
             }
         }
@@ -432,21 +442,21 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 if(searchActive){
                     let channelId = searchDataSource[index][userNameKey] as! String
                     searchDataSource.removeAtIndex(index)
-                    for i in 0 ..< fullDataSource.count
+                    for i in 0 ..< dataSource.count
                     {
-                        let orgChannel = fullDataSource[i][userNameKey] as! String
-                        if(orgChannel == channelId){
-                            dataSource.removeAtIndex(i)
-                            fullDataSource.removeAtIndex(i)
+                        if(i < dataSource.count){
+                            let orgChannel = dataSource[i][userNameKey] as! String
+                            if(orgChannel == channelId){
+                                dataSource.removeAtIndex(i)
+                            }
                         }
                     }
                 }
                 else{
-                    fullDataSource.removeAtIndex(index)
                     dataSource.removeAtIndex(index)
                 }
             }
-            if fullDataSource.count == 0
+            if dataSource.count == 0
             {
                 addNoDataLabel()
             }
@@ -485,7 +495,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
         else{
-            return fullDataSource.count > 0 ? (fullDataSource.count) : 0
+            return dataSource.count > 0 ? (dataSource.count) : 0
         }
     }
     
@@ -499,7 +509,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             dataSourceTmp = searchDataSource
         }
         else{
-            dataSourceTmp = fullDataSource
+            dataSourceTmp = dataSource
         }
         
         if dataSourceTmp?.count > 0
@@ -573,14 +583,14 @@ extension MyChannelSharingDetailsViewController: UISearchBarDelegate{
         
         if contactSearchBar.text!.isEmpty
         {
-            searchDataSource = fullDataSource
+            searchDataSource = dataSource
             contactSearchBar.resignFirstResponder()
             self.contactTableView.reloadData()
         }
         else{
-            if fullDataSource.count > 0
+            if dataSource.count > 0
             {
-                for element in fullDataSource{
+                for element in dataSource{
                     let tmp: String = (element[userNameKey]?.lowercaseString)!
                     if(tmp.containsString(searchText.lowercaseString))
                     {

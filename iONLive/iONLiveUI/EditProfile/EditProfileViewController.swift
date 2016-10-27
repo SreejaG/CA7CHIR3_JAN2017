@@ -417,25 +417,27 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         
         for i in 0 ..< dataSource!.count
         {
-            var j = 0
-            if i == 0
-            {
-                for  element in  dataSource![i]
+            if(i < dataSource!.count){
+                var j = 0
+                if i == 0
                 {
-                    fullName = element[displayNameKey]!
-                }
-            }
-            else if( i == 2){
-                for  element in  dataSource![i]
-                {
-                    if j == 0
+                    for  element in  dataSource![i]
                     {
-                        email = element[privateInfoKey]!
+                        fullName = element[displayNameKey]!
                     }
-                    else{
-                        mobNo = element[privateInfoKey]!
+                }
+                else if( i == 2){
+                    for  element in  dataSource![i]
+                    {
+                        if j == 0
+                        {
+                            email = element[privateInfoKey]!
+                        }
+                        else{
+                            mobNo = element[privateInfoKey]!
+                        }
+                        j = j + 1
                     }
-                    j = j + 1
                 }
             }
         }

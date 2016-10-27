@@ -31,28 +31,31 @@ class OtherContactListViewController: UIViewController {
    
     var ca7chContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var phoneContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var searchCa7chContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var searchPhoneContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    
+    var searchContactSource:[[[String:AnyObject]]] = [[[String:AnyObject]]]()
+    
+    var contactSource:[[[String:AnyObject]]] = [[[String:AnyObject]]]()
+    
     var contactPhoneNumbers: [String] = [String]()
+    
+    var addUserArray : NSMutableArray = NSMutableArray()
+    var inviteUserArray : NSMutableArray = NSMutableArray()
     
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var contactListSearchBar: UISearchBar!
     @IBOutlet var ca7chTableView: UITableView!
-    @IBOutlet var phoneTableView: UITableView!
     
     let userNameKey = "userName"
     let profileImageKey = "profileImage"
     let subscribedKey = "sharedindicator"
     let selectionKey = "selected"
-    let profileImageUrlKey = "profile_image"
+    let profileImageUrlKey = "profile_image_URL"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherContactListViewController.refreshCa7chContactsListTableView(_:)), name: "refreshCa7chContactsListTableView", object: nil)
-        
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherContactListViewController.refreshphoneContactsListTableView(_:)), name: "refreshphoneContactsListTableView", object: nil)
-        
+                
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
         setAddressBook(addressBookRef1)
         contactAuthorizationAlert()
@@ -65,10 +68,12 @@ class OtherContactListViewController: UIViewController {
     func initialise()
     {
         ca7chContactSource.removeAll()
-        contactPhoneNumbers.removeAll()
         phoneContactSource.removeAll()
-        searchCa7chContactSource.removeAll()
-        searchPhoneContactSource.removeAll()
+
+        contactPhoneNumbers.removeAll()
+        
+        contactSource.removeAll()
+        searchContactSource.removeAll()
         
         doneButton.hidden = true
         
@@ -133,6 +138,16 @@ class OtherContactListViewController: UIViewController {
         presentViewController(alertController, animated: false, completion: nil)
     }
     
+    
+    @IBAction func gestureTapped(sender: AnyObject) {
+        view.endEditing(true)
+        self.contactListSearchBar.text = ""
+        self.contactListSearchBar.resignFirstResponder()
+        searchActive = false
+        self.ca7chTableView.reloadData()
+        self.ca7chTableView.layoutIfNeeded()
+    }
+    
     func displayContacts(){
         showOverlay()
         let phoneCode = defaults.valueForKey("countryCode") as! String
@@ -185,7 +200,7 @@ class OtherContactListViewController: UIViewController {
                     currentContactImage = UIImage(data: currentContactImageData)!
                 }
                 else{
-                    currentContactImage = UIImage(named: "avatar")!
+                    currentContactImage = UIImage(named: "dummyUser")!
                 }
                 
                 if(phoneNumber != ""){
@@ -203,8 +218,6 @@ class OtherContactListViewController: UIViewController {
             }
         }
         
-        phoneTableView.reloadData()
-        
         if contactPhoneNumbers.count > 0
         {
             addContactDetails(self.contactPhoneNumbers)
@@ -213,6 +226,7 @@ class OtherContactListViewController: UIViewController {
             removeOverlay()
         }
     }
+    
     func addContactDetails(contactPhoneNumbers: NSArray)
     {
         contactManagers.addContactDetails(userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
@@ -274,6 +288,7 @@ class OtherContactListViewController: UIViewController {
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
+        self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             let responseArr = json["contactList"] as! [AnyObject]
@@ -283,13 +298,15 @@ class OtherContactListViewController: UIViewController {
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 ca7chContactSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0])
             }
+            
+            self.setContactDetails()
+            
             if(ca7chContactSource.count > 0){
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
                 let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
                 dispatch_async(backgroundQueue, {
                     self.downloadMediaFromGCS()
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        
                     })
                 })
             }
@@ -320,26 +337,36 @@ class OtherContactListViewController: UIViewController {
     func downloadMediaFromGCS(){
         for i in 0 ..< ca7chContactSource.count
         {
-            var profileImage : UIImage?
-            let profileImageName = ca7chContactSource[i][profileImageUrlKey] as! String
-            if(profileImageName != "")
+            if i < ca7chContactSource.count
             {
-                profileImage = createProfileImage(profileImageName)
+                var profileImage : UIImage?
+                let profileImageName = ca7chContactSource[i][profileImageUrlKey] as! String
+                if(profileImageName != "")
+                {
+                    profileImage = createProfileImage(profileImageName)
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                contactSource[0][i][profileImageKey] = profileImage
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.ca7chTableView.reloadData()
+                })
             }
-            else{
-                profileImage = UIImage(named: "dummyUser")
-            }
-            ca7chContactSource[i][profileImageKey] = profileImage
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.ca7chTableView.reloadData()
-            })
         }
     }
     
+    func setContactDetails()
+    {
+        contactSource = [ca7chContactSource,phoneContactSource]
+        ca7chTableView.reloadData()
+    }
+
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
+        self.setContactDetails()
+
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -355,95 +382,50 @@ class OtherContactListViewController: UIViewController {
         else{
             ErrorManager.sharedInstance.addContactError()
         }
-        ca7chTableView.reloadData()
     }
     
     func refreshCa7chContactsListTableView(notif:NSNotification){
         if(doneButton.hidden == true){
             doneButton.hidden = false
         }
-        let indexpath = notif.object as! Int
-//        if(searchActive)
-//        {
-//            if(indexpath < searchDataSource.count){
-//                let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
-//                if(selectedValue == 1)
-//                {
-//                    searchDataSource[indexpath]["tempSelected"] = 0
-//                }
-//                else
-//                {
-//                    searchDataSource[indexpath]["tempSelected"] = 1
-//                }
-//                
-//                let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-//                for i in 0 ..< fullDataSource.count
-//                {
-//                    let dataSourceUserId = fullDataSource[i][userNameKey] as! String
-//                    if(selecteduserId == dataSourceUserId)
-//                    {
-//                        fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
-//                    }
-//                }
-//            }
-//        }
-//        else
-//        {
-            if(indexpath < ca7chContactSource.count){
-                let selectedValue =  ca7chContactSource[indexpath]["tempSelected"] as! Int
-                if(selectedValue == 1){
-                    ca7chContactSource[indexpath]["tempSelected"] = 0
+        let dict = notif.object as! [String:Int]
+        let section: Int = dict["sectionKey"]!
+        let row : Int = dict["rowKey"]!
+        if(searchActive)
+        {
+            let selectedValue =  searchContactSource[section][row]["tempSelected"] as! Int
+            if(selectedValue == 1)
+            {
+                searchContactSource[section][row]["tempSelected"] = 0
+            }
+            else
+            {
+                searchContactSource[section][row]["tempSelected"] = 1
+            }
+            let selecteduserId =  searchContactSource[section][row][userNameKey] as! String
+            for j in 0 ..< contactSource[section].count
+            {
+                if j < contactSource[section].count
+                {
+                    let dataSourceUserId = contactSource[section][j][userNameKey] as! String
+                    if(selecteduserId == dataSourceUserId)
+                    {
+                        contactSource[section][j]["tempSelected"] = searchContactSource[section][row]["tempSelected"]
+                    }
                 }
-                else{
-                    ca7chContactSource[indexpath]["tempSelected"] = 1
-                }
-//            }
+            }
         }
-        ca7chTableView.reloadData()
-    }
-    
-    func refreshphoneContactsListTableView(notif:NSNotification){
-        if(doneButton.hidden == true){
-            doneButton.hidden = false
-        }
-        let indexpath = notif.object as! Int
-        //        if(searchActive)
-        //        {
-        //            if(indexpath < searchDataSource.count){
-        //                let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
-        //                if(selectedValue == 1)
-        //                {
-        //                    searchDataSource[indexpath]["tempSelected"] = 0
-        //                }
-        //                else
-        //                {
-        //                    searchDataSource[indexpath]["tempSelected"] = 1
-        //                }
-        //
-        //                let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
-        //                for i in 0 ..< fullDataSource.count
-        //                {
-        //                    let dataSourceUserId = fullDataSource[i][userNameKey] as! String
-        //                    if(selecteduserId == dataSourceUserId)
-        //                    {
-        //                        fullDataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        if(indexpath < phoneContactSource.count){
-            let selectedValue =  phoneContactSource[indexpath]["tempSelected"] as! Int
+        else
+        {
+            let selectedValue =  contactSource[section][row]["tempSelected"] as! Int
             if(selectedValue == 1){
-                phoneContactSource[indexpath]["tempSelected"] = 0
+                contactSource[section][row]["tempSelected"] = 0
             }
             else{
-                phoneContactSource[indexpath]["tempSelected"] = 1
+                contactSource[section][row]["tempSelected"] = 1
             }
-            //            }
         }
-        phoneTableView.reloadData()
+        ca7chTableView.reloadData()
     }
     
     func convertStringtoURL(url : String) -> NSURL
@@ -474,9 +456,113 @@ class OtherContactListViewController: UIViewController {
     }
     
     @IBAction func didTapBackButton(sender: AnyObject) {
-        self.navigationController?.popViewControllerAnimated(false)
+        if(doneButton.hidden == false){
+            doneButton.hidden = true
+            for i in 0 ..< contactSource[0].count
+            {
+                if i < contactSource[0].count
+                {
+                    let selectionValue : Int = contactSource[0][i]["orgSelected"] as! Int
+                    contactSource[0][i]["tempSelected"] = selectionValue
+                }
+            }
+            for j in 0 ..< contactSource[1].count
+            {
+                if j < contactSource[1].count
+                {
+                    let selectionValue : Int = contactSource[1][j]["orgSelected"] as! Int
+                    contactSource[1][j]["tempSelected"] = selectionValue
+                }
+            }
+            ca7chTableView.reloadData()
+        }
+        else{
+            self.navigationController?.popViewControllerAnimated(false)
+        }
     }
     @IBAction func didTapDoneButton(sender: AnyObject) {
+        doneButton.hidden = true
+        ca7chTableView.reloadData()
+        ca7chTableView.layoutIfNeeded()
+       
+
+        addUserArray.removeAllObjects()
+        
+        for i in 0 ..< contactSource[0].count
+        {
+            if i < contactSource[0].count
+            {
+                let userId = contactSource[0][i][userNameKey] as! String
+                let selectionValue : Int = contactSource[0][i]["tempSelected"] as! Int
+                if(selectionValue == 1){
+                    addUserArray.addObject(userId)
+                }
+            }
+        }
+        
+        for j in 0 ..< contactSource[1].count
+        {
+            if j < contactSource[1].count
+            {
+                let userId = contactSource[1][j][userNameKey] as! String
+                let selectionValue : Int = contactSource[1][j]["tempSelected"] as! Int
+                if(selectionValue == 1){
+                    inviteUserArray.addObject(userId)
+                }
+            }
+        }
+        
+        if addUserArray.count > 0
+        {
+            inviteContactList(userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray)
+        }
+    }
+    
+    func inviteContactList(userName: String, accessToken: String, channelid: String, addUser: NSMutableArray){
+        showOverlay()
+        channelManager.AddContactToChannel(userName, accessToken: accessToken, channelId: channelid, adduser: addUserArray, success: { (response) -> () in
+            self.authenticationSuccessHandlerInvite(response)
+        }) { (error, message) -> () in
+            self.authenticationFailureHandler(error, code: message)
+            return
+        }
+    }
+    
+    func authenticationSuccessHandlerInvite(response:AnyObject?)
+    {
+        if let json = response as? [String: AnyObject]
+        {
+            let status = json["status"] as! Int
+            if(status == 1){
+                for i in 0 ..< contactSource[0].count
+                {
+                    if i < contactSource[0].count
+                    {
+                        let selectionValue : Int = contactSource[0][i]["tempSelected"] as! Int
+                        contactSource[0][i]["orgSelected"] = selectionValue
+                    }
+                }
+                for j in 0 ..< contactSource[1].count
+                {
+                    if j < contactSource[1].count
+                    {
+                        let selectionValue : Int = contactSource[1][j]["tempSelected"] as! Int
+                        contactSource[1][j]["orgSelected"] = selectionValue
+                    }
+                }
+                loadMychannelDetailController()
+            }
+        }
+    }
+    
+    func loadMychannelDetailController(){
+        let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
+        let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier) as! UITabBarController
+        (channelDetailVC as! MyChannelDetailViewController).channelId = channelId as String
+        (channelDetailVC as! MyChannelDetailViewController).channelName = channelName as String
+        (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(totalMediaCount)
+        channelDetailVC.navigationController?.navigationBarHidden = true
+        self.navigationController?.pushViewController(channelDetailVC, animated: false)
     }
 }
 
@@ -498,128 +584,122 @@ extension OtherContactListViewController:UITableViewDelegate,UITableViewDataSour
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        if(tableView == ca7chTableView){
-            let  headerCell = tableView.dequeueReusableCellWithIdentifier("Ca7chContactsHeaderTableViewCell") as! Ca7chContactsHeaderTableViewCell
-            headerCell.headerLabel.text = "USING CA7CH"
-            return headerCell
-        }
-        else{
-            let  headerCell = tableView.dequeueReusableCellWithIdentifier("phoneContactsHeaderTableViewCell") as! phoneContactsHeaderTableViewCell
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier("Ca7chContactsHeaderTableViewCell") as! Ca7chContactsHeaderTableViewCell
+        
+        switch (section) {
+        case 0:
+            headerCell.headerLabel.text = "USING CATCH"
+        case 1:
             headerCell.headerLabel.text = "MY CONTACTS"
-            return headerCell
+        default:
+            headerCell.headerLabel.text = ""
         }
+        return headerCell
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if(tableView == ca7chTableView){
+        
+        switch section
+        {
+        case 0:
             if(searchActive){
-                return searchCa7chContactSource.count > 0 ? (searchCa7chContactSource.count) : 0
+                if(searchContactSource.count > 0){
+                    return searchContactSource[0].count > 0 ? (searchContactSource[0].count) : 0
+                }
+                else{
+                    return 0
+                }
             }
             else{
-                return ca7chContactSource.count > 0 ? (ca7chContactSource.count) : 0
+                return contactSource[0].count > 0 ? (contactSource[0].count) : 0
             }
-        }
-        else{
+        case 1:
             if(searchActive){
-                return searchPhoneContactSource.count > 0 ? (searchPhoneContactSource.count) : 0
+                if(searchContactSource.count > 0){
+                    return searchContactSource[1].count > 0 ? (searchContactSource[1].count) : 0
+                }
+                else{
+                    return 0
+                }
             }
             else{
-                return phoneContactSource.count > 0 ? (phoneContactSource.count) : 0
+                return contactSource[1].count > 0 ? (contactSource[1].count) : 0
             }
+        default:
+            return 0
         }
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if(tableView == ca7chTableView){
-            var dataSourceTmp1 : [[String:AnyObject]]?
-            if(searchActive){
-                dataSourceTmp1 = searchCa7chContactSource
-            }
-            else{
-                dataSourceTmp1 = ca7chContactSource
-            }
-
-            let cell = tableView.dequeueReusableCellWithIdentifier(Ca7chContactsTableViewCell.identifier, forIndexPath:indexPath) as! Ca7chContactsTableViewCell
-            
-            if dataSourceTmp1!.count > 0
-            {
-                cell.contactUserName.text = dataSourceTmp1![indexPath.row][userNameKey] as? String
-                let imageName =  dataSourceTmp1![indexPath.row][profileImageKey]
-                cell.contactProfileImage.image = imageName as? UIImage
-                cell.subscriptionButton.tag = indexPath.row
-                
-                let selectionValue : Int = dataSourceTmp1![indexPath.row]["tempSelected"] as! Int
-                if(selectionValue == 1){
-                    cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
-                }
-                else{
-                    cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
-                }
-                
-                cell.selectionStyle = .None
-                return cell
-            }
-            else
-            {
-                return UITableViewCell()
-            }
+        let cell = tableView.dequeueReusableCellWithIdentifier(Ca7chContactsTableViewCell.identifier, forIndexPath:indexPath) as! Ca7chContactsTableViewCell
+        
+        var cellDataSource:[String:AnyObject]?
+        var datasourceTmp: [[[String:AnyObject]]]?
+        
+        if(searchActive){
+            datasourceTmp = searchContactSource
         }
         else{
-            var dataSourceTmp2 : [[String:AnyObject]]?
-            if(searchActive){
-                dataSourceTmp2 = searchPhoneContactSource
-            }
-            else{
-                dataSourceTmp2 = phoneContactSource
-            }
-
-            let cell = tableView.dequeueReusableCellWithIdentifier(phoneContactsTableViewCell.identifier, forIndexPath:indexPath) as! phoneContactsTableViewCell
-            
-            if dataSourceTmp2!.count > 0
+            datasourceTmp = contactSource
+        }
+        
+        if let dataSources = datasourceTmp
+        {
+            if dataSources.count > indexPath.section
             {
-                cell.contactUserName.text = dataSourceTmp2![indexPath.row][userNameKey] as? String
-                let imageName =  dataSourceTmp2![indexPath.row][profileImageKey]
-                cell.contactProfileImage.image = imageName as? UIImage
-                cell.subscriptionButton.tag = indexPath.row
-                
-                let selectionValue : Int = dataSourceTmp2![indexPath.row]["tempSelected"] as! Int
-                if(selectionValue == 1){
-                    cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+                if dataSources[indexPath.section].count > indexPath.row
+                {
+                    cellDataSource = dataSources[indexPath.section][indexPath.row]
                 }
-                else{
-                    cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
-                }
-                cell.selectionStyle = .None
-                return cell
-            }
-            else
-            {
-                return UITableViewCell()
             }
         }
+        
+        if let cellDataSource = cellDataSource
+        {
+            cell.contactUserName.text = cellDataSource[userNameKey] as? String
+            cell.contactProfileImage.image = cellDataSource[profileImageKey] as? UIImage
+            cell.subscriptionButton.tag = indexPath.row
+            cell.section = indexPath.section
+            
+            let selectionValue : Int = cellDataSource["tempSelected"] as! Int
+            if(selectionValue == 1){
+                cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+            }
+            else{
+                cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
+            }
+            cell.selectionStyle = .None
+            return cell
+        }
+        else
+        {
+            return UITableViewCell()
+        }
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    {
+         return contactSource.count > 0 ? (contactSource.count) : 0
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        tableView.reloadData()
     }
 }
 
 extension OtherContactListViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        if searchBar.text != ""
-        {
-            searchActive = true
-        }
-        else{
-            searchActive = false
-        }
+        searchActive = true;
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         searchActive = false;
+        ca7chTableView.reloadData()
+        ca7chTableView.layoutIfNeeded()
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -631,48 +711,45 @@ extension OtherContactListViewController: UISearchBarDelegate{
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        searchPhoneContactSource.removeAll()
-        searchCa7chContactSource.removeAll()
+        searchContactSource.removeAll()
+        var searchCa7chContactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+        var searchPhoneContactsDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
+        searchCa7chContactDataSource.removeAll()
+        searchPhoneContactsDataSource.removeAll()
         
         if contactListSearchBar.text!.isEmpty
         {
-            searchCa7chContactSource = ca7chContactSource
-            searchPhoneContactSource = phoneContactSource
-            
+            searchActive = false
+//            searchContactSource = contactSource
             contactListSearchBar.resignFirstResponder()
             self.ca7chTableView.reloadData()
-            self.phoneTableView.reloadData()
         }
         else{
-            if ca7chContactSource.count > 0
+            if contactSource[0].count > 0
             {
-                for element in ca7chContactSource{
-                    let tmp: String = (element[userNameKey]?.lowercaseString)!
+                for element in contactSource[0]{
+                    var tmp: String = ""
+                    tmp = (element[userNameKey]?.lowercaseString)!
                     if(tmp.containsString(searchText.lowercaseString))
                     {
-                        searchCa7chContactSource.append(element)
+                        searchCa7chContactDataSource.append(element)
                     }
                 }
             }
-            if phoneContactSource.count > 0
+            if contactSource[1].count > 0
             {
-                for element in phoneContactSource{
-                    let tmp: String = (element[userNameKey]?.lowercaseString)!
+                for element in contactSource[1]{
+                    var tmp: String =  ""
+                    tmp = (element[userNameKey]?.lowercaseString)!
                     if(tmp.containsString(searchText.lowercaseString))
                     {
-                        searchPhoneContactSource.append(element)
+                        searchPhoneContactsDataSource.append(element)
                     }
                 }
             }
-                searchActive = true
-            print(searchCa7chContactSource)
-            print(searchPhoneContactSource)
-                self.ca7chTableView.reloadData()
-                self.phoneTableView.reloadData()
+            searchContactSource = [searchCa7chContactDataSource, searchPhoneContactsDataSource]
+            searchActive = true
+            self.ca7chTableView.reloadData()
         }
     }
 }
-
-
-
-

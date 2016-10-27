@@ -67,26 +67,29 @@ import UIKit
         let sizeThumb = CGSizeMake(30,30)
         for i in 0 ..< userThumbnailImage.count
         {
-            var image = UIImage()
-            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
-            if(thumbUrl != "")
+            if i < userThumbnailImage.count
             {
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                if let data = NSData(contentsOfURL: url){
-                    var convertImage : UIImage = UIImage()
-                    let imageDetailsData = (data as NSData?)!
-                    convertImage = UIImage(data: imageDetailsData)!
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFillSize: sizeThumb)
-                    image = imageAfterConversionThumbnail
+                var image = UIImage()
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
+                if(thumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        var convertImage : UIImage = UIImage()
+                        let imageDetailsData = (data as NSData?)!
+                        convertImage = UIImage(data: imageDetailsData)!
+                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFillSize: sizeThumb)
+                        image = imageAfterConversionThumbnail
+                    }
+                    else{
+                        image = UIImage(named: "dummyUser")!
+                    }
                 }
                 else{
                     image = UIImage(named: "dummyUser")!
                 }
+                userImages.append(image)
             }
-            else{
-                image = UIImage(named: "dummyUser")!
-            }
-            userImages.append(image)
         }
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])

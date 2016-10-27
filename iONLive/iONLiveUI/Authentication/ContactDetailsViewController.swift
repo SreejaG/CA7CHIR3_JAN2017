@@ -75,11 +75,14 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            for element in dataSource![i]{
-                let selected = element["tempSelected"] as! Int
-                if(selected == 1){
-                    let number = element[phoneKey] as! String
-                    contactsArray.addObject(number)
+            if i < dataSource?.count
+            {
+                for element in dataSource![i]{
+                    let selected = element["tempSelected"] as! Int
+                    if(selected == 1){
+                        let number = element[phoneKey] as! String
+                        contactsArray.addObject(number)
+                    }
                 }
             }
         }
@@ -145,10 +148,15 @@ class ContactDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
             for i in 0 ..< dataSource!.count
             {
-                for j in 0 ..< dataSource![i].count
+                if i < dataSource?.count
                 {
-                    let selected = dataSource![i][j]["orgSelected"] as! Int
-                    dataSource![i][j]["tempSelected"] = selected
+                    for j in 0 ..< dataSource![i].count
+                    {
+                        if(j < dataSource![i].count){
+                            let selected = dataSource![i][j]["orgSelected"] as! Int
+                            dataSource![i][j]["tempSelected"] = selected
+                        }
+                    }
                 }
             }
             contactTableView.reloadData()
@@ -179,10 +187,16 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            for j in 0 ..< dataSource![i].count
+            if i < dataSource?.count
             {
-                let selected = dataSource![i][j]["orgSelected"] as! Int
-                dataSource![i][j]["tempSelected"] = selected
+                for j in 0 ..< dataSource![i].count
+                {
+                    if j < dataSource![i].count
+                    {
+                        let selected = dataSource![i][j]["orgSelected"] as! Int
+                        dataSource![i][j]["tempSelected"] = selected
+                    }
+                }
             }
         }
         contactTableView.reloadData()
@@ -305,21 +319,27 @@ class ContactDetailsViewController: UIViewController {
         var Cflag : Bool = false
         for i in 0 ..< contactDataSource.count
         {
-            Cflag = false
-            let contactNumber = contactDataSource[i]["mobile_no"] as! String
-            for j in 0 ..< appContactsArr.count
+            if i < contactDataSource.count
             {
-                let appNumber = appContactsArr[j]["mobile_no"] as! String
-                if(contactNumber == appNumber) {
-                    Cflag = true
-                    break
+                Cflag = false
+                let contactNumber = contactDataSource[i]["mobile_no"] as! String
+                for j in 0 ..< appContactsArr.count
+                {
+                    if j < appContactsArr.count
+                    {
+                        let appNumber = appContactsArr[j]["mobile_no"] as! String
+                        if(contactNumber == appNumber) {
+                            Cflag = true
+                            break
+                        }
+                        else{
+                            Cflag = false
+                        }
+                    }
                 }
-                else{
-                    Cflag = false
+                if(Cflag == false){
+                    contactDummy.append(contactDataSource[i])
                 }
-            }
-            if(Cflag == false){
-                contactDummy.append(contactDataSource[i])
             }
         }
         contactDataSource.removeAll()
@@ -357,10 +377,13 @@ class ContactDetailsViewController: UIViewController {
             let selecteduserId =  searchDataSource![section][row][nameKey] as! String
             for j in 0 ..< dataSource![section].count
             {
-                let dataSourceUserId = dataSource![section][j][nameKey] as! String
-                if(selecteduserId == dataSourceUserId)
+                if j < dataSource![section].count
                 {
-                    dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                    let dataSourceUserId = dataSource![section][j][nameKey] as! String
+                    if(selecteduserId == dataSourceUserId)
+                    {
+                        dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                    }
                 }
             }
         }

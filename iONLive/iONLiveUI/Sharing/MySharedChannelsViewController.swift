@@ -103,8 +103,11 @@ class MySharedChannelsViewController: UIViewController {
             doneButton.hidden = true
             for i in 0 ..< dataSource.count
             {
-                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                dataSource[i]["tempSelected"] = selectionValue
+                if i < dataSource.count
+                {
+                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                    dataSource[i]["tempSelected"] = selectionValue
+                }
             }
             self.sharedChannelsTableView.reloadData()
         }
@@ -156,13 +159,16 @@ class MySharedChannelsViewController: UIViewController {
         deleteChannelArray.removeAllObjects()
         for i in 0 ..< dataSource.count
         {
-            let channelid = dataSource[i][channelIdKey] as! String
-            let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
-            if(selectionValue == 1){
-                addChannelArray.addObject(channelid)
-            }
-            else{
-                deleteChannelArray.addObject(channelid)
+            if i < dataSource.count
+            {
+                let channelid = dataSource[i][channelIdKey] as! String
+                let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
+                if(selectionValue == 1){
+                    addChannelArray.addObject(channelid)
+                }
+                else{
+                    deleteChannelArray.addObject(channelid)
+                }
             }
         }
         if((addChannelArray.count > 0) || (deleteChannelArray.count > 0)){
@@ -226,8 +232,11 @@ class MySharedChannelsViewController: UIViewController {
             if(status == 1){
                 for i in 0 ..< dataSource.count
                 {
-                    let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
-                    dataSource[i][sharedOriginalKey] = selectionValue
+                    if i < dataSource.count
+                    {
+                        let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
+                        dataSource[i][sharedOriginalKey] = selectionValue
+                    }
                 }
                 sharedChannelsTableView.reloadData()
                 GlobalDataChannelList.sharedInstance.enableDisableChannelList(dataSource)
@@ -237,8 +246,11 @@ class MySharedChannelsViewController: UIViewController {
         {
             for i in 0 ..< dataSource.count
             {
-                let selectionValue : Int = dataSource[i][sharedOriginalKey] as! Int
-                dataSource[i][sharedTemporaryKey] = selectionValue
+                if i < dataSource.count
+                {
+                    let selectionValue : Int = dataSource[i][sharedOriginalKey] as! Int
+                    dataSource[i][sharedTemporaryKey] = selectionValue
+                }
             }
             
             ErrorManager.sharedInstance.inValidResponseError()
@@ -314,8 +326,11 @@ class MySharedChannelsViewController: UIViewController {
         
         for i in 0 ..< dataSource.count
         {
-            let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-            dataSource[i]["tempSelected"] = selectionValue
+            if i < dataSource.count
+            {
+                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                dataSource[i]["tempSelected"] = selectionValue
+            }
         }
         self.sharedChannelsTableView.reloadData()
     }
@@ -340,10 +355,13 @@ class MySharedChannelsViewController: UIViewController {
             let selectedChannelId =  searchDataSource[indexpath][channelIdKey] as! String
             for i in 0 ..< dataSource.count
             {
-                let dataSourceChannelId = dataSource[i][channelIdKey] as! String
-                if(selectedChannelId == dataSourceChannelId)
+                if i < dataSource.count
                 {
-                    dataSource[i][sharedTemporaryKey] = searchDataSource[indexpath][sharedTemporaryKey]
+                    let dataSourceChannelId = dataSource[i][channelIdKey] as! String
+                    if(selectedChannelId == dataSourceChannelId)
+                    {
+                        dataSource[i][sharedTemporaryKey] = searchDataSource[indexpath][sharedTemporaryKey]
+                    }
                 }
             }
         }
