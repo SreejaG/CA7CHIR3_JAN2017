@@ -365,36 +365,42 @@ class ContactDetailsViewController: UIViewController {
         let row : Int = dict["rowKey"]!
         if(searchActive)
         {
-            let selectedValue =  searchDataSource![section][row]["tempSelected"] as! Int
-            if(selectedValue == 1)
+            if searchDataSource![section].count > row
             {
-                searchDataSource![section][row]["tempSelected"] = 0
-            }
-            else
-            {
-                searchDataSource![section][row]["tempSelected"] = 1
-            }
-            let selecteduserId =  searchDataSource![section][row][nameKey] as! String
-            for j in 0 ..< dataSource![section].count
-            {
-                if j < dataSource![section].count
+                let selectedValue =  searchDataSource![section][row]["tempSelected"] as! Int
+                if(selectedValue == 1)
                 {
-                    let dataSourceUserId = dataSource![section][j][nameKey] as! String
-                    if(selecteduserId == dataSourceUserId)
+                    searchDataSource![section][row]["tempSelected"] = 0
+                }
+                else
+                {
+                    searchDataSource![section][row]["tempSelected"] = 1
+                }
+                let selecteduserId =  searchDataSource![section][row][nameKey] as! String
+                for j in 0 ..< dataSource![section].count
+                {
+                    if j < dataSource![section].count
                     {
-                        dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                        let dataSourceUserId = dataSource![section][j][nameKey] as! String
+                        if(selecteduserId == dataSourceUserId)
+                        {
+                            dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                        }
                     }
                 }
             }
         }
         else
         {
-            let selectedValue =  dataSource![section][row]["tempSelected"] as! Int
-            if(selectedValue == 1){
-                dataSource![section][row]["tempSelected"] = 0
-            }
-            else{
-                dataSource![section][row]["tempSelected"] = 1
+            if dataSource![section].count > row
+            {
+                let selectedValue =  dataSource![section][row]["tempSelected"] as! Int
+                if(selectedValue == 1){
+                    dataSource![section][row]["tempSelected"] = 0
+                }
+                else{
+                    dataSource![section][row]["tempSelected"] = 1
+                }
             }
         }
         contactTableView.reloadData()
@@ -527,7 +533,13 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
 
 extension ContactDetailsViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchActive = true;
+        if searchBar.text != ""
+        {
+            searchActive = true
+        }
+        else{
+            searchActive = false
+        }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {

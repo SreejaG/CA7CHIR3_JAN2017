@@ -296,7 +296,9 @@ class OtherContactListViewController: UIViewController {
             for element in responseArr{
                 let userName = element["user_name"] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                ca7chContactSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0])
+                let profileImage = UIImage(named: "dummyUser")
+
+                ca7chContactSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!])
             }
             
             self.setContactDetails()
@@ -393,36 +395,42 @@ class OtherContactListViewController: UIViewController {
         let row : Int = dict["rowKey"]!
         if(searchActive)
         {
-            let selectedValue =  searchContactSource[section][row]["tempSelected"] as! Int
-            if(selectedValue == 1)
+            if searchContactSource[section].count > row
             {
-                searchContactSource[section][row]["tempSelected"] = 0
-            }
-            else
-            {
-                searchContactSource[section][row]["tempSelected"] = 1
-            }
-            let selecteduserId =  searchContactSource[section][row][userNameKey] as! String
-            for j in 0 ..< contactSource[section].count
-            {
-                if j < contactSource[section].count
+                let selectedValue =  searchContactSource[section][row]["tempSelected"] as! Int
+                if(selectedValue == 1)
                 {
-                    let dataSourceUserId = contactSource[section][j][userNameKey] as! String
-                    if(selecteduserId == dataSourceUserId)
+                    searchContactSource[section][row]["tempSelected"] = 0
+                }
+                else
+                {
+                    searchContactSource[section][row]["tempSelected"] = 1
+                }
+                let selecteduserId =  searchContactSource[section][row][userNameKey] as! String
+                for j in 0 ..< contactSource[section].count
+                {
+                    if j < contactSource[section].count
                     {
-                        contactSource[section][j]["tempSelected"] = searchContactSource[section][row]["tempSelected"]
+                        let dataSourceUserId = contactSource[section][j][userNameKey] as! String
+                        if(selecteduserId == dataSourceUserId)
+                        {
+                            contactSource[section][j]["tempSelected"] = searchContactSource[section][row]["tempSelected"]
+                        }
                     }
                 }
             }
         }
         else
         {
-            let selectedValue =  contactSource[section][row]["tempSelected"] as! Int
-            if(selectedValue == 1){
-                contactSource[section][row]["tempSelected"] = 0
-            }
-            else{
-                contactSource[section][row]["tempSelected"] = 1
+            if contactSource[section].count > row
+            {
+                let selectedValue =  contactSource[section][row]["tempSelected"] as! Int
+                if(selectedValue == 1){
+                    contactSource[section][row]["tempSelected"] = 0
+                }
+                else{
+                    contactSource[section][row]["tempSelected"] = 1
+                }
             }
         }
         ca7chTableView.reloadData()
@@ -693,7 +701,15 @@ extension OtherContactListViewController:UITableViewDelegate,UITableViewDataSour
 
 extension OtherContactListViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchActive = true;
+        func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+            if searchBar.text != ""
+            {
+                searchActive = true
+            }
+            else{
+                searchActive = false
+            }
+        }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
@@ -719,8 +735,7 @@ extension OtherContactListViewController: UISearchBarDelegate{
         
         if contactListSearchBar.text!.isEmpty
         {
-            searchActive = false
-//            searchContactSource = contactSource
+            searchContactSource = contactSource
             contactListSearchBar.resignFirstResponder()
             self.ca7chTableView.reloadData()
         }

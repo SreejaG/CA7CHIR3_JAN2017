@@ -260,7 +260,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let userName = element["user_name"] as! String
                 let imageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 let subscriptionValue =  Int(element["sub_enable_ind"] as! Bool)
-                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue])
+                let profileImage = UIImage(named: "dummyUser")
+                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue, profileImageKey: profileImage!])
             }
             if(dataSource.count > 0){
                 let qualityOfServiceClass = QOS_CLASS_BACKGROUND
