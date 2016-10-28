@@ -131,7 +131,7 @@ class MyChannelItemDetailsViewController1: UIViewController {
                     totalCount = 0
                     self.channelItemsCollectionView.reloadData()
                 }
-                self.downloadImagesFromGlobalChannelImageMapping(21)
+                self.downloadImagesFromGlobalChannelImageMapping(23)
             }
         }
     }
