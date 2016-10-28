@@ -8,6 +8,7 @@ class Ca7chContactsTableViewCell: UITableViewCell {
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
+    @IBOutlet var profileDownloadIndicator: UIActivityIndicatorView!
     
     var section : Int = Int()
     

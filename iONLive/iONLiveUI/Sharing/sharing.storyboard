@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--My Shared Channels View Controller-->
@@ -952,19 +953,30 @@
                                                                 <constraint firstAttribute="width" constant="40" id="kZe-96-BIS"/>
                                                             </constraints>
                                                         </imageView>
+                                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="faC-Ml-ml4">
+                                                            <rect key="frame" x="30" y="20" width="20" height="20"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="20" id="NDq-wQ-ngR"/>
+                                                                <constraint firstAttribute="height" constant="20" id="iWa-Gn-gis"/>
+                                                            </constraints>
+                                                            <color key="color" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </activityIndicatorView>
                                                     </subviews>
                                                     <constraints>
+                                                        <constraint firstItem="faC-Ml-ml4" firstAttribute="leading" secondItem="XzT-av-pBN" secondAttribute="leadingMargin" constant="22" id="Dxp-Ud-UTj"/>
                                                         <constraint firstItem="HRq-9i-tFJ" firstAttribute="centerY" secondItem="XzT-av-pBN" secondAttribute="centerY" id="N0q-LB-KYh"/>
                                                         <constraint firstItem="mLB-My-6BM" firstAttribute="centerY" secondItem="XzT-av-pBN" secondAttribute="centerY" id="PNP-YB-nOO"/>
                                                         <constraint firstItem="eIU-fc-aAG" firstAttribute="leading" secondItem="XzT-av-pBN" secondAttribute="leading" constant="20" id="QC5-8N-WzE"/>
                                                         <constraint firstItem="eIU-fc-aAG" firstAttribute="centerY" secondItem="XzT-av-pBN" secondAttribute="centerY" id="QjF-Hu-VIQ"/>
                                                         <constraint firstAttribute="trailing" secondItem="mLB-My-6BM" secondAttribute="trailing" constant="15" id="bhD-eu-hL9"/>
+                                                        <constraint firstItem="faC-Ml-ml4" firstAttribute="top" secondItem="XzT-av-pBN" secondAttribute="topMargin" constant="12" id="paE-T6-Y5F"/>
                                                         <constraint firstItem="HRq-9i-tFJ" firstAttribute="leading" secondItem="eIU-fc-aAG" secondAttribute="trailing" constant="20" id="qxW-C6-V4d"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <connections>
                                                     <outlet property="contactProfileImage" destination="eIU-fc-aAG" id="fg1-vb-Rck"/>
                                                     <outlet property="contactUserName" destination="HRq-9i-tFJ" id="jDM-4c-UCw"/>
+                                                    <outlet property="profileDownloadIndicator" destination="faC-Ml-ml4" id="AXv-fK-FMb"/>
                                                     <outlet property="subscriptionButton" destination="mLB-My-6BM" id="Oxe-Tb-0bw"/>
                                                 </connections>
                                             </tableViewCell>

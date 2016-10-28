@@ -28,6 +28,7 @@ class OtherContactListViewController: UIViewController {
     var loadingOverlay: UIView?
     
     var searchActive: Bool = false
+    var indicatorStopFlag : Bool = false
    
     var ca7chContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var phoneContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
@@ -401,6 +402,7 @@ class OtherContactListViewController: UIViewController {
         }
         localArray.removeAll()
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.indicatorStopFlag = true
             self.ca7chTableView.reloadData()
         })
     }
@@ -748,6 +750,23 @@ extension OtherContactListViewController:UITableViewDelegate,UITableViewDataSour
                 cell.subscriptionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
             }
             cell.selectionStyle = .None
+            if(indexPath.section == 0){
+                if(indicatorStopFlag == false){
+                    cell.profileDownloadIndicator.hidden = false
+                    cell.contactProfileImage.alpha = 0.4
+                    cell.profileDownloadIndicator.startAnimating()
+                }
+                else{
+                    cell.profileDownloadIndicator.hidden = true
+                    cell.contactProfileImage.alpha = 1.0
+                    cell.profileDownloadIndicator.stopAnimating()
+                }
+            }
+            else{
+                cell.profileDownloadIndicator.hidden = true
+                cell.contactProfileImage.alpha = 1.0
+            }
+            
             return cell
         }
         else
