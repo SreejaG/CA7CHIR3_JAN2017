@@ -557,4 +557,33 @@ class GlobalChannelToImageMapping: NSObject {
             }
         }
     }
+    
+    func cleanMyDayBasedOnTimeStamp(MyDayChanelId: String) {
+        if(GlobalChannelImageDict.count > 0){
+            if(GlobalChannelImageDict[MyDayChanelId]?.count > 0){
+                GlobalChannelImageDict[MyDayChanelId]?.removeAll()
+            }
+        }
+        
+        for p in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+        {
+            if(p < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
+                let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][channelIdKey] as! String
+                if MyDayChanelId == chanIdChk
+                {
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][latestMediaIdKey] = ""
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[MyDayChanelId]!.count)"
+                }
+            }
+        }
+        
+        GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
+            return time1 > time2
+        })
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
+    }
 }
