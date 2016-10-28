@@ -333,7 +333,8 @@ class ContactDetailsViewController: UIViewController {
                 let profileImageName = localArray[i][imageURLKey] as! String
                 if(profileImageName != "")
                 {
-                    profileImage = createProfileImage(profileImageName)
+//                    profileImage = createProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -365,19 +366,19 @@ class ContactDetailsViewController: UIViewController {
         })
     }
     
-    func createProfileImage(profileName: String) -> UIImage
-    {
-        var profileImage : UIImage = UIImage()
-        let url: NSURL = convertStringtoURL(profileName)
-        if let data = NSData(contentsOfURL: url){
-            let imageDetailsData = (data as NSData?)!
-            profileImage = UIImage(data: imageDetailsData)!
-        }
-        else{
-            profileImage = UIImage(named: "dummyUser")!
-        }
-        return profileImage
-    }
+//    func createProfileImage(profileName: String) -> UIImage
+//    {
+//        var profileImage : UIImage = UIImage()
+//        let url: NSURL = convertStringtoURL(profileName)
+//        if let data = NSData(contentsOfURL: url){
+//            let imageDetailsData = (data as NSData?)!
+//            profileImage = UIImage(data: imageDetailsData)!
+//        }
+//        else{
+//            profileImage = UIImage(named: "dummyUser")!
+//        }
+//        return profileImage
+//    }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
