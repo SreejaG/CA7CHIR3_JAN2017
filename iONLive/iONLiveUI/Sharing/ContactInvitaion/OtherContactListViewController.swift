@@ -339,9 +339,6 @@ class OtherContactListViewController: UIViewController {
                     })
                 })
             }
-            else{
-                removeOverlay()
-            }
         }
         else
         {
@@ -364,12 +361,16 @@ class OtherContactListViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
-        for i in 0 ..< ca7chContactSource.count
+        var localArray = [[String:AnyObject]]()
+        for i in 0 ..< contactSource[0].count
         {
-            if i < ca7chContactSource.count
-            {
+            localArray.append(contactSource[0][i])
+        }
+        for i in 0 ..< localArray.count
+        {
+            if(i < localArray.count){
                 var profileImage : UIImage?
-                let profileImageName = ca7chContactSource[i][profileImageUrlKey] as! String
+                let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
                     profileImage = createProfileImage(profileImageName)
@@ -377,13 +378,54 @@ class OtherContactListViewController: UIViewController {
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-                contactSource[0][i][profileImageKey] = profileImage
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.ca7chTableView.reloadData()
-                })
+                localArray[i][profileImageKey] = profileImage
             }
         }
+        for j in 0 ..< contactSource[0].count
+        {
+            if j < contactSource[0].count
+            {
+                let userChk = contactSource[0][j][userNameKey] as! String
+                for element in localArray
+                {
+                    let userLocalChk = element[userNameKey] as! String
+                    if userChk == userLocalChk
+                    {
+                        if element[profileImageKey] != nil
+                        {
+                            contactSource[0][j][profileImageKey] = element[profileImageKey] as! UIImage
+                        }
+                    }
+                }
+            }
+        }
+        localArray.removeAll()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.ca7chTableView.reloadData()
+        })
     }
+
+//    func downloadMediaFromGCS(){
+//        for i in 0 ..< ca7chContactSource.count
+//        {
+//            if i < ca7chContactSource.count
+//            {
+//                var profileImage : UIImage?
+//                let profileImageName = ca7chContactSource[i][profileImageUrlKey] as! String
+//                if(profileImageName != "")
+//                {
+//                    profileImage = createProfileImage(profileImageName)
+//                }
+//                else{
+//                    profileImage = UIImage(named: "dummyUser")
+//                }
+//                contactSource[0][i][profileImageKey] = profileImage
+//                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                    self.ca7chTableView.reloadData()
+//                })
+//            }
+//        }
+//    }
     
     func setContactDetails()
     {

@@ -459,12 +459,16 @@ class ContactListViewController: UIViewController
     }
     
     func downloadMediaFromGCS(){
+        var localArray = [[String:AnyObject]]()
         for i in 0 ..< dataSource.count
         {
-            if i < dataSource.count
-            {
+            localArray.append(dataSource[i])
+        }
+        for i in 0 ..< localArray.count
+        {
+            if(i < localArray.count){
                 var profileImage : UIImage?
-                let profileImageName = dataSource[i][profileImageUrlKey] as! String
+                let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
                     profileImage = createProfileImage(profileImageName)
@@ -472,14 +476,55 @@ class ContactListViewController: UIViewController
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-                dataSource[i][profileImageKey] = profileImage
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.removeOverlay()
-                    self.contactListTableView.reloadData()
-                })
+                localArray[i][profileImageKey] = profileImage
             }
         }
+        for j in 0 ..< dataSource.count
+        {
+            if j < dataSource.count
+            {
+                let userChk = dataSource[j][userNameKey] as! String
+                for element in localArray
+                {
+                    let userLocalChk = element[userNameKey] as! String
+                    if userChk == userLocalChk
+                    {
+                        if element[profileImageKey] != nil
+                        {
+                            dataSource[j][profileImageKey] = element[profileImageKey] as! UIImage
+                        }
+                    }
+                }
+            }
+        }
+        localArray.removeAll()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.contactListTableView.reloadData()
+        })
     }
+    
+//    func downloadMediaFromGCS(){
+//        for i in 0 ..< dataSource.count
+//        {
+//            if i < dataSource.count
+//            {
+//                var profileImage : UIImage?
+//                let profileImageName = dataSource[i][profileImageUrlKey] as! String
+//                if(profileImageName != "")
+//                {
+//                    profileImage = createProfileImage(profileImageName)
+//                }
+//                else{
+//                    profileImage = UIImage(named: "dummyUser")
+//                }
+//                dataSource[i][profileImageKey] = profileImage
+//                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                    self.removeOverlay()
+//                    self.contactListTableView.reloadData()
+//                })
+//            }
+//        }
+//    }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {

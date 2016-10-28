@@ -23,6 +23,7 @@ class ContactDetailsViewController: UIViewController {
     let imageKey = "profile_image"
     let selectionKey = "selection"
     let inviteKey = "invitationKey"
+    let imageURLKey = "imageUrl"
     
     static let identifier = "ContactDetailsViewController"
     
@@ -285,28 +286,97 @@ class ContactDetailsViewController: UIViewController {
         {
             appContactsArr.removeAll()
             let responseArr = json["contactListOfUser"] as! [AnyObject]
-            var contactImage : UIImage = UIImage()
+            let contactImage : UIImage = UIImage(named: "dummyUser")!
             for element in responseArr{
                 
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                if let data = NSData(contentsOfURL: url){
-                    let imageDetailsData = (data as NSData?)!
-                    contactImage = UIImage(data: imageDetailsData)!
-                }
-                else{
-                    contactImage = UIImage(named: "dummyUser")!
-                }
-                appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage, "orgSelected":0, "tempSelected":0])
+//                let url: NSURL = convertStringtoURL(thumbUrl)
+//                if let data = NSData(contentsOfURL: url){
+//                    let imageDetailsData = (data as NSData?)!
+//                    contactImage = UIImage(data: imageDetailsData)!
+//                }
+//                else{
+//                    contactImage = UIImage(named: "dummyUser")!
+//                }
+                appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageURLKey:thumbUrl, "orgSelected":0, "tempSelected":0, imageKey:contactImage])
             }
             setContactDetails()
+            
+            if(appContactsArr.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    })
+                })
+            }
         }
         else
         {
             ErrorManager.sharedInstance.addContactError()
         }
+    }
+    
+    func downloadMediaFromGCS(){
+        var localArray = [[String:AnyObject]]()
+        for i in 0 ..< dataSource![0].count
+        {
+            localArray.append(dataSource![0][i])
+        }
+        for i in 0 ..< localArray.count
+        {
+            if(i < localArray.count){
+                var profileImage : UIImage?
+                let profileImageName = localArray[i][imageURLKey] as! String
+                if(profileImageName != "")
+                {
+                    profileImage = createProfileImage(profileImageName)
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                localArray[i][imageKey] = profileImage
+            }
+        }
+        for j in 0 ..< dataSource![0].count
+        {
+            if j < dataSource![0].count
+            {
+                let userChk = dataSource![0][j][nameKey] as! String
+                for element in localArray
+                {
+                    let userLocalChk = element[nameKey] as! String
+                    if userChk == userLocalChk
+                    {
+                        if element[imageKey] != nil
+                        {
+                            dataSource![0][j][imageKey] = element[imageKey] as! UIImage
+                        }
+                    }
+                }
+            }
+        }
+        localArray.removeAll()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.contactTableView.reloadData()
+        })
+    }
+    
+    func createProfileImage(profileName: String) -> UIImage
+    {
+        var profileImage : UIImage = UIImage()
+        let url: NSURL = convertStringtoURL(profileName)
+        if let data = NSData(contentsOfURL: url){
+            let imageDetailsData = (data as NSData?)!
+            profileImage = UIImage(data: imageDetailsData)!
+        }
+        else{
+            profileImage = UIImage(named: "dummyUser")!
+        }
+        return profileImage
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)

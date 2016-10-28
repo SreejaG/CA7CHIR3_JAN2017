@@ -364,11 +364,11 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     }
                 }
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.contactTableView.reloadData()
-            })
         }
         localArray.removeAll()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.contactTableView.reloadData()
+        })
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
