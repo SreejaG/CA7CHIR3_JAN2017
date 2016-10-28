@@ -451,6 +451,8 @@ class ChannelItemListViewController: UIViewController {
         cancelButton.hidden = true
         backButton.hidden = false
         bottomView.hidden = true
+        downloadingFlag = false
+        selectionFlag = false
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

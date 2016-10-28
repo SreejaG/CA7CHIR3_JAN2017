@@ -1198,7 +1198,6 @@ class StreamsListViewController: UIViewController{
         }
     }
     deinit {
-        print("streamlistview controller deinit")
     }
 }
 

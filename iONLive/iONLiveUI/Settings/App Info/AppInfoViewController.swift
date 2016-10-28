@@ -17,7 +17,6 @@ class AppInfoViewController: UIViewController {
         super.viewDidLoad()
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         var build = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as! String
-        print("\(version) \(build)")
         
         if(build == "1"){
             build = "1.0"

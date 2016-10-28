@@ -88,7 +88,6 @@ class SnapCamSelectViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     deinit {
-        print("snapcamviewcontroller deinit")
     }
 
 }

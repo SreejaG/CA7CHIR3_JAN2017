@@ -76,7 +76,6 @@ class UrlManager : NSObject {
     func getFullImageForStreamMedia(mediaId : String) -> (String)
     {
         let getFullImageForMedia = getMediaFullImageBaseStreamURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
-        print(getFullImageForMedia)
         return getFullImageForMedia
     }
     func usersLoginAPIUrl() -> (String) {
@@ -247,8 +246,7 @@ class UrlManager : NSObject {
     }
     func getResetPasswordAPIUrl(userName: String, accessToken: String) -> String
     {
-      let getResetPasswordAPIUrl =  resetPasswordAPIUrl() + "/" + userName + "/" + accessToken
-        print(getResetPasswordAPIUrl)
+        let getResetPasswordAPIUrl =  resetPasswordAPIUrl() + "/" + userName + "/" + accessToken
         return getResetPasswordAPIUrl
 
     }
