@@ -50,7 +50,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         defaults.setValue("", forKey: "editedValue")
         
         channelUpdateSaveButton.hidden = true
