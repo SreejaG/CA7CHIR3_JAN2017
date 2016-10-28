@@ -1,7 +1,7 @@
 
 import UIKit
 
-class MyChannelItemDetailsViewController: UIViewController {
+class MyChannelItemDetailsViewController1: UIViewController {
     
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
@@ -40,7 +40,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         
         self.channelItemsCollectionView.alwaysBounceVertical = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController1.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
         initialise()
     }
@@ -62,7 +62,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         self.channelItemsCollectionView.alpha = 1.0
         customView.stopAnimationg()
         customView.removeFromSuperview()
-      //  self.channelItemsCollectionView.userInteractionEnabled = true
+        self.channelItemsCollectionView.userInteractionEnabled = true
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -118,9 +118,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
                         if(totalCount < 18){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.customView.startAnimating()
-                                self.customView.removeFromSuperview()
-                               // self.channelItemsCollectionView.userInteractionEnabled = false
+                                self.channelItemsCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemsCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
@@ -201,7 +199,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         totalCount = filteredData.count
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-         //   self.channelItemsCollectionView.userInteractionEnabled = true
+            self.channelItemsCollectionView.userInteractionEnabled = true
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.removeOverlay()
@@ -263,7 +261,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
 }
 
-extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
+extension MyChannelItemDetailsViewController1 : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
@@ -357,16 +355,6 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                     }
                 })
             }
-        }
-    }
-}
-
-extension MyChannelItemDetailsViewController: UIScrollViewDelegate
-{
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        if(totalCount > 0){
-            self.customView.stopAnimationg()
-            self.customView.removeFromSuperview()
         }
     }
 }
