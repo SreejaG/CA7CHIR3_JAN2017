@@ -101,6 +101,15 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if(doneButton.hidden == false){
             inviteButton.hidden = false
             doneButton.hidden = true
+            if(searchActive){
+                for i in 0 ..< searchDataSource.count
+                {
+                    if(i < searchDataSource.count){
+                        let selectionValue : Int = searchDataSource[i]["orgSelected"] as! Int
+                        searchDataSource[i]["tempSelected"] = selectionValue
+                    }
+                }
+            }
             for i in 0 ..< dataSource.count
             {
                 if(i < dataSource.count){

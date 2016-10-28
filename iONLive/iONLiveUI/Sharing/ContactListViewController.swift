@@ -94,12 +94,31 @@ class ContactListViewController: UIViewController
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            for i in 0 ..< dataSource.count
-            {
-                if i < dataSource.count
+            if(searchActive){
+                for i in 0 ..< searchDataSource.count
                 {
-                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                    dataSource[i]["tempSelected"] = selectionValue
+                    if i < searchDataSource.count
+                    {
+                        let selectionValue : Int = searchDataSource[i]["orgSelected"] as! Int
+                        searchDataSource[i]["tempSelected"] = selectionValue
+                    }
+                }
+                for i in 0 ..< dataSource.count
+                {
+                    if i < dataSource.count
+                    {
+                        dataSource[i]["tempSelected"] = 0
+                    }
+                }
+            }
+            else{
+                for i in 0 ..< dataSource.count
+                {
+                    if i < dataSource.count
+                    {
+                        let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                        dataSource[i]["tempSelected"] = selectionValue
+                    }
                 }
             }
             contactListTableView.reloadData()

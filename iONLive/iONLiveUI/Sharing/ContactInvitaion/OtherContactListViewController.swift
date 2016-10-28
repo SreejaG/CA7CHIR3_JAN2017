@@ -538,20 +538,54 @@ class OtherContactListViewController: UIViewController {
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
-            for i in 0 ..< contactSource[0].count
-            {
-                if i < contactSource[0].count
+            if(searchActive){
+                for i in 0 ..< searchContactSource[0].count
                 {
-                    let selectionValue : Int = contactSource[0][i]["orgSelected"] as! Int
-                    contactSource[0][i]["tempSelected"] = selectionValue
+                    if i < searchContactSource[0].count
+                    {
+                        let selectionValue : Int = searchContactSource[0][i]["orgSelected"] as! Int
+                        searchContactSource[0][i]["tempSelected"] = selectionValue
+                    }
+                }
+                for j in 0 ..< searchContactSource[1].count
+                {
+                    if j < searchContactSource[1].count
+                    {
+                        let selectionValue : Int = searchContactSource[1][j]["orgSelected"] as! Int
+                        searchContactSource[1][j]["tempSelected"] = selectionValue
+                    }
+                }
+                for i in 0 ..< contactSource[0].count
+                {
+                    if i < contactSource[0].count
+                    {
+                        contactSource[0][i]["tempSelected"] = 0
+                    }
+                }
+                for j in 0 ..< contactSource[1].count
+                {
+                    if j < contactSource[1].count
+                    {
+                        contactSource[1][j]["tempSelected"] = 0
+                    }
                 }
             }
-            for j in 0 ..< contactSource[1].count
-            {
-                if j < contactSource[1].count
+            else{
+                for i in 0 ..< contactSource[0].count
                 {
-                    let selectionValue : Int = contactSource[1][j]["orgSelected"] as! Int
-                    contactSource[1][j]["tempSelected"] = selectionValue
+                    if i < contactSource[0].count
+                    {
+                        let selectionValue : Int = contactSource[0][i]["orgSelected"] as! Int
+                        contactSource[0][i]["tempSelected"] = selectionValue
+                    }
+                }
+                for j in 0 ..< contactSource[1].count
+                {
+                    if j < contactSource[1].count
+                    {
+                        let selectionValue : Int = contactSource[1][j]["orgSelected"] as! Int
+                        contactSource[1][j]["tempSelected"] = selectionValue
+                    }
                 }
             }
             ca7chTableView.reloadData()
