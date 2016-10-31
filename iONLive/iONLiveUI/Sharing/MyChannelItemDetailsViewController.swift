@@ -58,10 +58,10 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(true)
-        operationInSharingImageList.cancel()
+//        operationInSharingImageList.cancel()
         self.channelItemsCollectionView.alpha = 1.0
-        customView.stopAnimationg()
-        customView.removeFromSuperview()
+//        customView.stopAnimationg()
+//        customView.removeFromSuperview()
     }
     
     @IBAction func backClicked(sender: AnyObject)
