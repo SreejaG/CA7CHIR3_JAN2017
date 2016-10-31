@@ -117,7 +117,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
                         if(totalCount < 18){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.customView.startAnimating()
+                                self.customView.stopAnimationg()
                                 self.customView.removeFromSuperview()
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemsCollectionView.addSubview(self.customView)

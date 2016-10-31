@@ -776,13 +776,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         addNoDataLabel()
                     }
                     else{
-                        showOverlay()
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.showOverlay()
+                            self.customView.stopAnimationg()
+                            self.customView.removeFromSuperview()
+                        })
                     }
-
-                    fullScrenImageView.image = UIImage()
-                    fullScreenZoomView.image = UIImage()
-                    deletButton.hidden = true
-                    addToButton.hidden = true
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.fullScrenImageView.image = UIImage()
+                        self.fullScreenZoomView.image = UIImage()
+                        self.deletButton.hidden = true
+                        self.addToButton.hidden = true
+                    })
                 }
             }
             else{
@@ -793,10 +798,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 else{
                     showOverlay()
                 }
-                fullScrenImageView.image = UIImage()
-                fullScreenZoomView.image = UIImage()
-                deletButton.hidden = true
-                addToButton.hidden = true
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.fullScrenImageView.image = UIImage()
+                    self.fullScreenZoomView.image = UIImage()
+                    self.deletButton.hidden = true
+                    self.addToButton.hidden = true
+                })
             }
             photoThumpCollectionView.reloadData()
         }
