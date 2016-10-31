@@ -140,7 +140,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             self.customView.startAnimating()
                         })
                     }
-                    else{
+                    else if(totalCount == 0){
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.showOverlay()
                             self.customView.stopAnimationg()
@@ -149,6 +149,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                             self.fullScreenZoomView.image = UIImage()
                             self.deletButton.hidden = true
                             self.addToButton.hidden = true
+                        })
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.removeOverlay()
+                            self.customView.stopAnimationg()
+                            self.customView.removeFromSuperview()
+                            self.deletButton.hidden = false
+                            self.addToButton.hidden = false
                         })
                     }
                 }
