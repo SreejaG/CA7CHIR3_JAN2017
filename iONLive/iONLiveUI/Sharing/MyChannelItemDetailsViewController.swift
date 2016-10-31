@@ -62,7 +62,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         self.channelItemsCollectionView.alpha = 1.0
         customView.stopAnimationg()
         customView.removeFromSuperview()
-      //  self.channelItemsCollectionView.userInteractionEnabled = true
     }
     
     @IBAction func backClicked(sender: AnyObject)
@@ -120,7 +119,6 @@ class MyChannelItemDetailsViewController: UIViewController {
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.customView.startAnimating()
                                 self.customView.removeFromSuperview()
-                               // self.channelItemsCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemsCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
@@ -201,7 +199,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         totalCount = filteredData.count
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-         //   self.channelItemsCollectionView.userInteractionEnabled = true
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.removeOverlay()

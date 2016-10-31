@@ -292,7 +292,7 @@ class MySharedChannelsViewController: UIViewController {
                     
                     mediaImage = UIImage(named: "thumb12")!
                 }
-
+                
                 completion(result: mediaImage)
             }
             else

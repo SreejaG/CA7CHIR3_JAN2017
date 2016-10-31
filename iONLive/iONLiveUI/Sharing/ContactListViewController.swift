@@ -65,7 +65,7 @@ class ContactListViewController: UIViewController
         addKeyboardObservers()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
-
+        
         contactAuthorizationAlert()
         
         self.refreshControl = UIRefreshControl()
@@ -102,7 +102,7 @@ class ContactListViewController: UIViewController
             self.tableViewBottomConstraint.constant = 0
         }
     }
-
+    
     func pullToRefresh()
     {
         if(!pullToRefreshActive){
@@ -520,13 +520,6 @@ class ContactListViewController: UIViewController
                     self.downloadMediaFromGCS(self.operationInSharingContactList)
                 })
                 self.operationQueueObjInSharingContactList.addOperation(operationInSharingContactList)
-//                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//                dispatch_async(backgroundQueue, {
-//                    self.downloadMediaFromGCS()
-//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                    })
-//                })
             }
             else{
                 addNoDataLabel()
@@ -537,20 +530,6 @@ class ContactListViewController: UIViewController
             ErrorManager.sharedInstance.addContactError()
         }
     }
-    
-//    func createProfileImage(profileName: String) -> UIImage
-//    {
-//        var profileImage : UIImage = UIImage()
-//        let url: NSURL = convertStringtoURL(profileName)
-//        if let data = NSData(contentsOfURL: url){
-//            let imageDetailsData = (data as NSData?)!
-//            profileImage = UIImage(data: imageDetailsData)!
-//        }
-//        else{
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
-//    }
     
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         var localArray = [[String:AnyObject]]()
@@ -568,8 +547,7 @@ class ContactListViewController: UIViewController
                 let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
-//                    profileImage = createProfileImage(profileImageName)
-                      profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -604,29 +582,6 @@ class ContactListViewController: UIViewController
         })
     }
     
-//    func downloadMediaFromGCS(){
-//        for i in 0 ..< dataSource.count
-//        {
-//            if i < dataSource.count
-//            {
-//                var profileImage : UIImage?
-//                let profileImageName = dataSource[i][profileImageUrlKey] as! String
-//                if(profileImageName != "")
-//                {
-//                    profileImage = createProfileImage(profileImageName)
-//                }
-//                else{
-//                    profileImage = UIImage(named: "dummyUser")
-//                }
-//                dataSource[i][profileImageKey] = profileImage
-//                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                    self.removeOverlay()
-//                    self.contactListTableView.reloadData()
-//                })
-//            }
-//        }
-//    }
-    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         if(!pullToRefreshActive){
@@ -654,14 +609,14 @@ class ContactListViewController: UIViewController
             ErrorManager.sharedInstance.addContactError()
         }
         if(dataSource.count > 0){
-        for i in 0 ..< dataSource.count
-        {
-            if i < dataSource.count
+            for i in 0 ..< dataSource.count
             {
-                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                dataSource[i]["tempSelected"] = selectionValue
+                if i < dataSource.count
+                {
+                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
+                    dataSource[i]["tempSelected"] = selectionValue
+                }
             }
-        }
         }
         else{
             addNoDataLabel()

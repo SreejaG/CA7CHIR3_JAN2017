@@ -2,7 +2,7 @@
 import UIKit
 
 class MyChannelCell: UITableViewCell {
-
+    
     static let identifier = "MyChannelCell"
     @IBOutlet weak var channelHeadImageView: UIImageView!
     @IBOutlet weak var channelItemCount: UILabel!
@@ -15,7 +15,7 @@ class MyChannelCell: UITableViewCell {
         channelNameLabel.minimumScaleFactor = 0.5
         channelNameLabel.adjustsFontSizeToFitWidth = true
     }
-
+    
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }

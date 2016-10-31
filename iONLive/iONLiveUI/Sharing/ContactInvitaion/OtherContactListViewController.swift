@@ -28,7 +28,7 @@ class OtherContactListViewController: UIViewController {
     var loadingOverlay: UIView?
     
     var searchActive: Bool = false
-   
+    
     var ca7chContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var phoneContactSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
@@ -54,14 +54,13 @@ class OtherContactListViewController: UIViewController {
     let selectionKey = "selected"
     let profileImageUrlKey = "profile_image_URL"
     
-    
     //Pull to refresh
     var refreshControl:UIRefreshControl!
     var pullToRefreshActive = false
     
     var operationQueueObjInSharingContactList = NSOperationQueue()
     var operationInSharingContactList = NSBlockOperation()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -76,9 +75,9 @@ class OtherContactListViewController: UIViewController {
         self.refreshControl.addTarget(self, action: #selector(OtherContactListViewController.pullToRefresh),forControlEvents :
             UIControlEvents.ValueChanged)
         self.ca7chTableView.addSubview(self.refreshControl)
-       
+        
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -106,7 +105,7 @@ class OtherContactListViewController: UIViewController {
             self.ca7chTableBottomConstraint.constant = 0
         }
     }
-
+    
     func initialise()
     {
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
@@ -114,7 +113,7 @@ class OtherContactListViewController: UIViewController {
         
         ca7chContactSource.removeAll()
         phoneContactSource.removeAll()
-
+        
         contactPhoneNumbers.removeAll()
         
         contactSource.removeAll()
@@ -122,7 +121,7 @@ class OtherContactListViewController: UIViewController {
         
         doneButton.hidden = true
         searchActive = false
-      
+        
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
         
@@ -395,7 +394,7 @@ class OtherContactListViewController: UIViewController {
                 let userName = element["user_name"] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 let profileImage = UIImage(named: "dummyUser")
-
+                
                 ca7chContactSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!])
             }
             
@@ -403,17 +402,9 @@ class OtherContactListViewController: UIViewController {
             
             if(ca7chContactSource.count > 0){
                 operationInSharingContactList  = NSBlockOperation (block: {
-                     self.downloadMediaFromGCS(self.operationInSharingContactList)
+                    self.downloadMediaFromGCS(self.operationInSharingContactList)
                 })
                 self.operationQueueObjInSharingContactList.addOperation(operationInSharingContactList)
-                
-//                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-//                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-//                dispatch_async(backgroundQueue, {
-//                    self.downloadMediaFromGCS()
-//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                    })
-//                })
             }
         }
         else
@@ -421,20 +412,6 @@ class OtherContactListViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
         }
     }
-    
-//    func createProfileImage(profileName: String) -> UIImage
-//    {
-//        var profileImage : UIImage = UIImage()
-//        let url: NSURL = convertStringtoURL(profileName)
-//        if let data = NSData(contentsOfURL: url){
-//            let imageDetailsData = (data as NSData?)!
-//            profileImage = UIImage(data: imageDetailsData)!
-//        }
-//        else{
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
-//    }
     
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         var localArray = [[String:AnyObject]]()
@@ -452,8 +429,7 @@ class OtherContactListViewController: UIViewController {
                 let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
-//                    profileImage = createProfileImage(profileImageName)
-                     profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -484,32 +460,9 @@ class OtherContactListViewController: UIViewController {
         }
         localArray.removeAll()
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//            self.indicatorStopFlag = true
             self.ca7chTableView.reloadData()
         })
     }
-
-//    func downloadMediaFromGCS(){
-//        for i in 0 ..< ca7chContactSource.count
-//        {
-//            if i < ca7chContactSource.count
-//            {
-//                var profileImage : UIImage?
-//                let profileImageName = ca7chContactSource[i][profileImageUrlKey] as! String
-//                if(profileImageName != "")
-//                {
-//                    profileImage = createProfileImage(profileImageName)
-//                }
-//                else{
-//                    profileImage = UIImage(named: "dummyUser")
-//                }
-//                contactSource[0][i][profileImageKey] = profileImage
-//                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                    self.ca7chTableView.reloadData()
-//                })
-//            }
-//        }
-//    }
     
     func setContactDetails()
     {
@@ -522,7 +475,7 @@ class OtherContactListViewController: UIViewController {
         }
         ca7chTableView.reloadData()
     }
-
+    
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         if(self.pullToRefreshActive){
@@ -533,7 +486,7 @@ class OtherContactListViewController: UIViewController {
             self.removeOverlay()
         }
         self.setContactDetails()
-
+        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -615,7 +568,7 @@ class OtherContactListViewController: UIViewController {
             return value
         }
     }
-
+    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
@@ -691,8 +644,8 @@ class OtherContactListViewController: UIViewController {
         doneButton.hidden = true
         ca7chTableView.reloadData()
         ca7chTableView.layoutIfNeeded()
-       
-
+        
+        
         addUserArray.removeAllObjects()
         
         for i in 0 ..< contactSource[0].count
@@ -879,25 +832,6 @@ extension OtherContactListViewController:UITableViewDelegate,UITableViewDataSour
             }
             cell.selectionStyle = .None
             cell.profileDownloadIndicator.hidden = true
-
-            
-//            if(indexPath.section == 0){
-//                if(indicatorStopFlag == false){
-//                    cell.profileDownloadIndicator.hidden = false
-//                    cell.contactProfileImage.alpha = 0.4
-//                    cell.profileDownloadIndicator.startAnimating()
-//                }
-//                else{
-//                    cell.profileDownloadIndicator.hidden = true
-//                    cell.contactProfileImage.alpha = 1.0
-//                    cell.profileDownloadIndicator.stopAnimating()
-//                }
-//            }
-//            else{
-//                cell.profileDownloadIndicator.hidden = true
-//                cell.contactProfileImage.alpha = 1.0
-//            }
-            
             return cell
         }
         else
@@ -908,7 +842,7 @@ extension OtherContactListViewController:UITableViewDelegate,UITableViewDataSour
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
-         return contactSource.count > 0 ? (contactSource.count) : 0
+        return contactSource.count > 0 ? (contactSource.count) : 0
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)

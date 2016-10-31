@@ -80,7 +80,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad()
     {
         super.viewDidLoad()
-      
+        
         getCurrentOrientaion()
         selectedItem = 0
         self.photoThumpCollectionView.alwaysBounceHorizontal = true
@@ -135,9 +135,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.customView.stopAnimationg()
                             self.customView.removeFromSuperview()
-//                            self.deletButton.userInteractionEnabled = false
-//                            self.addToButton.userInteractionEnabled = false
-//                            self.photoThumpCollectionView.userInteractionEnabled = false
                             self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 12, 30, 30))
                             self.photoThumpCollectionView.addSubview(self.customView)
                             self.customView.startAnimating()
@@ -225,7 +222,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         operationInMyMediaList.cancel()
         customView.stopAnimationg()
         customView.removeFromSuperview()
-//        self.photoThumpCollectionView.userInteractionEnabled = true
         NSNotificationCenter.defaultCenter().removeObserver(UIDeviceOrientationDidChangeNotification)
         NSNotificationCenter.defaultCenter().removeObserver(AVPlayerItemDidPlayToEndTimeNotification)
         if ((playHandleflag == 1) && (willEnterFlag == 1))
@@ -440,13 +436,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
     }
     
-//    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-//        if(totalCount > 0){
-//            self.customView.stopAnimationg()
-//            self.customView.removeFromSuperview()
-//        }
-//    }
-    
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
@@ -485,10 +474,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//            self.photoThumpCollectionView.userInteractionEnabled = true
-//            self.deletButton.userInteractionEnabled = true
-//            self.addToButton.userInteractionEnabled = true
-            
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.addToButton.hidden = false
@@ -755,7 +740,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             totalCount = totalCount - 1
             archiveMediaCount = archiveMediaCount - 1
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
-                if(totalCount < 9){
+                if(totalCount < 10){
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         self.customView.stopAnimationg()
                         self.customView.removeFromSuperview()
@@ -763,13 +748,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                         self.photoThumpCollectionView.addSubview(self.customView)
                         self.customView.startAnimating()
                     })
-                    downloadImagesFromGlobalChannelImageMapping(8)
+                    downloadImagesFromGlobalChannelImageMapping(9)
                 }
                 else{
                     downloadImagesFromGlobalChannelImageMapping(1)
                 }
             }
-
+            
             
             if(selectedItem - 1 <= 0){
                 selectedItem = 0
@@ -779,10 +764,26 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
+                if(totalCount > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
                 let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
+                }
+                else{
+                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){
+                        removeOverlay()
+                        addNoDataLabel()
+                    }
+                    else{
+                        showOverlay()
+                    }
+
+                    fullScrenImageView.image = UIImage()
+                    fullScreenZoomView.image = UIImage()
+                    deletButton.hidden = true
+                    addToButton.hidden = true
+                }
             }
             else{
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){

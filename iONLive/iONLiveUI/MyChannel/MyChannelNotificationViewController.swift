@@ -271,7 +271,7 @@ class MyChannelNotificationViewController: UIViewController {
         self.NoDatalabelFormyChanelImageList.text = "No Notifications Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
-
+    
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         fulldataSource.removeAll()
         for i in 0 ..< dataSource.count
@@ -287,7 +287,6 @@ class MyChannelNotificationViewController: UIViewController {
                 let profileImageName = dataSource[i][profileImageKey] as! String
                 if(profileImageName != "")
                 {
-//                    profileImage = createProfileImage(profileImageName)
                     profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
                 }
                 else{
@@ -340,29 +339,6 @@ class MyChannelNotificationViewController: UIViewController {
         return mediaImage
     }
     
-//    func createProfileImage(profileName: String) -> UIImage
-//    {
-//        var profileImage : UIImage = UIImage()
-//        do {
-//            let url: NSURL = convertStringtoURL(profileName)
-//            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
-//            if let imageData = data as NSData? {
-//                if let mediaImage1 = UIImage(data: imageData)
-//                {
-//                    profileImage = mediaImage1
-//                }
-//            }
-//            else
-//            {
-//                profileImage = UIImage(named: "dummyUser")!
-//            }
-//            
-//        } catch {
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
-//    }
-//    
     func  getTimeDifference(dateStr:String) -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"

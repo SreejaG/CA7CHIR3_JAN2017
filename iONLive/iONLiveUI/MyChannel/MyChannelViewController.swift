@@ -12,9 +12,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     @IBOutlet var SearchBarBottomConstraint: NSLayoutConstraint!
     @IBOutlet var tableviewBottomConstraint: NSLayoutConstraint!
     
-    @IBOutlet var notifImage: UIButton!
-    @IBOutlet var channelCreateButton: UIButton!
-    
     @IBOutlet var addChannelView: UIView!
     
     @IBOutlet var channelTextField: UITextField!
@@ -23,6 +20,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     @IBOutlet var channelUpdateCancelButton: UIButton!
     @IBOutlet var channelAddButton: UIButton!
     @IBOutlet var backButton: UIButton!
+    @IBOutlet var notifImage: UIButton!
+    @IBOutlet var channelCreateButton: UIButton!
     
     static let identifier = "MyChannelViewController"
     

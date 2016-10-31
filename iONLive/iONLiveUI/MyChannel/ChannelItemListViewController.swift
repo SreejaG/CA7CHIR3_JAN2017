@@ -98,7 +98,6 @@ class ChannelItemListViewController: UIViewController {
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                                 self.customView.startAnimating()
                                 self.customView.removeFromSuperview()
-//                                self.channelItemCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
@@ -137,7 +136,6 @@ class ChannelItemListViewController: UIViewController {
             else{
                 self.cancelButton.hidden = false
             }
-//            self.channelItemCollectionView.userInteractionEnabled = true
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.removeOverlay()
@@ -170,7 +168,6 @@ class ChannelItemListViewController: UIViewController {
         self.channelItemCollectionView.alpha = 1.0
         customView.stopAnimationg()
         customView.removeFromSuperview()
-//        channelItemCollectionView.userInteractionEnabled = true
     }
     
     override func didReceiveMemoryWarning() {
@@ -363,7 +360,6 @@ class ChannelItemListViewController: UIViewController {
             channelIds.append(Int(channelId)!)
             showOverlay()
             selectionButton.hidden = true
-//            downloadImagesFromGlobalChannelImageMapping(selected.count)
             imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: selected, channelId: channelIds, success: { (response) -> () in
                 self.authenticationSuccessHandlerDelete(response)
                 }, failure: { (error, message) -> () in
@@ -374,9 +370,7 @@ class ChannelItemListViewController: UIViewController {
     
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
-//        if(selected.count < 6){
-            removeOverlay()
-//        }
+        removeOverlay()
         if (response as? [String: AnyObject]) != nil
         {
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: selected)
@@ -389,23 +383,20 @@ class ChannelItemListViewController: UIViewController {
             selectionFlag = false
             
             if(totalCount == GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-               
+                
             }
             else{
-            //    if(selected.count > 3){
-                    if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
-                        if(totalCount < 18){
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.customView.startAnimating()
-                                self.customView.removeFromSuperview()
-//                                 self.channelItemCollectionView.userInteractionEnabled = false
-                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
-                                self.channelItemCollectionView.addSubview(self.customView)
-                                self.customView.startAnimating()
-                            })
-                        }
+                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
+                    if(totalCount < 18){
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.customView.startAnimating()
+                            self.customView.removeFromSuperview()
+                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
+                            self.channelItemCollectionView.addSubview(self.customView)
+                            self.customView.startAnimating()
+                        })
                     }
-              //  }
+                }
                 else{
                     customView.stopAnimationg()
                     customView.removeFromSuperview()
@@ -614,9 +605,9 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                     imageForProfile = mediaImageFromFile!
                 }
                 else{
-                     let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
-                     imageForProfile = mediaImageFromFile
+                    let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
+                    imageForProfile = mediaImageFromFile
                 }
                 
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String

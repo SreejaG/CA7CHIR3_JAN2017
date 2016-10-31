@@ -321,20 +321,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }
     }
     
-//    func createProfileImage(profileName: String) -> UIImage
-//    {
-//        var profileImage : UIImage = UIImage()
-//        let url: NSURL = convertStringtoURL(profileName)
-//        if let data = NSData(contentsOfURL: url){
-//            let imageDetailsData = (data as NSData?)!
-//            profileImage = UIImage(data: imageDetailsData)!
-//        }
-//        else{
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
-//    }
-    
     func downloadMediaFromGCS(){
         var localArray = [[String:AnyObject]]()
         for i in 0 ..< dataSource.count
@@ -348,7 +334,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
                 {
-//                    profileImage = createProfileImage(profileImageName)
                     profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
                 }
                 else{
@@ -604,15 +589,15 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-            if (editingStyle == UITableViewCellEditingStyle.Delete) {
-                var deletedUserId : String = String()
-                if(searchActive){
-                    deletedUserId = self.searchDataSource[indexPath.row][self.userNameKey]! as! String
-                }
-                else{
-                    deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
-                }
-                generateWaytoSendAlert(deletedUserId, indexpath: indexPath.row)
+        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+            var deletedUserId : String = String()
+            if(searchActive){
+                deletedUserId = self.searchDataSource[indexPath.row][self.userNameKey]! as! String
+            }
+            else{
+                deletedUserId = self.dataSource[indexPath.row][self.userNameKey]! as! String
+            }
+            generateWaytoSendAlert(deletedUserId, indexpath: indexPath.row)
         }
     }
 }
