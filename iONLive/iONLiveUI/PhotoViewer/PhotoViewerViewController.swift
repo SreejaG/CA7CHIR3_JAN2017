@@ -131,13 +131,24 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.photoThumpCollectionView.reloadData()
                 })
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
-                    if(totalCount < 9){
+                    if(totalCount < 9 && totalCount > 0){
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.customView.stopAnimationg()
                             self.customView.removeFromSuperview()
                             self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 12, 30, 30))
                             self.photoThumpCollectionView.addSubview(self.customView)
                             self.customView.startAnimating()
+                        })
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.showOverlay()
+                            self.customView.stopAnimationg()
+                            self.customView.removeFromSuperview()
+                            self.fullScrenImageView.image = UIImage()
+                            self.fullScreenZoomView.image = UIImage()
+                            self.deletButton.hidden = true
+                            self.addToButton.hidden = true
                         })
                     }
                 }
@@ -469,11 +480,18 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier:0)
         }
         else{
-            removeOverlay()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.removeOverlay()
+                self.customView.stopAnimationg()
+                self.customView.removeFromSuperview()
+                self.addToButton.hidden = false
+                self.deletButton.hidden = false
+            })
             addNoDataLabel()
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.removeOverlay()
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.addToButton.hidden = false
