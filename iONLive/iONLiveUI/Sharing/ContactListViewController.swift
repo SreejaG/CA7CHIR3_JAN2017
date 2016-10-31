@@ -26,7 +26,6 @@ class ContactListViewController: UIViewController
     let contactManagers = contactManager.sharedInstance
     
     var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-//    var fullDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
     
     let defaults = NSUserDefaults .standardUserDefaults()
@@ -48,6 +47,15 @@ class ContactListViewController: UIViewController
     @IBOutlet var doneButton: UIButton!
     @IBOutlet var tableViewBottomConstraint: NSLayoutConstraint!
     
+    var NoDatalabelFormySharingImageList : UILabel = UILabel()
+    
+    //Pull to refresh
+    var refreshControl:UIRefreshControl!
+    var pullToRefreshActive = false
+    
+    var operationQueueObjInSharingContactList = NSOperationQueue()
+    var operationInSharingContactList = NSBlockOperation()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,10 +65,14 @@ class ContactListViewController: UIViewController
         addKeyboardObservers()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactListViewController.callRefreshContactListTableView(_:)), name: "refreshContactListTableView", object: nil)
-        
-        let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
-        setAddressBook(addressBookRef1)
+
         contactAuthorizationAlert()
+        
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl.addTarget(self, action: #selector(ContactListViewController.pullToRefresh),forControlEvents :
+            UIControlEvents.ValueChanged)
+        self.contactListTableView.addSubview(self.refreshControl)
     }
     
     override func didReceiveMemoryWarning() {
@@ -91,6 +103,26 @@ class ContactListViewController: UIViewController
         }
     }
 
+    func pullToRefresh()
+    {
+        if(!pullToRefreshActive){
+            pullToRefreshActive = true
+            operationInSharingContactList.cancel()
+            self.contactListSearchBar.text = ""
+            self.contactListSearchBar.resignFirstResponder()
+            searchActive = false
+            self.getPullToRefreshData()
+        }
+        else
+        {
+        }
+    }
+    
+    func getPullToRefreshData()
+    {
+        initialise()
+    }
+    
     @IBAction func didTapBackButton(sender: AnyObject) {
         if(doneButton.hidden == false){
             doneButton.hidden = true
@@ -206,12 +238,17 @@ class ContactListViewController: UIViewController
     
     func initialise()
     {
+        let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
+        setAddressBook(addressBookRef1)
+        
         searchDataSource.removeAll()
         dataSource.removeAll()
         addUserArray.removeAllObjects()
         searchActive = false
         doneButton.hidden = true
         contactPhoneNumbers.removeAll()
+        NoDatalabelFormySharingImageList.removeFromSuperview()
+        contactListTableView.reloadData()
         displayContacts()
     }
     
@@ -270,7 +307,9 @@ class ContactListViewController: UIViewController
     }
     
     func displayContacts(){
-        showOverlay()
+        if(!pullToRefreshActive){
+            showOverlay()
+        }
         contactPhoneNumbers.removeAll()
         let defaults = NSUserDefaults .standardUserDefaults()
         let phoneCode = defaults.valueForKey("countryCode") as! String
@@ -323,8 +362,23 @@ class ContactListViewController: UIViewController
             addContactDetails(self.contactPhoneNumbers)
         }
         else{
-            removeOverlay()
+            if(!pullToRefreshActive){
+                self.removeOverlay()
+            }
+            else{
+                self.refreshControl.endRefreshing()
+                self.pullToRefreshActive = false
+            }
+            addNoDataLabel()
         }
+    }
+    
+    func addNoDataLabel()
+    {
+        self.NoDatalabelFormySharingImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
+        self.NoDatalabelFormySharingImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormySharingImageList.text = "No Contacts Available"
+        self.view.addSubview(self.NoDatalabelFormySharingImageList)
     }
     
     func addContactDetails(contactPhoneNumbers: NSArray)
@@ -356,7 +410,14 @@ class ContactListViewController: UIViewController
     
     func authenticationFailureHandlerAdd(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        if(!pullToRefreshActive){
+            self.removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            self.pullToRefreshActive = false
+        }
+        addNoDataLabel()
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -433,6 +494,14 @@ class ContactListViewController: UIViewController
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
+        if(!pullToRefreshActive){
+            self.removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            self.pullToRefreshActive = false
+        }
+        
         if let json = response as? [String: AnyObject]
         {
             dataSource.removeAll()
@@ -444,17 +513,23 @@ class ContactListViewController: UIViewController
                 dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!])
             }
             
+            self.contactListTableView.reloadData()
+            
             if(dataSource.count > 0){
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
-                    self.downloadMediaFromGCS()
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    })
+                operationInSharingContactList  = NSBlockOperation (block: {
+                    self.downloadMediaFromGCS(self.operationInSharingContactList)
                 })
+                self.operationQueueObjInSharingContactList.addOperation(operationInSharingContactList)
+//                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+//                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+//                dispatch_async(backgroundQueue, {
+//                    self.downloadMediaFromGCS()
+//                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+//                    })
+//                })
             }
             else{
-                removeOverlay()
+                addNoDataLabel()
             }
         }
         else
@@ -477,7 +552,7 @@ class ContactListViewController: UIViewController
 //        return profileImage
 //    }
     
-    func downloadMediaFromGCS(){
+    func downloadMediaFromGCS(operationObj: NSBlockOperation){
         var localArray = [[String:AnyObject]]()
         for i in 0 ..< dataSource.count
         {
@@ -486,6 +561,9 @@ class ContactListViewController: UIViewController
         for i in 0 ..< localArray.count
         {
             if(i < localArray.count){
+                if operationObj.cancelled == true{
+                    return
+                }
                 var profileImage : UIImage?
                 let profileImageName = localArray[i][profileImageUrlKey] as! String
                 if(profileImageName != "")
@@ -501,6 +579,9 @@ class ContactListViewController: UIViewController
         }
         for j in 0 ..< dataSource.count
         {
+            if operationObj.cancelled == true{
+                return
+            }
             if j < dataSource.count
             {
                 let userChk = dataSource[j][userNameKey] as! String
@@ -548,7 +629,14 @@ class ContactListViewController: UIViewController
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        self.removeOverlay()
+        if(!pullToRefreshActive){
+            self.removeOverlay()
+        }
+        else{
+            self.refreshControl.endRefreshing()
+            self.pullToRefreshActive = false
+        }
+        
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -565,6 +653,7 @@ class ContactListViewController: UIViewController
         else{
             ErrorManager.sharedInstance.addContactError()
         }
+        if(dataSource.count > 0){
         for i in 0 ..< dataSource.count
         {
             if i < dataSource.count
@@ -572,6 +661,10 @@ class ContactListViewController: UIViewController
                 let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
                 dataSource[i]["tempSelected"] = selectionValue
             }
+        }
+        }
+        else{
+            addNoDataLabel()
         }
         contactListTableView.reloadData()
     }
