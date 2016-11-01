@@ -19,6 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: "StartedStreaming")
         }
+        
+        
+     
+
 //        NSUserDefaults.standardUserDefaults().setBool(false, forKey:"Background")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
         NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
@@ -289,7 +293,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-        else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream" )){
+        else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream") || (result["type"] as! String == "My Day Cleaning")){
             
             if (result["type"] as! String == "share"){
                 
@@ -318,7 +322,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
                 }
             }
-            
+            else if (result["type"] as! String == "My Day Cleaning")
+            {
+                let chid : String = "\(result["channelId"]!)"
+                myDayCleanUpChannel(chid)
+        
+            }
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
                 NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
@@ -351,7 +360,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-    
+//    
+//    func test()
+//    {
+//        let chid : String = "\(156)"
+//        myDayCleanUpChannel(chid)
+//        
+//        
+//        let result = ["channelId": 156, "type": "My Day Cleaning"]
+//
+//        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
+//        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
+//    }
+    func myDayCleanUpChannel(channelId : String)
+    {
+        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        if(index != -1)
+        {
+            if(mediaShared.count > 0)
+            {
+                let  latestCount : Int = 0
+                mediaShared[index][sharedMediaCount]  = "\(latestCount)"
+                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            }
+            print(mediaShared[index])
+        }
+        let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
+        if(indexOfChannelList != -1)
+        {
+            var mediaImage : UIImage?
+            mediaImage = UIImage()
+         ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][mediaImageKey] = mediaImage
+            
+            print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList])
+
+        }
+        
+    }
     func updateCount( channelId : String)
     {
         let index  = getUpdateIndexChannel(channelId, isCountArray: true)

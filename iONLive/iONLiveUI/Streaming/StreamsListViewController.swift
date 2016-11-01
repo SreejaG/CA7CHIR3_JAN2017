@@ -52,6 +52,7 @@ class StreamsListViewController: UIViewController{
         getAllLiveStreams()
         showOverlay()
         createScrollViewAnimations()
+//          _ = NSTimer.scheduledTimerWithTimeInterval(60.0, target: self, selector: #selector(StreamsListViewController.test(_:)), userInfo: nil, repeats: true)
         if GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0
         {
             GlobalStreamList.sharedInstance.initialiseCloudData(count ,endValueLimit: limit)
@@ -149,6 +150,141 @@ class StreamsListViewController: UIViewController{
             sharedNewMediaLabel.hidden = false
             sharedNewMediaLabel.text = "Pull to get new media"
         }
+        else if (info["type"] as! String == "My Day Cleaning")
+        {
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                let channelId = info["channelId"]!
+                self.deleteFromOtherChannelIfExistDuringMyDayCleanUp("\(channelId)")
+                self.deleteChannelSpecificMediaFromLocal("\(channelId)")
+                self.deleteChannelSpecificMediaFromGlobal("\(channelId)")
+                let refreshAlert = UIAlertController(title: "Deleted", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+                refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+                }))
+            }
+            
+        }
+    }
+//    func test(timer : NSTimer)
+//    {
+//        
+//        print("CLEANING..................")
+//      //  dispatch_async(dispatch_get_main_queue()) {
+//            let info = ["channelId": "104", "type": "My Day Cleaning"]
+//
+//            let channelId = info["channelId"]! as String
+//            self.deleteFromOtherChannelIfExistDuringMyDayCleanUp("104")
+//            self.myDayCleanUpChannel("104")
+//            self.deleteChannelSpecificMediaFromLocal(channelId)
+//            self.deleteChannelSpecificMediaFromGlobal(channelId)
+//            let refreshAlert = UIAlertController(title: "Deleted", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+//            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+//
+//            }))
+//            self.presentViewController(refreshAlert, animated: true, completion: nil)
+//
+//      //  }
+//
+//    }
+    func myDayCleanUpChannel(channelId : String)
+    {
+        let index  = getUpdateIndexChannelList(channelId, isCountArray: true)
+        if(index != -1)
+        {
+            if(mediaShared.count > 0)
+            {
+                let  latestCount : Int = 0
+                mediaShared[index][sharedMediaCount]  = "\(latestCount)"
+                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            }
+            print(mediaShared[index])
+        }
+        let indexOfChannelList =  getUpdateIndexChannelList(channelId, isCountArray: false)
+        if(indexOfChannelList != -1)
+        {
+            var mediaImage : UIImage?
+            mediaImage = UIImage()
+            
+            if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > indexOfChannelList )
+            {
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][mediaImageKey] = mediaImage
+            
+            print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList])
+            }
+        }
+        
+    }
+    func getUpdateIndexChannelList(channelIdValue : String , isCountArray : Bool) -> Int
+    {
+        let channelIdkey = "ch_detail_id"
+        var selectedArray : NSArray = NSArray()
+        var indexOfRow : Int = -1
+        if(isCountArray)
+        {
+            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            {
+                mediaShared.removeAll()
+                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                selectedArray = mediaShared as Array
+            }
+            else{
+                indexOfRow = -1
+            }
+        }
+        else{
+            selectedArray = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
+        }
+        
+        var  checkFlag : Bool = false
+        var index : Int =  -1
+        
+        for i in 0  ..< selectedArray.count
+        {
+            let channelId = selectedArray[i][channelIdkey]!
+            if "\(channelId!)"  == channelIdValue
+            {
+                checkFlag = true
+                index = i
+                break
+            }
+        }
+        if(checkFlag)
+        {
+            indexOfRow = index
+        }
+        
+        return indexOfRow
+    }
+
+    func deleteFromOtherChannelIfExistDuringMyDayCleanUp(channelId : String)
+    {
+        var chId : String = String()
+        if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
+        {
+            var selectedArray : [Int] = [Int]()
+            for i in 0  ..< SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count
+            {
+                //let channelIdValue = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[i][stream_channelNameKey] as! String
+                if NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") != nil{
+                    let channelIdValue = NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") as! String
+                    if ( channelIdValue == "\(channelId)")
+                    {
+                            selectedArray.append(i)
+                            chId = channelIdValue
+                        
+                    }
+                }
+            }
+            
+            selectedArray =  selectedArray.sort()
+            for i in 0  ..< selectedArray.count
+            {
+                SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(selectedArray[i] - i)
+            }
+        }
+    NSNotificationCenter.defaultCenter().postNotificationName("ViewMediaDeletedMyDAyCleanUp", object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("DeletedObject", object: nil)
+      
     }
     func deleteChannelSpecificMediaFromLocal(channelId : String)
     {
@@ -193,14 +329,21 @@ class StreamsListViewController: UIViewController{
             if (channelIdValue == "\(channelId)")
             {
                 selectedArray.append(i)
+            
             }
         }
         
         selectedArray =  selectedArray.sort()
+        if(selectedArray.count > 0)
+        {
+            let obj : SetUpView = SetUpView()
+            obj.callDeleteWhileMyDayCleanUp(vc, channelId: channelId)
+        }
         for i in 0  ..< selectedArray.count 
         {
             GlobalStreamList.sharedInstance.GlobalStreamDataSource.removeAtIndex(selectedArray[i] - i)
         }
+      
     }
     
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
@@ -1170,6 +1313,8 @@ class StreamsListViewController: UIViewController{
         self.removeOverlay()
         streamListCollectionView.alpha = 1.0
         let index = Int32(indexPathRow)
+        if (mediaAndLiveArray.count > 0)
+        {
         let type = mediaAndLiveArray[indexPathRow][stream_mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
@@ -1197,6 +1342,7 @@ class StreamsListViewController: UIViewController{
             {
                 ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
             }
+        }
         }
     }
     deinit {

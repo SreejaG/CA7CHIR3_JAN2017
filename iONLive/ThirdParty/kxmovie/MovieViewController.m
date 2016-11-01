@@ -1664,6 +1664,28 @@ UIPanGestureRecognizer *afterPan;
     }
     
 }
+-(void) checkToCloseWhileMyDayCleanUp :(NSString *) channelIdShare
+{
+    
+    //dispatch_sync(dispatch_get_main_queue(), ^{
+      if([channelIdSelected isEqualToString: channelIdShare] )
+    {
+        if(downloadTask.state == 0)
+        {
+            [downloadTask cancel];
+            
+        }
+        [_moviePlayer stop];
+        _moviePlayer = nil;
+        [self removeOverlay];
+        [self dismissViewControllerAnimated:true
+                                 completion:^{
+                                     
+                                 }];
+    }
+  //  });
+
+}
 #pragma mark - gesture recognizer
 
 -(void) addTapGestures

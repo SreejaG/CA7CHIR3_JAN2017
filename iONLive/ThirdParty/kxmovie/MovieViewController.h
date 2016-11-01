@@ -32,6 +32,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) mediaDeletedErrorMessage;
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
 -(void) checkToCloseViewWhileMediaDelete :(NSString *)mediaId;
+-(void) checkToCloseWhileMyDayCleanUp :(NSString *) channelId;
 
 @property (readonly) BOOL playing;
 
