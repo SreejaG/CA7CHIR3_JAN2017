@@ -1665,6 +1665,23 @@ UIPanGestureRecognizer *afterPan;
     }
     
 }
+-(void) cleanMyDayComplete :(NSString *) chanel
+{
+    if([channelIdSelected isEqualToString:chanel])
+    {
+        if(downloadTask.state == 0)
+        {
+            [downloadTask cancel];
+            
+        }
+        [_moviePlayer stop];
+        _moviePlayer = nil;
+        [self dismissViewControllerAnimated:true
+                                 completion:^{
+                                     
+                                 }];
+    }
+}
 -(void) checkToCloseWhileMyDayCleanUp :(NSString *) channelIdShare
 {
     
