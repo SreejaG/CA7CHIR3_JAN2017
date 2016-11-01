@@ -396,12 +396,21 @@ class ChannelItemListViewController: UIViewController {
                             self.customView.startAnimating()
                         })
                     }
-                    else{
+                    else if totalCount == 0
+                    {
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.customView.stopAnimationg()
                             self.customView.removeFromSuperview()
                             self.showOverlay()
                             self.selectionButton.hidden = true
+                        })
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.customView.stopAnimationg()
+                            self.customView.removeFromSuperview()
+                            self.removeOverlay()
+                            self.selectionButton.hidden = false
                         })
                     }
                 }
