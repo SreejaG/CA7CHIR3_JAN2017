@@ -335,6 +335,9 @@ class GlobalChannelToImageMapping: NSObject {
                         GlobalChannelImageDict[selectedChanelId]!.append(dataRowOfSelectedMediaArray)
                     }
                 }
+                
+                thumbExist(selectedChanelId)
+                
                 GlobalChannelImageDict[selectedChanelId]!.sortInPlace({ p1, p2 in
                     let time1 = Int(p1[mediaIdKey] as! String)
                     let time2 = Int(p2[mediaIdKey] as! String)
@@ -362,6 +365,24 @@ class GlobalChannelToImageMapping: NSObject {
             let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
+    }
+    
+    func thumbExist(chanel: String)  {
+        for k in 0 ..< GlobalChannelImageDict[chanel]!.count
+        {
+            if k < GlobalChannelImageDict[chanel]!.count
+            {
+                if GlobalChannelImageDict[chanel]![k][tImageKey] != nil
+                {
+                    
+                }
+                else{
+                    let mediaId = GlobalChannelImageDict[chanel]![k][mediaIdKey] as! String
+                    let imagemedia = downloadLatestMedia(mediaId)
+                    GlobalChannelImageDict[chanel]![k][tImageKey] = imagemedia
+                }
+            }
+        }
     }
     
     func downloadLatestMedia(mediaId: String) -> UIImage
