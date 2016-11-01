@@ -72,6 +72,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        ChannelSharedTableView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -79,7 +80,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         refreshAlert = UIAlertController()
         ChannelSharedListAPI.sharedInstance.cancelOperationQueue()
     }
-    
+   
     func initialise()
     {
         self.refreshControl = UIRefreshControl()
@@ -104,6 +105,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         }else
         {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.ChannelSharedTableView.reloadData()
                 self.removeOverlay()
             })
         }
@@ -247,6 +249,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         else if (info["type"] as! String == "liveStream")
         {
             channelPushNotificationLiveStarted(info)
+        }
+        else
+        {
+            ChannelSharedTableView.reloadData()
         }
     }
     
@@ -534,6 +540,9 @@ extension ChannelsSharedController:UITableViewDataSource
             }
             else
             {
+                
+                print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String)
+                print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelNameKey] as? String)
                 if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
                 {
                     mediaShared.removeAll()
@@ -585,6 +594,7 @@ extension ChannelsSharedController:UITableViewDataSource
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
         let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
         let chId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelIdkey] as! String
+        NSUserDefaults.standardUserDefaults().setObject(chId, forKey: "SharedChannelId")
         let index  = getUpdateIndexChannel(chId, isCountArray: true)
         if(index != -1)
         {

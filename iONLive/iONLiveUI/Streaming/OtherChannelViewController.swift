@@ -39,12 +39,13 @@ class OtherChannelViewController: UIViewController  {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-            NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectDeleted), name: "DeletedObject", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.checkCountIncrementInSelectedChannel), name: "CountIncrementedPushNotification", object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.dismissFullView), name: "ViewMediaDeleted", object:nil)
+          NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.dismissFullViewWhileMyDayCleanUp), name:"ViewMediaDeletedMyDAyCleanUp", object:nil)
         self.notificationLabel.hidden = true
         self.refreshControl = UIRefreshControl()
         self.channelItemsCollectionView.alwaysBounceVertical = true
@@ -87,6 +88,20 @@ class OtherChannelViewController: UIViewController  {
          //   self.channelItemsCollectionView.reloadData()
         }
         
+    }
+    func dismissFullViewWhileMyDayCleanUp(notif: NSNotification)
+    {
+        
+        
+        if NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") != nil{
+            let channelIdValue = NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") as! String
+           // let channelIdValue = notif.object as! String
+            let obj : SetUpView = SetUpView()
+            //  vc.mediaDeletedErrorMessage()
+            print(vc)
+            obj.callDeleteWhileMyDayCleanUp(vc, channelId:channelIdValue)
+        }
+       
     }
     func pushNotificationUpdateStream(notif: NSNotification)
     {
@@ -567,6 +582,8 @@ class OtherChannelViewController: UIViewController  {
     func loadmovieViewController(indexPathRow:Int,likeCount:String) {
         self.removeOverlay()
         channelItemsCollectionView.alpha = 1.0
+        if (SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
+        {
         let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String
         if((type ==  "image") || (type == "video"))
         {
@@ -592,6 +609,9 @@ class OtherChannelViewController: UIViewController  {
                 ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
             }
         }
+        }
+        print(vc)
+
     }
 }
 

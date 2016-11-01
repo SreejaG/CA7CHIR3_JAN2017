@@ -105,9 +105,13 @@ import UIKit
             objects.successFromSetUpView(count)
         }
     }
-    func callDelete(obj:MovieViewController, mediaId : NSString)
+    func callDelete(obj:MovieViewController, mediaId : String)
     {
         obj.checkToCloseViewWhileMediaDelete( mediaId as String)
+    }
+    func callDeleteWhileMyDayCleanUp(obj:MovieViewController, channelId : String)
+    {
+       obj.checkToCloseWhileMyDayCleanUp (channelId as String)
     }
     func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {

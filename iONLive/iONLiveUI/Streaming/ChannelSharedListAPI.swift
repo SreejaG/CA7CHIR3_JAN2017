@@ -276,11 +276,14 @@ class ChannelSharedListAPI: NSObject {
             {
                 if(dataSource.count > 0)
                 {
+                    if (i < self.dataSource.count )
+                    {
                     if(!checkDuplicate(self.dataSource[i][ch_channelIdkey] as! String))
                     {
                         if(dataSource.count > 0)
                         {
                             SharedChannelListDataSource.append([ch_channelIdkey:self.dataSource[i][ch_channelIdkey]!,ch_channelNameKey:self.dataSource[i][ch_channelNameKey]!,sharedMediaCount:self.dataSource[i][sharedMediaCount]!,timeStamp:self.dataSource[i][timeStamp]!,usernameKey:self.dataSource[i][usernameKey]!,liveStreamStatus:self.dataSource[i][liveStreamStatus]!,streamTockenKey:self.dataSource[i][streamTockenKey]!,profileImageKey:profileImage!,mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]!])
+                        }
                         }
                     }
                 }
@@ -312,6 +315,9 @@ class ChannelSharedListAPI: NSObject {
         {
             NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelList", object: "success")
         }
+        
+        
+        print(SharedChannelListDataSource)
     }
     
     func checkDuplicate( chId : String) -> Bool
