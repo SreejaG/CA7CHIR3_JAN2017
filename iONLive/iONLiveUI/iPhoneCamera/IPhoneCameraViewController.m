@@ -1392,6 +1392,7 @@ int timerCount = 0;
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
          [self setUpInitialBlurView];
+        
     });
    
 }
@@ -1447,6 +1448,10 @@ int timerCount = 0;
         self.activitView.hidden = true;
         _liveSteamSession.previewView.hidden = false;
         [self.bottomView setUserInteractionEnabled:YES];
+        _firstButton.userInteractionEnabled = true;
+        _secondButton.userInteractionEnabled = true;
+        _thirdButton.userInteractionEnabled = true;
+        _iphoneCameraButton.userInteractionEnabled = true;
     } );
 }
 
@@ -1811,6 +1816,11 @@ int timerCount = 0;
     self.view.backgroundColor = [UIColor colorWithPatternImage:image];
     self.activitView.hidden =false;
     [self.bottomView setUserInteractionEnabled:NO];
+    _firstButton.userInteractionEnabled = false;
+    _secondButton.userInteractionEnabled = false;
+    _thirdButton.userInteractionEnabled = false;
+    _iphoneCameraButton.userInteractionEnabled = false;
+//    _startCameraActionButton.userInteractionEnabled = false;
 }
 
 - (IBAction)didTapCamSelectionButton:(id)sender

@@ -4,12 +4,12 @@ import MediaPlayer
 import Foundation
 import AVKit
 
-protocol progressviewDelegate
+protocol progressviewDelegate1
 {
     func ProgresviewUpdate (value : Float)
 }
 
-class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate,NSURLSessionDataDelegate,NSURLSessionDownloadDelegate,UIScrollViewDelegate,AVPlayerViewControllerDelegate
+class PhotoViewerViewController1: UIViewController,UIGestureRecognizerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate,NSURLSessionDataDelegate,NSURLSessionDownloadDelegate,UIScrollViewDelegate,AVPlayerViewControllerDelegate
 {
     var delegate:progressviewDelegate?
     
@@ -70,9 +70,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
     var customView = CustomInfiniteIndicator()
-    class var sharedInstance: PhotoViewerViewController {
+    class var sharedInstance: PhotoViewerViewController1 {
         struct Singleton {
-            static let instance = PhotoViewerViewController()
+            static let instance = PhotoViewerViewController1()
         }
         return Singleton.instance
     }
@@ -80,7 +80,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+      
         getCurrentOrientaion()
         selectedItem = 0
         self.photoThumpCollectionView.alwaysBounceHorizontal = true
@@ -92,11 +92,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         playHandleflag = 0
         videoDurationLabel.hidden = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController1.removeActivityIndicatorMyMedia(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.uploadMediaProgress(_:)), name: "upload", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController1.uploadMediaProgress(_:)), name: "upload", object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController.setFullscreenImage(_:)), name: "setFullscreenImage", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PhotoViewerViewController1.setFullscreenImage(_:)), name: "setFullscreenImage", object: nil)
         
         showOverlay()
         initialise()
@@ -131,33 +131,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.photoThumpCollectionView.reloadData()
                 })
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
-                    if(totalCount < 9 && totalCount > 0){
+                    if(totalCount < 9){
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
+                            self.deletButton.userInteractionEnabled = false
+                            self.addToButton.userInteractionEnabled = false
+                            self.photoThumpCollectionView.userInteractionEnabled = false
                             self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 12, 30, 30))
                             self.photoThumpCollectionView.addSubview(self.customView)
                             self.customView.startAnimating()
-                        })
-                    }
-                    else if(totalCount == 0){
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.showOverlay()
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                            self.fullScrenImageView.image = UIImage()
-                            self.fullScreenZoomView.image = UIImage()
-                            self.deletButton.hidden = true
-                            self.addToButton.hidden = true
-                        })
-                    }
-                    else{
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.removeOverlay()
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                            self.deletButton.hidden = false
-                            self.addToButton.hidden = false
                         })
                     }
                 }
@@ -188,26 +169,26 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         self.view.bringSubviewToFront(TopView)
         self.view.bringSubviewToFront(BottomView)
         
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController1.handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         self.fullScrenImageView.addGestureRecognizer(doubleTap)
         
-        let doubleTap1 = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleDoubleTap(_:)))
+        let doubleTap1 = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController1.handleDoubleTap(_:)))
         doubleTap1.numberOfTapsRequired = 2
         self.fullScreenZoomView.addGestureRecognizer(doubleTap1)
         
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController1.handleSwipe(_:)))
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
         self.fullScrenImageView.addGestureRecognizer(swipeRight)
         
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.handleSwipe(_:)))
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(PhotoViewerViewController1.handleSwipe(_:)))
         swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
         self.fullScrenImageView.addGestureRecognizer(swipeLeft)
         
         swipeRight.delegate = self;
         swipeLeft.delegate = self;
         
-        let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController.enlargeImageView(_:)))
+        let enlargeImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(PhotoViewerViewController1.enlargeImageView(_:)))
         enlargeImageViewRecognizer.numberOfTapsRequired = 1
         fullScrenImageView.addGestureRecognizer(enlargeImageViewRecognizer)
     }
@@ -232,7 +213,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.photoThumpCollectionView.reloadData()
         })
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController1.orientaionChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice())
         
         downloadingFlag = false
     }
@@ -242,6 +223,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
         operationInMyMediaList.cancel()
         customView.stopAnimationg()
         customView.removeFromSuperview()
+        self.photoThumpCollectionView.userInteractionEnabled = true
         NSNotificationCenter.defaultCenter().removeObserver(UIDeviceOrientationDidChangeNotification)
         NSNotificationCenter.defaultCenter().removeObserver(AVPlayerItemDidPlayToEndTimeNotification)
         if ((playHandleflag == 1) && (willEnterFlag == 1))
@@ -489,18 +471,15 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             self.downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier:0)
         }
         else{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.customView.stopAnimationg()
-                self.customView.removeFromSuperview()
-                self.addToButton.hidden = false
-                self.deletButton.hidden = false
-            })
+            removeOverlay()
             addNoDataLabel()
         }
         
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.removeOverlay()
+            self.photoThumpCollectionView.userInteractionEnabled = true
+            self.deletButton.userInteractionEnabled = true
+            self.addToButton.userInteractionEnabled = true
+            
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.addToButton.hidden = false
@@ -766,22 +745,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(archiveChanelId, mediaIds: deletedMediaId)
             totalCount = totalCount - 1
             archiveMediaCount = archiveMediaCount - 1
-            if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > totalCount){
-                if(totalCount < 10){
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.customView.stopAnimationg()
-                        self.customView.removeFromSuperview()
-                        self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.photoThumpCollectionView.layer.frame.width - 50, self.photoThumpCollectionView.layer.frame.height/2 - 12, 30, 30))
-                        self.photoThumpCollectionView.addSubview(self.customView)
-                        self.customView.startAnimating()
-                    })
-                    downloadImagesFromGlobalChannelImageMapping(9)
-                }
-                else{
-                    downloadImagesFromGlobalChannelImageMapping(1)
-                }
-            }
-            
+            downloadImagesFromGlobalChannelImageMapping(1)
             
             if(selectedItem - 1 <= 0){
                 selectedItem = 0
@@ -791,31 +755,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
             }
             
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
-                if(totalCount > 0){
                 deletButton.hidden = false
                 addToButton.hidden = false
                 let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
                 downloadFullImageWhenTapThumb(dict, indexpaths: selectedItem,gestureIdentifier: 0)
-                }
-                else{
-                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){
-                        removeOverlay()
-                        addNoDataLabel()
-                    }
-                    else{
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.showOverlay()
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                        })
-                    }
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.fullScrenImageView.image = UIImage()
-                        self.fullScreenZoomView.image = UIImage()
-                        self.deletButton.hidden = true
-                        self.addToButton.hidden = true
-                    })
-                }
             }
             else{
                 if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){
@@ -825,12 +768,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 else{
                     showOverlay()
                 }
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.fullScrenImageView.image = UIImage()
-                    self.fullScreenZoomView.image = UIImage()
-                    self.deletButton.hidden = true
-                    self.addToButton.hidden = true
-                })
+                fullScrenImageView.image = UIImage()
+                fullScreenZoomView.image = UIImage()
+                deletButton.hidden = true
+                addToButton.hidden = true
             }
             photoThumpCollectionView.reloadData()
         }
@@ -997,7 +938,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                 self.playerViewController.player = player1
                 self.presentViewController(self.playerViewController, animated: true, completion: {
                     self.playerViewController.player!.play()
-                    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
+                    NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController1.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
                 })
             })
         }
@@ -1097,7 +1038,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
                     self.playerViewController.player = player1
                     self.presentViewController(self.playerViewController, animated: true, completion: {
                         self.playerViewController.player!.play()
-                        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
+                        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PhotoViewerViewController1.playerDidFinishPlaying(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: player1.currentItem)
                     })
                     
                 })
@@ -1466,7 +1407,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,NS
 
 //PRAGMA MARK:- Collection View Delegates
 
-extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout
+extension PhotoViewerViewController1:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {

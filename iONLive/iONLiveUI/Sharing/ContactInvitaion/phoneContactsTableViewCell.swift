@@ -1,20 +1,13 @@
 
 import UIKit
 
-class ContactListTableViewCell: UITableViewCell {
+class phoneContactsTableViewCell: UITableViewCell {
 
-    static let identifier = "ContactListTableViewCell"
-    
+    static let identifier = "phoneContactsTableViewCell"
+
     @IBOutlet var contactProfileImage: UIImageView!
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
-    
-    var loadingOverlay: UIView?
-    
-    @IBAction func contactSharingButtonClicked(sender: AnyObject) {
-        let tag = sender.tag
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshContactListTableView", object:tag)
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,5 +18,9 @@ class ContactListTableViewCell: UITableViewCell {
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
+    
+    @IBAction func phoneContactsSharingButtonClicked(sender: AnyObject) {
+        let tag = sender.tag
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshphoneContactsListTableView", object:tag)
+    }
 }

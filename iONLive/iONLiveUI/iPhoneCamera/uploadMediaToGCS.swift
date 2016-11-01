@@ -392,12 +392,15 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
             {
                 for j in 0 ..< GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]!.count
                 {
-                    indexOfJ = j
-                    let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]![j][mediaIdKey] as! String
-                    if mediaId == mediaIdChk
+                    if j < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]!.count
                     {
-                        chkFlag = true
-                        break
+                        indexOfJ = j
+                        let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]![j][mediaIdKey] as! String
+                        if mediaId == mediaIdChk
+                        {
+                            chkFlag = true
+                            break
+                        }
                     }
                 }
                 

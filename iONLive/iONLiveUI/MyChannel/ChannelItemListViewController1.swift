@@ -1,7 +1,7 @@
 
 import UIKit
 
-class ChannelItemListViewController: UIViewController {
+class ChannelItemListViewController1: UIViewController {
     
     @IBOutlet weak var channelTitleLabel: UILabel!
     
@@ -66,7 +66,7 @@ class ChannelItemListViewController: UIViewController {
         selectionFlag = false
         self.channelItemCollectionView.alwaysBounceVertical = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController1.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
         showOverlay()
         totalCount = 0
@@ -96,8 +96,7 @@ class ChannelItemListViewController: UIViewController {
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
                         if(totalCount < 18){
                             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                self.customView.stopAnimationg()
-                                self.customView.removeFromSuperview()
+                                self.channelItemCollectionView.userInteractionEnabled = false
                                 self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
                                 self.channelItemCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
@@ -136,6 +135,7 @@ class ChannelItemListViewController: UIViewController {
             else{
                 self.cancelButton.hidden = false
             }
+            self.channelItemCollectionView.userInteractionEnabled = true
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.removeOverlay()
@@ -168,6 +168,7 @@ class ChannelItemListViewController: UIViewController {
         self.channelItemCollectionView.alpha = 1.0
         customView.stopAnimationg()
         customView.removeFromSuperview()
+        channelItemCollectionView.userInteractionEnabled = true
     }
     
     override func didReceiveMemoryWarning() {
@@ -182,7 +183,7 @@ class ChannelItemListViewController: UIViewController {
         customView.stopAnimationg()
         customView.removeFromSuperview()
         channelItemCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
-        channelItemCollectionView.infiniteScrollIndicatorMargin = 40
+        channelItemCollectionView.infiniteScrollIndicatorMargin = 50
         channelItemCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
             if self!.totalCount > 0
             {
@@ -360,6 +361,7 @@ class ChannelItemListViewController: UIViewController {
             channelIds.append(Int(channelId)!)
             showOverlay()
             selectionButton.hidden = true
+//            downloadImagesFromGlobalChannelImageMapping(selected.count)
             imageUploadManger.deleteMediasByChannel(userId, accessToken: accessToken, mediaIds: selected, channelId: channelIds, success: { (response) -> () in
                 self.authenticationSuccessHandlerDelete(response)
                 }, failure: { (error, message) -> () in
@@ -370,7 +372,9 @@ class ChannelItemListViewController: UIViewController {
     
     func authenticationSuccessHandlerDelete(response:AnyObject?)
     {
-        removeOverlay()
+//        if(selected.count < 6){
+            removeOverlay()
+//        }
         if (response as? [String: AnyObject]) != nil
         {
             GlobalChannelToImageMapping.sharedInstance.deleteMediasFromChannel(channelId, mediaIds: selected)
@@ -383,49 +387,26 @@ class ChannelItemListViewController: UIViewController {
             selectionFlag = false
             
             if(totalCount == GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count){
-                
+               
             }
             else{
-                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
-                    if(totalCount < 18 && totalCount > 0){
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                            self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
-                            self.channelItemCollectionView.addSubview(self.customView)
-                            self.customView.startAnimating()
-                        })
-                    }
-                    else if totalCount == 0
-                    {
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                            self.showOverlay()
-                            self.selectionButton.hidden = true
-                        })
-                    }
-                    else{
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.customView.stopAnimationg()
-                            self.customView.removeFromSuperview()
-                            self.removeOverlay()
-                            self.selectionButton.hidden = false
-                        })
+                if(selected.count > 3){
+                    if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
+                        if(totalCount < 18){
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                 self.channelItemCollectionView.userInteractionEnabled = false
+                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemCollectionView.layer.frame.width/2 - 20, self.channelItemCollectionView.layer.frame.height - 100, 40, 40))
+                                self.channelItemCollectionView.addSubview(self.customView)
+                                self.customView.startAnimating()
+                            })
+                        }
                     }
                 }
                 else{
                     customView.stopAnimationg()
                     customView.removeFromSuperview()
                 }
-                if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
-                    if(totalCount < 18){
-                        downloadImagesFromGlobalChannelImageMapping(18)
-                    }
-                    else{
-                        downloadImagesFromGlobalChannelImageMapping(selected.count)
-                    }
-                }
+                downloadImagesFromGlobalChannelImageMapping(selected.count)
             }
             
             selectedArray.removeAll()
@@ -459,8 +440,6 @@ class ChannelItemListViewController: UIViewController {
         cancelButton.hidden = true
         backButton.hidden = false
         bottomView.hidden = true
-        downloadingFlag = false
-        selectionFlag = false
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -497,7 +476,7 @@ class ChannelItemListViewController: UIViewController {
     }
 }
 
-extension ChannelItemListViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
+extension ChannelItemListViewController1 : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
@@ -622,9 +601,9 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                     imageForProfile = mediaImageFromFile!
                 }
                 else{
-                    let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
-                    imageForProfile = mediaImageFromFile
+                     let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
+                     imageForProfile = mediaImageFromFile
                 }
                 
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
@@ -640,16 +619,6 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                     }
                 })
             }
-        }
-    }
-}
-
-extension ChannelItemListViewController: UIScrollViewDelegate
-{
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        if(totalCount > 0){
-            self.customView.stopAnimationg()
-            self.customView.removeFromSuperview()
         }
     }
 }

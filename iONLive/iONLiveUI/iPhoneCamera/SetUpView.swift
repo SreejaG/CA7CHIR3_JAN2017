@@ -39,7 +39,6 @@ import UIKit
     {
         if let json = response as? [String: AnyObject]
         {
-            print(json)
             channelDetails = json as NSDictionary
             let qualityOfServiceClass = QOS_CLASS_BACKGROUND
             let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
@@ -68,29 +67,30 @@ import UIKit
         let sizeThumb = CGSizeMake(30,30)
         for i in 0 ..< userThumbnailImage.count
         {
-            var image = UIImage()
-            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
-            print(thumbUrl)
-            if(thumbUrl != "")
+            if i < userThumbnailImage.count
             {
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                if let data = NSData(contentsOfURL: url){
-                    var convertImage : UIImage = UIImage()
-                    let imageDetailsData = (data as NSData?)!
-                    convertImage = UIImage(data: imageDetailsData)!
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFillSize: sizeThumb)
-                    image = imageAfterConversionThumbnail
+                var image = UIImage()
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + (userThumbnailImage[i]["user_name"] as! String)
+                if(thumbUrl != "")
+                {
+                    let url: NSURL = convertStringtoURL(thumbUrl)
+                    if let data = NSData(contentsOfURL: url){
+                        var convertImage : UIImage = UIImage()
+                        let imageDetailsData = (data as NSData?)!
+                        convertImage = UIImage(data: imageDetailsData)!
+                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFillSize: sizeThumb)
+                        image = imageAfterConversionThumbnail
+                    }
+                    else{
+                        image = UIImage(named: "dummyUser")!
+                    }
                 }
                 else{
                     image = UIImage(named: "dummyUser")!
                 }
+                userImages.append(image)
             }
-            else{
-                image = UIImage(named: "dummyUser")!
-            }
-            userImages.append(image)
         }
-        print(userImages)
         let controller = PhotoViewerInstance.iphoneCam as! IPhoneCameraViewController
         controller.loggedInDetails(channelDetails as [NSObject : AnyObject], userImages: userImages as NSArray as! [UIImage])
     }
@@ -131,7 +131,6 @@ import UIKit
             else{
                 countint = 0
             }
-         print("liked Count ----\(countint)")
             NSUserDefaults.standardUserDefaults().setValue("\(countint)", forKey: "likeCountFlag")
             obj.successFromSetUpView("\(countint)")
         }

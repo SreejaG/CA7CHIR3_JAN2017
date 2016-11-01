@@ -253,4 +253,27 @@ class FileManagerViewController: UIViewController {
         }
         return hourDuration
     }
+    
+    func getProfileImage(profileNameURL: String) -> UIImage
+    {
+        var profileImage : UIImage = UIImage()
+        do {
+            let url: NSURL = convertStringtoURL(profileNameURL)
+            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
+            if let imageData = data as NSData? {
+                if let mediaImage1 = UIImage(data: imageData)
+                {
+                    profileImage = mediaImage1
+                }
+            }
+            else
+            {
+                profileImage = UIImage(named: "dummyUser")!
+            }
+            
+        } catch {
+            profileImage = UIImage(named: "dummyUser")!
+        }
+        return profileImage
+    }
 }

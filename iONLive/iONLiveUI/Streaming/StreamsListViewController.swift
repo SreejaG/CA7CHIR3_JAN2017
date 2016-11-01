@@ -910,8 +910,6 @@ class StreamsListViewController: UIViewController{
             }
             self.streamListCollectionView.reloadData()
         })
-        print(mediaAndLiveArray)
-        print(GlobalStreamList)
     }
     
     func streamUpdate(notif: NSNotification)
@@ -1346,7 +1344,6 @@ class StreamsListViewController: UIViewController{
         }
     }
     deinit {
-        print("streamlistview controller deinit")
     }
 }
 

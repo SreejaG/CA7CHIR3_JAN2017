@@ -178,7 +178,6 @@ class iONCamPictureAPIViewController: UIViewController {
     //PRAGMA MARK:- API response Handlers
     func iONLiveCamGetPictureSuccessHandler(response:AnyObject?)
     {
-        print("entered download pic")
         self.removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -202,7 +201,6 @@ class iONCamPictureAPIViewController: UIViewController {
     func iONLiveCamGetPictureFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }

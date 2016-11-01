@@ -191,7 +191,6 @@ class GlobalDataChannelList: NSObject {
     
     func autoDownloadChannelDetails()
     {
-        print(globalChannelDataSource)
         GlobalChannelToImageMapping.sharedInstance.globalData(globalChannelDataSource)
     }
     
@@ -217,11 +216,13 @@ class GlobalDataChannelList: NSObject {
             let sharedIndicator = element[sharedTemporaryKey] as! Int
             for i in 0 ..< globalChannelDataSource.count
             {
-                let chanelId = globalChannelDataSource[i][channelIdKey] as! String
-                if channelIdChk == chanelId
-                {
-                    globalChannelDataSource[i][sharedOriginalKey] = sharedIndicator
-                    globalChannelDataSource[i][sharedTemporaryKey] = sharedIndicator
+                if(i < globalChannelDataSource.count){
+                    let chanelId = globalChannelDataSource[i][channelIdKey] as! String
+                    if channelIdChk == chanelId
+                    {
+                        globalChannelDataSource[i][sharedOriginalKey] = sharedIndicator
+                        globalChannelDataSource[i][sharedTemporaryKey] = sharedIndicator
+                    }
                 }
             }
         }

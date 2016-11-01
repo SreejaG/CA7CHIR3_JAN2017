@@ -271,45 +271,48 @@ class MyChannelNotificationViewController: UIViewController {
         self.NoDatalabelFormyChanelImageList.text = "No Notifications Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
-
+    
     func downloadMediaFromGCS(operationObj: NSBlockOperation){
         fulldataSource.removeAll()
         for i in 0 ..< dataSource.count
         {
-            if operationObj.cancelled == true{
-                return
-            }
-            var mediaImage : UIImage?
-            var profileImage : UIImage?
-            
-            let profileImageName = dataSource[i][profileImageKey] as! String
-            if(profileImageName != "")
+            if i < dataSource.count
             {
-                profileImage = createProfileImage(profileImageName)
-            }
-            else{
-                profileImage = UIImage(named: "dummyUser")
-            }
-            
-            let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
-            if(mediaThumbUrl != "nomedia"){
-                if(mediaThumbUrl != "")
+                if operationObj.cancelled == true{
+                    return
+                }
+                var mediaImage : UIImage?
+                var profileImage : UIImage?
+                
+                let profileImageName = dataSource[i][profileImageKey] as! String
+                if(profileImageName != "")
                 {
-                    mediaImage = createMediaThumb(mediaThumbUrl)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                
+                let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
+                if(mediaThumbUrl != "nomedia"){
+                    if(mediaThumbUrl != "")
+                    {
+                        mediaImage = createMediaThumb(mediaThumbUrl)
+                    }
+                    else{
+                        mediaImage = UIImage()
+                    }
                 }
                 else{
                     mediaImage = UIImage()
                 }
+                self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.removeOverlay()
+                    self.NotificationTableView.reloadData()
+                })
             }
-            else{
-                mediaImage = UIImage()
-            }
-            self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
-            
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.removeOverlay()
-                self.NotificationTableView.reloadData()
-            })
         }
     }
     
@@ -334,29 +337,6 @@ class MyChannelNotificationViewController: UIViewController {
             mediaImage = UIImage(named: "thumb12")!
         }
         return mediaImage
-    }
-    
-    func createProfileImage(profileName: String) -> UIImage
-    {
-        var profileImage : UIImage = UIImage()
-        do {
-            let url: NSURL = convertStringtoURL(profileName)
-            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
-            if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
-                {
-                    profileImage = mediaImage1
-                }
-            }
-            else
-            {
-                profileImage = UIImage(named: "dummyUser")!
-            }
-            
-        } catch {
-            profileImage = UIImage(named: "dummyUser")!
-        }
-        return profileImage
     }
     
     func  getTimeDifference(dateStr:String) -> String {

@@ -188,21 +188,23 @@ class GlobalChannelToImageMapping: NSObject {
             
             for j in 0 ..< GlobalChannelImageDict[chanelId]!.count
             {
-                let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
-                for element in localDataSource
+                if j < GlobalChannelImageDict[chanelId]!.count
                 {
-                    let mediaIdFromLocal = element[mediaIdKey] as! String
-                    if mediaIdChk == mediaIdFromLocal
+                    let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
+                    for element in localDataSource
                     {
-                        if element[tImageKey] != nil
+                        let mediaIdFromLocal = element[mediaIdKey] as! String
+                        if mediaIdChk == mediaIdFromLocal
                         {
-                            GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
+                            if element[tImageKey] != nil
+                            {
+                                GlobalChannelImageDict[chanelId]![j][tImageKey] = element[tImageKey] as! UIImage
+                            }
                         }
                     }
                 }
             }
             localDataSource.removeAll()
-            print(GlobalChannelImageDict)
             NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
         }
     }
@@ -253,38 +255,41 @@ class GlobalChannelToImageMapping: NSObject {
     {
         for j in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
         {
-            let chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][channelIdKey] as! String
-            let sharedInd = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][sharedOriginalKey] as! Bool
-            let chanName = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][channelNameKey] as! String
-            
-            if(sharedInd == true || chanName == "Archive")
+            if j < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
             {
-                if GlobalChannelImageDict[chanId] != nil
+                let chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][channelIdKey] as! String
+                let sharedInd = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][sharedOriginalKey] as! Bool
+                let chanName = GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][channelNameKey] as! String
+                
+                if(sharedInd == true || chanName == "Archive")
                 {
-                    GlobalChannelImageDict[chanId]!.append(dataSourceRow)
-                    
-                    GlobalChannelImageDict[chanId]!.sortInPlace({ p1, p2 in
-                        let time1 = Int(p1[mediaIdKey] as! String)
-                        let time2 = Int(p2[mediaIdKey] as! String)
-                        return time1 > time2
-                    })
-                    let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][latestMediaIdKey] = mediaIdForFilePath
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
-                    
-                    if chanName == "Archive"
+                    if GlobalChannelImageDict[chanId] != nil
                     {
-                        var archCount : Int = Int()
-                        if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
+                        GlobalChannelImageDict[chanId]!.append(dataSourceRow)
+                        
+                        GlobalChannelImageDict[chanId]!.sortInPlace({ p1, p2 in
+                            let time1 = Int(p1[mediaIdKey] as! String)
+                            let time2 = Int(p2[mediaIdKey] as! String)
+                            return time1 > time2
+                        })
+                        let mediaIdForFilePath = GlobalChannelImageDict[chanId]![0][mediaIdKey] as! String
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][totalMediaKey] = "\(GlobalChannelImageDict[chanId]!.count)"
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][latestMediaIdKey] = mediaIdForFilePath
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[j][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
+                        
+                        if chanName == "Archive"
                         {
-                            archCount = archivetotal as! Int
+                            var archCount : Int = Int()
+                            if let archivetotal =  NSUserDefaults.standardUserDefaults().valueForKey(ArchiveCount)
+                            {
+                                archCount = archivetotal as! Int
+                            }
+                            else{
+                                archCount = 0
+                            }
+                            archCount = archCount + 1
+                            NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
                         }
-                        else{
-                            archCount = 0
-                        }
-                        archCount = archCount + 1
-                        NSUserDefaults.standardUserDefaults().setInteger( archCount, forKey: ArchiveCount)
                     }
                 }
             }
@@ -303,46 +308,52 @@ class GlobalChannelToImageMapping: NSObject {
     {
         for i in 0 ..< channelSelectedDict.count
         {
-            let selectedChanelId = channelSelectedDict[i][channelIdKey] as! String
-            var chkFlag = false
-            var dataRowOfSelectedMediaArray : [String: AnyObject] = [String:AnyObject]()
-            
-            for element in mediaDetailOfSelectedChannel
+            if i < channelSelectedDict.count
             {
-                dataRowOfSelectedMediaArray = element
-                let mediaIdChk = element[mediaIdKey] as! String
-                for elementGlob in GlobalChannelImageDict[selectedChanelId]!
+                let selectedChanelId = channelSelectedDict[i][channelIdKey] as! String
+                var chkFlag = false
+                var dataRowOfSelectedMediaArray : [String: AnyObject] = [String:AnyObject]()
+                
+                for element in mediaDetailOfSelectedChannel
                 {
-                    let mediaId = elementGlob[mediaIdKey] as! String
-                    if mediaIdChk == mediaId
+                    dataRowOfSelectedMediaArray = element
+                    let mediaIdChk = element[mediaIdKey] as! String
+                    for elementGlob in GlobalChannelImageDict[selectedChanelId]!
                     {
-                        chkFlag = true
-                        break
+                        let mediaId = elementGlob[mediaIdKey] as! String
+                        if mediaIdChk == mediaId
+                        {
+                            chkFlag = true
+                            break
+                        }
+                        else{
+                            chkFlag = false
+                        }
                     }
-                    else{
-                        chkFlag = false
+                    if chkFlag == false
+                    {
+                        GlobalChannelImageDict[selectedChanelId]!.append(dataRowOfSelectedMediaArray)
                     }
                 }
-                if chkFlag == false
+                GlobalChannelImageDict[selectedChanelId]!.sortInPlace({ p1, p2 in
+                    let time1 = Int(p1[mediaIdKey] as! String)
+                    let time2 = Int(p2[mediaIdKey] as! String)
+                    return time1 > time2
+                })
+                
+                for k in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
                 {
-                    GlobalChannelImageDict[selectedChanelId]!.append(dataRowOfSelectedMediaArray)
-                }
-            }
-            GlobalChannelImageDict[selectedChanelId]!.sortInPlace({ p1, p2 in
-                let time1 = Int(p1[mediaIdKey] as! String)
-                let time2 = Int(p2[mediaIdKey] as! String)
-                return time1 > time2
-            })
-            
-            for k in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
-            {
-                let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
-                if chanIdChk == selectedChanelId
-                {
-                    let mediaIdForFilePath = GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][latestMediaIdKey] = mediaIdForFilePath
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
+                    if k < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+                    {
+                        let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][channelIdKey] as! String
+                        if chanIdChk == selectedChanelId
+                        {
+                            let mediaIdForFilePath = GlobalChannelImageDict[selectedChanelId]![0][mediaIdKey] as! String
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][totalMediaKey] = "\(GlobalChannelImageDict[selectedChanelId]!.count)"
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][latestMediaIdKey] = mediaIdForFilePath
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[k][tImageKey] = downloadLatestMedia(mediaIdForFilePath)
+                        }
+                    }
                 }
             }
         }
@@ -411,23 +422,28 @@ class GlobalChannelToImageMapping: NSObject {
         
         for i in 0 ..< mediaIds.count
         {
-            let selectedMediaId = mediaIds[i] as! String
-            var chkFlag = false
-            var indexOfJ = 0
-            
-            for j in 0 ..< GlobalChannelImageDict[chanelId]!.count
-            {
-                indexOfJ = j
-                let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
-                if mediaIdChk == selectedMediaId
+            if(i < mediaIds.count){
+                let selectedMediaId = mediaIds[i] as! String
+                var chkFlag = false
+                var indexOfJ = 0
+                
+                for j in 0 ..< GlobalChannelImageDict[chanelId]!.count
                 {
-                    chkFlag = true
-                    break
+                    if(j < GlobalChannelImageDict[chanelId]!.count){
+                        
+                        indexOfJ = j
+                        let mediaIdChk = GlobalChannelImageDict[chanelId]![j][mediaIdKey] as! String
+                        if mediaIdChk == selectedMediaId
+                        {
+                            chkFlag = true
+                            break
+                        }
+                    }
                 }
-            }
-            if chkFlag == true
-            {
-                selectedIndex.append(indexOfJ)
+                if chkFlag == true
+                {
+                    selectedIndex.append(indexOfJ)
+                }
             }
         }
         if selectedIndex.count > 0
@@ -435,8 +451,10 @@ class GlobalChannelToImageMapping: NSObject {
             selectedIndex = selectedIndex.sort()
             for k in 0 ..< selectedIndex.count
             {
-                let indexToDelete = selectedIndex[k] - k
-                GlobalChannelImageDict[chanelId]!.removeAtIndex(indexToDelete)
+                if(k < selectedIndex.count){
+                    let indexToDelete = selectedIndex[k] - k
+                    GlobalChannelImageDict[chanelId]!.removeAtIndex(indexToDelete)
+                }
             }
             GlobalChannelImageDict[chanelId]!.sortInPlace({ p1, p2 in
                 let time1 = Int(p1[mediaIdKey] as! String)
@@ -477,8 +495,10 @@ class GlobalChannelToImageMapping: NSObject {
         let globalchannelIdList : Array = Array(GlobalChannelImageDict.keys)
         for i in 0 ..< globalchannelIdList.count
         {
-            let globalChanelId = globalchannelIdList[i]
-            deleteMediaFromParticularChannel(globalChanelId, mediaIds: mediaIds)
+            if(i < globalchannelIdList.count){
+                let globalChanelId = globalchannelIdList[i]
+                deleteMediaFromParticularChannel(globalChanelId, mediaIds: mediaIds)
+            }
         }
         NSUserDefaults.standardUserDefaults().setInteger(GlobalChannelImageDict[chanelId]!.count, forKey: ArchiveCount)
     }
@@ -496,11 +516,14 @@ class GlobalChannelToImageMapping: NSObject {
         if(mediaUploadFailedDict.count > 0){
             for j in 0 ..< mediaUploadFailedDict.count
             {
-                let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
-                if mediaIdChk == mediaId
+                if j < mediaUploadFailedDict.count
                 {
-                    chkFlag = true
-                    break
+                    let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
+                    if mediaIdChk == mediaId
+                    {
+                        chkFlag = true
+                        break
+                    }
                 }
             }
             if(chkFlag == false){
@@ -518,17 +541,49 @@ class GlobalChannelToImageMapping: NSObject {
         if(mediaUploadFailedDict.count > 0){
             for j in 0 ..< mediaUploadFailedDict.count
             {
-                let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
-                if mediaIdChk == mediaId
+                if j < mediaUploadFailedDict.count
                 {
-                    chkFlag = true
-                    indexChk = j
-                    break
+                    let mediaIdChk = mediaUploadFailedDict[j][mediaIdKey] as! String
+                    if mediaIdChk == mediaId
+                    {
+                        chkFlag = true
+                        indexChk = j
+                        break
+                    }
                 }
             }
             if(chkFlag == true){
                mediaUploadFailedDict.removeAtIndex(indexChk)
             }
         }
+    }
+    
+    func cleanMyDayBasedOnTimeStamp(MyDayChanelId: String) {
+        if(GlobalChannelImageDict.count > 0){
+            if(GlobalChannelImageDict[MyDayChanelId]?.count > 0){
+                GlobalChannelImageDict[MyDayChanelId]?.removeAll()
+            }
+        }
+        
+        for p in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+        {
+            if(p < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
+                let chanIdChk = GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][channelIdKey] as! String
+                if MyDayChanelId == chanIdChk
+                {
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][tImageKey] = UIImage(named: "thumb12")
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][latestMediaIdKey] = ""
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource[p][totalMediaKey] = "\(GlobalChannelImageDict[MyDayChanelId]!.count)"
+                }
+            }
+        }
+        
+        GlobalDataChannelList.sharedInstance.globalChannelDataSource.sortInPlace({ p1, p2 in
+            let time1 = p1[ChannelCreatedTimeKey] as! String
+            let time2 = p2[ChannelCreatedTimeKey] as! String
+            return time1 > time2
+        })
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
     }
 }

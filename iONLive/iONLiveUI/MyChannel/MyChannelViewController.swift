@@ -12,9 +12,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     @IBOutlet var SearchBarBottomConstraint: NSLayoutConstraint!
     @IBOutlet var tableviewBottomConstraint: NSLayoutConstraint!
     
-    @IBOutlet var notifImage: UIButton!
-    @IBOutlet var channelCreateButton: UIButton!
-    
     @IBOutlet var addChannelView: UIView!
     
     @IBOutlet var channelTextField: UITextField!
@@ -23,6 +20,8 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     @IBOutlet var channelUpdateCancelButton: UIButton!
     @IBOutlet var channelAddButton: UIButton!
     @IBOutlet var backButton: UIButton!
+    @IBOutlet var notifImage: UIButton!
+    @IBOutlet var channelCreateButton: UIButton!
     
     static let identifier = "MyChannelViewController"
     
@@ -50,7 +49,6 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         defaults.setValue("", forKey: "editedValue")
         
         channelUpdateSaveButton.hidden = true
@@ -262,9 +260,12 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                 let chaId = searchDataSource[longPressIndexPathRow][channelIdKey] as! String
                 for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
                 {
-                    if(GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String == chaId)
+                    if i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
                     {
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] = cellChannelUpdatedNameStr
+                        if(GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String == chaId)
+                        {
+                            GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] = cellChannelUpdatedNameStr
+                        }
                     }
                 }
             }
@@ -430,11 +431,14 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                     
                     for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
                     {
-                        let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
-                        if(orgChannel == channelId){
-                            deleteFlag = true
-                            deleteIndexOfI = i
-                            break
+                        if i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+                        {
+                            let orgChannel = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
+                            if(orgChannel == channelId){
+                                deleteFlag = true
+                                deleteIndexOfI = i
+                                break
+                            }
                         }
                     }
                     if deleteFlag == true

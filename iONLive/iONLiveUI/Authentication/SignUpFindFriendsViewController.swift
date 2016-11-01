@@ -145,7 +145,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 currentContactImage = UIImage(data: currentContactImageData)!
             }
             else{
-                currentContactImage = UIImage(named: "avatar")!
+                currentContactImage = UIImage(named: "dummyUser")!
             }
             
             if(phoneNumber != ""){

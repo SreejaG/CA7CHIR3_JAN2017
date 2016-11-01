@@ -332,6 +332,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alert("Invalid GCS", message: "GCS name invalid")
     }
     
+    func uploadFailed()
+    {
+        alert("Deletion Failed", message: "Deleting media before upload")
+    }
+
     func invalidBucket()
     {
         alert("Invalid Bucket", message: "Bucket name invalid")
@@ -486,6 +491,9 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
             break
         case"MEDIA001":
             invalidGCSName()
+            break
+        case"MEDIA004":
+            uploadFailed()
             break
         default:
             alert("Error", message: "\(errorCode)")

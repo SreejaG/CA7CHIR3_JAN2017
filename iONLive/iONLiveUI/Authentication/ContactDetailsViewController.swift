@@ -23,6 +23,7 @@ class ContactDetailsViewController: UIViewController {
     let imageKey = "profile_image"
     let selectionKey = "selection"
     let inviteKey = "invitationKey"
+    let imageURLKey = "imageUrl"
     
     static let identifier = "ContactDetailsViewController"
     
@@ -35,6 +36,8 @@ class ContactDetailsViewController: UIViewController {
     @IBOutlet var contactSearchBar: UISearchBar!
     
     @IBOutlet var contactTableView: UITableView!
+    
+    @IBOutlet var tableBottomConstraint: NSLayoutConstraint!
     
     @IBAction func gestureTapped(sender: AnyObject) {
         view.endEditing(true)
@@ -66,6 +69,30 @@ class ContactDetailsViewController: UIViewController {
         self.contactTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
     }
     
+    func addKeyboardObservers()
+    {
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
+        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+    }
+    
+    func keyboardDidShow(notification:NSNotification)
+    {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        if tableBottomConstraint.constant == 0
+        {
+            self.tableBottomConstraint.constant = self.tableBottomConstraint.constant + keyboardFrame.size.height
+        }
+    }
+    
+    func keyboardDidHide()
+    {
+        if tableBottomConstraint.constant != 0
+        {
+            self.tableBottomConstraint.constant = 0
+        }
+    }
+    
     @IBAction func didTapDoneButton(sender: AnyObject) {
         doneButton.hidden = true
         contactTableView.reloadData()
@@ -75,11 +102,14 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            for element in dataSource![i]{
-                let selected = element["tempSelected"] as! Int
-                if(selected == 1){
-                    let number = element[phoneKey] as! String
-                    contactsArray.addObject(number)
+            if i < dataSource?.count
+            {
+                for element in dataSource![i]{
+                    let selected = element["tempSelected"] as! Int
+                    if(selected == 1){
+                        let number = element[phoneKey] as! String
+                        contactsArray.addObject(number)
+                    }
                 }
             }
         }
@@ -145,10 +175,15 @@ class ContactDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
             for i in 0 ..< dataSource!.count
             {
-                for j in 0 ..< dataSource![i].count
+                if i < dataSource?.count
                 {
-                    let selected = dataSource![i][j]["orgSelected"] as! Int
-                    dataSource![i][j]["tempSelected"] = selected
+                    for j in 0 ..< dataSource![i].count
+                    {
+                        if(j < dataSource![i].count){
+                            let selected = dataSource![i][j]["orgSelected"] as! Int
+                            dataSource![i][j]["tempSelected"] = selected
+                        }
+                    }
                 }
             }
             contactTableView.reloadData()
@@ -179,10 +214,16 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            for j in 0 ..< dataSource![i].count
+            if i < dataSource?.count
             {
-                let selected = dataSource![i][j]["orgSelected"] as! Int
-                dataSource![i][j]["tempSelected"] = selected
+                for j in 0 ..< dataSource![i].count
+                {
+                    if j < dataSource![i].count
+                    {
+                        let selected = dataSource![i][j]["orgSelected"] as! Int
+                        dataSource![i][j]["tempSelected"] = selected
+                    }
+                }
             }
         }
         contactTableView.reloadData()
@@ -204,6 +245,8 @@ class ContactDetailsViewController: UIViewController {
         dataSource?.removeAll()
         appContactsArr.removeAll()
         searchDataSource?.removeAll()
+        
+        addKeyboardObservers()
         
         userId = defaults.valueForKey(userLoginIdKey) as! String
         accessToken = defaults.valueForKey(userAccessTockenKey) as! String
@@ -243,29 +286,99 @@ class ContactDetailsViewController: UIViewController {
         {
             appContactsArr.removeAll()
             let responseArr = json["contactListOfUser"] as! [AnyObject]
-            var contactImage : UIImage = UIImage()
+            let contactImage : UIImage = UIImage(named: "dummyUser")!
             for element in responseArr{
                 
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                let url: NSURL = convertStringtoURL(thumbUrl)
-                if let data = NSData(contentsOfURL: url){
-                    let imageDetailsData = (data as NSData?)!
-                    contactImage = UIImage(data: imageDetailsData)!
-                }
-                else{
-                    contactImage = UIImage(named: "dummyUser")!
-                }
-                appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageKey:contactImage, "orgSelected":0, "tempSelected":0])
+//                let url: NSURL = convertStringtoURL(thumbUrl)
+//                if let data = NSData(contentsOfURL: url){
+//                    let imageDetailsData = (data as NSData?)!
+//                    contactImage = UIImage(data: imageDetailsData)!
+//                }
+//                else{
+//                    contactImage = UIImage(named: "dummyUser")!
+//                }
+                appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageURLKey:thumbUrl, "orgSelected":0, "tempSelected":0, imageKey:contactImage])
             }
             setContactDetails()
+            
+            if(appContactsArr.count > 0){
+                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
+                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+                dispatch_async(backgroundQueue, {
+                    self.downloadMediaFromGCS()
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    })
+                })
+            }
         }
         else
         {
             ErrorManager.sharedInstance.addContactError()
         }
     }
+    
+    func downloadMediaFromGCS(){
+        var localArray = [[String:AnyObject]]()
+        for i in 0 ..< dataSource![0].count
+        {
+            localArray.append(dataSource![0][i])
+        }
+        for i in 0 ..< localArray.count
+        {
+            if(i < localArray.count){
+                var profileImage : UIImage?
+                let profileImageName = localArray[i][imageURLKey] as! String
+                if(profileImageName != "")
+                {
+//                    profileImage = createProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                localArray[i][imageKey] = profileImage
+            }
+        }
+        for j in 0 ..< dataSource![0].count
+        {
+            if j < dataSource![0].count
+            {
+                let userChk = dataSource![0][j][nameKey] as! String
+                for element in localArray
+                {
+                    let userLocalChk = element[nameKey] as! String
+                    if userChk == userLocalChk
+                    {
+                        if element[imageKey] != nil
+                        {
+                            dataSource![0][j][imageKey] = element[imageKey] as! UIImage
+                        }
+                    }
+                }
+            }
+        }
+        localArray.removeAll()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.contactTableView.reloadData()
+        })
+    }
+    
+//    func createProfileImage(profileName: String) -> UIImage
+//    {
+//        var profileImage : UIImage = UIImage()
+//        let url: NSURL = convertStringtoURL(profileName)
+//        if let data = NSData(contentsOfURL: url){
+//            let imageDetailsData = (data as NSData?)!
+//            profileImage = UIImage(data: imageDetailsData)!
+//        }
+//        else{
+//            profileImage = UIImage(named: "dummyUser")!
+//        }
+//        return profileImage
+//    }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
@@ -305,21 +418,27 @@ class ContactDetailsViewController: UIViewController {
         var Cflag : Bool = false
         for i in 0 ..< contactDataSource.count
         {
-            Cflag = false
-            let contactNumber = contactDataSource[i]["mobile_no"] as! String
-            for j in 0 ..< appContactsArr.count
+            if i < contactDataSource.count
             {
-                let appNumber = appContactsArr[j]["mobile_no"] as! String
-                if(contactNumber == appNumber) {
-                    Cflag = true
-                    break
+                Cflag = false
+                let contactNumber = contactDataSource[i]["mobile_no"] as! String
+                for j in 0 ..< appContactsArr.count
+                {
+                    if j < appContactsArr.count
+                    {
+                        let appNumber = appContactsArr[j]["mobile_no"] as! String
+                        if(contactNumber == appNumber) {
+                            Cflag = true
+                            break
+                        }
+                        else{
+                            Cflag = false
+                        }
+                    }
                 }
-                else{
-                    Cflag = false
+                if(Cflag == false){
+                    contactDummy.append(contactDataSource[i])
                 }
-            }
-            if(Cflag == false){
-                contactDummy.append(contactDataSource[i])
             }
         }
         contactDataSource.removeAll()
@@ -345,33 +464,42 @@ class ContactDetailsViewController: UIViewController {
         let row : Int = dict["rowKey"]!
         if(searchActive)
         {
-            let selectedValue =  searchDataSource![section][row]["tempSelected"] as! Int
-            if(selectedValue == 1)
+            if searchDataSource![section].count > row
             {
-                searchDataSource![section][row]["tempSelected"] = 0
-            }
-            else
-            {
-                searchDataSource![section][row]["tempSelected"] = 1
-            }
-            let selecteduserId =  searchDataSource![section][row][nameKey] as! String
-            for j in 0 ..< dataSource![section].count
-            {
-                let dataSourceUserId = dataSource![section][j][nameKey] as! String
-                if(selecteduserId == dataSourceUserId)
+                let selectedValue =  searchDataSource![section][row]["tempSelected"] as! Int
+                if(selectedValue == 1)
                 {
-                    dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                    searchDataSource![section][row]["tempSelected"] = 0
+                }
+                else
+                {
+                    searchDataSource![section][row]["tempSelected"] = 1
+                }
+                let selecteduserId =  searchDataSource![section][row][nameKey] as! String
+                for j in 0 ..< dataSource![section].count
+                {
+                    if j < dataSource![section].count
+                    {
+                        let dataSourceUserId = dataSource![section][j][nameKey] as! String
+                        if(selecteduserId == dataSourceUserId)
+                        {
+                            dataSource![section][j]["tempSelected"] = searchDataSource![section][row]["tempSelected"]
+                        }
+                    }
                 }
             }
         }
         else
         {
-            let selectedValue =  dataSource![section][row]["tempSelected"] as! Int
-            if(selectedValue == 1){
-                dataSource![section][row]["tempSelected"] = 0
-            }
-            else{
-                dataSource![section][row]["tempSelected"] = 1
+            if dataSource![section].count > row
+            {
+                let selectedValue =  dataSource![section][row]["tempSelected"] as! Int
+                if(selectedValue == 1){
+                    dataSource![section][row]["tempSelected"] = 0
+                }
+                else{
+                    dataSource![section][row]["tempSelected"] = 1
+                }
             }
         }
         contactTableView.reloadData()
@@ -504,7 +632,13 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
 
 extension ContactDetailsViewController: UISearchBarDelegate{
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchActive = true;
+        if searchBar.text != ""
+        {
+            searchActive = true
+        }
+        else{
+            searchActive = false
+        }
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {

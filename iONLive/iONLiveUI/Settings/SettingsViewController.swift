@@ -28,7 +28,7 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         
         accountOptions = [[optionTitle:"Edit profile", optionType : normalCell, accessryText:""],[optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"],[optionTitle:"Connect Accounts", optionType : normalCell, accessryText:""]]
         
-        supportOptions = [[optionTitle:"Help Center ", optionType : normalCell, accessryText:""],[optionTitle:"Report a Problem", optionType : normalCell, accessryText:""]]
+        supportOptions = [[optionTitle:"Help Center ", optionType : normalCell, accessryText:""],[optionTitle:"Report a Problem", optionType : normalCell, accessryText:""], [optionTitle:"App Info ", optionType : normalCell, accessryText:""]]
         
         dataSource = [cameraOptions,accountOptions,supportOptions]
         
@@ -199,8 +199,10 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 cell.selectionStyle = .None
                 if indexPath.row == 4 || indexPath.row == 7
                 {
+                    cell.userInteractionEnabled = true
                     cell.backgroundColor = UIColor.clearColor()
-
+                    cell.titlelabel.textColor = UIColor.blackColor()
+                    cell.titlelabel.alpha = 0.6
                     var switchStatus : Int = Int()
                     if indexPath.row == 4
                     {
@@ -217,6 +219,11 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                         cell.toggleCellSwitch.setOn(true, animated: false)
                     }
                 }
+                else{
+                    cell.userInteractionEnabled = false
+                    cell.titlelabel.textColor = UIColor.lightGrayColor()
+                    cell.titlelabel.alpha = 1.0
+                }
                 cell.cellDelegate = self
                 return cell
             }
@@ -225,14 +232,22 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                 let cell = tableView.dequeueReusableCellWithIdentifier("SettingsTableViewCell", forIndexPath:indexPath) as! SettingsTableViewCell
                 cell.titleLabel.text = cellDataSource[optionTitle]
                 cell.accessryLabel.text = cellDataSource[accessryText]
-                if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)) || ((indexPath.section == 1) && (indexPath.row == 1)))
+                cell.backgroundColor = UIColor.clearColor()
+                
+                if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)) || ((indexPath.section == 1) && (indexPath.row == 1)) || ((indexPath.section == 2) && (indexPath.row == 2)))
                 {
-                    cell.backgroundColor = UIColor.clearColor()
+                    cell.titleLabel.textColor = UIColor.blackColor()
+                    cell.accessryLabel.textColor = UIColor.blackColor()
+                    cell.titleLabel.alpha = 0.6
+                    cell.accessryLabel.alpha = 0.6
                     cell.userInteractionEnabled = true
                 }
                 else{
-                    cell.backgroundColor = UIColor.init(colorLiteralRed: 230/255, green: 230/255, blue: 230/255, alpha: 1)
                     cell.userInteractionEnabled = false
+                    cell.titleLabel.textColor = UIColor.lightGrayColor()
+                    cell.accessryLabel.textColor = UIColor.lightGrayColor()
+                    cell.titleLabel.alpha = 1.0
+                    cell.accessryLabel.alpha = 1.0
                 }
                 return cell
             }
@@ -294,10 +309,12 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             switch indexPath.row
             {
             case 0:
-                loadEditProfileView()
                 break
             case 1:
                 loadReportProblemView()
+                break
+            case 2:
+                loadAppInfoView()
                 break
             default:
                 break
@@ -309,13 +326,19 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     }
     func updateSwitchAtIndexPath(toggleSwitch: UISwitch)
     {
-        print(toggleSwitch.tag)
     }
     
     func loadReportProblemView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
         let reportVC = storyBoard.instantiateViewControllerWithIdentifier(ReportAProblemViewController.identifier) as! ReportAProblemViewController
+        self.navigationController?.pushViewController(reportVC, animated: true)
+    }
+    
+    func loadAppInfoView()
+    {
+        let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
+        let reportVC = storyBoard.instantiateViewControllerWithIdentifier(AppInfoViewController.identifier) as! AppInfoViewController
         self.navigationController?.pushViewController(reportVC, animated: true)
     }
     

@@ -113,7 +113,6 @@ class SharedChannelDetailsAPI: NSObject {
             for index in 0 ..< responseArr.count
             {
                 
-                print(responseArr)
                 let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
                 let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
                 let infiniteScrollId  = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
