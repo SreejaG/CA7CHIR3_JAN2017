@@ -70,7 +70,9 @@ class ChannelItemListViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
         
-        NSTimer.scheduledTimerWithTimeInterval(30.0, target: self, selector: #selector(ChannelItemListViewController.cleanMyDay), userInfo: nil, repeats: true)
+         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.cleanMyDayNotif(_:)), name: "myDayCleanNotif", object: nil)
+        
+//        NSTimer.scheduledTimerWithTimeInterval(30.0, target: self, selector: #selector(ChannelItemListViewController.cleanMyDay), userInfo: nil, repeats: true)
         
         showOverlay()
         totalCount = 0
@@ -120,31 +122,52 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
-    func cleanMyDay(){
-        var chanId: String = String()
-        for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+//    func cleanMyDay(){
+//        var chanId: String = String()
+//        for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+//        {
+//            if(i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
+//                let channame = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] as! String
+//                if channame == "My Day"
+//                {
+//                    NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanUp", object:nil)
+//                    operationInChannelImageList.cancel()
+//                    chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
+//                    GlobalChannelToImageMapping.sharedInstance.cleanMyDayBasedOnTimeStamp(chanId)
+//                    let setOj = SetUpView()
+//                    setOj.cleanMyDayCall(vc, chanelId: chanId)
+//                    if(channelName == "My Day"){
+//                        let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+//                    
+//                        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+//                        }))
+//                        self.presentViewController(refreshAlert, animated: true, completion: nil)
+//                    }
+//                    break
+//                }
+//            }
+//        }
+//    }
+    
+    func cleanMyDayNotif(notification: NSNotification){
+        let info = notification.object as! [String : AnyObject]
+        if (info["type"] as! String == "My Day Cleaning")
         {
-            if(i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
-                let channame = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] as! String
-                if channame == "My Day"
-                {
-                    NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanUp", object:nil)
-                    operationInChannelImageList.cancel()
-                    chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
-                    GlobalChannelToImageMapping.sharedInstance.cleanMyDayBasedOnTimeStamp(chanId)
-                    let setOj = SetUpView()
-                    setOj.cleanMyDayCall(vc, chanelId: chanId)
-                    if(channelName == "My Day"){
-                        let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
-                    
-                        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
-                        }))
-                        self.presentViewController(refreshAlert, animated: true, completion: nil)
-                    }
-                    break
-                }
+            let chanId = info["channelId"]!
+            NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanUp", object:nil)
+            operationInChannelImageList.cancel()
+            GlobalChannelToImageMapping.sharedInstance.cleanMyDayBasedOnTimeStamp(chanId as! String)
+            let setOj = SetUpView()
+            setOj.cleanMyDayCall(vc, chanelId: chanId as! String)
+            if(channelName == "My Day"){
+                let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+                        
+                refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+                }))
+                self.presentViewController(refreshAlert, animated: true, completion: nil)
             }
         }
+        NSNotificationCenter.defaultCenter().removeObserver(notification)
     }
     
     func addNoDataLabel()

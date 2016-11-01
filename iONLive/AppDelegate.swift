@@ -324,13 +324,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             else if (result["type"] as! String == "My Day Cleaning")
             {
                 let chid : String = "\(result["channelId"]!)"
+                
+                for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+                {
+                    if(i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
+                        let channame = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] as! String
+                        if channame == "My Day"
+                        {
+                            let chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
+                            if(chid == chanId){
+                            NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanNotif", object: result)
+                                break
+                            }
+                        }
+                    }
+                }
+                
                 myDayCleanUpChannel(chid)
-        
             }
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
                 NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
-            })
+                
+                })
+        
             
         }
         
