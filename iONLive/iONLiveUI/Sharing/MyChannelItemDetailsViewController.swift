@@ -34,6 +34,8 @@ class MyChannelItemDetailsViewController: UIViewController {
     var scrollObjSharing = UIScrollView()
     var NoDatalabelFormySharingImageList : UILabel = UILabel()
     
+    var vc = MovieViewController()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -41,6 +43,7 @@ class MyChannelItemDetailsViewController: UIViewController {
         self.channelItemsCollectionView.alwaysBounceVertical = true
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.myDayCleanUp(_:)), name: "myDayCleanUp", object: nil)
         
         initialise()
     }
@@ -207,9 +210,28 @@ class MyChannelItemDetailsViewController: UIViewController {
             self.channelItemsCollectionView.reloadData()
         })
         
+        if(totalCount == 0){
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.addNoDataLabel()
+            })
+        }
+        
         if downloadingFlag == true
         {
             downloadingFlag = false
+        }
+    }
+    
+    func myDayCleanUp(notif : NSNotification){
+        if(channelName == "My day"){
+            operationInSharingImageList.cancel()
+            let setOj = SetUpView()
+            setOj.cleanMyDayCall(vc, chanelId: channelId)
+            let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+        
+            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            }))
+            self.presentViewController(refreshAlert, animated: true, completion: nil)
         }
     }
     
@@ -347,8 +369,8 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 let index = Int32(indexPath.row)
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem: index,pageIndicator: 0 ) as! MovieViewController
-                    self.presentViewController(vc, animated: false) { () -> Void in
+                    self.vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem: index,pageIndicator: 0 ) as! MovieViewController
+                    self.presentViewController(self.vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemsCollectionView.alpha = 1.0
                     }

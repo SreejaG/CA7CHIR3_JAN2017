@@ -349,6 +349,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
+        
+        
     }
     
     func updateCount( channelId : String)
@@ -473,22 +475,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     //Called if unable to register for APNS.
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
-    }
-    
-    func cleanMyDay(){
-        var chanId: String = String()
-        for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
-        {
-            if(i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
-                let channame = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] as! String
-                if channame == "My Day"
-                {
-                    chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
-                    GlobalChannelToImageMapping.sharedInstance.cleanMyDayBasedOnTimeStamp(chanId)
-                    break
-                }
-            }
-        }
     }
 }
 

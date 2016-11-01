@@ -584,6 +584,6 @@ class GlobalChannelToImageMapping: NSObject {
             return time1 > time2
         })
         NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
-        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannel", object:nil)        
     }
 }

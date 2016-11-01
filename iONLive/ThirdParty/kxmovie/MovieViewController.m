@@ -388,6 +388,23 @@ UIPanGestureRecognizer *afterPan;
     return self;
 }
 
+-(void) cleanMyDayComplete :(NSString *) chanel
+{
+    if([channelIdSelected isEqualToString:chanel])
+    {
+        if(downloadTask.state == 0)
+        {
+            [downloadTask cancel];
+                        
+        }
+        [_moviePlayer stop];
+        _moviePlayer = nil;
+        [self dismissViewControllerAnimated:true
+                    completion:^{
+                                                 
+                    }];
+    }
+}
 
 -(void) setGUIChanges: (NSString *) mediaType
               mediaId: (NSString *) mediaId
@@ -455,6 +472,7 @@ UIPanGestureRecognizer *afterPan;
         [self setUpImageVideo:mediaType mediaUrl:mediaUrlForReplay mediaDetailId:mediaDetailId];
     }
 }
+
 
 - (BOOL)gestureRecognizer:(UITapGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if ([touch.view isKindOfClass:[UIButton class]]){
@@ -1644,6 +1662,7 @@ UIPanGestureRecognizer *afterPan;
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
+
 -(void) checkToCloseViewWhileMediaDelete : (NSString *)mediaId
 {
     //  NSString * mediaId = notification.object;

@@ -54,6 +54,8 @@ class ChannelItemListViewController: UIViewController {
     
     let defaults = NSUserDefaults.standardUserDefaults()
     
+    var vc = MovieViewController()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -67,6 +69,8 @@ class ChannelItemListViewController: UIViewController {
         self.channelItemCollectionView.alwaysBounceVertical = true
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(ChannelItemListViewController.removeActivityIndicatorMyChanel(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
+        
+        NSTimer.scheduledTimerWithTimeInterval(30.0, target: self, selector: #selector(ChannelItemListViewController.cleanMyDay), userInfo: nil, repeats: true)
         
         showOverlay()
         totalCount = 0
@@ -116,6 +120,33 @@ class ChannelItemListViewController: UIViewController {
         }
     }
     
+    func cleanMyDay(){
+        var chanId: String = String()
+        for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
+        {
+            if(i < GlobalDataChannelList.sharedInstance.globalChannelDataSource.count){
+                let channame = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelNameKey] as! String
+                if channame == "My Day"
+                {
+                    NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanUp", object:nil)
+                    operationInChannelImageList.cancel()
+                    chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
+                    GlobalChannelToImageMapping.sharedInstance.cleanMyDayBasedOnTimeStamp(chanId)
+                    let setOj = SetUpView()
+                    setOj.cleanMyDayCall(vc, chanelId: chanId)
+                    if(channelName == "My Day"){
+                        let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+                        }))
+                        self.presentViewController(refreshAlert, animated: true, completion: nil)
+                    }
+                    break
+                }
+            }
+        }
+    }
+    
     func addNoDataLabel()
     {
         self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
@@ -143,6 +174,13 @@ class ChannelItemListViewController: UIViewController {
             self.scrollObj = UIScrollView()
             self.channelItemCollectionView.reloadData()
         })
+        
+        if(totalCount == 0){
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.selectionButton.hidden = true
+                self.addNoDataLabel()
+            })
+        }
         
         if downloadingFlag == true
         {
@@ -633,8 +671,8 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                 let index = Int32(indexPath.row)
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    let vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0) as! MovieViewController
-                    self.presentViewController(vc, animated: false) { () -> Void in
+                     self.vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0) as! MovieViewController
+                    self.presentViewController(self.vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemCollectionView.alpha = 1.0
                     }
