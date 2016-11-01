@@ -113,6 +113,9 @@ import UIKit
     {
        obj.checkToCloseWhileMyDayCleanUp (channelId as String)
     }
+    func cleanMyDayCall(obj:MovieViewController, chanelId: String) {
+        obj.cleanMyDayComplete(chanelId)
+    }
     func authenticationSuccessHandlerSetMedia(response:AnyObject?,obj: MovieViewController)
     {
         let count = NSUserDefaults.standardUserDefaults().valueForKey("likeCountFlag") as! String

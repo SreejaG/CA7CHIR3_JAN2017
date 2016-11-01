@@ -33,7 +33,7 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 -(void) successFromSetUpViewProfileImage :(UIImage *)profImage;
 -(void) checkToCloseViewWhileMediaDelete :(NSString *)mediaId;
 -(void) checkToCloseWhileMyDayCleanUp :(NSString *) channelId;
-
+-(void) cleanMyDayComplete :(NSString *) chanel;
 @property (readonly) BOOL playing;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *photoCollectionView;
