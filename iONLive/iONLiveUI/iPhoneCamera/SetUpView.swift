@@ -255,8 +255,5 @@ import UIKit
         return item[tImageKey] != nil
     }
     
-    func cleanMyDayCall(obj:MovieViewController, chanelId: String) {
-        obj.cleanMyDayComplete(chanelId)
-    }
 }
 
