@@ -38,7 +38,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
 }
 
 //For CA7CH specific album in phone
-@property (weak,nonatomic) ALAssetsLibrary *assetsLibrary;
+@property (strong,nonatomic) ALAssetsLibrary *assetsLibrary;
 
 //Video Core Session
 @property (nonatomic, retain) VCSimpleSession* liveSteamSession;
@@ -1199,7 +1199,7 @@ int timerCount = 0;
                                     NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
                                     if (isSave != 0)
                                     {
-                                        [self.assetsLibrary saveImageData:imageData1 toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
+                                        [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
                                          {
                                          } failure:^(NSError *error)
                                          {
