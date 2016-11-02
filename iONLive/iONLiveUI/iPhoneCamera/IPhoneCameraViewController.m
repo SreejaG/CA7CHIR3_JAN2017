@@ -1189,21 +1189,40 @@ int timerCount = 0;
                                 self.imageViewAnimate.hidden = NO;
                                 [self.view bringSubviewToFront:self.imageViewAnimate];
                                 self.imageViewAnimate.image = [UIImage imageWithData:imageData];
-                                
                                 [self cameraAnimation];
-                                NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
-                                if (isSave != 0)
+                                
+                                if(orientationFlag == 4)
                                 {
-                                    [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
-                                     {
-                                     } failure:^(NSError *error)
-                                     {
-                                     }];
+                                    UIImage *img1 = [UIImage imageWithData:imageData];
+                                    UIImage *img2 = rotate(img1, UIImageOrientationUpMirrored);
+                                    NSData *imageData1 = UIImageJPEGRepresentation(img2, 5.0);
+                                    NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
+                                    if (isSave != 0)
+                                    {
+                                        [self.assetsLibrary saveImageData:imageData1 toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
+                                         {
+                                         } failure:^(NSError *error)
+                                         {
+                                         }];
+                                    }
+                                    
+                                    [self saveImage:imageData1];
+                                    [self loaduploadManagerForImage];
                                 }
+                                else{
+                                    NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
+                                    if (isSave != 0)
+                                    {
+                                        [self.assetsLibrary saveImageData:imageData toAlbum:@"CA7CH" metadata:nil completion:^(NSURL *assetURL, NSError *error)
+                                         {
+                                         } failure:^(NSError *error)
+                                         {
+                                         }];
+                                    }
 
-                               
-                                [self saveImage:imageData];
-                                [self loaduploadManagerForImage];
+                                    [self saveImage:imageData];
+                                    [self loaduploadManagerForImage];
+                                }
                             });
                         }
                     }];
@@ -1213,6 +1232,31 @@ int timerCount = 0;
             }];
         });
     }
+}
+
+static inline double radians (double degrees) {return degrees * M_PI/180;}
+
+UIImage* rotate(UIImage* src, UIImageOrientation orientation)
+{
+    UIGraphicsBeginImageContext(src.size);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    if (orientation == UIImageOrientationRight) {
+        CGContextRotateCTM (context, radians(90));
+    } else if (orientation == UIImageOrientationLeft) {
+        CGContextRotateCTM (context, radians(-90));
+    } else if (orientation == UIImageOrientationDown) {
+        // NOTHING
+    } else if (orientation == UIImageOrientationUp) {
+        CGContextRotateCTM (context, radians(90));
+    }
+    
+    [src drawAtPoint:CGPointMake(0, 0)];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
 }
 
 -(void)cameraAnimation
