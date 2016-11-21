@@ -146,7 +146,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     func InvalidUsernameEnteredError()
     {
-        alert(title: "Invalid Username", message: "Username must contain atleast 5 charactes and atmost 15 characters")
+        alert(title: "Invalid Full Name", message: "Full Name must contain atleast 5 charactes and atmost 15 characters")
     }
     
     func noSpaceInUsername()

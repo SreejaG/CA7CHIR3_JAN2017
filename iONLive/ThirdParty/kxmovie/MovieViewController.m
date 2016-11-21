@@ -2889,7 +2889,7 @@ UIPanGestureRecognizer *afterPan;
     }
     else if (screenNumber == 0){
         cell.thumbImageView.image = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexPath.row][thumbImageKey];
-        if([GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexPath.row][@"media_type"] isEqualToString:@"video"])
+        if([GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexPath.row][@"gcs_object_type"] isEqualToString:@"video"])
         {
             cell.videoIconImgView.hidden = false;
         }

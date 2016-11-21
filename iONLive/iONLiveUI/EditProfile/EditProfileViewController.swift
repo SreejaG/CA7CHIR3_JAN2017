@@ -297,13 +297,21 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     @IBAction func saveClicked(_ sender: Any) {
-        saveButton.isHidden = true
-        if(photoTakenFlag == false){
-            updateProfileDetails()
+        view.endEditing(true)
+        if(((dataSource![0][0][displayNameKey]?.characters.count)! < 5) || ((dataSource![0][0][displayNameKey]?.characters.count)! > 15))
+        {
+            ErrorManager.sharedInstance.InvalidUsernameEnteredError()
         }
-        else{
-            showOverlay()
-            getSignedUrl()
+        else
+        {
+            saveButton.isHidden = true
+            if(photoTakenFlag == false){
+                updateProfileDetails()
+            }
+            else{
+                showOverlay()
+                getSignedUrl()
+            }
         }
     }
     
