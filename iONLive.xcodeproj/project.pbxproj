@@ -199,7 +199,6 @@
 		B2355F1E1DD329970022BADF /* CountryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2355F1C1DD329970022BADF /* CountryView.swift */; };
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
-		B24FE4BC1DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */; };
 		B28C91531DB2577D005EBBF5 /* ReportAProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */; };
 		B299464C1DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946491DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift */; };
 		B299464D1DC0B35500BD58B7 /* AppInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B299464A1DC0B35500BD58B7 /* AppInfoTableViewCell.swift */; };
@@ -219,6 +218,7 @@
 		B2C46ADA1DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B2C46AD91DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
 		B2FA6B501DE2BD09008986AA /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */; };
+		B2FA6B531DE2BDCB008986AA /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -579,7 +579,6 @@
 		B2355F1C1DD329970022BADF /* CountryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryView.swift; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
-		B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
 		B255B0C91DDAEEA900176E54 /* CA7CH.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CA7CH.entitlements; sourceTree = "<group>"; };
 		B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportAProblemViewController.swift; sourceTree = "<group>"; };
 		B29946491DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoHeaderTableViewCell.swift; sourceTree = "<group>"; };
@@ -603,6 +602,7 @@
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
 		B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "../../../UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
 		B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+InfiniteScroll.h"; path = "../../../UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
+		B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomInfiniteIndicator.swift; path = ../../../CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1524,7 +1524,7 @@
 		B24FE4B81DDC93E800C3F8A4 /* Scroll */ = {
 			isa = PBXGroup;
 			children = (
-				B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */,
+				B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */,
 				B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */,
 				B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */,
 			);
@@ -1788,7 +1788,6 @@
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
 				B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */,
-				B24FE4BC1DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */,
@@ -1816,6 +1815,7 @@
 				16DA06EB1C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
+				B2FA6B531DE2BDCB008986AA /* CustomInfiniteIndicator.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				B299465B1DC0B39800BD58B7 /* ResolutionTableViewCell.swift in Sources */,
