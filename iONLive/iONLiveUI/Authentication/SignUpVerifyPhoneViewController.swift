@@ -37,7 +37,12 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        countryPicker.selectRow(232, inComponent: 0, animated: true)
+        if #available(iOS 10.0, *){
+            countryPicker.selectRow(232, inComponent: 0, animated: true)
+        }
+        else{
+             countryPicker.selectRow(230, inComponent: 0, animated: true)
+        }
         continuButton.isHidden = true
         initialiseCountryPicker()
         initialise()

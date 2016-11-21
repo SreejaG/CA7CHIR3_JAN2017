@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--iPhone Camera View Controller-->
@@ -14,21 +18,21 @@
                         <viewControllerLayoutGuide type="bottom" id="elk-Yj-JGw"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="SWS-Ne-i52">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hPk-zc-tpz" userLabel="Preview View" customClass="AAPLPreviewView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xqQ-5y-mlC">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="600" id="Q4u-dY-cns"/>
-                                            <constraint firstAttribute="height" constant="600" id="x0N-g9-7Mh"/>
+                                            <constraint firstAttribute="width" constant="320" id="Q4u-dY-cns"/>
+                                            <constraint firstAttribute="height" constant="568" id="x0N-g9-7Mh"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="xqQ-5y-mlC" firstAttribute="leading" secondItem="hPk-zc-tpz" secondAttribute="leading" id="LRI-zk-uUX"/>
                                     <constraint firstAttribute="trailing" secondItem="xqQ-5y-mlC" secondAttribute="trailing" id="ZNs-dw-dby"/>
@@ -37,10 +41,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ucJ-gA-nDs" userLabel="TopView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hxn-Bj-Hfb">
-                                        <rect key="frame" x="490" y="25" width="90" height="35"/>
+                                        <rect key="frame" x="210" y="25" width="90" height="35"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxw-lQ-yPH" userLabel="ThirdButton">
                                                 <rect key="frame" x="55" y="0.0" width="35" height="35"/>
@@ -76,7 +80,7 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstItem="eZ6-5L-198" firstAttribute="top" secondItem="hxn-Bj-Hfb" secondAttribute="top" id="3cq-oB-6zf"/>
                                             <constraint firstItem="eZ6-5L-198" firstAttribute="leading" secondItem="hxn-Bj-Hfb" secondAttribute="leading" id="Lpg-9b-Ops"/>
@@ -89,13 +93,13 @@
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-1r-I7s">
-                                        <rect key="frame" x="469" y="38" width="21" height="21"/>
+                                        <rect key="frame" x="189" y="38" width="21" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="21" id="7g3-5n-gZZ"/>
                                             <constraint firstAttribute="height" constant="21" id="Nqh-hF-rUG"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lwm-xS-hJh" userLabel="SwapCameraButton">
@@ -132,7 +136,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="lwm-xS-hJh" secondAttribute="bottom" constant="6" id="1vg-tO-rz6"/>
                                     <constraint firstItem="QMd-g2-gjt" firstAttribute="leading" secondItem="lwm-xS-hJh" secondAttribute="trailing" constant="25" id="3Fp-Qe-jWp"/>
@@ -148,7 +152,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JqH-kr-rKo" userLabel="BottomView">
-                                <rect key="frame" x="0.0" y="480" width="600" height="120"/>
+                                <rect key="frame" x="0.0" y="448" width="320" height="120"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="joa-mg-5MH">
                                         <rect key="frame" x="42" y="37" width="46" height="46"/>
@@ -158,7 +162,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzX-a8-zLm" userLabel="StreamThumbButton">
-                                        <rect key="frame" x="504" y="32" width="56" height="56"/>
+                                        <rect key="frame" x="224" y="32" width="56" height="56"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="56" id="Sdf-C9-wZb"/>
                                             <constraint firstAttribute="width" constant="56" id="s9o-Ai-0VI"/>
@@ -169,14 +173,14 @@
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="VfF-28-FyM" userLabel="StreamThumbImage">
-                                        <rect key="frame" x="508" y="41" width="43" height="44"/>
+                                        <rect key="frame" x="228" y="41" width="43" height="44"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="43" id="9XI-EL-yle"/>
                                             <constraint firstAttribute="height" constant="44" id="jfd-4u-a5b"/>
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpM-Fq-WiG" userLabel="cameraButton">
-                                        <rect key="frame" x="257" y="17" width="86" height="86"/>
+                                        <rect key="frame" x="117" y="17" width="86" height="86"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="86" id="S4b-z5-DOc"/>
                                             <constraint firstAttribute="height" constant="86" id="njH-x8-Xx8"/>
@@ -205,18 +209,18 @@
                                         </connections>
                                     </button>
                                     <label hidden="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2fe-SJ-fm1">
-                                        <rect key="frame" x="507" y="40" width="45" height="45"/>
-                                        <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                        <rect key="frame" x="227" y="40" width="45" height="45"/>
+                                        <color key="backgroundColor" red="0.17254901959999999" green="0.83921568629999999" blue="0.8980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="VAe-7E-Yus"/>
                                             <constraint firstAttribute="width" constant="45" id="gu6-sb-aii"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="cEw-NK-Mzz" firstAttribute="top" secondItem="JqH-kr-rKo" secondAttribute="top" constant="51" id="04B-DS-lLl"/>
                                     <constraint firstItem="YEH-gb-xIX" firstAttribute="leading" secondItem="JqH-kr-rKo" secondAttribute="leading" constant="40" id="11j-r3-wO9"/>
@@ -236,7 +240,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sw1-iw-Cte" userLabel="activityView">
-                                <rect key="frame" x="200" y="250" width="200" height="100"/>
+                                <rect key="frame" x="60" y="234" width="200" height="100"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vGm-sF-zny">
                                         <rect key="frame" x="76" y="23" width="49" height="20"/>
@@ -251,11 +255,11 @@
                                             <constraint firstAttribute="height" constant="26" id="wnY-OX-ycu"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="BIV-8z-Rim" firstAttribute="top" secondItem="vGm-sF-zny" secondAttribute="bottom" constant="1" id="2EJ-MI-IoB"/>
                                     <constraint firstAttribute="height" constant="100" id="7Zn-9w-yos"/>
@@ -269,7 +273,7 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Sw1-iw-Cte" firstAttribute="centerY" secondItem="SWS-Ne-i52" secondAttribute="centerY" id="3fg-RE-R0A"/>
                             <constraint firstItem="Sw1-iw-Cte" firstAttribute="centerX" secondItem="SWS-Ne-i52" secondAttribute="centerX" id="CPj-Vj-Y6z"/>
@@ -310,19 +314,19 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eNM-F5-Mjs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2763" y="291"/>
+            <point key="canvasLocation" x="-2763.75" y="290.49295774647885"/>
         </scene>
     </scenes>
     <resources>
         <image name="Camera_Button_OFF" width="86" height="86"/>
-        <image name="Camera_Thumb" width="51" height="50"/>
+        <image name="Camera_Thumb" width="50" height="50"/>
         <image name="Circled Play" width="25" height="25"/>
-        <image name="Stream_Thumb" width="56" height="56"/>
+        <image name="Stream_Thumb" width="55" height="55"/>
         <image name="avatarCircleStroke" width="35" height="35"/>
         <image name="dummyUser" width="128" height="128"/>
-        <image name="flash_off" width="21" height="26"/>
-        <image name="iphone" width="17" height="26"/>
-        <image name="swap_camera" width="30" height="23"/>
+        <image name="flash_off" width="21" height="25"/>
+        <image name="iphone" width="15" height="24"/>
+        <image name="swap_camera" width="30" height="22"/>
         <image name="thumb12" width="128" height="128"/>
     </resources>
 </document>
