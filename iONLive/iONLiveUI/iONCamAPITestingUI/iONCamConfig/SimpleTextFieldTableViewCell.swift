@@ -1,10 +1,3 @@
-//
-//  SimpleTextFieldTableViewCell.swift
-//  iONLive
-//
-//  Created by Vinitha on 2/5/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -16,13 +9,9 @@ class SimpleTextFieldTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
-
 }

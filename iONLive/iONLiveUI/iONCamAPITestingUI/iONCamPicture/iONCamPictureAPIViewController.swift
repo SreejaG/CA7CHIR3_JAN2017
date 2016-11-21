@@ -1,14 +1,5 @@
-//
-//  iONCamPictureAPIViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 1/18/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
-
-
 
 class iONCamPictureAPIViewController: UIViewController {
     
@@ -21,17 +12,14 @@ class iONCamPictureAPIViewController: UIViewController {
     @IBOutlet var scalePickerView: UIPickerView!
     @IBOutlet weak var imageLoadingIndicator: UIActivityIndicatorView!
     @IBOutlet var burstCountTextField: UITextField!
-//    @IBOutlet var inputBurstIdTextField: UITextField!
     @IBOutlet var inputBurstIdPickerView: UIPickerView!
     
     let requestManager = RequestManager.sharedInstance
     let iOnLiveCameraPictureCaptureManager = iOnLiveCameraPictureCapture.sharedInstance
-//    var inputBurstIdPickerData : [String] = []
     var burstIdDataSource : [String] = []
     var selectedBurstId = ""
     
     //PRAGMA MARK :- dataSource
-    //    let scalePickerData = ["1=4000x3000 (12Mpixel)", "2=3840X2160(8Mpixel)", "4=2560X1920(5Mpixel)", "8=1920x1080(2Mpixel)"]
     let burstIntervalData = ["333ms","100ms","200ms","5000ms","10000ms","30000ms","60000ms"]
     let scalePickerData = ["1", "2", "4", "8"]
     
@@ -43,7 +31,6 @@ class iONCamPictureAPIViewController: UIViewController {
     
     //PRAGMA MARK: Load view
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         initialise()
     }
@@ -52,7 +39,7 @@ class iONCamPictureAPIViewController: UIViewController {
     func initialise()
     {
         burstCountTextField.delegate = self
-        self.imageLoadingIndicator.hidden = true
+        self.imageLoadingIndicator.isHidden = true
         updatePickerDataSource()
     }
     
@@ -60,118 +47,101 @@ class iONCamPictureAPIViewController: UIViewController {
     func updatePickerDataSource()
     {
         let status = IONLiveCameraStatusUtility()
-        status.getiONLiveCameraStatus({ (response) -> () in
-            
+        status.getiONLiveCameraStatus(success: { (response) -> () in
             self.burstIdDataSource = status.getCatalogStatus()!
             self.inputBurstIdPickerView.reloadAllComponents()
             if (self.burstIdDataSource.count > 0 )
             {
                 self.selectedBurstId = self.burstIdDataSource[0]
             }
-            
-            }) { (error, code) -> () in
-                ErrorManager.sharedInstance.alert("error", message: "error")
-                
+        }) { (error, code) -> () in
+            ErrorManager.sharedInstance.alert(title: "error", message: "error")
         }
     }
     
     //PRAGMA MARK:- Button Actions
-    
-    @IBAction func didTapDeleteAll(sender: AnyObject)
+    @IBAction func didTapDeleteAll(_ sender: Any)
     {
         self.deleteAllPictures()
     }
     
-    @IBAction func didTapGetPicture(sender: AnyObject)
+    @IBAction func didTapGetPicture(_ sender: Any)
     {
         selectedBurstCount = burstCountTextField.text!
         self.captureiONLiveCamImage()
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject) {
-        
-        self.navigationController?.popViewControllerAnimated(true)
+    @IBAction func didTapBackButton(_ sender: Any) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func didTapCancelSnaps(sender: AnyObject) {
+    @IBAction func didTapCancelSnaps(_ sender: Any) {
         self.cancelSnaps()
-        
     }
     
-    @IBAction func didTapDeletePictureWithBurstId(sender: AnyObject) {
-        
+    @IBAction func didTapDeletePictureWithBurstId(_ sender: Any) {
         if self.selectedBurstId.isEmpty
         {
-            ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
+            ErrorManager.sharedInstance.alert(title: "Invalid Burst Id", message: "Please enter valid Burst Id.")
         }
         else
         {
-            self.deleteiONLiveCamImage(self.selectedBurstId)
+            self.deleteiONLiveCamImage(burstId: self.selectedBurstId)
         }
     }
     
     //PRAGMA MARK:- API call
-    /////////For testing iOnLiveCamPictureCapture API
     func captureiONLiveCamImage()
     {
         showOverlay()
         validateBurstCount()
         
-        iOnLiveCameraPictureCaptureManager.getiONLiveCameraPictureId(selectedScale, burstCount: selectedBurstCount, burstInterval: selectedBurstInterval, quality: selectedQuality, success: { (response) -> () in
-            
+        iOnLiveCameraPictureCaptureManager.getiONLiveCameraPictureId(scale: selectedScale, burstCount: selectedBurstCount, burstInterval: selectedBurstInterval, quality: selectedQuality, success: { (response) -> () in
             self.updatePickerDataSource()
-            ErrorManager.sharedInstance.alert("Success BurstId found", message:"\(response as? [String: AnyObject])")
-            self.iONLiveCamGetPictureSuccessHandler(response)
-            
-            }) { (error, message) -> () in
-                self.iONLiveCamGetPictureFailureHandler(error, code: message)
-                return
+            ErrorManager.sharedInstance.alert(title: "Success BurstId found", message:"\(response as? [String: AnyObject])")
+            self.iONLiveCamGetPictureSuccessHandler(response: response)
+        }) { (error, message) -> () in
+            self.iONLiveCamGetPictureFailureHandler(error: error, code: message)
+            return
         }
     }
     
-    ////////////////////////////////////////////////
-    
-    /////////For testing iOnLiveCamPictureDelete API
+    //For testing iOnLiveCamPictureDelete API
     func deleteiONLiveCamImage(burstId: String!)
     {
         showOverlay()
-        iOnLiveCameraPictureCaptureManager.deleteiONLiveCameraPicture(burstId, success: { (response) -> () in
-            
+        iOnLiveCameraPictureCaptureManager.deleteiONLiveCameraPicture(burstID: burstId, success: { (response) -> () in
             self.updatePickerDataSource()
-            self.iONLiveCamDeletePictureSuccessHandler(response)
-            }) { (error, message) -> () in
-                
-                self.updatePickerDataSource()
-                self.iONLiveCamDeletePictureFailureHandler(error, code: message)
-                return
+            self.iONLiveCamDeletePictureSuccessHandler(response: response)
+        }) { (error, message) -> () in
+            self.updatePickerDataSource()
+            self.iONLiveCamDeletePictureFailureHandler(error: error, code: message)
+            return
         }
     }
     
     func deleteAllPictures()
     {
         showOverlay()
-        
-        iOnLiveCameraPictureCaptureManager.deleteAllIONLiveCameraPicture({ (response) -> () in
+        iOnLiveCameraPictureCaptureManager.deleteAllIONLiveCameraPicture(success: { (response) -> () in
             self.updatePickerDataSource()
-            self.iONLiveCamDeletePictureSuccessHandler(response)
-            }) { (error, code) -> () in
-                self.updatePickerDataSource()
-                self.iONLiveCamDeletePictureFailureHandler(error, code: code)
-                return
+            self.iONLiveCamDeletePictureSuccessHandler(response: response)
+        }) { (error, code) -> () in
+            self.updatePickerDataSource()
+            self.iONLiveCamDeletePictureFailureHandler(error: error, code: code)
+            return
         }
     }
     
     func cancelSnaps()
     {
         showOverlay()
-        iOnLiveCameraPictureCaptureManager.cancelSnaps({ (response) -> () in
-            
+        iOnLiveCameraPictureCaptureManager.cancelSnaps(success: { (response) -> () in
             self.removeOverlay()
-            self.iONLiveCamCancelSnaps(response)
-            
-            }) { (error, code) -> () in
-                self.removeOverlay()
-                ErrorManager.sharedInstance.alert("Error", message: error?.localizedDescription)
+            self.iONLiveCamCancelSnaps(response: response)
+        }) { (error, code) -> () in
+            self.removeOverlay()
+            ErrorManager.sharedInstance.alert(title: "Error", message: error?.localizedDescription)
         }
     }
     
@@ -186,15 +156,14 @@ class iONCamPictureAPIViewController: UIViewController {
                 let id:String = burstId as! String
                 // push result VC and load image
                 let apiStoryBoard = UIStoryboard(name:"iONCamPictureAPITest", bundle: nil)
-                let resultVC = apiStoryBoard.instantiateViewControllerWithIdentifier(iONCamPictureAPIResultViewController.identifier) as! iONCamPictureAPIResultViewController
+                let resultVC = apiStoryBoard.instantiateViewController(withIdentifier: iONCamPictureAPIResultViewController.identifier) as! iONCamPictureAPIResultViewController
                 resultVC.imageBurstId = id
                 self.navigationController?.pushViewController(resultVC, animated: true)
-                
             }
         }
         else
         {
-            ErrorManager.sharedInstance.alert("responce error", message: "Responce Error occured")
+            ErrorManager.sharedInstance.alert(title: "responce error", message: "Responce Error occured")
         }
     }
     
@@ -205,10 +174,10 @@ class iONCamPictureAPIViewController: UIViewController {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
         }
         else{
-            ErrorManager.sharedInstance.alert("responce error", message: "Responce Error occured")
+            ErrorManager.sharedInstance.alert(title: "responce error", message: "Responce Error occured")
         }
     }
     
@@ -217,12 +186,11 @@ class iONCamPictureAPIViewController: UIViewController {
         self.removeOverlay()
         if (response as? [String: AnyObject]) != nil
         {
-            ErrorManager.sharedInstance.alert("Success", message: "Successfully deleted picture")
-         //   print("success = \(json["burstID"]))")
+            ErrorManager.sharedInstance.alert(title: "Success", message: "Successfully deleted picture")
         }
         else
         {
-            ErrorManager.sharedInstance.alert("responce error", message: "Responce Error occured")
+            ErrorManager.sharedInstance.alert(title: "responce error", message: "Responce Error occured")
         }
     }
     
@@ -231,37 +199,24 @@ class iONCamPictureAPIViewController: UIViewController {
         self.removeOverlay()
         if (response as? [String: AnyObject]) != nil
         {
-            ErrorManager.sharedInstance.alert("Success", message: "Cancel all ongoing image capture bursts")
-        //    print("success = \(json["burstID"]))")
+            ErrorManager.sharedInstance.alert(title: "Success", message: "Cancel all ongoing image capture bursts")
         }
         else
         {
-            ErrorManager.sharedInstance.alert("responce error", message: "Responce Error occured")
+            ErrorManager.sharedInstance.alert(title: "responce error", message: "Responce Error occured")
         }
     }
     
     func iONLiveCamDeletePictureFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        print("message = \(code) andError = \(error?.localizedDescription) ")
-        ErrorManager.sharedInstance.alert("Error", message: error?.localizedDescription)
-        //        if !self.requestManager.validConnection() {
-        //            ErrorManager.sharedInstance.noNetworkConnection()
-        //        }
-        //        else if code.isEmpty == false {
-        //            ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-        //        }
-        //        else{
-        //            ErrorManager.sharedInstance.loginError()
-        //        }
+        ErrorManager.sharedInstance.alert(title: "Error", message: error?.localizedDescription)
     }
-    ////////////////////////////////////////////////
     
     //PRAGMA MARK:- Loading indicator Methods
     func showOverlay(){
-        let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-         loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height)
-//        loadingOverlayController.view.frame = self.view.bounds
+        let loadingOverlayController:IONLLoadingView = IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.navigationController?.view.addSubview(self.loadingOverlay!)
@@ -338,15 +293,15 @@ extension iONCamPictureAPIViewController
             }
         }
     }
-    //PRAGMA MARK:- validate Burst Count
     
+    //PRAGMA MARK:- validate Burst Count
     func validateBurstCount()
     {
         if selectedBurstCount.isEmpty == false
         {
-            if !isValidBurstCount(selectedBurstCount)
+            if !isValidBurstCount(burstCount: selectedBurstCount)
             {
-                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+                ErrorManager.sharedInstance.alert(title: "Invalid Burst Count", message: "Please enter valid Burst Count.")
             }
         }
     }
@@ -355,12 +310,12 @@ extension iONCamPictureAPIViewController
     {
         if let burstCount = textField.text
         {
-            if isValidBurstCount(burstCount) || (burstCount.isEmpty)
+            if isValidBurstCount(burstCount: burstCount) || (burstCount.isEmpty)
             {
                 selectedBurstCount = burstCount
             }
             else{
-                ErrorManager.sharedInstance.alert("Invalid Burst Count", message: "Please enter valid Burst Count.")
+                ErrorManager.sharedInstance.alert(title: "Invalid Burst Count", message: "Please enter valid Burst Count.")
             }
         }
     }
@@ -370,41 +325,34 @@ extension iONCamPictureAPIViewController
         switch selectedBurstInterval
         {
         case "333ms":
-            
             if burstCount == "3"
             {
                 return true;
             }
             break
         case "100ms":
-            
             if burstCount == "10"
             {
                 return true;
             }
             break
         case "200ms":
-            
             if (burstCount == "5") || (burstCount == "10")
             {
                 return true;
             }
             break
         case "":
-            
-            return isValidBurstCountRange(burstCount)
+            return isValidBurstCountRange(burstCount: burstCount)
         default:
-            
-            return isValidBurstCount(burstCount)
+            return isValidBurstCount(burstCount: burstCount)
         }
         return false
     }
     
     func isValidBurstCountRange(burstCount:String) -> Bool{
-        
         let intVal = Int(burstCount)
-        
-        if (intVal >= 1) && (intVal <= 16777215)
+        if (intVal! >= 1) && (intVal! <= 16777215)
         {
             return true
         }
@@ -413,39 +361,31 @@ extension iONCamPictureAPIViewController
 }
 
 //PRAGMA MARK:- Pickerview delegate datasource
-
-extension iONCamPictureAPIViewController:UIPickerViewDelegate , UIPickerViewDataSource
+extension iONCamPictureAPIViewController:UIPickerViewDelegate, UIPickerViewDataSource
 {
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
-    // The number of rows of data
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        
-        return getNumberOfElementsInPickerView(pickerView)
-        
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return getNumberOfElementsInPickerView(pickerView: pickerView)
     }
     
-    // The data to return for the row and component (column) that's being passed in
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        
-        return getPickerViewData(pickerView, ForRow: row)
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return getPickerViewData(pickerView: pickerView, ForRow: row)
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
-    {
-        updateSelectedValueFromPickerView(pickerView, selectedRow: row)
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        updateSelectedValueFromPickerView(pickerView: pickerView, selectedRow: row)
     }
 }
 
 //PRAGMA MARK:- TextField Delegate
 extension iONCamPictureAPIViewController:UITextFieldDelegate
 {
-    func textFieldShouldReturn(textField: UITextField) -> Bool
-    {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        validateTextField(textField)
+        validateTextField(textField: textField)
         return false
     }
     
@@ -453,23 +393,8 @@ extension iONCamPictureAPIViewController:UITextFieldDelegate
     {
         if textField.isEqual(burstCountTextField)
         {
-            validateBurstCountTextField(textField)
+            validateBurstCountTextField(textField: textField)
         }
-//        else if textField.isEqual(inputBurstIdTextField)
-//        {
-//            validateBurstIdTextField(textField)
-//        }
     }
-    
-//    func validateBurstIdTextField(textField:UITextField)
-//    {
-//        if let burstId = textField.text
-//        {
-//            if burstId.isEmpty
-//            {
-//                ErrorManager.sharedInstance.alert("Invalid Burst Id", message: "Please enter valid Burst Id.")
-//            }
-//        }
-//    }
 }
 

@@ -2,25 +2,25 @@
 import UIKit
 
 class IONCamLiveStreamStatusViewController: UIViewController {
-    
     @IBOutlet weak var liveStreamTableView: UITableView!
     static let identifier = "IONCamLiveStreamStatusViewController"
     let iONLiveStreamStatusManager  = iONCamLiveStatusManager.sharedInstance
     
-    var FrameRateDataSource = []
     var tableViewDataSource = ["FrameRate": ["30","15"],"Resolution":["848x480",
-        "424x240"]]
-    func getIONLiveStatus( success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+                                                                      "424x240"]]
+    
+    func getIONLiveStatus( success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
-        iONLiveStreamStatusManager.getiONLiveCameraStatus({ (response) -> () in
+        iONLiveStreamStatusManager.getiONLiveCameraStatus(success: { (response) -> () in
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
         }) { (error, code) -> () in
-            ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get streaming status ")
+            ErrorManager.sharedInstance.alert(title: "Status Failed", message: "Failure to get streaming status ")
         }
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -36,89 +36,63 @@ class IONCamLiveStreamStatusViewController: UIViewController {
             if let liveStreamStatus = json["status"]
             {
                 let alertController = UIAlertController(title: "Live Stream Status", message:
-                    liveStreamStatus as? String, preferredStyle: UIAlertControllerStyle.Alert)
-                alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
-                self.presentViewController(alertController, animated: true, completion: nil)
+                    liveStreamStatus as? String, preferredStyle: UIAlertControllerStyle.alert)
+                alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
+                self.present(alertController, animated: true, completion: nil)
             }
         }
     }
     
-    @IBAction func getLiveStreamStatus(sender: AnyObject) {
-        self.getIONLiveStatus({ (response) -> () in
-            self.iONLiveCamStreamGetStatusSuccessHandler(response)
-            }, failure: { (error, code) -> () in
-                
+    @IBAction func getLiveStreamStatus(_ sender: Any) {
+        self.getIONLiveStatus(success: { (response) -> () in
+            self.iONLiveCamStreamGetStatusSuccessHandler(response: response)
+        }, failure: { (error, code) -> () in
         })
     }
     
-    @IBAction func startLiveStreamAction(sender: AnyObject) {
-        //        iONCamLiveStatusManager.putIONLiveCameraStreamConfiguration(inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
-        //
-        //            self.iONLiveCamGetConfigSuccessHandler(response)
-        //
-        //            }) { (error, code) -> () in
-        //                ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
+    @IBAction func startLiveStreamAction(_ sender: Any) {
     }
 }
 
 extension IONCamLiveStreamStatusViewController:UITableViewDelegate,UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableViewDataSource.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableViewDataSource.count > indexPath.row
         {
             var keys = Array(tableViewDataSource.keys)
             let values:Array = tableViewDataSource[keys[indexPath.row]]!
             if values.count > 1
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier(StreamPickerTableViewCell.identifier, forIndexPath: indexPath) as! StreamPickerTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: StreamPickerTableViewCell.identifier, for: indexPath) as! StreamPickerTableViewCell
                 
                 cell.inputlabel.text = keys[indexPath.row]
                 cell.pickerViewData = values
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
                 cell.frameratePickerView.reloadAllComponents()
                 return cell
             }
             else
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier(SimpleTextFieldTableViewCell.identifier, forIndexPath: indexPath) as! SimpleTextFieldTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: SimpleTextFieldTableViewCell.identifier, for: indexPath) as! SimpleTextFieldTableViewCell
                 cell.inputLabel.text = keys[indexPath.row]
                 cell.inputTextField.text = values[0]
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
                 return cell
-                
             }
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-        //        switch indexPath.row
-        //        {
-        //        case 0:
-        //            loadPictureAPIViewController()
-        //            break;
-        //        case 1:
-        //            loadIONLiveCamVideo()
-        //            break;
-        //        case 2:
-        //            loadCameraConfiguration()
-        //        case 5:
-        //            loadCameraStatus()
-        //        default:
-        //            break;
-        //        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
     }
 }
 

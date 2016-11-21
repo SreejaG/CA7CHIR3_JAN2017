@@ -2,7 +2,7 @@
 import UIKit
 
 class ChannelItemListCollectionViewCell: UICollectionViewCell {
-   
+    
     static let identifier = "ChannelItemListCollectionViewCell"
     @IBOutlet weak var channelItemImageView: UIImageView!
     @IBOutlet var selectionView: UIView!

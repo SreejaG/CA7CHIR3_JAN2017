@@ -15,7 +15,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     static let identifier = "SignUpVerifyPhoneViewController"
     var verificationCode = ""
@@ -27,7 +27,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     @IBOutlet var countrySelectionButton: UIButton!
     @IBOutlet var continuButton: UIButton!
     
-    @IBAction func selectCountryCode(sender: AnyObject) {
+    @IBAction func selectCountryCode(_ sender: Any) {
         initialiseCountryPicker()
     }
     
@@ -37,19 +37,19 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        countryPicker.selectRow(230, inComponent: 0, animated: true)
-        continuButton.hidden = true
+        countryPicker.selectRow(232, inComponent: 0, animated: true)
+        continuButton.isHidden = true
         initialiseCountryPicker()
         initialise()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
         checkVerificationCodeVisiblty()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
     }
     
@@ -67,43 +67,42 @@ class SignUpVerifyPhoneViewController: UIViewController
             self.title = "VERIFY PHONE #"
         }
         
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
         countryTextField.attributedPlaceholder = NSAttributedString(string: "Country",
-                                                                    attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                    attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         mobileNumberTextField.attributedPlaceholder = NSAttributedString(string: "Mobile Number",
-                                                                         attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                         attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         countryCodeTextField.attributedPlaceholder = NSAttributedString(string: "Code",
-                                                                        attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                        attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         verificationCodeTextField.attributedPlaceholder = NSAttributedString(string: "Verification Code",
-                                                                             attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        verificationCodeTextField.keyboardType = .DecimalPad
+                                                                             attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
+        verificationCodeTextField.keyboardType = .decimalPad
         
         countryPicker.countryPhoneCodeDelegate = self
-        countryTextField.userInteractionEnabled = false
-        countryCodeTextField.userInteractionEnabled = true
-        verificationCodeTextField.hidden = true
+        countryTextField.isUserInteractionEnabled = false
+        countryCodeTextField.isUserInteractionEnabled = true
+        verificationCodeTextField.isHidden = true
         verificationCode = ""
         mobileNumberTextField.delegate = self
         countryCodeTextField.delegate = self
         verificationCodeTextField.delegate = self
-        //        self.countryPicker.hidden = true
-        countryTextField.autocorrectionType = .No
-        mobileNumberTextField.autocorrectionType = .No
-        countryCodeTextField.autocorrectionType = .No
-        verificationCodeTextField.autocorrectionType = .No
+        countryTextField.autocorrectionType = .no
+        mobileNumberTextField.autocorrectionType = .no
+        countryCodeTextField.autocorrectionType = .no
+        verificationCodeTextField.autocorrectionType = .no
         
-        countryTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        countryCodeTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        mobileNumberTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        verificationCodeTextField.addTarget(self, action: #selector(self.verificationTextChange), forControlEvents: .EditingChanged)
+        countryTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        countryCodeTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        mobileNumberTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        verificationCodeTextField.addTarget(self, action: #selector(self.verificationTextChange), for: .editingChanged)
         
         addObserver()
     }
     
     func initialiseCountryPicker()  {
-        self.countryPicker.hidden = false
+        self.countryPicker.isHidden = false
         countryCodeTextField.resignFirstResponder()
         mobileNumberTextField.resignFirstResponder()
         verificationCodeTextField.resignFirstResponder()
@@ -113,39 +112,39 @@ class SignUpVerifyPhoneViewController: UIViewController
         CountryPhoneCode = "+1"
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
         if(countryTextField.text!.isEmpty || countryCodeTextField.text!.isEmpty || mobileNumberTextField.text!.isEmpty)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
-        else if(countryCodeTextField.text?.characters.count < 2)
+        else if((countryCodeTextField.text?.characters.count)! < 2)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
-        else if(mobileNumberTextField.text?.characters.count < 4)
+        else if((mobileNumberTextField.text?.characters.count)! < 4)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
         else{
-            continuButton.hidden = false
+            continuButton.isHidden = false
         }
     }
     
-    func verificationTextChange(textField: UITextField)
+    func verificationTextChange(_ textField: UITextField)
     {
-        countryPicker.hidden = true
+        countryPicker.isHidden = true
         if(verificationCodeTextField.text!.isEmpty)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
         else if(verificationCodeTextField.text?.characters.count != 6)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
         else
         {
-            continuButton.hidden = false
+            continuButton.isHidden = false
         }
     }
     
@@ -153,39 +152,44 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         if verificationCode != ""
         {
-            countryPicker.hidden = true
-            countryTextField.enabled = false
-            mobileNumberTextField.enabled = false
-            countrySelectionButton.enabled = false
+            countryPicker.isHidden = true
+            countryTextField.isEnabled = false
+            mobileNumberTextField.isEnabled = false
+            countrySelectionButton.isEnabled = false
             countryCodeTextField.enablesReturnKeyAutomatically = false
-            verificationCodeTextField.hidden = false
+            verificationCodeTextField.isHidden = false
             mobileNumberTextField.resignFirstResponder()
             verificationCodeTextField.becomeFirstResponder()
             topConstaintDescriptionLabel.constant = 67
         }
         else
         {
-            verificationCodeTextField.hidden = true
+            verificationCodeTextField.isHidden = true
             topConstaintDescriptionLabel.constant = 1
         }
     }
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpVerifyPhoneViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpVerifyPhoneViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpVerifyPhoneViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpVerifyPhoneViewController.KeyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         self.view.layoutIfNeeded()
         if continueBottomConstraint.constant == 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.continueBottomConstraint.constant += keyboardFrame.size.height
                 self.view.layoutIfNeeded()
             }
@@ -197,7 +201,7 @@ class SignUpVerifyPhoneViewController: UIViewController
         self.view.layoutIfNeeded()
         if continueBottomConstraint.constant != 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.continueBottomConstraint.constant = 0
                 self.view.layoutIfNeeded()
             }
@@ -205,109 +209,88 @@ class SignUpVerifyPhoneViewController: UIViewController
     }
     
     //PRAGMA MARK:- IBActions
-    
-    @IBAction func tapGestureRecognized(sender: AnyObject) {
+    @IBAction func tapGestureRecognized(_ sender: Any) {
         view.endEditing(true)
     }
     
-    @IBAction func verifyPhoneContinueButtonClicked(sender: AnyObject)
+    @IBAction func verifyPhoneContinueButtonClicked(_ sender: Any)
     {
-        //        if countryTextField.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.emptyCountryError()
-        //        }
-        //        else if mobileNumberTextField.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.emptyMobileError()
-        //        }
-        //        else if countryCodeTextField.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.emptyCodeError()
-        //        }
-        //        else
-        //        {
         if(verificationCode != ""){
-            //                if verificationCodeTextField.text!.isEmpty
-            //                {
-            //                    ErrorManager.sharedInstance.signUpNoCodeEnteredError()
-            //                }
-            //                else
             if((userName == "invalid") && (email == "invalid"))
             {
                 loadForgotPasswordView()
             }
             else{
-                let deviceToken = defaults.valueForKey("deviceToken") as! String
-                let gcmRegId = "ios".stringByAppendingString(deviceToken)
-                validateVerificationCode(userName , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
+                let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                let gcmRegId = "ios".appending(deviceToken)
+                validateVerificationCode(userName: userName , verificationCode: verificationCodeTextField.text! , gcmRegId: gcmRegId)
             }
         }
         else{
             if((userName == "invalid") && (email == "invalid")){
-                continuButton.hidden = true
+                continuButton.isHidden = true
                 view.endEditing(true)
                 generateWaytoSendAlertForResetPassword()
             }
             else{
-                continuButton.hidden = true
+                continuButton.isHidden = true
                 view.endEditing(true)
                 generateWaytoSendAlert()
             }
         }
-        //        }
     }
     
     func  loadForgotPasswordView(){
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(ForgotPasswordViewController.identifier) as! ForgotPasswordViewController
+        let verifyPhoneVC = storyboard.instantiateViewController(withIdentifier: ForgotPasswordViewController.identifier) as! ForgotPasswordViewController
         verifyPhoneVC.verificationCode = verificationCodeTextField.text!
         verifyPhoneVC.mobileNumber = countryCodeTextField.text! + mobileNumberTextField.text!
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         verifyPhoneVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
     }
     
     func generateWaytoSendAlert()
     {
-        let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "sms")
+        alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.generateVerificationCode(userName: self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "sms")
         }))
-        alert.addAction(UIAlertAction(title: "Send to Email", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.generateVerificationCode(self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "email")
+        alert.addAction(UIAlertAction(title: "Send to Email", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.generateVerificationCode(userName: self.userName, location: self.countryName, mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!, verificationMethod: "email")
         }))
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-            self.continuButton.hidden = false
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (action) -> Void in
+            self.continuButton.isHidden = false
             self.mobileNumberTextField.becomeFirstResponder()
         }))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func generateWaytoSendAlertForResetPassword()
     {
-        let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "We will send a verification code to" + self.countryCodeTextField.text! + self.mobileNumberTextField.text!, message: "Enter the verification code to finish", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.generateVerificationCodeForResetPassword(self.countryCodeTextField.text! + self.mobileNumberTextField.text!)
+        alert.addAction(UIAlertAction(title: "Send to SMS", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.generateVerificationCodeForResetPassword(mobileNumber: self.countryCodeTextField.text! + self.mobileNumberTextField.text!)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-            self.continuButton.hidden = false
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (action) -> Void in
+            self.continuButton.isHidden = false
             self.mobileNumberTextField.becomeFirstResponder()
         }))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func generateVerificationCodeForResetPassword(mobileNumber: String)
     {
         showOverlay()
-        authenticationManager.generateVerificationCodeForResetPassword(mobileNumber, success: { (response) in
-            self.authenticationSuccessHandler(response)
+        authenticationManager.generateVerificationCodeForResetPassword(mobileNumber: mobileNumber, success: { (response) in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
@@ -316,8 +299,8 @@ class SignUpVerifyPhoneViewController: UIViewController
     {
         showOverlay()
         let userCountryCode = self.countryCodeTextField.text
-        let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
-        let timeOffsetStr = String(timeOffset)
+        let timeOffset = NSTimeZone.system.secondsFromGMT()
+        let timeOffsetStr = String(describing: timeOffset)
         var timeZoneOffsetInUTC : String = String()
         if timeOffsetStr.hasPrefix("-")
         {
@@ -328,46 +311,45 @@ class SignUpVerifyPhoneViewController: UIViewController
             timeZoneOffsetInUTC = "+\(timeOffsetStr)"
         }
         
-        authenticationManager.generateVerificationCodes(userName, location: location, mobileNumber: mobileNumber, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        authenticationManager.generateVerificationCodes(userName: userName, location: location, mobileNumber: mobileNumber, verificationMethod: verificationMethod, offset: timeZoneOffsetInUTC, countryCode: userCountryCode!, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -392,7 +374,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     func authenticationFailureHandler(error: NSError?, code: String)
     {
         self.removeOverlay()
-        self.continuButton.hidden = false
+        self.continuButton.isHidden = false
         self.mobileNumberTextField.becomeFirstResponder()
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
@@ -400,10 +382,10 @@ class SignUpVerifyPhoneViewController: UIViewController
         else if code.isEmpty == false
         {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -414,10 +396,10 @@ class SignUpVerifyPhoneViewController: UIViewController
     func validateVerificationCode(userName: String, verificationCode: String, gcmRegId: String)
     {
         showOverlay()
-        authenticationManager.validateVerificationCode(userName, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
-            self.authenticationSuccessHandlerVerification(response)
+        authenticationManager.validateVerificationCode(userName: userName, verificationCode: verificationCode, gcmRegId: gcmRegId, success: { (response) -> () in
+            self.authenticationSuccessHandlerVerification(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
@@ -464,7 +446,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     func loadFindFriendsView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let findFriendsVC = storyboard.instantiateViewControllerWithIdentifier(SignUpFindFriendsViewController.identifier) as! SignUpFindFriendsViewController
+        let findFriendsVC = storyboard.instantiateViewController(withIdentifier: SignUpFindFriendsViewController.identifier) as! SignUpFindFriendsViewController
         findFriendsVC.phoneCode = CountryPhoneCode
         findFriendsVC.navigationItem.hidesBackButton = true
         self.navigationController?.pushViewController(findFriendsVC, animated: false)
@@ -472,7 +454,7 @@ class SignUpVerifyPhoneViewController: UIViewController
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -485,8 +467,8 @@ class SignUpVerifyPhoneViewController: UIViewController
     func loadUserNameView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier)
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let userNameVC = storyboard.instantiateViewController(withIdentifier: SignUpUserNameViewController.identifier)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         userNameVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(userNameVC, animated: false)
     }
@@ -494,25 +476,25 @@ class SignUpVerifyPhoneViewController: UIViewController
 
 extension SignUpVerifyPhoneViewController:UITextFieldDelegate{
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true
     }
     
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-        self.countryPicker.hidden = true
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        self.countryPicker.isHidden = true
         return true
     }
 }
 
 extension SignUpVerifyPhoneViewController:CountryPhoneCodePickerDelegate{
-    func countryPhoneCodePicker(picker: CountryPicker, didSelectCountryCountryWithName name: String, countryCode: String, phoneCode: String) {
+    func countryPhoneCodePicker(_ picker: CountryPicker, didSelectCountryCountryWithName name: String, countryCode: String, phoneCode: String) {
         countryName = name
         self.countryTextField.text = countryCode + " - " + name
         self.countryCodeTextField.text = phoneCode

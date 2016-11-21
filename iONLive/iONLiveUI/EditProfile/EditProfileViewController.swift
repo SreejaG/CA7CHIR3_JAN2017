@@ -1,7 +1,7 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate,UITextFieldDelegate {
+class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate,UITextFieldDelegate {
     
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
@@ -61,20 +61,20 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     var userDetails: NSMutableDictionary = NSMutableDictionary()
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     var userId : String = String()
     var accessToken: String = String()
     
     @IBOutlet weak var editProfTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         initialise()
         self.editProfTableView.delegate = self
         self.editProfTableView.dataSource = self
-        NSNotificationCenter .defaultCenter() .addObserver(self, selector: #selector(EditProfileViewController.keyBoardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
-        let tapTableView: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.tableViewTap))
+        
+        let tapTableView: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.tableViewTap(recognizer:)))
         editProfTableView.addGestureRecognizer(tapTableView)
     }
     
@@ -82,24 +82,22 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         view.endEditing(true)
     }
     
-    @IBAction func tapGestureRecognizer(sender: AnyObject) {
+    @IBAction func tapGestureRecognizer(_ sender: Any) {
         view.endEditing(true)
     }
     
     func tableViewTap(recognizer: UITapGestureRecognizer)
     {
-        if recognizer.state == UIGestureRecognizerState.Ended {
-            let swipeLocation = recognizer.locationInView(self.editProfTableView)
-            if let swipedIndexPath = editProfTableView.indexPathForRowAtPoint(swipeLocation) {
-                
+        if recognizer.state == UIGestureRecognizerState.ended {
+            let swipeLocation = recognizer.location(in: self.editProfTableView)
+            if let swipedIndexPath = editProfTableView.indexPathForRow(at: swipeLocation) {
                 if swipedIndexPath.section == 1 && swipedIndexPath.row == 2
                 {
                     let sharingStoryboard = UIStoryboard(name:"EditProfile", bundle: nil)
-                    let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("ResetPasswordViewController") as! ResetPasswordViewController
-                    channelItemListVC.navigationController?.navigationBarHidden = true
-                    self.presentViewController(channelItemListVC, animated: false) { () -> Void in
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "ResetPasswordViewController") as! ResetPasswordViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.present(channelItemListVC, animated: false) { () -> Void in
                     }
-                    
                 }
                 else if (swipedIndexPath.section == 1 && swipedIndexPath.row == 3)
                 {
@@ -112,22 +110,22 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.editProfTableView.backgroundView = nil
         self.editProfTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
         addKeyboardObservers()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func initialise()
     {
         photoTakenFlag = false
-        saveButton.hidden = true
+        saveButton.isHidden = true
         imageForProfile = UIImage()
         getUserDetails()
     }
@@ -135,15 +133,15 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     func getUserDetails()
     {
         showOverlay()
-        profileManager.getUserDetails(userId, accessToken:accessToken, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        profileManager.getUserDetails(userName: userId, accessToken:accessToken, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
-    func nullToNil(value : AnyObject?) -> AnyObject? {
+    func nullToNil(value : Any?) -> Any? {
         if value is NSNull {
             return ""
         } else {
@@ -154,14 +152,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
-            var userDict: NSMutableDictionary = NSMutableDictionary()
-            userDict = json["user"] as! NSMutableDictionary
+            var userDict: [String: Any] = [String: Any]()
+            userDict = json["user"] as!  [String: Any]
             for (key,value) in userDict
             {
-                let valueAfterNullCheck =  nullToNil(value)
-                userDetails.setValue(valueAfterNullCheck!, forKey: key as! String)
+                let valueAfterNullCheck =  nullToNil(value: value)
+                userDetails.setValue(valueAfterNullCheck!, forKey: key)
             }
             setUserDetails()
         }
@@ -180,16 +178,16 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        if(dataSource?.count > 0)
+        if((dataSource?.count)! > 0)
         {
             dataSource![0][0][displayNameKey] = fullNames
             dataSource![2][0][privateInfoKey] = emails
@@ -223,14 +221,7 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         if actualImage != ""
         {
             let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-            let url: NSURL = convertStringtoURL(thumbUrl)
-            if let data = NSData(contentsOfURL: url){
-                let imageDetailsData = (data as NSData?)!
-                imageForProfile = UIImage(data: imageDetailsData)!
-            }
-            else{
-                imageForProfile = UIImage(named: "dummyUser")!
-            }
+            imageForProfile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: thumbUrl)
         }
         else{
             imageForProfile = UIImage(named: "dummyUser")!
@@ -248,48 +239,47 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func ltzAbbrev() -> String
     {
-        let zoneName = NSTimeZone.localTimeZone().name
-        let timeValue = NSTimeZone.localTimeZone().localizedName(.ShortStandard, locale: NSLocale.init(localeIdentifier: zoneName))
+        let zoneName = NSTimeZone.local.identifier
+        let timeValue = NSTimeZone.local.localizedName(for: .shortStandard, locale: NSLocale.init(localeIdentifier: zoneName) as Locale)
         return timeValue!
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -301,13 +291,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    @IBAction func saveClicked(sender: AnyObject) {
-        saveButton.hidden = true
+    @IBAction func saveClicked(_ sender: Any) {
+        saveButton.isHidden = true
         if(photoTakenFlag == false){
             updateProfileDetails()
         }
@@ -319,10 +309,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func generateWaytoSendAlert()
     {
-        let alert = UIAlertController(title: "Not Saved", message: "Do you want to save the details", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Not Saved", message: "Do you want to save the details", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.saveButton.hidden = true
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.saveButton.isHidden = true
             if(self.photoTakenFlag == true){
                 self.showOverlay()
                 self.getSignedUrl()
@@ -330,25 +320,25 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             else{
                 self.updateProfileDetails()
             }
-           
+            
         }))
-        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: {
+        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.cancel, handler: {
             (action) -> Void in
             self.redirect()
         }))
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func redirect() {
-        self.navigationController?.popViewControllerAnimated(false)
+        _ = self.navigationController?.popViewController(animated: false)
     }
     
-    @IBAction func backClicked(sender: AnyObject) {
-        if(saveButton.hidden == false){
+    @IBAction func backClicked(_ sender: Any) {
+        if(saveButton.isHidden == false){
             generateWaytoSendAlert()
         }
         else{
-            self.navigationController?.popViewControllerAnimated(false)
+            _ = self.navigationController?.popViewController(animated: false)
         }
     }
     
@@ -357,13 +347,13 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
     
     func getSignedUrl()  {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        profileManager.getUploadProfileImageURL(userId, accessToken: accessToken, success: { (response) in
-            self.authenticationSuccessHandlerSignedUrl(response)
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+        profileManager.getUploadProfileImageURL(userName: userId, accessToken: accessToken, success: { (response) in
+            self.authenticationSuccessHandlerSignedUrl(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
@@ -380,22 +370,22 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
             
             let cameraController = IPhoneCameraViewController()
-            let sizeThumb = CGSizeMake(70,70)
-            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFillSize: sizeThumb)
-            let imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail, 0.5)
+            let sizeThumb = CGSize(width:70, height:70)
+            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfile, scaledToFill: sizeThumb)
+            let imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail!, 0.5)
             let imagethumbDetailsData = (imageData as NSData?)!
-            let thumbImageForProfile = UIImage(data:imagethumbDetailsData)
+            let thumbImageForProfile = UIImage(data:imagethumbDetailsData as Data)
             
-            uploadImage(fullImageURL, imageToSave: imageForProfile, completion: { (result) in
-                self.uploadImage(self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
+            uploadImage(signedUrl: fullImageURL, imageToSave: imageForProfile, completion: { (result) in
+                self.uploadImage(signedUrl: self.thumbURL, imageToSave: thumbImageForProfile!, completion: { (result) in
                     if(result == "Success"){
                         self.removeOverlay()
                         self.imageForProfileOld = self.imageForProfile
-                        let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                            self.navigationController?.popViewControllerAnimated(false)
+                        let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+                            _ = self.navigationController?.popViewController(animated: false)
                         }))
-                        self.presentViewController(alert, animated: true, completion: nil)
+                        self.present(alert, animated: true, completion: nil)
                     }
                     else{
                         self.removeOverlay()
@@ -411,9 +401,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         view.endEditing(true)
         editProfTableView.reloadData()
         editProfTableView.layoutIfNeeded()
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         
         for i in 0 ..< dataSource!.count
         {
@@ -449,12 +439,14 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             timeUpdate = timeZoneInSecondsUpdated
         }
-        let phoneNumberStringArray = mobNo.componentsSeparatedByCharactersInSet(
-            NSCharacterSet.decimalDigitCharacterSet().invertedSet)
-        let phoneNumber = "+".stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
-        profileManager.updateUserDetails(userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, timeZone: timeUpdate, success: { (response) in
+        let phoneNumberStringArray = (mobNo as NSString).components(
+            separatedBy: CharacterSet.decimalDigits.inverted)
+        
+        let phoneNumber = ("+" as NSString).appending(NSArray(array: phoneNumberStringArray).componentsJoined(by: "")) as String
+        profileManager.updateUserDetails(userName: userId, accessToken: accessToken, email: email, location: "", mobNo: phoneNumber, fullName: fullName, timeZone: timeUpdate, success: { (response) in
             let savingPath = "\(userId)Profile"
-            FileManagerViewController.sharedInstance.saveImageToFilePath(savingPath, mediaImage: self.imageForProfile)
+            _ =
+                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: savingPath, mediaImage: self.imageForProfile)
             self.fullNames = self.fullName
             self.mobileNo = self.mobNo
             self.emails = self.email
@@ -465,36 +457,36 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
                 self.timeZoneInSecondsFromAPI = self.timeZoneInSecondsUpdated
             }
             if(self.photoTakenFlag == false){
-                let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                    self.navigationController?.popViewControllerAnimated(false)
+                let alert = UIAlertController(title: "Success", message: "Profile updated successfully", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+                    _ = self.navigationController?.popViewController(animated: false)
                 }))
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
             }
             self.photoTakenFlag = false
             
         }) { (error, message) in
             self.photoTakenFlag = false
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
-    func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: (result: String) -> Void)
+    func  uploadImage(signedUrl: String, imageToSave: UIImage, completion: @escaping (_ result: String) -> Void)
     {
         let url = NSURL(string: signedUrl)
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "PUT"
-        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        let request = NSMutableURLRequest(url: url! as URL)
+        request.httpMethod = "PUT"
+        let session = URLSession(configuration:URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
         var imageData: NSData = NSData()
-        imageData = UIImageJPEGRepresentation(imageToSave, 0.5)!
-        request.HTTPBody = imageData
-        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+        imageData = UIImageJPEGRepresentation(imageToSave, 0.5)! as NSData
+        request.httpBody = imageData as Data
+        let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
             if error != nil {
-                completion(result:"Failed")
+                completion("Failed")
             }
             else {
-                completion(result:"Success")
+                completion("Success")
             }
         }
         dataTask.resume()
@@ -502,15 +494,22 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(EditProfileViewController.keyBoardWasShown(notif:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(EditProfileViewController.keyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     func keyboardDidShow(notification:NSNotification)
     {
         isKeyBoardUp = true
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         if tableViewBottomConstaint.constant == 0
         {
             self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
@@ -527,9 +526,9 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     }
 }
 
-extension EditProfileViewController: UITableViewDelegate
+extension EditProfileViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         if section == 0
         {
@@ -544,21 +543,24 @@ extension EditProfileViewController: UITableViewDelegate
             return 55.0
         }
     }
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         
     }
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(EditProfileHeaderCell.identifier) as! EditProfileHeaderCell
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: EditProfileHeaderCell.identifier) as! EditProfileHeaderCell
         
-        headerCell.borderLine.hidden = false
-        headerCell.topBorderLine.hidden = false
+        headerCell.borderLine.isHidden = false
+        headerCell.topBorderLine.isHidden = false
         
         switch (section) {
         case 0:
             headerCell.headerTitleLabel.text = ""
-            headerCell.topBorderLine.hidden = true
+            headerCell.topBorderLine.isHidden = true
         case 1:
             headerCell.headerTitleLabel.text = "ACCOUNT INFO"
         case 2:
@@ -567,10 +569,10 @@ extension EditProfileViewController: UITableViewDelegate
             let privacyPolicyDesc = NSMutableAttributedString(string: "All your Media is Private unless Channels are shared to specific people. Archive is always private to you.")
             let privacyPolicyString = NSMutableAttributedString(string:"\nPrivacy Policy")
             privacyPolicyString.addAttribute(NSForegroundColorAttributeName, value: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0), range: NSMakeRange(0, privacyPolicyString.length))
-            privacyPolicyDesc.appendAttributedString(privacyPolicyString)
+            privacyPolicyDesc.append(privacyPolicyString)
             
             headerCell.headerTitleLabel.attributedText = privacyPolicyDesc
-            headerCell.borderLine.hidden = true
+            headerCell.borderLine.isHidden = true
             
         default:
             headerCell.headerTitleLabel.text = ""
@@ -578,7 +580,7 @@ extension EditProfileViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         if indexPath.section == 0
         {
@@ -590,17 +592,12 @@ extension EditProfileViewController: UITableViewDelegate
         }
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
         return 0.01
     }
-}
-
-
-extension EditProfileViewController:UITableViewDataSource
-{
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         switch section
         {
@@ -621,9 +618,8 @@ extension EditProfileViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        
         if let dataSource = dataSource
         {
             if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
@@ -632,76 +628,70 @@ extension EditProfileViewController:UITableViewDataSource
                 switch indexPath.section
                 {
                 case 0:
-                    
-                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPersonalInfoCell.identifier, forIndexPath:indexPath) as! EditProfPersonalInfoCell
-                    cell.editProfileImageButton.addTarget(self, action: #selector(EditProfileViewController.editProfileTapped(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+                    let cell = tableView.dequeueReusableCell(withIdentifier: EditProfPersonalInfoCell.identifier, for:indexPath) as! EditProfPersonalInfoCell
+                    cell.editProfileImageButton.addTarget(self, action: #selector(EditProfileViewController.editProfileTapped(sender:)), for: UIControlEvents.touchUpInside)
                     
                     if cellDataSource[displayNameKey] == ""
                     {
-                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Name", attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                        cell.displayNameTextField.attributedPlaceholder = NSAttributedString(string: "Name", attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
                     }
                     let cameraController = IPhoneCameraViewController()
-                    let sizeThumb = CGSizeMake(70,70)
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfileOld, scaledToFillSize: sizeThumb)
-                    imageForProfileOld = imageAfterConversionThumbnail
+                    let sizeThumb = CGSize(width:70, height:70)
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(self.imageForProfileOld, scaledToFill: sizeThumb)
+                    imageForProfileOld = imageAfterConversionThumbnail!
                     cell.userImage.image = imageForProfile
                     
                     cell.userNameTextField.text = cellDataSource[userNameKey]
-                    cell.userNameTextField.userInteractionEnabled = false
+                    cell.userNameTextField.isUserInteractionEnabled = false
                     
                     cell.displayNameTextField.text = cellDataSource[displayNameKey]
                     
                     cell.displayNameTextField.tag = indexPath.section
                     cell.displayNameTextField.delegate = self
                     
-                    cell.selectionStyle = .None
+                    cell.selectionStyle = .none
                     return cell
-                    
                 case 1:
-                    
-                    
-                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfAccountInfoCell.identifier, forIndexPath:indexPath) as! EditProfAccountInfoCell
+                    let cell = tableView.dequeueReusableCell(withIdentifier: EditProfAccountInfoCell.identifier, for:indexPath) as! EditProfAccountInfoCell
                     cell.accountInfoTitleLabel.text = cellDataSource[titleKey]
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
-                        cell.borderLine.hidden = true
-                        cell.selectionStyle = .Default
+                        cell.borderLine.isHidden = true
+                        cell.selectionStyle = .default
                     }
                     else
                     {
-                        cell.borderLine.hidden = false
-                        cell.selectionStyle = .Default
+                        cell.borderLine.isHidden = false
+                        cell.selectionStyle = .default
                     }
                     
                     if indexPath.row == 3
                     {
                         button.removeFromSuperview()
-                        cell.accessoryType = .None
-                        cell.selectionStyle = .None
+                        cell.accessoryType = .none
+                        cell.selectionStyle = .none
                         let image = UIImage(named: "synchronising.png")
-                        button = UIButton(type: UIButtonType.Custom) as UIButton
-                        button.frame = CGRectMake(cell.frame.width - 35, cell.frame.height/2 - 10, 25, 25)
-                        button.backgroundColor = UIColor.clearColor()
-                        button.setImage(image, forState: .Normal)
+                        button = UIButton(type: UIButtonType.custom) as UIButton
+                        button.frame = CGRect(x:(cell.frame.width - 35), y:(cell.frame.height/2 - 10), width:25, height:25)
+                        button.backgroundColor = UIColor.clear
+                        button.setImage(image, for: .normal)
                         cell.addSubview(button)
                     }
                     else
                     {
-                        cell.selectionStyle = .Default
-                        cell.userInteractionEnabled = true
+                        cell.selectionStyle = .default
+                        cell.isUserInteractionEnabled = true
                         
                     }
-                    
                     return cell
-                    
                 case 2:
-                    let cell = tableView.dequeueReusableCellWithIdentifier(EditProfPrivateInfoCell.identifier, forIndexPath:indexPath) as! EditProfPrivateInfoCell
+                    let cell = tableView.dequeueReusableCell(withIdentifier: EditProfPrivateInfoCell.identifier, for:indexPath) as! EditProfPrivateInfoCell
                     cell.privateInfoTitleLabel.tag = 100 + indexPath.row
                     if(indexPath.row == 1){
-                        cell.privateInfoTitleLabel.keyboardType = .PhonePad
+                        cell.privateInfoTitleLabel.keyboardType = .phonePad
                     }
                     else{
-                        cell.privateInfoTitleLabel.keyboardType = .Default
+                        cell.privateInfoTitleLabel.keyboardType = .default
                     }
                     cell.privateInfoTitleLabel.delegate = self
                     cellSection = indexPath.row
@@ -710,13 +700,13 @@ extension EditProfileViewController:UITableViewDataSource
                     
                     if dataSource[indexPath.section].count-1 == indexPath.row
                     {
-                        cell.borderLine.hidden = true
+                        cell.borderLine.isHidden = true
                     }
                     else
                     {
-                        cell.borderLine.hidden = false
+                        cell.borderLine.isHidden = false
                     }
-                    cell.selectionStyle = .None
+                    cell.selectionStyle = .none
                     return cell
                     
                 default:
@@ -727,19 +717,17 @@ extension EditProfileViewController:UITableViewDataSource
         return UITableViewCell()
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-    }
     
     func synchronisingTapped()
     {
-        self.button.rotate360Degrees(1.0)
-        _ = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(EditProfileViewController.timerStop), userInfo: nil, repeats: false)
+        self.button.rotate360Degrees(duration: 1.0)
+        _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(EditProfileViewController.timerStop), userInfo: nil, repeats: false)
     }
     
     func timerStop()
     {
-        let timeOffset = NSTimeZone.systemTimeZone().secondsFromGMT
-        let timeOffsetStr = String(timeOffset)
+        let timeOffset = NSTimeZone.system.secondsFromGMT()
+        let timeOffsetStr = String(describing: timeOffset)
         if timeOffsetStr.hasPrefix("-")
         {
             self.timeZoneInSecondsUpdated = timeOffsetStr
@@ -752,18 +740,18 @@ extension EditProfileViewController:UITableViewDataSource
         if self.timeZoneInSecondsUpdated != self.timeZoneInSecondsFromAPI
         {
             let timeZoneOffsetInGMT : String = self.ltzAbbrev()
-            let timeZoneOffsetStr = (timeZoneOffsetInGMT as NSString).stringByReplacingOccurrencesOfString("GMT", withString: "UTC")
+            let timeZoneOffsetStr = (timeZoneOffsetInGMT as NSString).replacingOccurrences(of: "GMT", with: "UTC")
             self.dataSource![1][3][self.titleKey] = timeZoneOffsetStr
-            self.saveButton.hidden = false
+            self.saveButton.isHidden = false
         }
-        let indexPath = NSIndexPath(forRow: 3, inSection: 1)
-        self.editProfTableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+        let indexPath = IndexPath(row: 3, section: 1)
+        self.editProfTableView.reloadRows(at: [indexPath], with: .none)
         
     }
-    func textFieldDidBeginEditing(textField: UITextField) {
-        
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         activeField = textField
-        saveButton.hidden = false
+        saveButton.isHidden = false
     }
     
     func keyBoardWasShown(notif:NSNotification)
@@ -771,26 +759,26 @@ extension EditProfileViewController:UITableViewDataSource
         if(activeField.tag == 100)
         {
             var info: NSDictionary = NSDictionary()
-            info = notif .userInfo!
-            let kbSize : CGSize = info.objectForKey(UIKeyboardFrameBeginUserInfoKey)!.CGRectValue.size
+            info = notif .userInfo! as NSDictionary
+            let kbSize : CGSize = (info.object(forKey: UIKeyboardFrameBeginUserInfoKey)! as AnyObject).cgRectValue.size
             var bkgndRect:CGRect = (activeField.superview?.frame)!
             bkgndRect.size.height += kbSize.height
             activeField.superview?.frame = bkgndRect
-            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 70), animated: true)
+            editProfTableView.setContentOffset(CGPoint(x:0, y:(activeField.frame.origin.y + kbSize.height - 70)), animated: true)
         }
         else if(activeField.tag == 101)
         {
             var info: NSDictionary = NSDictionary()
-            info = notif .userInfo!
-            let kbSize : CGSize = info.objectForKey(UIKeyboardFrameBeginUserInfoKey)!.CGRectValue.size
+            info = notif .userInfo! as NSDictionary
+            let kbSize : CGSize = (info.object(forKey: UIKeyboardFrameBeginUserInfoKey)! as AnyObject).cgRectValue.size
             var bkgndRect:CGRect = (activeField.superview?.frame)!
             bkgndRect.size.height += kbSize.height
             activeField.superview?.frame = bkgndRect
-            editProfTableView.setContentOffset(CGPointMake(0, activeField.frame.origin.y + kbSize.height - 20), animated: true)
+            editProfTableView.setContentOffset(CGPoint(x:0, y:(activeField.frame.origin.y + kbSize.height - 20)), animated: true)
         }
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         
         activeField = UITextField()
         
@@ -804,10 +792,10 @@ extension EditProfileViewController:UITableViewDataSource
                 dataSource![textField.tag][0][displayNameKey] = textField.text
             }
             textField.attributedPlaceholder = NSAttributedString(string: "Name",
-                                                                 attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                 attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         }
         else if(textField.tag == 100){
-            let isEmailValid = isEmail(textField.text!) as Bool!
+            let isEmailValid = isEmail(email: textField.text!) as Bool!
             if isEmailValid == false
             {
                 ErrorManager.sharedInstance.loginInvalidEmail()
@@ -831,22 +819,22 @@ extension EditProfileViewController:UITableViewDataSource
     }
     
     func isEmail(email:String) -> Bool {
-        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
-        return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
+        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .caseInsensitive)
+        return regex?.firstMatch(in: email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
     }
     
     func editProfileTapped(sender:UIButton!)
     {
         self.imagePicker.delegate = self
-        let myActionSheet = UIAlertController(title: "", message: "How would you like to set your photo?", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        let myActionSheet = UIAlertController(title: "", message: "How would you like to set your photo?", preferredStyle: UIAlertControllerStyle.actionSheet)
         
-        let takeAction = UIAlertAction(title: "Take a photo", style: UIAlertActionStyle.Default) { (action) in
-            if (UIImagePickerController.isSourceTypeAvailable(.Camera)) {
-                if UIImagePickerController.availableCaptureModesForCameraDevice(.Rear) != nil {
+        let takeAction = UIAlertAction(title: "Take a photo", style: UIAlertActionStyle.default) { (action) in
+            if (UIImagePickerController.isSourceTypeAvailable(.camera)) {
+                if UIImagePickerController.availableCaptureModes(for: .rear) != nil {
                     self.imagePicker.allowsEditing = false
-                    self.imagePicker.sourceType = .Camera
-                    self.imagePicker.cameraCaptureMode = .Photo
-                    self.presentViewController(self.imagePicker, animated: true, completion: {
+                    self.imagePicker.sourceType = .camera
+                    self.imagePicker.cameraCaptureMode = .photo
+                    self.present(self.imagePicker, animated: true, completion: {
                         
                     })
                     
@@ -856,34 +844,37 @@ extension EditProfileViewController:UITableViewDataSource
             }
         }
         
-        let chooseAction = UIAlertAction(title: "Choose a photo", style: UIAlertActionStyle.Default) { (action) in
+        let chooseAction = UIAlertAction(title: "Choose a photo", style: UIAlertActionStyle.default) { (action) in
             
             self.imagePicker.allowsEditing = false
-            self.imagePicker.sourceType = .SavedPhotosAlbum
-            self.presentViewController(self.imagePicker, animated: true, completion: nil)
+            self.imagePicker.sourceType = .savedPhotosAlbum
+            self.present(self.imagePicker, animated: true, completion: nil)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { (action) in
         }
         
         myActionSheet.addAction(takeAction)
         myActionSheet.addAction(chooseAction)
         myActionSheet.addAction(cancelAction)
         
-        self.presentViewController(myActionSheet, animated: true, completion: nil)
+        self.present(myActionSheet, animated: true, completion: nil)
     }
     
-    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            imageForProfile = pickedImage
+        }
+        self.dismiss(animated: true, completion: { () -> Void in
             
         })
+        
         photoTakenFlag = true
-        imageForProfile = image
-        saveButton.hidden = false
+        saveButton.isHidden = false
         editProfTableView.reloadData()
     }
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         if let dataSource = dataSource
         {
@@ -896,16 +887,15 @@ extension EditProfileViewController:UITableViewDataSource
     }
 }
 
-extension UIView {
-    func rotate360Degrees(duration: CFTimeInterval , completionDelegate: AnyObject? = nil) {
+extension UIView: CAAnimationDelegate {
+    func rotate360Degrees(duration: CFTimeInterval , completionDelegate: Any? = nil) {
         let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
         rotateAnimation.fromValue = 0.0
         rotateAnimation.toValue = CGFloat(M_PI * 2.0)
         rotateAnimation.duration = duration
-        
-        if let delegate: AnyObject = completionDelegate {
-            rotateAnimation.delegate = delegate
+        if let _: Any = completionDelegate {
+            rotateAnimation.delegate = self
         }
-        self.layer.addAnimation(rotateAnimation, forKey: nil)
+        self.layer.add(rotateAnimation, forKey: nil)
     }
 }

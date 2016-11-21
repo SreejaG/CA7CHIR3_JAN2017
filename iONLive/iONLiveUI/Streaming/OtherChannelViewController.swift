@@ -16,7 +16,7 @@ class OtherChannelViewController: UIViewController  {
     var offsetToInt : Int = Int()
     let isWatched = "isWatched"
     var loadingOverlay: UIView?
-    var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaSharedCountArray:[[String:Any]] = [[String:Any]]()
     let cameraController = IPhoneCameraViewController()
     var refreshControl:UIRefreshControl!
     var limit : Int = Int()
@@ -34,81 +34,83 @@ class OtherChannelViewController: UIViewController  {
     var liveStreamFlag : Bool = false
     var vc : MovieViewController = MovieViewController()
     var customView = CustomInfiniteIndicator()
-
+    
     @IBOutlet weak var notificationLabel: UILabel!
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.updateChannelMediaList), name: "SharedChannelMediaDetail", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.ObjectDeleted), name: "DeletedObject", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.pushNotificationUpdateStream), name: "PushNotification", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.checkCountIncrementInSelectedChannel), name: "CountIncrementedPushNotification", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.dismissFullView), name: "ViewMediaDeleted", object:nil)
-          NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OtherChannelViewController.dismissFullViewWhileMyDayCleanUp), name:"ViewMediaDeletedMyDAyCleanUp", object:nil)
-        self.notificationLabel.hidden = true
+        NotificationCenter.default.removeObserver(self)
+        
+        let SharedChannelMediaDetail = Notification.Name("SharedChannelMediaDetail")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.updateChannelMediaList(notif:)), name: SharedChannelMediaDetail, object: nil)
+        
+        let DeletedObject = Notification.Name("DeletedObject")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.ObjectDeleted(notif:)), name: DeletedObject, object: nil)
+        
+        let PushNotification = Notification.Name("PushNotification")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.pushNotificationUpdateStream(notif:)), name: PushNotification, object: nil)
+        
+        let CountIncrementedPushNotification = Notification.Name("CountIncrementedPushNotification")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.checkCountIncrementInSelectedChannel(notif:)), name: CountIncrementedPushNotification, object: nil)
+        
+        let ViewMediaDeleted = Notification.Name("ViewMediaDeleted")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.dismissFullView(notif:)), name: ViewMediaDeleted, object: nil)
+        
+        let ViewMediaDeletedMyDAyCleanUp = Notification.Name("ViewMediaDeletedMyDAyCleanUp")
+        NotificationCenter.default.addObserver(self, selector:#selector(OtherChannelViewController.dismissFullViewWhileMyDayCleanUp(notif:)), name: ViewMediaDeletedMyDAyCleanUp, object: nil)
+        
+        self.notificationLabel.isHidden = true
         self.refreshControl = UIRefreshControl()
         self.channelItemsCollectionView.alwaysBounceVertical = true
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),forControlEvents :
-            UIControlEvents.ValueChanged)
+        self.refreshControl.addTarget(self, action: #selector(StreamsListViewController.pullToRefresh),for : UIControlEvents.valueChanged)
         self.channelItemsCollectionView.addSubview(self.refreshControl)
         isWatchedTrue()
         createScrollViewAnimations()
         
         showOverlay()
-        SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(channelId
+        SharedChannelDetailsAPI.sharedInstance.getSubscribedChannelData(channelId: channelId
             , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         channelItemsCollectionView.alpha = 1.0
-        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.withRenderingMode(.alwaysOriginal)
         if let channelName = channelName
         {
-            channelTitleLabel.text = channelName.uppercaseString
+            channelTitleLabel.text = channelName.uppercased()
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-     //   NSNotificationCenter.defaultCenter().removeObserver(self)
         channelItemsCollectionView.alpha = 1.0
         self.customView.removeFromSuperview()
-
+        
     }
     func dismissFullView(notif: NSNotification)
     {
         let mediaId = notif.object as! String
         let obj : SetUpView = SetUpView()
-      //  vc.mediaDeletedErrorMessage()
-        obj.callDelete(vc, mediaId: mediaId)
-        dispatch_async(dispatch_get_main_queue()) {
-         //   self.channelItemsCollectionView.reloadData()
-        }
-        
+        obj.callDelete(obj: vc, mediaId: mediaId)
     }
+    
     func dismissFullViewWhileMyDayCleanUp(notif: NSNotification)
     {
-        
-        
-        if NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") != nil{
-            let channelIdValue = NSUserDefaults.standardUserDefaults().valueForKey("SharedChannelId") as! String
-           // let channelIdValue = notif.object as! String
+        if UserDefaults.standard.value(forKey: "SharedChannelId") != nil{
+            let channelIdValue = UserDefaults.standard.value(forKey: "SharedChannelId") as! String
             let obj : SetUpView = SetUpView()
-            //  vc.mediaDeletedErrorMessage()
-            print(vc)
-            obj.callDeleteWhileMyDayCleanUp(vc, channelId:channelIdValue)
+            obj.callDeleteWhileMyDayCleanUp(obj: vc, channelId:channelIdValue)
         }
-       
     }
+    
     func pushNotificationUpdateStream(notif: NSNotification)
     {
-        let info = notif.object as! [String : AnyObject]
+        let info = notif.object as! [String : Any]
         if (info["type"] as! String == "liveStream")
         {
-            channelPushNotificationLiveStarted(info)
+            channelPushNotificationLiveStarted(info: info)
         }
         else if (info["type"] as! String == "channel")
         {
@@ -125,19 +127,19 @@ class OtherChannelViewController: UIViewController  {
     
     func channelRemoved()
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            let refreshAlert = UIAlertController(title: "Deleted", message: "User deleted shared channel.", preferredStyle: UIAlertControllerStyle.Alert)
+        DispatchQueue.main.async {
+            let refreshAlert = UIAlertController(title: "Deleted", message: "User deleted shared channel.", preferredStyle: UIAlertControllerStyle.alert)
             
-            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             }))
-            self.presentViewController(refreshAlert, animated: true, completion: nil)
+            self.present(refreshAlert, animated: true, completion: nil)
             self.channelItemsCollectionView.reloadData()
             self.NoDatalabel.removeFromSuperview()
             SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
             if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
             {
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.center
                 self.NoDatalabel.text = "No Media Available"
                 self.view.addSubview(self.NoDatalabel)
             }
@@ -147,7 +149,7 @@ class OtherChannelViewController: UIViewController  {
                 self.refreshControl.endRefreshing()
                 
             }
-        })
+        }
     }
     
     func checkCountIncrementInSelectedChannel(notif : NSNotification)
@@ -155,13 +157,14 @@ class OtherChannelViewController: UIViewController  {
         let channel = notif.object!
         if  "\(channel)" == channelId as String
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.notificationLabel.hidden = false
+            DispatchQueue.main.async {
+                self.notificationLabel.isHidden = false
                 self.notificationLabel.text = "Pull to get new media"
-            })
+            }
         }
     }
-    func channelPushNotificationLiveStarted(info: [String : AnyObject])
+    
+    func channelPushNotificationLiveStarted(info: [String : Any])
     {
         let subType = info["subType"] as! String
         let chId = info["channelId"]!
@@ -171,53 +174,52 @@ class OtherChannelViewController: UIViewController  {
             liveStreamFlag = false
             if("\(chId)" == channelId as String )
             {
-                notificationLabel.hidden = false
+                notificationLabel.isHidden = false
                 notificationLabel.text = "pull to get livestream"
             }
             break;
         case "stopped":
             liveStreamFlag = true
-            updateLiveStreamStoppeddEntry(info)
+            updateLiveStreamStoppeddEntry(info: info)
             break;
         default:
             break;
         }
     }
     
-    func updateLiveStreamStartedEntry(info:[String : AnyObject])
+    func updateLiveStreamStartedEntry(info:[String : Any])
     {
         ErrorManager.sharedInstance.streamAvailable()
     }
     
-    func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
+    func updateLiveStreamStoppeddEntry(info:[String : Any])
     {
         if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
             let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String
             if(type == "live")
             {
-                
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     if ( SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                     {
-                        SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAtIndex(0)
+                        SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.remove(at: 0)
                         self.channelItemsCollectionView.reloadData()
                     }
-                })
+                }
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.channelItemsCollectionView.reloadData()
-                })
+                }
             }
         }
     }
     
     func createScrollViewAnimations()  {
-        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
+        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRect(x:0, y:0, width:40, height:40))
         channelItemsCollectionView.infiniteScrollIndicatorMargin = 50
-        channelItemsCollectionView.addInfiniteScrollWithHandler {  (scrollView) -> Void in
+        channelItemsCollectionView.addInfiniteScroll {  (scrollView) -> Void in
             
             if(!self.pullToRefreshActive)
             {
@@ -247,7 +249,7 @@ class OtherChannelViewController: UIViewController  {
                         if self.downloadCompleteFlag == "end"
                         {
                             self.downloadCompleteFlag = "start"
-                            SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
+                            SharedChannelDetailsAPI.sharedInstance.getMedia(channelId: channelId
                                 , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
                         }
                     }
@@ -263,45 +265,42 @@ class OtherChannelViewController: UIViewController  {
     
     func ObjectDeleted(notif: NSNotification)
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.channelItemsCollectionView.reloadData()
             self.NoDatalabel.removeFromSuperview()
             if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
             {
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.center
                 self.NoDatalabel.text = "No Media Available"
                 self.view.addSubview(self.NoDatalabel)
             }
             if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count < 18 && SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count != 0)
             {
-               // self.showOverlay()
-                
-                
                 self.getInfinteScrollData()
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.customView.removeFromSuperview()
-                    self.channelItemsCollectionView.userInteractionEnabled = false
-                    self.customView  = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
+                    self.channelItemsCollectionView.isUserInteractionEnabled = false
+                    self.customView  = CustomInfiniteIndicator(frame: CGRect(x:(self.channelItemsCollectionView.layer.frame.width/2 - 20), y:(self.channelItemsCollectionView.layer.frame.height - 100), width:40, height:40))
                     self.channelItemsCollectionView.addSubview(self.customView)
                     self.customView.startAnimating()
-                })
-
+                }
+                
             }
             if(self.pullToRefreshActive)
             {
                 self.pullToRefreshActive = false
                 self.refreshControl.endRefreshing()
             }
-        })
+        }
     }
     
     func updateChannelMediaList(notif: NSNotification)
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.scrollObj.finishInfiniteScroll()
             self.scrollObj = UIScrollView()
-            self.notificationLabel.hidden = true
+            self.notificationLabel.isHidden = true
             if(self.downloadCompleteFlag == "start")
             {
                 self.downloadCompleteFlag = "end"
@@ -310,11 +309,11 @@ class OtherChannelViewController: UIViewController  {
                 self.refreshControl.endRefreshing()
                 self.pullToRefreshActive = false
             }
-        })
+        }
         let success =  notif.object as! String
         if(success == "success")
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
                 {
                     self.removeOverlay()
@@ -322,36 +321,36 @@ class OtherChannelViewController: UIViewController  {
                     self.NoDatalabel.removeFromSuperview()
                 }
                 
-            })
+            }
         }
         else{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.removeOverlay()
                 self.NoDatalabel.removeFromSuperview()
                 if(SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count == 0)
                 {
-                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                    self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.center
                     self.NoDatalabel.text = "No Media Available"
                     self.view.addSubview(self.NoDatalabel)
                 }
-            })
+            }
         }
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.channelItemsCollectionView.userInteractionEnabled = true
+        DispatchQueue.main.async {
+            self.channelItemsCollectionView.isUserInteractionEnabled = true
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
-        })
+        }
     }
     
-    @IBAction func backClicked(sender: AnyObject)
+    @IBAction func backClicked(_ sender: Any)
     {
         self.setMediaimage()
-        NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "SelectedTab")
+        UserDefaults.standard.set(0, forKey: "SelectedTab")
         let sharingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
-        let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
-        sharingVC.navigationController?.navigationBarHidden = true
+        let sharingVC = sharingStoryboard.instantiateViewController(withIdentifier: StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
+        sharingVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(sharingVC, animated: false)
     }
     
@@ -361,41 +360,40 @@ class OtherChannelViewController: UIViewController  {
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func removeOverlay(){
@@ -403,15 +401,15 @@ class OtherChannelViewController: UIViewController  {
     }
     
     func isWatchedTrue(){
-        let defaults = NSUserDefaults .standardUserDefaults()
-        mediaSharedCountArray = defaults.valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+        let defaults = UserDefaults.standard
+        mediaSharedCountArray = defaults.value(forKey: "Shared") as! NSArray as! [[String : AnyObject]]
         for i in 0  ..< mediaSharedCountArray.count
         {
             if  mediaSharedCountArray[i][channelIdkey] as! String == channelId as String
             {
                 mediaSharedCountArray[i][sharedMediaCount] = "0"
-                let defaults = NSUserDefaults .standardUserDefaults()
-                defaults.setObject(mediaSharedCountArray, forKey: "Shared")
+                let defaults = UserDefaults .standard
+                defaults.set(mediaSharedCountArray, forKey: "Shared")
             }
         }
     }
@@ -448,8 +446,6 @@ class OtherChannelViewController: UIViewController  {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][mediaImageKey] =  UIImage()
             }
         }
-        
-        
     }
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
@@ -471,16 +467,16 @@ class OtherChannelViewController: UIViewController  {
         }
         if(subIdArray.count > 0)
         {
-            let subid = subIdArray.minElement()!
+            let subid = subIdArray.min()!
             let channelSelectedMediaId =  "\(subid)"
-            let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-            SharedChannelDetailsAPI.sharedInstance.infiniteScroll(channelId, selectedChannelName: channelName, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
+            let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+            SharedChannelDetailsAPI.sharedInstance.infiniteScroll(channelId: channelId, selectedChannelName: channelName, selectedChannelUserName: userId, channelMediaId: channelSelectedMediaId)
         }
         else{
             self.downloadCompleteFlag = "end"
             removeOverlay()
         }
-
+        
     }
     
     func getPullToRefreshData()
@@ -501,15 +497,15 @@ class OtherChannelViewController: UIViewController  {
                     }
                     if(subIdArray.count > 0)
                     {
-                        let subid = subIdArray.maxElement()
+                        let subid = subIdArray.max()
                         let channelSelectedMediaId = subid!
-                        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: "\(channelSelectedMediaId)")
+                        let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId: channelId, selectedChannelUserName: userId, channelMediaId: "\(channelSelectedMediaId)")
                     }
                 }
             }
             else{
-                let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
+                let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
                 if self.downloadCompleteFlag == "end"
                 {
                     let sortList : Array = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource
@@ -521,9 +517,9 @@ class OtherChannelViewController: UIViewController  {
                     }
                     if subIdArray.count > 0
                     {
-                        let subid = subIdArray.maxElement()
+                        let subid = subIdArray.max()
                         let channelSelectedMediaId = subid!
-                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId, selectedChannelUserName: userId, channelMediaId: "\(channelSelectedMediaId)")
+                        SharedChannelDetailsAPI.sharedInstance.pullToRefresh(channelId: channelId, selectedChannelUserName: userId, channelMediaId: "\(channelSelectedMediaId)")
                     }
                 }
             }
@@ -533,7 +529,7 @@ class OtherChannelViewController: UIViewController  {
             if self.downloadCompleteFlag == "end"
             {
                 self.downloadCompleteFlag = "start"
-                SharedChannelDetailsAPI.sharedInstance.getMedia(channelId
+                SharedChannelDetailsAPI.sharedInstance.getMedia(channelId: channelId
                     , selectedChannelName: channelName, selectedChannelUserName: userName , sharedCount: totalMediaCount)
             }
         }
@@ -541,24 +537,24 @@ class OtherChannelViewController: UIViewController  {
     
     func  didSelectExtension(indexPathRow: Int)
     {
-        getLikeCountForSelectedIndex(indexPathRow)
+        getLikeCountForSelectedIndex(indexpathRow: indexPathRow)
     }
     
     func getLikeCountForSelectedIndex(indexpathRow:Int)  {
         let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaIdKey] as! String
-        getLikeCount(mediaId, indexpathRow: indexpathRow)
+        getLikeCount(mediaId: mediaId, indexpathRow: indexpathRow)
     }
     
     func getLikeCount(mediaId: String,indexpathRow:Int) {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         let mediaTypeSelected : String = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaTypeKey] as! String
-        channelManager.getMediaLikeCountDetails(userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
-            self.successHandlerForMediaCount(response,indexpathRow:indexpathRow)
-            }, failure: { (error, message) -> () in
-                self.failureHandlerForMediaCount(error, code: message,indexPathRow:indexpathRow)
-                return
+        channelManager.getMediaLikeCountDetails(userName: userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
+            self.successHandlerForMediaCount(response: response,indexpathRow:indexpathRow)
+        }, failure: { (error, message) -> () in
+            self.failureHandlerForMediaCount(error: error, code: message,indexPathRow:indexpathRow)
+            return
         })
     }
     
@@ -570,13 +566,13 @@ class OtherChannelViewController: UIViewController  {
         {
             likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
-        loadmovieViewController(indexpathRow, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexpathRow, likeCount: likeCountSelectedIndex)
     }
     
     func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int)
     {
         likeCountSelectedIndex = "0"
-        loadmovieViewController(indexPathRow, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexPathRow, likeCount: likeCountSelectedIndex)
     }
     
     func loadmovieViewController(indexPathRow:Int,likeCount:String) {
@@ -584,40 +580,38 @@ class OtherChannelViewController: UIViewController  {
         channelItemsCollectionView.alpha = 1.0
         if (SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
-        let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String
-        if((type ==  "image") || (type == "video"))
-        {
-            let dateString = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow]["createdTime"] as! String
-            let index = Int32 (indexPathRow)
-            let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
-            vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
-            self.presentViewController(vc, animated: false) { () -> Void in
-            }
-        }
-        else
-        {
-            let streamTocken = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][ stream_streamTockenKey] as! String
-            if streamTocken != ""
+            let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String
+            if((type ==  "image") || (type == "video"))
             {
-                let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
-                 vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as! [NSObject : AnyObject] , liveVideo: false) as! MovieViewController
-                self.presentViewController(vc, animated: false) { () -> Void in
+                let dateString = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow]["createdTime"] as! String
+                let index = Int32 (indexPathRow)
+                let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
+                vc = MovieViewController.movieViewController(withImageVideo: self.channelName,channelId: self.channelId as String, userName: userName, mediaType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String, profileImage:self.profileImage,videoImageUrl:SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][mediaUrlKey] as! UIImage, notifType: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, mediaId: SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,timeDiff: imageTakenTime,likeCountStr: likeCount, selectedItem: index,pageIndicator: 2) as! MovieViewController
+                self.present(vc, animated: false) { () -> Void in
                 }
             }
             else
             {
-                ErrorManager.sharedInstance.alert("Streaming error", message: "Not a valid stream tocken")
+                let streamTocken = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][ stream_streamTockenKey] as! String
+                if streamTocken != ""
+                {
+                    let parameters : NSDictionary = ["channelName": self.channelName, "userName":userName ,    "mediaType":type, "profileImage":self.profileImage, "notifType":SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][notificationKey] as! String, "mediaId": SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaIdKey] as! String,"channelId":self.channelId, "likeCount":likeCount ]
+                    vc = MovieViewController.movieViewController(withContentPath: "rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: parameters as [NSObject : AnyObject] , liveVideo: false) as! MovieViewController
+                    self.present(vc, animated: false) { () -> Void in
+                    }
+                }
+                else
+                {
+                    ErrorManager.sharedInstance.alert(title: "Streaming error", message: "Not a valid stream tocken")
+                }
             }
         }
-        }
-        print(vc)
-
     }
 }
 
-extension OtherChannelViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
+extension OtherChannelViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, UICollectionViewDelegate
 {
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
         {
@@ -629,9 +623,9 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("OtherChannelCell", forIndexPath: indexPath) as! OtherChannelCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "OtherChannelCell", for: indexPath) as! OtherChannelCell
         
         if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0
         {
@@ -642,24 +636,24 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
                 if mediaType == "video"
                 {
                     let vDuration  = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPath.row][videoDurationKey] as! String
-                    cell.detailLabel.hidden = false
+                    cell.detailLabel.isHidden = false
                     cell.detailLabel.text = vDuration
-                    cell.videoView.hidden = false
+                    cell.videoView.isHidden = false
                     cell.videoView.image = UIImage(named: "Live_now_off_mode")
                     let imageToConvert: UIImage = imageData
-                    let sizeThumb = CGSizeMake(150, 150)
-                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFillSize: sizeThumb)
+                    let sizeThumb = CGSize(width:150, height:150)
+                    let imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageToConvert, scaledToFill: sizeThumb)
                     cell.channelMediaImage.image = imageAfterConversionThumbnail
                 }
                 else if mediaType == "image" {
-                    cell.detailLabel.hidden = true
-                    cell.videoView.hidden = true
+                    cell.detailLabel.isHidden = true
+                    cell.videoView.isHidden = true
                     cell.channelMediaImage.image = imageData
                 }
                 else{
-                    cell.detailLabel.hidden = false
+                    cell.detailLabel.isHidden = false
                     cell.detailLabel.text = "LIVE"
-                    cell.videoView.hidden = false
+                    cell.videoView.isHidden = false
                     cell.videoView.image = UIImage(named: "Live_now")
                     cell.channelMediaImage.image = imageData
                 }
@@ -668,28 +662,35 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
+    {
         return UIEdgeInsetsMake(1, 1, 0, 1)
     }
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
-        return 1
-    }
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
-        return 1
-    }
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat
     {
-        return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
+        return 1
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat
+    {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        return CGSize(width:((UIScreen.main.bounds.width/3)-2), height:100)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
+    {
         if  SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count>0
         {
             if SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > indexPath.row
             {
                 showOverlay()
                 channelItemsCollectionView.alpha = 0.4
-                didSelectExtension(indexPath.row)
+                didSelectExtension(indexPathRow: indexPath.row)
             }
         }
     }

@@ -2,16 +2,16 @@
 import UIKit
 
 class ContactDetailsViewController: UIViewController {
-    var contactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var contactDummy:[[String:AnyObject]] = [[String:AnyObject]]()
-    var appContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
-    var dataSource:[[[String:AnyObject]]]?
+    var contactDataSource:[[String:Any]] = [[String:Any]]()
+    var contactDummy:[[String:Any]] = [[String:Any]]()
+    var appContactsArr: [[String:Any]] = [[String:Any]]()
+    var dataSource:[[[String:Any]]]?
     var indexTitles : NSArray = NSArray()
     
-    var searchDataSource : [[[String:AnyObject]]]?
+    var searchDataSource : [[[String:Any]]]?
     var checkedMobiles : NSMutableDictionary = NSMutableDictionary()
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     var userId = String()
     var accessToken = String()
     
@@ -39,7 +39,7 @@ class ContactDetailsViewController: UIViewController {
     
     @IBOutlet var tableBottomConstraint: NSLayoutConstraint!
     
-    @IBAction func gestureTapped(sender: AnyObject) {
+    @IBAction func gestureTapped(_ sender: Any) {
         view.endEditing(true)
         self.contactSearchBar.text = ""
         self.contactSearchBar.resignFirstResponder()
@@ -50,11 +50,12 @@ class ContactDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ContactDetailsViewController.callSignUpRefreshContactListTableView(_:)), name: "refreshSignUpContactListTableView", object: nil)
+        let refreshSignUpContactList = Notification.Name("refreshSignUpContactListTableView")
+        NotificationCenter.default.addObserver(self, selector:#selector(ContactDetailsViewController.callSignUpRefreshContactListTableView(notif:)), name: refreshSignUpContactList, object: nil)
         initialise()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
     }
     
@@ -62,23 +63,29 @@ class ContactDetailsViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.isNavigationBarHidden = true
         self.contactTableView.backgroundView = nil
         self.contactTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
     }
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(EditProfileViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(ContactDetailsViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(ContactDetailsViewController.keyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     func keyboardDidShow(notification:NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         if tableBottomConstraint.constant == 0
         {
             self.tableBottomConstraint.constant = self.tableBottomConstraint.constant + keyboardFrame.size.height
@@ -93,8 +100,8 @@ class ContactDetailsViewController: UIViewController {
         }
     }
     
-    @IBAction func didTapDoneButton(sender: AnyObject) {
-        doneButton.hidden = true
+    @IBAction func didTapDoneButton(_ sender: Any) {
+        doneButton.isHidden = true
         contactTableView.reloadData()
         contactTableView.layoutIfNeeded()
         let contactsArray : NSMutableArray = NSMutableArray()
@@ -102,23 +109,23 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            if i < dataSource?.count
+            if i < (dataSource?.count)!
             {
                 for element in dataSource![i]{
                     let selected = element["tempSelected"] as! Int
                     if(selected == 1){
                         let number = element[phoneKey] as! String
-                        contactsArray.addObject(number)
+                        contactsArray.add(number)
                     }
                 }
             }
         }
         if(contactsArray.count > 0){
             showOverlay()
-            contactManagers.inviteContactDetails(userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
-                self.authenticationSuccessHandlerInvite(response)
+            contactManagers.inviteContactDetails(userName: userId, accessToken: accessToken, contacts: contactsArray, success: { (response) -> () in
+                self.authenticationSuccessHandlerInvite(response: response)
             }) { (error, message) -> () in
-                self.authenticationFailureHandlerInvite(error, code: message)
+                self.authenticationFailureHandlerInvite(error: error, code: message)
                 return
             }
         }
@@ -128,36 +135,35 @@ class ContactDetailsViewController: UIViewController {
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch  _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let deviceToken = self.defaults.valueForKey("deviceToken") as! String
-            self.defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let deviceToken = self.defaults.value(forKey: "deviceToken") as! String
+            self.defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             self.defaults.setValue(deviceToken, forKey: "deviceToken")
-            self.defaults.setObject(1, forKey: "shutterActionMode");
+            self.defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func authenticationSuccessHandlerInvite(response:AnyObject?)
@@ -175,7 +181,7 @@ class ContactDetailsViewController: UIViewController {
             ErrorManager.sharedInstance.addContactError()
             for i in 0 ..< dataSource!.count
             {
-                if i < dataSource?.count
+                if i < (dataSource?.count)!
                 {
                     for j in 0 ..< dataSource![i].count
                     {
@@ -205,7 +211,7 @@ class ContactDetailsViewController: UIViewController {
                 loadIphoneCameraController()
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
         }
         else{
@@ -214,7 +220,7 @@ class ContactDetailsViewController: UIViewController {
         
         for i in 0 ..< dataSource!.count
         {
-            if i < dataSource?.count
+            if i < (dataSource?.count)!
             {
                 for j in 0 ..< dataSource![i].count
                 {
@@ -230,13 +236,13 @@ class ContactDetailsViewController: UIViewController {
     }
     
     func loadIphoneCameraController(){
-        NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
+        UserDefaults.standard.setValue("initialCall", forKey: "CallingAPI")
         GlobalDataChannelList.sharedInstance.initialise()
         ChannelSharedListAPI.sharedInstance.initialisedata()
         
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        iPhoneCameraVC.navigationController?.navigationBarHidden = true
+        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+        iPhoneCameraVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
     
@@ -248,11 +254,11 @@ class ContactDetailsViewController: UIViewController {
         
         addKeyboardObservers()
         
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         
         if(contactExistChk == true){
-            getContactDetails(userId, token: accessToken)
+            getContactDetails(userName: userId, token: accessToken)
         }
         else{
             setContactDetails()
@@ -263,19 +269,11 @@ class ContactDetailsViewController: UIViewController {
     func getContactDetails(userName: String, token: String)
     {
         showOverlay()
-        contactManagers.getContactDetails(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        contactManagers.getContactDetails(userName: userName, accessToken: token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
-        }
-    }
-    
-    func nullToNil(value : AnyObject?) -> AnyObject? {
-        if value is NSNull {
-            return ""
-        } else {
-            return value
         }
     }
     
@@ -292,26 +290,17 @@ class ContactDetailsViewController: UIViewController {
                 let userName = element[nameKey] as! String
                 let mobNum = element[phoneKey] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-//                let url: NSURL = convertStringtoURL(thumbUrl)
-//                if let data = NSData(contentsOfURL: url){
-//                    let imageDetailsData = (data as NSData?)!
-//                    contactImage = UIImage(data: imageDetailsData)!
-//                }
-//                else{
-//                    contactImage = UIImage(named: "dummyUser")!
-//                }
                 appContactsArr.append([nameKey:userName, phoneKey:mobNum,imageURLKey:thumbUrl, "orgSelected":0, "tempSelected":0, imageKey:contactImage])
             }
             setContactDetails()
             
             if(appContactsArr.count > 0){
-                let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-                let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-                dispatch_async(backgroundQueue, {
+                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+                                                    qos: .background,
+                                                    target: nil)
+                backgroundQueue.async {
                     self.downloadMediaFromGCS()
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    })
-                })
+                }
             }
         }
         else
@@ -321,7 +310,7 @@ class ContactDetailsViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(){
-        var localArray = [[String:AnyObject]]()
+        var localArray = [[String:Any]]()
         for i in 0 ..< dataSource![0].count
         {
             localArray.append(dataSource![0][i])
@@ -333,8 +322,7 @@ class ContactDetailsViewController: UIViewController {
                 let profileImageName = localArray[i][imageURLKey] as! String
                 if(profileImageName != "")
                 {
-//                    profileImage = createProfileImage(profileImageName)
-                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -361,24 +349,10 @@ class ContactDetailsViewController: UIViewController {
             }
         }
         localArray.removeAll()
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.contactTableView.reloadData()
-        })
+        }
     }
-    
-//    func createProfileImage(profileName: String) -> UIImage
-//    {
-//        var profileImage : UIImage = UIImage()
-//        let url: NSURL = convertStringtoURL(profileName)
-//        if let data = NSData(contentsOfURL: url){
-//            let imageDetailsData = (data as NSData?)!
-//            profileImage = UIImage(data: imageDetailsData)!
-//        }
-//        else{
-//            profileImage = UIImage(named: "dummyUser")!
-//        }
-//        return profileImage
-//    }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
@@ -388,11 +362,11 @@ class ContactDetailsViewController: UIViewController {
         }
         else if code.isEmpty == false {
             if code == "CONTACT001"{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
                 setContactDetails()
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
         }
         else{
@@ -402,7 +376,7 @@ class ContactDetailsViewController: UIViewController {
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -450,14 +424,14 @@ class ContactDetailsViewController: UIViewController {
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
     func callSignUpRefreshContactListTableView(notif:NSNotification){
-        if(doneButton.hidden == true){
-            doneButton.hidden = false
+        if(doneButton.isHidden == true){
+            doneButton.isHidden = false
         }
         let dict = notif.object as! [String:Int]
         let section: Int = dict["sectionKey"]!
@@ -508,23 +482,24 @@ class ContactDetailsViewController: UIViewController {
 
 extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 45.0
     }
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 60
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
         return 0.01
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier("contactHeaderTableViewCell") as! contactHeaderTableViewCell
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: "contactHeaderTableViewCell") as! contactHeaderTableViewCell
         
         switch (section) {
         case 0:
@@ -537,7 +512,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         return headerCell
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         
         switch section
@@ -561,12 +536,12 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCellWithIdentifier("contactTableViewCell", forIndexPath:indexPath) as! contactTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "contactTableViewCell", for:indexPath) as! contactTableViewCell
         
-        var cellDataSource:[String:AnyObject]?
-        var datasourceTmp: [[[String:AnyObject]]]?
+        var cellDataSource:[String:Any]?
+        var datasourceTmp: [[[String:Any]]]?
         
         if(searchActive){
             datasourceTmp = searchDataSource
@@ -595,13 +570,13 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
             
             let selectionValue : Int = cellDataSource["tempSelected"] as! Int
             if(selectionValue == 1){
-                cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
+                cell.contactSelectionButton.setImage(UIImage(named:"CheckOn"), for:.normal)
             }
             else{
-                cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
+                cell.contactSelectionButton.setImage(UIImage(named:"red-circle"), for:.normal)
             }
             
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             return cell
         }
         else
@@ -610,7 +585,7 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         if let dataSource = dataSource
         {
@@ -622,16 +597,16 @@ extension ContactDetailsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: false)
         tableView.reloadData()
         
     }
 }
 
 extension ContactDetailsViewController: UISearchBarDelegate{
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         if searchBar.text != ""
         {
             searchActive = true
@@ -641,24 +616,24 @@ extension ContactDetailsViewController: UISearchBarDelegate{
         }
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchActive = false;
         contactTableView.reloadData()
         contactTableView.layoutIfNeeded()
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
     }
     
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
     }
     
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchDataSource?.removeAll()
-        var searchContactDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-        var searchAppContactsArr: [[String:AnyObject]] = [[String:AnyObject]]()
+        var searchContactDataSource:[[String:Any]] = [[String:Any]]()
+        var searchAppContactsArr: [[String:Any]] = [[String:Any]]()
         searchContactDataSource.removeAll()
         searchAppContactsArr.removeAll()
         
@@ -672,9 +647,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
             if dataSource![0].count > 0
             {
                 for element in dataSource![0]{
-                    var tmp: String = ""
-                    tmp = (element["user_name"]?.lowercaseString)!
-                    if(tmp.containsString(searchText.lowercaseString))
+                    let tmp: String = (element["user_name"] as! String).lowercased()
+                    if(tmp.range(of: searchText.lowercased()) != nil)
                     {
                         searchAppContactsArr.append(element)
                     }
@@ -683,9 +657,8 @@ extension ContactDetailsViewController: UISearchBarDelegate{
             if dataSource![1].count > 0
             {
                 for element in dataSource![1]{
-                    var tmp: String =  ""
-                    tmp = (element["user_name"]?.lowercaseString)!
-                    if(tmp.containsString(searchText.lowercaseString))
+                    let tmp: String = (element["user_name"] as! String).lowercased()
+                    if(tmp.range(of: searchText.lowercased()) != nil)
                     {
                         searchContactDataSource.append(element)
                     }

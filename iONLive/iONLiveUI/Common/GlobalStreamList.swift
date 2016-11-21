@@ -2,10 +2,10 @@
 import UIKit
 
 class GlobalStreamList: NSObject {
-    var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var GlobalStreamDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var operationQueue = NSOperationQueue()
-    var operation2 : NSBlockOperation = NSBlockOperation()
+    var imageDataSource: [[String:Any]] = [[String:Any]]()
+    var GlobalStreamDataSource: [[String:Any]] = [[String:Any]]()
+    var operationQueue = OperationQueue()
+    var operation2 : BlockOperation = BlockOperation()
     
     class var sharedInstance: GlobalStreamList
     {
@@ -27,77 +27,60 @@ class GlobalStreamList: NSObject {
     func initialiseCloudData( startOffset : Int ,endValueLimit :Int){
         imageDataSource.removeAll()
         GlobalStreamDataSource.removeAll()
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         let startValue = "\(startOffset)"
         let endValueCount = String(endValueLimit)
-        ImageUpload.sharedInstance.getSubscribedChannelMediaDetails(userId, accessToken: accessToken, limit: endValueCount, offset: startValue, success: { (response) in
-            self.authenticationSuccessHandler(response)
+        ImageUpload.sharedInstance.getSubscribedChannelMediaDetails(userName: userId, accessToken: accessToken, limit: endValueCount, offset: startValue, success: { (response) in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandlerStream(error, code: message)
+            self.authenticationFailureHandlerStream(error: error, code: message)
         }
     }
     
-    func authenticationSuccessHandler(response:AnyObject?)
+    func authenticationSuccessHandler(response:Any?)
     {
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
-            let responseArr = json["objectJson"] as! [  AnyObject]
+            let responseArr = json["objectJson"] as! [AnyObject]
             if(responseArr.count == 0)
             {
-                NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
+                UserDefaults.standard.setValue("Empty", forKey: "EmptyMedia")
             }
             for index in 0 ..< responseArr.count
             {
-                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyMedia")
-                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let userid = responseArr[index].valueForKey(userIdKey) as! String
-                let time = responseArr[index].valueForKey("last_updated_time_stamp") as! String
-                let channelName =  responseArr[index].valueForKey("channel_name") as! String
-                let channelIdSelected =  responseArr[index].valueForKey("channel_detail_id")?.stringValue
+                UserDefaults.standard.setValue("NotEmpty", forKey: "EmptyMedia")
+                
+                let mediaId = String(responseArr[index]["media_detail_id"] as! Int)
+                let mediaType =  responseArr[index]["gcs_object_type"] as! String
+                let userid = responseArr[index][userIdKey] as! String
+                let time = responseArr[index]["last_updated_time_stamp"] as! String
+                let channelName =  responseArr[index]["channel_name"] as! String
+                let channelIdSelected =  String(responseArr[index]["channel_detail_id"] as! Int)
                 let notificationType : String = "likes"
                 var vDuration = String()
-
+                
                 if(mediaType == "video"){
-                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
-                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
+                    let videoDurationStr = responseArr[index]["video_duration"] as! String
+                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(duration: videoDurationStr)
                 }
                 else{
                     vDuration = ""
                 }
-               
-//                if let notifType =  responseArr[index].valueForKey("notification_type") as? String
-//                {
-//                    if notifType != ""
-//                    {
-//                        notificationType = notifType.lowercaseString
-//                    }
-//                    else{
-//                        notificationType = "shared"
-//                    }
-//                }
-//                else{
-//                    notificationType = "shared"
-//                }
-               
-                let actualUrlBeforeNullChk =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
-                let actualUrl = nullToNil(actualUrlBeforeNullChk) as! String
-                
-                let mediaUrlBeforeNullChk =  UrlManager.sharedInstance.getMediaURL(mediaId!)
-                let mediaUrl = nullToNil(mediaUrlBeforeNullChk) as! String
-                let pulltorefreshId = responseArr[index].valueForKey(pullTorefreshKey)?.stringValue
-                imageDataSource.append([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_mediaTypeKey:mediaType,actualImageKey:actualUrl,notificationKey:notificationType,userIdKey:userid,timestamp:time,stream_channelNameKey:channelName, pullTorefreshKey : pulltorefreshId!, channelIdkey:channelIdSelected!,"createdTime":time,videoDurationKey:vDuration])
+                let actualUrlBeforeNullChk =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId: mediaId)
+                let mediaUrlBeforeNullChk =  UrlManager.sharedInstance.getMediaURL(mediaId: mediaId)
+                let pulltorefreshId = String(responseArr[index][pullTorefreshKey] as! Int)
+                imageDataSource.append([stream_mediaIdKey:mediaId, mediaUrlKey:mediaUrlBeforeNullChk, stream_mediaTypeKey:mediaType,actualImageKey:actualUrlBeforeNullChk,notificationKey:notificationType,userIdKey:userid,timestamp:time,stream_channelNameKey:channelName, pullTorefreshKey : pulltorefreshId, channelIdkey:channelIdSelected,"createdTime":time,videoDurationKey:vDuration])
             }
             if(imageDataSource.count > 0){
-                operation2 = NSBlockOperation (block: {
+                operation2 = BlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
             }
             else{
-                NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
             }
         }
         else
@@ -106,17 +89,10 @@ class GlobalStreamList: NSObject {
         }
     }
     
-    func nullToNil(value : AnyObject?) -> AnyObject? {
-        if value is NSNull {
-            return ""
-        } else {
-            return value
-        }
-    }
     
     func authenticationFailureHandlerStream(error: NSError?, code: String)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "failure")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -134,36 +110,34 @@ class GlobalStreamList: NSObject {
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (_ result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
         do {
-            
-            
-            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            let data = try NSData(contentsOf: downloadURL as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
                 }
                 else{
-                        
+                    
                     mediaImage = UIImage(named: "thumb12")!
                 }
-                completion(result: mediaImage)
+                completion(mediaImage)
             }
             else
             {
-                completion(result:UIImage(named: "thumb12")!)
+                completion(UIImage(named: "thumb12")!)
             }
             
         } catch {
-            completion(result:UIImage(named: "thumb12")!)
+            completion(UIImage(named: "thumb12")!)
         }
     }
     
@@ -175,12 +149,13 @@ class GlobalStreamList: NSObject {
                 if imageDataSource[i][stream_mediaIdKey] != nil
                 {
                     var imageForMedia : UIImage = UIImage()
-                    let mediaIdForFilePath = "\(self.imageDataSource[i][stream_mediaIdKey] as! String)thumb"
-                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                    let mediaIdForFilePathStr = self.imageDataSource[i][stream_mediaIdKey] as! String
+                    let mediaIdForFilePath = mediaIdForFilePathStr + "thumb"
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                    let savingPath = parentPath! + "/" + mediaIdForFilePath
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
                     if fileExistFlag == true{
-                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
                         imageForMedia = mediaImageFromFile!
                         if(self.imageDataSource.count > 0)
                         {
@@ -192,25 +167,31 @@ class GlobalStreamList: NSObject {
                         {
                             let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
                             if(mediaUrl != ""){
-                                let url: NSURL = convertStringtoURL(mediaUrl)
-                                downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                                let url: NSURL = convertStringtoURL(url: mediaUrl)
+                                downloadMedia(downloadURL: url, key: "ThumbImage", completion: { (result) -> Void in
                                     if(result != UIImage()){
                                         let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                        let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                        let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                        let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                        if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        if imageDataFromresult != nil
+                                        {
+                                            let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                            let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                            let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                            if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                            }
+                                            else{
+                                                imageForMedia = result
+                                                if(self.imageDataSource.count > 0)
+                                                {
+                                                    self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia, stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
+                                                }
+                                                
+                                                _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: mediaIdForFilePath, mediaImage: result)
+                                            }
+                                            imageForMedia = result
                                         }
                                         else{
-                                            imageForMedia = result
-                                            if(self.imageDataSource.count > 0)
-                                            {
-                                                self.GlobalStreamDataSource.append([stream_mediaIdKey:self.imageDataSource[i][stream_mediaIdKey]!, mediaUrlKey:imageForMedia, stream_thumbImageKey:imageForMedia ,stream_streamTockenKey:"",actualImageKey:self.imageDataSource[i][actualImageKey]!,userIdKey:self.imageDataSource[i][userIdKey]!,notificationKey:self.imageDataSource[i][notificationKey]!,timestamp :self.imageDataSource[i][timestamp]!,stream_mediaTypeKey:self.imageDataSource[i][stream_mediaTypeKey]!,stream_channelNameKey:self.imageDataSource[i][stream_channelNameKey]!,channelIdkey:self.imageDataSource[i][channelIdkey]!,pullTorefreshKey:self.imageDataSource[i][pullTorefreshKey] as! String,"createdTime":self.imageDataSource[i]["createdTime"] as! String,videoDurationKey:self.imageDataSource[i][videoDurationKey] as! String])
-                                            }
-                                            
-                                            FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                            imageForMedia = UIImage(named: "thumb12")!
                                         }
-                                        imageForMedia = result
                                     }
                                     else{
                                         imageForMedia = UIImage(named: "thumb12")!
@@ -223,48 +204,48 @@ class GlobalStreamList: NSObject {
             }
         }
         if(GlobalStreamDataSource.count > 0){
-            GlobalStreamDataSource.sortInPlace({ p1, p2 in
+            GlobalStreamDataSource.sort(by: { p1, p2 in
                 let time1 = p1[timestamp] as! String
                 let time2 = p2[timestamp] as! String
                 return time1 > time2
             })
         }
-        NSNotificationCenter.defaultCenter().postNotificationName("stream", object: "success")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"success")
     }
     
     func getPullToRefreshData()
     {
         imageDataSource.removeAll()
-        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        let accessToken = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
         let sortList : Array = GlobalStreamList.sharedInstance.GlobalStreamDataSource
         var subIdArray : [Int] = [Int]()
-        for i in 0  ..< sortList.count 
+        for i in 0  ..< sortList.count
         {
             let subId = sortList[i][pullTorefreshKey] as! String
             subIdArray.append(Int(subId)!)
         }
         if(subIdArray.count > 0)
         {
-            let subid = subIdArray.maxElement()!
-            ChannelManager.sharedInstance.getUpdatedMediaDetails(userId, accessToken:accessToken,timestamp : "\(subid)",success: { (response) in
-                self.authenticationSuccessHandler(response)
+            let subid = subIdArray.max()!
+            ChannelManager.sharedInstance.getUpdatedMediaDetails(userName: userId, accessToken:accessToken,timestamp : "\(subid)",success: { (response) in
+                self.authenticationSuccessHandler(response: response)
                 
             }) { (error, message) in
-                self.authenticationFailureHandlerStream(error, code: message)
+                self.authenticationFailureHandlerStream(error: error, code: message)
             }
         }
     }
     
     func getMediaByOffset(subId : String)
     {
-        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        let accessToken = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
         GlobalStreamList.sharedInstance.imageDataSource.removeAll()
-        ChannelManager.sharedInstance.getOffsetMediaDetails(userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
-            self.authenticationSuccessHandler(response)
+        ChannelManager.sharedInstance.getOffsetMediaDetails(userName: userId, accessToken:accessToken,timestamp : subId ,success: { (response) in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandlerStream(error, code: message)
+            self.authenticationFailureHandlerStream(error: error, code: message)
         }
     }
 }

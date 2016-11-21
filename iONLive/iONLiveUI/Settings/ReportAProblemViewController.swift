@@ -2,7 +2,7 @@
 import UIKit
 
 class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegate {
-
+    
     @IBOutlet var probelmTitle: UITextField!
     @IBOutlet var descTextView: UITextView!
     @IBOutlet var saveButton: UIButton!
@@ -11,39 +11,39 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
     let reportManager = ReportManager.sharedInstance
     
     static let identifier = "ReportAProblemViewController"
-
+    
     var loadingOverlay: UIView?
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     var userId : String = String()
     var accessToken: String = String()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialise()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func gestureTapped(sender: AnyObject) {
+    @IBAction func gestureTapped(_ sender: Any) {
         view.endEditing(true)
     }
     
     func initialise() {
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         
-        saveButton.hidden = true
+        saveButton.isHidden = true
         
-        descTextView.textColor = UIColor.lightGrayColor()
+        descTextView.textColor = UIColor.lightGray
         descTextView.delegate = self
         descTextView.text = "Description"
         descTextView.alpha = 0.7
         
-        descTextView.layer.borderColor = UIColor.lightGrayColor().CGColor
-        probelmTitle.layer.borderColor = UIColor.lightGrayColor().CGColor
+        descTextView.layer.borderColor = UIColor.lightGray.cgColor
+        probelmTitle.layer.borderColor = UIColor.lightGray.cgColor
         
         descTextView.layer.borderWidth = 0.5
         probelmTitle.layer.borderWidth = 0.5
@@ -51,8 +51,8 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
         probelmTitle.delegate = self
     }
     
-    @IBAction func didTapSaveButton(sender: AnyObject) {
-        saveButton.hidden = true
+    @IBAction func didTapSaveButton(_ sender: Any) {
+        saveButton.isHidden = true
         descTextView.resignFirstResponder()
         probelmTitle.resignFirstResponder()
         if probelmTitle.text!.isEmpty
@@ -67,16 +67,16 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
             showOverlay()
             let title = probelmTitle.text
             let desc = descTextView.text as String
-            reportProblem(title!, desc: desc)
+            reportProblem(title: title!, desc: desc)
         }
     }
     
     func reportProblem(title: String, desc: String) {
-        reportManager.reportAProblem(userId, accessToken: accessToken, problemTitle: title, probelmDesc: desc, success: { (response) in
-            self.authenticationSuccessHandler(response)
-            }, failure: { (error, message) in
-                self.authenticationFailureHandler(error, code: message)
-                return
+        reportManager.reportAProblem(userName: userId, accessToken: accessToken, problemTitle: title, probelmDesc: desc, success: { (response) in
+            self.authenticationSuccessHandler(response: response)
+        }, failure: { (error, message) in
+            self.authenticationFailureHandler(error: error, code: message)
+            return
         })
     }
     
@@ -89,11 +89,11 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
         {
             let status = json["status"] as! Int
             if(status == 1){
-                let alert = UIAlertController(title: "Success", message: "Mail send successfully", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                      self.redirect()
+                let alert = UIAlertController(title: "Success", message: "Mail send successfully", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+                    self.redirect()
                 }))
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
             }
         }
         else
@@ -111,59 +111,58 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
-
     
-    @IBAction func didTapBackButton(sender: AnyObject) {
+    @IBAction func didTapBackButton(_ sender: Any) {
         descTextView.resignFirstResponder()
         probelmTitle.resignFirstResponder()
-        if(saveButton.hidden == false){
+        if(saveButton.isHidden == false){
             if (probelmTitle.text!.isEmpty || descTextView.text == "Description"){
-                self.navigationController?.popViewControllerAnimated(false)
+                _ = self.navigationController?.popViewController(animated: false)
             }
             else{
                 generateWaytoSendAlert()
             }
         }
         else{
-            self.navigationController?.popViewControllerAnimated(false)
+            _ = self.navigationController?.popViewController(animated: false)
         }
     }
     
     func generateWaytoSendAlert()
     {
-        let alert = UIAlertController(title: "Not Reported", message: "Do you want report a problem", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Not Reported", message: "Do you want report a problem", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.saveButton.hidden = true
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.saveButton.isHidden = true
             self.showOverlay()
             let title = self.probelmTitle.text
             let desc = self.descTextView.text as String
-            self.reportProblem(title!, desc: desc)
+            self.reportProblem(title: title!, desc: desc)
         }))
-        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Cancel, handler: {
+        alert.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.cancel, handler: {
             (action) -> Void in
             self.redirect()
         }))
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func redirect() {
-        self.navigationController?.popViewControllerAnimated(false)
+        _ = self.navigationController?.popViewController(animated: false)
     }
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -174,54 +173,52 @@ class ReportAProblemViewController: UIViewController, UIGestureRecognizerDelegat
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
 }
 
 extension ReportAProblemViewController: UITextViewDelegate
 {
-    func textViewDidBeginEditing(textView: UITextView) {
-        saveButton.hidden = false
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        saveButton.isHidden = false
         if(descTextView.text == "Description"){
             descTextView.text = nil
         }
-        descTextView.textColor = UIColor.blackColor()
+        descTextView.textColor = UIColor.black
         descTextView.alpha = 1.0
     }
     
-    func textViewDidEndEditing(textView: UITextView) {
+    func textViewDidEndEditing(_ textView: UITextView) {
         if(descTextView.text == ""){
-            descTextView.textColor = UIColor.lightGrayColor()
+            descTextView.textColor = UIColor.lightGray
             descTextView.text = "Description"
             descTextView.alpha = 0.7
         }
@@ -230,8 +227,8 @@ extension ReportAProblemViewController: UITextViewDelegate
 
 extension ReportAProblemViewController : UITextFieldDelegate
 {
-    func textFieldDidBeginEditing(textField: UITextField) {
-            saveButton.hidden = false
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        saveButton.isHidden = false
     }
 }
 

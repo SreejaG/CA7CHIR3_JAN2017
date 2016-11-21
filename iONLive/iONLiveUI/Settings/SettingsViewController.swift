@@ -32,9 +32,9 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         
         dataSource = [cameraOptions,accountOptions,supportOptions]
         
-        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
+        if(UserDefaults.standard.value(forKey: "liveResolution") != nil)
         {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
+            let value = UserDefaults.standard.value(forKey: "liveResolution") as! String
             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:value]
         }
         else{
@@ -42,31 +42,31 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.settingsTableView.backgroundView = nil
         self.settingsTableView.backgroundColor = UIColor(red: 249.0/255, green: 249.0/255, blue: 249.0/255, alpha: 1)
-        backbutton.hidden = true
+        backbutton.isHidden = true
         reloadTableData()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
     }
     
     func reloadTableData(){
-        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        if(UserDefaults.standard.value(forKey: "archiveMediaDeletion") != nil)
         {
-            let archiveConstant = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
+            let archiveConstant = UserDefaults.standard.value(forKey: "archiveMediaDeletion") as! String
             dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:archiveConstant]
         }
         else{
             dataSource![1][1] = [optionTitle:"Delete Archived Media", optionType : normalCell, accessryText:"Never"]
         }
         
-        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
+        if(UserDefaults.standard.value(forKey: "liveResolution") != nil)
         {
-            let liveResolutionConstant = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
+            let liveResolutionConstant = UserDefaults.standard.value(forKey: "liveResolution") as! String
             dataSource![0][9] = [optionTitle:"Live Stream Resolution", optionType : normalCell, accessryText:liveResolutionConstant]
         }
         else{
@@ -76,10 +76,10 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         settingsTableView.reloadData()
     }
     
-    @IBAction func doneClicked(sender: AnyObject) {
+    @IBAction func doneClicked(_ sender: Any) {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        self.navigationController?.navigationBarHidden = true
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
     
@@ -87,43 +87,42 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
         super.didReceiveMemoryWarning()
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    @IBAction func backButtonClicked(sender: AnyObject) {
-        doneButton.hidden = false
-        backbutton.hidden = true
+    @IBAction func backButtonClicked(_ sender: Any) {
+        doneButton.isHidden = false
+        backbutton.isHidden = true
         settingsTableView.reloadData()
-        self.settingsTableView.userInteractionEnabled = true
+        self.settingsTableView.isUserInteractionEnabled = true
     }
     
-   // #pragma mark - toggleCellDelegate
-    
+    // #pragma mark - toggleCellDelegate
     func didChangeSwitchState(toggleCell:SettingsToggleTableViewCell , isOn: Bool) {
-        let indexPath = self.settingsTableView.indexPathForCell(toggleCell)
+        let indexPath = self.settingsTableView.indexPath(for: toggleCell)
         
         switch indexPath!.row {
         case 7:
             if isOn
             {
-                NSUserDefaults.standardUserDefaults().setObject(1, forKey: "SaveToCameraRoll")
+                UserDefaults.standard.set(1, forKey: "SaveToCameraRoll")
             }
             else{
-                NSUserDefaults.standardUserDefaults().setObject(0, forKey: "SaveToCameraRoll")
+                UserDefaults.standard.set(0, forKey: "SaveToCameraRoll")
             }
             break;
         case 4:
             if isOn
             {
-                NSUserDefaults.standardUserDefaults().setObject(1, forKey: "flashMode")
+                UserDefaults.standard.set(1, forKey: "flashMode")
             }
             else{
-                NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
+                UserDefaults.standard.set(0, forKey: "flashMode")
             }
             break;
         default:
@@ -134,15 +133,13 @@ class SettingsViewController: UIViewController, UIGestureRecognizerDelegate ,tog
 
 extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 45.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
-    {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier("SettingsHeaderTableViewCell") as! SettingsHeaderTableViewCell
-        headerCell.userInteractionEnabled = false
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: "SettingsHeaderTableViewCell") as! SettingsHeaderTableViewCell
+        headerCell.isUserInteractionEnabled = false
         switch (section) {
         case 0:
             headerCell.headerTitle.text = "CAMERA"
@@ -156,7 +153,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         return headerCell
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         switch section
         {
@@ -174,7 +171,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         var cellDataSource:[String:String]?
         if let dataSource = dataSource
@@ -192,24 +189,24 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         {
             if cellDataSource[optionType] == toggleCell
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier("SettingsToggleTableViewCell", forIndexPath:indexPath) as! SettingsToggleTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsToggleTableViewCell", for:indexPath) as! SettingsToggleTableViewCell
                 cell.titlelabel.text = cellDataSource[optionTitle]
-                cell.backgroundColor = UIColor.clearColor()
-                cell.userInteractionEnabled = true
-                cell.selectionStyle = .None
+                cell.backgroundColor = UIColor.clear
+                cell.isUserInteractionEnabled = true
+                cell.selectionStyle = .none
                 if indexPath.row == 4 || indexPath.row == 7
                 {
-                    cell.userInteractionEnabled = true
-                    cell.backgroundColor = UIColor.clearColor()
-                    cell.titlelabel.textColor = UIColor.blackColor()
+                    cell.isUserInteractionEnabled = true
+                    cell.backgroundColor = UIColor.clear
+                    cell.titlelabel.textColor = UIColor.black
                     cell.titlelabel.alpha = 0.6
                     var switchStatus : Int = Int()
                     if indexPath.row == 4
                     {
-                        switchStatus = NSUserDefaults.standardUserDefaults().integerForKey("flashMode")
+                        switchStatus = UserDefaults.standard.integer(forKey: "flashMode")
                     }
                     else if indexPath.row == 7{
-                        switchStatus =  NSUserDefaults.standardUserDefaults().integerForKey("SaveToCameraRoll")
+                        switchStatus =  UserDefaults.standard.integer(forKey: "SaveToCameraRoll")
                     }
                     if switchStatus == 0
                     {
@@ -220,8 +217,8 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
                     }
                 }
                 else{
-                    cell.userInteractionEnabled = false
-                    cell.titlelabel.textColor = UIColor.lightGrayColor()
+                    cell.isUserInteractionEnabled = false
+                    cell.titlelabel.textColor = UIColor.lightGray
                     cell.titlelabel.alpha = 1.0
                 }
                 cell.cellDelegate = self
@@ -229,23 +226,23 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             }
             else
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier("SettingsTableViewCell", forIndexPath:indexPath) as! SettingsTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for:indexPath) as! SettingsTableViewCell
                 cell.titleLabel.text = cellDataSource[optionTitle]
                 cell.accessryLabel.text = cellDataSource[accessryText]
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
                 
                 if(((indexPath.section == 1) && (indexPath.row == 0)) || ((indexPath.section == 0) && (indexPath.row == 9)) || ((indexPath.section == 2) && (indexPath.row == 1)) || ((indexPath.section == 1) && (indexPath.row == 1)) || ((indexPath.section == 2) && (indexPath.row == 2)))
                 {
-                    cell.titleLabel.textColor = UIColor.blackColor()
-                    cell.accessryLabel.textColor = UIColor.blackColor()
+                    cell.titleLabel.textColor = UIColor.black
+                    cell.accessryLabel.textColor = UIColor.black
                     cell.titleLabel.alpha = 0.6
                     cell.accessryLabel.alpha = 0.6
-                    cell.userInteractionEnabled = true
+                    cell.isUserInteractionEnabled = true
                 }
                 else{
-                    cell.userInteractionEnabled = false
-                    cell.titleLabel.textColor = UIColor.lightGrayColor()
-                    cell.accessryLabel.textColor = UIColor.lightGrayColor()
+                    cell.isUserInteractionEnabled = false
+                    cell.titleLabel.textColor = UIColor.lightGray
+                    cell.accessryLabel.textColor = UIColor.lightGray
                     cell.titleLabel.alpha = 1.0
                     cell.accessryLabel.alpha = 1.0
                 }
@@ -258,8 +255,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
-    {
+    func numberOfSections(in tableView: UITableView) -> Int {
         if let dataSource = dataSource
         {
             return dataSource.count
@@ -270,9 +266,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        tableView.deselectRow(at: indexPath, animated: false)
         switch indexPath.section
         {
         case 0:
@@ -319,7 +315,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
             default:
                 break
             }
-
+            
         default:
             break
         }
@@ -331,56 +327,56 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource
     func loadReportProblemView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let reportVC = storyBoard.instantiateViewControllerWithIdentifier(ReportAProblemViewController.identifier) as! ReportAProblemViewController
+        let reportVC = storyBoard.instantiateViewController(withIdentifier: ReportAProblemViewController.identifier) as! ReportAProblemViewController
         self.navigationController?.pushViewController(reportVC, animated: true)
     }
     
     func loadAppInfoView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let reportVC = storyBoard.instantiateViewControllerWithIdentifier(AppInfoViewController.identifier) as! AppInfoViewController
+        let reportVC = storyBoard.instantiateViewController(withIdentifier: AppInfoViewController.identifier) as! AppInfoViewController
         self.navigationController?.pushViewController(reportVC, animated: true)
     }
     
     func loadEditProfileView()
     {
         let storyBoard = UIStoryboard.init(name:"EditProfile", bundle: nil)
-        let editProfileVC = storyBoard.instantiateViewControllerWithIdentifier(EditProfileViewController.identifier) as! EditProfileViewController
+        let editProfileVC = storyBoard.instantiateViewController(withIdentifier: EditProfileViewController.identifier) as! EditProfileViewController
         self.navigationController?.pushViewController(editProfileVC, animated: true)
     }
     
     func loadTimeLapseOptionsView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let timeLapseVC = storyBoard.instantiateViewControllerWithIdentifier(TimeLapseSettingsViewController.identifier) as! TimeLapseSettingsViewController
+        let timeLapseVC = storyBoard.instantiateViewController(withIdentifier: TimeLapseSettingsViewController.identifier) as! TimeLapseSettingsViewController
         self.navigationController?.pushViewController(timeLapseVC, animated: true)
     }
     
     func loadDeleteMediaOptionsView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let deleteMediaOptionsVC = storyBoard.instantiateViewControllerWithIdentifier(DeleteMediaSettingsViewController.identifier) as! DeleteMediaSettingsViewController
+        let deleteMediaOptionsVC = storyBoard.instantiateViewController(withIdentifier: DeleteMediaSettingsViewController.identifier) as! DeleteMediaSettingsViewController
         self.navigationController?.pushViewController(deleteMediaOptionsVC, animated: true)
     }
     
     func loadConnectAccountView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ConnectAccountViewController.identifier) as! ConnectAccountViewController
+        let connectAccountVC = storyBoard.instantiateViewController(withIdentifier: ConnectAccountViewController.identifier) as! ConnectAccountViewController
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
     
     func loadProgramCameraButtonView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let connectAccountVC = storyBoard.instantiateViewControllerWithIdentifier(ProgramCameraButtonViewController.identifier) as! ProgramCameraButtonViewController
+        let connectAccountVC = storyBoard.instantiateViewController(withIdentifier: ProgramCameraButtonViewController.identifier) as! ProgramCameraButtonViewController
         self.navigationController?.pushViewController(connectAccountVC, animated: true)
     }
     
     func loadLiveStreamView()
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let LiveStreamVC = storyBoard.instantiateViewControllerWithIdentifier(ResolutionSelectionViewController.identifier) as! ResolutionSelectionViewController
+        let LiveStreamVC = storyBoard.instantiateViewController(withIdentifier: ResolutionSelectionViewController.identifier) as! ResolutionSelectionViewController
         self.navigationController?.pushViewController(LiveStreamVC, animated: true)
     }
 }

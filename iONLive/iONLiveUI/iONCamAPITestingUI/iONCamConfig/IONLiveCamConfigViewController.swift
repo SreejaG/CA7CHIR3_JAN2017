@@ -1,22 +1,13 @@
-//
-//  IONLiveCamConfigViewController.swift
-//  iONLive
-//
-//  Created by Vinitha on 2/5/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class IONLiveCamConfigViewController: UIViewController {
-
+    
     static let identifier = "IONLiveCamConfigViewController"
     
     @IBOutlet var cameraConfigTableView: UITableView!
     
-    
     //PRAGMA MARK: - DataSource
-    var videoResolutionDataSource = []
     var tableViewDataSource = ["Video Resolution": ["3840x2160","1920x1080","1280x720","848x480"],"ButtonSingleClick":["Picture"],"videoFps":["240","200","120","100","60","50","30","25"],"buttonDoubleClick":["video"],"led":["on"],"quality":["1","2","3"],"scale":["1","2","4","8"]]
     
     //PRAGMA MARK:- class variables
@@ -32,57 +23,33 @@ class IONLiveCamConfigViewController: UIViewController {
     
     func iONLiveCamGetConfigSuccessHandler(response:AnyObject?)
     {
-        
         if let json = response as? [String: AnyObject]
         {
             if json["quality"] != nil
             {
-             //   let intVal = quality as! Int
-                //                outputQualityTextField.text =  stringVal
             }
             if json["scale"] != nil
             {
-              //  let intVal = scale as! Int
-                //                outputScaleTextField.text = stringVal
             }
             if json["singleClick"] != nil
             {
-                //                outputSingleClickTextField.text = singleClick as? String
             }
             if json["doubleClick"] != nil
             {
-                //                outputDoubleClickTextField.text = doubleClick as? String
             }
         }
     }
     
-    @IBAction func didTapPutCameraConfiguration(sender: AnyObject) {
+    @IBAction func didTapPutCameraConfiguration(_ sender: Any) {
         self.view.endEditing(true)
-        //         iONLiveCameraConfigManager.putIONLiveCameraConfiguration(inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
-        //
-        //             self.iONLiveCamGetConfigSuccessHandler(response)
-        //
-        //            }) { (error, code) -> () in
-        //            ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
-        //        }
-        
     }
     
-    @IBAction func didTapGetCameraConfiguration(sender: AnyObject) {
+    @IBAction func didTapGetCameraConfiguration(_ sender: Any) {
         self.view.endEditing(true)
-        
-        //        iONLiveCameraConfigManager.getiONLiveCameraConfiguration(inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
-        //
-        //            self.iONLiveCamGetConfigSuccessHandler(response)
-        //
-        //            }) { (error, code) -> () in
-        //                ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
-        //        }
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject) {
-        
-        self.navigationController?.popViewControllerAnimated(true)
+    @IBAction func didTapBackButton(_ sender: Any) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     func createPickerViewTableViewCell()
@@ -93,18 +60,15 @@ class IONLiveCamConfigViewController: UIViewController {
 
 extension IONLiveCamConfigViewController:UITableViewDelegate,UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableViewDataSource.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableViewDataSource.count > indexPath.row
         {
             var keys = Array(tableViewDataSource.keys)
@@ -112,35 +76,34 @@ extension IONLiveCamConfigViewController:UITableViewDelegate,UITableViewDataSour
             
             if values.count > 1
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier(PickerViewTableViewCell.identifier, forIndexPath: indexPath) as! PickerViewTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: PickerViewTableViewCell.identifier, for: indexPath) as! PickerViewTableViewCell
                 
                 cell.inputLabel.text = keys[indexPath.row]
                 cell.pickerViewData = values
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
                 return cell
             }
             else
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier(SimpleTextFieldTableViewCell.identifier, forIndexPath: indexPath) as! SimpleTextFieldTableViewCell
-                
-//                let keyValue = keys[indexPath.row];
-//                print(keyValue)
+                let cell = tableView.dequeueReusableCell(withIdentifier: SimpleTextFieldTableViewCell.identifier, for: indexPath) as! SimpleTextFieldTableViewCell
                 cell.inputLabel.text = keys[indexPath.row]
                 cell.inputTextField.text = values[0]
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
                 return cell
-                
             }
         }
         return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
     }
 }
 
 //TextField Delegate
 extension IONLiveCamConfigViewController:UITextFieldDelegate
 {
-    func textFieldShouldReturn(textField: UITextField) -> Bool
-    {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }

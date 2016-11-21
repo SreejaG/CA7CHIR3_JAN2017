@@ -5,7 +5,7 @@ class AuthenticateViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
     }
 
@@ -13,13 +13,13 @@ class AuthenticateViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.isNavigationBarHidden = true
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
     }
 }

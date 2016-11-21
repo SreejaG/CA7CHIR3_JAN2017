@@ -2,7 +2,6 @@
 import Foundation
 
 class AuthenticationManager: NSObject {
-    
     class var sharedInstance: AuthenticationManager {
         struct Singleton {
             static let instance = AuthenticationManager()
@@ -11,186 +10,185 @@ class AuthenticationManager: NSObject {
     }
     
     //Method to authenticate a user with email and password, success and failure block
-    func authenticate(email: String, password: String, gcmRegId:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func authenticate(email: String, password: String, gcmRegId:String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["userName":email,"password": password, "gcmRegistrationId": gcmRegId], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.usersLoginAPIUrl(), parameters: ["userName":email,"password": password, "gcmRegistrationId": gcmRegId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func signUp(email email: String, password: String, userName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func signUp(email: String, password: String, userName: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["email":email,"password": password,"userName": userName], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["email":email,"password": password,"userName": userName], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error message from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error message from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
     //verification code generation
-    
-    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, verificationMethod: String, offset: String, countryCode: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func generateVerificationCodes(userName: String, location: String, mobileNumber: String, verificationMethod: String, offset: String, countryCode: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["location":location,"mobileNumber":mobileNumber,"userName":userName,"verificationMethod":verificationMethod,"timeZone":offset, "countryCode":countryCode], success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.usersSignUpAPIUrl(), parameters: ["location":location,"mobileNumber":mobileNumber,"userName":userName,"verificationMethod":verificationMethod,"timeZone":offset, "countryCode":countryCode], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error message from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error message from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func generateVerificationCodeForResetPassword(mobileNumber: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func generateVerificationCodeForResetPassword(mobileNumber: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error message from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error message from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func validateVerificationCode(userName: String, verificationCode: String, gcmRegId: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func validateVerificationCode(userName: String, verificationCode: String, gcmRegId: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName), parameters: ["verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getUserRelatedDataAPIUrl(userName: userName), parameters: ["verificationCode":verificationCode,"gcmRegistrationId":gcmRegId], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error message from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
                 
-                var failureErrorCode:String = ""
-                //get the error message from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func resetPassword(mobileNumber: String, newPassword: String, verificationCode: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func resetPassword(mobileNumber: String, newPassword: String, verificationCode: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber,"newPassword":newPassword,"verificationCode":verificationCode], success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getPasswordUrl(), parameters: ["mobileNumber":mobileNumber,"newPassword":newPassword,"verificationCode":verificationCode], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error message from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error message from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
-    
 }

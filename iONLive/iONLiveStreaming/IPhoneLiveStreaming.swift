@@ -14,6 +14,7 @@ class IPhoneLiveStreaming: NSObject {
         }
         return Singleton.instance
     }
+    
     func startLiveStreaming(session:VCSimpleSession)
     {
         liveStreamingHelpers.iPhoneLiveStreamingSession = session
@@ -25,13 +26,4 @@ class IPhoneLiveStreaming: NSObject {
         showAlert = true;
         liveStreamingHelpers.stopLiveStreaming()
     }
-    
-//    func mapStream(){
-//        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey) as! String
-//        let streamToken = NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String
-//       
-//        liveStreamingHelpers.setDefaultMappingForLiveStream(streamToken)
-//
-////        liveStreamingHelpers.mapStream()
-//    }
 }

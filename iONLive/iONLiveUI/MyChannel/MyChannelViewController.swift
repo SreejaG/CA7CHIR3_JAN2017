@@ -1,7 +1,8 @@
 
 import UIKit
+import Foundation
 
-class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollViewDelegate {
+class MyChannelViewController: UIViewController,UIScrollViewDelegate {
     
     @IBOutlet weak var myChannelSearchBar: UISearchBar!
     @IBOutlet weak var myChannelTableView: UITableView!
@@ -33,7 +34,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     var gestureRecognizer = UIGestureRecognizer()
     var longPressRecognizer : UILongPressGestureRecognizer = UILongPressGestureRecognizer()
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     var loadingOverlay: UIView?
     
@@ -45,32 +46,35 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     var cellChannelUpdatedNameStr = String()
     
-    var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var searchDataSource:[[String:Any]] = [[String:Any]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         defaults.setValue("", forKey: "editedValue")
         
-        channelUpdateSaveButton.hidden = true
-        channelUpdateCancelButton.hidden = true
+        channelUpdateSaveButton.isHidden = true
+        channelUpdateCancelButton.isHidden = true
         searchFlagForUpdateChannel = false
         longPressIndexPathRow = -1
         
-        if let notifFlag = defaults.valueForKey("notificationArrived")
+        if let notifFlag = defaults.value(forKey: "notificationArrived")
         {
             if notifFlag as! String == "0"
             {
                 let image = UIImage(named: "noNotif") as UIImage?
-                notifImage.setImage(image, forState: .Normal)
+                notifImage.setImage(image, for: .normal)
             }
         }
         else{
             let image = UIImage(named: "notif") as UIImage?
-            notifImage.setImage(image, forState: .Normal)
+            notifImage.setImage(image, for: .normal)
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannelList", object: nil)
-        
+        let removeActivityIndicatorMyChannelListNotificationName = Notification.Name("removeActivityIndicatorMyChannelList")
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(MyChannelViewController.removeActivityIndicator(notif:)),
+                                               name: removeActivityIndicatorMyChannelListNotificationName,
+                                               object: nil)
         showOverlay()
         
         if(GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0)
@@ -84,17 +88,17 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         }
         
         initialise()
-        hideView(0)
+        hideView(constraintConstant: 0)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         addKeyboardObservers()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         searchActive = false
         myChannelTableView.reloadData()
         myChannelSearchBar.resignFirstResponder()
@@ -107,40 +111,40 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.center
         self.NoDatalabelFormyChanelImageList.text = "No Channel Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
     
     func hideView(constraintConstant: CGFloat)
     {
-        addChannelView.hidden = true
-        myChannelSearchBar.hidden = true
+        addChannelView.isHidden = true
+        myChannelSearchBar.isHidden = true
         myChannelTableViewTopConstraint.constant = -120 + constraintConstant
     }
     
     func initialise()
     {
         myChannelSearchBar.delegate = self
-        gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleTap(_:)))
+        gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleTap(gestureRecognizer:)))
         myChannelTableView.addGestureRecognizer(gestureRecognizer)
-        channelCreateButton.hidden = true
+        channelCreateButton.isHidden = true
     }
     
     func removeActivityIndicator(notif : NSNotification){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.removeOverlay()
-        })
+        }
         self.myChannelTableView.reloadData()
     }
     
     func handleTap(gestureRecognizer: UIGestureRecognizer) {
         if(longPressFlag == false){
-            let swipeLocation = gestureRecognizer.locationInView(self.myChannelTableView)
-            if let swipedIndexPath = self.myChannelTableView.indexPathForRowAtPoint(swipeLocation) {
+            let swipeLocation = gestureRecognizer.location(in: self.myChannelTableView)
+            if let swipedIndexPath = self.myChannelTableView.indexPathForRow(at: swipeLocation) {
                 let sharingStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-                let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier(ChannelItemListViewController.identifier) as! ChannelItemListViewController
+                let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: ChannelItemListViewController.identifier) as! ChannelItemListViewController
                 if(!searchActive){
                     if GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > swipedIndexPath.row
                     {
@@ -157,16 +161,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                         channelItemListVC.totalMediaCount = Int(searchDataSource[swipedIndexPath.row][totalMediaKey]! as! String)!
                     }
                 }
-                channelItemListVC.navigationController?.navigationBarHidden = true
+                channelItemListVC.navigationController?.isNavigationBarHidden = true
                 self.navigationController?.pushViewController(channelItemListVC, animated: false)
             }
         }
     }
     
-    @IBAction func didTapNotificationButton(sender: AnyObject) {
+    @IBAction func didTapNotificationButton(_ sender: Any) {
         let notificationStoryboard = UIStoryboard(name:"MyChannel", bundle: nil)
-        let channelItemListVC = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
-        channelItemListVC.navigationController?.navigationBarHidden = true
+        let channelItemListVC = notificationStoryboard.instantiateViewController(withIdentifier: MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
+        channelItemListVC.navigationController?.isNavigationBarHidden = true
         let animation:CATransition = CATransition()
         animation.timingFunction = CAMediaTimingFunction(name:
             kCAMediaTimingFunctionEaseOut)
@@ -174,54 +178,54 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         animation.subtype = kCATransitionFromBottom
         animation.fillMode = kCAFillModeRemoved
         animation.duration = 0.2
-        self.navigationController?.view.layer.addAnimation(animation, forKey: "animation")
+        self.navigationController?.view.layer.add(animation, forKey: "animation")
         self.navigationController?.pushViewController(channelItemListVC, animated: false)
     }
     
-    @IBAction func didtapBackButton(sender: AnyObject)
+    @IBAction func didtapBackButton(_ sender: Any)
     {
         let cameraViewStoryboard = UIStoryboard(name:"PhotoViewer" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("PhotoViewerViewController") as! PhotoViewerViewController
-        self.navigationController?.navigationBarHidden = true
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "PhotoViewerViewController") as! PhotoViewerViewController
+        self.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
     
-    @IBAction func didTapAddChannelButton(sender: AnyObject) {
+    @IBAction func didTapAddChannelButton(_ sender: Any) {
         showviewWithNewConstraints()
         searchActive = false
     }
     
-    @IBAction func didTapChanelUpdateCancel(sender: AnyObject) {
-        self.notifImage.hidden = false
-        self.channelAddButton.hidden = false
-        self.channelUpdateCancelButton.hidden = true
-        self.channelUpdateSaveButton.hidden = true
-        self.backButton.hidden = false
+    @IBAction func didTapChanelUpdateCancel(_ sender: Any) {
+        self.notifImage.isHidden = false
+        self.channelAddButton.isHidden = false
+        self.channelUpdateCancelButton.isHidden = true
+        self.channelUpdateSaveButton.isHidden = true
+        self.backButton.isHidden = false
         longPressIndexPathRow = -1
         longPressFlag = false
         searchActive = false
         myChannelSearchBar.text! = ""
         searchDataSource.removeAll()
         searchFlagForUpdateChannel = false
-        NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
-        myChannelSearchBar.hidden = false
+        UserDefaults.standard.setValue("", forKey: "editedValue")
+        myChannelSearchBar.isHidden = false
         self.myChannelTableView.reloadData()
     }
     
-    @IBAction func didTapChannelUpdateSave(sender: AnyObject) {
-        let indexPath = NSIndexPath(forRow:longPressIndexPathRow, inSection:0)
-        let cell : MyChannelCell? = self.myChannelTableView.cellForRowAtIndexPath(indexPath) as! MyChannelCell?
+    @IBAction func didTapChannelUpdateSave(_ sender: Any) {
+        let indexPath = IndexPath(row: longPressIndexPathRow, section: 0)
+        let cell : MyChannelCell? = self.myChannelTableView.cellForRow(at: indexPath) as! MyChannelCell?
         if((cell?.editChanelNameTextField.text)!.characters.count > 15 || (cell?.editChanelNameTextField.text)!.characters.count <= 3){
-            NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
+            UserDefaults.standard.setValue("", forKey: "editedValue")
             ErrorManager.sharedInstance.InvalidChannelEnteredError()
             cell?.editChanelNameTextField.text = ""
         }
         else{
             cell?.editChanelNameTextField.resignFirstResponder()
             showOverlay()
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            let defaults = UserDefaults .standard
+            let userId = defaults.value(forKey: userLoginIdKey) as! String
+            let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
             cellChannelUpdatedNameStr = (cell?.editChanelNameTextField.text)!
             
             var chanelId : String = String()
@@ -236,15 +240,15 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                 }
             }
             if(chanelId != ""){
-                channelManager.updateChannelName(userId, accessToken: accessToken, channelName: cellChannelUpdatedNameStr, channelId: chanelId, success: { (response) in
-                    self.authenticationSuccessHandlerUpdateChannel(response)
-                    }, failure: { (error, message) in
-                        self.authenticationFailureHandlerDelete(error, code: message)
-                        return
+                channelManager.updateChannelName(userName: userId, accessToken: accessToken, channelName: cellChannelUpdatedNameStr, channelId: chanelId, success: { (response) in
+                    self.authenticationSuccessHandlerUpdateChannel(response: response)
+                }, failure: { (error, message) in
+                    self.authenticationFailureHandlerDelete(error: error, code: message)
+                    return
                 })
             }
             else{
-                NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
+                UserDefaults.standard.setValue("", forKey: "editedValue")
             }
         }
     }
@@ -278,16 +282,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             searchFlagForUpdateChannel = false
             longPressIndexPathRow = -1
             cellChannelUpdatedNameStr = ""
-            myChannelSearchBar.hidden = false
-            NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.notifImage.hidden = false
-                self.channelAddButton.hidden = false
-                self.channelUpdateCancelButton.hidden = true
-                self.channelUpdateSaveButton.hidden = true
-                self.backButton.hidden = false
+            myChannelSearchBar.isHidden = false
+            UserDefaults.standard.setValue("", forKey: "editedValue")
+            DispatchQueue.main.async {
+                self.notifImage.isHidden = false
+                self.channelAddButton.isHidden = false
+                self.channelUpdateCancelButton.isHidden = true
+                self.channelUpdateSaveButton.isHidden = true
+                self.backButton.isHidden = false
                 self.myChannelTableView.reloadData()
-            })
+            }
         }
         else
         {
@@ -298,59 +302,59 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             searchFlagForUpdateChannel = false
             longPressIndexPathRow = -1
             cellChannelUpdatedNameStr = ""
-            myChannelSearchBar.hidden = false
-            NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.notifImage.hidden = false
-                self.channelAddButton.hidden = false
-                self.channelUpdateCancelButton.hidden = true
-                self.channelUpdateSaveButton.hidden = true
-                self.backButton.hidden = false
+            myChannelSearchBar.isHidden = false
+            UserDefaults.standard.setValue("", forKey: "editedValue")
+            DispatchQueue.main.async {
+                self.notifImage.isHidden = false
+                self.channelAddButton.isHidden = false
+                self.channelUpdateCancelButton.isHidden = true
+                self.channelUpdateSaveButton.isHidden = true
+                self.backButton.isHidden = false
                 self.myChannelTableView.reloadData()
-            })
+            }
         }
     }
     
     func  showviewWithNewConstraints()
     {
-        addChannelView.hidden = false
+        addChannelView.isHidden = false
         addChannelViewTopConstraint.constant = -40
-        myChannelSearchBar.hidden = true
+        myChannelSearchBar.isHidden = true
         myChannelTableViewTopConstraint.constant = 0
     }
     
-    @IBAction func didTapCreateButton(sender: AnyObject) {
-        if(channelTextField.text?.characters.count > 15){
+    @IBAction func didTapCreateButton(_ sender: Any) {
+        if((channelTextField.text?.characters.count)! > 15){
             channelTextField.resignFirstResponder()
             channelTextField.text = ""
-            channelCreateButton.hidden = true
+            channelCreateButton.isHidden = true
             ErrorManager.sharedInstance.InvalidChannelEnteredError()
         }
         else{
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            let defaults = UserDefaults .standard
+            let userId = defaults.value(forKey: userLoginIdKey) as! String
+            let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
             let channelname: String = channelTextField.text!
             channelTextField.resignFirstResponder()
-            channelCreateButton.hidden = true
+            channelCreateButton.isHidden = true
             addChannelViewTopConstraint.constant = 0
             myChannelTableViewTopConstraint.constant = 0
-            hideView(0)
+            hideView(constraintConstant: 0)
             myChannelSearchBar.text = ""
             myChannelSearchBar.resignFirstResponder()
             myChannelSearchBar.delegate = self
             
-            addChannelDetails(userId, token: accessToken, channelName: channelname)
+            addChannelDetails(userName: userId, token: accessToken, channelName: channelname)
         }
     }
     
     func addChannelDetails(userName: String, token: String, channelName: String)
     {
         showOverlay()
-        channelManager.addChannelDetails(userName, accessToken: token, channelName: channelName, success: { (response) -> () in
-            self.authenticationSuccessHandlerAddChannel(response)
+        channelManager.addChannelDetails(userName: userName, accessToken: token, channelName: channelName, success: { (response) -> () in
+            self.authenticationSuccessHandlerAddChannel(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandlerAddChannel(error, code: message)
+            self.authenticationFailureHandlerAddChannel(error: error, code: message)
             return
         }
     }
@@ -363,18 +367,18 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             channelTextField.text = ""
             let channelId = json["channelId"]?.stringValue
             let channelName = json["channelName"] as! String
-            let dateFormatter = NSDateFormatter()
+            let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            dateFormatter.timeZone = NSTimeZone(name: "UTC")
-            let localDateStr = dateFormatter.stringFromDate(NSDate())
+            dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+            let localDateStr = dateFormatter.string(from: NSDate() as Date)
             
-            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", ChannelCreatedTimeKey: localDateStr, sharedOriginalKey:1, sharedTemporaryKey:1], atIndex: 0)
+            GlobalDataChannelList.sharedInstance.globalChannelDataSource.insert([channelIdKey:channelId!, channelNameKey:channelName, totalMediaKey:"0", ChannelCreatedTimeKey: localDateStr, sharedOriginalKey:1, sharedTemporaryKey:1], at: 0)
             
             let imageData = [[String:AnyObject]]()
             GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.updateValue(imageData, forKey: channelId!)
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.myChannelTableView.reloadData()
-            })
+            }
         }
         else
         {
@@ -393,10 +397,10 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         else if code.isEmpty == false {
             
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -408,9 +412,9 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     {
         showOverlay()
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
-            self.authenticationSuccessHandlerDelete(response,index: index)
+            self.authenticationSuccessHandlerDelete(response: response,index: index)
         }) { (error, message) -> () in
-            self.authenticationFailureHandlerDelete(error, code: message)
+            self.authenticationFailureHandlerDelete(error: error, code: message)
             return
         }
     }
@@ -424,7 +428,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
             if(status == 1){
                 if(searchActive){
                     let channelId = searchDataSource[index][channelIdKey] as! String
-                    searchDataSource.removeAtIndex(index)
+                    searchDataSource.remove(at: index)
                     
                     var deleteIndexOfI : Int = Int()
                     var deleteFlag = false
@@ -443,16 +447,16 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
                     }
                     if deleteFlag == true
                     {
-                        GlobalDataChannelList.sharedInstance.globalChannelDataSource.removeAtIndex(deleteIndexOfI)
+                        GlobalDataChannelList.sharedInstance.globalChannelDataSource.remove(at: deleteIndexOfI)
                     }
                 }
                 else{
-                    GlobalDataChannelList.sharedInstance.globalChannelDataSource.removeAtIndex(index)
+                    GlobalDataChannelList.sharedInstance.globalChannelDataSource.remove(at: index)
                 }
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.myChannelTableView.reloadData()
-                })
+                }
             }
         }
         else
@@ -465,28 +469,28 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     {
         self.removeOverlay()
         myChannelSearchBar.text! = ""
-        NSUserDefaults.standardUserDefaults().setValue("", forKey: "editedValue")
+        UserDefaults.standard.setValue("", forKey: "editedValue")
         searchDataSource.removeAll()
-        self.notifImage.hidden = false
-        self.channelAddButton.hidden = false
-        self.channelUpdateCancelButton.hidden = true
-        self.channelUpdateSaveButton.hidden = true
-        self.backButton.hidden = false
+        self.notifImage.isHidden = false
+        self.channelAddButton.isHidden = false
+        self.channelUpdateCancelButton.isHidden = true
+        self.channelUpdateSaveButton.isHidden = true
+        self.backButton.isHidden = false
         self.longPressFlag = false
         self.searchFlagForUpdateChannel = false
         self.searchActive = false
         self.longPressIndexPathRow = -1
-        myChannelSearchBar.hidden = false
+        myChannelSearchBar.isHidden = false
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
             
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -496,55 +500,54 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults .standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
-            }
-        })
-    }
-    
-    @IBAction func channelTextFieldChange(sender: AnyObject) {
-        
-        if let text = channelTextField.text where !text.isEmpty
-        {
-            if(text.characters.count >= 3)
-            {
-                channelCreateButton.hidden = false
-            }
-            else
-            {
-                channelCreateButton.hidden = true
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
     }
     
-    @IBAction func tapGestureRecognizer(sender: AnyObject) {
+    @IBAction func channelTextFieldChange(_ sender: Any) {
+        
+        if let text = channelTextField.text, !text.isEmpty
+        {
+            if(text.characters.count >= 3)
+            {
+                channelCreateButton.isHidden = false
+            }
+            else
+            {
+                channelCreateButton.isHidden = true
+            }
+        }
+    }
+    
+    @IBAction func tapGestureRecognizer(_ sender: Any) {
         if(longPressFlag == false){
             view.endEditing(true)
             self.myChannelSearchBar.text = ""
@@ -556,7 +559,7 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view.addSubview(self.loadingOverlay!)
@@ -566,32 +569,38 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
         self.loadingOverlay?.removeFromSuperview()
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
-        if let text = textField.text where !text.isEmpty
+        if let text = textField.text, !text.isEmpty
         {
             if(text.characters.count >= 3)
             {
-                channelCreateButton.hidden = false
+                channelCreateButton.isHidden = false
             }
             else
             {
                 ErrorManager.sharedInstance.InvalidChannelEnteredError()
-                channelCreateButton.hidden = true
+                channelCreateButton.isHidden = true
             }
         }
     }
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MyChannelViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(MyChannelViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(MyChannelViewController.keyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     func keyboardDidShow(notification:NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         if tableViewBottomConstraint.constant == 0
         {
             self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
@@ -608,38 +617,32 @@ class MyChannelViewController: UIViewController,UISearchBarDelegate,UIScrollView
     
     func generateWaytoSendAlert(channelId: String, indexPath: Int)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        let defaults = UserDefaults .standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         
-        let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the channel", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Delete!!!", message: "Do you want to delete the channel", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-            self.deleteChannelDetails(userId, token: accessToken, channelId: channelId, index: indexPath)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+            self.deleteChannelDetails(userName: userId, token: accessToken, channelId: channelId, index: indexPath)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
-extension MyChannelViewController: UITableViewDelegate
+extension MyChannelViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0.01
     }
-}
-
-extension MyChannelViewController:UITableViewDataSource
-{
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if(searchActive){
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
@@ -648,9 +651,8 @@ extension MyChannelViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
-        var dataSourceTmp : [[String:AnyObject]]?
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var dataSourceTmp : [[String:Any]]?
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
@@ -660,7 +662,7 @@ extension MyChannelViewController:UITableViewDataSource
         
         if dataSourceTmp!.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelCell.identifier, forIndexPath:indexPath) as! MyChannelCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelCell.identifier, for:indexPath) as! MyChannelCell
             
             let channleName = dataSourceTmp![indexPath.row][channelNameKey] as? String
             if ((channleName == "My Day") || (channleName == "Archive"))
@@ -668,18 +670,18 @@ extension MyChannelViewController:UITableViewDataSource
                 cell.removeGestureRecognizer(longPressRecognizer)
             }
             else{
-                longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleChannelLongPress(_:)))
+                longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleChannelLongPress(longPressGestureRecognizer:)))
                 cell.addGestureRecognizer(longPressRecognizer)
             }
             
             if(indexPath.row == longPressIndexPathRow)
             {
-                let str = NSUserDefaults.standardUserDefaults().valueForKey("editedValue")
+                let str = UserDefaults.standard.value(forKey: "editedValue")
                 cell.editChanelNameTextField.text = str as? String
-                cell.channelNameLabel.hidden = true
-                cell.editChanelNameTextField.hidden = false
-                cell.editChanelNameTextField.userInteractionEnabled = true
-                cell.editChanelNameTextField.autocorrectionType = .No
+                cell.channelNameLabel.isHidden = true
+                cell.editChanelNameTextField.isHidden = false
+                cell.editChanelNameTextField.isUserInteractionEnabled = true
+                cell.editChanelNameTextField.autocorrectionType = .no
                 cell.editChanelNameTextField.becomeFirstResponder()
                 cell.channelItemCount.text = dataSourceTmp![indexPath.row][totalMediaKey] as? String
                 if let latestImage = dataSourceTmp![indexPath.row][tImageKey]
@@ -693,9 +695,9 @@ extension MyChannelViewController:UITableViewDataSource
             }
             else{
                 cell.editChanelNameTextField.text = ""
-                cell.editChanelNameTextField.hidden = true
-                cell.editChanelNameTextField.userInteractionEnabled = false
-                cell.channelNameLabel.hidden = false
+                cell.editChanelNameTextField.isHidden = true
+                cell.editChanelNameTextField.isUserInteractionEnabled = false
+                cell.channelNameLabel.isHidden = false
                 cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
                 cell.channelItemCount.text = dataSourceTmp![indexPath.row][totalMediaKey] as? String
                 if let latestImage = dataSourceTmp![indexPath.row][tImageKey]
@@ -706,9 +708,8 @@ extension MyChannelViewController:UITableViewDataSource
                 {
                     cell.channelHeadImageView.image = UIImage(named: "thumb12")
                 }
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
             }
-            
             return cell
         }
         else{
@@ -716,11 +717,14 @@ extension MyChannelViewController:UITableViewDataSource
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+    }
+    
     func handleChannelLongPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
-        let longPressLocation = longPressGestureRecognizer.locationInView(self.myChannelTableView)
-        if let longPressIndexPath = self.myChannelTableView.indexPathForRowAtPoint(longPressLocation) {
+        let longPressLocation = longPressGestureRecognizer.location(in: self.myChannelTableView)
+        if let longPressIndexPath = self.myChannelTableView.indexPathForRow(at: longPressLocation) {
             var chanelNameChk = String()
-            
             if(longPressFlag == false){
                 longPressFlag = true
                 longPressIndexPathRow = longPressIndexPath.row
@@ -735,27 +739,23 @@ extension MyChannelViewController:UITableViewDataSource
                 {
                     longPressIndexPathRow = -1
                     longPressFlag = false
-                    myChannelSearchBar.hidden = false
+                    myChannelSearchBar.isHidden = false
                 }
                 else
                 {
-                    myChannelSearchBar.hidden = true
-                    notifImage.hidden = true
-                    channelAddButton.hidden = true
-                    channelUpdateCancelButton.hidden = false
-                    channelUpdateSaveButton.hidden = false
-                    backButton.hidden = true
+                    myChannelSearchBar.isHidden = true
+                    notifImage.isHidden = true
+                    channelAddButton.isHidden = true
+                    channelUpdateCancelButton.isHidden = false
+                    channelUpdateSaveButton.isHidden = false
+                    backButton.isHidden = true
                     myChannelTableView.reloadData()
                 }
             }
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-    }
-    
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if(longPressFlag == false){
             var channelName : String = String()
             if(searchActive){
@@ -777,8 +777,8 @@ extension MyChannelViewController:UITableViewDataSource
         return false
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == UITableViewCellEditingStyle.delete) {
             var deletedChannelId : String = String()
             if(searchActive){
                 deletedChannelId = self.searchDataSource[indexPath.row][channelIdKey] as! String
@@ -786,23 +786,26 @@ extension MyChannelViewController:UITableViewDataSource
             else{
                 deletedChannelId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[indexPath.row][channelIdKey] as! String
             }
-            generateWaytoSendAlert(deletedChannelId, indexPath: indexPath.row)
+            generateWaytoSendAlert(channelId: deletedChannelId, indexPath: indexPath.row)
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        if(addChannelView.hidden)
+        if(addChannelView.isHidden)
         {
             if(longPressFlag == false){
-                myChannelSearchBar.hidden = false
-                addChannelView.hidden = true
+                myChannelSearchBar.isHidden = false
+                addChannelView.isHidden = true
                 myChannelTableViewTopConstraint.constant = -90
             }
         }
     }
+}
+
+extension MyChannelViewController: UISearchBarDelegate{
     
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         if searchBar.text!.isEmpty
         {
             searchActive = false
@@ -814,16 +817,7 @@ extension MyChannelViewController:UITableViewDataSource
         }
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-    }
-    
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-    }
-    
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-    }
-    
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchDataSource.removeAll()
         if myChannelSearchBar.text!.isEmpty
         {
@@ -835,8 +829,8 @@ extension MyChannelViewController:UITableViewDataSource
             if GlobalDataChannelList.sharedInstance.globalChannelDataSource.count > 0
             {
                 for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource{
-                    let tmp: String = (element[channelNameKey]?.lowercaseString)!
-                    if(tmp.containsString(searchText.lowercaseString))
+                    let tmp: String = (element[channelNameKey] as! String).lowercased()
+                    if(tmp.range(of: searchText.lowercased()) != nil)
                     {
                         searchDataSource.append(element)
                     }
@@ -848,5 +842,4 @@ extension MyChannelViewController:UITableViewDataSource
         }
     }
 }
-
 

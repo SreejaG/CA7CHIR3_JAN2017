@@ -1,7 +1,7 @@
 
 import UIKit
 
-class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
+class ProfileManager: NSObject,URLSessionDelegate,URLSessionTaskDelegate, URLSessionDataDelegate {
     
     class var sharedInstance: ProfileManager {
         struct Singleton {
@@ -11,119 +11,118 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
     }
     
     //Method to get user details, success and failure block
-    func getUserDetails(userName: String, accessToken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getUserDetails(userName: String, accessToken: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getProfileDataAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().get(UrlManager.sharedInstance.getProfileDataAPIUrl(userName: userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
-    func resetPassword(userName: String, accessToken: String, resetPassword: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    
+    func resetPassword(userName: String, accessToken: String, resetPassword: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
-        
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getResetPasswordAPIUrl(userName, accessToken: accessToken), parameters: ["newPassword":resetPassword], success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getResetPasswordAPIUrl(userName: userName, accessToken: accessToken), parameters: ["newPassword":resetPassword], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
-    func getSubUserProfileImage(userName: String, accessToken: String, subscriberUserName: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
-        
+    
+    func getSubUserProfileImage(userName: String, accessToken: String, subscriberUserName: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?){
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getSubscriberProfileImageAPIUrl(userName, accessToken: accessToken, subscriberUserName: subscriberUserName), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().get(UrlManager.sharedInstance.getSubscriberProfileImageAPIUrl(userName: userName, accessToken: accessToken, subscriberUserName: subscriberUserName), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
-        
     }
     
-    func uploadProfileImage(userName: String, accessToken: String, profileImage: NSData, actualImageUrl: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
+    func uploadProfileImage(userName: String, accessToken: String, profileImage: NSData, actualImageUrl: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?){
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.getProfileImageUploadAPIUrl(userName, accessToken: accessToken, actualImageUrl: actualImageUrl), parameters: nil, constructingBodyWithBlock: { (formData: AFMultipartFormData!) -> Void in
-            formData.appendPartWithFileData(profileImage, name: "Photo", fileName: "photo.jpg", mimeType: "image/jpeg")
-            },success: { (operation, response) -> Void in
-                if let responseObject = response as? [String:AnyObject]
-                {
-                    success?(response: responseObject)
-                }
-                else
-                {
-                    failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
-                }
-                
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                failure?(error: error, code:failureErrorCode)
+        requestManager.httpManager().post(UrlManager.sharedInstance.getProfileImageUploadAPIUrl(userName: userName, accessToken: accessToken, actualImageUrl: actualImageUrl), parameters: nil, constructingBodyWith: { (formData: AFMultipartFormData!) -> Void in
+            formData.appendPart(withFileData: profileImage as Data, name: "Photo", fileName: "photo.jpg", mimeType: "image/jpeg")
+        },success: { (operation, response) -> Void in
+            if let responseObject = response as? [String:AnyObject]
+            {
+                success?(responseObject as AnyObject?)
+            }
+            else
+            {
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil),
+                         "ResponseInvalid")
+            }
+            
+        }, failure: { (operation, error) -> Void in
+            var failureErrorCode:String = ""
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func updateUserDetails(userName: String, accessToken: String, email: String, location: String, mobNo: String,fullName: String, timeZone: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?){
+    func updateUserDetails(userName: String, accessToken: String, email: String, location: String, mobNo: String,fullName: String, timeZone: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?){
         
         var paramet = NSMutableDictionary()
         if(fullName == ""){
@@ -133,59 +132,57 @@ class ProfileManager: NSObject,NSURLSessionDelegate,NSURLSessionTaskDelegate, NS
             paramet  = ["email":email,"mobileNumber":mobNo,"fullName":fullName,"timeZone": timeZone]
         }
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileImageAPIUrl(userName, accessToken: accessToken), parameters: paramet, success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getProfileImageAPIUrl(userName: userName, accessToken: accessToken), parameters: paramet, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
     //Method to get user details, success and failure block
-    func getUploadProfileImageURL(userName: String, accessToken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getUploadProfileImageURL(userName: String, accessToken: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getProfileUploadAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getProfileUploadAPIUrl(userName: userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
-    
 }

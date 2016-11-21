@@ -1,7 +1,6 @@
 
 import Foundation
 
-
 class LiveStreamingHelpers: NSObject
 {
     let livestreamingManager = LiveStreamingManager()
@@ -13,13 +12,13 @@ class LiveStreamingHelpers: NSObject
     //PRAGMA MARK:- Create Base Stream
     func getBaseStreamWithToken(streamToken:String , AndUserName userName:String) -> String
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
+        let defaults = UserDefaults .standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
         
-        let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() +  getUserNameAndToken(streamToken, WithUserName: userId)
+        let baseStream = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() +  getUserNameAndToken(streamToken: streamToken, WithUserName: userId)
         
-        let streamPath = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(streamToken)
-        NSUserDefaults.standardUserDefaults().setObject(streamPath, forKey: "LiveStreamUrl")
+        let streamPath = getProtocol() + "://" + getHost() + ":" + getPort() + "/" + getAppName() + getToken(token: streamToken)
+        UserDefaults.standard.set(streamPath, forKey: "LiveStreamUrl")
         return baseStream
     }
     
@@ -59,9 +58,9 @@ class LiveStreamingHelpers: NSObject
     
     func initialiseLiveStreamingToken()
     {
-        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
-        let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
-        NSUserDefaults.standardUserDefaults().setBool(true, forKey: initializingStream)
+        let loginId = UserDefaults.standard.object(forKey: userLoginIdKey)
+        let accessTocken = UserDefaults.standard.object(forKey: userAccessTockenKey)
+        UserDefaults.standard.set(true, forKey: initializingStream)
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
@@ -70,36 +69,35 @@ class LiveStreamingHelpers: NSObject
                 if let json = response as? [String: AnyObject]
                 {
                     self.currentStreamingTocken = json["streamToken"] as? String
-                    self.startLiveStreamingToken(self.currentStreamingTocken)
+                    self.startLiveStreamingToken(streamTocken: self.currentStreamingTocken)
                 }
                 else
                 {
-                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+                    UserDefaults.standard.set(false, forKey: initializingStream)
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
-                }, failure: { (error, message) -> () in
-                    self.streamingFailed()
-                    self.handleFailure(message)
-                    return
+            }, failure: { (error, message) -> () in
+                self.streamingFailed()
+                self.handleFailure(message: message)
+                return
             })
         }
         else
         {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
-//            ErrorManager.sharedInstance.authenticationIssue()
+            UserDefaults.standard.set(false, forKey: initializingStream)
         }
     }
     
     func mapStream()
     {
-        self.setDefaultMappingForLiveStream(NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String)
+        self.setDefaultMappingForLiveStream(Tocken: UserDefaults.standard.object(forKey: "streamTocken") as! String)
     }
     
     func startLiveStreamingToken(streamTocken:String?)
     {
-        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
-        let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
+        let loginId = UserDefaults.standard.object(forKey: userLoginIdKey)
+        let accessTocken = UserDefaults.standard.object(forKey: userAccessTockenKey)
         cleanStreamingToken()
         
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
@@ -109,49 +107,39 @@ class LiveStreamingHelpers: NSObject
                 if let json = response as? [String: AnyObject]
                 {
                     let url =  (json["Signed url"]) as! String
-                    let defaults = NSUserDefaults .standardUserDefaults()
+                    let defaults = UserDefaults.standard
                     defaults.setValue(url, forKey: "liveStreamURL")
-                    
                     let streamToken:String = json["streamToken"] as! String
-                    NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: "streamTocken")
-                    
-                    self.updateDefaultsAndStartStreamWithToken(streamToken, AndUserName: loginId as! String )
-                    
-                    //                    NSNotificationCenter.defaultCenter().addObserver(self, selector:Selector(self.mapLiveStream()), name: "mapLiveStream", object: nil)
-                    
+                    UserDefaults.standard.setValue(streamToken, forKey: "streamTocken")
+                    self.updateDefaultsAndStartStreamWithToken(streamToken: streamToken, AndUserName: loginId as! String )
                 }
-                    
                 else
                 {
                     self.streamingFailed()
-                    
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
-                }, failure: { (error, message) -> () in
-                    
-                    self.streamingFailed()
-                    self.handleFailure(message)
-                    return
+            }, failure: { (error, message) -> () in
+                self.streamingFailed()
+                self.handleFailure(message: message)
+                return
             })
         }
         else
         {
             self.streamingFailed()
-//            ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     
     func mapLiveStream(){
-        
-        let streamToken = NSUserDefaults.standardUserDefaults().objectForKey("streamTocken") as! String
-        self.setDefaultMappingForLiveStream(streamToken)
+        let streamToken = UserDefaults.standard.object(forKey: "streamTocken") as! String
+        self.setDefaultMappingForLiveStream(Tocken: streamToken)
     }
     
     func setDefaultMappingForLiveStream(Tocken : String)
     {
-        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)as! String
-        let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey) as! String
+        let loginId = UserDefaults.standard.object(forKey: userLoginIdKey)as! String
+        let accessTocken = UserDefaults.standard.object(forKey: userAccessTockenKey) as! String
         livestreamingManager.defaultStreamMapping(loginId: loginId, accesstocken:accessTocken, streamTockn: Tocken, success: { (response) in
         }) { (error, code) in
         }
@@ -160,28 +148,28 @@ class LiveStreamingHelpers: NSObject
     //PRAGMA MARK: User Defaults
     func setStreamingDefaults()
     {
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
-        NSUserDefaults.standardUserDefaults().setBool(true, forKey: startedStreaming)
+        UserDefaults.standard.set(false, forKey: initializingStream)
+        UserDefaults.standard.set(true, forKey: startedStreaming)
     }
     
     func streamingFailed()
     {
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+        UserDefaults.standard.set(false, forKey: initializingStream)
         self.streamingStatus?.updateStreamingStatus!();
     }
     
     func clearStreamingDefaults()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
+        let defaults = UserDefaults .standard
         defaults.setValue(false, forKey: startedStreaming)
         self.streamingStatus?.updateStreamingStatus!();
     }
     
     func cleanStreamingToken()
     {
-        let userDefault = NSUserDefaults.standardUserDefaults()
-        userDefault.removeObjectForKey(streamingToken)
-        userDefault.removeObjectForKey(startedStreaming)
+        let userDefault = UserDefaults.standard
+        userDefault.removeObject(forKey: streamingToken)
+        userDefault.removeObject(forKey: startedStreaming)
     }
     
     //PRAGMA MARK:Handlers
@@ -192,9 +180,10 @@ class LiveStreamingHelpers: NSObject
         }
         else if message.isEmpty == false {
             if(message != "STREAM001"){
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: message)
                 if((message == "USER004") || (message == "USER005") || (message == "USER006")){
-                    NSNotificationCenter.defaultCenter().postNotificationName("refreshLogin", object:self)
+                    let notificationName = Notification.Name("refreshLogin")
+                    NotificationCenter.default.post(name: notificationName, object: self)
                 }
             }
         }
@@ -206,10 +195,10 @@ class LiveStreamingHelpers: NSObject
     //PRAGMA MARK:- Start iPhone Camera Streaming
     func updateDefaultsAndStartStreamWithToken(streamToken:String , AndUserName userName:String)
     {
-        let baseStreamName = self.getBaseStreamWithToken(streamToken, AndUserName: userName)
-        NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: streamingToken)
+        let baseStreamName = self.getBaseStreamWithToken(streamToken: streamToken, AndUserName: userName)
+        UserDefaults.standard.setValue(streamToken, forKey: streamingToken)
         self.setStreamingDefaults()
-        self.startStreamingWithUrl(baseStreamName, andStreamToken: streamToken)
+        self.startStreamingWithUrl(url: baseStreamName, andStreamToken: streamToken)
     }
     
     func startStreamingWithUrl(url:String ,andStreamToken streamToken:String)
@@ -217,8 +206,8 @@ class LiveStreamingHelpers: NSObject
         if let session = iPhoneLiveStreamingSession
         {
             switch session.rtmpSessionState {
-            case .None, .PreviewStarted, .Ended, .Error:
-                startiPhoneCameraLiveStreamingWithUrl(url, andStreamToken: streamToken)
+            case .none, .previewStarted, .ended, .error:
+                startiPhoneCameraLiveStreamingWithUrl(url: url, andStreamToken: streamToken)
                 break
             default:
                 stopLiveStreaming()
@@ -229,18 +218,18 @@ class LiveStreamingHelpers: NSObject
     
     func startiPhoneCameraLiveStreamingWithUrl(url:String , andStreamToken streamToken:String)
     {
-        UIApplication.sharedApplication().idleTimerDisabled = true
-        iPhoneLiveStreamingSession!.startRtmpSessionWithURL(url, andStreamKey: streamToken)
+        UIApplication.shared.isIdleTimerDisabled = true
+        iPhoneLiveStreamingSession!.startRtmpSession(withURL: url, andStreamKey: streamToken)
     }
     
     //PRAGMA MARK: Stop Live streaming API
     func stopLiveStreaming()
     {
         let iPhoneLiveStreaming = IPhoneLiveStreaming()
-        let userDefault = NSUserDefaults.standardUserDefaults()
-        let loginId = userDefault.objectForKey(userLoginIdKey)
-        let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        let streamTocken = userDefault.objectForKey(streamingToken)
+        let userDefault = UserDefaults.standard
+        let loginId = userDefault.object(forKey: userLoginIdKey)
+        let accessTocken = userDefault.object(forKey: userAccessTockenKey)
+        let streamTocken = userDefault.object(forKey: streamingToken)
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
             livestreamingManager.stopLiveStreaming(loginId:loginId as! String , accesstocken:accessTocken as! String , streamTocken: streamTocken as! String,success: { (response) -> () in
@@ -254,18 +243,17 @@ class LiveStreamingHelpers: NSObject
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
-                }, failure: { (error, message) -> () in
-                    if iPhoneLiveStreaming.showAlert
-                    {
-                        self.removeStreaming()
-                        self.handleFailure(message)
-                    }
-                    return
+            }, failure: { (error, message) -> () in
+                if iPhoneLiveStreaming.showAlert
+                {
+                    self.removeStreaming()
+                    self.handleFailure(message: message)
+                }
+                return
             })
         }
         else
         {
-//            ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     

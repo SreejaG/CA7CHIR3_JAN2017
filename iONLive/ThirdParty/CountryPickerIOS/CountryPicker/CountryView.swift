@@ -14,17 +14,15 @@ class CountryView: UIView {
         super.init(coder: aDecoder)
     }
     
-    func setup(country: Country) {
+    func setup(_ country: Country) {
         if let countryCode = country.code {
             flagImageView.layer.borderWidth = 0.5
-            flagImageView.layer.borderColor = UIColor.darkGrayColor().CGColor
+            flagImageView.layer.borderColor = UIColor.darkGray.cgColor
             flagImageView.layer.cornerRadius = 1
             flagImageView.layer.masksToBounds = true
-            flagImageView.image = UIImage(named: countryCode.lowercaseString)
+            flagImageView.image = UIImage(named: countryCode.lowercased())
         }
-        
         countryNameLabel.text = country.name
         countryCodeLabel.text = country.phoneCode
     }
-
 }

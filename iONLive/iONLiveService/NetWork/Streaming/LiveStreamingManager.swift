@@ -12,153 +12,150 @@ class LiveStreamingManager: NSObject {
     
     //PRAGMA MARK:- initialiseLiveStreaming
     //Method to initialize live streaming with userid, tocken, success and failure block
-    func initialiseLiveStreaming(loginId loginId: String, tocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func initialiseLiveStreaming(loginId: String, tocken: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token": tocken], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token": tocken], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code:"ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                var failureErrorDesc:String = ""
-                //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorDesc = errorMessage
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorDesc)
+        }, failure: { (operation, error) -> Void in
+            var failureErrorDesc:String = ""
+            //get the error message from API response if any
+            if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorDesc = errorMessage
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorDesc)
         })
     }
     
     //PRAGMA MARK:- startLiveStreaming
     //Method to start live streaming with user tocken and stream tocken, success and failure block
-    func startLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func startLiveStreaming(loginId: String, accesstocken: String,streamTocken:String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTocken, parameters: ["userName":loginId,"access_token":accesstocken,"action":"startStream"],success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTocken, parameters: ["userName":loginId,"access_token":accesstocken,"action":"startStream"],success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                var failureErrorDesc:String = ""
-                //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorDesc = errorMessage
-                }
-                failure?(error: error, code:failureErrorDesc)
+        }, failure: { (operation, error) -> Void in
+            var failureErrorDesc:String = ""
+            //get the error message from API response if any
+            if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorDesc = errorMessage
+            }
+            failure?(error as NSError?, failureErrorDesc)
         })
     }
     
     //PRAGMA MARK:- stopLiveStreaming
     //Method to start live streaming with user tocken and stream tocken, success and failure block
-    func stopLiveStreaming(loginId loginId: String, accesstocken: String,streamTocken:String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func stopLiveStreaming(loginId: String, accesstocken: String,streamTocken:String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTocken, parameters: ["userName":loginId,"access_token":accesstocken,"action":"stopStream"],success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTocken, parameters: ["userName":loginId,"access_token":accesstocken,"action":"stopStream"],success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                var failureErrorDesc:String = ""
-                //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorDesc = errorMessage
-                }
-                failure?(error: error, code:failureErrorDesc)
+        }, failure: { (operation, error) -> Void in
+            var failureErrorDesc:String = ""
+            //get the error message from API response if any
+            if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorDesc = errorMessage
+            }
+            failure?(error as NSError?, failureErrorDesc)
         })
     }
     
-    
     //PRAGMA MARK:- getAllLiveStreams
-    
-    func getAllLiveStreams(loginId loginId: String, accesstocken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getAllLiveStreams(loginId: String, accesstocken: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
+        requestManager.httpManager().get(UrlManager.sharedInstance.liveStreamingAPIUrl(), parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            },failure: { (operation, error) -> Void in
-                var failureErrorDesc:String = ""
-                //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorDesc = errorMessage
-                }
-                failure?(error: error, code:failureErrorDesc)
+        },failure: { (operation, error) -> Void in
+            var failureErrorDesc:String = ""
+            //get the error message from API response if any
+            if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorDesc = errorMessage
+            }
+            failure?(error as NSError?, failureErrorDesc)
         })
     }
     
     //PRAGMA MARK:- Default Stream Mapping
-    
-    func defaultStreamMapping(loginId loginId: String, accesstocken: String, streamTockn: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func defaultStreamMapping(loginId: String, accesstocken: String, streamTockn: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTockn, parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.liveStreamingAPIUrl() + "/" + streamTockn, parameters: ["userName":loginId,"access_token":accesstocken], success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            },failure: { (operation, error) -> Void in
-                var failureErrorDesc:String = ""
-                //get the error message from API response if any
-                if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorDesc = errorMessage
-                }
-                failure?(error: error, code:failureErrorDesc)
+        },failure: { (operation, error) -> Void in
+            var failureErrorDesc:String = ""
+            //get the error message from API response if any
+            if let errorMessage = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorDesc = errorMessage
+            }
+            failure?(error as NSError?, failureErrorDesc)
         })
     }
 }

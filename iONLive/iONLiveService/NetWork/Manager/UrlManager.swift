@@ -3,13 +3,14 @@ import UIKit
 import Foundation
 class UrlManager : NSObject {
     
-   let baseUrl = "http://104.196.159.90:3000"; //IR3 Instance
+    let baseUrl = "http://104.196.159.90:3000"; //IR3 Instance
     
     //  let baseUrl = "http://104.196.113.247:3000"; //Production
     
     // let baseUrl = "http://104.197.92.137:3000"; //Developer
- //   let baseUrl = "http://192.168.18.89:3000"; //Local
-
+    
+    //   let baseUrl = "http://192.168.18.89:3000"; //Local
+    
     let iONLiveCamUrl = "http://104.197.92.137:8888"
     
     class var sharedInstance: UrlManager {
@@ -18,7 +19,7 @@ class UrlManager : NSObject {
         }
         return Singleton.instance
     }
-   
+    
     func getUserProfileImageBaseURL() -> (String)
     {
         let userProfileImageURL = baseUrl+"/api/v1/imageUrl/thumb/profileImage/"
@@ -53,6 +54,7 @@ class UrlManager : NSObject {
         let profileUrl = getUserProfileImageBaseURL() + getUserId() + "/" + getAccessTocken() + "/" + userId
         return profileUrl
     }
+    
     func getMediaURL(mediaId : String) -> (String)
     {
         let mediaUrl =   getMediaThumbImageBaseURL() + mediaId + "/" + getUserId() + "/" + getAccessTocken()
@@ -248,7 +250,7 @@ class UrlManager : NSObject {
     {
         let getResetPasswordAPIUrl =  resetPasswordAPIUrl() + "/" + userName + "/" + accessToken
         return getResetPasswordAPIUrl
-
+        
     }
     func getProfileImageUploadAPIUrl(userName: String, accessToken: String, actualImageUrl: String) -> String
     {
@@ -273,7 +275,7 @@ class UrlManager : NSObject {
         let updateChannelsAPI = channelAPIUrl()  + "/" + chanelId  + "/" + userName + "/" + accessToken
         return updateChannelsAPI
     }
-
+    
     
     func getUserProfileImageAPIUrl(userName: String, accessToken: String) -> String
     {
@@ -384,17 +386,13 @@ class UrlManager : NSObject {
     func iONLiveCamDeletePictureUrl(burstId: String!) -> String
     {
         var getPictureUrl = iONLiveCamUrl+"/picture"
-        
         if burstId.isEmpty == false
         {
-            let stringArray = burstId.componentsSeparatedByString(".")
-            
+            let stringArray = burstId.components(separatedBy: ".")
             let burstIdUrl = stringArray[0]
-            
             getPictureUrl = getPictureUrl + "?burstID=\(burstIdUrl)"
         }
         return getPictureUrl
-        
     }
     
     func iONLiveCamDeleteAllPictureUrl() -> String
@@ -426,13 +424,10 @@ class UrlManager : NSObject {
     func getiONLiveVideoUrlWithHlsId(hlsId:String)->String
     {
         var getVideoUrl = iONLiveCamUrl+"/video"
-        
         if hlsId.isEmpty == false
         {
-            let stringArray = hlsId.componentsSeparatedByString(".")
-            
+            let stringArray = hlsId.components(separatedBy: ".")
             let vldIdUrl = stringArray[0]
-            
             getVideoUrl = getVideoUrl + "?hlsID=\(vldIdUrl)"
         }
         return getVideoUrl
@@ -461,17 +456,17 @@ class UrlManager : NSObject {
         let getUpdatedMediaUrl = SubscribedChannelMediaUrl() + "/" + userName + "/" + accessToken
         return getUpdatedMediaUrl
     }
-    
 }
+
 extension NSObject{
     func getUserId() -> String
     {
-        return NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-        
+        return UserDefaults.standard.value(forKey: userLoginIdKey) as! String
     }
+    
     func getAccessTocken() -> String
     {
-        return NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        return UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
     }
 }
-    
+

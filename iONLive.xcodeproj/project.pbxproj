@@ -30,7 +30,6 @@
 		162F97431CC9F0C7009F68F8 /* IPhoneCameraView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 162F97421CC9F0C7009F68F8 /* IPhoneCameraView.storyboard */; };
 		163282551C7EE57100D03F51 /* Flags.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 163282541C7EE57100D03F51 /* Flags.xcassets */; };
 		1632825B1C7F098000D03F51 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1632825A1C7F098000D03F51 /* ProfileManager.swift */; };
-		1633D1E51C5F1CBD00937FAD /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1633D1E41C5F1CBD00937FAD /* CoreData.framework */; };
 		1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1633D1ED1C5F1DD200937FAD /* GalleryModel.xcdatamodeld */; };
 		1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2361C5F21FD00937FAD /* Entity+CoreDataProperties.swift */; };
 		1633D2391C5F21FD00937FAD /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633D2371C5F21FD00937FAD /* Entity.swift */; };
@@ -48,7 +47,6 @@
 		164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */; };
 		164989F51C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */; };
 		164AEE551CD09DE8006ACAE0 /* SetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164AEE541CD09DE8006ACAE0 /* SetUpView.swift */; };
-		1656E4F61C10595700F62D12 /* PhotoViewerViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1656E4F51C10595700F62D12 /* PhotoViewerViewController1.swift */; };
 		165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C831C0C2E90005379A9 /* SignUpViewController.swift */; };
 		165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */; };
 		165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */; };
@@ -60,7 +58,6 @@
 		165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165E50AB1C993DFA003718A4 /* ImageUpload.swift */; };
 		165E87451CAFB35F00CE03BD /* PhotoViewerInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */; };
 		166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */; };
-		166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController1.swift */; };
 		166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */; };
 		166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */; };
 		166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */; };
@@ -75,7 +72,6 @@
 		166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B31C31074000543D7A /* ProgramCameraButtonViewController.swift */; };
 		166796B61C31076500543D7A /* ProgramCameraButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B51C31076500543D7A /* ProgramCameraButtonCell.swift */; };
 		166796B81C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166796B71C31077A00543D7A /* ProgramCameraButtonHeaderCell.swift */; };
-		166B9CDE1CC8FF0E00396C4E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166B9CDD1CC8FF0E00396C4E /* CoreTelephony.framework */; };
 		166FC7451C044246003EEC68 /* UrlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FC7441C044246003EEC68 /* UrlManager.swift */; };
 		1671A4771C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4761C2BACCE00C2E0B0 /* DeleteMediaSettingsViewController.swift */; };
 		1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671A4781C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift */; };
@@ -85,10 +81,8 @@
 		1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */; };
 		1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */; };
 		167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C11C315271007F5326 /* MyChannelViewController.swift */; };
-		167512C41C3152BE007F5326 /* ChannelItemListViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167512C31C3152BE007F5326 /* ChannelItemListViewController1.swift */; };
 		167512C61C3152CE007F5326 /* MyChannel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 167512C51C3152CE007F5326 /* MyChannel.storyboard */; };
 		1676473B1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */; };
-		1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1677FEB81C48BFF900261F59 /* CoreLocation.framework */; };
 		1678D00E1CF4246B0021D805 /* SwiftAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678D00D1CF4246A0021D805 /* SwiftAlertView.swift */; };
 		167AF02F1BFDC1F6003CDF30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF02E1BFDC1F6003CDF30 /* AppDelegate.swift */; };
 		167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167AF0301BFDC1F6003CDF30 /* ViewController.swift */; };
@@ -108,8 +102,6 @@
 		1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1683B8EE1C0EE29700CBB6FE /* StreamingProtocol.swift */; };
 		168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168F7A641C929EF000DE8C7A /* MyChannelNotificationCell.swift */; };
 		1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690C2601C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift */; };
-		16A266111C993E3D00650F24 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266101C993E3D00650F24 /* AddressBook.framework */; };
-		16A266131C993E4100650F24 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266121C993E4100650F24 /* AddressBookUI.framework */; };
 		16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A266141C994EC200650F24 /* ContactDetailsViewController.swift */; };
 		16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF531C646E92000B5432 /* SimpleTextFieldTableViewCell.swift */; };
 		16ACFF561C646EB0000B5432 /* PickerViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ACFF551C646EB0000B5432 /* PickerViewTableViewCell.swift */; };
@@ -120,29 +112,9 @@
 		16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B457C41C86C145009D36A9 /* ChannelManager.swift */; };
 		16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */; };
 		16BA62311C8962090086DA30 /* AddChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA62301C8962090086DA30 /* AddChannelCell.swift */; };
-		16BBA8861CD8902B00742142 /* screencap.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA8851CD8902B00742142 /* screencap.m */; };
-		16BBA8871CD8912B00742142 /* screencap.m in Resources */ = {isa = PBXBuildFile; fileRef = 16BBA8851CD8902B00742142 /* screencap.m */; };
-		16BBA8881CD8913400742142 /* screencap.h in Resources */ = {isa = PBXBuildFile; fileRef = 16BBA8841CD8902B00742142 /* screencap.h */; };
-		16BFCA601D1A6DE700761C94 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA401D1A6DE700761C94 /* MKAnnotationView+WebCache.m */; };
-		16BFCA611D1A6DE700761C94 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA421D1A6DE700761C94 /* NSData+ImageContentType.m */; };
-		16BFCA621D1A6DE700761C94 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA441D1A6DE700761C94 /* SDImageCache.m */; };
-		16BFCA631D1A6DE700761C94 /* SDWebImageCompat.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA461D1A6DE700761C94 /* SDWebImageCompat.m */; };
-		16BFCA641D1A6DE700761C94 /* SDWebImageDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA481D1A6DE700761C94 /* SDWebImageDecoder.m */; };
-		16BFCA651D1A6DE700761C94 /* SDWebImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA4A1D1A6DE700761C94 /* SDWebImageDownloader.m */; };
-		16BFCA661D1A6DE700761C94 /* SDWebImageDownloaderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA4C1D1A6DE700761C94 /* SDWebImageDownloaderOperation.m */; };
-		16BFCA671D1A6DE700761C94 /* SDWebImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA4E1D1A6DE700761C94 /* SDWebImageManager.m */; };
-		16BFCA681D1A6DE700761C94 /* SDWebImagePrefetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA511D1A6DE700761C94 /* SDWebImagePrefetcher.m */; };
-		16BFCA691D1A6DE700761C94 /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA531D1A6DE700761C94 /* UIButton+WebCache.m */; };
-		16BFCA6A1D1A6DE700761C94 /* UIImage+GIF.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA551D1A6DE700761C94 /* UIImage+GIF.m */; };
-		16BFCA6B1D1A6DE700761C94 /* UIImage+MultiFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA571D1A6DE700761C94 /* UIImage+MultiFormat.m */; };
-		16BFCA6C1D1A6DE700761C94 /* UIImage+WebP.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA591D1A6DE700761C94 /* UIImage+WebP.m */; };
-		16BFCA6D1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA5B1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.m */; };
-		16BFCA6E1D1A6DE700761C94 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA5D1D1A6DE700761C94 /* UIImageView+WebCache.m */; };
-		16BFCA6F1D1A6DE700761C94 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 16BFCA5F1D1A6DE700761C94 /* UIView+WebCacheOperation.m */; };
 		16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */; };
 		16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */; };
 		16CC76971C64A7D60044EE36 /* IONLiveCamConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC76961C64A7D60044EE36 /* IONLiveCamConfigViewController.swift */; };
-		16CEBF4A1CCF9FAF005AE3AE /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */; };
 		16D1456F1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1456E1C9A7F3D00AA3365 /* contactHeaderTableViewCell.swift */; };
 		16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D145701C9A7F5500AA3365 /* contactTableViewCell.swift */; };
 		16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D29B3E1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift */; };
@@ -150,8 +122,6 @@
 		16D933BD1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */; };
 		16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */; };
 		16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */; };
-		16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06C51C7ED830004759D5 /* CountryPicker.swift */; };
-		16DA06C91C7ED830004759D5 /* CountryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06C61C7ED830004759D5 /* CountryView.swift */; };
 		16DA06CA1C7ED830004759D5 /* CountryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16DA06C71C7ED830004759D5 /* CountryView.xib */; };
 		16DA06CE1C7ED88B004759D5 /* NBAsYouTypeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06CD1C7ED88B004759D5 /* NBAsYouTypeFormatter.m */; };
 		16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06D01C7ED8A8004759D5 /* NBMetadataCore.m */; };
@@ -167,18 +137,14 @@
 		16DA06F21C7ED8A8004759D5 /* NBPhoneNumberDesc.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E41C7ED8A8004759D5 /* NBPhoneNumberDesc.m */; };
 		16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16DA06E51C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist */; };
 		16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 16DA06E71C7ED8A8004759D5 /* NBPhoneNumberUtil.m */; };
-		16DB09AD1CC7671F0092B742 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DB09AC1CC7671F0092B742 /* QuartzCore.framework */; };
-		16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
 		16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E34EEC1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift */; };
 		16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6771C198596005F8242 /* SettingsViewController.swift */; };
 		16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA6791C1987D3005F8242 /* SettingsToggleTableViewCell.swift */; };
 		16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAA67B1C1987ED005F8242 /* SettingsTableViewCell.swift */; };
-		16EC52841CA95D69000D38DF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EC52831CA95D69000D38DF /* CoreFoundation.framework */; };
 		16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */; };
 		16EC54A91CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EC54A81CBD1C8C00E6B6BA /* contactSharingDetailTableViewCell.swift */; };
 		16F008601CD4A3D100360664 /* FileManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0085F1CD4A3D100360664 /* FileManagerViewController.swift */; };
 		16F6A4411BFEF0BD0074EA57 /* IONLLoadingOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16F6A4401BFEF0BD0074EA57 /* IONLLoadingOverlay.xib */; };
-		16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
 		16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4441BFEF85C0074EA57 /* libxml2.2.tbd */; };
 		599964CE1C057EF000D20FB2 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BA1C057EF000D20FB2 /* libavcodec.a */; };
 		599964CF1C057EF000D20FB2 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964BB1C057EF000D20FB2 /* libavdevice.a */; };
@@ -216,13 +182,24 @@
 		76A910B804D0278CA3BCFA9C /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 06DD833BCC68B7DCB2D38C82 /* libPods.a */; };
 		B20B8BBE1D45F3CC00323599 /* LiveStreamingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */; };
 		B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */; };
-		B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */; };
-		B20B8BC81D45F98900323599 /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */; };
 		B2160A9D1DC339B2006F0724 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160A9C1DC339B2006F0724 /* PhotoViewerViewController.swift */; };
 		B2160A9F1DC33A12006F0724 /* ChannelItemListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160A9E1DC33A12006F0724 /* ChannelItemListViewController.swift */; };
 		B2160AA11DC33A44006F0724 /* MyChannelItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */; };
+		B2355F111DD2E2C50022BADF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */; };
+		B2355F121DD2E2CD0022BADF /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166B9CDD1CC8FF0E00396C4E /* CoreTelephony.framework */; };
+		B2355F131DD2E2D60022BADF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DB09AC1CC7671F0092B742 /* QuartzCore.framework */; };
+		B2355F141DD2E2DE0022BADF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EC52831CA95D69000D38DF /* CoreFoundation.framework */; };
+		B2355F151DD2E2E50022BADF /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266101C993E3D00650F24 /* AddressBook.framework */; };
+		B2355F161DD2E2F20022BADF /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A266121C993E4100650F24 /* AddressBookUI.framework */; };
+		B2355F171DD2E2FB0022BADF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1633D1E41C5F1CBD00937FAD /* CoreData.framework */; };
+		B2355F181DD2E3040022BADF /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1677FEB81C48BFF900261F59 /* CoreLocation.framework */; };
+		B2355F191DD2E30A0022BADF /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DD05371C1AA85A00769EDA /* CFNetwork.framework */; };
+		B2355F1A1DD2E3110022BADF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F6A4421BFEF83E0074EA57 /* AVFoundation.framework */; };
+		B2355F1D1DD329970022BADF /* CountryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2355F1B1DD329970022BADF /* CountryPicker.swift */; };
+		B2355F1E1DD329970022BADF /* CountryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2355F1C1DD329970022BADF /* CountryView.swift */; };
 		B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */; };
 		B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */; };
+		B24FE4BC1DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */; };
 		B28C91531DB2577D005EBBF5 /* ReportAProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */; };
 		B299464C1DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29946491DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift */; };
 		B299464D1DC0B35500BD58B7 /* AppInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B299464A1DC0B35500BD58B7 /* AppInfoTableViewCell.swift */; };
@@ -241,6 +218,7 @@
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2C46ADA1DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B2C46AD91DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
+		B2FA6B501DE2BD09008986AA /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -309,7 +287,6 @@
 		164989F21C0D785C007C912C /* SnapCamTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamTableViewCell.swift; sourceTree = "<group>"; };
 		164989F41C0D9BD4007C912C /* SnapCamCustomHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapCamCustomHeaderCell.swift; sourceTree = "<group>"; };
 		164AEE541CD09DE8006ACAE0 /* SetUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpView.swift; sourceTree = "<group>"; };
-		1656E4F51C10595700F62D12 /* PhotoViewerViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController1.swift; sourceTree = "<group>"; };
 		165A9C831C0C2E90005379A9 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		165A9C851C0C5D35005379A9 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		165B77DA1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOnLiveCameraPictureCapture.swift; sourceTree = "<group>"; };
@@ -321,7 +298,6 @@
 		165E50AB1C993DFA003718A4 /* ImageUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUpload.swift; sourceTree = "<group>"; };
 		165E87441CAFB35F00CE03BD /* PhotoViewerInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerInstance.swift; sourceTree = "<group>"; };
 		166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelDetailViewController.swift; sourceTree = "<group>"; };
-		166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemDetailsViewController1.swift; sourceTree = "<group>"; };
 		166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelSharingDetailsViewController.swift; sourceTree = "<group>"; };
 		166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemCell.swift; sourceTree = "<group>"; };
 		166456001C2A873400D09FAE /* TimeLapseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLapseSettingsViewController.swift; sourceTree = "<group>"; };
@@ -346,7 +322,6 @@
 		1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsCell.swift; sourceTree = "<group>"; };
 		1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySharedChannelsHeaderCell.swift; sourceTree = "<group>"; };
 		167512C11C315271007F5326 /* MyChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelViewController.swift; sourceTree = "<group>"; };
-		167512C31C3152BE007F5326 /* ChannelItemListViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListViewController1.swift; sourceTree = "<group>"; };
 		167512C51C3152CE007F5326 /* MyChannel.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MyChannel.storyboard; sourceTree = "<group>"; };
 		1676473A1C6DBFC10076C8C8 /* StreamPickerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamPickerTableViewCell.swift; sourceTree = "<group>"; };
 		1677FEB81C48BFF900261F59 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -387,41 +362,6 @@
 		16B457C41C86C145009D36A9 /* ChannelManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
 		16BA622E1C895E8B0086DA30 /* AddChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelViewController.swift; sourceTree = "<group>"; };
 		16BA62301C8962090086DA30 /* AddChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelCell.swift; sourceTree = "<group>"; };
-		16BBA8841CD8902B00742142 /* screencap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screencap.h; sourceTree = "<group>"; };
-		16BBA8851CD8902B00742142 /* screencap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = screencap.m; sourceTree = "<group>"; };
-		16BFCA3F1D1A6DE700761C94 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
-		16BFCA401D1A6DE700761C94 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
-		16BFCA411D1A6DE700761C94 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ImageContentType.h"; sourceTree = "<group>"; };
-		16BFCA421D1A6DE700761C94 /* NSData+ImageContentType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ImageContentType.m"; sourceTree = "<group>"; };
-		16BFCA431D1A6DE700761C94 /* SDImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDImageCache.h; sourceTree = "<group>"; };
-		16BFCA441D1A6DE700761C94 /* SDImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDImageCache.m; sourceTree = "<group>"; };
-		16BFCA451D1A6DE700761C94 /* SDWebImageCompat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageCompat.h; sourceTree = "<group>"; };
-		16BFCA461D1A6DE700761C94 /* SDWebImageCompat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImageCompat.m; sourceTree = "<group>"; };
-		16BFCA471D1A6DE700761C94 /* SDWebImageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageDecoder.h; sourceTree = "<group>"; };
-		16BFCA481D1A6DE700761C94 /* SDWebImageDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDecoder.m; sourceTree = "<group>"; };
-		16BFCA491D1A6DE700761C94 /* SDWebImageDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageDownloader.h; sourceTree = "<group>"; };
-		16BFCA4A1D1A6DE700761C94 /* SDWebImageDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDownloader.m; sourceTree = "<group>"; };
-		16BFCA4B1D1A6DE700761C94 /* SDWebImageDownloaderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageDownloaderOperation.h; sourceTree = "<group>"; };
-		16BFCA4C1D1A6DE700761C94 /* SDWebImageDownloaderOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImageDownloaderOperation.m; sourceTree = "<group>"; };
-		16BFCA4D1D1A6DE700761C94 /* SDWebImageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageManager.h; sourceTree = "<group>"; };
-		16BFCA4E1D1A6DE700761C94 /* SDWebImageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImageManager.m; sourceTree = "<group>"; };
-		16BFCA4F1D1A6DE700761C94 /* SDWebImageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImageOperation.h; sourceTree = "<group>"; };
-		16BFCA501D1A6DE700761C94 /* SDWebImagePrefetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebImagePrefetcher.h; sourceTree = "<group>"; };
-		16BFCA511D1A6DE700761C94 /* SDWebImagePrefetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebImagePrefetcher.m; sourceTree = "<group>"; };
-		16BFCA521D1A6DE700761C94 /* UIButton+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+WebCache.h"; sourceTree = "<group>"; };
-		16BFCA531D1A6DE700761C94 /* UIButton+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+WebCache.m"; sourceTree = "<group>"; };
-		16BFCA541D1A6DE700761C94 /* UIImage+GIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+GIF.h"; sourceTree = "<group>"; };
-		16BFCA551D1A6DE700761C94 /* UIImage+GIF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+GIF.m"; sourceTree = "<group>"; };
-		16BFCA561D1A6DE700761C94 /* UIImage+MultiFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+MultiFormat.h"; sourceTree = "<group>"; };
-		16BFCA571D1A6DE700761C94 /* UIImage+MultiFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MultiFormat.m"; sourceTree = "<group>"; };
-		16BFCA581D1A6DE700761C94 /* UIImage+WebP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+WebP.h"; sourceTree = "<group>"; };
-		16BFCA591D1A6DE700761C94 /* UIImage+WebP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+WebP.m"; sourceTree = "<group>"; };
-		16BFCA5A1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+HighlightedWebCache.h"; sourceTree = "<group>"; };
-		16BFCA5B1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HighlightedWebCache.m"; sourceTree = "<group>"; };
-		16BFCA5C1D1A6DE700761C94 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+WebCache.h"; sourceTree = "<group>"; };
-		16BFCA5D1D1A6DE700761C94 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WebCache.m"; sourceTree = "<group>"; };
-		16BFCA5E1D1A6DE700761C94 /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
-		16BFCA5F1D1A6DE700761C94 /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
 		16C668CE1CC109CB009DA7D9 /* OtherChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelViewController.swift; sourceTree = "<group>"; };
 		16C668D01CC10A10009DA7D9 /* OtherChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OtherChannelCell.swift; sourceTree = "<group>"; };
 		16CBE7441C4E076E0049112C /* iONLive-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iONLive-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -434,8 +374,6 @@
 		16D933BC1C61B9A400FDA359 /* iONLiveCameraStatusViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatusViewController.swift; sourceTree = "<group>"; };
 		16D933BE1C61C24300FDA359 /* iONLiveCameraStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraStatus.swift; sourceTree = "<group>"; };
 		16D933C01C61D88700FDA359 /* iONLiveCameraConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iONLiveCameraConfiguration.swift; sourceTree = "<group>"; };
-		16DA06C51C7ED830004759D5 /* CountryPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryPicker.swift; sourceTree = "<group>"; };
-		16DA06C61C7ED830004759D5 /* CountryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryView.swift; sourceTree = "<group>"; };
 		16DA06C71C7ED830004759D5 /* CountryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CountryView.xib; sourceTree = "<group>"; };
 		16DA06CC1C7ED873004759D5 /* NBAsYouTypeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBAsYouTypeFormatter.h; sourceTree = "<group>"; };
 		16DA06CD1C7ED88B004759D5 /* NBAsYouTypeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBAsYouTypeFormatter.m; sourceTree = "<group>"; };
@@ -634,14 +572,15 @@
 		72AE1D055BF62B01C23FA317 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStreamingHelpers.swift; sourceTree = "<group>"; };
 		B20B8BC11D45F4BB00323599 /* IPhoneLiveStreaming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPhoneLiveStreaming.swift; sourceTree = "<group>"; };
-		B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomInfiniteIndicator.swift; path = scroll/CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
-		B20B8BC61D45F98500323599 /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+InfiniteScroll.h"; path = "scroll/UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
-		B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "scroll/UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
 		B2160A9C1DC339B2006F0724 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		B2160A9E1DC33A12006F0724 /* ChannelItemListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListViewController.swift; sourceTree = "<group>"; };
 		B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemDetailsViewController.swift; sourceTree = "<group>"; };
+		B2355F1B1DD329970022BADF /* CountryPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryPicker.swift; sourceTree = "<group>"; };
+		B2355F1C1DD329970022BADF /* CountryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryView.swift; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
 		B23F266A1D40A85700A320BF /* GlobalChannelToImageMapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalChannelToImageMapping.swift; sourceTree = "<group>"; };
+		B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
+		B255B0C91DDAEEA900176E54 /* CA7CH.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CA7CH.entitlements; sourceTree = "<group>"; };
 		B28C91521DB2577C005EBBF5 /* ReportAProblemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportAProblemViewController.swift; sourceTree = "<group>"; };
 		B29946491DC0B35500BD58B7 /* AppInfoHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		B299464A1DC0B35500BD58B7 /* AppInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoTableViewCell.swift; sourceTree = "<group>"; };
@@ -662,6 +601,8 @@
 		B2C46AD81DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
 		B2C46AD91DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
+		B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "../../../UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
+		B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+InfiniteScroll.h"; path = "../../../UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -669,22 +610,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16CEBF4A1CCF9FAF005AE3AE /* MediaPlayer.framework in Frameworks */,
-				166B9CDE1CC8FF0E00396C4E /* CoreTelephony.framework in Frameworks */,
-				16DB09AD1CC7671F0092B742 /* QuartzCore.framework in Frameworks */,
-				16EC52841CA95D69000D38DF /* CoreFoundation.framework in Frameworks */,
-				16A266131C993E4100650F24 /* AddressBookUI.framework in Frameworks */,
-				16A266111C993E3D00650F24 /* AddressBook.framework in Frameworks */,
-				1633D1E51C5F1CBD00937FAD /* CoreData.framework in Frameworks */,
-				1677FEB91C48BFF900261F59 /* CoreLocation.framework in Frameworks */,
-				16DD05381C1AA85A00769EDA /* CFNetwork.framework in Frameworks */,
+				B2355F1A1DD2E3110022BADF /* AVFoundation.framework in Frameworks */,
+				B2355F191DD2E30A0022BADF /* CFNetwork.framework in Frameworks */,
+				B2355F181DD2E3040022BADF /* CoreLocation.framework in Frameworks */,
+				B2355F171DD2E2FB0022BADF /* CoreData.framework in Frameworks */,
+				B2355F161DD2E2F20022BADF /* AddressBookUI.framework in Frameworks */,
+				B2355F151DD2E2E50022BADF /* AddressBook.framework in Frameworks */,
+				B2355F141DD2E2DE0022BADF /* CoreFoundation.framework in Frameworks */,
+				B2355F131DD2E2D60022BADF /* QuartzCore.framework in Frameworks */,
+				B2355F121DD2E2CD0022BADF /* CoreTelephony.framework in Frameworks */,
+				B2355F111DD2E2C50022BADF /* MediaPlayer.framework in Frameworks */,
 				599964E01C05801B00D20FB2 /* libbz2.tbd in Frameworks */,
 				599964DE1C05801100D20FB2 /* libz.tbd in Frameworks */,
 				599964DC1C057FFF00D20FB2 /* libiconv.tbd in Frameworks */,
 				599964D31C057EF000D20FB2 /* libswresample.a in Frameworks */,
 				16F6A4451BFEF85C0074EA57 /* libxml2.2.tbd in Frameworks */,
 				599964D01C057EF000D20FB2 /* libavfilter.a in Frameworks */,
-				16F6A4431BFEF83E0074EA57 /* AVFoundation.framework in Frameworks */,
 				599964D11C057EF000D20FB2 /* libavformat.a in Frameworks */,
 				599964D21C057EF000D20FB2 /* libavutil.a in Frameworks */,
 				599964D41C057EF000D20FB2 /* libswscale.a in Frameworks */,
@@ -742,8 +683,6 @@
 				B20B8BBD1D45F3CC00323599 /* LiveStreamingHelpers.swift */,
 				160903FE1C6C7F31004E381D /* rtsp_relay.h */,
 				160903FF1C6C7F31004E381D /* rtsp_relay.m */,
-				16BBA8841CD8902B00742142 /* screencap.h */,
-				16BBA8851CD8902B00742142 /* screencap.m */,
 			);
 			path = iONLiveStreaming;
 			sourceTree = "<group>";
@@ -875,7 +814,6 @@
 			children = (
 				B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */,
 				B2160A9C1DC339B2006F0724 /* PhotoViewerViewController.swift */,
-				1656E4F51C10595700F62D12 /* PhotoViewerViewController1.swift */,
 				16396E3B1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift */,
 			);
 			path = PhotoViewer;
@@ -976,7 +914,6 @@
 				1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */,
 				1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */,
 				166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */,
-				166455F91C2A5B8200D09FAE /* MyChannelItemDetailsViewController1.swift */,
 				166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */,
 				166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */,
 				16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */,
@@ -993,7 +930,6 @@
 			children = (
 				167512C11C315271007F5326 /* MyChannelViewController.swift */,
 				B2160A9E1DC33A12006F0724 /* ChannelItemListViewController.swift */,
-				167512C31C3152BE007F5326 /* ChannelItemListViewController1.swift */,
 				167512C51C3152CE007F5326 /* MyChannel.storyboard */,
 				162ABFF81C3258D000625C89 /* MyChannelCell.swift */,
 				162ABFFC1C32815700625C89 /* ChannelItemListCollectionViewCell.swift */,
@@ -1030,6 +966,7 @@
 		167AF02D1BFDC1F6003CDF30 /* iONLive */ = {
 			isa = PBXGroup;
 			children = (
+				B255B0C91DDAEEA900176E54 /* CA7CH.entitlements */,
 				1633D1F01C5F1E3400937FAD /* DataBase */,
 				1633D1E91C5F1DAA00937FAD /* DataModel */,
 				599964501C057EBB00D20FB2 /* ThirdParty */,
@@ -1078,7 +1015,7 @@
 		167AF05D1BFDC28B003CDF30 /* iONLiveUI */ = {
 			isa = PBXGroup;
 			children = (
-				B20B8BC31D45F95F00323599 /* Scroll */,
+				B24FE4B81DDC93E800C3F8A4 /* Scroll */,
 				163844B81C6CB04700EAF25D /* iONCamLiveStreamStatus */,
 				165B77DC1C4CE71400BDB02F /* iONCamAPITestingUI */,
 				160B1F4E1C4CCEB40022B711 /* iPhoneCamera */,
@@ -1174,46 +1111,6 @@
 			path = Channel;
 			sourceTree = "<group>";
 		};
-		16BFCA3E1D1A6DE700761C94 /* SDWebImage */ = {
-			isa = PBXGroup;
-			children = (
-				16BFCA3F1D1A6DE700761C94 /* MKAnnotationView+WebCache.h */,
-				16BFCA401D1A6DE700761C94 /* MKAnnotationView+WebCache.m */,
-				16BFCA411D1A6DE700761C94 /* NSData+ImageContentType.h */,
-				16BFCA421D1A6DE700761C94 /* NSData+ImageContentType.m */,
-				16BFCA431D1A6DE700761C94 /* SDImageCache.h */,
-				16BFCA441D1A6DE700761C94 /* SDImageCache.m */,
-				16BFCA451D1A6DE700761C94 /* SDWebImageCompat.h */,
-				16BFCA461D1A6DE700761C94 /* SDWebImageCompat.m */,
-				16BFCA471D1A6DE700761C94 /* SDWebImageDecoder.h */,
-				16BFCA481D1A6DE700761C94 /* SDWebImageDecoder.m */,
-				16BFCA491D1A6DE700761C94 /* SDWebImageDownloader.h */,
-				16BFCA4A1D1A6DE700761C94 /* SDWebImageDownloader.m */,
-				16BFCA4B1D1A6DE700761C94 /* SDWebImageDownloaderOperation.h */,
-				16BFCA4C1D1A6DE700761C94 /* SDWebImageDownloaderOperation.m */,
-				16BFCA4D1D1A6DE700761C94 /* SDWebImageManager.h */,
-				16BFCA4E1D1A6DE700761C94 /* SDWebImageManager.m */,
-				16BFCA4F1D1A6DE700761C94 /* SDWebImageOperation.h */,
-				16BFCA501D1A6DE700761C94 /* SDWebImagePrefetcher.h */,
-				16BFCA511D1A6DE700761C94 /* SDWebImagePrefetcher.m */,
-				16BFCA521D1A6DE700761C94 /* UIButton+WebCache.h */,
-				16BFCA531D1A6DE700761C94 /* UIButton+WebCache.m */,
-				16BFCA541D1A6DE700761C94 /* UIImage+GIF.h */,
-				16BFCA551D1A6DE700761C94 /* UIImage+GIF.m */,
-				16BFCA561D1A6DE700761C94 /* UIImage+MultiFormat.h */,
-				16BFCA571D1A6DE700761C94 /* UIImage+MultiFormat.m */,
-				16BFCA581D1A6DE700761C94 /* UIImage+WebP.h */,
-				16BFCA591D1A6DE700761C94 /* UIImage+WebP.m */,
-				16BFCA5A1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.h */,
-				16BFCA5B1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.m */,
-				16BFCA5C1D1A6DE700761C94 /* UIImageView+WebCache.h */,
-				16BFCA5D1D1A6DE700761C94 /* UIImageView+WebCache.m */,
-				16BFCA5E1D1A6DE700761C94 /* UIView+WebCacheOperation.h */,
-				16BFCA5F1D1A6DE700761C94 /* UIView+WebCacheOperation.m */,
-			);
-			path = SDWebImage;
-			sourceTree = "<group>";
-		};
 		16CBE7431C4E076E0049112C /* ObjectiveCBridging */ = {
 			isa = PBXGroup;
 			children = (
@@ -1254,8 +1151,8 @@
 		16DA06C41C7ED813004759D5 /* CountryPicker */ = {
 			isa = PBXGroup;
 			children = (
-				16DA06C51C7ED830004759D5 /* CountryPicker.swift */,
-				16DA06C61C7ED830004759D5 /* CountryView.swift */,
+				B2355F1B1DD329970022BADF /* CountryPicker.swift */,
+				B2355F1C1DD329970022BADF /* CountryView.swift */,
 				16DA06C71C7ED830004759D5 /* CountryView.xib */,
 			);
 			path = CountryPicker;
@@ -1323,7 +1220,6 @@
 		599964501C057EBB00D20FB2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				16BFCA3E1D1A6DE700761C94 /* SDWebImage */,
 				16DA06BD1C7ED7A7004759D5 /* CountryPickerIOS */,
 				160903EB1C6C7E66004E381D /* Connectivity */,
 				599964511C057EF000D20FB2 /* FFmpeg-iOS */,
@@ -1625,14 +1521,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B20B8BC31D45F95F00323599 /* Scroll */ = {
+		B24FE4B81DDC93E800C3F8A4 /* Scroll */ = {
 			isa = PBXGroup;
 			children = (
-				B20B8BC41D45F97F00323599 /* CustomInfiniteIndicator.swift */,
-				B20B8BC61D45F98500323599 /* UIScrollView+InfiniteScroll.h */,
-				B20B8BC71D45F98900323599 /* UIScrollView+InfiniteScroll.m */,
+				B24FE4B91DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift */,
+				B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */,
+				B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */,
 			);
-			name = Scroll;
+			path = Scroll;
 			sourceTree = "<group>";
 		};
 		B29946421DC0B32300BD58B7 /* App Info */ = {
@@ -1738,7 +1634,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = Gadgeon;
 				TargetAttributes = {
 					167AF02A1BFDC1F6003CDF30 = {
@@ -1789,8 +1685,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */,
-				16BBA8881CD8913400742142 /* screencap.h in Resources */,
-				16BBA8871CD8912B00742142 /* screencap.m in Resources */,
 				16DA06F31C7ED8A8004759D5 /* NBPhoneNumberMetadata.plist in Resources */,
 				162F97411CC9EB14009F68F8 /* Streaming.storyboard in Resources */,
 				163282551C7EE57100D03F51 /* Flags.xcassets in Resources */,
@@ -1874,12 +1768,10 @@
 				59BC3F671BFF848600710905 /* UIImageView+AFNetworking.m in Sources */,
 				1674A9151C291BE200D547D7 /* MySharedChannelsCell.swift in Sources */,
 				16DA06CE1C7ED88B004759D5 /* NBAsYouTypeFormatter.m in Sources */,
-				16BFCA641D1A6DE700761C94 /* SDWebImageDecoder.m in Sources */,
 				160F47B11BFEEF6300599AA7 /* IONLLoadingView.swift in Sources */,
 				16A266151C994EC200650F24 /* ContactDetailsViewController.swift in Sources */,
 				B2AFC6B21D50DB4000EFA78C /* GlobalStreamList.swift in Sources */,
 				167D8CB91C3A72F9007BD083 /* SignUpVerifyPhoneViewController.swift in Sources */,
-				16BFCA6C1D1A6DE700761C94 /* UIImage+WebP.m in Sources */,
 				16BA622F1C895E8B0086DA30 /* AddChannelViewController.swift in Sources */,
 				165B77DB1C4CAB2E00BDB02F /* iOnLiveCameraPictureCapture.swift in Sources */,
 				166796AD1C30FFA600543D7A /* ConnectAccountOptionsCell.swift in Sources */,
@@ -1888,7 +1780,6 @@
 				166796AF1C30FFBA00543D7A /* ConnectAccountOptionsHeaderCell.swift in Sources */,
 				166FC7451C044246003EEC68 /* UrlManager.swift in Sources */,
 				16D29B3F1C1ACD1000BFDC3F /* SettingsHeaderTableViewCell.swift in Sources */,
-				1656E4F61C10595700F62D12 /* PhotoViewerViewController1.swift in Sources */,
 				16F008601CD4A3D100360664 /* FileManagerViewController.swift in Sources */,
 				1633D2401C5F4D8F00937FAD /* iONLiveCameraVideoCapture.swift in Sources */,
 				599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */,
@@ -1897,6 +1788,7 @@
 				1674A9171C29207600D547D7 /* MySharedChannelsHeaderCell.swift in Sources */,
 				16AED0101CBE1D3400D72C0F /* ContactListTableViewCell.swift in Sources */,
 				B23F26681D409F9300A320BF /* GlobalDataChannelList.swift in Sources */,
+				B24FE4BC1DDC93E800C3F8A4 /* CustomInfiniteIndicator.swift in Sources */,
 				59BC3F641BFF848600710905 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				16DA06EC1C7ED8A8004759D5 /* NBMetadataHelper.m in Sources */,
 				B20B8BC21D45F4BB00323599 /* IPhoneLiveStreaming.swift in Sources */,
@@ -1911,8 +1803,8 @@
 				B20B8BBE1D45F3CC00323599 /* LiveStreamingHelpers.swift in Sources */,
 				59BC3F661BFF848600710905 /* UIButton+AFNetworking.m in Sources */,
 				1666D4831C0EF12200A4D1E7 /* StreamListCollectionViewCell.swift in Sources */,
-				16DA06C81C7ED830004759D5 /* CountryPicker.swift in Sources */,
 				1633D2391C5F21FD00937FAD /* Entity.swift in Sources */,
+				B2355F1D1DD329970022BADF /* CountryPicker.swift in Sources */,
 				1644B3D81C05698F004E3832 /* Login.swift in Sources */,
 				B29946611DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift in Sources */,
 				1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */,
@@ -1928,21 +1820,16 @@
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				B299465B1DC0B39800BD58B7 /* ResolutionTableViewCell.swift in Sources */,
 				B2AFC6B01D50DAB400EFA78C /* SharedChannelDetailsAPI.swift in Sources */,
-				166455FA1C2A5B8200D09FAE /* MyChannelItemDetailsViewController1.swift in Sources */,
-				16BFCA621D1A6DE700761C94 /* SDImageCache.m in Sources */,
 				B29946591DC0B39800BD58B7 /* ResolutionHeaderTableViewCell.swift in Sources */,
 				B23F266B1D40A85700A320BF /* GlobalChannelToImageMapping.swift in Sources */,
-				16BFCA691D1A6DE700761C94 /* UIButton+WebCache.m in Sources */,
 				1632825B1C7F098000D03F51 /* ProfileManager.swift in Sources */,
 				067B996B1DA227A3002B78BA /* photoViewCell.m in Sources */,
 				16EAA67C1C1987ED005F8242 /* SettingsTableViewCell.swift in Sources */,
-				16BFCA671D1A6DE700761C94 /* SDWebImageManager.m in Sources */,
 				16DA06ED1C7ED8A8004759D5 /* NBNumberFormat.m in Sources */,
 				B2160A9D1DC339B2006F0724 /* PhotoViewerViewController.swift in Sources */,
 				160B1F511C4CCEB40022B711 /* AAPLPreviewView.m in Sources */,
 				167AF0311BFDC1F6003CDF30 /* ViewController.swift in Sources */,
 				163844BE1C6CB09600EAF25D /* iONCamLiveStatusManager.swift in Sources */,
-				16BFCA681D1A6DE700761C94 /* SDWebImagePrefetcher.m in Sources */,
 				1671A4791C2BB30200C2E0B0 /* DeleteMediaOptionCell.swift in Sources */,
 				B29946681DC0E42C00BD58B7 /* OtherContactListViewController.swift in Sources */,
 				165E50AC1C993DFA003718A4 /* ImageUpload.swift in Sources */,
@@ -1953,35 +1840,28 @@
 				B2160AA11DC33A44006F0724 /* MyChannelItemDetailsViewController.swift in Sources */,
 				165A9C861C0C5D35005379A9 /* ForgotPasswordViewController.swift in Sources */,
 				166456011C2A873400D09FAE /* TimeLapseSettingsViewController.swift in Sources */,
-				16BFCA6D1D1A6DE700761C94 /* UIImageView+HighlightedWebCache.m in Sources */,
 				167AF06D1BFDC32E003CDF30 /* StreamsListViewController.swift in Sources */,
 				16652B461C92865000125BB8 /* MyChannelNotificationViewController.swift in Sources */,
 				59BC3F621BFF848600710905 /* AFURLSessionManager.m in Sources */,
 				1644B3D01C056934004E3832 /* RequestManager.swift in Sources */,
-				16BFCA611D1A6DE700761C94 /* NSData+ImageContentType.m in Sources */,
 				166796B41C31074000543D7A /* ProgramCameraButtonViewController.swift in Sources */,
 				B299464D1DC0B35500BD58B7 /* AppInfoTableViewCell.swift in Sources */,
 				166796B61C31076500543D7A /* ProgramCameraButtonCell.swift in Sources */,
 				160903FB1C6C7ED1004E381D /* EditProfPrivateInfoCell.swift in Sources */,
-				16BFCA661D1A6DE700761C94 /* SDWebImageDownloaderOperation.m in Sources */,
 				B2C46ADA1DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */,
 				167512C21C315271007F5326 /* MyChannelViewController.swift in Sources */,
 				160903F91C6C7ED1004E381D /* EditProfileViewController.swift in Sources */,
 				16D933C11C61D88700FDA359 /* iONLiveCameraConfiguration.swift in Sources */,
-				B20B8BC51D45F97F00323599 /* CustomInfiniteIndicator.swift in Sources */,
 				16AED00E1CBE1B3D00D72C0F /* ContactListViewController.swift in Sources */,
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */,
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
-				16BFCA6A1D1A6DE700761C94 /* UIImage+GIF.m in Sources */,
 				165D44E21CBBC0D700BEA24E /* ChannelsSharedController.swift in Sources */,
-				16BFCA6E1D1A6DE700761C94 /* UIImageView+WebCache.m in Sources */,
 				B2160A9F1DC33A12006F0724 /* ChannelItemListViewController.swift in Sources */,
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,
 				16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */,
-				B20B8BC81D45F98900323599 /* UIScrollView+InfiniteScroll.m in Sources */,
 				16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */,
 				B299465A1DC0B39800BD58B7 /* ResolutionSelectionViewController.swift in Sources */,
 				1683B8EF1C0EE29700CBB6FE /* StreamingProtocol.swift in Sources */,
@@ -1995,15 +1875,11 @@
 				165A9C841C0C2E90005379A9 /* SignUpViewController.swift in Sources */,
 				59BC3F5D1BFF848600710905 /* AFNetworkReachabilityManager.m in Sources */,
 				59BC3F5C1BFF848600710905 /* AFHTTPSessionManager.m in Sources */,
-				16BBA8861CD8902B00742142 /* screencap.m in Sources */,
 				16DA06E81C7ED8A8004759D5 /* NBMetadataCore.m in Sources */,
 				59BC3F601BFF848600710905 /* AFURLRequestSerialization.m in Sources */,
 				B299464E1DC0B35500BD58B7 /* AppInfoViewController.swift in Sources */,
 				16EAA6781C198596005F8242 /* SettingsViewController.swift in Sources */,
 				167AF0661BFDC30D003CDF30 /* AuthenticateViewController.swift in Sources */,
-				16DA06C91C7ED830004759D5 /* CountryView.swift in Sources */,
-				16BFCA631D1A6DE700761C94 /* SDWebImageCompat.m in Sources */,
-				16BFCA6B1D1A6DE700761C94 /* UIImage+MultiFormat.m in Sources */,
 				1683B8EA1C0EC1D700CBB6FE /* UploadStream.swift in Sources */,
 				164989F11C0D5C6C007C912C /* SnapCamSelectViewController.swift in Sources */,
 				160903F81C6C7ED1004E381D /* EditProfileHeaderCell.swift in Sources */,
@@ -2014,18 +1890,16 @@
 				59BC3F651BFF848600710905 /* UIAlertView+AFNetworking.m in Sources */,
 				068661331DAE0DB700B41CC0 /* ResetPasswordViewController.swift in Sources */,
 				164989F31C0D785C007C912C /* SnapCamTableViewCell.swift in Sources */,
+				B2355F1E1DD329970022BADF /* CountryView.swift in Sources */,
 				167D8CB71C3A4A74007BD083 /* SignUpUserNameViewController.swift in Sources */,
-				16BFCA6F1D1A6DE700761C94 /* UIView+WebCacheOperation.m in Sources */,
 				1678D00E1CF4246B0021D805 /* SwiftAlertView.swift in Sources */,
 				165E87451CAFB35F00CE03BD /* PhotoViewerInstance.swift in Sources */,
 				167AF0681BFDC30D003CDF30 /* LoginViewController.swift in Sources */,
 				1690C2611C5B1913001EEBBE /* iONCamPictureAPIResultViewController.swift in Sources */,
 				16B457C51C86C145009D36A9 /* ChannelManager.swift in Sources */,
-				16BFCA601D1A6DE700761C94 /* MKAnnotationView+WebCache.m in Sources */,
 				168F7A651C929EF000DE8C7A /* MyChannelNotificationCell.swift in Sources */,
 				16DA06EA1C7ED8A8004759D5 /* NBMetadataCoreTest.m in Sources */,
 				16ACFF541C646E92000B5432 /* SimpleTextFieldTableViewCell.swift in Sources */,
-				16BFCA651D1A6DE700761C94 /* SDWebImageDownloader.m in Sources */,
 				16C668D11CC10A10009DA7D9 /* OtherChannelCell.swift in Sources */,
 				16D145711C9A7F5500AA3365 /* contactTableViewCell.swift in Sources */,
 				16E34EED1C63440D00A02DE1 /* IONLiveCameraStatusUtility.swift in Sources */,
@@ -2039,7 +1913,6 @@
 				16DA06F11C7ED8A8004759D5 /* NBPhoneNumberDefines.m in Sources */,
 				160B1F601C4CDF9E0022B711 /* IPhoneCameraViewController.m in Sources */,
 				16AED0121CBE1D4C00D72C0F /* ContactListHeaderTableViewCell.swift in Sources */,
-				167512C41C3152BE007F5326 /* ChannelItemListViewController1.swift in Sources */,
 				1644B3D61C05698F004E3832 /* ErrorManager.swift in Sources */,
 				16396E3C1C193C7D00EC467E /* PhotoThumbCollectionViewCell.swift in Sources */,
 				B2C223DB1D264785001C8516 /* uploadMediaToGCS.swift in Sources */,
@@ -2054,6 +1927,7 @@
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
+				B2FA6B501DE2BD09008986AA /* UIScrollView+InfiniteScroll.m in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2112,6 +1986,7 @@
 		167AF0511BFDC1F6003CDF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2122,14 +1997,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2160,6 +2036,7 @@
 		167AF0521BFDC1F6003CDF30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2170,14 +2047,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2193,6 +2071,7 @@
 				PROVISIONING_PROFILE = "ac323c7f-8843-44aa-91e8-8cca51f7cc5f";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "../ionliveiosapp/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2205,6 +2084,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iONLive/CA7CH.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2228,6 +2108,7 @@
 				PROVISIONING_PROFILE = "9dc399ba-a592-4353-a882-013be46eabf5";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Debug;
 		};
@@ -2238,6 +2119,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iONLive/CA7CH.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Kiran Gopalan (8268S58YKU)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2260,6 +2142,7 @@
 				PRODUCT_NAME = CA7CH;
 				PROVISIONING_PROFILE = "9dc399ba-a592-4353-a882-013be46eabf5";
 				SWIFT_OBJC_BRIDGING_HEADER = "../live-ios-app/iONLive/ObjectiveCBridging/iONLive-Bridging-Header.h";
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Release;
 		};
@@ -2271,6 +2154,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Gadgeon.iONLiveTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iONLive.app/iONLive";
 			};
 			name = Debug;
@@ -2283,6 +2167,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Gadgeon.iONLiveTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iONLive.app/iONLive";
 			};
 			name = Release;
@@ -2294,6 +2179,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Gadgeon.iONLiveUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0.1;
 				TEST_TARGET_NAME = iONLive;
 				USES_XCTRUNNER = YES;
 			};
@@ -2306,6 +2192,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Gadgeon.iONLiveUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0.1;
 				TEST_TARGET_NAME = iONLive;
 				USES_XCTRUNNER = YES;
 			};

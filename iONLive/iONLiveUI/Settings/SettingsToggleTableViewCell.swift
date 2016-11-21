@@ -1,4 +1,6 @@
+
 import UIKit
+
 protocol toggleCellDelegate : class {
     func didChangeSwitchState(toggleCell: SettingsToggleTableViewCell, isOn: Bool)
 }
@@ -12,12 +14,12 @@ class SettingsToggleTableViewCell: UITableViewCell {
         super.awakeFromNib()
     }
 
-    @IBAction func changedSwitch(sender: AnyObject) {
+    @IBAction func changedSwitch(_ sender: Any) {
         let  settingSwitch = sender as! UISwitch
-        self.cellDelegate?.didChangeSwitchState(self, isOn:settingSwitch.on)
+        self.cellDelegate?.didChangeSwitchState(toggleCell: self, isOn:settingSwitch.isOn)
 
     }
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
 

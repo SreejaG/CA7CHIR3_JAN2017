@@ -1,17 +1,11 @@
-//
-//  ProgramCameraButtonViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/28/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
+
 
 import UIKit
 
 class ProgramCameraButtonViewController: UIViewController {
     
     static let identifier = "ProgramCameraButtonViewController"
-
+    
     @IBOutlet weak var programCameraButonTableView: UITableView!
     var dataSource = ["One click picture | Double click video","One click picture | Double click GIF","One click video | Double click live-stream"]
     
@@ -21,9 +15,9 @@ class ProgramCameraButtonViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject)
+    @IBAction func didTapBackButton(_ sender: Any)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -31,27 +25,27 @@ class ProgramCameraButtonViewController: UIViewController {
     }
 }
 
-extension ProgramCameraButtonViewController: UITableViewDelegate
+extension ProgramCameraButtonViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 40.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ProgramCameraButtonHeaderCell.identifier) as! ProgramCameraButtonHeaderCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: ProgramCameraButtonHeaderCell.identifier) as! ProgramCameraButtonHeaderCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-            headerCell.topBorder.hidden = true
+            headerCell.topBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         case 1:
-            headerCell.bottomBorder.hidden = true
+            headerCell.bottomBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         default:
@@ -60,26 +54,22 @@ extension ProgramCameraButtonViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01   
     }
-}
-
-
-extension ProgramCameraButtonViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -91,28 +81,28 @@ extension ProgramCameraButtonViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if dataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(ProgramCameraButtonCell.identifier, forIndexPath:indexPath) as! ProgramCameraButtonCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ProgramCameraButtonCell.identifier, for:indexPath) as! ProgramCameraButtonCell
             cell.cameraOptionslabel.text = dataSource[indexPath.row]
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             
             if selectedOption == dataSource[indexPath.row]
             {
-                cell.selectionImage.hidden = false
+                cell.selectionImage.isHidden = false
             }
             else
             {
-                cell.selectionImage.hidden = true
+                cell.selectionImage.isHidden = true
             }
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if dataSource.count > indexPath.row
         {

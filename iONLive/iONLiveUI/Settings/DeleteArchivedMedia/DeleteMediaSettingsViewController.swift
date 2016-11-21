@@ -13,10 +13,10 @@ class DeleteMediaSettingsViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if(NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") != nil)
+        if(UserDefaults.standard.value(forKey: "archiveMediaDeletion") != nil)
         {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("archiveMediaDeletion") as! String
-            selectedOption = FileManagerViewController.sharedInstance.getArchiveDeleteLongString(value)
+            let value = UserDefaults.standard.value(forKey: "archiveMediaDeletion") as! String
+            selectedOption = FileManagerViewController.sharedInstance.getArchiveDeleteLongString(resolution: value)
         }
         else{
             selectedOption = "Never"
@@ -24,11 +24,11 @@ class DeleteMediaSettingsViewController: UIViewController{
         deleteMediaSettingsTableView.reloadData()
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject)
+    @IBAction func didTapBackButton(_ sender: Any)
     {
-        let value = FileManagerViewController.sharedInstance.getArchiveDeleteShortString(selectedOption)
-        NSUserDefaults.standardUserDefaults().setValue(value, forKey: "archiveMediaDeletion")
-        self.navigationController?.popViewControllerAnimated(true)
+        let value = FileManagerViewController.sharedInstance.getArchiveDeleteShortString(resolution: selectedOption)
+        UserDefaults.standard.setValue(value, forKey: "archiveMediaDeletion")
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -36,27 +36,27 @@ class DeleteMediaSettingsViewController: UIViewController{
     }
 }
 
-extension DeleteMediaSettingsViewController: UITableViewDelegate
+extension DeleteMediaSettingsViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 40.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(DeleteMediaSettingsHeaderCell.identifier) as! DeleteMediaSettingsHeaderCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: DeleteMediaSettingsHeaderCell.identifier) as! DeleteMediaSettingsHeaderCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-            headerCell.topBorder.hidden = true
+            headerCell.topBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         case 1:
-            headerCell.bottomBorder.hidden = true
+            headerCell.bottomBorder.isHidden = true
             headerCell.headerTitleLabel.text = "Archieved Media is stored on the Catch Cloud."
             break
         default:
@@ -65,26 +65,22 @@ extension DeleteMediaSettingsViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
-}
-
-
-extension DeleteMediaSettingsViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -96,28 +92,28 @@ extension DeleteMediaSettingsViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if dataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(DeleteMediaOptionCell.identifier, forIndexPath:indexPath) as! DeleteMediaOptionCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: DeleteMediaOptionCell.identifier, for:indexPath as IndexPath) as! DeleteMediaOptionCell
             cell.mediaDeleteOptionLabel.text = dataSource[indexPath.row]
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             
             if selectedOption == dataSource[indexPath.row]
             {
-                cell.selectionImageView.hidden = false
+                cell.selectionImageView.isHidden = false
             }
             else
             {
-                cell.selectionImageView.hidden = true
+                cell.selectionImageView.isHidden = true
             }
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if dataSource.count > indexPath.row
         {

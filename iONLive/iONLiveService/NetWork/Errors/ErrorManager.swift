@@ -1,10 +1,8 @@
 
-
 import Foundation
 import UIKit
 
 class ErrorManager: NSObject, SwiftAlertViewDelegate {
-    
     let loginErrorTitle = "Login Error"
     let signUpErrorTitle = "Sign Up Error"
     let StreamingErrortitle = "Streaming Error"
@@ -18,246 +16,248 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     }
     
     func serverError() {
-        alert("Something went wrong :-/", message: "Something bad happened")
+        alert(title: "Something went wrong :-/", message: "Something bad happened")
     }
     
     func inValidResponseError() {
-        alert("Invalid Response", message: "Something bad happened")
+        alert(title: "Invalid Response", message: "Something bad happened")
     }
     
     func subscriptionEmpty ()
     {
-        alert("Shared Channel Empty", message: "No Sharing Data.")
-        
+        alert(title: "Shared Channel Empty", message: "No Sharing Data.")
     }
     
     func invalidRequest()
     {
-        alert("Error", message:"Invalid request")
+        alert(title: "Error", message:"Invalid request")
     }
     
     func operationFailed()
     {
-        alert("Error", message:"Operation failed")
+        alert(title: "Error", message:"Operation failed")
     }
     
     func updationFailed()
     {
-        alert("Error", message:"Updation failed")
+        alert(title: "Error", message:"Updation failed")
     }
     
     func invalidImage()
     {
-        alert("Invalid Email", message:"Please provide a valid image")
+        alert(title: "Invalid Email", message:"Please provide a valid image")
     }
     
     func loginInvalidEmail()
     {
-        alert("Invalid Email", message: "Please provide a valid email address.")
+        alert(title: "Invalid Email", message: "Please provide a valid email address.")
     }
+    
     func withouCodeMobNumber()
     {
-        alert("Missing Code", message: "Mobile Number should be in the format +Country Code Mobile Number (+918967543467)")
+        alert(title: "Missing Code", message: "Mobile Number should be in the format +Country Code Mobile Number (+918967543467)")
     }
     
     func loginError() {
-        alert(loginErrorTitle, message: "We're sorry but there was an error retrieving your account. Please try again.")
+        alert(title: loginErrorTitle, message: "We're sorry but there was an error retrieving your account. Please try again.")
     }
     
     func loginNoEmailEnteredError()
     {
-        alert(loginErrorTitle, message: "Please enter your username")
+        alert(title: loginErrorTitle, message: "Please enter your username")
     }
     
     func loginNoFullnameEnteredError()
     {
-        alert(loginErrorTitle, message: "Please enter your full name")
+        alert(title: loginErrorTitle, message: "Please enter your full name")
     }
     
     func loginNoPasswordEnteredError()
     {
-        alert(loginErrorTitle, message: "Please enter your password")
+        alert(title: loginErrorTitle, message: "Please enter your password")
     }
     
     func authenticationIssue() {
-        alert("Authentication Error", message: "We're sorry but there was an error retrieving your account. Please try login again.")
+        alert(title: "Authentication Error", message: "We're sorry but there was an error retrieving your account. Please try login again.")
     }
     
     func invalidUserNameOrPaswd()
     {
-        alert(loginErrorTitle, message:"Invalid username or password")
+        alert(title: loginErrorTitle, message:"Invalid username or password")
     }
     
     func invalidUserError()
     {
-        alert(loginErrorTitle, message: "Invalid user")
+        alert(title: loginErrorTitle, message: "Invalid user")
     }
     
     func newPaswrdEmpty ()
     {
-        alert("New Password Empty", message: "Please enter your password")
+        alert(title: "New Password Empty", message: "Please enter your password")
     }
     
     func confirmPaswrdEmpty ()
     {
-        alert("Re-enter Password Empty", message: "Please Re-enter your password")
+        alert(title: "Re-enter Password Empty", message: "Please Re-enter your password")
     }
     
     func probelmTitleEmpty ()
     {
-        alert("Problem Title Empty", message: "Please enter a Title for Problem")
+        alert(title: "Problem Title Empty", message: "Please enter a Title for Problem")
     }
     
     func descOfProblemEmpty()
     {
-        alert("Description Empty", message: "Please enter a brief Description")
+        alert(title: "Description Empty", message: "Please enter a brief Description")
     }
     
     func signUpError() {
-        alert(signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")
+        alert(title: signUpErrorTitle, message: "We're sorry but there was an error creating your account. Please try again.")
     }
     
     func addContactError() {
-        alert(ContactErrortitle, message: "We're sorry but there was an error adding your contacts. Please try again.")
+        alert(title: ContactErrortitle, message: "We're sorry but there was an error adding your contacts. Please try again.")
     }
     
     func userAlreadyRegError()
     {
-        alert(signUpErrorTitle, message: "This user has already been registered")
+        alert(title: signUpErrorTitle, message: "This user has already been registered")
     }
     
     func noEmailEnteredError()
     {
-        alert("No Email", message: "Please enter your Email")
+        alert(title: "No Email", message: "Please enter your Email")
     }
     
     func InvalidPwdEnteredError()
     {
-        alert("Invalid Password", message: "Password must contain atleast 8 characters and atmost 40 characters")
+        alert(title: "Invalid Password", message: "Password must contain atleast 8 characters and atmost 40 characters")
     }
     
     func InvalidChannelEnteredError()
     {
-        alert("Invalid Channel", message: "Channel Name must contain atleast 3 characters and atmost 15 characters")
+        alert(title: "Invalid Channel", message: "Channel Name must contain atleast 3 characters and atmost 15 characters")
     }
     
     func noNumberInPassword()
     {
-        alert("Invalid Password", message: "Password must contain atleast 1 digit")
+        alert(title: "Invalid Password", message: "Password must contain atleast 1 digit")
     }
     
     func InvalidUsernameEnteredError()
     {
-        alert("Invalid Username", message: "Username must contain atleast 5 charactes and atmost 15 characters")
+        alert(title: "Invalid Username", message: "Username must contain atleast 5 charactes and atmost 15 characters")
     }
     
     func noSpaceInUsername()
     {
-        alert("Invalid Username", message: "Username should not contain white spaces")
+        alert(title: "Invalid Username", message: "Username should not contain white spaces")
     }
     
     func signUpNoEmailEnteredError()
     {
-        alert(signUpErrorTitle, message: "Please enter your email Id")
+        alert(title: signUpErrorTitle, message: "Please enter your email Id")
     }
     
     func signUpNoUsernameEnteredError()
     {
-        alert(signUpErrorTitle, message: "Please enter your username")
+        alert(title: signUpErrorTitle, message: "Please enter your username")
     }
     
     func emptyCountryError()
     {
-        alert(signUpErrorTitle, message: "Please select your country")
+        alert(title: signUpErrorTitle, message: "Please select your country")
     }
     
     func emptyMobileError()
     {
-        alert(signUpErrorTitle, message: "Please enter your mobile number")
+        alert(title: signUpErrorTitle, message: "Please enter your mobile number")
     }
     
     func emptyCodeError()
     {
-        alert(signUpErrorTitle, message: "Please enter your country code")
+        alert(title: signUpErrorTitle, message: "Please enter your country code")
     }
     
     func emptyCountryCodeError()
     {
-        alert(signUpErrorTitle, message: "Please enter your country code")
+        alert(title: signUpErrorTitle, message: "Please enter your country code")
     }
     
     func signUpNoCodeEnteredError()
     {
-        alert(signUpErrorTitle, message: "Please enter your verification code")
+        alert(title: signUpErrorTitle, message: "Please enter your verification code")
     }
     
     func signUpNoPasswordEnteredError()
     {
-        alert(signUpErrorTitle, message: "Please enter your password")
+        alert(title: signUpErrorTitle, message: "Please enter your password")
     }
     func resetPassworderror()
     {
-        alert("Password Error", message: "Please enter your password")
-
+        alert(title: "Password Error", message: "Please enter your password")
+        
     }
     func failedToUpdatepassword()
     {
-        alert("Error", message: "Failed to update password")
- 
+        alert(title: "Error", message: "Failed to update password")
+        
     }
     func missingFullNameError()
     {
-        alert("Missing Fullname", message: "Please enter your Full name")
+        alert(title: "Missing Fullname", message: "Please enter your Full name")
     }
     
     func noNetworkConnection() {
-        alert("Network Error", message: "Oops, it looks like you don't have a working internet connection. Please connect and try again.")
+        alert(title: "Network Error", message: "Oops, it looks like you don't have a working internet connection. Please connect and try again.")
     }
     
     func streamingError()
     {
-        alert(StreamingErrortitle, message: "\nWe're sorry, but an error occurred. Please try again.")
+        alert(title: StreamingErrortitle, message: "\nWe're sorry, but an error occurred. Please try again.")
     }
     
     func liveStreamFetchingError()
     {
-        alert("Live Stream Fetching Error", message: "\nWe're sorry, but an error occurred. Please try again.")
+        alert(title: "Live Stream Fetching Error", message: "\nWe're sorry, but an error occurred. Please try again.")
     }
     func liveStreamStopped()
     {
-        alert("Live Stream Stopped", message: " live stream stopped by user")
+        alert(title: "Live Stream Stopped", message: " live stream stopped by user")
     }
     func invalidTockenError()
     {
-        alert("Invalid Token", message:"Invalid Token error. Please try again")
+        alert(title: "Invalid Token", message:"Invalid Token error. Please try again")
     }
     
     func passwordMismatch()
     {
-        alert("Password Mismatch", message:"The new and re-enter passwords should be same")
+        alert(title: "Password Mismatch", message:"The new and re-enter passwords should be same")
     }
     
     func tockenExpired()
     {
-        alert("Token Expired", message:"Token expired error. please try again")
+        alert(title: "Token Expired", message:"Token expired error. please try again")
     }
     
     func tockenMissingError()
     {
-        alert("Token Missing", message: "Token missing error. Please try again")
+        alert(title: "Token Missing", message: "Token missing error. Please try again")
     }
     
     func invalidStream()
     {
-        alert("Error", message:"Invalid stream")
+        alert(title: "Error", message:"Invalid stream")
     }
     
     func verificationCodeMismatchError()
     {
-        alert("Code Mismatch", message: "Verification code mismatch error. Please try again")
+        alert(title: "Code Mismatch", message: "Verification code mismatch error. Please try again")
     }
     
-    func alert(var title: String?, var message: String?) {
+    func alert(title: String?, message: String?) {
+        var title = title
+        var message = message
         if title as String? == nil {
             title = "Error"
         }
@@ -270,13 +270,11 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
         alertView.disappearType = SwiftAlertViewDisappearType.FadeOut
         alertView.appearTime = 0.2
         alertView.disappearTime = 0.2
-        
         alertView.show()
-        self.performSelector(#selector(ErrorManager.dismissAlert(_:)), withObject: alertView, afterDelay: 2)
+        self.perform(#selector(ErrorManager.dismissAlert(alert:)), with: alertView, afterDelay: 2)
     }
     
     // MARK: SwiftAlertViewDelegate
-    
     func alertView(alertView: SwiftAlertView, clickedButtonAtIndex buttonIndex: Int) {
     }
     
@@ -292,110 +290,110 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     
     func NoArchiveId()
     {
-        alert("Failed", message: "Failed to get channel details")
+        alert(title: "Failed", message: "Failed to get channel details")
     }
-    
     
     func channelAlreayExist()
     {
-        alert("Channel Exist", message: "Channel name already exists")
+        alert(title: "Channel Exist", message: "Channel name already exists")
     }
     
     
     func unsubscribedUserChannel()
     {
-        alert("Unsubscribed User", message: "channel is not subscribed")
+        alert(title: "Unsubscribed User", message: "channel is not subscribed")
     }
     
     func invalidUserChannel()
     {
-        alert("Invalid User", message: "sorry! you dont have the permission to access the channel")
+        alert(title: "Invalid User", message: "sorry! you dont have the permission to access the channel")
     }
     
     func invalidChannelId()
     {
-        alert("Invalid Channel", message: "Channel details invalid")
+        alert(title: "Invalid Channel", message: "Channel details invalid")
     }
     
     func invalidChannel()
     {
-        alert("Invalid Channel", message: "Channel is invalid")
+        alert(title: "Invalid Channel", message: "Channel is invalid")
     }
     
     func invalidChannelName()
     {
-        alert("Invalid Channel", message: "Channel name invalid")
+        alert(title: "Invalid Channel", message: "Channel name invalid")
     }
     
     func invalidGCSName()
     {
-        alert("Invalid GCS", message: "GCS name invalid")
+        alert(title: "Invalid GCS", message: "GCS name invalid")
     }
     
     func uploadFailed()
     {
-        alert("Deletion Failed", message: "Deleting media before upload")
+        alert(title: "Deletion Failed", message: "Deleting media before upload")
     }
-
+    
     func invalidBucket()
     {
-        alert("Invalid Bucket", message: "Bucket name invalid")
+        alert(title: "Invalid Bucket", message: "Bucket name invalid")
     }
     
     func invalidEmail()
     {
-        alert("Invalid Email", message: "Email Id invalid")
+        alert(title: "Invalid Email", message: "Email Id invalid")
     }
     
     func invalidVerification()
     {
-        alert("Invalid Verification", message: "Verification method invalid")
+        alert(title: "Invalid Verification", message: "Verification method invalid")
     }
     
     func invalidMobileNo()
     {
-        alert("Invalid mobile Numer", message: "Mobile number invalid/already registered")
+        alert(title: "Invalid mobile Numer", message: "Mobile number invalid/already registered")
     }
     
     func unregisteredContact()
     {
-        alert("Invalid Contacts", message: "Unregistered Contact List")
+        alert(title: "Invalid Contacts", message: "Unregistered Contact List")
     }
     
     func mobileExist()
     {
-        alert(signUpErrorTitle, message: "Mobile number already exists")
+        alert(title: signUpErrorTitle, message: "Mobile number already exists")
     }
     
     func invalidContacts()
     {
-        alert("Invalid Contacts", message: "Invalid Contact List")
+        alert(title: "Invalid Contacts", message: "Invalid Contact List")
     }
     
     func emptyContact()
     {
-        alert("No Contacts", message: "Contact List Empty")
+        alert(title: "No Contacts", message: "Contact List Empty")
     }
+    
     func streamAvailable() {
-        alert("Live Stream", message: "Someone shared a stream")
+        alert(title: "Live Stream", message: "Someone shared a stream")
     }
+    
     func emptyMedia()
     {
-        alert("No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")
+        alert(title: "No Media", message: "Oops! No media, Please take some pictures or invite Ca7ch contacts...")
     }
+    
     func noShared()
     {
-        alert("No Shared Media", message: "No Shared Images available")
+        alert(title: "No Shared Media", message: "No Shared Images available")
         
     }
     func installFailure()
     {
-        alert("Install Failed", message: "Ooops, The CA7CH is not installed properly, please reinstall the application once again...")
+        alert(title: "Install Failed", message: "Ooops, The CA7CH is not installed properly, please reinstall the application once again...")
     }
     
-    
     //PRAGMA MARK:- Error code mapping
-    
     func mapErorMessageToErrorCode(errorCode:String)
     {
         switch errorCode
@@ -496,7 +494,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
             uploadFailed()
             break
         default:
-            alert("Error", message: "\(errorCode)")
+            alert(title: "Error", message: "\(errorCode)")
             break
         }
     }

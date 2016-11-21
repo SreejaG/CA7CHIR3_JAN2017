@@ -11,9 +11,9 @@ class SharedChannelDetailsAPI: NSObject {
         }
         return Singleton.instance
     }
-    var operationQueue = NSOperationQueue()
-    var imageDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var selectedSharedChannelMediaSource: [[String:AnyObject]] = [[String:AnyObject]]()
+    var operationQueue = OperationQueue()
+    var imageDataSource: [[String:Any]] = [[String:Any]]()
+    var selectedSharedChannelMediaSource: [[String:Any]] = [[String:Any]]()
     var userName:String!
     var channelName :String = String()
     func getSubscribedChannelData(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , sharedCount : String)
@@ -24,56 +24,57 @@ class SharedChannelDetailsAPI: NSObject {
             {
                 selectedSharedChannelMediaSource.removeAll()
                 imageDataSource.removeAll()
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                let defaults = UserDefaults.standard
+                let userId = defaults.value(forKey: userLoginIdKey) as! String
+                let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
                 channelName = selectedChannelName
                 userName = selectedChannelUserName
-                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
-                    self.authenticationSuccessHandler(response)
+                ImageUpload.sharedInstance.getChannelMediaDetails(channelId: channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
+                    self.authenticationSuccessHandler(response: response)
                 }) { (error, message) -> () in
-                    self.authenticationFailureHandler(error, code: message)
+                    self.authenticationFailureHandler(error: error, code: message)
                 }
             }
             else{
                 selectedSharedChannelMediaSource.removeAll()
                 imageDataSource.removeAll()
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                let defaults = UserDefaults.standard
+                let userId = defaults.value(forKey: userLoginIdKey) as! String
+                let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
                 channelName = selectedChannelName
                 userName = selectedChannelUserName
-                ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
-                    self.authenticationSuccessHandler(response)
+                ImageUpload.sharedInstance.getChannelMediaDetails(channelId: channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
+                    self.authenticationSuccessHandler(response: response)
                 }) { (error, message) -> () in
-                    self.authenticationFailureHandler(error, code: message)
+                    self.authenticationFailureHandler(error: error, code: message)
                 }
             }
         }
         else{
             selectedSharedChannelMediaSource.removeAll()
             imageDataSource.removeAll()
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+            let defaults = UserDefaults.standard
+            
+            let userId = defaults.value(forKey: userLoginIdKey) as! String
+            let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
             channelName = selectedChannelName
             userName = selectedChannelUserName
-            ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
-                self.authenticationSuccessHandler(response)
+            ImageUpload.sharedInstance.getChannelMediaDetails(channelId: channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
+                self.authenticationSuccessHandler(response: response)
             }) { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+                self.authenticationFailureHandler(error: error, code: message)
             }
         }
     }
     
     func infiniteScroll(channelId : String , selectedChannelName : String ,selectedChannelUserName :String , channelMediaId : String)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        ImageUpload.sharedInstance.getInfinteScrollChannelMediaDetails(channelId, userName: selectedChannelUserName, accessToken: accessToken, channelMediaId: channelMediaId, success: { (response) in
-            self.authenticationSuccessHandler(response)
+        let defaults = UserDefaults.standard
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+        ImageUpload.sharedInstance.getInfinteScrollChannelMediaDetails(channelId: channelId, userName: selectedChannelUserName, accessToken: accessToken, channelMediaId: channelMediaId, success: { (response) in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             
         }
     }
@@ -82,86 +83,82 @@ class SharedChannelDetailsAPI: NSObject {
     {
         selectedSharedChannelMediaSource.removeAll()
         imageDataSource.removeAll()
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         channelName = selectedChannelName
         userName = selectedChannelUserName
-        ImageUpload.sharedInstance.getChannelMediaDetails(channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        ImageUpload.sharedInstance.getChannelMediaDetails(channelId: channelId , userName: userId, accessToken: accessToken, limit: "27", offset: "0", success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
         }
     }
     
     func pullToRefresh (channelId : String ,selectedChannelUserName :String , channelMediaId : String)
     {
-        let accessToken = NSUserDefaults .standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        ImageUpload.sharedInstance.getPullToRefreshChannelMediaDetails(channelId, userName: selectedChannelUserName, accessToken: accessToken, channelMediaId: channelMediaId, success: { (response) in
-            self.authenticationSuccessHandler(response)
+        let accessToken = UserDefaults .standard.value(forKey: userAccessTockenKey) as! String
+        ImageUpload.sharedInstance.getPullToRefreshChannelMediaDetails(channelId: channelId, userName: selectedChannelUserName, accessToken: accessToken, channelMediaId: channelMediaId, success: { (response) in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
         }
     }
     
-    func authenticationSuccessHandler(response:AnyObject?)
+    func authenticationSuccessHandler(response:Any?)
     {
         imageDataSource.removeAll()
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
             let responseArr = json["MediaDetail"] as! [AnyObject]
             for index in 0 ..< responseArr.count
             {
-                
-                let mediaId = responseArr[index].valueForKey("media_detail_id")?.stringValue
-                let mediaType =  responseArr[index].valueForKey("gcs_object_type") as! String
-                let infiniteScrollId  = responseArr[index].valueForKey("channel_media_detail_id")?.stringValue
+                let mediaId = String(responseArr[index]["media_detail_id"] as! Int)
+                let mediaType =  responseArr[index]["gcs_object_type"] as! String
+                let infiniteScrollId  = String(responseArr[index]["channel_media_detail_id"] as! Int)
                 let notificationType : String = " likes"
-                let time = responseArr[index].valueForKey("created_time_stamp") as! String
-                let actualUrl =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId!)
-                let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId!)
-                
+                let time = responseArr[index]["created_time_stamp"] as! String
+                let actualUrl =  UrlManager.sharedInstance.getFullImageForStreamMedia(mediaId: mediaId)
+                let mediaUrl =  UrlManager.sharedInstance.getMediaURL(mediaId: mediaId)
                 var vDuration = String()
-                
                 if(mediaType == "video"){
-                    let videoDurationStr = responseArr[index].valueForKey("video_duration") as! String
-                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDurationStr)
+                    let videoDurationStr = responseArr[index]["video_duration"] as! String
+                    vDuration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(duration: videoDurationStr)
                 }
                 else{
                     vDuration = ""
                 }
-              
-                imageDataSource.append([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId!,notificationKey:notificationType,"createdTime":time,videoDurationKey:vDuration])
+                imageDataSource.append([stream_mediaIdKey:mediaId, mediaUrlKey:mediaUrl, stream_mediaTypeKey:mediaType,actualImageKey:actualUrl,infiniteScrollIdKey: infiniteScrollId,notificationKey:notificationType,"createdTime":time,videoDurationKey:vDuration])
             }
             
             let responseArrLive = json["LiveDetail"] as! [AnyObject]
             
-            for liveIndex in 0  ..< responseArrLive.count 
+            for liveIndex in 0  ..< responseArrLive.count
             {
-                let streamTocken = responseArrLive[liveIndex].valueForKey("wowza_stream_token")as! String
-                let mediaId = responseArrLive[liveIndex].valueForKey("live_stream_detail_id")?.stringValue
-                let dateFormatter = NSDateFormatter()
+                let streamTocken = responseArrLive[liveIndex]["wowza_stream_token"] as! String
+                let mediaId = String(responseArrLive[liveIndex]["live_stream_detail_id"] as! Int)
+                let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                let currentDate = dateFormatter.stringFromDate(NSDate())
+                dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+                let currentDate = dateFormatter.string(from: NSDate() as Date)
                 let notificationType : String = ""
-                let mediaUrl =  UrlManager.sharedInstance.getLiveThumbUrlApi(mediaId!)
+                let mediaUrl =  UrlManager.sharedInstance.getLiveThumbUrlApi(liveStreamId: mediaId)
                 var vDuration = String()
                 vDuration = ""
                 if(mediaUrl != ""){
-                    let url: NSURL = convertStringtoURL(mediaUrl)
-                    downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                    let url: NSURL = convertStringtoURL(url: mediaUrl)
+                    downloadMedia(downloadURL: url, key: "ThumbImage", completion: { (result) -> Void in
                         if(self.selectedSharedChannelMediaSource.count > 0)
                         {
                             if (self.selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String != "live")
                             {
-                                self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl, stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
+                                self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId, mediaUrlKey:mediaUrl, stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], at: 0)
                             }
                         }
                         else{
-                            self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId!, mediaUrlKey:mediaUrl,stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], atIndex: 0)
+                            self.selectedSharedChannelMediaSource.insert([stream_mediaIdKey:mediaId, mediaUrlKey:mediaUrl,stream_thumbImageKey:result ,stream_streamTockenKey:streamTocken,actualImageKey:mediaUrl,notificationKey:notificationType,stream_mediaTypeKey:"live",infiniteScrollIdKey: "", userIdKey:self.userName, stream_channelNameKey:self.channelName,"createdTime":currentDate,videoDurationKey:vDuration], at: 0)
                         }
-                        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"success")
                     })
                 }
             }
@@ -171,13 +168,13 @@ class SharedChannelDetailsAPI: NSObject {
                 {
                 }
                 
-                let operation2 : NSBlockOperation = NSBlockOperation (block: {
+                let operation2 : BlockOperation = BlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
             }
             else{
-                NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
             }
         }
         else
@@ -188,7 +185,8 @@ class SharedChannelDetailsAPI: NSObject {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "failure")
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -199,15 +197,15 @@ class SharedChannelDetailsAPI: NSObject {
         }
     }
     
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (_ result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
         
         // Data object to fetch weather data
         do {
-            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            let data = try NSData(contentsOf: downloadURL as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
                 }
@@ -215,22 +213,22 @@ class SharedChannelDetailsAPI: NSObject {
                     
                     mediaImage = UIImage(named: "thumb12")!
                 }
-
-                completion(result: mediaImage)
+                
+                completion(mediaImage)
             }
             else
             {
-                completion(result:UIImage(named: "thumb12")!)
+                completion(UIImage(named: "thumb12")!)
             }
             
         } catch {
-            completion(result:UIImage(named: "thumb12")!)
+            completion(UIImage(named: "thumb12")!)
         }
     }
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
@@ -242,30 +240,36 @@ class SharedChannelDetailsAPI: NSObject {
             var imageForMedia : UIImage = UIImage()
             if(imageDataSource.count > 0 && imageDataSource.count > i)
             {
-                let mediaIdForFilePath = "\(imageDataSource[i][stream_mediaIdKey] as! String)thumb"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                let mediaidStrFile = imageDataSource[i][stream_mediaIdKey] as! String
+                let mediaIdForFilePath = mediaidStrFile + "thumb"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let savingPath = parentPath! + "/" + mediaIdForFilePath
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
                 if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
                     imageForMedia = mediaImageFromFile!
                 }
                 else{
                     let mediaUrl = imageDataSource[i][mediaUrlKey] as! String
                     if(mediaUrl != ""){
-                        let url: NSURL = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        let url: NSURL = convertStringtoURL(url: mediaUrl)
+                        downloadMedia(downloadURL: url, key: "ThumbImage", completion: { (result) -> Void in
                             if(result != UIImage()){
                                 let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                if(imageDataFromresult != nil){
+                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                    }
+                                    else{
+                                        _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: mediaIdForFilePath, mediaImage: result)
+                                    }
+                                    imageForMedia = result
                                 }
                                 else{
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath(mediaIdForFilePath, mediaImage: result)
+                                    imageForMedia = UIImage(named: "thumb12")!
                                 }
-                                imageForMedia = result
                             }
                             else{
                                 imageForMedia = UIImage(named: "thumb12")!
@@ -291,21 +295,21 @@ class SharedChannelDetailsAPI: NSObject {
                 let type = selectedSharedChannelMediaSource[0][stream_mediaTypeKey] as! String
                 if type == "live"
                 {
-                    let dateFormatter = NSDateFormatter()
+                    let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                    dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                    let currentDate = dateFormatter.stringFromDate(NSDate())
+                    dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+                    let currentDate = dateFormatter.string(from: NSDate() as Date)
                     selectedSharedChannelMediaSource[0]["createdTime"] = currentDate
                 }
             }
             if(selectedSharedChannelMediaSource.count > 0){
-                selectedSharedChannelMediaSource.sortInPlace({ p1, p2 in
+                selectedSharedChannelMediaSource.sort(by: { p1, p2 in
                     let time1 = p1["createdTime"] as! String
                     let time2 = p2["createdTime"] as! String
                     return time1 > time2
                 })
             }
         }
-        NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelMediaDetail", object: "success")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"success")
     }
 }

@@ -1,11 +1,3 @@
-//
-//  UIScrollView+InfiniteScroll.h
-//
-//  UIScrollView infinite scroll category
-//
-//  Created by Andrej Mihajlov on 9/4/13.
-//  Copyright (c) 2013-2015 Andrej Mihajlov. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 
@@ -26,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Infinite indicator view
  *
- *  You can set your own custom view instead of default activity indicator, 
+ *  You can set your own custom view instead of default activity indicator,
  *  make sure it implements methods below:
  *
  *  * `- (void)startAnimating`

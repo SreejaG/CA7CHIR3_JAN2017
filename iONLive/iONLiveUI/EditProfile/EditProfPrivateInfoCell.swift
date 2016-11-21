@@ -13,19 +13,21 @@ class EditProfPrivateInfoCell: UITableViewCell,UITextFieldDelegate {
         privateInfoTitleLabel.delegate = self
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    func textFieldDidBeginEditing(textField: UITextField)
+    func textFieldDidBeginEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
-    func textFieldDidEndEditing(textField: UITextField)
+    
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

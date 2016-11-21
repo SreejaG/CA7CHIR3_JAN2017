@@ -30,7 +30,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Use Location</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>external-accessory</string>
@@ -46,6 +46,16 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSContactsUsageDescription</key>
+	<string>Use Contacts</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Use Photo Library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Use Camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Use Microphones</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Use media Library</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

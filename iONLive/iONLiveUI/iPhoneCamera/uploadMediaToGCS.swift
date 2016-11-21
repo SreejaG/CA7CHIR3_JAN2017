@@ -1,14 +1,13 @@
 
 import UIKit
 
-class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate {
-    
+class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate {
     let cameraController = IPhoneCameraViewController()
     let imageUploadManager = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     let mediaBeforeUploadCompleteManager = MediaBeforeUploadComplete.sharedInstance
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     var userId : String = String()
     var accessToken : String = String()
@@ -28,9 +27,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     var videoData : NSData = NSData()
     
-    var dataRowFromLocal : [String:AnyObject] = [String:AnyObject]()
+    var dataRowFromLocal : [String:Any] = [String:Any]()
     
-    var progressDictionary : [[String:AnyObject]]  = [[String:AnyObject]]()
+    var progressDictionary : [[String:Any]]  = [[String:Any]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,23 +40,23 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     }
     
     func initialise(){
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         getMediaFromDB()
     }
     
     //get image from local db
     func getMediaFromDB(){
-        imageFromDB = FileManagerViewController.sharedInstance.getImageFromFilePath(path)!
+        imageFromDB = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: path)!
         
         var sizeThumb : CGSize = CGSize()
         if(media == "image"){
-            sizeThumb = CGSizeMake(70,70)
+            sizeThumb = CGSize(width:70, height:70)
         }
         else{
-            sizeThumb = CGSizeMake(140, 140)
+            sizeThumb = CGSize(width:140, height:140)
         }
-        imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageFromDB, scaledToFillSize: sizeThumb)
+        imageAfterConversionThumbnail = cameraController.thumbnaleImage(imageFromDB, scaledToFill: sizeThumb)
         
         getSignedURLFromCloud()
     }
@@ -70,12 +69,12 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         else{
             videoDuration = ""
         }
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        self.imageUploadManager.getSignedURL(userId, accessToken: accessToken, mediaType: media, videoDuration: videoDuration, success: { (response) -> () in
-            self.authenticationSuccessHandlerSignedURL(response)
-            }, failure: { (error, message) -> () in
-                self.authenticationFailureHandler(error, code: message)
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+        self.imageUploadManager.getSignedURL(userName: userId, accessToken: accessToken, mediaType: media, videoDuration: videoDuration, success: { (response) -> () in
+            self.authenticationSuccessHandlerSignedURL(response: response)
+        }, failure: { (error, message) -> () in
+            self.authenticationFailureHandler(error: error, code: message)
         })
     }
     
@@ -84,19 +83,19 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         self.media = mediaType
         self.uploadFullImageOrVideoURLGCS = fullURL
         self.uploadThumbImageURLGCS = thumbURL
-        let mediaIdForFilePath = "\(MediaIDGlob)full"
+        let mediaIdForFilePath =  MediaIDGlob + "full"
         let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-        let savingPathfull = "\(parentPath)/\(mediaIdForFilePath)"
-        let fileExistFlagFull = FileManagerViewController.sharedInstance.fileExist(savingPathfull)
+        let savingPathfull =  parentPath.absoluteString! + "/" + mediaIdForFilePath
+        let fileExistFlagFull = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPathfull)
         if fileExistFlagFull == true{
-            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPathfull)
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPathfull)
             self.imageFromDB =  mediaImageFromFile!
         }
-        let mediaIdForFilePaththumb = "\(MediaIDGlob)thumb"
-        let savingPaththumb = "\(parentPath)/\(mediaIdForFilePaththumb)"
-        let fileExistFlagthumb = FileManagerViewController.sharedInstance.fileExist(savingPaththumb)
+        let mediaIdForFilePaththumb =  MediaIDGlob + "thumb"
+        let savingPaththumb =  parentPath.absoluteString! + "/" + mediaIdForFilePaththumb
+        let fileExistFlagthumb = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPaththumb)
         if fileExistFlagthumb == true{
-            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPaththumb)
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPaththumb)
             self.imageAfterConversionThumbnail =  mediaImageFromFile!
         }
         startUploadingToGCS()
@@ -107,9 +106,9 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         mapMediaToDefaultChannels()
     }
     
-    func authenticationSuccessHandlerSignedURL(response:AnyObject?)
+    func authenticationSuccessHandlerSignedURL(response:Any?)
     {
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
             uploadFullImageOrVideoURLGCS = json["UploadObjectUrl"] as! String
             uploadThumbImageURLGCS = json["UploadThumbnailUrl"] as! String
@@ -131,7 +130,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -141,11 +140,10 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //save image to local cache
     func saveImageToLocalCache(){
-        
-        let filePathToSaveThumb = "\(mediaId)thumb"
-        FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
-        let filePathToSaveFull = "\(mediaId)full"
-        FileManagerViewController.sharedInstance.saveImageToFilePath(filePathToSaveFull, mediaImage: imageFromDB)
+        let filePathToSaveThumb = mediaId + "thumb"
+        _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: filePathToSaveThumb, mediaImage: imageAfterConversionThumbnail)
+        let filePathToSaveFull = mediaId + "full"
+        _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: filePathToSaveFull, mediaImage: imageFromDB)
         
         if (media == "video"){
             saveVideoToCahce()
@@ -156,23 +154,36 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     func  saveVideoToCahce()  {
         if ((videoSavedURL.path?.isEmpty) != nil)
         {
-            if var imageDatadup = NSData(contentsOfURL: videoSavedURL){
+            do {
+                var imageDatadup = try NSData(contentsOfFile: videoSavedURL.absoluteString!, options: NSData.ReadingOptions())
                 videoData = imageDatadup
                 
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-                let savingPath = "\(parentPath)/\(mediaId)video.mov"
+                let savingPath = parentPath! + "/" + mediaId + "video.mov"
                 let url = NSURL(fileURLWithPath: savingPath)
-                videoData.writeToURL(url, atomically: true)
+                videoData.write(to: url as URL, atomically: true)
+                
+                // delete video from local buffer
+                let fileManager : FileManager = FileManager()
+                if(fileManager.fileExists(atPath: videoSavedURL.absoluteString!)){
+                    do {
+                        try fileManager.removeItem(atPath: videoSavedURL.absoluteString!)
+                    } catch _ as NSError {
+                    }
+                }
                 
                 imageDatadup = NSData()
                 videoData = NSData()
                 
-                if(NSFileManager.defaultManager().fileExistsAtPath(videoSavedURL.path!)){
+                if(FileManager.default.fileExists(atPath: videoSavedURL.path!)){
                     do {
-                        try NSFileManager.defaultManager().removeItemAtPath(videoSavedURL.path!)
+                        try FileManager.default.removeItem(atPath: videoSavedURL.path!)
                     } catch _ as NSError {
                     }
                 }
+                
+            } catch {
+                
             }
         }
     }
@@ -182,72 +193,73 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         let currentTimeStamp : String = getCurrentTimeStamp()
         var duration = String()
         if(media == "video"){
-            duration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(videoDuration)
+            duration = FileManagerViewController.sharedInstance.getVideoDurationInProperFormat(duration: videoDuration)
         }
         else{
             duration = ""
         }
         
-        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",mediaCreatedTimeKey:currentTimeStamp,progressKey:0.02,tImageKey:imageAfterConversionThumbnail,videoDurationKey:duration]
+        dataRowFromLocal = [mediaIdKey:mediaId,mediaTypeKey:media,notifTypeKey:"likes",mediaCreatedTimeKey:currentTimeStamp,progressKey:Float(0.02),tImageKey:imageAfterConversionThumbnail,videoDurationKey:duration]
         
-        mediaBeforeUploadCompleteManager.updateDataSource(dataRowFromLocal)
+        mediaBeforeUploadCompleteManager.updateDataSource(dataSourceRow: dataRowFromLocal)
     }
     
     func getCurrentTimeStamp() -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        dateFormatter.timeZone = NSTimeZone(name: "UTC")
-        let localDateStr = dateFormatter.stringFromDate(NSDate())
+        dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+        let localDateStr = dateFormatter.string(from: NSDate() as Date)
         return localDateStr
     }
     
     //start Image upload after getting signed url
     func startUploadingToGCS()  {
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
-            self.uploadFullImageOrVideoToGCS({(result) -> Void in
+        let backgroundQueue = DispatchQueue(label: "com.app.queue",
+                                            qos: .background,
+                                            target: nil)
+        backgroundQueue.async {
+            self.uploadFullImageOrVideoToGCS(completion: {(result) -> Void in
                 if(result == "Success"){
-                    self.uploadThumbImageToGCS({(result) -> Void in
+                    self.uploadThumbImageToGCS(completion: {(result) -> Void in
                         self.deleteDataFromDB()
                         self.imageFromDB = UIImage()
                         if(result == "Success"){
                             self.imageAfterConversionThumbnail = UIImage()
-                            GlobalChannelToImageMapping.sharedInstance.removeUploadSuccessMediaDetails(self.mediaId)
-                            self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(self.mediaId)
+                            GlobalChannelToImageMapping.sharedInstance.removeUploadSuccessMediaDetails(mediaId: self.mediaId)
+                            //                            self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(mediaId: self.mediaId)
                             self.mapMediaToDefaultChannels()
                         }
                         else{
-                            GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
+                            GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(mediaId: self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
                         }
                     })
                 }
                 else{
-                    GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
+                    GlobalChannelToImageMapping.sharedInstance.setFailedUploadMediaDetails(mediaId: self.mediaId, thumbURL: self.uploadThumbImageURLGCS, fullURL: self.uploadFullImageOrVideoURLGCS, mediaType: self.media)
                 }
             })
-        })
+        }
     }
     
     //full image upload to cloud
-    func uploadFullImageOrVideoToGCS(completion: (result: String) -> Void)
+    func uploadFullImageOrVideoToGCS(completion: @escaping (_ result: String) -> Void)
     {
         let url = NSURL(string: uploadFullImageOrVideoURLGCS)
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "PUT"
-        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        let request = NSMutableURLRequest(url: url! as URL)
+        request.httpMethod = "PUT"
+        let session = URLSession(configuration:URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
         var imageOrVideoData: NSData = NSData()
         if(media == "image"){
-            imageOrVideoData = UIImageJPEGRepresentation(imageFromDB, 0.5)!
-            request.HTTPBody = imageOrVideoData
-            let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
-                
+            imageOrVideoData = UIImageJPEGRepresentation(imageFromDB, 0.5)! as NSData
+            request.httpBody = imageOrVideoData as Data
+            let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
                 if error != nil {
-                    self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
-                    completion(result:"Failed")
+                    self.updateProgressToDefault(progress: Float(2.0), mediaIds: self.mediaId)
+                    self.autoUpdateProgressAfterSuccess(progr: Float(2.0))
+                    completion("Failed")
                 }
                 else {
-                    completion(result:"Success")
+                    completion("Success")
                 }
             }
             dataTask.resume()
@@ -256,20 +268,21 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         }
         else{
             let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-            let savingPath = "\(parentPath)/\(mediaId)video.mov"
+            let savingPath =  parentPath! + "/" + mediaId + "video.mov"
             let url = NSURL(fileURLWithPath: savingPath)
-            if NSData(contentsOfURL: url) != nil
+            if NSData(contentsOf: url as URL) != nil
             {
-                imageOrVideoData = NSData(contentsOfURL: url)!
-                request.HTTPBody = imageOrVideoData
-                let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+                imageOrVideoData = NSData(contentsOf: url as URL)!
+                request.httpBody = imageOrVideoData as Data
+                let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
                     imageOrVideoData = NSData()
                     if error != nil {
-                        self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
-                        completion(result:"Failed")
+                        self.updateProgressToDefault(progress: Float(2.0), mediaIds: self.mediaId)
+                        self.autoUpdateProgressAfterSuccess(progr: Float(2.0))
+                        completion("Failed")
                     }
                     else {
-                        completion(result:"Success")
+                        completion("Success")
                     }
                 }
                 dataTask.resume()
@@ -280,22 +293,23 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     }
     
     //thumb image upload to cloud
-    func uploadThumbImageToGCS(completion: (result: String) -> Void)
+    func uploadThumbImageToGCS(completion: @escaping (_ result: String) -> Void)
     {
         let url = NSURL(string: uploadThumbImageURLGCS)
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "PUT"
-        let session = NSURLSession(configuration:NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        let request = NSMutableURLRequest(url: url! as URL)
+        request.httpMethod = "PUT"
+        let session = URLSession(configuration:URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
         var imageData: NSData = NSData()
-        imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail, 0.5)!
-        request.HTTPBody = imageData
-        let dataTask = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+        imageData = UIImageJPEGRepresentation(imageAfterConversionThumbnail, 0.5)! as NSData
+        request.httpBody = imageData as Data
+        let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) -> Void in
             if error != nil {
-                self.updateProgressToDefault(2.0, mediaIds: self.mediaId)
-                completion(result:"Failed")
+                self.updateProgressToDefault(progress: Float(2.0), mediaIds: self.mediaId)
+                self.autoUpdateProgressAfterSuccess(progr: Float(2.0))
+                completion("Failed")
             }
             else {
-                completion(result:"Success")
+                completion("Success")
             }
         }
         dataTask.resume()
@@ -305,25 +319,24 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     
     //after upload complete delete data from local file and db
     func deleteDataFromDB(){
-        let fileManager : NSFileManager = NSFileManager()
-        if(fileManager.fileExistsAtPath(path)){
+        let fileManager : FileManager = FileManager()
+        if(fileManager.fileExists(atPath: path)){
             do {
-                try fileManager.removeItemAtPath(path)
+                try fileManager.removeItem(atPath: path)
             } catch _ as NSError {
             }
         }
-        
-        let appDel : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDel : AppDelegate = UIApplication.shared.delegate as! AppDelegate
         let context : NSManagedObjectContext = appDel.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "SnapShots")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SnapShots")
         fetchRequest.returnsObjectsAsFaults=false
         do
         {
-            let results = try context.executeFetchRequest(fetchRequest)
+            let results = try context.fetch(fetchRequest)
             for managedObject in results
             {
                 let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
-                context.deleteObject(managedObjectData)
+                context.delete(managedObjectData)
             }
         }
         catch _ as NSError {
@@ -333,33 +346,58 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
     //after uploading map media to channels
     func mapMediaToDefaultChannels(){
         if self.requestManager.validConnection() {
-            userId = defaults.valueForKey(userLoginIdKey) as! String
-            accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            imageUploadManager.setDefaultMediaChannelMapping(userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
-                self.authenticationSuccessHandlerAfterMapping(response)
-                }, failure: { (error, message) -> () in
-                    self.authenticationFailureHandlerMapping(error, code: message)
+            userId = defaults.value(forKey: userLoginIdKey) as! String
+            accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+            imageUploadManager.setDefaultMediaChannelMapping(userName: userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
+                self.authenticationSuccessHandlerAfterMapping(response: response)
+            }, failure: { (error, message) -> () in
+                self.authenticationFailureHandlerMapping(error: error, code: message)
             })
         }
         else{
-            self.updateProgressToDefault(4.0, mediaIds: mediaId)
+            self.updateProgressToDefault(progress: Float(4.0), mediaIds: mediaId)
+            self.autoUpdateProgressAfterSuccess(progr: Float(4.0))
         }
     }
     
-    func authenticationSuccessHandlerAfterMapping(response:AnyObject?)
+    func authenticationSuccessHandlerAfterMapping(response:Any?)
     {
-        if let json = response as? [String: AnyObject]
+        self.updateProgressToDefault(progress: Float(3.0), mediaIds: "\(mediaId)")
+        autoUpdateProgressAfterSuccess(progr: Float(3.0))
+        if let json = response as? [String: Any]
         {
             let mediaId = json["mediaId"]
-            let channelWithScrollingIds = json["channelMediaDetails"] as! [[String:AnyObject]]
-            self.updateProgressToDefault(3.0, mediaIds: "\(mediaId!)")
-            addScrollingIdsToChannels(channelWithScrollingIds, mediaId: "\(mediaId)")
+            let channelWithScrollingIds = json["channelMediaDetails"] as! [[String:Any]]
+            addScrollingIdsToChannels(channelScrollsDict: channelWithScrollingIds, mediaId: "\(mediaId)")
+        }
+    }
+    
+    func autoUpdateProgressAfterSuccess(progr: Float){
+        var indexOfJ = 0
+        var chkFlag = false
+        let archiveChanelId = String(UserDefaults.standard.value(forKey: archiveId) as! Int)
+        for j in 0 ..< GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+        {
+            if j < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count
+            {
+                indexOfJ = j
+                let mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![j][mediaIdKey] as! String
+                if mediaId == mediaIdChk
+                {
+                    chkFlag = true
+                    break
+                }
+            }
+        }
+        if(chkFlag == true){
+            GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexOfJ][progressKey] = progr
         }
     }
     
     func authenticationFailureHandlerMapping(error: NSError?, code: String)
     {
-        self.updateProgressToDefault(4.0, mediaIds: mediaId)
+        self.updateProgressToDefault(progress: Float(4.0), mediaIds: mediaId)
+        self.autoUpdateProgressAfterSuccess(progr: Float(4.0))
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -368,7 +406,7 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -376,15 +414,15 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
         }
     }
     
-    func addScrollingIdsToChannels(channelScrollsDict: [[String:AnyObject]], mediaId: String)
+    func addScrollingIdsToChannels(channelScrollsDict: [[String:Any]], mediaId: String)
     {
         //all channelIds from global channel image mapping data source to a channelids array
         let channelIds : Array = Array(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.keys)
         
         for i in 0  ..< channelScrollsDict.count
         {
-            let chanelIdChk : String = String(channelScrollsDict[i][channelIdKey]!)
-            let chanelMediaId : String = String(channelScrollsDict[i][channelMediaIdKey]!)
+            let chanelIdChk : String = String(describing: channelScrollsDict[i][channelIdKey]!)
+            let chanelMediaId : String = String(describing: channelScrollsDict[i][channelMediaIdKey]!)
             var indexOfJ = 0
             var chkFlag = false
             
@@ -406,33 +444,29 @@ class uploadMediaToGCS: UIViewController, NSURLSessionDelegate, NSURLSessionTask
                 
                 if chkFlag == true
                 {
-                    GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]![indexOfJ][channelMediaIdKey] = chanelMediaId
+                    GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[chanelIdChk]![indexOfJ][channelMediaIdKey] = chanelMediaId as Any?
                 }
             }
         }
     }
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
-    {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         let myAlert = UIAlertView(title: "Alert", message: error?.localizedDescription, delegate: nil, cancelButtonTitle: "Ok")
         myAlert.show()
     }
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64)
-    {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         let uploadProgress:Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-        updateProgressToDefault(uploadProgress,mediaIds: mediaId)
+        updateProgressToDefault(progress: uploadProgress,mediaIds: mediaId)
     }
     
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void)
-    {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
     }
     
     func updateProgressToDefault(progress:Float, mediaIds: String)
     {
-        var dict = [mediaIdKey: mediaIds, progressKey: progress]
-        NSNotificationCenter.defaultCenter().postNotificationName("upload", object:dict)
-        dict = NSDictionary()
-        
+        var dict = [mediaIdKey: mediaIds, progressKey: progress] as [String : Any]
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "upload"), object:dict)
+        dict = NSDictionary() as! [String : Any]
     }
 }

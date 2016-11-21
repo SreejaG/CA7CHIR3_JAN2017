@@ -15,21 +15,21 @@ class EditProfPersonalInfoCell: UITableViewCell,UITextFieldDelegate {
         super.awakeFromNib()
         userNameTextField.delegate = self
         displayNameTextField.delegate = self
-        displayNameTextField.autocorrectionType = .No
+        displayNameTextField.autocorrectionType = .no
         userImage.layer.cornerRadius = userImage.frame.size.width/2
         userImage.layer.masksToBounds = true
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    func textFieldDidBeginEditing(textField: UITextField)
+    func textFieldDidBeginEditing(_ textField: UITextField)
     {
        textField.layoutIfNeeded()
     }
    
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

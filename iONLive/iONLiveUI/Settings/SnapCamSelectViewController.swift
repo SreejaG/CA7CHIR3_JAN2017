@@ -24,15 +24,12 @@ class SnapCamSelectViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       loadDefaults()
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
+        loadDefaults()
     }
     
     func loadDefaults()
     {
-        snapCamSettingsTableView.separatorStyle = .None
+        snapCamSettingsTableView.separatorStyle = .none
         snapCamButton.clipsToBounds = true
         snapCamButton.layer.cornerRadius = 5
         updateDatabaseForSnapCamOrIPhone()
@@ -40,8 +37,8 @@ class SnapCamSelectViewController: UIViewController {
     
     func updateDatabaseForSnapCamOrIPhone()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let shutterMode = defaults.integerForKey("shutterActionMode")
+        let defaults = UserDefaults.standard
+        let shutterMode = defaults.integer(forKey: "shutterActionMode")
         switch(shutterMode)
         {
         case 0 :
@@ -73,14 +70,14 @@ class SnapCamSelectViewController: UIViewController {
         {
             dataSource[5] = "Switch to iPhone"
             titleLabel.text = "Snapcam"
-            snapCamButton.setImage(UIImage(named: "snapCamMode"), forState: .Normal)
+            snapCamButton.setImage(UIImage(named: "snapCamMode"), for: .normal)
             
         }
         else
         {
             dataSource[5] = "Switch to SnapCam"
             titleLabel.text = "iPhone"
-            snapCamButton.setImage(UIImage(named: "iphone"), forState: .Normal)
+            snapCamButton.setImage(UIImage(named: "iphone"), for: .normal)
         }
     }
     
@@ -89,38 +86,34 @@ class SnapCamSelectViewController: UIViewController {
     }
     deinit {
     }
-
+    
 }
 
 //PRAGMA MARK:- TableView datasource, delegates
-
-extension SnapCamSelectViewController:UITableViewDataSource
+extension SnapCamSelectViewController:UITableViewDataSource,UITableViewDelegate
 {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         let count = dataSource.count
         return count > 0 ? count : 0
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCellWithIdentifier(SnapCamTableViewCell.identifier, forIndexPath: indexPath) as! SnapCamTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: SnapCamTableViewCell.identifier, for: indexPath) as! SnapCamTableViewCell
         
         if dataSource.count > indexPath.row
         {
             cell.optionlabel.text = dataSource[indexPath.row]
         }
-        customizeCellBasedOnSnapCamSelectionMode(cell , row: indexPath.row)
+        customizeCellBasedOnSnapCamSelectionMode(selectedCell: cell , row: indexPath.row)
         return cell
     }
-}
-
-extension SnapCamSelectViewController:UITableViewDelegate
-{
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        let selectedCell:UITableViewCell = tableView.cellForRowAtIndexPath(indexPath)!
-        updateSnapCamModeSelection(indexPath.row, ForCell: selectedCell)
+        let selectedCell:UITableViewCell = tableView.cellForRow(at: indexPath)!
+        updateSnapCamModeSelection(row: indexPath.row, ForCell: selectedCell)
         
         switch indexPath.row
         {
@@ -134,7 +127,7 @@ extension SnapCamSelectViewController:UITableViewDelegate
             {
                 titleLabel.text = "iPhone"
                 let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-                let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+                let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
                 self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
                 loadSnapCamViewWithFadeInFadeOutAnimation()
             }
@@ -145,17 +138,16 @@ extension SnapCamSelectViewController:UITableViewDelegate
             break
             
         default :
-//            self.dismissViewControllerAnimated(false, completion: nil)
             let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
             let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-            self.presentViewController(navController, animated: false) { () -> Void in
+            self.present(navController, animated: false) { () -> Void in
             }
             break;
         }
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 60
     }
@@ -168,12 +160,12 @@ extension SnapCamSelectViewController
     {
         if isStreamStarted()
         {
-            showAlertViewToStopStream(row, ForCell: selectedCell)
+            showAlertViewToStopStream(row: row, ForCell: selectedCell)
         }
         else
         {
-            updateSnapCamSelection(row)
-            changeSnapCamModeForCell(selectedCell)
+            updateSnapCamSelection(rowVal: row)
+            changeSnapCamModeForCell(selectedCell: selectedCell)
         }
     }
     
@@ -181,19 +173,19 @@ extension SnapCamSelectViewController
     func loadSnapCamViewWithFadeInFadeOutAnimation()
     {
         self.blurView.alpha = 0;
-        self.blurView.hidden = false;
-        activityImageView.hidden = true;
-        activityLabel.hidden = true;
+        self.blurView.isHidden = false;
+        activityImageView.isHidden = true;
+        activityLabel.isHidden = true;
         iPhoneSnapCamImageView.image = UIImage(named: "Switched_mode_Camera");
-        snapCamSettingsTableView.hidden = true;
+        snapCamSettingsTableView.isHidden = true;
         
-        UIView.animateWithDuration(1.0, animations: { () -> Void in
+        UIView.animate(withDuration: 1.0, animations: { () -> Void in
             self.blurView.alpha = 1.0
         }) { (finished) -> Void in
-            UIView.animateWithDuration(1.0, animations: { () -> Void in
+            UIView.animate(withDuration: 1.0, animations: { () -> Void in
                 self.blurView.alpha = 0.0
-                }, completion: { (finshed) -> Void in
-                    self.switchToiPhoneView()
+            }, completion: { (finshed) -> Void in
+                self.switchToiPhoneView()
             })
         }
     }
@@ -201,12 +193,12 @@ extension SnapCamSelectViewController
     func loadCameraViewWithFadeInFadeOutAnimation()
     {
         self.blurView.alpha = 0;
-        self.blurView.hidden = false;
+        self.blurView.isHidden = false;
         activityImageView.image =  UIImage.animatedImageNamed("loader-", duration: 1.0)
         iPhoneSnapCamImageView.image = UIImage(named: "Switched modes");
-        snapCamSettingsTableView.hidden = true;
+        snapCamSettingsTableView.isHidden = true;
         
-        UIView .animateWithDuration(1.0, animations: { () -> Void in
+        UIView .animate(withDuration: 1.0, animations: { () -> Void in
             self.blurView.alpha = 1.0
             
         }) { (finished) -> Void in
@@ -216,20 +208,20 @@ extension SnapCamSelectViewController
     
     func startSnapCamViewAnimation()
     {
-        UIView .animateWithDuration(1.0, animations: { () -> Void in
+        UIView .animate(withDuration: 1.0, animations: { () -> Void in
             
-            self.activityImageView.hidden = true;
-            self.activityLabel.hidden = true;
+            self.activityImageView.isHidden = true;
+            self.activityLabel.isHidden = true;
             self.iPhoneSnapCamImageView.image = UIImage(named: "SnapCam Switched modes");
             
         }) { (finished) -> Void in
             
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
+            UIView.animate(withDuration: 0.5, animations: { () -> Void in
                 
                 self.blurView.alpha = 0.0
                 
-                }, completion: { (finshed) -> Void in
-                    self.switchToSnapCamView()
+            }, completion: { (finshed) -> Void in
+                self.switchToSnapCamView()
             })
         }
     }
@@ -252,32 +244,30 @@ extension SnapCamSelectViewController
     //PRAGMA MARK:- LoadViews for each table Actions
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! MovieViewController
-        clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
+        let vc = MovieViewController.movieViewController(withContentPath: "rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! MovieViewController
+        clearStreamingUserDefaults(defaults: UserDefaults.standard)
         let navigationController:UINavigationController = UINavigationController(rootViewController: vc)
-        navigationController.navigationBarHidden = true
-        self.presentViewController(navigationController, animated: false) { () -> Void in
+        navigationController.isNavigationBarHidden = true
+        self.present(navigationController, animated: false) { () -> Void in
         }
     }
     
     func loadCameraViewController()
     {
-//        self.dismissViewControllerAnimated(false, completion: nil)
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
         let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
+        navController.isNavigationBarHidden = true
+        self.present(navController, animated: false) { () -> Void in
         }
     }
     
     func loadAPITestView()
     {
         let storyBoard = UIStoryboard(name:"iONCamPictureAPITest" , bundle: nil)
-        let testAPIListVC = storyBoard.instantiateViewControllerWithIdentifier(iONLiveCamAPIListViewController.identifier)
+        let testAPIListVC = storyBoard.instantiateViewController(withIdentifier: iONLiveCamAPIListViewController.identifier)
         self.navigationController?.pushViewController(testAPIListVC, animated: true)
     }
-    
     
     func changeSelectedSnapCamMode(selectedMode:SnapCamSelectionMode)
     {
@@ -289,7 +279,7 @@ extension SnapCamSelectViewController
             snapCamMode = selectedMode
             if snapCamMode != SnapCamSelectionMode.SnapCam && snapCamMode != SnapCamSelectionMode.iPhone
             {
-                NSUserDefaults.standardUserDefaults().setObject(selectedMode.rawValue, forKey: "shutterActionMode");
+                UserDefaults.standard.set(selectedMode.rawValue, forKey: "shutterActionMode");
             }
         }
     }
@@ -299,8 +289,8 @@ extension SnapCamSelectViewController
         let alert: UIAlertView = UIAlertView()
         alert.title = "Streaming In Progress"
         alert.message = "Do you want to stop streaming?"
-        alert.addButtonWithTitle("Yes")
-        alert.addButtonWithTitle("No")
+        alert.addButton(withTitle: "Yes")
+        alert.addButton(withTitle: "No")
         alert.delegate = self
         rowAfterAlertHit = row
         cellAfterAlertHit = selectedCell
@@ -309,18 +299,18 @@ extension SnapCamSelectViewController
     
     func changeSnapCamModeForCell(selectedCell:UITableViewCell)
     {
-        streamingDelegate?.cameraSelectionMode(snapCamMode)
+        //        streamingDelegate?.cameraSelectionMode!(selection: snapCamMode)
         self.snapCamSettingsTableView.reloadData()
     }
     
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
         
-        let buttonTitle = alertView.buttonTitleAtIndex(buttonIndex)
+        let buttonTitle = alertView.buttonTitle(at: buttonIndex)
         if buttonTitle == "Yes" {
             
             stopLiveStreaming()
-            updateSnapCamSelection(rowAfterAlertHit)
-            changeSnapCamModeForCell(cellAfterAlertHit)
+            updateSnapCamSelection(rowVal: rowAfterAlertHit)
+            changeSnapCamModeForCell(selectedCell: cellAfterAlertHit)
             self.snapCamSettingsTableView.reloadData()
         }
         else
@@ -345,7 +335,7 @@ extension SnapCamSelectViewController
     {
         let stream = UploadStream()
         stream.stopStreamingClicked()
-        streamingDelegate?.cameraSelectionMode(snapCamMode)
+        streamingDelegate?.cameraSelectionMode!(selection: snapCamMode)
     }
     
     func stopIPhoneCameraLiveStreaming()
@@ -355,12 +345,11 @@ extension SnapCamSelectViewController
     }
     
     //PRAGMA MARK:- customize table cell
-    
     func customizeCellBasedOnSnapCamSelectionMode(selectedCell:UITableViewCell , row:Int)
     {
         if (snapCamMode == SnapCamSelectionMode.SnapCam || snapCamMode ==  SnapCamSelectionMode.iPhone) && row == 5
         {
-            customizeSnapCamIPhoneCell(selectedCell)
+            customizeSnapCamIPhoneCell(selectedCell: selectedCell)
         }
         else if snapCamMode == SnapCamSelectionMode.TestAPI && row == 6
         {
@@ -372,7 +361,7 @@ extension SnapCamSelectViewController
         }
         else
         {
-            selectedCell.contentView.backgroundColor = UIColor.clearColor()
+            selectedCell.contentView.backgroundColor = UIColor.clear
         }
     }
     
@@ -386,25 +375,25 @@ extension SnapCamSelectViewController
         switch(rowVal)
         {
         case 0 :
-            changeSelectedSnapCamMode(.LiveStream)
+            changeSelectedSnapCamMode(selectedMode: .LiveStream)
             break
         case 1:
-            changeSelectedSnapCamMode(.Photos)
+            changeSelectedSnapCamMode(selectedMode: .Photos)
             break
         case 2:
-            changeSelectedSnapCamMode(.Video)
+            changeSelectedSnapCamMode(selectedMode: .Video)
             break
         case 3:
-            changeSelectedSnapCamMode(.CatchGif)
+            changeSelectedSnapCamMode(selectedMode: .CatchGif)
             break
         case 4:
-            changeSelectedSnapCamMode(.Timelapse)
+            changeSelectedSnapCamMode(selectedMode: .Timelapse)
             break
         case 5:
-            changeSelectedSnapCamMode(.iPhone)
+            changeSelectedSnapCamMode(selectedMode: .iPhone)
             break
         case 6:
-            changeSelectedSnapCamMode(.TestAPI)
+            changeSelectedSnapCamMode(selectedMode: .TestAPI)
             break
         default :
             break
@@ -414,44 +403,39 @@ extension SnapCamSelectViewController
     //PRAGMA MARK:- User defaults
     func isStreamStarted()->Bool
     {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        return  defaults.boolForKey("StartedStreaming")
+        let defaults = UserDefaults.standard
+        return  defaults.bool(forKey: "StartedStreaming")
     }
     
-    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    func clearStreamingUserDefaults(defaults:UserDefaults)
     {
-        defaults.removeObjectForKey(streamingToken)
-        defaults.removeObjectForKey(startedStreaming)
-        defaults.removeObjectForKey(initializingStream)
+        defaults.removeObject(forKey: streamingToken)
+        defaults.removeObject(forKey: startedStreaming)
+        defaults.removeObject(forKey: initializingStream)
     }
     
     //PRAGMA MARK:- IBActions
-    @IBAction func settingsbuttonClicked(sender: AnyObject)
+    @IBAction func settingsbuttonClicked(_ sender: Any)
     {
         let storyBoard = UIStoryboard.init(name:"Settings", bundle: nil)
-        let settingsVC = storyBoard.instantiateViewControllerWithIdentifier("SettingsViewController") as! SettingsViewController
+        let settingsVC = storyBoard.instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
         
         let navController = UINavigationController(rootViewController: settingsVC)
-        navController.navigationBarHidden = true
-        self.presentViewController(navController, animated: false) { () -> Void in
+        navController.isNavigationBarHidden = true
+        self.present(navController, animated: false) { () -> Void in
         }
     }
     
-    @IBAction func snapcamButtonClicked(sender: AnyObject)
+    @IBAction func snapcamButtonClicked(_ sender: Any)
     {
-//        self.dismissViewControllerAnimated(false, completion: nil)
-        
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-//        let navController = UINavigationController(rootViewController: iPhoneCameraViewController)
-//        navController.navigationBarHidden = true
-        
-        self.presentViewController(iPhoneCameraViewController, animated: false) { () -> Void in
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+        self.present(iPhoneCameraViewController, animated: false) { () -> Void in
         }
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent;
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }
 

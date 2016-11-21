@@ -14,10 +14,10 @@ class MyChannelNotificationViewController: UIViewController {
     
     var loadingOverlay: UIView?
     
-    var mediaDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var channelDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var fulldataSource : [[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaDataSource:[[String:Any]] = [[String:Any]]()
+    var channelDataSource:[[String:Any]] = [[String:Any]]()
+    var dataSource:[[String:Any]] = [[String:Any]]()
+    var fulldataSource : [[String:Any]] = [[String:Any]]()
     
     let usernameKey = "userName"
     let profileImageKey = "profileImage"
@@ -27,10 +27,10 @@ class MyChannelNotificationViewController: UIViewController {
     let messageKey = "message"
     let notificationTimeKey = "notifTime"
     
-    var operationQueueObjInNotif = NSOperationQueue()
-    var operationInNotif = NSBlockOperation()
+    var operationQueueObjInNotif = OperationQueue()
+    var operationInNotif = BlockOperation()
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     var userId = String()
     var accessToken = String()
     
@@ -41,17 +41,17 @@ class MyChannelNotificationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let notifFlag = defaults.valueForKey("notificationArrived")
+        if let notifFlag = defaults.value(forKey: "notificationArrived")
         {
             if notifFlag as! String == "0"
             {
                 let image = UIImage(named: "noNotif") as UIImage?
-                notifImage.setImage(image, forState: .Normal)
+                notifImage.setImage(image, for: .normal)
             }
         }
         else{
             let image = UIImage(named: "notif") as UIImage?
-            notifImage.setImage(image, forState: .Normal)
+            notifImage.setImage(image, for: .normal)
         }
         initialise()
     }
@@ -59,20 +59,21 @@ class MyChannelNotificationViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    override func viewWillAppear(animated: Bool) {
+    
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         NotificationTableView.layer.cornerRadius=10
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         operationInNotif.cancel()
     }
     
-    @IBAction func didTapNotificationButton(sender: AnyObject) {
+    @IBAction func didTapNotificationButton(_ sender: Any) {
         let storyboard = UIStoryboard(name:"MyChannel", bundle: nil)
-        let channelVC = storyboard.instantiateViewControllerWithIdentifier(MyChannelViewController.identifier) as! MyChannelViewController
-        channelVC.navigationController?.navigationBarHidden = true
+        let channelVC = storyboard.instantiateViewController(withIdentifier: MyChannelViewController.identifier) as! MyChannelViewController
+        channelVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(channelVC, animated: false)
     }
     
@@ -83,61 +84,59 @@ class MyChannelNotificationViewController: UIViewController {
         fulldataSource.removeAll()
         
         defaults.setValue("0", forKey: "notificationFlag")
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        
-        getNotificationDetails(userId, token: accessToken)
+        getNotificationDetails(userName: userId, token: accessToken)
     }
     
     func getNotificationDetails(userName: String, token: String)
     {
         showOverlay()
-        channelManager.getMediaInteractionDetails(userName, accessToken: token, limit: "350", offset: "0", success: { (response) in
-            self.authenticationSuccessHandler(response)
+        channelManager.getMediaInteractionDetails(userName: userName, accessToken: token, limit: "350", offset: "0", success: { (response) in
+            self.authenticationSuccessHandler(response: response)
             
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
         }
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults .standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 72, self.view.frame.width, self.view.frame.height - 72)
+        loadingOverlayController.view.frame = CGRect(x:0, y:72, width:self.view.frame.width, height:self.view.frame.height - 72)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -149,58 +148,74 @@ class MyChannelNotificationViewController: UIViewController {
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
+    func years(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.year], from: fromDate, to: toDate).year ?? 0
     }
-    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Month, fromDate: date, toDate: todate, options: []).month
+    
+    func months(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.month], from: fromDate, to: toDate).month ?? 0
     }
-    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    
+    func weeks(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.weekOfYear], from: fromDate, to: fromDate).weekOfYear ?? 0
     }
-    func daysFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Day, fromDate: date, toDate: todate, options: []).day
+    
+    func days(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.day], from: fromDate, to: toDate).day ?? 0
     }
-    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    
+    func hours(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.hour], from: fromDate, to: toDate).hour ?? 0
     }
-    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    
+    func minutes(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.minute], from: fromDate, to: toDate).minute ?? 0
     }
-    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
+    
+    func seconds(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.second], from: fromDate, to: toDate).second ?? 0
     }
-    func offsetFrom(date:NSDate,todate:NSDate) -> String {
-        if yearsFrom(date,todate:todate)   > 0 { return "\(yearsFrom(date,todate:todate))y"   }
-        if monthsFrom(date,todate:todate)  > 0 { return "\(monthsFrom(date,todate:todate))m"  }
-        if weeksFrom(date,todate:todate)   > 0 { return "\(weeksFrom(date,todate:todate))w"   }
-        if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))d"    }
-        if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))h"   }
-        if minutesFrom(date,todate:todate) > 0 {
-            return "\(minutesFrom(date,todate:todate))min"
+    
+    func offset(fromDate: Date, toDate: Date ) -> String {
+        if years(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(years(fromDate: fromDate, toDate: toDate))Y"
         }
-        if secondsFrom(date,todate:todate) > 0 {
+        if months(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(months(fromDate: fromDate, toDate: toDate))m"
+        }
+        if weeks(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(weeks(fromDate: fromDate, toDate: toDate))w"
+        }
+        if days(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(days(fromDate: fromDate, toDate: toDate))d"
+        }
+        if hours(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(hours(fromDate: fromDate, toDate: toDate))h"
+        }
+        if minutes(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(minutes(fromDate: fromDate, toDate: toDate))min"
+        }
+        if seconds(fromDate: fromDate, toDate: toDate) > 0
+        {
             return "Just now"
         }
         return ""
     }
     
-    func nullToNil(value : AnyObject?) -> AnyObject? {
-        if value is NSNull {
-            return ""
-        } else {
-            return value
-        }
-    }
-    
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
+        UserDefaults.standard.setValue("0", forKey: "notificationArrived")
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
@@ -221,8 +236,8 @@ class MyChannelNotificationViewController: UIViewController {
                     }
                     
                     let notifType = element["notification_type"] as! String
-                    if(notifType.lowercaseString == "likes"){
-                        mediaThumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId, userName: userId, accessToken: accessToken)
+                    if(notifType.lowercased() == "likes"){
+                        mediaThumbUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId: mediaId, userName: userId, accessToken: accessToken)
                     }
                     else{
                         mediaThumbUrl = "nomedia"
@@ -232,24 +247,24 @@ class MyChannelNotificationViewController: UIViewController {
                     let profileImageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                     
                     let notTime = element["created_time_stamp"] as! String
-                    let timeDiff = getTimeDifference(notTime)
+                    let timeDiff = getTimeDifference(dateStr: notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
                     
-                    dataSource.append(["mediaIdKey":mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercaseString])
+                    dataSource.append(["mediaIdKey":mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased()])
                 }
             }
             
             if(dataSource.count > 0)
             {
-                dataSource.sortInPlace({ p1, p2 in
+                dataSource.sort(by: { p1, p2 in
                     let time1 = p1[notificationTimeKey] as! String
                     let time2 = p2[notificationTimeKey] as! String
                     return time1 > time2
                 })
                 if(dataSource.count > 0){
-                    operationInNotif  = NSBlockOperation (block: {
-                        self.downloadMediaFromGCS(self.operationInNotif)
+                    operationInNotif  = BlockOperation (block: {
+                        self.downloadMediaFromGCS(operationObj: self.operationInNotif)
                     })
                     self.operationQueueObjInNotif.addOperation(operationInNotif)
                 }
@@ -266,19 +281,19 @@ class MyChannelNotificationViewController: UIViewController {
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.center
         self.NoDatalabelFormyChanelImageList.text = "No Notifications Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
     
-    func downloadMediaFromGCS(operationObj: NSBlockOperation){
+    func downloadMediaFromGCS(operationObj: BlockOperation){
         fulldataSource.removeAll()
         for i in 0 ..< dataSource.count
         {
             if i < dataSource.count
             {
-                if operationObj.cancelled == true{
+                if operationObj.isCancelled == true{
                     return
                 }
                 var mediaImage : UIImage?
@@ -287,7 +302,7 @@ class MyChannelNotificationViewController: UIViewController {
                 let profileImageName = dataSource[i][profileImageKey] as! String
                 if(profileImageName != "")
                 {
-                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileImageName)
+                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -297,7 +312,7 @@ class MyChannelNotificationViewController: UIViewController {
                 if(mediaThumbUrl != "nomedia"){
                     if(mediaThumbUrl != "")
                     {
-                        mediaImage = createMediaThumb(mediaThumbUrl)
+                        mediaImage = createMediaThumb(mediaName: mediaThumbUrl)
                     }
                     else{
                         mediaImage = UIImage()
@@ -308,10 +323,10 @@ class MyChannelNotificationViewController: UIViewController {
                 }
                 self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.removeOverlay()
                     self.NotificationTableView.reloadData()
-                })
+                }
             }
         }
     }
@@ -320,10 +335,10 @@ class MyChannelNotificationViewController: UIViewController {
     {
         var mediaImage : UIImage = UIImage()
         do {
-            let url: NSURL = convertStringtoURL(mediaName)
-            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
+            let url: NSURL = convertStringtoURL(url: mediaName)
+            let data = try NSData(contentsOf: url as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
                 }
@@ -340,31 +355,30 @@ class MyChannelNotificationViewController: UIViewController {
     }
     
     func  getTimeDifference(dateStr:String) -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        dateFormatter.timeZone = NSTimeZone(name: "UTC")
+        dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
         
-        let cloudDate = dateFormatter.dateFromString(dateStr)
-        let localDateStr = dateFormatter.stringFromDate(NSDate())
-        let localDate = dateFormatter.dateFromString(localDateStr)
-        
-        let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
+        let cloudDate = dateFormatter.date(from: dateStr)
+        let localDateStr = dateFormatter.string(from: NSDate() as Date)
+        let localDate = dateFormatter.date(from: localDateStr)
+        let differenceString =  offset(fromDate: cloudDate!, toDate: localDate!)
         return differenceString
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
+        UserDefaults.standard.setValue("0", forKey: "notificationArrived")
         self.removeOverlay()
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -373,22 +387,19 @@ class MyChannelNotificationViewController: UIViewController {
     }
 }
 
-extension MyChannelNotificationViewController: UITableViewDelegate
+extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return 55.0
+        return 75.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
         return 0.01
     }
-}
-
-extension MyChannelNotificationViewController:UITableViewDataSource
-{
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if fulldataSource.count > 0
         {
@@ -400,11 +411,11 @@ extension MyChannelNotificationViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if fulldataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(MyChannelNotificationCell.identifier, forIndexPath:indexPath) as! MyChannelNotificationCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelNotificationCell.identifier, for:indexPath) as! MyChannelNotificationCell
             
             cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
@@ -415,14 +426,13 @@ extension MyChannelNotificationViewController:UITableViewDataSource
             else{
                 cell.NotificationImage.image = UIImage(named:"thumb12")
             }
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
     }
-    
 }

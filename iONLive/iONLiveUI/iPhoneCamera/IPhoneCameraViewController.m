@@ -13,7 +13,6 @@
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CoreMedia.h>
 #import <QuartzCore/QuartzCore.h>
-#import "screencap.h"
 #import "ALAssetsLibrary+CustomPhotoAlbum.h"
 
 static void * CapturingStillImageContext = &CapturingStillImageContext;
@@ -31,7 +30,7 @@ typedef NS_ENUM( NSInteger, AVCamSetupResult ) {
     AVCamSetupResultSessionConfigurationFailed
 };
 
-@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate , StreamingProtocol,  VCSessionDelegate, NSURLSessionDelegate,NSURLSessionTaskDelegate,NSURLSessionDataDelegate>
+@interface IPhoneCameraViewController ()<AVCaptureFileOutputRecordingDelegate,VCSessionDelegate, NSURLSessionDelegate,NSURLSessionTaskDelegate,NSURLSessionDataDelegate, StreamingProtocol>
 
 {
     SnapCamSelectionMode _snapCamMode;
@@ -122,7 +121,7 @@ int timerCount = 0;
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-   
+    
     if([self isStreamStarted]){
         [liveStreaming stopStreamingClicked];
         [_liveSteamSession endRtmpSession];
@@ -458,7 +457,7 @@ int timerCount = 0;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.thumbnailImageView.image = img;
                 });
-
+                
             }
         }
     }
@@ -811,7 +810,7 @@ int timerCount = 0;
         
         [self initialise];
     });
-      [self enabelOrDisableButtons:1];
+    [self enabelOrDisableButtons:1];
 }
 
 -(void) initialise{
@@ -858,7 +857,7 @@ int timerCount = 0;
     else if(_currentFlashMode == 1){
         [self.flashButton setImage:[UIImage imageNamed:@"flash_On"] forState:UIControlStateNormal];
     }
-    _snapCamMode = SnapCamSelectionModeiPhone;
+    _snapCamMode = SnapCamSelectionModeIPhone;
     flashFlag = 0;
     _activitView.hidden = YES;
 }
@@ -895,9 +894,11 @@ int timerCount = 0;
     NSString * latestCapturedMediaThumbnail =detailArray[@"latestCapturedMediaThumbnail"];
     NSString *latestCapturedMediaType  =  detailArray[@"latestCapturedMediaType"];
     [[NSUserDefaults standardUserDefaults] setObject:mediaSharedCount forKey:@"mediaSharedCount"] ;
-    NSString * latestMediaURL = [[UrlManager sharedInstance] getMediaURL:[NSString stringWithFormat:@"%@",latestCapturedMediaThumbnail]];
-    NSString * latestSharedURL = [[UrlManager sharedInstance] getMediaURL:[NSString stringWithFormat:@"%@",latestSharedMediaThumbnail]];
-    NSLog(@"%@", latestSharedURL);
+    
+    NSString * latestMediaURL = [[UrlManager sharedInstance] getMediaURLWithMediaId:[NSString stringWithFormat:@"%@",latestCapturedMediaThumbnail]];
+    
+    NSString * latestSharedURL = [[UrlManager sharedInstance] getMediaURLWithMediaId:[NSString stringWithFormat:@"%@",latestSharedMediaThumbnail]];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         _sharedUserCount.text = sharedUserCount;
         if(userImages.count > 0){
@@ -932,8 +933,6 @@ int timerCount = 0;
     
     if(takePictureFlag == false){
         dispatch_async(dispatch_get_global_queue(0,0), ^{
-            
-           
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: latestMediaURL]];
             
             if ( data == nil ){
@@ -943,14 +942,13 @@ int timerCount = 0;
             }
             else if ([UIImage imageWithData: data] == nil)
             {
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     self.thumbnailImageView.image = [UIImage imageNamed:@"thumb12"];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                         [self updateThumbnails];
-                     });
+                        [self updateThumbnails];
+                    });
                     
-                 });
-
+                });
             }
             else{
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -962,9 +960,9 @@ int timerCount = 0;
                         self.playiIconView.hidden = YES;
                     }
                     dispatch_async(dispatch_get_main_queue(), ^{
-
-                    self.thumbnailImageView.image = [UIImage imageWithData: data];
-                          });
+                        
+                        self.thumbnailImageView.image = [UIImage imageWithData: data];
+                    });
                 });
             }
         });
@@ -1128,7 +1126,7 @@ int timerCount = 0;
             case VCSessionStateEnded:
             case VCSessionStateError:
             {
-                [liveStreaming startLiveStreaming:_liveSteamSession];
+                [liveStreaming startLiveStreamingWithSession:_liveSteamSession];
                 [self showProgressBar];
                 break;
             }
@@ -1219,7 +1217,7 @@ int timerCount = 0;
                                          {
                                          }];
                                     }
-
+                                    
                                     [self saveImage:imageData];
                                     [self loaduploadManagerForImage];
                                 }
@@ -1247,7 +1245,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     } else if (orientation == UIImageOrientationLeft) {
         CGContextRotateCTM (context, radians(-90));
     } else if (orientation == UIImageOrientationDown) {
-        // NOTHING
     } else if (orientation == UIImageOrientationUp) {
         CGContextRotateCTM (context, radians(90));
     }
@@ -1275,9 +1272,9 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
         }];
     }completion:nil];
     self.imageViewAnimate.image = nil;
-    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationCurveEaseOut animations:^{
+    [UIView animateWithDuration:0.1 delay:0.4 options:UIViewAnimationOptionCurveEaseOut animations:^{
         snapshot.alpha = 0.0;
-    }completion:nil];
+    } completion:nil];
 }
 
 #pragma mark save image to db
@@ -1291,13 +1288,16 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
     NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
     filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
-    [imageData writeToFile:filePath atomically:YES];
-    imageData = Nil;
-    [self saveIphoneCameraSnapShots:dateString path:filePath];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath])
+        [[NSFileManager defaultManager] createDirectoryAtPath:filePath withIntermediateDirectories:NO attributes:nil error:nil];
+    NSString *imgStr = @"/image";
+    NSString *orgFilePath = [NSString stringWithFormat:@"%@%@", filePath,imgStr];
+    [imageData writeToFile:orgFilePath atomically:NO];
+    [self saveIphoneCameraSnapShots:dateString path:orgFilePath];
 }
 
 -(void) saveIphoneCameraSnapShots :(NSString *)imageName path:(NSString *)path{
-    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    AppDelegate *appDel = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     NSManagedObjectContext *context = appDel.managedObjectContext;
     NSManagedObject *newSnapShots =[NSEntityDescription insertNewObjectForEntityForName:@"SnapShots" inManagedObjectContext:context];
     [newSnapShots setValue:imageName forKey:@"imageName"];
@@ -1315,7 +1315,7 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 }
 
 -(NSString *) readIphoneCameraSnapShotsFromDB {
-    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    AppDelegate *appDel = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     NSManagedObjectContext *context = appDel.managedObjectContext;
     
     NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
@@ -1435,10 +1435,8 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
         _noDataFound.text = @"Initializing Stream";
         _noDataFound.hidden = false;
         _liveSteamSession.previewView.hidden = true;
-         [self setUpInitialBlurView];
-        
+        [self setUpInitialBlurView];
     });
-   
 }
 
 #pragma mark : VCSessionState Delegate
@@ -1503,24 +1501,29 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 
 -(void)screenCapture
 {
+    dispatch_async( dispatch_get_main_queue(), ^{
     CGSize size = CGSizeMake(_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
     
     UIGraphicsBeginImageContextWithOptions(size, NO, 7);
     CGRect rec = CGRectMake(0,0,_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
-    [self.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
     
+        [self.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+ 
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
+        
     [self saveThumbnailImageLive:image1];
     [self uploadThumbToCloud:image1];
+    });
+  
 }
 
 -(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
     deleteCount = 0;
     NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
     NSString *finalPath = [NSString stringWithFormat:@"%@LiveThumb",userName];
-    [[FileManagerViewController sharedInstance]saveImageToFilePath:finalPath mediaImage:liveThumbImage];
+    [[FileManagerViewController sharedInstance] saveImageToFilePathWithMediaName:finalPath mediaImage:liveThumbImage];
 }
 
 -(void) uploadThumbToCloud:(UIImage *)image
@@ -1548,7 +1551,7 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     NSString *userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLoginIdKey"];
     NSURL *parentPathStr = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *finalPath = [NSString stringWithFormat:@"%@/%@%@",parentPathStr,userName,@"LiveThumb"];
-    [[FileManagerViewController sharedInstance] deleteImageFromFilePath:finalPath];
+    [[FileManagerViewController sharedInstance] deleteImageFromFilePathWithMediaPath:finalPath];
 }
 
 #pragma mark KVO and Notifications
@@ -1603,7 +1606,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
         }
     }
     else if (context == SessionRunningContext ) {
-        BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1671,7 +1673,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
-    UIBackgroundTaskIdentifier currentBackgroundRecordingID = self.backgroundRecordingID;
     self.backgroundRecordingID = UIBackgroundTaskInvalid;
     BOOL success = YES;
     
@@ -1679,6 +1680,19 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
         success = [error.userInfo[AVErrorRecordingSuccessfullyFinishedKey] boolValue];
     }
     if ( success ) {
+        
+        NSData *videoData = [[NSData alloc]initWithContentsOfURL:outputFileURL];
+        NSURL *videoUrl = [self writeVideoDataToLocalFile:videoData];
+        
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outputFileURL
+                                                    options:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                             [NSNumber numberWithBool:YES],
+                                                             AVURLAssetPreferPreciseDurationAndTimingKey,
+                                                             nil]];
+        NSTimeInterval durationInSeconds = 0.0;
+        if (asset){
+            durationInSeconds = CMTimeGetSeconds(asset.duration) ;
+        }
         [PHPhotoLibrary requestAuthorization:^( PHAuthorizationStatus status ) {
             if ( status == PHAuthorizationStatusAuthorized ) {
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
@@ -1691,23 +1705,13 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
                         takePictureFlag = true;
                         [_playiIconView setHidden:NO];
                         if(imageData != nil){
-                            
-                            AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:outputFileURL
-                                                                        options:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                 [NSNumber numberWithBool:YES],
-                                                                                 AVURLAssetPreferPreciseDurationAndTimingKey,
-                                                                                 nil]];
-                            
-                            NSTimeInterval durationInSeconds = 0.0;
-                            if (asset)
-                                durationInSeconds = CMTimeGetSeconds(asset.duration) ;
                             NSDate* d = [NSDate dateWithTimeIntervalSince1970:durationInSeconds];
                             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
                             [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
                             [dateFormatter setDateFormat:@"HH:mm:ss"];
                             NSString* result = [dateFormatter stringFromDate:d];
                             [self saveImage:imageData];
-                            [self moveVideoToDocumentDirectory:outputFileURL videoDuration:result];
+                            [self moveVideoToDocumentDirectory:videoUrl videoDuration:result];
                             
                             NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
                             if (isSave != 0)
@@ -1718,8 +1722,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
                                  {
                                  }];
                             }
-
-                           
                         }
                     });
                     if ([PHAssetResourceCreationOptions class] ) {
@@ -1747,8 +1749,26 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     });
 }
 
-#pragma mark save video
+-(NSURL *) writeVideoDataToLocalFile: (NSData *) videoData
+{
+    NSArray *paths= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
+    NSString *filePath=@"";
+    NSString *orgFilePath=@"";
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd_MM_yyyy_HH_mm_ss"];
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    filePath = [documentsDirectory stringByAppendingPathComponent:dateString];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath])
+        [[NSFileManager defaultManager] createDirectoryAtPath:filePath withIntermediateDirectories:NO attributes:nil error:nil];
+    NSString *videoStr = @"/video.mov";
+    orgFilePath = [NSString stringWithFormat:@"%@%@", filePath,videoStr];
+    [videoData writeToFile:orgFilePath atomically:NO];
+    NSURL *filePathUrl = [NSURL URLWithString:orgFilePath];
+    return filePathUrl;
+}
 
+#pragma mark save video
 -(void) moveVideoToDocumentDirectory : (NSURL *) path videoDuration: (NSString *) duration
 {
     [self loaduploadManager : path videoDuration:duration];
@@ -1766,7 +1786,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 }
 
 #pragma mark Device Configuration
-
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
 {
     dispatch_async( self.sessionQueue, ^{
@@ -1834,7 +1853,7 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 #pragma mark save Image to DataBase
 
 -(void) deleteIphoneCameraSnapShots{
-    AppDelegate *appDel = [[UIApplication sharedApplication]delegate];
+    AppDelegate *appDel = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     NSManagedObjectContext *context = appDel.managedObjectContext;
     NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"SnapShots"];
     request.returnsObjectsAsFaults=false;
@@ -1864,7 +1883,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     _secondButton.userInteractionEnabled = false;
     _thirdButton.userInteractionEnabled = false;
     _iphoneCameraButton.userInteractionEnabled = false;
-//    _startCameraActionButton.userInteractionEnabled = false;
 }
 
 - (IBAction)didTapCamSelectionButton:(id)sender
@@ -1920,13 +1938,13 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     
     takePictureFlag = false;
     [self stopTimer];
-
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Settings" bundle:nil];
     SnapCamSelectViewController *snapCamSelectVC = (SnapCamSelectViewController*)[storyboard instantiateViewControllerWithIdentifier:@"SnapCamSelectViewController"];
     snapCamSelectVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     snapCamSelectVC.streamingDelegate = self;
     snapCamSelectVC.snapCamMode = [self getCameraSelectionMode];
-    snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeiPhone;
+    snapCamSelectVC.toggleSnapCamIPhoneMode = SnapCamSelectionModeIPhone;
     [self presentViewController:snapCamSelectVC animated:YES completion:nil];
 }
 
@@ -2008,10 +2026,9 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     
 }
 -(void) deinit {
-    NSLog(@"iphonecamera deinit");
 }
-#pragma mark :- StreamingProtocol delegates
 
+#pragma mark :- StreamingProtocol delegates
 -(void)cameraSelectionMode:(SnapCamSelectionMode)selectionMode
 {
     _snapCamMode = selectionMode;
@@ -2023,7 +2040,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 }
 
 #pragma mark :- Private Methods
-
 -(void)stopLiveStreaming
 {
     NSInteger shutterActionMode = [[NSUserDefaults standardUserDefaults] integerForKey:@"shutterActionMode"];
@@ -2050,7 +2066,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 }
 
 # pragma mark:- Thumbnail generator
-
 - (UIImage *)thumbnaleImage:(UIImage *)image scaledToFillSize:(CGSize)size
 {
     CGFloat scale = MAX(size.width/image.size.width, size.height/image.size.height);
@@ -2085,11 +2100,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 
 -(NSData *)getThumbNail:(NSURL*)stringPath
 {
-    UIImage *firstImage =[[UIImage alloc] init];
-    NSURL *videoURL = [NSURL fileURLWithPath:[stringPath path]];
-    AVPlayerItem *SelectedItem = [AVPlayerItem playerItemWithURL:stringPath];
-    CMTime duration = SelectedItem.duration;
-    float seconds = CMTimeGetSeconds(duration);
     AVURLAsset *asset1 = [[AVURLAsset alloc] initWithURL:stringPath options:nil];
     AVAssetImageGenerator *generate1 = [[AVAssetImageGenerator alloc] initWithAsset:asset1];
     generate1.appliesPreferredTrackTransform = YES;
@@ -2097,7 +2107,6 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
     CMTime time = CMTimeMake(0.0,600);
     CGImageRef oneRef = [generate1 copyCGImageAtTime:time actualTime:NULL error:&err];
     UIImage *one = [[UIImage alloc] initWithCGImage:oneRef];
-    
     UIImage *result  =  [self drawImage:[UIImage imageNamed:@"Circled Play"] inImage:one atPoint:CGPointMake(50, 50)];
     NSData *imageData = [[NSData alloc] init];
     imageData = UIImageJPEGRepresentation(result,1.0);

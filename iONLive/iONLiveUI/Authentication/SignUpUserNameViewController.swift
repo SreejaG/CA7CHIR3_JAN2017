@@ -19,17 +19,17 @@ class SignUpUserNameViewController: UIViewController {
     @IBOutlet var continuButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-        continuButton.hidden = true
+        continuButton.isHidden = true
         initialise()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
         userNameTextfield.becomeFirstResponder()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         view.endEditing(true)
     }
     
@@ -40,36 +40,42 @@ class SignUpUserNameViewController: UIViewController {
     func initialise()
     {
         self.title = "USERNAME"
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
         userNameTextfield.attributedPlaceholder = NSAttributedString(string: "Username",
-                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
+                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
+        userNameTextfield.autocorrectionType = UITextAutocorrectionType.no
         userNameTextfield.delegate = self
-        userNameTextfield.keyboardType = .NamePhonePad
+        userNameTextfield.keyboardType = .namePhonePad
         
-        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
         
         addObserver()
     }
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpUserNameViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpUserNameViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpUserNameViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpUserNameViewController
+                                                .KeyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         self.view.layoutIfNeeded()
         if continueBottomConstraint.constant == 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.continueBottomConstraint.constant += keyboardFrame.size.height
                 self.view.layoutIfNeeded()
             }
@@ -81,76 +87,52 @@ class SignUpUserNameViewController: UIViewController {
         self.view.layoutIfNeeded()
         if continueBottomConstraint.constant != 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.continueBottomConstraint.constant = 0
                 self.view.layoutIfNeeded()
             }
         }
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
         if( userNameTextfield.text!.isEmpty)
         {
-            continuButton.hidden = true
+            continuButton.isHidden = true
         }
         else{
-            let whiteChrSet = NSCharacterSet.whitespaceCharacterSet()
-            if((userNameTextfield.text?.characters.count < 5) || (userNameTextfield.text?.characters.count > 15))
+            let whiteChrSet = NSCharacterSet.whitespaces
+            if(((userNameTextfield.text?.characters.count)! < 5) || ((userNameTextfield.text?.characters.count)! > 15))
             {
-                continuButton.hidden = true
+                continuButton.isHidden = true
             }
-            else if userNameTextfield.text!.rangeOfCharacterFromSet(whiteChrSet) != nil {
-                continuButton.hidden = true
+            else if (userNameTextfield.text! as String).rangeOfCharacter(from: whiteChrSet) != nil
+            {
+                continuButton.isHidden = true
             }
             else{
-                continuButton.hidden = false
+                continuButton.isHidden = false
             }
         }
     }
     
     //PRAGMA MARK:- IBActions
-    
-    @IBAction func tapGestureRecognized(sender: AnyObject) {
+    @IBAction func tapGestureRecognized(_ sender: Any) {
         view.endEditing(true)
     }
     
-    @IBAction func userNameContinueButtonClicked(sender: AnyObject)
+    @IBAction func userNameContinueButtonClicked(_ sender: Any)
     {
-        //        if userNameTextfield.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.signUpNoUsernameEnteredError()
-        //        }
-        //        else
-        //        {
-        //            let text = userNameTextfield.text
-        //            let chrSet = NSCharacterSet.whitespaceCharacterSet()
-        //            if((text?.characters.count < 5) || (text?.characters.count > 15))
-        //            {
-        //                ErrorManager.sharedInstance.InvalidUsernameEnteredError()
-        //                userNameTextfield.text = ""
-        //                userNameTextfield.becomeFirstResponder()
-        //                return
-        //            }
-        //            else if text!.rangeOfCharacterFromSet(chrSet) != nil {
-        //                ErrorManager.sharedInstance.noSpaceInUsername()
-        //                userNameTextfield.text = ""
-        //                userNameTextfield.becomeFirstResponder()
-        //                return
-        //            }
-        //            else{
-        signUpUser(email, password: password, userName: self.userNameTextfield.text!)
-        //            }
-        //        }
+        signUpUser(email: email, password: password, userName: self.userNameTextfield.text!)
     }
     
     func loadVerifyPhoneView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
+        let verifyPhoneVC = storyboard.instantiateViewController(withIdentifier: SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
         verifyPhoneVC.email = email
         verifyPhoneVC.userName = self.userNameTextfield.text
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         verifyPhoneVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
     }
@@ -159,45 +141,44 @@ class SignUpUserNameViewController: UIViewController {
     {
         showOverlay()
         authenticationManager.signUp(email: email, password: password, userName: self.userNameTextfield.text!, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -205,7 +186,7 @@ class SignUpUserNameViewController: UIViewController {
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {
-            let defaults = NSUserDefaults .standardUserDefaults()
+            let defaults = UserDefaults.standard
             if let userId = json["user"]
             {
                 defaults.setValue(userId, forKey: userLoginIdKey)
@@ -227,10 +208,10 @@ class SignUpUserNameViewController: UIViewController {
         else if code.isEmpty == false {
             
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -240,7 +221,7 @@ class SignUpUserNameViewController: UIViewController {
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -253,12 +234,12 @@ class SignUpUserNameViewController: UIViewController {
 
 extension SignUpUserNameViewController:UITextFieldDelegate{
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

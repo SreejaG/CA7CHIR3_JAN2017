@@ -3,7 +3,7 @@ import Foundation
 
 class RequestManager {
     
-    var timeoutInterval: NSTimeInterval {
+    var timeoutInterval: TimeInterval {
         return 15.0
     }
     
@@ -36,8 +36,8 @@ class RequestManager {
     
     func imageHttpManagerWithUrl(url: String) -> AFHTTPRequestOperation? {
         let nsUrl = NSURL(string: url)
-        let imageRequest: NSURLRequest = NSURLRequest(URL: nsUrl!, cachePolicy: .UseProtocolCachePolicy, timeoutInterval: timeoutInterval)
-        let request: AFHTTPRequestOperation = AFHTTPRequestOperation(request: imageRequest)
+        let imageRequest: NSURLRequest = NSURLRequest(url: nsUrl! as URL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: timeoutInterval)
+        let request: AFHTTPRequestOperation = AFHTTPRequestOperation(request: imageRequest as URLRequest)
         request.responseSerializer = AFImageResponseSerializer() as AFHTTPResponseSerializer
         return request
     }
@@ -55,7 +55,7 @@ class RequestManager {
             if let errorData = responseErrorData
             {
                 do {
-                    let jsonData = try NSJSONSerialization.JSONObjectWithData(errorData, options:NSJSONReadingOptions.MutableContainers ) as! NSDictionary
+                    let jsonData = try JSONSerialization.jsonObject(with: errorData as Data, options:JSONSerialization.ReadingOptions.mutableContainers ) as! NSDictionary
                     if let errorMsg = jsonData[apiErrorMessageKey]
                     {
                         errorMessage = errorMsg as? String
@@ -77,7 +77,7 @@ class RequestManager {
             if let errorData = responseErrorData
             {
                 do {
-                    let jsonData = try NSJSONSerialization.JSONObjectWithData(errorData, options:NSJSONReadingOptions.MutableContainers ) as! NSDictionary
+                    let jsonData = try JSONSerialization.jsonObject(with: errorData as Data, options:JSONSerialization.ReadingOptions.mutableContainers ) as! NSDictionary
                     if let errorC = jsonData[apiErrorCodeKey]
                     {
                         errorCode = errorC as? String
@@ -99,7 +99,7 @@ class RequestManager {
             if let errorData = responseErrorData
             {
                 do {
-                    let jsonData = try NSJSONSerialization.JSONObjectWithData(errorData, options:NSJSONReadingOptions.MutableContainers ) as! NSDictionary
+                    let jsonData = try JSONSerialization.jsonObject(with: errorData as Data, options:JSONSerialization.ReadingOptions.mutableContainers ) as! NSDictionary
                     if let errorC = jsonData[apiDeveloperFailureMessage]
                     {
                         errorCode = errorC as? String

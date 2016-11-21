@@ -9,10 +9,10 @@ class contactTableViewCell: UITableViewCell {
     
     var section : Int = Int()
     
-    @IBAction func contactSelectionButtonClicked(sender: AnyObject) {
-        let tag = sender.tag
+    @IBAction func contactSelectionButtonClicked(_ sender: Any) {
+        let tag = (sender as AnyObject).tag
         let dict = ["sectionKey": section,"rowKey":tag]
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshSignUpContactListTableView", object:dict)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshSignUpContactListTableView"), object:dict)
     }
     
     override func awakeFromNib() {
@@ -22,7 +22,7 @@ class contactTableViewCell: UITableViewCell {
         
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
 }

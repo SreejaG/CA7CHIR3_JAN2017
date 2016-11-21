@@ -1,5 +1,4 @@
 
-
 import UIKit
 
 class contactManager: NSObject {
@@ -14,88 +13,89 @@ class contactManager: NSObject {
     }
     
     //Method to add contact details, success and failure block
-    func addContactDetails(userName: String, accessToken: String, userContacts: NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func addContactDetails(userName: String, accessToken: String, userContacts: NSArray, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().POST(UrlManager.sharedInstance.contactAPIUrl(), parameters: ["userName": userName, "access_token": accessToken, "contactList": userContacts], success: { (operation, response) -> Void in
+        requestManager.httpManager().post(UrlManager.sharedInstance.contactAPIUrl(), parameters: ["userName": userName, "access_token": accessToken, "contactList": userContacts], success: { (operation, response) -> Void in
             
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
     //Method to get contact details, success and failure block
-    func getContactDetails(userName: String, accessToken: String, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getContactDetails(userName: String, accessToken: String, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.getContactDataAPIUrl(userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().get(UrlManager.sharedInstance.getContactDataAPIUrl(userName: userName, accessToken: accessToken), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func inviteContactDetails(userName: String, accessToken: String, contacts: NSArray, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    //Method to invite contact details, success and failure block
+    func inviteContactDetails(userName: String, accessToken: String, contacts: NSArray, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().PUT(UrlManager.sharedInstance.getContactDataAPIUrl(userName, accessToken: accessToken), parameters: ["contactList":contacts], success: { (operation, response) -> Void in
+        requestManager.httpManager().put(UrlManager.sharedInstance.getContactDataAPIUrl(userName: userName, accessToken: accessToken), parameters: ["contactList":contacts], success: { (operation, response) -> Void in
             if let responseObject = response as? [String:AnyObject]
             {
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureErrorCodeFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The credentials were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureErrorCodeFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The credentials were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
 }

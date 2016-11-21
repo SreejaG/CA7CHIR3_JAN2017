@@ -3,13 +3,13 @@ import UIKit
 
 class GlobalDataChannelList: NSObject {
     
-    var globalChannelDataSource: [[String:AnyObject]] = [[String:AnyObject]]()
-    var channelDetailsDict : [[String:AnyObject]] = [[String:AnyObject]]()
+    var globalChannelDataSource: [[String:Any]] = [[String:Any]]()
+    var channelDetailsDict : [[String:Any]] = [[String:Any]]()
     
-    var operationQueueObjInChannelList = NSOperationQueue()
-    var operationInChannelList = NSBlockOperation()
+    var operationQueueObjInChannelList = OperationQueue()
+    var operationInChannelList = BlockOperation()
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     var userId : String = String()
     var accessToken : String = String()
@@ -26,26 +26,26 @@ class GlobalDataChannelList: NSObject {
     
     func initialise()
     {
-        userId = defaults.valueForKey(userLoginIdKey) as! String
-        accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        getChannelDetails(userId, token: accessToken)
+        userId = defaults.value(forKey: userLoginIdKey) as! String
+        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+        getChannelDetails(userName: userId, token: accessToken)
     }
     
     func getChannelDetails(userName: String, token: String)
     {
-        ChannelManager.sharedInstance.getChannelDetails(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        ChannelManager.sharedInstance.getChannelDetails(userName: userName, accessToken: token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandlerChannel(error, code: message)
+            self.authenticationFailureHandlerChannel(error: error, code: message)
         }
     }
     
-    func authenticationSuccessHandler(response:AnyObject?)
+    func authenticationSuccessHandler(response:Any?)
     {
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
             channelDetailsDict.removeAll()
-            channelDetailsDict = json["channels"] as! [[String:AnyObject]]
+            channelDetailsDict = json["channels"] as! [[String:Any]]
             setChannelDetails()
         }
         else
@@ -65,7 +65,7 @@ class GlobalDataChannelList: NSObject {
             codeString = code
         }
         else{
-            if(UIApplication.sharedApplication().applicationState == .Inactive)
+            if(UIApplication.shared.applicationState == .inactive)
             {
                 codeString = "Nothing"
             }
@@ -73,33 +73,33 @@ class GlobalDataChannelList: NSObject {
                 codeString = "ResponseError"
             }
         }
-        NSNotificationCenter.defaultCenter().postNotificationName("stopInitialising", object: codeString)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stopInitialising"), object:codeString)
     }
     
     func setChannelDetails()
     {
         globalChannelDataSource.removeAll()
         for element in channelDetailsDict{
-            let channelId = element[channelIdKey]?.stringValue
+            let channelId = "\(element[channelIdKey]!)"
             var mediaId = String()
-            if let m =  element[latestMediaIdKey]?.stringValue
+            if let _ = element[latestMediaIdKey] as? Int
             {
-                mediaId = m
+                mediaId = String(element[latestMediaIdKey] as! Int)
             }
             else{
                 mediaId = ""
             }
             let channelName = element[channelNameKey] as! String
-            let mediaSharedCount = element[totalMediaKey]?.stringValue
+            let mediaSharedCount = String(element[totalMediaKey] as! Int)
             let createdTime = element[ChannelCreatedTimeKey] as! String
-            let sharedBool = Int(element[chanelSharedIndicatorKey] as! Bool)
+            let sharedBool = (element[chanelSharedIndicatorKey] as! Bool).hashValue
             
-            self.globalChannelDataSource.append([channelIdKey: channelId!,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount!,ChannelCreatedTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool])
+            self.globalChannelDataSource.append([channelIdKey: channelId,channelNameKey: channelName,mediaIdKey: mediaId,totalMediaKey: mediaSharedCount,ChannelCreatedTimeKey: createdTime,sharedOriginalKey: sharedBool,sharedTemporaryKey: sharedBool])
         }
         
         if(self.globalChannelDataSource.count > 0){
             sortChannelList()
-            operationInChannelList  = NSBlockOperation (block: {
+            operationInChannelList  = BlockOperation (block: {
                 self.downloadMediaFromGCS()
             })
             self.operationQueueObjInChannelList.addOperation(operationInChannelList)
@@ -115,29 +115,34 @@ class GlobalDataChannelList: NSObject {
                 if let mediaIdChk = globalChannelDataSource[i][mediaIdKey]
                 {
                     let mediaIdForFilePath = "\(mediaIdChk as! String)thumb"
-                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                    let savingPath = "\(parentPath)/\(mediaIdForFilePath)"
-                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                    let savingPath = parentPath! + "/" + mediaIdForFilePath
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
                     if fileExistFlag == true{
-                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                        let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
                         imageForMedia = mediaImageFromFile!
                     }
                     else{
-                        let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaIdChk as! String, userName: userId, accessToken: accessToken)
-                        url = convertStringtoURL(mediaUrl)
-                        downloadMedia(url, key: "ThumbImage", completion: { (result) -> Void in
+                        let mediaUrl = UrlManager.sharedInstance.getThumbImageForMedia(mediaId: mediaIdChk as! String, userName: userId, accessToken: accessToken)
+                        url = convertStringtoURL(url: mediaUrl)
+                        downloadMedia(downloadURL: url, key: "ThumbImage", completion: { (result) -> Void in
                             if(result != UIImage()){
                                 let imageDataFromresult = UIImageJPEGRepresentation(result, 0.5)
-                                let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
-                                let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
-                                let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
-                                if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
-                                    
+                                if(imageDataFromresult != nil){
+                                    let imageDataFromresultAsNsdata = (imageDataFromresult as NSData?)!
+                                    let imageDataFromDefault = UIImageJPEGRepresentation(UIImage(named: "thumb12")!, 0.5)
+                                    let imageDataFromDefaultAsNsdata = (imageDataFromDefault as NSData?)!
+                                    if(imageDataFromresultAsNsdata.isEqual(imageDataFromDefaultAsNsdata)){
+                                        
+                                    }
+                                    else{
+                                        _ = FileManagerViewController.sharedInstance.saveImageToFilePath    (mediaName: mediaIdForFilePath, mediaImage: result)
+                                    }
+                                    imageForMedia = result
                                 }
                                 else{
-                                    FileManagerViewController.sharedInstance.saveImageToFilePath    (mediaIdForFilePath, mediaImage: result)
+                                    imageForMedia =  UIImage(named: "thumb12")!
                                 }
-                                imageForMedia = result
                             }
                             else{
                                 imageForMedia =  UIImage(named: "thumb12")!
@@ -152,13 +157,13 @@ class GlobalDataChannelList: NSObject {
         }
     }
     
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (_ result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
         do {
-            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            let data = try NSData(contentsOf: downloadURL as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
                 }
@@ -166,50 +171,42 @@ class GlobalDataChannelList: NSObject {
                     
                     mediaImage = UIImage(named: "thumb12")!
                 }
-
-                completion(result: mediaImage)
+                
+                completion(mediaImage)
             }
             else
             {
-                completion(result:UIImage(named: "thumb12")!)
+                completion(UIImage(named: "thumb12")!)
             }
             
         } catch {
-            completion(result:UIImage(named: "thumb12")!)
+            completion(UIImage(named: "thumb12")!)
         }
     }
     
     func sortChannelList(){
-        globalChannelDataSource.sortInPlace({ p1, p2 in
+        globalChannelDataSource.sort(by: { p1, p2 in
             let time1 = p1[ChannelCreatedTimeKey] as! String
             let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
-        NSNotificationCenter.defaultCenter().postNotificationName("removeActivityIndicatorMyChannelList", object:nil)
+        NotificationCenter.default.post(name:NSNotification.Name(rawValue:"removeActivityIndicatorMyChannelList"), object:nil)
         autoDownloadChannelDetails()
     }
     
     func autoDownloadChannelDetails()
     {
-        GlobalChannelToImageMapping.sharedInstance.globalData(globalChannelDataSource)
-    }
-    
-    func nullToNil(value : AnyObject?) -> AnyObject? {
-        if value is NSNull {
-            return ""
-        } else {
-            return value
-        }
+        GlobalChannelToImageMapping.sharedInstance.globalData(source: globalChannelDataSource)
     }
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    func enableDisableChannelList(dataSource : [[String:AnyObject]])  {
+    func enableDisableChannelList(dataSource : [[String:Any]])  {
         for element in dataSource
         {
             let channelIdChk = element[channelIdKey] as! String
@@ -227,5 +224,4 @@ class GlobalDataChannelList: NSObject {
             }
         }
     }
-    
 }

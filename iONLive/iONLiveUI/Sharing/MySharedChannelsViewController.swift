@@ -12,10 +12,10 @@ class MySharedChannelsViewController: UIViewController {
     let channelManager = ChannelManager.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
-    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var dataSource:[[String:Any]] = [[String:Any]]()
     
     var searchActive : Bool = false
-    var searchDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var searchDataSource:[[String:Any]] = [[String:Any]]()
     var addChannelArray : NSMutableArray = NSMutableArray()
     var deleteChannelArray : NSMutableArray = NSMutableArray()
     
@@ -27,9 +27,11 @@ class MySharedChannelsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(_:)), name: "refreshMySharedChannelTableView", object: nil)
         
-        doneButton.hidden = true
+        let refreshMySharedChannel = Notification.Name("refreshMySharedChannelTableView")
+        NotificationCenter.default.addObserver(self, selector:#selector(MySharedChannelsViewController.CallRefreshMySharedChannelTableView(notif:)), name: refreshMySharedChannel, object: nil)
+        
+        doneButton.isHidden = true
         
         dataSource.removeAll()
         addChannelArray.removeAllObjects()
@@ -37,7 +39,8 @@ class MySharedChannelsViewController: UIViewController {
         
         sharedChannelsSearchBar.delegate = self
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannelList", object: nil)
+        let removeActivityIndicatorMyChannelList = Notification.Name("removeActivityIndicatorMyChannelList")
+        NotificationCenter.default.addObserver(self, selector:#selector(MySharedChannelsViewController.removeActivityIndicator(notif:)), name: removeActivityIndicatorMyChannelList, object: nil)
         
         showOverlay()
         
@@ -52,14 +55,14 @@ class MySharedChannelsViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         addKeyboardObservers()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func didReceiveMemoryWarning() {
@@ -68,8 +71,8 @@ class MySharedChannelsViewController: UIViewController {
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormyChanelImageList = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+        self.NoDatalabelFormyChanelImageList.textAlignment = NSTextAlignment.center
         self.NoDatalabelFormyChanelImageList.text = "No Channel Available"
         self.view.addSubview(self.NoDatalabelFormyChanelImageList)
     }
@@ -77,9 +80,9 @@ class MySharedChannelsViewController: UIViewController {
     func removeActivityIndicator(notif : NSNotification){
         dataSource.removeAll()
         self.createChannelDataSource()
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.removeOverlay()
-        })
+        }
     }
     
     func createChannelDataSource()
@@ -97,10 +100,10 @@ class MySharedChannelsViewController: UIViewController {
         }
     }
     
-    @IBAction func backButtonClicked(sender: AnyObject)
+    @IBAction func backButtonClicked(_ sender: Any)
     {
-        if(doneButton.hidden == false){
-            doneButton.hidden = true
+        if(doneButton.isHidden == false){
+            doneButton.isHidden = true
             for i in 0 ..< dataSource.count
             {
                 if i < dataSource.count
@@ -113,22 +116,28 @@ class MySharedChannelsViewController: UIViewController {
         }
         else{
             let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-            self.navigationController?.navigationBarHidden = true
+            let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+            self.navigationController?.isNavigationBarHidden = true
             self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
         }
     }
     
     func addKeyboardObservers()
     {
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.keyboardDidShow(_:)), name: UIKeyboardDidShowNotification, object:nil)]
-        [NSNotificationCenter .defaultCenter().addObserver(self, selector:#selector(MySharedChannelsViewController.keyboardDidHide), name: UIKeyboardWillHideNotification, object:nil)]
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(MySharedChannelsViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(MySharedChannelsViewController.keyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     func keyboardDidShow(notification:NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         if tableViewBottomConstaint.constant == 0
         {
             self.tableViewBottomConstaint.constant = self.tableViewBottomConstaint.constant + keyboardFrame.size.height
@@ -143,7 +152,7 @@ class MySharedChannelsViewController: UIViewController {
         }
     }
     
-    @IBAction func gestureTapped(sender: AnyObject) {
+    @IBAction func gestureTapped(_ sender: Any) {
         view.endEditing(true)
         self.sharedChannelsSearchBar.text = ""
         self.sharedChannelsSearchBar.resignFirstResponder()
@@ -151,8 +160,8 @@ class MySharedChannelsViewController: UIViewController {
         self.sharedChannelsTableView.reloadData()
     }
     
-    @IBAction func didTapDoneButton(sender: AnyObject) {
-        doneButton.hidden = true
+    @IBAction func didTapDoneButton(_ sender: Any) {
+        doneButton.isHidden = true
         self.sharedChannelsTableView.reloadData()
         sharedChannelsTableView.layoutIfNeeded()
         addChannelArray.removeAllObjects()
@@ -164,63 +173,62 @@ class MySharedChannelsViewController: UIViewController {
                 let channelid = dataSource[i][channelIdKey] as! String
                 let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
                 if(selectionValue == 1){
-                    addChannelArray.addObject(channelid)
+                    addChannelArray.add(channelid)
                 }
                 else{
-                    deleteChannelArray.addObject(channelid)
+                    deleteChannelArray.add(channelid)
                 }
             }
         }
         if((addChannelArray.count > 0) || (deleteChannelArray.count > 0)){
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let userId = defaults.valueForKey(userLoginIdKey) as! String
-            let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-            enableDisableChannels(userId, token: accessToken, addChannels: addChannelArray, deleteChannels: deleteChannelArray)
+            let defaults = UserDefaults .standard
+            let userId = defaults.value(forKey: userLoginIdKey) as! String
+            let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+            enableDisableChannels(userName: userId, token: accessToken, addChannels: addChannelArray, deleteChannels: deleteChannelArray)
         }
     }
     
     func  enableDisableChannels(userName: String, token: String, addChannels: NSMutableArray, deleteChannels:NSMutableArray) {
         showOverlay()
-        channelManager.enableDisableChannels(userName, accessToken: token, addChannel: addChannels, deleteChannel: deleteChannels, success: { (response) in
-            self.authenticationSuccessHandlerEnableDisable(response)
+        channelManager.enableDisableChannels(userName: userName, accessToken: token, addChannel: addChannels, deleteChannel: deleteChannels, success: { (response) in
+            self.authenticationSuccessHandlerEnableDisable(response: response)
         }) { (error, message) in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
     func loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults .standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func authenticationSuccessHandlerEnableDisable(response:AnyObject?)
@@ -239,7 +247,7 @@ class MySharedChannelsViewController: UIViewController {
                     }
                 }
                 sharedChannelsTableView.reloadData()
-                GlobalDataChannelList.sharedInstance.enableDisableChannelList(dataSource)
+                GlobalDataChannelList.sharedInstance.enableDisableChannelList(dataSource: dataSource)
             }
         }
         else
@@ -260,7 +268,7 @@ class MySharedChannelsViewController: UIViewController {
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -272,19 +280,19 @@ class MySharedChannelsViewController: UIViewController {
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    func downloadMedia(downloadURL : NSURL ,key : String , completion: (result: UIImage) -> Void)
+    func downloadMedia(downloadURL : NSURL ,key : String , completion: (_ result: UIImage) -> Void)
     {
         var mediaImage : UIImage = UIImage()
         
         do {
-            let data = try NSData(contentsOfURL: downloadURL,options: NSDataReadingOptions())
+            let data = try NSData(contentsOf: downloadURL as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
                 }
@@ -293,15 +301,15 @@ class MySharedChannelsViewController: UIViewController {
                     mediaImage = UIImage(named: "thumb12")!
                 }
                 
-                completion(result: mediaImage)
+                completion(mediaImage)
             }
             else
             {
-                completion(result:UIImage(named: "thumb12")!)
+                completion(UIImage(named: "thumb12")!)
             }
             
         } catch {
-            completion(result:UIImage(named: "thumb12")!)
+            completion(UIImage(named: "thumb12")!)
         }
     }
     
@@ -314,10 +322,10 @@ class MySharedChannelsViewController: UIViewController {
         else if code.isEmpty == false {
             
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -336,8 +344,8 @@ class MySharedChannelsViewController: UIViewController {
     }
     
     func CallRefreshMySharedChannelTableView(notif:NSNotification){
-        if(doneButton.hidden == true){
-            doneButton.hidden = false
+        if(doneButton.isHidden == true){
+            doneButton.isHidden = false
         }
         let indexpath = notif.object as! Int
         if(searchActive)
@@ -379,35 +387,28 @@ class MySharedChannelsViewController: UIViewController {
     }
 }
 
-extension MySharedChannelsViewController: UITableViewDelegate
+extension MySharedChannelsViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 45.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
-    {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsHeaderCell.identifier) as! MySharedChannelsHeaderCell
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: MySharedChannelsHeaderCell.identifier) as! MySharedChannelsHeaderCell
         headerCell.headerTitleLabel.text = "MY SHARED CHANNELS"
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
-    {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0.01
     }
-}
-
-extension MySharedChannelsViewController:UITableViewDataSource
-{
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if(searchActive){
             return searchDataSource.count > 0 ? (searchDataSource.count) : 0
         }
@@ -416,19 +417,19 @@ extension MySharedChannelsViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
-        var dataSourceTmp : [[String:AnyObject]]?
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var dataSourceTmp : [[String:Any]]?
         if(searchActive){
             dataSourceTmp = searchDataSource
         }
+            
         else{
             dataSourceTmp = dataSource
         }
         
         if dataSourceTmp!.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(MySharedChannelsCell.identifier, forIndexPath:indexPath) as! MySharedChannelsCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: MySharedChannelsCell.identifier, for:indexPath as IndexPath) as! MySharedChannelsCell
             
             cell.channelNameLabel.text = dataSourceTmp![indexPath.row][channelNameKey] as? String
             cell.sharedCountLabel.text = dataSourceTmp![indexPath.row][totalMediaKey] as? String
@@ -446,16 +447,16 @@ extension MySharedChannelsViewController:UITableViewDataSource
             
             let selectionValue : Int = dataSourceTmp![indexPath.row][sharedTemporaryKey] as! Int
             if(selectionValue == 1){
-                cell.channelSelectionButton.setImage(UIImage(named:"CheckOn"), forState:.Normal)
-                cell.sharedCountLabel.hidden = false
-                cell.avatarIconImageView.hidden = false
+                cell.channelSelectionButton.setImage(UIImage(named:"CheckOn"), for:.normal)
+                cell.sharedCountLabel.isHidden = false
+                cell.avatarIconImageView.isHidden = false
             }
             else{
-                cell.channelSelectionButton.setImage(UIImage(named:"red-circle"), forState:.Normal)
-                cell.sharedCountLabel.hidden = true
-                cell.avatarIconImageView.hidden = true
+                cell.channelSelectionButton.setImage(UIImage(named:"red-circle"), for:.normal)
+                cell.sharedCountLabel.isHidden = true
+                cell.avatarIconImageView.isHidden = true
             }
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             return cell
         }
         else{
@@ -463,11 +464,10 @@ extension MySharedChannelsViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "tabToAppear")
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        UserDefaults.standard.set(1, forKey: "tabToAppear")
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewControllerWithIdentifier(MyChannelDetailViewController.identifier) as! UITabBarController
+        let channelDetailVC:UITabBarController = sharingStoryboard.instantiateViewController(withIdentifier: MyChannelDetailViewController.identifier) as! UITabBarController
         if(!searchActive){
             if dataSource.count > indexPath.row
             {
@@ -484,13 +484,13 @@ extension MySharedChannelsViewController:UITableViewDataSource
                 (channelDetailVC as! MyChannelDetailViewController).totalMediaCount = Int(searchDataSource[indexPath.row][totalMediaKey]! as! String)!
             }
         }
-        channelDetailVC.navigationController?.navigationBarHidden = true
+        channelDetailVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(channelDetailVC, animated: false)
     }
 }
 
 extension MySharedChannelsViewController : UISearchBarDelegate,UISearchDisplayDelegate{
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         if self.sharedChannelsSearchBar.text != ""
         {
             searchActive = true
@@ -500,19 +500,19 @@ extension MySharedChannelsViewController : UISearchBarDelegate,UISearchDisplayDe
         }
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchActive = false;
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
     }
     
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
     }
     
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchDataSource.removeAll()
         
         if sharedChannelsSearchBar.text!.isEmpty
@@ -525,8 +525,9 @@ extension MySharedChannelsViewController : UISearchBarDelegate,UISearchDisplayDe
             if dataSource.count > 0
             {
                 for element in dataSource{
-                    let tmp: String = (element[channelNameKey]?.lowercaseString)!
-                    if(tmp.containsString(searchText.lowercaseString))
+                    var tmp: String =  ""
+                    tmp = (element[channelNameKey] as! String).lowercased()
+                    if(tmp.range(of: searchText.lowercased()) != nil)
                     {
                         searchDataSource.append(element)
                     }

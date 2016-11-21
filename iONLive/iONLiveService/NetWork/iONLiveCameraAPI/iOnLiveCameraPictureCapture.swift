@@ -1,5 +1,4 @@
 
-
 import Foundation
 
 class iOnLiveCameraPictureCapture: NSObject {
@@ -12,125 +11,126 @@ class iOnLiveCameraPictureCapture: NSObject {
     }
     
     //Method to get burst id of the image from connected iONLIve Cam, success and failure block
-    func getiONLiveCameraPictureId(scale: String?, burstCount: String?,burstInterval:String?,quality:String?, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getiONLiveCameraPictureId(scale: String?, burstCount: String?,burstInterval:String?,quality:String?, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().GET(UrlManager.sharedInstance.iONLiveCamGetPictureUrl(scale, burstCount: burstCount, burstInterval: burstInterval, quality: quality), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().get(UrlManager.sharedInstance.iONLiveCamGetPictureUrl(scale: scale, burstCount: burstCount, burstInterval: burstInterval, quality: quality), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The parameters were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The parameters were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    
-    //    //Method to get burst id of the image from connected iONLIve Cam, success and failure block
-    func deleteiONLiveCameraPicture(burstID: String!, success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    //Method to get burst id of the image from connected iONLIve Cam, success and failure block
+    func deleteiONLiveCameraPicture(burstID: String!, success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().DELETE(UrlManager.sharedInstance.iONLiveCamDeletePictureUrl(burstID), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().delete(UrlManager.sharedInstance.iONLiveCamDeletePictureUrl(burstId: burstID), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error: error as NSError?)
+            {
                 
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The parameters were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+                failureErrorCode = errorCode
+            }
+            //The parameters were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func deleteAllIONLiveCameraPicture(success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func deleteAllIONLiveCameraPicture(success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().DELETE(UrlManager.sharedInstance.iONLiveCamDeleteAllPictureUrl(), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().delete(UrlManager.sharedInstance.iONLiveCamDeleteAllPictureUrl(), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The parameters were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The parameters were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
     
-    func cancelSnaps(success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func cancelSnaps(success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
         let requestManager = RequestManager.sharedInstance
-        requestManager.httpManager().DELETE(UrlManager.sharedInstance.iONLiveCamCancelSnapsUrl(), parameters: nil, success: { (operation, response) -> Void in
+        requestManager.httpManager().delete(UrlManager.sharedInstance.iONLiveCamCancelSnapsUrl(), parameters: nil, success: { (operation, response) -> Void in
             
             //Get and parse the response
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             else
             {
                 //The response did not match the form we expected, error/fail
-                failure?(error: NSError(domain: "Response error", code: 1, userInfo: nil), code: "ResponseInvalid")
+                failure?(NSError(domain: "Response error", code: 1, userInfo: nil), "ResponseInvalid")
             }
             
-            }, failure: { (operation, error) -> Void in
-                
-                var failureErrorCode:String = ""
-                //get the error code from API if any
-                if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error)
-                {
-                    failureErrorCode = errorCode
-                }
-                //The parameters were wrong or the network call failed
-                failure?(error: error, code:failureErrorCode)
+        }, failure: { (operation, error) -> Void in
+            
+            var failureErrorCode:String = ""
+            //get the error code from API if any
+            if let errorCode = requestManager.getFailureDeveloperMessageFromResponse(error: error as NSError?)
+            {
+                failureErrorCode = errorCode
+            }
+            //The parameters were wrong or the network call failed
+            failure?(error as NSError?, failureErrorCode)
         })
     }
 }

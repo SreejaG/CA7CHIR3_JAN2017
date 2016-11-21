@@ -22,7 +22,6 @@ let apiDeveloperFailureMessage = "developerMsg"
 let vowzaIp = "104.196.159.90" //IR3
 
 //channel details
-
 let channelIdKey = "channel_detail_id"
 let channelNameKey = "channel_name"
 let totalMediaKey = "total_no_media_shared"
@@ -33,7 +32,6 @@ let chanelSharedIndicatorKey = "channel_shared_ind"
 let latestMediaIdKey = "latest_thumbnail_id"
 
 //media details
-
 let mediaIdKey = "media_detail_id"
 let tImageKey = "thumbImage"
 let tImageURLKey = "thumbImage_URL"
@@ -46,7 +44,6 @@ let videoDurationKey = "video_duration"
 let mediaCreatedTimeKey = "created_time_stamp"
 
 // channel page
-
 let ch_channelIdkey = "ch_detail_id"
 let ch_channelNameKey = "channel_name"
 let sharedMediaCount = "total_no_media_shared"
@@ -80,8 +77,6 @@ let timestamp = "last_updated_time_stamp"
 let channelIdkey = "ch_detail_id"
 let stream_channelNameKey = "channel_name"
 let notificationKey = "notification"
-
-
 
 @objc enum SnapCamSelectionMode : Int {
     

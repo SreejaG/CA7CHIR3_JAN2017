@@ -16,11 +16,11 @@ class MyChannelCell: UITableViewCell {
         channelNameLabel.adjustsFontSizeToFitWidth = true
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    @IBAction func edited(sender: AnyObject) {
-        NSUserDefaults.standardUserDefaults().setValue(editChanelNameTextField.text, forKey: "editedValue")
+    @IBAction func edited(_ sender: Any) {
+        UserDefaults.standard.setValue(editChanelNameTextField.text, forKey: "editedValue")
     }
 }

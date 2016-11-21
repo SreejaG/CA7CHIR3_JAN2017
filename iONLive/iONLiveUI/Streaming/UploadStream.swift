@@ -25,9 +25,9 @@ class UploadStream : NSObject
     
     func initialiseLiveStreamingToken()
     {
-        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
-        let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
-        NSUserDefaults.standardUserDefaults().setBool(true, forKey: initializingStream)
+        let loginId = UserDefaults.standard.object(forKey: userLoginIdKey)
+        let accessTocken = UserDefaults.standard.object(forKey: userAccessTockenKey)
+        UserDefaults.standard.set(true, forKey: initializingStream)
         
         if let loginId = loginId, let accessTocken = accessTocken
         {
@@ -35,38 +35,37 @@ class UploadStream : NSObject
                 if let json = response as? [String: AnyObject]
                 {
                     self.currentStreamingTocken = json["streamToken"] as? String
-                    self.startLiveStreamingToken(self.currentStreamingTocken)
+                    self.startLiveStreamingToken(streamTocken: self.currentStreamingTocken)
                 }
                 else
                 {
-                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+                    UserDefaults.standard.set(false, forKey: initializingStream)
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
-                
-                }, failure: { (error, message) -> () in
-                    self.streamingFailed()
-                    self.handleFailure(message)
-                    return
+            }, failure: { (error, message) -> () in
+                self.streamingFailed()
+                self.handleFailure(message: message)
+                return
             })
         }
         else
         {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+            UserDefaults.standard.set(false, forKey: initializingStream)
             ErrorManager.sharedInstance.authenticationIssue()
         }
     }
     
     func cleanStreamingToken()
     {
-        let userDefault = NSUserDefaults.standardUserDefaults()
-        userDefault.removeObjectForKey(streamingToken)
-        userDefault.removeObjectForKey(startedStreaming)
+        let userDefault = UserDefaults.standard
+        userDefault.removeObject(forKey: streamingToken)
+        userDefault.removeObject(forKey: startedStreaming)
     }
     
     func startLiveStreamingToken(streamTocken:String?)
     {
-        let loginId = NSUserDefaults.standardUserDefaults().objectForKey(userLoginIdKey)
-        let accessTocken = NSUserDefaults.standardUserDefaults().objectForKey(userAccessTockenKey)
+        let loginId = UserDefaults.standard.object(forKey: userLoginIdKey)
+        let accessTocken = UserDefaults.standard.object(forKey: userAccessTockenKey)
         
         cleanStreamingToken()
         
@@ -77,18 +76,18 @@ class UploadStream : NSObject
                 if let json = response as? [String: AnyObject]
                 {
                     let streamToken:String = json["streamToken"] as! String
-                    self.InitialiseStreamWithToken(streamToken)
+                    self.InitialiseStreamWithToken(streamToken: streamToken)
                 }
                 else
                 {
                     self.streamingFailed()
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
-                }, failure: { (error, message) -> () in
-                    
-                    self.streamingFailed()
-                    self.handleFailure(message)
-                    return
+            }, failure: { (error, message) -> () in
+                
+                self.streamingFailed()
+                self.handleFailure(message: message)
+                return
             })
         }
         else
@@ -104,7 +103,7 @@ class UploadStream : NSObject
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if message.isEmpty == false {
-            ErrorManager.sharedInstance.mapErorMessageToErrorCode(message)
+            ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: message)
         }
         else{
             ErrorManager.sharedInstance.streamingError()
@@ -113,52 +112,51 @@ class UploadStream : NSObject
     
     func InitialiseStreamWithToken(streamToken:String)
     {
-        let baseStreamName = self.getBaseStream(streamToken)
+        let baseStreamName = self.getBaseStream(streamToken: streamToken)
         let cameraServerName = self.getCameraServer()
         
-        NSUserDefaults.standardUserDefaults().setValue(streamToken, forKey: streamingToken)
+        UserDefaults.standard.setValue(streamToken, forKey: streamingToken)
         
         if (init_streams(cameraServerName, baseStreamName) == 0)
         {
-            self.setStreamingDefaults()
-            let queue:dispatch_queue_t = dispatch_queue_create("streaming", DISPATCH_QUEUE_SERIAL)
             
-            dispatch_async(queue, { () -> Void in
-                self.startStreamingWithToken(streamToken)
-            })
+            self.setStreamingDefaults()
+            let queue = DispatchQueue(label: "streaming")
+            queue.async {
+                self.startStreamingWithToken(streamtoken: streamToken)
+            }
         }
         else
         {
             showAlert = false
             self.stopLiveStreaming()
             self.streamingFailed()
-            NSUserDefaults.standardUserDefaults().setValue(false, forKey: startedStreaming)
-            ErrorManager.sharedInstance.alert("Can't Initialise the stream", message: "Can't Initialise the stream")
+            UserDefaults.standard.setValue(false, forKey: startedStreaming)
+            ErrorManager.sharedInstance.alert(title: "Can't Initialise the stream", message: "Can't Initialise the stream")
         }
     }
     
     func setStreamingDefaults()
     {
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
-        NSUserDefaults.standardUserDefaults().setBool(true, forKey: startedStreaming)
+        UserDefaults.standard.set(false, forKey: initializingStream)
+        UserDefaults.standard.set(true, forKey: startedStreaming)
     }
     
     func streamingFailed()
     {
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: initializingStream)
+        UserDefaults.standard.set(false, forKey: initializingStream)
         self.streamingStatus?.updateStreamingStatus!();
     }
     
     func startStreamingWithToken(streamtoken:String)
     {
-        let taskId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+        let taskId = UIApplication.shared.beginBackgroundTask {
             
         }
-        
-        self.startStreamAndHandleInterruption(streamtoken)
+        self.startStreamAndHandleInterruption(streamtoken: streamtoken)
         if(taskId != UIBackgroundTaskInvalid)
         {
-            UIApplication.sharedApplication().endBackgroundTask(taskId)
+            UIApplication.shared.endBackgroundTask(taskId)
             self.clearStreamingDefaults()
         }
     }
@@ -168,7 +166,7 @@ class UploadStream : NSObject
         self.streamingStatus?.updateStreamingStatus!();
         
         let errCode = start_stream()
-        let defaults = NSUserDefaults .standardUserDefaults()
+        let defaults = UserDefaults.standard
         
         if errCode > 0
         {
@@ -182,10 +180,10 @@ class UploadStream : NSObject
             defaults.setValue(false, forKey: startedStreaming)
             break
         case 1:
-            ErrorManager.sharedInstance.alert("Streaming Stopped", message: "Connection error occurs in input stream")
+            ErrorManager.sharedInstance.alert(title: "Streaming Stopped", message: "Connection error occurs in input stream")
             break
         case 2:
-            ErrorManager.sharedInstance.alert("Streaming Stopped", message: "Connection error occurs in output stream")
+            ErrorManager.sharedInstance.alert(title: "Streaming Stopped", message: "Connection error occurs in output stream")
             break
         default:
             break
@@ -195,9 +193,9 @@ class UploadStream : NSObject
     func getBaseStream(streamToken:String) -> UnsafeMutablePointer<CChar>
     {
         var baseStream = getProtocol() + "://" + getUserName() + ":" + getPassword() + "@" + getMainStream() + "." + getSubStream() + ".com" + ":" + getRTSPPort() + "/live/"
-        baseStream.appendContentsOf(streamToken)
-        let baseStreamptr = strdup(baseStream.cStringUsingEncoding(NSUTF8StringEncoding)!)
-        let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr)
+        baseStream.append(streamToken)
+        let baseStreamptr = strdup(baseStream.cString(using: String.Encoding.utf8)!)
+        let baseStreamName: UnsafeMutablePointer<CChar> = UnsafeMutablePointer(baseStreamptr!)
         return baseStreamName
     }
     
@@ -234,17 +232,17 @@ class UploadStream : NSObject
     func getCameraServer() -> UnsafeMutablePointer<CChar>
     {
         let cameraServer = "rtsp://\(vowzaIp):1935/live"
-        let cameraServerPtr = strdup(cameraServer.cStringUsingEncoding(NSUTF8StringEncoding)!)
-        let cameraServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(cameraServerPtr)
+        let cameraServerPtr = strdup(cameraServer.cString(using: String.Encoding.utf8)!)
+        let cameraServerName :UnsafeMutablePointer<CChar> = UnsafeMutablePointer(cameraServerPtr!)
         return cameraServerName
     }
     
     func stopLiveStreaming()
     {
-        let userDefault = NSUserDefaults.standardUserDefaults()
-        let loginId = userDefault.objectForKey(userLoginIdKey)
-        let accessTocken = userDefault.objectForKey(userAccessTockenKey)
-        let streamTocken = userDefault.objectForKey(streamingToken)
+        let userDefault = UserDefaults.standard
+        let loginId = userDefault.object(forKey: userLoginIdKey)
+        let accessTocken = userDefault.object(forKey: userAccessTockenKey)
+        let streamTocken = userDefault.object(forKey: streamingToken)
         
         if let loginId = loginId, let accessTocken = accessTocken, let streamTocken = streamTocken
         {
@@ -259,12 +257,12 @@ class UploadStream : NSObject
                     ErrorManager.sharedInstance.inValidResponseError()
                 }
                 
-                }, failure: { (error, message) -> () in
-                    if self.showAlert
-                    {
-                        self.handleFailure(message)
-                    }
-                    return
+            }, failure: { (error, message) -> () in
+                if self.showAlert
+                {
+                    self.handleFailure(message: message)
+                }
+                return
             })
         }
         else
@@ -275,7 +273,7 @@ class UploadStream : NSObject
     
     func clearStreamingDefaults()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
+        let defaults = UserDefaults.standard
         defaults.setValue(false, forKey: startedStreaming)
         self.streamingStatus?.updateStreamingStatus!();
     }

@@ -2,9 +2,9 @@
 import UIKit
 
 class AppInfoViewController: UIViewController {
-
+    
     static let identifier = "AppInfoViewController"
-
+    
     let optionTitle = "optionTitle"
     let accessryText = "accessryText"
     
@@ -15,8 +15,8 @@ class AppInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
-        var build = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as! String
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+        var build = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as! String
         
         if(build == "1"){
             build = "1.0"
@@ -26,37 +26,37 @@ class AppInfoViewController: UIViewController {
         
         appInfoTableView.reloadData()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject) {
-         self.navigationController?.popViewControllerAnimated(true)
+    @IBAction func didTapBackButton(_ sender: Any) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
-    
 }
-extension AppInfoViewController: UITableViewDelegate
+
+extension AppInfoViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 40.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(AppInfoHeaderTableViewCell.identifier) as! AppInfoHeaderTableViewCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: AppInfoHeaderTableViewCell.identifier) as! AppInfoHeaderTableViewCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-            headerCell.topBorder.hidden = true
+            headerCell.topBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         case 1:
-            headerCell.bottomBorder.hidden = true
+            headerCell.bottomBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         default:
@@ -65,25 +65,22 @@ extension AppInfoViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
-}
-
-extension AppInfoViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -95,13 +92,13 @@ extension AppInfoViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if appInfoSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(AppInfoTableViewCell.identifier, forIndexPath:indexPath) as! AppInfoTableViewCell
-            cell.userInteractionEnabled = false
-            cell.selectionStyle = .None
+            let cell = tableView.dequeueReusableCell(withIdentifier: AppInfoTableViewCell.identifier, for:indexPath as IndexPath) as! AppInfoTableViewCell
+            cell.isUserInteractionEnabled = false
+            cell.selectionStyle = .none
             cell.titleLabel.text = appInfoSource[indexPath.row][optionTitle]
             cell.accessryLabel.text = appInfoSource[indexPath.row][accessryText]
             return cell
@@ -109,7 +106,7 @@ extension AppInfoViewController:UITableViewDataSource
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
     }
 }

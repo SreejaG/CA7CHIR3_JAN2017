@@ -1,11 +1,3 @@
-//
-//  UIScrollView+InfiniteScroll.m
-//
-//  UIScrollView infinite scroll category
-//
-//  Created by Andrej Mihajlov on 9/4/13.
-//  Copyright (c) 2013-2015 Andrej Mihajlov. All rights reserved.
-//
 
 #import "UIScrollView+InfiniteScroll.h"
 #import <objc/runtime.h>
@@ -31,9 +23,6 @@ static void PBSwizzleMethod(Class c, SEL original, SEL alternate) {
 
 /**
  *  A helper function to force table view to update its content size
- *
- *  See https://github.com/pronebird/UIScrollView-InfiniteScroll/issues/31
- *
  *  @param tableView
  */
 static void PBForceUpdateTableViewContentSize(UITableView *tableView) {
@@ -41,7 +30,7 @@ static void PBForceUpdateTableViewContentSize(UITableView *tableView) {
 }
 
 // Animation duration used for setContentOffset:
-static const NSTimeInterval kPBInfiniteScrollAnimationDuration = 0.50;
+static const NSTimeInterval kPBInfiniteScrollAnimationDuration = 0.35;
 
 // Keys for values in associated dictionary
 static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
@@ -225,7 +214,7 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
 - (void)setInfiniteScrollIndicatorView:(UIView *)indicatorView {
     // make sure indicator is initially hidden
     indicatorView.hidden = YES;
-
+    
     self.pb_infiniteScrollState.indicatorView = indicatorView;
 }
 
@@ -261,7 +250,7 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
 
 - (_PBInfiniteScrollState *)pb_infiniteScrollState {
     _PBInfiniteScrollState *state = objc_getAssociatedObject(self, kPBInfiniteScrollStateKey);
-
+    
     if(!state) {
         state = [[_PBInfiniteScrollState alloc] init];
         
@@ -333,7 +322,7 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
 - (CGFloat)pb_clampContentSizeToFitVisibleBounds:(CGSize)contentSize {
     // Find minimum content height. Only original insets are used in calculation.
     CGFloat minHeight = self.bounds.size.height - self.contentInset.top - [self pb_originalBottomInset];
-
+    
     return MAX(contentSize.height, minHeight);
 }
 
@@ -457,7 +446,7 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
             [self pb_scrollToInfiniteIndicatorIfNeeded:YES];
         }
     }];
-
+    
     TRACE(@"Start animating.");
 }
 
@@ -471,13 +460,6 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
     UIView *activityIndicator = self.infiniteScrollIndicatorView;
     UIEdgeInsets contentInset = self.contentInset;
     
-    // Force the table view to update its contentSize; if we don't do this,
-    // finishInfiniteScroll() will adjust contentInsets and cause contentOffset
-    // to be off by an amount equal to the height of the activity indicator.
-    // See https://github.com/pronebird/UIScrollView-InfiniteScroll/issues/31
-    // Note: this call has to happen before we reset extraBottomInset or indicatorInset
-    //       otherwise indicator may re-layout at the wrong position but we haven't set
-    //       contentInset yet!
     if([self isKindOfClass:[UITableView class]]) {
         PBForceUpdateTableViewContentSize((UITableView *)self);
     }
@@ -522,7 +504,7 @@ static const void *kPBInfiniteScrollStateKey = &kPBInfiniteScrollStateKey;
 
 - (BOOL)pb_shouldShowInfiniteScroll {
     _PBInfiniteScrollState *state = self.pb_infiniteScrollState;
-
+    
     // Ensure we should show the inifinite scroll
     if(state.shouldShowInfiniteScrollHandler) {
         return state.shouldShowInfiniteScrollHandler(self);

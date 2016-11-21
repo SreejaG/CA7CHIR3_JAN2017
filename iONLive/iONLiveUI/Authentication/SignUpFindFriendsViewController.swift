@@ -5,9 +5,9 @@ import UIKit
 
 class SignUpFindFriendsViewController: UIViewController{
     
-    private var addressBookRef: ABAddressBookRef?
+    private var addressBookRef: ABAddressBook?
     
-    func setAddressBook(addressBook: ABAddressBookRef) {
+    func setAddressBook(addressBook: ABAddressBook) {
         addressBookRef = addressBook
     }
     
@@ -16,7 +16,7 @@ class SignUpFindFriendsViewController: UIViewController{
     let requestManager = RequestManager.sharedInstance
     let contactManagers = contactManager.sharedInstance
     var phoneCode: String!
-    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
+    var dataSource:[[String:Any]] = [[String:Any]]()
     var contactPhoneNumbers: [String] = [String]()
     let nameKey = "user_name"
     let phoneKey = "mobile_no"
@@ -25,12 +25,12 @@ class SignUpFindFriendsViewController: UIViewController{
     var loadingOverlay: UIView?
     var contactExist: Bool = false
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
     }
     
@@ -47,10 +47,10 @@ class SignUpFindFriendsViewController: UIViewController{
     {
         self.title = "FIND FRIENDS"
         let addressBookRef1 = ABAddressBookCreateWithOptions(nil, nil).takeRetainedValue()
-        setAddressBook(addressBookRef1)
+        setAddressBook(addressBook: addressBookRef1)
     }
     
-    @IBAction func continueButtonClicked(sender: AnyObject) {
+    @IBAction func continueButtonClicked(_ sender: Any) {
         contactAuthorizationAlert()
     }
     
@@ -58,68 +58,67 @@ class SignUpFindFriendsViewController: UIViewController{
     {
         let authorizationStatus = ABAddressBookGetAuthorizationStatus()
         switch authorizationStatus {
-        case .Denied, .Restricted:
+        case .denied, .restricted:
             generateContactSynchronizeAlert()
-        case .Authorized:
+        case .authorized:
             displayContacts()
-        case .NotDetermined:
+        case .notDetermined:
             promptForAddressBookRequestAccess()
         }
     }
     
     func generateContactSynchronizeAlert()
     {
-        let alert = UIAlertController(title: "\"Catch\" would like to access your contacts", message: "The contacts in your address book will be transmitted to Catch for you to decide who to add", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "\"Catch\" would like to access your contacts", message: "The contacts in your address book will be transmitted to Catch for you to decide who to add", preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: "Don't Allow", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+        alert.addAction(UIAlertAction(title: "Don't Allow", style: UIAlertActionStyle.default, handler: { (action) -> Void in
             self.loadCameraViewController()
         }))
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action) -> Void in
             self.showEventsAcessDeniedAlert()
         }))
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func promptForAddressBookRequestAccess() {
-        ABAddressBookRequestAccessWithCompletion(addressBookRef) {
-            (granted: Bool, error: CFError!) in
-            dispatch_async(dispatch_get_main_queue()) {
-                if !granted {
-                    self.generateContactSynchronizeAlert()
-                } else {
-                    self.displayContacts()
-                }
+        ABAddressBookRequestAccessWithCompletion(addressBookRef, { granted, error in              DispatchQueue.main.async {
+            if !granted {
+                self.generateContactSynchronizeAlert()
+            } else {
+                self.displayContacts()
             }
-        }
+            }
+        })
     }
+    
     func displayContacts(){
         showOverlay()
         contactPhoneNumbers.removeAll()
         let allContacts = ABAddressBookCopyArrayOfAllPeople(addressBookRef).takeRetainedValue() as Array
         for record in allContacts {
-            let phones : ABMultiValueRef = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
+            let phones : ABMultiValue = ABRecordCopyValue(record,kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValue
             var phoneNumber: String = String()
             var appendPlus : String = String()
             for numberIndex : CFIndex in 0 ..< ABMultiValueGetCount(phones)
             {
                 let phoneUnmaganed = ABMultiValueCopyValueAtIndex(phones, numberIndex)
-                let phoneNumberStr = phoneUnmaganed.takeUnretainedValue() as! String
+                let phoneNumberStr = phoneUnmaganed?.takeUnretainedValue() as! String
                 let phoneNumberWithCode: String!
                 if(phoneNumberStr.hasPrefix("+")){
                     phoneNumberWithCode = phoneNumberStr
                 }
                 else if(phoneNumberStr.hasPrefix("00")){
                     let stringLength = phoneNumberStr.characters.count
-                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 2, length: stringLength - 2))
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
+                    let subStr = (phoneNumberStr as NSString).substring(with: NSRange(location: 2, length: stringLength - 2))
+                    phoneNumberWithCode = phoneCode.appending(subStr)
                 }
                 else if(phoneNumberStr.hasPrefix("0")){
                     let stringLength = phoneNumberStr.characters.count
-                    let subStr = (phoneNumberStr as NSString).substringWithRange(NSRange(location: 1, length: stringLength - 1))
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(subStr)
+                    let subStr = (phoneNumberStr as NSString).substring(with: NSRange(location: 1, length: stringLength - 1))
+                    phoneNumberWithCode = phoneCode.appending(subStr)
                 }
                 else{
-                    phoneNumberWithCode = phoneCode.stringByAppendingString(phoneNumberStr)
+                    phoneNumberWithCode = phoneCode.appending(phoneNumberStr)
                 }
                 
                 if phoneNumberWithCode.hasPrefix("+")
@@ -130,19 +129,20 @@ class SignUpFindFriendsViewController: UIViewController{
                     appendPlus = "nil"
                 }
                 
-                let phoneNumberStringArray = phoneNumberWithCode.componentsSeparatedByCharactersInSet(
-                    NSCharacterSet.decimalDigitCharacterSet().invertedSet)
+                let phoneNumberStringArray = (phoneNumberWithCode).components(
+                    separatedBy: CharacterSet.decimalDigits.inverted)
+                
                 if appendPlus == "+"
                 {
-                    phoneNumber = appendPlus.stringByAppendingString(NSArray(array: phoneNumberStringArray).componentsJoinedByString("")) as String
+                    phoneNumber = (appendPlus).appending(NSArray(array: phoneNumberStringArray).componentsJoined(by: "")) as String
                 }
                 contactPhoneNumbers.append(phoneNumber)
             }
             var currentContactImage : UIImage = UIImage()
             
-            if let currentContactImageData = ABPersonCopyImageDataWithFormat(record, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFDataRef!
+            if let currentContactImageData = ABPersonCopyImageDataWithFormat(record, kABPersonImageFormatThumbnail)?.takeRetainedValue() as CFData!
             {
-                currentContactImage = UIImage(data: currentContactImageData)!
+                currentContactImage = UIImage(data: currentContactImageData as Data)!
             }
             else{
                 currentContactImage = UIImage(named: "dummyUser")!
@@ -162,69 +162,68 @@ class SignUpFindFriendsViewController: UIViewController{
                 self.dataSource.append([self.nameKey: currentContactName, self.phoneKey: phoneNumber, self.imageKey: currentContactImage, "orgSelected":0, "tempSelected":0])
             }
         }
-        addContactDetails(contactPhoneNumbers)
+        addContactDetails(contactPhoneNumbers: contactPhoneNumbers as NSArray)
     }
     
     func showEventsAcessDeniedAlert() {
         let alertController = UIAlertController(title: "Permission Denied!",
                                                 message: "The contact permission was not authorized. Please enable it in Settings to continue.",
-                                                preferredStyle: .Alert)
-        let settingsAction = UIAlertAction(title: "Settings", style: .Default) { (alertAction) in
+                                                preferredStyle: .alert)
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (alertAction) in
             if let appSettings = NSURL(string: UIApplicationOpenSettingsURLString) {
-                UIApplication.sharedApplication().openURL(appSettings)
+                UIApplication.shared.openURL(appSettings as URL)
             }
         }
         alertController.addAction(settingsAction)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
-        presentViewController(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
     
     func addContactDetails(contactPhoneNumbers: NSArray)
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
-        let userId = defaults.valueForKey(userLoginIdKey) as! String
-        let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
-        contactManagers.addContactDetails(userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        let defaults = UserDefaults.standard
+        let userId = defaults.value(forKey: userLoginIdKey) as! String
+        let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+        contactManagers.addContactDetails(userName: userId, accessToken: accessToken, userContacts: contactPhoneNumbers, success:  { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -258,7 +257,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 loadContactViewController()
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
                 if code == "CONTACT001"{
                     
                     contactExist = false
@@ -266,7 +265,7 @@ class SignUpFindFriendsViewController: UIViewController{
                 }
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
         }
         else{
@@ -276,7 +275,7 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -288,8 +287,8 @@ class SignUpFindFriendsViewController: UIViewController{
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live", parameters: nil , liveVideo: true) as! UIViewController
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let vc = MovieViewController.movieViewController(withContentPath: "rtsp://\(vowzaIp):1935/live", parameters: nil , liveVideo: true) as! UIViewController
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         vc.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(vc, animated: false)
     }
@@ -297,8 +296,8 @@ class SignUpFindFriendsViewController: UIViewController{
     func loadCameraViewController()
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        iPhoneCameraViewController.navigationController?.navigationBarHidden = true
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+        iPhoneCameraViewController.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: true)
     }
     
@@ -306,10 +305,10 @@ class SignUpFindFriendsViewController: UIViewController{
     {
         removeOverlay()
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let contactDetailsViewController = storyboard.instantiateViewControllerWithIdentifier("ContactDetailsViewController") as! ContactDetailsViewController
+        let contactDetailsViewController = storyboard.instantiateViewController(withIdentifier: "ContactDetailsViewController") as! ContactDetailsViewController
         contactDetailsViewController.contactDataSource = dataSource
         contactDetailsViewController.contactExistChk = contactExist
-        contactDetailsViewController.navigationController?.navigationBarHidden = true
+        contactDetailsViewController.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(contactDetailsViewController, animated: true)
     }
 }

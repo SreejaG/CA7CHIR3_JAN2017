@@ -1,9 +1,8 @@
 
 import UIKit
 
-class ChannelsSharedController: UIViewController , UITableViewDelegate {
-    
-    var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
+class ChannelsSharedController: UIViewController  {
+    var mediaShared:[[String:Any]] = [[String:Any]]()
     var loadingOverlay: UIView?
     var refreshControl:UIRefreshControl!
     var downloadCompleteFlag : String = "start"
@@ -14,113 +13,120 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     @IBOutlet weak var leadingLabelConstraint: NSLayoutConstraint!
     var pushNotificationFlag : Bool = false
     @IBOutlet weak var newShareAvailabellabel: UILabel!
-    let calendar = NSCalendar.currentCalendar()
+    let calendar = NSCalendar.current
     var refreshAlert : UIAlertController = UIAlertController()
     var NoDatalabel : UILabel = UILabel()
-    var timer : NSTimer = NSTimer()
+    var timer : Timer = Timer()
     override func viewDidLoad() {
         super.viewDidLoad()
         newShareAvailabellabel.layer.cornerRadius = 5
         initialise()
-        timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChannelsSharedController.timerFunc(_:)), userInfo: nil, repeats: false)
+        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(ChannelsSharedController.timerFunc(timer:)), userInfo: nil, repeats: false)
         
-        if NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") != nil{
-            let messageText = NSUserDefaults.standardUserDefaults().objectForKey("NotificationChannelText") as! String
+        if UserDefaults.standard.object(forKey: "NotificationChannelText") != nil{
+            let messageText = UserDefaults.standard.object(forKey: "NotificationChannelText") as! String
             if(messageText != "")
             {
-                self.newShareAvailabellabel.hidden = false
+                self.newShareAvailabellabel.isHidden = false
                 self.newShareAvailabellabel.text = messageText
             }
-            NSUserDefaults.standardUserDefaults().setObject("", forKey: "NotificationChannelText")
+            UserDefaults.standard.set("", forKey: "NotificationChannelText")
         }
     }
     
-    @IBAction func backButtonClicked(sender: AnyObject) {
+    @IBAction func backButtonClicked(_ sender: Any) {
         SharedChannelDetailsAPI.sharedInstance.imageDataSource.removeAll()
         SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.removeAll()
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
-        iPhoneCameraVC.navigationController?.navigationBarHidden = true
+        let iPhoneCameraVC = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
+        iPhoneCameraVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
         
     }
-    func timerFunc(timer:NSTimer!) {
+    func timerFunc(timer:Timer!) {
         
         if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.removeOverlay()
-            
-            if (GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
-            {
-                self.removeOverlay()
-                self.NoDatalabel.removeFromSuperview()
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
-                self.NoDatalabel.text = "No Channel Available"
-                self.view.addSubview(self.NoDatalabel)
+                
+                if (GlobalStreamList.sharedInstance.GlobalStreamDataSource.count == 0)
+                {
+                    self.removeOverlay()
+                    self.NoDatalabel.removeFromSuperview()
+                    self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.center
+                    self.NoDatalabel.text = "No Channel Available"
+                    self.view.addSubview(self.NoDatalabel)
+                }
             }
-            })
         }
         else
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.removeOverlay()
-            })
+            }
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         ChannelSharedTableView.reloadData()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         refreshAlert = UIAlertController()
         ChannelSharedListAPI.sharedInstance.cancelOperationQueue()
     }
-   
+    
     func initialise()
     {
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl.addTarget(self, action: #selector(ChannelsSharedController.pullToRefresh), for: UIControlEvents.valueChanged)
         self.ChannelSharedTableView.addSubview(self.refreshControl)
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.ChannelSharedTableView.alwaysBounceVertical = true
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.updateChannelList), name: "SharedChannelList", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pushNotificationUpdate), name: "PushNotificationChannel", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.pullToRefreshUpdate), name: "PullToRefreshSharedChannelList", object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChannelsSharedController.removeOverlay), name: "RemoveOverlay", object:nil)
-        newShareAvailabellabel.hidden = true
+        
+        let SharedChannelList = Notification.Name("SharedChannelList")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelsSharedController.updateChannelList(notif:)), name: SharedChannelList, object: nil)
+        
+        let PushNotificationChannel = Notification.Name("PushNotificationChannel")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelsSharedController.pushNotificationUpdate(notif:)), name: PushNotificationChannel, object: nil)
+        
+        let PullToRefreshSharedChannelList = Notification.Name("PullToRefreshSharedChannelList")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelsSharedController.pullToRefreshUpdate(notif:)), name: PullToRefreshSharedChannelList, object: nil)
+        
+        let RemoveOverlay = Notification.Name("RemoveOverlay")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelsSharedController.removeOverlay), name: RemoveOverlay, object: nil)
+        
+        newShareAvailabellabel.isHidden = true
         if (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.showOverlay()
-            })
-            let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-            let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-            ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userId, token: accessToken)
-            
+            }
+            let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+            let accessToken = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
+            ChannelSharedListAPI.sharedInstance.getChannelSharedDetails(userName: userId, token: accessToken)
         }else
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.ChannelSharedTableView.reloadData()
                 self.removeOverlay()
-            })
+            }
         }
     }
     
     // channel delete push notification handler
     func channelDeletionPushNotification(info:  [String : AnyObject])
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
+        DispatchQueue.main.async {
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
             {
                 self.NoDatalabel.removeFromSuperview()
-                self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                self.NoDatalabel.textAlignment = NSTextAlignment.center
                 self.NoDatalabel.text = "No Channel Available"
                 self.view.addSubview(self.NoDatalabel)
             }
@@ -129,8 +135,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 self.NoDatalabel.removeFromSuperview()
             }
             self.ChannelSharedTableView.reloadData()
-        })
+        }
     }
+    
     func channelPushNotificationLiveStarted(info: [String : AnyObject])
     {
         let subType = info["subType"] as! String
@@ -138,61 +145,64 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         switch subType {
         case "started":
             ErrorManager.sharedInstance.streamAvailable()
-            updateLiveStreamStartedEntry(info)
+            updateLiveStreamStartedEntry(info: info)
             break;
         case "stopped":
-            updateLiveStreamStoppeddEntry(info)
+            updateLiveStreamStoppeddEntry(info: info)
             break;
             
         default:
             break;
         }
     }
-    func updateLiveStreamStartedEntry(info:[String : AnyObject])
+    
+    func updateLiveStreamStartedEntry(info:[String : Any])
     {
         let channelId = info["channelId"] as! Int
-        let index  = getUpdateIndexChannel("\(channelId)", isCountArray: false)
+        let index  = getUpdateIndexChannel(channelIdValue: "\(channelId)", isCountArray: false)
         if(index != -1)
         {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][liveStreamStatus] = "1"
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][streamTockenKey] = "1"
-            let dateFormatter = NSDateFormatter()
+            let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            dateFormatter.timeZone = NSTimeZone(name: "UTC")
-            let currentDate = dateFormatter.stringFromDate(NSDate())
+            dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+            let currentDate = dateFormatter.string(from: NSDate() as Date)
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][timeStamp] = currentDate
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: 0)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.remove(at: index)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, at: 0)
                 self.ChannelSharedTableView.reloadData()
-            })
+            }
         }
         else{
-            newShareAvailabellabel.hidden = false
+            newShareAvailabellabel.isHidden = false
             newShareAvailabellabel.text = "Live stream available"
         }
     }
     
-    func isVisibleCell( index : Int ) -> Bool
+    func isVisibleCell(index : Int ) -> Bool
     {
         if let indices = ChannelSharedTableView.indexPathsForVisibleRows {
-            for index in indices {
-                if index.row == index {
+            for index1 in indices {
+                if Int(index1.row) == index {
                     return true
                 }
             }
         }
         return false
     }
-    func thumbExists (item: [String : AnyObject]) -> Bool {
+    
+    func thumbExists (item: [String : Any]) -> Bool {
         let liveStreamStatus = "liveChannel"
         return item[liveStreamStatus] as! String == "1"
     }
+    
     func updateLiveStreamStoppeddEntry(info:[String : AnyObject])
     {
         let channelId = info["channelId"] as! Int
-        let index  = getUpdateIndexChannel("\(channelId)", isCountArray: false)
+        let index  = getUpdateIndexChannel(channelIdValue: "\(channelId)", isCountArray: false)
         if(index != -1)
         {
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index][ liveStreamStatus] = "0"
@@ -201,12 +211,12 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
             let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
             let totalCount = filteredData.count
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[index]
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.remove(at: index)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, at: totalCount)
                 self.ChannelSharedTableView.reloadData()
-            })
+            }
         }
     }
     
@@ -214,41 +224,38 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     {
         let info = notif.object as! [String : AnyObject]
         if (info["type"] as! String == "share"){
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-           
-//            self.pushNotificationFlag = true
-            if(self.downloadCompleteFlag != "end")
-            {
-                self.newShareAvailabellabel.hidden = true
-            }
+            DispatchQueue.main.async {
+                if(self.downloadCompleteFlag != "end")
+                {
+                    self.newShareAvailabellabel.isHidden = true
+                }
                 self.ChannelSharedTableView.reloadData()
-            })
-//            pushNotificationFlag = false
+            }
         }
         else if (info["type"] as! String == "channel")
         {
             self.pushNotificationFlag = false
-
+            
             if(info["subType"] as! String == "useradded")
             {
-                newShareAvailabellabel.hidden = false
+                newShareAvailabellabel.isHidden = false
                 newShareAvailabellabel.text = info[ "messageText"] as? String
             }
             else{
                 if(!ChannelSharedTableView.visibleCells.isEmpty)
                 {
-                    refreshAlert = UIAlertController(title: "Deleted", message: "Shared channel deleted.", preferredStyle: UIAlertControllerStyle.Alert)
+                    refreshAlert = UIAlertController(title: "Deleted", message: "Shared channel deleted.", preferredStyle: UIAlertControllerStyle.alert)
                     
-                    refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+                    refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
                     }))
-                    self.presentViewController(refreshAlert, animated: true, completion: nil)
-                    self.channelDeletionPushNotification(info)
+                    self.present(refreshAlert, animated: true, completion: nil)
+                    self.channelDeletionPushNotification(info: info)
                 }
             }
         }
         else if (info["type"] as! String == "liveStream")
         {
-            channelPushNotificationLiveStarted(info)
+            channelPushNotificationLiveStarted(info: info)
         }
         else
         {
@@ -257,7 +264,7 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
     
     func topMostController() -> UIViewController {
-        var topController: UIViewController = UIApplication.sharedApplication().keyWindow!.rootViewController!
+        var topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
         while (topController.presentedViewController != nil) {
             topController = topController.presentedViewController!
         }
@@ -266,14 +273,14 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
     {
-        var selectedArray : NSArray = NSArray()
+        var selectedArray : [[String:Any]] = [[String:Any]]()
         var indexOfRow : Int = -1
         if(isCountArray)
         {
-            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            if (UserDefaults.standard.object(forKey: "Shared") != nil)
             {
                 mediaShared.removeAll()
-                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                mediaShared = UserDefaults.standard.value(forKey: "Shared") as! NSArray as! [[String : AnyObject]]
                 selectedArray = mediaShared as Array
             }
             
@@ -284,10 +291,10 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         var  checkFlag : Bool = false
         var index : Int =  Int()
         
-        for i in 0  ..< selectedArray.count 
+        for i in 0  ..< selectedArray.count
         {
             let channelId = selectedArray[i][ch_channelIdkey]!
-            if "\(channelId!)"  == channelIdValue
+            if "\(channelId)"  == channelIdValue
             {
                 checkFlag = true
                 index = i
@@ -306,51 +313,47 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
         {
             downloadCompleteFlag = "end"
         }
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.newShareAvailabellabel.hidden = true
+        DispatchQueue.main.async {
+            self.newShareAvailabellabel.isHidden = true
             self.removeOverlay()
             if(self.pullToRefreshActive){
                 self.refreshControl.endRefreshing()
                 self.pullToRefreshActive = false
             }
-        })
+        }
         let success =  notif.object as! String
         if(success == "success")
         {
             if !pushNotificationFlag
             {
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
+                DispatchQueue.main.async {
                     self.removeOverlay()
                     self.ChannelSharedTableView.reloadData()
                     if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
                     {
                         self.NoDatalabel.removeFromSuperview()
                     }
-                })
+                }
             }
             else{
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.pushNotificationFlag = false
                     self.removeOverlay()
                     self.ChannelSharedTableView.reloadData()
-                })
-            
+                }
             }
-            
         }
         else{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.removeOverlay()
                 self.pushNotificationFlag = false
-
-            })
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            }
+            DispatchQueue.main.async {
                 if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count == 0)
                 {
                     self.NoDatalabel.removeFromSuperview()
-                    self.NoDatalabel = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-                    self.NoDatalabel.textAlignment = NSTextAlignment.Center
+                    self.NoDatalabel = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100), y:((self.view.frame.height/2) - 35), width:200, height:70))
+                    self.NoDatalabel.textAlignment = NSTextAlignment.center
                     self.NoDatalabel.text = "No Channel Available"
                     self.view.addSubview(self.NoDatalabel)
                 }
@@ -358,27 +361,26 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                 {
                     self.NoDatalabel.removeFromSuperview()
                 }
-            })
-            
+            }
         }
     }
     
     func pullToRefresh()
     {
-        newShareAvailabellabel.hidden = true
-        NSUserDefaults.standardUserDefaults().setObject("", forKey: "NotificationChannelText")
+        newShareAvailabellabel.isHidden = true
+        UserDefaults.standard.set("", forKey: "NotificationChannelText")
         pullToRefreshActive = true
         let sortList : Array = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource
         var subIdArray : [Int] = [Int]()
         
-        for i in 0  ..< sortList.count 
+        for i in 0  ..< sortList.count
         {
             let subId = sortList[i][subChannelIdKey] as! String
             subIdArray.append(Int(subId)!)
         }
         if(subIdArray.count > 0)
         {
-            let subid = subIdArray.maxElement()!
+            let subid = subIdArray.max()!
             
             if(!pushNotificationFlag)
             {
@@ -388,13 +390,13 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     ChannelSharedListAPI.sharedInstance.dataSource.removeAll()
                     ChannelSharedListAPI.sharedInstance.dummy.removeAll()
                     ChannelSharedListAPI.sharedInstance.pullToRefreshSource.removeAll()
-                    ChannelSharedListAPI.sharedInstance.pullToRefreshData("\(subid)")
+                    ChannelSharedListAPI.sharedInstance.pullToRefreshData(subID: "\(subid)")
                 }
             }
             else{
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
-                })
+                }
                 self.pullToRefreshActive = false
             }
         }
@@ -409,16 +411,16 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     
     func pullToRefreshUpdate(notif : NSNotification)
     {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
             self.pullToRefreshActive = false
-        })
+        }
         let success =  notif.object as! String
         if(success == "success")
         {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                for(var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1 ; dataSourceIndex >= 0 ; dataSourceIndex--)
-                {
+            DispatchQueue.main.async {
+                var dataSourceIndex = ChannelSharedListAPI.sharedInstance.pullToRefreshSource.count - 1
+                while(dataSourceIndex >= 0){
                     var flag : Bool = false
                     for i in 0  ..< ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count
                     {
@@ -432,61 +434,63 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
                     }
                     if(!flag)
                     {
-                        ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex] , atIndex: 0)
+                        ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(ChannelSharedListAPI.sharedInstance.pullToRefreshSource[dataSourceIndex] , at: 0)
                     }
+                    dataSourceIndex -= 1
                 }
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async {
                     if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
                     {
                         self.NoDatalabel.removeFromSuperview()
                     }
                     self.ChannelSharedTableView.reloadData()
-                })
-            })
+                }
+            }
         }
         else{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
-            })
+            }
             self.pullToRefreshActive = false
         }
     }
+    
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:(self.view.frame.height - (64 + 50)))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -497,9 +501,9 @@ class ChannelsSharedController: UIViewController , UITableViewDelegate {
     }
 }
 
-extension ChannelsSharedController:UITableViewDataSource
+extension ChannelsSharedController:UITableViewDataSource, UITableViewDelegate
 {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0
         {
@@ -512,68 +516,65 @@ extension ChannelsSharedController:UITableViewDataSource
         
     }
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        DispatchQueue.main.async {
             self.removeOverlay()
-        })
+        }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(ChannelSharedCell.identifier, forIndexPath:indexPath) as! ChannelSharedCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ChannelSharedCell.identifier, for:indexPath) as! ChannelSharedCell
             cell.channelProfileImage.image = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as? UIImage
             cell.channelNameLabel.text =   ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelNameKey] as? String
-            cell.countLabel.hidden = true
+            cell.countLabel.isHidden = true
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][liveStreamStatus] as! String == "1")
             {
-                cell.currentUpdationImage.hidden = false
-                cell.latestImage.hidden = true
+                cell.currentUpdationImage.isHidden = false
+                cell.latestImage.isHidden = true
                 let text = "@" + (ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String) + " Live"
                 cell.currentUpdationImage.image  = UIImage(named: "Live_camera")
                 let linkTextWithColor = "Live"
-                let range = (text as NSString).rangeOfString(linkTextWithColor)
+                let range = (text as NSString).range(of: linkTextWithColor)
                 let attributedString = NSMutableAttributedString(string:text)
-                attributedString.addAttribute(NSForegroundColorAttributeName, value: UIColor.redColor() , range: range)
+                attributedString.addAttribute(NSForegroundColorAttributeName, value: UIColor.red , range: range)
                 cell.detailLabel.attributedText = attributedString
             }
             else
             {
-                
-                print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String)
-                print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelNameKey] as? String)
-                if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+                if (UserDefaults.standard.object(forKey: "Shared") != nil)
                 {
                     mediaShared.removeAll()
-                    mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                    mediaShared = UserDefaults.standard.value(forKey: "Shared") as! NSArray as! [[String : Any]]
                 }
-                cell.countLabel.hidden = false
-                cell.currentUpdationImage.hidden = true
+                cell.countLabel.isHidden = false
+                cell.currentUpdationImage.isHidden = true
                 for i in 0  ..< mediaShared.count
                 {
-                    if(mediaShared[i][ch_channelIdkey]?.intValue ==  ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelIdkey]?.intValue)
+                    if(Int(mediaShared[i][ch_channelIdkey] as! String) == Int(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelIdkey] as! String))
                     {
-                        let dateFormatter = NSDateFormatter()
+                        let dateFormatter = DateFormatter()
                         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                        dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                        var date = dateFormatter.dateFromString(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][timeStamp] as! String)
-                        let fromdateStr = dateFormatter.stringFromDate(NSDate())
-                        var fromdate = dateFormatter.dateFromString(fromdateStr)
-                        let sdifferentString =  offsetFrom(date!, todate: fromdate!)
-                        let count = (mediaShared[i][sharedMediaCount]?.intValue)!
+                        dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+                        var date = dateFormatter.date(from: ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][timeStamp] as! String)
+                        let fromdateStr = dateFormatter.string(from: NSDate() as Date)
+                        var fromdate = dateFormatter.date(from: fromdateStr)
+                        let sdifferentString = offset(fromDate: date!, toDate: fromdate!)
+                        let count = Int(mediaShared[i][sharedMediaCount] as! String)!
                         let text = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
                         if( count == 0)
                         {
-                            cell.latestImage.hidden = false
-                            cell.countLabel.hidden = true
+                            cell.latestImage.isHidden = false
+                            cell.countLabel.isHidden = true
                             cell.latestImage.image  = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][mediaImageKey] as? UIImage
                             cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
                         else
                         {
-                            cell.latestImage.hidden = true
-                            cell.countLabel.hidden = false
+                            cell.latestImage.isHidden = true
+                            cell.countLabel.isHidden = false
                             cell.countLabel.text = String(count)
                             cell.detailLabel.text = "@" + text + " " +  sdifferentString
                         }
@@ -583,19 +584,19 @@ extension ChannelsSharedController:UITableViewDataSource
                     }
                 }
             }
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let streamingStoryboard = UIStoryboard(name:"Streaming", bundle: nil)
-        let channelItemListVC = streamingStoryboard.instantiateViewControllerWithIdentifier(OtherChannelViewController.identifier) as! OtherChannelViewController
+        let channelItemListVC = streamingStoryboard.instantiateViewController(withIdentifier: OtherChannelViewController.identifier) as! OtherChannelViewController
         let chId = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][ch_channelIdkey] as! String
-        NSUserDefaults.standardUserDefaults().setObject(chId, forKey: "SharedChannelId")
-        let index  = getUpdateIndexChannel(chId, isCountArray: true)
+        UserDefaults.standard.set(chId, forKey: "SharedChannelId")
+        let index  = getUpdateIndexChannel(channelIdValue: chId, isCountArray: true)
         if(index != -1)
         {
             let sharedCount = mediaShared[index][sharedMediaCount] as! String
@@ -604,51 +605,78 @@ extension ChannelsSharedController:UITableViewDataSource
             channelItemListVC.totalMediaCount = sharedCount
             channelItemListVC.userName = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][usernameKey] as! String
             channelItemListVC.profileImage = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexPath.row][profileImageKey] as! UIImage
-            channelItemListVC.navigationController?.navigationBarHidden = true
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
             self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
     
     func loadLiveStreamView(streamTocken:String)
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
-        self.presentViewController(vc, animated: false) { () -> Void in
+        let vc = MovieViewController.movieViewController(withContentPath: "rtsp://\(vowzaIp):1935/live/\(streamTocken)", parameters: nil , liveVideo: false) as! UIViewController
+        self.present(vc, animated: false) { () -> Void in
             
         }
     }
     
-    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
-        return calendar.components(.Year, fromDate: date, toDate: todate, options: []).year
+    func years(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.year], from: fromDate, to: toDate).year ?? 0
     }
-    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.Month, fromDate: date, toDate: todate, options: []).month
+    
+    func months(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.month], from: fromDate, to: toDate).month ?? 0
     }
-    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    
+    func weeks(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.weekOfYear], from: fromDate, to: fromDate).weekOfYear ?? 0
     }
-    func daysFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.Day, fromDate: date, toDate: todate, options: []).day
+    
+    func days(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.day], from: fromDate, to: toDate).day ?? 0
     }
-    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    
+    func hours(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.hour], from: fromDate, to: toDate).hour ?? 0
     }
-    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    
+    func minutes(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.minute], from: fromDate, to: toDate).minute ?? 0
     }
-    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
-        return calendar.components(.Second, fromDate: date, toDate: todate, options: []).second
+    
+    func seconds(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.second], from: fromDate, to: toDate).second ?? 0
     }
-    func offsetFrom(date:NSDate,todate:NSDate) -> String {
-        if yearsFrom(date,todate:todate)   > 0 {
-            return String(yearsFrom(date,todate:todate))+"Y"
+    
+    func offset(fromDate: Date, toDate: Date ) -> String {
+        if years(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(years(fromDate: fromDate, toDate: toDate))Y"
         }
-        if monthsFrom(date,todate:todate)  > 0 { return String(monthsFrom(date,todate:todate))+"M" }
-        if weeksFrom(date,todate:todate)   > 0 { return  String(weeksFrom(date,todate:todate))+"w"}
-        if daysFrom(date,todate:todate)    > 0 { return String(daysFrom(date,todate:todate))+"d"    }
-        if hoursFrom(date,todate:todate)   > 0 { return String(hoursFrom(date,todate:todate))+"h"   }
-        if minutesFrom(date,todate:todate) > 0 { return String(minutesFrom(date,todate:todate))+"m" }
-        if secondsFrom(date,todate:todate) > 0 { return String(secondsFrom(date,todate:todate))+"s" }
-        if secondsFrom(date,todate:todate) == 0 {
+        if months(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(months(fromDate: fromDate, toDate: toDate))M"
+        }
+        if weeks(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(weeks(fromDate: fromDate, toDate: toDate))w"
+        }
+        if days(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(days(fromDate: fromDate, toDate: toDate))d"
+        }
+        if hours(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(hours(fromDate: fromDate, toDate: toDate))h"
+        }
+        if minutes(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(minutes(fromDate: fromDate, toDate: toDate))m"
+        }
+        if seconds(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(seconds(fromDate: fromDate, toDate: toDate))s"
+        }
+        if seconds(fromDate: fromDate, toDate: toDate) == 0
+        {
             return "0s"
         }
         return ""

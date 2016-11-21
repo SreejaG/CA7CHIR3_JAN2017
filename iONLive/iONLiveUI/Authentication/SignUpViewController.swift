@@ -15,17 +15,17 @@ class SignUpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        continueButton.hidden = true
+        continueButton.isHidden = true
         initialise()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
         self.emailTextfield.becomeFirstResponder()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         view.endEditing(true)
     }
     
@@ -36,42 +36,47 @@ class SignUpViewController: UIViewController {
     func initialise()
     {
         self.title = "SIGN UP"
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
         emailTextfield.attributedPlaceholder = NSAttributedString(string: "Email address",
-                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                  attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         passwdTextField.attributedPlaceholder = NSAttributedString(string: "New Password",
-                                                                   attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        emailTextfield.autocorrectionType = UITextAutocorrectionType.No
-        passwdTextField.autocorrectionType = UITextAutocorrectionType.No
-        passwdTextField.secureTextEntry = true
+                                                                   attributes:[NSForegroundColorAttributeName: UIColor.lightGray ,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
+        emailTextfield.autocorrectionType = UITextAutocorrectionType.no
+        passwdTextField.autocorrectionType = UITextAutocorrectionType.no
+        passwdTextField.isSecureTextEntry = true
         emailTextfield.delegate = self
         passwdTextField.delegate = self
         passwdTextField.tag = 10
         
-        emailTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        passwdTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        emailTextfield.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        passwdTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
         
         addObserver()
     }
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SignUpViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(SignUpViewController.KeyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         self.view.layoutIfNeeded()
         if signUpBottomConstraint.constant == 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.signUpBottomConstraint.constant += keyboardFrame.size.height
                 self.view.layoutIfNeeded()
             }
@@ -83,125 +88,81 @@ class SignUpViewController: UIViewController {
         self.view.layoutIfNeeded()
         if signUpBottomConstraint.constant != 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.signUpBottomConstraint.constant = 0
                 self.view.layoutIfNeeded()
             }
         }
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
         if(emailTextfield.text!.isEmpty || passwdTextField.text!.isEmpty)
         {
-            continueButton.hidden = true
+            continueButton.isHidden = true
         }
         else{
-            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
+            let decimalChrSet = NSCharacterSet.decimalDigits
             
-            if(isEmail(self.emailTextfield.text!) as Bool! == false)
+            if(isEmail(email: self.emailTextfield.text!) as Bool! == false)
             {
-                continueButton.hidden = true
+                continueButton.isHidden = true
             }
-            else if((passwdTextField.text?.characters.count < 8) || (passwdTextField.text?.characters.count > 40))
+            else if(((passwdTextField.text?.characters.count)! < 8) || ((passwdTextField.text?.characters.count)! > 40))
             {
-                continueButton.hidden = true
+                continueButton.isHidden = true
             }
-            else if passwdTextField.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            else if (passwdTextField.text! as String).rangeOfCharacter(from: decimalChrSet) == nil
             {
-                continueButton.hidden = true
+                continueButton.isHidden = true
             }
             else{
-                continueButton.hidden = false
+                continueButton.isHidden = false
             }
         }
     }
     
     //PRAGMA MARK:- IBActions
-    
-    @IBAction func tapGestureRecognized(sender: AnyObject) {
+    @IBAction func tapGestureRecognized(_ sender: Any) {
         view.endEditing(true)
     }
     
-    @IBAction func signUpClicked(sender: AnyObject)
+    @IBAction func signUpClicked(_ sender: Any)
     {
-        //        if emailTextfield.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.signUpNoEmailEnteredError()
-        //        }
-        //        else if passwdTextField.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.signUpNoPasswordEnteredError()
-        //        }
-        //        else
-        //        {
-        //            validateEmail()
-        //        }
-        
         loadUserNameView()
     }
-    
-    //    func validateEmail(){
-    //        let isEmailValid = isEmail(self.emailTextfield.text!) as Bool!
-    //        if isEmailValid == false
-    //        {
-    //            ErrorManager.sharedInstance.loginInvalidEmail()
-    //            return
-    //        }
-    //        else
-    //        {
-    //            let text = passwdTextField.text
-    //            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-    //            if((text?.characters.count < 8) || (text?.characters.count > 40))
-    //            {
-    //                ErrorManager.sharedInstance.InvalidPwdEnteredError()
-    //                passwdTextField.text = ""
-    //                passwdTextField.becomeFirstResponder()
-    //                return
-    //            }
-    //            else if text!.rangeOfCharacterFromSet(chrSet) == nil {
-    //                ErrorManager.sharedInstance.noNumberInPassword()
-    //                passwdTextField.text = ""
-    //                passwdTextField.becomeFirstResponder()
-    //                return
-    //            }
-    //            else{
-    //                loadUserNameView()
-    //            }
-    //        }
-    //    }
     
     func loadUserNameView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let userNameVC = storyboard.instantiateViewControllerWithIdentifier(SignUpUserNameViewController.identifier) as! SignUpUserNameViewController
+        let userNameVC = storyboard.instantiateViewController(withIdentifier: SignUpUserNameViewController.identifier) as! SignUpUserNameViewController
         userNameVC.email = self.emailTextfield.text!
         userNameVC.password = self.passwdTextField.text!
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         userNameVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(userNameVC, animated: false)
     }
     
     //PRAGMA MARK:- Helper functions
     func isEmail(email:String) -> Bool {
-        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .CaseInsensitive)
-        return regex?.firstMatchInString(email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
+        let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: .caseInsensitive)
+        return regex?.firstMatch(in: email, options: [], range: NSMakeRange(0, email.characters.count)) != nil
     }
     
     deinit
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
 extension SignUpViewController:UITextFieldDelegate{
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

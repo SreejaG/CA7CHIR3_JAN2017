@@ -16,10 +16,10 @@ class ResetPasswordViewController: UIViewController {
         super.viewDidLoad()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ResetPasswordViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
-        resetButton.hidden = true
+        resetButton.isHidden = true
         initialise()
     }
-   
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -29,33 +29,38 @@ class ResetPasswordViewController: UIViewController {
         resetPasswordTextfield.becomeFirstResponder()
         resetPasswordTextfield.delegate = self
         reEnterPasswordTextField.delegate = self
-        reEnterPasswordTextField.autocorrectionType = UITextAutocorrectionType.No
-        resetPasswordTextfield.autocorrectionType = UITextAutocorrectionType.No
-        reEnterPasswordTextField.secureTextEntry = true
-        resetPasswordTextfield.secureTextEntry = true
+        reEnterPasswordTextField.autocorrectionType = UITextAutocorrectionType.no
+        resetPasswordTextfield.autocorrectionType = UITextAutocorrectionType.no
+        reEnterPasswordTextField.isSecureTextEntry = true
+        resetPasswordTextfield.isSecureTextEntry = true
         
-        resetPasswordTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        reEnterPasswordTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        resetPasswordTextfield.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        reEnterPasswordTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
         
         addObserver()
     }
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(ResetPasswordViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(ResetPasswordViewController.KeyboardDidHide(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
     //PRAGMA MARK:- keyboard notification handler
-    
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         self.view.layoutIfNeeded()
         if resetPasswdBottomConstraint.constant == 0
         {
-            UIView.animateWithDuration(1.0, animations: { () -> Void in
+            UIView.animate(withDuration: 1.0, animations: { () -> Void in
                 self.resetPasswdBottomConstraint.constant += keyboardFrame.size.height
                 self.view.layoutIfNeeded()
             })
@@ -67,7 +72,7 @@ class ResetPasswordViewController: UIViewController {
         self.view.layoutIfNeeded()
         if resetPasswdBottomConstraint.constant != 0
         {
-            UIView.animateWithDuration(1.0, animations: { () -> Void in
+            UIView.animate(withDuration: 1.0, animations: { () -> Void in
                 self.resetPasswdBottomConstraint.constant = 0
             })
         }
@@ -77,91 +82,61 @@ class ResetPasswordViewController: UIViewController {
         view.endEditing(true)
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
         if(resetPasswordTextfield.text!.isEmpty || reEnterPasswordTextField.text!.isEmpty)
         {
-            resetButton.hidden = true
+            resetButton.isHidden = true
         }
         else{
-            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
+            let decimalChrSet = NSCharacterSet.decimalDigits
             
-            if((resetPasswordTextfield.text?.characters.count < 8) || (resetPasswordTextfield.text?.characters.count > 40))
+            if(((resetPasswordTextfield.text?.characters.count)! < 8) || ((resetPasswordTextfield.text?.characters.count)! > 40))
             {
-                resetButton.hidden = true
+                resetButton.isHidden = true
             }
-            if((reEnterPasswordTextField.text?.characters.count < 8) || (reEnterPasswordTextField.text?.characters.count > 40))
+            if(((reEnterPasswordTextField.text?.characters.count)! < 8) || ((reEnterPasswordTextField.text?.characters.count)! > 40))
             {
-                resetButton.hidden = true
+                resetButton.isHidden = true
             }
-            else if resetPasswordTextfield.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            else if (resetPasswordTextfield.text! as String).rangeOfCharacter(from: decimalChrSet) == nil
             {
-                resetButton.hidden = true
+                resetButton.isHidden = true
             }
-            else if reEnterPasswordTextField.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            else if (reEnterPasswordTextField.text! as String).rangeOfCharacter(from: decimalChrSet) == nil
             {
-                resetButton.hidden = true
+                resetButton.isHidden = true
             }
             else{
-                resetButton.hidden = false
+                resetButton.isHidden = false
             }
         }
     }
-
-    @IBAction func backButtonClicked(sender: AnyObject) {
+    
+    @IBAction func backButtonClicked(_ sender: Any) {
         resetPasswordTextfield.text = ""
         reEnterPasswordTextField.text = ""
-        self.dismissViewControllerAnimated(false, completion: nil)
+        self.dismiss(animated: false, completion: nil)
     }
     
-    @IBAction func resetPasswordClicked(sender: AnyObject) {
+    @IBAction func resetPasswordClicked(_ sender: Any) {
         let text = resetPasswordTextfield.text!
         let reEnteredtext = reEnterPasswordTextField.text!
-        
-//        if resetPasswordTextfield.text!.isEmpty
-//        {
-//            ErrorManager.sharedInstance.newPaswrdEmpty()
-//        }
-//        else if reEnterPasswordTextField.text!.isEmpty
-//        {
-//            ErrorManager.sharedInstance.confirmPaswrdEmpty()
-//        }
-//        else
         if(text != reEnteredtext){
             ErrorManager.sharedInstance.passwordMismatch()
-//            resetPasswordTextfield.text = ""
-//            reEnterPasswordTextField.text = ""
         }
         else
         {
-//            let chrSet = NSCharacterSet.decimalDigitCharacterSet()
-//            if((text.characters.count < 8) || (text.characters.count > 40))
-//            {
-//                ErrorManager.sharedInstance.InvalidPwdEnteredError()
-//                resetPasswordTextfield.text = ""
-//                reEnterPasswordTextField.text = ""
-//                resetPasswordTextfield.becomeFirstResponder()
-//                return
-//            }
-//            else if text.rangeOfCharacterFromSet(chrSet) == nil {
-//                ErrorManager.sharedInstance.noNumberInPassword()
-//                resetPasswordTextfield.text = ""
-//                reEnterPasswordTextField.text = ""
-//                resetPasswordTextfield.becomeFirstResponder()
-//                return
-//            }
-//            else{
-                let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-                let  accessToken =  NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-                self.showOverlay()
-                ProfileManager.sharedInstance.resetPassword(userId, accessToken: accessToken, resetPassword: resetPasswordTextfield.text!, success: { (response) in
-                    self.SuccessHandler(response!)
-                }) { (error, code) in
-                    self.removeOverlay()
-                    ErrorManager.sharedInstance.failedToUpdatepassword()
-                }
+            let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+            let  accessToken =  UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
+            self.showOverlay()
+            ProfileManager.sharedInstance.resetPassword(userName: userId, accessToken: accessToken, resetPassword: resetPasswordTextfield.text!, success: { (response) in
+                self.SuccessHandler(response: response!)
+            }) { (error, code) in
+                self.removeOverlay()
+                ErrorManager.sharedInstance.failedToUpdatepassword()
             }
-//        }
+        }
     }
     
     func SuccessHandler(response : AnyObject?)
@@ -171,11 +146,11 @@ class ResetPasswordViewController: UIViewController {
         {
             let status = json["status"] as! Int
             if(status == 1){
-                let alert = UIAlertController(title: "Success", message: "Password updated successfully", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
-                    self.dismissViewControllerAnimated(false, completion: nil)
+                let alert = UIAlertController(title: "Success", message: "Password updated successfully", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { (action) -> Void in
+                    self.dismiss(animated: false, completion: nil)
                 }))
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
             }
         }
         else
@@ -186,7 +161,7 @@ class ResetPasswordViewController: UIViewController {
     }
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -199,12 +174,12 @@ class ResetPasswordViewController: UIViewController {
 
 extension ResetPasswordViewController : UITextFieldDelegate{
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

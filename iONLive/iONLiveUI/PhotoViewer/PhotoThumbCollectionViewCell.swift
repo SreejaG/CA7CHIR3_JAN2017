@@ -19,16 +19,16 @@ class PhotoThumbCollectionViewCell: UICollectionViewCell,progressviewDelegate {
     
     func toggleSelected (cell :UICollectionViewCell)
     {
-        if (selected){
+        if (isSelected){
             cell.layer.borderWidth = 10;
-            cell.layer.borderColor = UIColor.blueColor().CGColor;
+            cell.layer.borderColor = UIColor.blue.cgColor;
         }else {
-            cell.layer.borderColor = UIColor.clearColor().CGColor;
+            cell.layer.borderColor = UIColor.clear.cgColor;
         }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        progressView.transform = CGAffineTransformScale(progressView.transform, 1,3)
+        progressView.transform = progressView.transform.scaledBy(x: 1,y: 3)
     }
 }

@@ -21,9 +21,9 @@ class FileManagerViewController: UIViewController {
     func createParentDirectory() -> Bool
     {
         let flag:Bool
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(documentsPath, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: documentsPath, withIntermediateDirectories: true, attributes: nil)
             flag = true
         } catch _ as NSError {
             flag = false
@@ -32,42 +32,46 @@ class FileManagerViewController: UIViewController {
     }
     
     func getParentDirectoryPath() -> NSURL {
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
+        let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
         return  NSURL(string: documentsPath)!
     }
     
     func fileExist(mediaPath: String) -> Bool
     {
         let flag : Bool
-        var fileManager = NSFileManager.defaultManager()
-        if(fileManager.fileExistsAtPath(mediaPath))
+        var fileManager = FileManager.default
+        if(fileManager.fileExists(atPath: mediaPath))
         {
             flag = true
         }
         else{
             flag = false
         }
-        fileManager = NSFileManager()
+        fileManager = FileManager()
         return flag
     }
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
     func  saveImageToFilePath(mediaName: String, mediaImage: UIImage) -> Bool {
-        let parentPath = getParentDirectoryPath()
-        let savingPath = "\(parentPath)/\(mediaName)"
+        let parentPath = getParentDirectoryPath().absoluteString
+        let savingPath = parentPath! + "/" + mediaName
         let mediaSaveFlag : Bool
         if(mediaImage != UIImage())
         {
             if let image = UIImageJPEGRepresentation(mediaImage, 0.5)
             {
-                let result = image.writeToFile(savingPath, atomically: true)
-                mediaSaveFlag = result
+                do {
+                    try image.write(to: URL(fileURLWithPath: savingPath), options: .atomic)
+                    mediaSaveFlag = true
+                } catch _ {
+                    mediaSaveFlag = false
+                }
             }
             else{
                 mediaSaveFlag = false
@@ -81,7 +85,7 @@ class FileManagerViewController: UIViewController {
     
     func getImageFromFilePath(mediaPath: String) -> UIImage? {
         var mediaimage : UIImage = UIImage()
-        if(fileExist(mediaPath)){
+        if(fileExist(mediaPath: mediaPath)){
             mediaimage = UIImage(contentsOfFile: mediaPath)!
         }
         else{
@@ -92,10 +96,10 @@ class FileManagerViewController: UIViewController {
     
     func deleteImageFromFilePath(mediaPath: String) -> Int {
         let mediaDeleteFlag : Int
-        let fileManager = NSFileManager.defaultManager()
-        if(fileExist(mediaPath)){
+        let fileManager = FileManager.default
+        if(fileExist(mediaPath: mediaPath)){
             do {
-                try fileManager.removeItemAtPath(mediaPath)
+                try fileManager.removeItem(atPath: mediaPath)
                 mediaDeleteFlag = 1
             }
             catch _ as NSError {
@@ -115,16 +119,16 @@ class FileManagerViewController: UIViewController {
             retResolution = "240p"
         }
         else if(resolution == "480x360 (360p)"){
-             retResolution = "360p"
+            retResolution = "360p"
         }
         else if(resolution == "850x480 (480p)"){
-             retResolution = "480p"
+            retResolution = "480p"
         }
         else if(resolution == "1280x720 (720p)"){
-             retResolution = "720p"
+            retResolution = "720p"
         }
         else if(resolution == "1920x1080 (1080p)"){
-             retResolution = "1080p"
+            retResolution = "1080p"
         }
         return retResolution
     }
@@ -149,7 +153,7 @@ class FileManagerViewController: UIViewController {
         }
         return retResolution
     }
-
+    
     func getArchiveDeleteShortString(resolution: String) -> String
     {
         var retResolution = String()
@@ -180,46 +184,74 @@ class FileManagerViewController: UIViewController {
         return retResolution
     }
     
-    func yearsFrom(date:NSDate, todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Year, fromDate: date, toDate: todate, options: []).year
+    func years(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.year], from: fromDate, to: toDate).year ?? 0
     }
-    func monthsFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Month, fromDate: date, toDate: todate, options: []).month
+    
+    func months(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.month], from: fromDate, to: toDate).month ?? 0
     }
-    func weeksFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.WeekOfYear, fromDate: date, toDate: todate, options: []).weekOfYear
+    
+    func weeks(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.weekOfYear], from: fromDate, to: fromDate).weekOfYear ?? 0
     }
-    func daysFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Day, fromDate: date, toDate: todate, options: []).day
+    
+    func days(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.day], from: fromDate, to: toDate).day ?? 0
     }
-    func hoursFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Hour, fromDate: date, toDate: todate, options: []).hour
+    
+    func hours(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.hour], from: fromDate, to: toDate).hour ?? 0
     }
-    func minutesFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Minute, fromDate: date, toDate: todate, options: []).minute
+    
+    func minutes(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.minute], from: fromDate, to: toDate).minute ?? 0
     }
-    func secondsFrom(date:NSDate,todate:NSDate) -> Int{
-        return NSCalendar.currentCalendar().components(.Second, fromDate: date, toDate: todate, options: []).second
+    
+    func seconds(fromDate: Date, toDate: Date) -> Int {
+        return Calendar.current.dateComponents([.second], from: fromDate, to: toDate).second ?? 0
     }
-    func offsetFrom(date:NSDate,todate:NSDate) -> String {
-        if yearsFrom(date,todate:todate)   > 0 { return "\(yearsFrom(date,todate:todate))year ago"   }
-        if monthsFrom(date,todate:todate)  > 0 { return "\(monthsFrom(date,todate:todate))month ago"  }
-        if weeksFrom(date,todate:todate)   > 0 { return "\(weeksFrom(date,todate:todate))week ago"   }
-        if daysFrom(date,todate:todate)    > 0 { return "\(daysFrom(date,todate:todate))day ago"    }
-        if hoursFrom(date,todate:todate)   > 0 { return "\(hoursFrom(date,todate:todate))hour ago"   }
-        if minutesFrom(date,todate:todate) > 0 { return "\(minutesFrom(date,todate:todate))min ago" }
-        if secondsFrom(date,todate:todate) > 0 { return "\(secondsFrom(date,todate:todate))sec ago" }
+    
+    func offset(fromDate: Date, toDate: Date ) -> String {
+        if years(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(years(fromDate: fromDate, toDate: toDate))year ago"
+        }
+        if months(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(months(fromDate: fromDate, toDate: toDate))month ago"
+        }
+        if weeks(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(weeks(fromDate: fromDate, toDate: toDate))week ago"
+        }
+        if days(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(days(fromDate: fromDate, toDate: toDate))day ago"
+        }
+        if hours(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(hours(fromDate: fromDate, toDate: toDate))hour ago"
+        }
+        if minutes(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(minutes(fromDate: fromDate, toDate: toDate))min ago"
+        }
+        if seconds(fromDate: fromDate, toDate: toDate) > 0
+        {
+            return "\(seconds(fromDate: fromDate, toDate: toDate))sec ago"
+        }
         return ""
     }
     
     func  getTimeDifference(dateStr:String) -> String {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        dateFormatter.timeZone = NSTimeZone(name: "UTC")
-        let cloudDate = dateFormatter.dateFromString(dateStr)
-        let localDateStr = dateFormatter.stringFromDate(NSDate())
-        let localDate = dateFormatter.dateFromString(localDateStr)
-        let differenceString =  offsetFrom(cloudDate!, todate: localDate!)
+        dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+        let cloudDate = dateFormatter.date(from: dateStr)
+        let localDateStr = dateFormatter.string(from: NSDate() as Date)
+        let localDate = dateFormatter.date(from: localDateStr)
+        let differenceString = offset(fromDate: cloudDate!, toDate: localDate!)
         return differenceString
     }
     
@@ -258,10 +290,10 @@ class FileManagerViewController: UIViewController {
     {
         var profileImage : UIImage = UIImage()
         do {
-            let url: NSURL = convertStringtoURL(profileNameURL)
-            let data = try NSData(contentsOfURL: url,options: NSDataReadingOptions())
+            let url: NSURL = convertStringtoURL(url: profileNameURL)
+            let data = try NSData(contentsOf: url as URL,options: NSData.ReadingOptions())
             if let imageData = data as NSData? {
-                if let mediaImage1 = UIImage(data: imageData)
+                if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     profileImage = mediaImage1
                 }

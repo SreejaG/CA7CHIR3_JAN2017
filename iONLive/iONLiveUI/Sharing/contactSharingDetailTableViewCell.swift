@@ -9,9 +9,9 @@ class contactSharingDetailTableViewCell: UITableViewCell {
     @IBOutlet var contactUserName: UILabel!
     @IBOutlet var subscriptionButton: UIButton!
     
-    @IBAction func contactSharingButtonClicked(sender: AnyObject) {
-            let tag = sender.tag
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshContactSharingTableView", object:tag)
+    @IBAction func contactSharingButtonClicked(_ sender: Any) {
+            let tag = (sender as AnyObject).tag
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshContactSharingTableView"), object:tag)
     }
     
     override func awakeFromNib() {
@@ -20,7 +20,7 @@ class contactSharingDetailTableViewCell: UITableViewCell {
         contactProfileImage.layer.masksToBounds = true     
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     

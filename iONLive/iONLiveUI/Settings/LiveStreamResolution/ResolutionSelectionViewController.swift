@@ -8,14 +8,15 @@ class ResolutionSelectionViewController: UIViewController {
     @IBOutlet var resolutionTableView: UITableView!
     
     var liveResolutions = ["352x240 (240p)","480x360 (360p)","850x480 (480p)","1280x720 (720p)","1920x1080 (1080p)"]
+    
     var selectedOption:String = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if(NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") != nil)
+        if(UserDefaults.standard.value(forKey: "liveResolution") != nil)
         {
-            let value = NSUserDefaults.standardUserDefaults().valueForKey("liveResolution") as! String
-            selectedOption = FileManagerViewController.sharedInstance.getLiveResolutionLongString(value)
+            let value = UserDefaults.standard.value(forKey: "liveResolution") as! String
+            selectedOption = FileManagerViewController.sharedInstance.getLiveResolutionLongString(resolution: value)
         }
         else{
             selectedOption = "1280x720 (720p)"
@@ -27,35 +28,35 @@ class ResolutionSelectionViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject)
+    @IBAction func didTapBackButton(_ sender: Any)
     {
-        let value = FileManagerViewController.sharedInstance.getLiveResolutionShortString(selectedOption)
-        NSUserDefaults.standardUserDefaults().setValue(value, forKey: "liveResolution")
-        self.navigationController?.popViewControllerAnimated(true)
+        let value = FileManagerViewController.sharedInstance.getLiveResolutionShortString(resolution: selectedOption)
+        UserDefaults.standard.setValue(value, forKey: "liveResolution")
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }
 
-extension ResolutionSelectionViewController: UITableViewDelegate
+extension ResolutionSelectionViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 40.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ResolutionHeaderTableViewCell.identifier) as! ResolutionHeaderTableViewCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: ResolutionHeaderTableViewCell.identifier) as! ResolutionHeaderTableViewCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-            headerCell.topBorder.hidden = true
+            headerCell.topBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         case 1:
-            headerCell.bottomBorder.hidden = true
+            headerCell.bottomBorder.isHidden = true
             headerCell.headerTitleLabel.text = ""
             break
         default:
@@ -64,25 +65,22 @@ extension ResolutionSelectionViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01
     }
-}
-
-extension ResolutionSelectionViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -94,28 +92,28 @@ extension ResolutionSelectionViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if liveResolutions.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(ResolutionTableViewCell.identifier, forIndexPath:indexPath) as! ResolutionTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ResolutionTableViewCell.identifier, for:indexPath as IndexPath) as! ResolutionTableViewCell
             cell.resolutionLabel.text = liveResolutions[indexPath.row]
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             
             if selectedOption == liveResolutions[indexPath.row]
             {
-                cell.selectionImageView.hidden = false
+                cell.selectionImageView.isHidden = false
             }
             else
             {
-                cell.selectionImageView.hidden = true
+                cell.selectionImageView.isHidden = true
             }
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if liveResolutions.count > indexPath.row
         {

@@ -1,10 +1,3 @@
-//
-//  TimeLapseSettingsViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/23/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -19,14 +12,14 @@ class TimeLapseSettingsViewController: UIViewController {
     var dataSource = [["Every 5 seconds","Every 10 seconds","Every 15 seconds"],["Stop after 5 minutes","Stop after 10 minutes","Stop after 15 minutes"]]
     
     var selectedOptions:[String:String] = [String:String]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
-    @IBAction func didTapBackButton(sender: AnyObject)
+    
+    @IBAction func didTapBackButton(_ sender: Any)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -34,75 +27,71 @@ class TimeLapseSettingsViewController: UIViewController {
     }
 }
 
-extension TimeLapseSettingsViewController: UITableViewDelegate
+extension TimeLapseSettingsViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 55.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(TimeLapseHeaderCell.identifier) as! TimeLapseHeaderCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: TimeLapseHeaderCell.identifier) as! TimeLapseHeaderCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-             headerCell.topBorder.hidden = true
-             headerCell.headerTitleLabel.text = "CAPTURE IMAGE"
-             break
+            headerCell.topBorder.isHidden = true
+            headerCell.headerTitleLabel.text = "CAPTURE IMAGE"
+            break
         case 1:
-             headerCell.headerTitleLabel.text = "IMAGE DURATION"
-             break
+            headerCell.headerTitleLabel.text = "IMAGE DURATION"
+            break
         default:
             break
         }
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
-    }
-}
-
-
-extension TimeLapseSettingsViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
-    {
-        return dataSource.count
+        return 0.01
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func numberOfSections(in tableView: UITableView) -> Int
+    {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return dataSource[section].count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if dataSource.count > indexPath.section
         {
             if dataSource[indexPath.section].count > indexPath.row
             {
-                let cell = tableView.dequeueReusableCellWithIdentifier(TimeTapseCell.identifier, forIndexPath:indexPath) as! TimeTapseCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: TimeTapseCell.identifier, for:indexPath as IndexPath) as! TimeTapseCell
                 cell.timelapseOptionLabel.text = dataSource[indexPath.section][indexPath.row]
-                cell.selectionStyle = .None
+                cell.selectionStyle = .none
                 
-                if getselectedOptionForSection(indexPath.section) == dataSource[indexPath.section][indexPath.row]
+                if getselectedOptionForSection(section: indexPath.section) == dataSource[indexPath.section][indexPath.row]
                 {
-                    cell.selectionImageView.hidden = false
+                    cell.selectionImageView.isHidden = false
                 }
                 else
                 {
-                    cell.selectionImageView.hidden = true
+                    cell.selectionImageView.isHidden = true
                 }
                 return cell
             }
@@ -110,11 +99,11 @@ extension TimeLapseSettingsViewController:UITableViewDataSource
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if dataSource.count > indexPath.section && dataSource[indexPath.section].count > indexPath.row
         {
-            setSelectedOption(indexPath)
+            setSelectedOption(indexPath: indexPath as NSIndexPath)
             timeLapseTableView.reloadData()
         }
     }
@@ -141,10 +130,10 @@ extension TimeLapseSettingsViewController:UITableViewDataSource
         switch indexPath.section
         {
         case 0:
-          selectedOptions[captureImageOption] = dataSource[indexPath.section][indexPath.row]
+            selectedOptions[captureImageOption] = dataSource[indexPath.section][indexPath.row]
             break
         case 1:
-           selectedOptions[imageDurationOption] = dataSource[indexPath.section][indexPath.row]
+            selectedOptions[imageDurationOption] = dataSource[indexPath.section][indexPath.row]
             break
         default:
             break

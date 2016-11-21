@@ -13,18 +13,18 @@ class StreamsGalleryViewController: UITabBarController {
         super.viewDidLoad()
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.addTabBarItems()
     }
     
     func addTabBarItems()
     {
-        NSUserDefaults.standardUserDefaults().objectForKey("SelectedTab")
-        self.selectedIndex = NSUserDefaults.standardUserDefaults().integerForKey("SelectedTab")
+        UserDefaults.standard.object(forKey: "SelectedTab")
+        self.selectedIndex = UserDefaults.standard.integer(forKey: "SelectedTab")
     }
     
-    override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         
     }
     

@@ -1,10 +1,3 @@
-//
-//  IONLiveCameraStatusUtility.swift
-//  iONLive
-//
-//  Created by Vinitha on 2/4/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -28,31 +21,26 @@ class IONLiveCameraStatusUtility: NSObject {
         return videoDataSourceStatus
     }
     
-    func getiONLiveCameraStatus( success: ((response: AnyObject?)->())?, failure: ((error: NSError?, code: String)->())?)
+    func getiONLiveCameraStatus( success: ((_ response: AnyObject?)->())?, failure: ((_ error: NSError?, _ code: String)->())?)
     {
-        iONLiveCameraStatusManager.getiONLiveCameraStatus({ (response) -> () in
-            
-            self.iONLiveCamGetStatusSuccessHandler(response)
+        iONLiveCameraStatusManager.getiONLiveCameraStatus(success: { (response) -> () in
+            self.iONLiveCamGetStatusSuccessHandler(response: response)
             if let responseObject = response as? [String:AnyObject]
             {
                 //call the success block that was passed with response data
-                success?(response: responseObject)
+                success?(responseObject as AnyObject?)
             }
             
-            }) { (error, code) -> () in
-                
-                ErrorManager.sharedInstance.alert("Status Failed", message: "Failure to get status ")
+        }) { (error, code) -> () in
+            ErrorManager.sharedInstance.alert(title: "Status Failed", message: "Failure to get status ")
         }
     }
-        
-    //PRAGMA MARK:- API Handlers
     
+    //PRAGMA MARK:- API Handlers
     func iONLiveCamGetStatusSuccessHandler(response:AnyObject?)
     {
-        print("entered status")
         if let json = response as? [String: AnyObject]
         {
-            print("success")
             if let freemem = json["freemem"]
             {
                 freememStatus = (freemem as? String)!

@@ -18,14 +18,13 @@ class Ca7chContactsTableViewCell: UITableViewCell {
         contactProfileImage.layer.masksToBounds = true
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    @IBAction func Ca7chContactsSharingButtonClicked(sender: AnyObject) {
-        let tag = sender.tag
+    @IBAction func Ca7chContactsSharingButtonClicked(_ sender: Any) {
+        let tag = (sender as AnyObject).tag
         let dict = ["sectionKey": section,"rowKey":tag]
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshCa7chContactsListTableView", object:dict)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshCa7chContactsListTableView"), object:dict)
     }
-
 }

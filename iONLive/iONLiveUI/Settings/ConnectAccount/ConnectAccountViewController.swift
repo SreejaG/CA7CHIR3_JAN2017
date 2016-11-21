@@ -1,10 +1,3 @@
-//
-//  ConnectAccountViewController.swift
-//  iONLive
-//
-//  Created by Gadgeon on 12/28/15.
-//  Copyright © 2015 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
@@ -18,39 +11,39 @@ class ConnectAccountViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
     
-    @IBAction func didTapBackButton(sender: AnyObject)
+    @IBAction func didTapBackButton(_ sender: Any)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }
 
-extension ConnectAccountViewController: UITableViewDelegate
+extension ConnectAccountViewController: UITableViewDelegate, UITableViewDataSource
 {
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
         return 40.0
     }
     
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(ConnectAccountOptionsHeaderCell.identifier) as! ConnectAccountOptionsHeaderCell
-        headerCell.topBorder.hidden = false
-        headerCell.bottomBorder.hidden = false
+        let  headerCell = tableView.dequeueReusableCell(withIdentifier: ConnectAccountOptionsHeaderCell.identifier) as! ConnectAccountOptionsHeaderCell
+        headerCell.topBorder.isHidden = false
+        headerCell.bottomBorder.isHidden = false
         
         switch section
         {
         case 0:
-            headerCell.topBorder.hidden = true
+            headerCell.topBorder.isHidden = true
             headerCell.headerTitle.text = ""
             break
         case 1:
-            headerCell.bottomBorder.hidden = true
+            headerCell.bottomBorder.isHidden = true
             headerCell.headerTitle.text = ""
             break
         default:
@@ -59,26 +52,22 @@ extension ConnectAccountViewController: UITableViewDelegate
         return headerCell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44.0
     }
     
-    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
     {
-        return 0.01   // to avoid extra blank lines
+        return 0.01   
     }
-}
-
-
-extension ConnectAccountViewController:UITableViewDataSource
-{
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    
+    func numberOfSections(in tableView: UITableView) -> Int
     {
         return 2
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -90,20 +79,21 @@ extension ConnectAccountViewController:UITableViewDataSource
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if dataSource.count > indexPath.row
         {
-            let cell = tableView.dequeueReusableCellWithIdentifier(ConnectAccountOptionsCell.identifier, forIndexPath:indexPath) as! ConnectAccountOptionsCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ConnectAccountOptionsCell.identifier, for:indexPath) as! ConnectAccountOptionsCell
             cell.accountOptionsLabel.text = dataSource[indexPath.row]
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             return cell
         }
         return UITableViewCell()
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        
     }
 }
 

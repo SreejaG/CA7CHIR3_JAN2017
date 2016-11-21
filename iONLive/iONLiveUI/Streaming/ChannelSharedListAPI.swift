@@ -2,16 +2,15 @@
 import UIKit
 
 class ChannelSharedListAPI: NSObject {
-   
-    var  dummy:[[String:AnyObject]] = [[String:AnyObject]]()
-    var dataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var SharedChannelListDataSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var pullToRefreshSource:[[String:AnyObject]] = [[String:AnyObject]]()
-    var mediaSharedCountArray:[[String:AnyObject]] = [[String:AnyObject]]()
-    var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
+    var  dummy:[[String:Any]] = [[String:Any]]()
+    var dataSource:[[String:Any]] = [[String:Any]]()
+    var SharedChannelListDataSource:[[String:Any]] = [[String:Any]]()
+    var pullToRefreshSource:[[String:Any]] = [[String:Any]]()
+    var mediaSharedCountArray:[[String:Any]] = [[String:Any]]()
+    var mediaShared:[[String:Any]] = [[String:Any]]()
     var pullTorefresh : Bool = false
-    var operationQueue = NSOperationQueue()
-    var operation2 : NSBlockOperation = NSBlockOperation()
+    var operationQueue = OperationQueue()
+    var operation2 : BlockOperation = BlockOperation()
     
     class var sharedInstance: ChannelSharedListAPI
     {
@@ -22,12 +21,14 @@ class ChannelSharedListAPI: NSObject {
         }
         return Singleton.instance
     }
+    
     func initialisedata()
     {
-        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
-        getChannelSharedDetails(userId, token: accessToken)
+        let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        let accessToken = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
+        getChannelSharedDetails(userName: userId, token: accessToken)
     }
+    
     func cancelOperationQueue()
     {
         operation2.cancel()
@@ -35,51 +36,51 @@ class ChannelSharedListAPI: NSObject {
     
     func getChannelSharedDetails(userName: String, token: String)
     {
-        ChannelManager.sharedInstance.getChannelShared(userName, accessToken: token, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        ChannelManager.sharedInstance.getChannelShared(userName: userName, accessToken: token, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
             
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
         }
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
     {
-        if let json = response as? [String: AnyObject]
+        if let json = response as? [String: Any]
         {
             dummy.removeAll()
             dataSource.removeAll()
-            let responseArrLive = json[liveChannelKey] as! [[String:AnyObject]]
-            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            let responseArrLive = json[liveChannelKey] as! [[String:Any]]
+            if (UserDefaults.standard.object(forKey: "Shared") != nil)
             {
-                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                mediaShared = UserDefaults.standard.value(forKey: "Shared") as! NSArray as! [[String : Any]]
             }
             if (responseArrLive.count != 0)
             {
-                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "MEDIA")
+                UserDefaults.standard.setValue("NotEmpty", forKey: "MEDIA")
                 
                 for element in responseArrLive{
-                    let channelId = element[ch_channelIdkey]?.stringValue
+                    let channelId = String(element[ch_channelIdkey] as! Int)
                     let channelName = element[ch_channelNameKey] as! String
                     let streamTocken = element[streamTockenKey] as! String
-                    let mediaSharedCount = element[sharedMediaCount]?.stringValue
+                    let mediaSharedCount = String(element[sharedMediaCount] as! Int)
                     let username = element[usernameKey] as! String
                     let liveStream = "1"
-                    let channelSubId = element[subChannelIdKey]?.stringValue
-                    let profileImageUserName = nullToNil(element[usernameKey]!)
+                    let channelSubId = String(element[subChannelIdKey] as! Int)
+                    let profileImageUserName = nullToNil(value: element[usernameKey]!)
                     let mediaUrl =  "noimage"
-                    let dateFormatter = NSDateFormatter()
+                    let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                    dateFormatter.timeZone = NSTimeZone(name: "UTC")
-                    let localDateStr = dateFormatter.stringFromDate(NSDate())
+                    dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+                    let localDateStr = dateFormatter.string(from: NSDate() as Date)
                     var flag: Bool = false
                     var thumbUrl : String = String()
                     if("\(profileImageUserName)" != "")
                     {
-                        let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(profileImageUserName as! String)
-                        thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
+                        let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(userId: profileImageUserName! as! String)
+                        thumbUrl =  nullToNil(value: profileImageNameBeforeNullChk)! as! String
                     }
-
+                    
                     if(mediaShared.count > 0)
                     {
                         for i in 0  ..< mediaShared.count
@@ -93,65 +94,63 @@ class ChannelSharedListAPI: NSObject {
                         }
                         if(!flag)
                         {
-                            mediaShared.append([ch_channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                            mediaShared.append([ch_channelIdkey:channelId,sharedMediaCount:mediaSharedCount])
                         }
                     }
                     else{
-                        mediaShared.append([ch_channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                        mediaShared.append([ch_channelIdkey:channelId,sharedMediaCount:mediaSharedCount])
                     }
-                    dataSource.append([ch_channelIdkey:channelId!,ch_channelNameKey:channelName,subChannelIdKey : channelSubId!,sharedMediaCount:mediaSharedCount!, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
+                    dataSource.append([ch_channelIdkey:channelId,ch_channelNameKey:channelName,subChannelIdKey : channelSubId,sharedMediaCount:mediaSharedCount, streamTockenKey:streamTocken,timeStamp:localDateStr,usernameKey:username,liveStreamStatus:liveStream, profileImageKey:thumbUrl,mediaImageKey:mediaUrl])
                 }
             }
             
-            let responseArr = json[subscribedChannelsKey] as! [[String:AnyObject]]
+            let responseArr = json[subscribedChannelsKey] as! [[String:Any]]
             if(responseArr.count == 0)
             {
-                NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
+                UserDefaults.standard.setValue("Empty", forKey: "EmptyShare")
             }
             if (responseArr.count != 0)
             {
-                NSUserDefaults.standardUserDefaults().setValue("NotEmpty", forKey: "EmptyShare")
+                UserDefaults.standard.setValue("NotEmpty", forKey: "EmptyShare")
                 for element in responseArr{
-
-                    let channelId = element[ch_channelIdkey]?.stringValue
+                    
+                    let channelId = String(element[ch_channelIdkey] as! Int)
                     let channelName = element[ch_channelNameKey] as! String
-                    let mediaSharedCount = element[sharedMediaCount]?.stringValue
+                    let mediaSharedCount = String(element[sharedMediaCount] as! Int)
                     let time = element[lastUpdatedTimeStamp] as! String
                     let username = element[usernameKey] as! String
-                    let channelSubId = element[subChannelIdKey]?.stringValue
+                    let channelSubId = String(element[subChannelIdKey] as! Int)
                     let liveStream = "0"
-                    let thumbID  = nullToNil(element[latest_thumbnail_idKey])
-                    let profileImageUserName = nullToNil(element[usernameKey]!)
+                    let thumbID  = nullToNil(value: element[latest_thumbnail_idKey])
+                    let profileImageUserName = nullToNil(value: element[usernameKey]!)
                     var mediaThumbUrl : String = String()
                     var thumbUrl : String = String()
                     if liveStream == "0"
                     {
-                        
-                        if("\(thumbID!)" != "")
+                        if("\(thumbID)"  != "")
                         {
-                            let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getMediaURL("\(thumbID!)" )
-                            mediaThumbUrl = nullToNil(mediaThumbUrlBeforeNullChk) as! String
+                            let mediaThumbUrlBeforeNullChk = UrlManager.sharedInstance.getMediaURL(mediaId: "\(thumbID!)")
+                            mediaThumbUrl = nullToNil(value: mediaThumbUrlBeforeNullChk)! as! String
                         }
                         else{
                             mediaThumbUrl = "noimage"
-
+                            
                         }
                     }
                     else
                     {
                         mediaThumbUrl = "noimage"
                     }
-//                    
-                   if("\(profileImageUserName)" != "")
+                    if("\(profileImageUserName)" != "")
                     {
-                        let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(profileImageUserName as! String)
-                          thumbUrl =  nullToNil(profileImageNameBeforeNullChk) as! String
-                   }
+                        let profileImageNameBeforeNullChk = UrlManager.sharedInstance.getProfileURL(userId: profileImageUserName! as! String)
+                        thumbUrl =  nullToNil(value: profileImageNameBeforeNullChk)! as! String
+                    }
                     var flag: Bool = false
                     
                     if(mediaShared.count > 0)
                     {
-                        for i in 0  ..< mediaShared.count 
+                        for i in 0  ..< mediaShared.count
                         {
                             if let val = mediaShared[i][ch_channelIdkey] {
                                 if((val as! String) == channelId)
@@ -162,18 +161,18 @@ class ChannelSharedListAPI: NSObject {
                         }
                         if(!flag)
                         {
-                            mediaShared.append([ch_channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                            mediaShared.append([ch_channelIdkey:channelId,sharedMediaCount:mediaSharedCount])
                         }
                     }
                     else{
-                        mediaShared.append([ch_channelIdkey:channelId!,sharedMediaCount:mediaSharedCount!])
+                        mediaShared.append([ch_channelIdkey:channelId,sharedMediaCount:mediaSharedCount])
                     }
-                    dummy.append([ch_channelIdkey:channelId!, subChannelIdKey : channelSubId!,ch_channelNameKey:channelName,sharedMediaCount:mediaSharedCount!,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
+                    dummy.append([ch_channelIdkey:channelId, subChannelIdKey : channelSubId,ch_channelNameKey:channelName,sharedMediaCount:mediaSharedCount,timeStamp:time,usernameKey:username,liveStreamStatus:liveStream,streamTockenKey:"0", profileImageKey:thumbUrl,mediaImageKey:mediaThumbUrl])
                 }
             }
             if(dummy.count > 0)
             {
-                dummy.sortInPlace({ p1, p2 in
+                dummy.sort(by: { p1, p2 in
                     
                     let time1 = p1[timeStamp] as! String
                     let time2 = p2[timeStamp] as! String
@@ -186,21 +185,21 @@ class ChannelSharedListAPI: NSObject {
                 dataSource.append(element)
             }
             
-            NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+            UserDefaults.standard.set(mediaShared, forKey: "Shared")
             
             if(dataSource.count > 0){
-                operation2  = NSBlockOperation (block: {
+                operation2  = BlockOperation (block: {
                     self.downloadMediaFromGCS()
                 })
                 self.operationQueue.addOperation(operation2)
             }
             else{
-                NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PullToRefreshSharedChannelList"), object:"failure")
             }
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PullToRefreshSharedChannelList"), object:"failure")
             
             ErrorManager.sharedInstance.inValidResponseError()
         }
@@ -209,12 +208,12 @@ class ChannelSharedListAPI: NSObject {
     func pullToRefreshData( subID : String)
     {
         pullTorefresh = true
-        let userId = NSUserDefaults.standardUserDefaults().valueForKey(userLoginIdKey) as! String
-        let accessToken = NSUserDefaults.standardUserDefaults().valueForKey(userAccessTockenKey) as! String
+        let userId = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        let accessToken = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
         if( SharedChannelListDataSource.count > 0 )
         {
-            ChannelManager.sharedInstance.getChannelSharedPullToRefresh(userId, accessToken:    accessToken, channelSubId: subID, success: { (response) in
-                self.authenticationSuccessHandler(response)
+            ChannelManager.sharedInstance.getChannelSharedPullToRefresh(userName: userId, accessToken:    accessToken, channelSubId: subID, success: { (response) in
+                self.authenticationSuccessHandler(response: response)
             }) { (error, code) in
             }
         }
@@ -222,12 +221,12 @@ class ChannelSharedListAPI: NSObject {
     
     func convertStringtoURL(url : String) -> NSURL
     {
-        let url : NSString = url
+        let url : NSString = url as NSString
         let searchURL : NSURL = NSURL(string: url as String)!
         return searchURL
     }
     
-    func nullToNil(value : AnyObject?) -> AnyObject? {
+    func nullToNil(value : Any?) -> Any? {
         if value is NSNull {
             return ""
         } else {
@@ -245,7 +244,7 @@ class ChannelSharedListAPI: NSObject {
                 let profileImageName = dataSource[i][profileImageKey] as! String
                 if(profileImageName != "")
                 {
-                    profileImage = createProfileImage(profileImageName)
+                    profileImage = createProfileImage(profileName: profileImageName)
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -258,8 +257,10 @@ class ChannelSharedListAPI: NSObject {
                         if(media1 as! String != "noimage"){
                             if(media1 as! String != "")
                             {
-                                
-                                mediaImage = createMediaThumb(media1 as! String)
+                                mediaImage = createMediaThumb(mediaName: media1 as! String)
+                                if(mediaImage == nil){
+                                     mediaImage = UIImage()
+                                }
                             }
                             else{
                                 mediaImage = UIImage()
@@ -278,12 +279,12 @@ class ChannelSharedListAPI: NSObject {
                 {
                     if (i < self.dataSource.count )
                     {
-                    if(!checkDuplicate(self.dataSource[i][ch_channelIdkey] as! String))
-                    {
-                        if(dataSource.count > 0)
+                        if(!checkDuplicate(chId: self.dataSource[i][ch_channelIdkey] as! String))
                         {
-                            SharedChannelListDataSource.append([ch_channelIdkey:self.dataSource[i][ch_channelIdkey]!,ch_channelNameKey:self.dataSource[i][ch_channelNameKey]!,sharedMediaCount:self.dataSource[i][sharedMediaCount]!,timeStamp:self.dataSource[i][timeStamp]!,usernameKey:self.dataSource[i][usernameKey]!,liveStreamStatus:self.dataSource[i][liveStreamStatus]!,streamTockenKey:self.dataSource[i][streamTockenKey]!,profileImageKey:profileImage!,mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]!])
-                        }
+                            if(dataSource.count > 0)
+                            {
+                                SharedChannelListDataSource.append([ch_channelIdkey:self.dataSource[i][ch_channelIdkey]!,ch_channelNameKey:self.dataSource[i][ch_channelNameKey]!,sharedMediaCount:self.dataSource[i][sharedMediaCount]!,timeStamp:self.dataSource[i][timeStamp]!,usernameKey:self.dataSource[i][usernameKey]!,liveStreamStatus:self.dataSource[i][liveStreamStatus]!,streamTockenKey:self.dataSource[i][streamTockenKey]!,profileImageKey:profileImage!,mediaImageKey:mediaImage!, subChannelIdKey :self.dataSource[i][subChannelIdKey]!])
+                            }
                         }
                     }
                 }
@@ -304,26 +305,23 @@ class ChannelSharedListAPI: NSObject {
         {
             if(pullToRefreshSource.count > 0)
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "success")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PullToRefreshSharedChannelList"), object:"success")
             }
             else
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("PullToRefreshSharedChannelList", object: "failure")
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PullToRefreshSharedChannelList"), object:"failure")
             }
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("SharedChannelList", object: "success")
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelList"), object:"success")
         }
-        
-        
-        print(SharedChannelListDataSource)
     }
     
     func checkDuplicate( chId : String) -> Bool
     {
         var flag: Bool = false
-        for i in 0  ..< SharedChannelListDataSource.count 
+        for i in 0  ..< SharedChannelListDataSource.count
         {
             if SharedChannelListDataSource[i][ch_channelIdkey] as! String == chId{
                 flag = true
@@ -332,7 +330,7 @@ class ChannelSharedListAPI: NSObject {
         return flag
     }
     
-    func uniq<S : SequenceType, T : Hashable where S.Generator.Element == T>(source: S) -> [T] {
+    func uniq<S : Sequence, T : Hashable>(source: S) -> [T] where S.Iterator.Element == T {
         var buffer = [T]()
         var added = Set<T>()
         for elem in source {
@@ -364,10 +362,13 @@ class ChannelSharedListAPI: NSObject {
         var mediaImage : UIImage?
         if(mediaName != "")
         {
-            let url: NSURL = convertStringtoURL(mediaName)
-            if let mediaData = NSData(contentsOfURL: url){
+            let url: NSURL = convertStringtoURL(url: mediaName)
+            if let mediaData = NSData(contentsOf: url as URL){
                 let mediaImageData = (mediaData as NSData?)!
-                mediaImage = UIImage(data: mediaImageData)
+                mediaImage = UIImage(data: mediaImageData as Data)
+                if(mediaImage == nil){
+                    mediaImage = UIImage()
+                }
             }
             else{
                 mediaImage = UIImage()
@@ -382,10 +383,10 @@ class ChannelSharedListAPI: NSObject {
     func createProfileImage(profileName: String) -> UIImage
     {
         var profileImage : UIImage = UIImage()
-        let url: NSURL = convertStringtoURL(profileName)
-        if let data = NSData(contentsOfURL: url){
+        let url: NSURL = convertStringtoURL(url: profileName)
+        if let data = NSData(contentsOf: url as URL){
             let imageDetailsData = (data as NSData?)!
-            profileImage = UIImage(data: imageDetailsData)!
+            profileImage = UIImage(data: imageDetailsData as Data)!
         }
         else{
             profileImage = UIImage(named: "dummyUser")!

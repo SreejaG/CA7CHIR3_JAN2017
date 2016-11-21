@@ -7,9 +7,10 @@ class IONLLoadingView: UIViewController {
         super.viewDidLoad()
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nil)
     }
+    
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
     }

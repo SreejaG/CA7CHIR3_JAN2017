@@ -12,13 +12,12 @@ class MyChannelNotificationCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         notificationText.numberOfLines = 0
-        notificationText.lineBreakMode = .ByWordWrapping
+        notificationText.lineBreakMode = .byWordWrapping
         NotificationSenderImageView.layer.cornerRadius = NotificationSenderImageView.frame.size.width/2
         NotificationSenderImageView.layer.masksToBounds = true
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
 }

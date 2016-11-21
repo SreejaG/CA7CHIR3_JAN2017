@@ -6,8 +6,8 @@ class MyChannelItemDetailsViewController: UIViewController {
     let imageUploadManger = ImageUpload.sharedInstance
     let requestManager = RequestManager.sharedInstance
     
-    var operationQueueObjInSharingImageList = NSOperationQueue()
-    var operationInSharingImageList = NSBlockOperation()
+    var operationQueueObjInSharingImageList = OperationQueue()
+    var operationInSharingImageList = BlockOperation()
     
     @IBOutlet weak var channelItemsCollectionView: UICollectionView!
     @IBOutlet weak var channelTitleLabel: UILabel!
@@ -42,36 +42,36 @@ class MyChannelItemDetailsViewController: UIViewController {
         
         self.channelItemsCollectionView.alwaysBounceVertical = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(_:)), name: "removeActivityIndicatorMyChannel", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(MyChannelItemDetailsViewController.myDayCleanUp(_:)), name: "myDayCleanUp", object: nil)
+        let removeActivityIndicatorMyChannel = Notification.Name("removeActivityIndicatorMyChannel")
+        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(notif:)), name: removeActivityIndicatorMyChannel, object: nil)
+        
+        let myDayCleanUp = Notification.Name("myDayCleanUp")
+        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelItemDetailsViewController.myDayCleanUp(notif:)), name: myDayCleanUp, object: nil)
         
         initialise()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "tabToAppear")
-        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.imageWithRenderingMode(.AlwaysOriginal)
+        UserDefaults.standard.set(0, forKey: "tabToAppear")
+        self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.withRenderingMode(.alwaysOriginal)
         if let channelName = channelName
         {
-            channelTitleLabel.text = channelName.uppercaseString
+            channelTitleLabel.text = channelName.uppercased()
         }
         downloadingFlag = false
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-//        operationInSharingImageList.cancel()
         self.channelItemsCollectionView.alpha = 1.0
-//        customView.stopAnimationg()
-//        customView.removeFromSuperview()
     }
     
-    @IBAction func backClicked(sender: AnyObject)
+    @IBAction func backClicked(_ sender: Any)
     {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let sharingVC = sharingStoryboard.instantiateViewControllerWithIdentifier(MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
-        sharingVC.navigationController?.navigationBarHidden = true
+        let sharingVC = sharingStoryboard.instantiateViewController(withIdentifier: MySharedChannelsViewController.identifier) as! MySharedChannelsViewController
+        sharingVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(sharingVC, animated: false)
     }
     
@@ -79,13 +79,13 @@ class MyChannelItemDetailsViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func inviteContacts(sender: AnyObject) {
+    @IBAction func inviteContacts(_ sender: Any) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let inviteContactsVC = sharingStoryboard.instantiateViewControllerWithIdentifier(OtherContactListViewController.identifier) as! OtherContactListViewController
+        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: OtherContactListViewController.identifier) as! OtherContactListViewController
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
-        inviteContactsVC.navigationController?.navigationBarHidden = true
+        inviteContactsVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(inviteContactsVC, animated: false)
     }
     
@@ -114,18 +114,18 @@ class MyChannelItemDetailsViewController: UIViewController {
                 if totalCount > 0
                 {
                     removeOverlay()
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    DispatchQueue.main.async {
                         self.channelItemsCollectionView.reloadData()
-                    })
+                    }
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > totalCount){
                         if(totalCount < 18){
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            DispatchQueue.main.async {
                                 self.customView.stopAnimationg()
                                 self.customView.removeFromSuperview()
-                                self.customView = CustomInfiniteIndicator(frame: CGRectMake(self.channelItemsCollectionView.layer.frame.width/2 - 20, self.channelItemsCollectionView.layer.frame.height - 100, 40, 40))
+                                self.customView = CustomInfiniteIndicator(frame: CGRect(x:(self.channelItemsCollectionView.layer.frame.width/2 - 20), y:(self.channelItemsCollectionView.layer.frame.height - 100), width:40, height:40))
                                 self.channelItemsCollectionView.addSubview(self.customView)
                                 self.customView.startAnimating()
-                            })
+                            }
                         }
                     }
                 }
@@ -134,12 +134,12 @@ class MyChannelItemDetailsViewController: UIViewController {
                     totalCount = 0
                     self.channelItemsCollectionView.reloadData()
                 }
-                self.downloadImagesFromGlobalChannelImageMapping(21)
+                self.downloadImagesFromGlobalChannelImageMapping(limit: 21)
             }
         }
     }
     
-    func thumbExists (item: [String : AnyObject]) -> Bool {
+    func thumbExists (item: [String : Any]) -> Bool {
         return item[tImageKey] != nil
     }
     
@@ -156,17 +156,17 @@ class MyChannelItemDetailsViewController: UIViewController {
         end = start + end
         if end <= GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count
         {
-            operationInSharingImageList  = NSBlockOperation (block: {
-                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
+            operationInSharingImageList  = BlockOperation (block: {
+                GlobalChannelToImageMapping.sharedInstance.downloadMediaFromGCS(chanelId: self.channelId, start: start, end: end, operationObj: self.operationInSharingImageList)
             })
             self.operationQueueObjInSharingImageList.addOperation(operationInSharingImageList)
         }
     }
     
     func createScrollViewAnimations()  {
-        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRectMake(0, 0, 40, 40))
+        channelItemsCollectionView.infiniteScrollIndicatorView = CustomInfiniteIndicator(frame: CGRect(x:0, y:0, width:40, height:40))
         channelItemsCollectionView.infiniteScrollIndicatorMargin = 50
-        channelItemsCollectionView.addInfiniteScrollWithHandler { [weak self] (scrollView) -> Void in
+        channelItemsCollectionView.addInfiniteScroll { [weak self] (scrollView) -> Void in
             if self!.totalCount > 0
             {
                 if(self!.totalCount < GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self!.channelId]!.count)
@@ -175,7 +175,7 @@ class MyChannelItemDetailsViewController: UIViewController {
                     {
                         self!.scrollObjSharing = scrollView
                         self!.downloadingFlag = true
-                        self!.downloadImagesFromGlobalChannelImageMapping(12)
+                        self!.downloadImagesFromGlobalChannelImageMapping(limit: 12)
                     }
                 }
                 else{
@@ -190,8 +190,8 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func addNoDataLabel()
     {
-        self.NoDatalabelFormySharingImageList = UILabel(frame: CGRectMake((self.view.frame.width/2) - 100,(self.view.frame.height/2) - 35, 200, 70))
-        self.NoDatalabelFormySharingImageList.textAlignment = NSTextAlignment.Center
+        self.NoDatalabelFormySharingImageList = UILabel(frame: CGRect(x:((self.view.frame.width/2) - 100),y:((self.view.frame.height/2) - 35), width:200, height:70))
+        self.NoDatalabelFormySharingImageList.textAlignment = NSTextAlignment.center
         self.NoDatalabelFormySharingImageList.text = "No Media Available"
         self.view.addSubview(self.NoDatalabelFormySharingImageList)
     }
@@ -201,19 +201,19 @@ class MyChannelItemDetailsViewController: UIViewController {
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.filter(thumbExists)
         totalCount = filteredData.count
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()
             self.removeOverlay()
             self.scrollObjSharing.finishInfiniteScroll()
             self.scrollObjSharing = UIScrollView()
             self.channelItemsCollectionView.reloadData()
-        })
+        }
         
         if(totalCount == 0){
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async {
                 self.addNoDataLabel()
-            })
+            }
         }
         
         if downloadingFlag == true
@@ -226,18 +226,18 @@ class MyChannelItemDetailsViewController: UIViewController {
         if(channelName == "My day"){
             operationInSharingImageList.cancel()
             let setOj = SetUpView()
-            setOj.cleanMyDayCall(vc, chanelId: channelId)
-            let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.Alert)
-        
-            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            setOj.cleanMyDayCall(obj: vc, chanelId: channelId)
+            let refreshAlert = UIAlertController(title: "Cleaning", message: "My Day Cleaning In Progress.", preferredStyle: UIAlertControllerStyle.alert)
+            
+            refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             }))
-            self.presentViewController(refreshAlert, animated: true, completion: nil)
+            self.present(refreshAlert, animated: true, completion: nil)
         }
     }
     
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - (64 + 50))
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:(self.view.frame.height - (64 + 50)))
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -248,52 +248,49 @@ class MyChannelItemDetailsViewController: UIViewController {
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults .standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
     }
 }
 
 extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UICollectionViewDelegateFlowLayout
 {
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return totalCount
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
-    {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MyChannelItemCell.identifier, forIndexPath: indexPath) as! MyChannelItemCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyChannelItemCell.identifier, for: indexPath) as! MyChannelItemCell
         cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+        cell.layer.rasterizationScale = UIScreen.main.scale
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0
         {
             let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaTypeKey] as! String
@@ -307,8 +304,8 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
             
             if mediaType == "video"
             {
-                cell.videoPlayIcon.hidden = false
-                cell.videoDurationLabel.hidden = false
+                cell.videoPlayIcon.isHidden = false
+                cell.videoDurationLabel.isHidden = false
                 if let vDuration =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][videoDurationKey]
                 {
                     cell.videoDurationLabel.text = vDuration as? String
@@ -316,65 +313,65 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 
             }
             else{
-                cell.videoPlayIcon.hidden = true
-                cell.videoDurationLabel.hidden = true
+                cell.videoPlayIcon.isHidden = true
+                cell.videoDurationLabel.isHidden = true
             }
         }
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(1, 1, 0, 1)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        return CGSizeMake((UIScreen.mainScreen().bounds.width/3)-2, 100)
+        return CGSize(width:((UIScreen.main.bounds.width/3)-2), height:100)
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]!.count > 0){
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][tImageKey] != nil
             {
-                let defaults = NSUserDefaults .standardUserDefaults()
-                let userId = defaults.valueForKey(userLoginIdKey) as! String
-                let accessToken = defaults.valueForKey(userAccessTockenKey) as! String
+                let defaults = UserDefaults .standard
+                let userId = defaults.value(forKey: userLoginIdKey) as! String
+                let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
                 self.showOverlay()
                 
                 self.channelItemsCollectionView.alpha = 0.4
                 var imageForProfile : UIImage = UIImage()
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath()
-                let savingPath = "\(parentPath)/\(userId)Profile"
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(savingPath)
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let savingPath = parentPath! + "/" + userId + "Profile"
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
                 if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(savingPath)
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
                     imageForProfile = mediaImageFromFile!
                 }
                 else{
                     let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileUrl )
+                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileUrl )
                     imageForProfile = mediaImageFromFile
                 }
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
-                let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateString)
+                let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
                 
                 let index = Int32(indexPath.row)
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.vc = MovieViewController.movieViewControllerWithImageVideo(self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem: index,pageIndicator: 0 ) as! MovieViewController
-                    self.presentViewController(self.vc, animated: false) { () -> Void in
+                DispatchQueue.main.async {
+                    self.vc = MovieViewController.movieViewController(withImageVideo: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem: index,pageIndicator: 0 ) as! MovieViewController
+                    self.present(self.vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemsCollectionView.alpha = 1.0
                     }
-                })
+                }
             }
         }
     }
@@ -382,7 +379,7 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
 
 extension MyChannelItemDetailsViewController: UIScrollViewDelegate
 {
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if(totalCount > 0){
             self.customView.stopAnimationg()
             self.customView.removeFromSuperview()

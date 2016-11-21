@@ -13,17 +13,17 @@ class LoginViewController: UIViewController {
     let requestManager = RequestManager.sharedInstance
     let authenticationManager = AuthenticationManager.sharedInstance
     
-    let defaults = NSUserDefaults .standardUserDefaults()
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loginButton.hidden = true
+        loginButton.isHidden = true
         initialise()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.navigationController?.navigationBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
         self.userNameTextfield.becomeFirstResponder()
     }
     
@@ -34,58 +34,66 @@ class LoginViewController: UIViewController {
     func initialise()
     {
         self.title = "LOG IN"
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backItem
         
         userNameTextfield.attributedPlaceholder = NSAttributedString(string: "Username",
-                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor(),NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
+                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGray,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
         passwordTextField.attributedPlaceholder = NSAttributedString(string: "Password",
-                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGrayColor() ,NSFontAttributeName: UIFont.italicSystemFontOfSize(14.0)])
-        userNameTextfield.autocorrectionType = UITextAutocorrectionType.No
-        passwordTextField.autocorrectionType = UITextAutocorrectionType.No
-        passwordTextField.secureTextEntry = true
+                                                                     attributes:[NSForegroundColorAttributeName: UIColor.lightGray ,NSFontAttributeName: UIFont.italicSystemFont(ofSize: 14.0)])
+        userNameTextfield.autocorrectionType = UITextAutocorrectionType.no
+        passwordTextField.autocorrectionType = UITextAutocorrectionType.no
+        passwordTextField.isSecureTextEntry = true
         userNameTextfield.delegate = self
         passwordTextField.delegate = self
         
-        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
-        passwordTextField.addTarget(self, action: #selector(self.textFieldDidChange), forControlEvents: .EditingChanged)
+        userNameTextfield.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
         
         addObserver()
     }
     
     func addObserver()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.keyboardDidShow(_:)), name:UIKeyboardWillShowNotification , object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LoginViewController.KeyboardDidHide(_:)), name:UIKeyboardWillHideNotification , object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(LoginViewController.keyboardDidShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector:#selector(LoginViewController.KeyboardDidHide),
+                                               name: NSNotification.Name.UIKeyboardDidHide,
+                                               object: nil)
     }
     
-    func textFieldDidChange(textField: UITextField)
+    func textFieldDidChange(_ textField: UITextField)
     {
         if(userNameTextfield.text!.isEmpty || passwordTextField.text!.isEmpty)
         {
-            loginButton.hidden = true
+            loginButton.isHidden = true
         }
         else{
-            let whiteChrSet = NSCharacterSet.whitespaceCharacterSet()
-            let decimalChrSet = NSCharacterSet.decimalDigitCharacterSet()
+            let whiteChrSet = NSCharacterSet.whitespaces
+            let decimalChrSet = NSCharacterSet.decimalDigits
             
-            if((userNameTextfield.text?.characters.count < 5) || (userNameTextfield.text?.characters.count > 15))
+            if(((userNameTextfield.text?.characters.count)! < 5) || ((userNameTextfield.text?.characters.count)! > 15))
             {
-                loginButton.hidden = true
+                loginButton.isHidden = true
             }
-            else if userNameTextfield.text!.rangeOfCharacterFromSet(whiteChrSet) != nil {
-                loginButton.hidden = true
-            }
-            else if((passwordTextField.text?.characters.count < 8) || (passwordTextField.text?.characters.count > 40))
+            else if (userNameTextfield.text! as String).rangeOfCharacter(from: whiteChrSet) != nil
             {
-                loginButton.hidden = true
+                loginButton.isHidden = true
             }
-            else if passwordTextField.text!.rangeOfCharacterFromSet(decimalChrSet) == nil
+            else if(((passwordTextField.text?.characters.count)! < 8) || ((passwordTextField.text?.characters.count)! > 40))
             {
-                loginButton.hidden = true
+                loginButton.isHidden = true
+            }
+            else if (passwordTextField.text! as String).rangeOfCharacter(from: decimalChrSet) == nil
+            {
+                loginButton.isHidden = true
             }
             else{
-                loginButton.hidden = false
+                loginButton.isHidden = false
             }
         }
     }
@@ -94,11 +102,11 @@ class LoginViewController: UIViewController {
     func keyboardDidShow(notification: NSNotification)
     {
         let info = notification.userInfo!
-        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         self.view.layoutIfNeeded()
         if logInBottomConstraint.constant == 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.logInBottomConstraint.constant += keyboardFrame.size.height
                 self.view.layoutIfNeeded()
             }
@@ -110,7 +118,7 @@ class LoginViewController: UIViewController {
         self.view.layoutIfNeeded()
         if logInBottomConstraint.constant != 0
         {
-            UIView.animateWithDuration(1.0) { () -> Void in
+            UIView.animate(withDuration: 1.0) { () -> Void in
                 self.logInBottomConstraint.constant = 0
                 self.view.layoutIfNeeded()
             }
@@ -118,7 +126,7 @@ class LoginViewController: UIViewController {
     }
     
     //PRAGMA MARK:- IBActions
-    @IBAction func forgetPasswordClicked(sender: AnyObject)
+    @IBAction func forgetPasswordClicked(_ sender: Any)
     {
         loadVerifyPhoneView()
     }
@@ -126,35 +134,25 @@ class LoginViewController: UIViewController {
     func loadVerifyPhoneView()
     {
         let storyboard = UIStoryboard(name:"Authentication" , bundle: nil)
-        let verifyPhoneVC = storyboard.instantiateViewControllerWithIdentifier(SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
+        let verifyPhoneVC = storyboard.instantiateViewController(withIdentifier: SignUpVerifyPhoneViewController.identifier) as! SignUpVerifyPhoneViewController
         verifyPhoneVC.email = "invalid"
         verifyPhoneVC.userName = "invalid"
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         verifyPhoneVC.navigationItem.backBarButtonItem = backItem
         self.navigationController?.pushViewController(verifyPhoneVC, animated: false)
     }
     
-    @IBAction func tapGestureRecognized(sender: AnyObject) {
+    @IBAction func tapGestureRecognized(_ sender: Any) {
         view.endEditing(true)
     }
     
-    @IBAction func loginClicked(sender: AnyObject)
+    @IBAction func loginClicked(_ sender: Any)
     {
-        //        if userNameTextfield.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.loginNoEmailEnteredError()
-        //        }
-        //        else if passwordTextField.text!.isEmpty
-        //        {
-        //            ErrorManager.sharedInstance.loginNoPasswordEnteredError()
-        //        }
-        //        else
-        //        {
-        if let deviceToken = defaults.valueForKey("deviceToken")
+        if let deviceToken = defaults.value(forKey: "deviceToken")
         {
-            let gcmRegId = "ios".stringByAppendingString(deviceToken as! String)
+            let gcmRegId = ("ios" ).appending(deviceToken as! String)
             
-            self.loginUser(self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
+            self.loginUser(email: self.userNameTextfield.text!, password: self.passwordTextField.text!, gcmRegistrationId: gcmRegId, withLoginButton: true)
         }
         else{
             if !self.requestManager.validConnection() {
@@ -164,13 +162,12 @@ class LoginViewController: UIViewController {
                 ErrorManager.sharedInstance.installFailure()
             }
         }
-        //        }
     }
     
     //Loading Overlay Methods
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
-        loadingOverlayController.view.frame = CGRectMake(0, 64, self.view.frame.width, self.view.frame.height - 64)
+        loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:self.view.frame.height - 64)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
         self.view .addSubview(self.loadingOverlay!)
@@ -184,46 +181,46 @@ class LoginViewController: UIViewController {
     func loginUser(email: String, password: String, gcmRegistrationId: String, withLoginButton: Bool)
     {
         showOverlay()
-        authenticationManager.authenticate(email, password: password, gcmRegId: gcmRegistrationId, success: { (response) -> () in
-            self.authenticationSuccessHandler(response)
+        authenticationManager.authenticate(email: email, password: password, gcmRegId: gcmRegistrationId, success: { (response) -> () in
+            self.authenticationSuccessHandler(response: response)
         }) { (error, message) -> () in
-            self.authenticationFailureHandler(error, code: message)
+            self.authenticationFailureHandler(error: error, code: message)
             return
         }
     }
     
     func  loadInitialViewController(code: String){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
             
-            let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+            if(FileManager.default.fileExists(atPath: documentsPath))
             {
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtPath(documentsPath)
+                    try fileManager.removeItem(atPath: documentsPath)
                 }
                 catch _ as NSError {
                 }
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             else{
-                FileManagerViewController.sharedInstance.createParentDirectory()
+                _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = NSUserDefaults .standardUserDefaults()
-            let deviceToken = defaults.valueForKey("deviceToken") as! String
-            defaults.removePersistentDomainForName(NSBundle.mainBundle().bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let deviceToken = defaults.value(forKey: "deviceToken") as! String
+            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.setObject(1, forKey: "shutterActionMode");
+            defaults.set(1, forKey: "shutterActionMode");
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.navigationBarHidden = true
-            self.presentViewController(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            channelItemListVC.navigationController?.isNavigationBarHidden = true
+            self.present(channelItemListVC, animated: false) { () -> Void in
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
-        })
+        }
+        
     }
     
     func authenticationSuccessHandler(response:AnyObject?)
@@ -233,8 +230,7 @@ class LoginViewController: UIViewController {
         loadCameraViewController()
         if let json = response as? [String: AnyObject]
         {
-            clearStreamingUserDefaults(defaults)
-            
+            clearStreamingUserDefaults(defaults: defaults)
             if let tocken = json["token"]
             {
                 defaults.setValue(tocken, forKey: userAccessTockenKey)
@@ -256,7 +252,7 @@ class LoginViewController: UIViewController {
             {
                 defaults.setValue(code, forKey:ArchiveCount)
             }
-            NSUserDefaults.standardUserDefaults().setValue("initialCall", forKey: "CallingAPI")
+            UserDefaults.standard.setValue("initialCall", forKey: "CallingAPI")
             GlobalDataChannelList.sharedInstance.initialise()
             ChannelSharedListAPI.sharedInstance.initialisedata()
         }
@@ -266,11 +262,11 @@ class LoginViewController: UIViewController {
         }
     }
     
-    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    func clearStreamingUserDefaults(defaults:UserDefaults)
     {
-        defaults.removeObjectForKey(streamingToken)
-        defaults.removeObjectForKey(startedStreaming)
-        defaults.removeObjectForKey(initializingStream)
+        defaults.removeObject(forKey: streamingToken)
+        defaults.removeObject(forKey: startedStreaming)
+        defaults.removeObject(forKey: initializingStream)
     }
     
     func authenticationFailureHandler(error: NSError?, code: String)
@@ -282,10 +278,10 @@ class LoginViewController: UIViewController {
         else if code.isEmpty == false {
             
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code)
+                loadInitialViewController(code: code)
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(code)
+                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
         else{
@@ -295,31 +291,31 @@ class LoginViewController: UIViewController {
     
     deinit
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func loadLiveStreamView()
     {
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+        let vc = MovieViewController.movieViewController(withContentPath: "rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
         self.navigationController?.pushViewController(vc, animated: false)
     }
     
     func loadCameraViewController()
     {
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
         self.navigationController?.pushViewController(iPhoneCameraViewController, animated: false)
     }
 }
 
 extension LoginViewController:UITextFieldDelegate{
     
-    func textFieldDidEndEditing(textField: UITextField)
+    func textFieldDidEndEditing(_ textField: UITextField)
     {
         textField.layoutIfNeeded()
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
         textField.resignFirstResponder()
         return true

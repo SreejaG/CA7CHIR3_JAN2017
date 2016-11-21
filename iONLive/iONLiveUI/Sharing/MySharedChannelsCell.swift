@@ -15,13 +15,13 @@ class MySharedChannelsCell: UITableViewCell {
         super.awakeFromNib()
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    @IBAction func channelSelectionClicked(sender: AnyObject)
+    @IBAction func channelSelectionClicked(_ sender: Any)
     {
-        let tag = sender.tag
-        NSNotificationCenter.defaultCenter().postNotificationName("refreshMySharedChannelTableView", object:tag)
+        let tag = (sender as AnyObject).tag
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshMySharedChannelTableView"), object:tag)
     }
 }

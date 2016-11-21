@@ -8,7 +8,7 @@ extern NSString * const KxMovieParameterMinBufferedDuration;    // Float
 extern NSString * const KxMovieParameterMaxBufferedDuration;    // Float
 extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
 
-@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate ,UICollectionViewDelegate, UICollectionViewDataSource>
+@interface MovieViewController : UIViewController < NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate, UIGestureRecognizerDelegate, AVPlayerViewControllerDelegate ,UICollectionViewDelegate, UICollectionViewDataSource, CAAnimationDelegate>
 
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters

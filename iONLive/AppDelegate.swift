@@ -10,45 +10,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var photoViewController : PhotoViewerViewController?
     let requestManager = RequestManager.sharedInstance
     
-    var mediaShared:[[String:AnyObject]] = [[String:AnyObject]]()
+    var mediaShared:[[String:Any]] = [[String:Any]]()
     let sharedMediaCount = "total_no_media_shared"
     var deleteQueue : NSMutableArray = NSMutableArray()
-
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        if(NSUserDefaults.standardUserDefaults().boolForKey("StartedStreaming"))
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        if(UserDefaults.standard.bool(forKey: "StartedStreaming"))
         {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: "StartedStreaming")
+            UserDefaults.standard.set(false, forKey: "StartedStreaming")
         }
-        
-        
-     
-
-//        NSUserDefaults.standardUserDefaults().setBool(false, forKey:"Background")
-        NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyMedia")
-        NSUserDefaults.standardUserDefaults().setValue("Empty", forKey: "EmptyShare")
-        let settings : UIUserNotificationSettings = UIUserNotificationSettings(forTypes:[UIUserNotificationType.Alert, UIUserNotificationType.Sound], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
-        let documentsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] + "/GCSCA7CH"
-        if(NSFileManager.defaultManager().fileExistsAtPath(documentsPath))
+        UserDefaults.standard.setValue("Empty", forKey: "EmptyMedia")
+        UserDefaults.standard.setValue("Empty", forKey: "EmptyShare")
+        let settings : UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .sound], categories: nil)
+        UIApplication.shared.registerUserNotificationSettings(settings)
+        UIApplication.shared.registerForRemoteNotifications()
+        let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+        if(FileManager.default.fileExists(atPath: documentsPath))
         {
         }
         else{
-            FileManagerViewController.sharedInstance.createParentDirectory()
+            _ = FileManagerViewController.sharedInstance.createParentDirectory()
         }
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(nil, forKey: "uploaObjectDict")
-        defaults.setObject(nil, forKey: "ProgressDict")
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        self.window!.backgroundColor = UIColor.whiteColor()
-        if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? NSDictionary {
-             NSUserDefaults.standardUserDefaults().setValue(remoteNotification, forKey: "remote")
+        let defaults = UserDefaults.standard
+        defaults.set(nil, forKey: "uploaObjectDict")
+        defaults.set(nil, forKey: "ProgressDict")
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window!.backgroundColor = UIColor.white
+        if let remoteNotification = launchOptions?[UIApplicationLaunchOptionsKey.remoteNotification] as? NSDictionary {
+            UserDefaults.standard.setValue(remoteNotification, forKey: "remote")
             GlobalDataChannelList.sharedInstance.initialise()
             ChannelSharedListAPI.sharedInstance.initialisedata()
             let result = remoteNotification["messageFrom"] as! NSDictionary
             if(result["type"] as! String == "liveStream")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotification"), object:result)
                 if(result["subType"] as! String == "started"){
                     defaults.setValue("1", forKey: "notificationArrived")
                 }
@@ -61,43 +56,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.setValue("1", forKey: "notificationArrived")
             }
             else{
-               defaults.setValue("0", forKey: "notificationArrived")
+                defaults.setValue("0", forKey: "notificationArrived")
             }
-            if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
+            if UserDefaults.standard.value(forKey: "notificationArrived") as! String == "1"
             {
                 loadNotificationView()
             }
             else{
-                let defaults = NSUserDefaults .standardUserDefaults()
+                let defaults = UserDefaults.standard
                 defaults.setValue("0", forKey: "notificationArrived")
                 initialViewController()
             }
         }
         else{
-            let defaults = NSUserDefaults .standardUserDefaults()
+            let defaults = UserDefaults.standard
             defaults.setValue("0", forKey: "notificationArrived")
             initialViewController()
         }
-        
         self.window!.makeKeyAndVisible()
         return true
     }
     
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
+        
     }
     
-    func applicationDidEnterBackground(application: UIApplication) {
-       
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        
     }
     
-    func applicationWillEnterForeground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName("enterBackground", object:nil)
-        if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") != nil{
-            if NSUserDefaults.standardUserDefaults().valueForKey("notificationArrived") as! String == "1"
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "enterBackground"), object:nil)
+        if UserDefaults.standard.value(forKey: "notificationArrived") != nil{
+            if UserDefaults.standard.value(forKey: "notificationArrived") as! String == "1"
             {
-                if(application.applicationState == .Inactive || application.applicationState == .Background)
+                if(application.applicationState == .inactive || application.applicationState == .background)
                 {
-                    
                     GlobalDataChannelList.sharedInstance.initialise()
                     ChannelSharedListAPI.sharedInstance.initialisedata()
                     loadNotificationView()
@@ -108,43 +102,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             for i in 0  ..< deleteQueue.count
             {
-
-                NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: deleteQueue[i])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "MediaDelete"), object:deleteQueue[i])
             }
         }
         deleteQueue.removeAllObjects()
     }
     
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         application.applicationIconBadgeNumber = 0;
     }
     
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         self.saveContext()
-         NSUserDefaults.standardUserDefaults().setValue("0", forKey: "notificationArrived")
+        UserDefaults.standard.setValue("0", forKey: "notificationArrived")
     }
     
     func initialViewController()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
+        let defaults = UserDefaults.standard
         defaults.setValue("0", forKey: "notificationFlag")
         var controller : UIViewController = UIViewController()
-        NSUserDefaults.standardUserDefaults().setObject(1, forKey: "shutterActionMode");
-        if (NSUserDefaults.standardUserDefaults().objectForKey("flashMode") == nil)
+        UserDefaults.standard.set(1, forKey: "shutterActionMode");
+        if (UserDefaults.standard.object(forKey: "flashMode") == nil)
         {
-            NSUserDefaults.standardUserDefaults().setObject(0, forKey: "flashMode")
+            UserDefaults.standard.set(0, forKey: "flashMode")
         }
-        if (NSUserDefaults.standardUserDefaults().objectForKey("SaveToCameraRoll") == nil)
+        if (UserDefaults.standard.object(forKey: "SaveToCameraRoll") == nil)
         {
-            NSUserDefaults.standardUserDefaults().setObject(1, forKey: "SaveToCameraRoll")
+            UserDefaults.standard.set(1, forKey: "SaveToCameraRoll")
         }
         //Auto login check
-        if (NSUserDefaults.standardUserDefaults().objectForKey("userAccessTockenKey") == nil)
+        if (UserDefaults.standard.object(forKey: "userAccessTockenKey") == nil)
         {
-            let defaults = NSUserDefaults .standardUserDefaults()
+            let defaults = UserDefaults .standard
             defaults.setValue("login", forKey: "loadingView")
             let authenticationStoryboard = UIStoryboard(name:"Authentication" , bundle: nil)
-            controller = authenticationStoryboard.instantiateViewControllerWithIdentifier("AuthenticateNavigationController")
+            controller = authenticationStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController")
             self.window!.rootViewController = controller
         }
         else
@@ -153,80 +146,69 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func clearStreamingUserDefaults(defaults:NSUserDefaults)
+    func clearStreamingUserDefaults(defaults:UserDefaults)
     {
-        defaults.removeObjectForKey(streamingToken)
-        defaults.removeObjectForKey(startedStreaming)
-        defaults.removeObjectForKey(initializingStream)
+        defaults.removeObject(forKey: streamingToken)
+        defaults.removeObject(forKey: startedStreaming)
+        defaults.removeObject(forKey: initializingStream)
     }
     
     func loadCameraViewController()
     {
-        let defaults = NSUserDefaults .standardUserDefaults()
+        let defaults = UserDefaults.standard
         defaults.setValue("appDelegateRedirection", forKey: "viewFromWhichPage")
         var navigationController:UINavigationController?
         let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
-        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewControllerWithIdentifier("IPhoneCameraViewController") as! IPhoneCameraViewController
+        let iPhoneCameraViewController = cameraViewStoryboard.instantiateViewController(withIdentifier: "IPhoneCameraViewController") as! IPhoneCameraViewController
         
         navigationController = UINavigationController(rootViewController: iPhoneCameraViewController)
-        navigationController!.navigationBarHidden = true
+        navigationController!.isNavigationBarHidden = true
         self.window!.rootViewController = navigationController
     }
     
     func loadLiveStreamView()
     {
         var navigationController:UINavigationController?
-        let vc = MovieViewController.movieViewControllerWithContentPath("rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
-        
-        clearStreamingUserDefaults(NSUserDefaults.standardUserDefaults())
+        let vc = MovieViewController.movieViewController(withContentPath: "rtsp://192.168.42.1:554/live", parameters: nil , liveVideo: true) as! UIViewController
+        clearStreamingUserDefaults(defaults: UserDefaults.standard)
         navigationController = UINavigationController(rootViewController: vc)
-        navigationController!.navigationBarHidden = true
+        navigationController!.isNavigationBarHidden = true
         self.window!.rootViewController = navigationController
     }
     
     func  loadNotificationView()  {
-        NSUserDefaults.standardUserDefaults().setInteger(1, forKey: "SelectedTab")
-        let defaults = NSUserDefaults .standardUserDefaults()
+        UserDefaults.standard.set(1, forKey: "SelectedTab")
+        let defaults = UserDefaults .standard
         defaults.setValue("1", forKey: "notificationFlag")
         var navigationController:UINavigationController?
         let notificationStoryboard = UIStoryboard(name:"Streaming" , bundle: nil)
-        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
+        let notificationViewController = notificationStoryboard.instantiateViewController(withIdentifier: StreamsGalleryViewController.identifier) as! StreamsGalleryViewController
         navigationController = UINavigationController(rootViewController: notificationViewController)
-        navigationController!.navigationBarHidden = true
+        navigationController!.isNavigationBarHidden = true
         self.window?.rootViewController = navigationController
-        
-        
-//        let defaults = NSUserDefaults .standardUserDefaults()
-//        defaults.setValue("1", forKey: "notificationFlag")
-//        var navigationController:UINavigationController?
-//        let notificationStoryboard = UIStoryboard(name:"MyChannel" , bundle: nil)
-//        let notificationViewController = notificationStoryboard.instantiateViewControllerWithIdentifier(MyChannelNotificationViewController.identifier) as! MyChannelNotificationViewController
-//        navigationController = UINavigationController(rootViewController: notificationViewController)
-//        navigationController!.navigationBarHidden = true
-//        self.window?.rootViewController = navigationController
     }
     
     // MARK: - Core Data stack
     lazy var applicationDocumentsDirectory: NSURL = {
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1]
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls[urls.count-1] as NSURL
     }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
-        let modelURL = NSBundle.mainBundle().URLForResource("GalleryModel", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
+        let modelURL = Bundle.main.url(forResource: "GalleryModel", withExtension: "momd")!
+        return NSManagedObjectModel(contentsOf: modelURL)!
     }()
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("SingleViewCoreData.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
         } catch {
-            var dict = [String: AnyObject]()
+            var dict = [String: Any]()
             dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = failureReason
+            dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
             
             dict[NSUnderlyingErrorKey] = error as NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
@@ -237,7 +219,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     lazy var managedObjectContext: NSManagedObjectContext = {
         let coordinator = self.persistentStoreCoordinator
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
     }()
@@ -255,14 +237,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     //push notification
-    func application(application: UIApplication,didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        
-        let characterSet: NSCharacterSet = NSCharacterSet( charactersInString: "<>" )
-        let deviceTokenString: String = ( deviceToken.description as NSString )
-            .stringByTrimmingCharactersInSet( characterSet )
-            .stringByReplacingOccurrencesOfString( " ", withString: "" ) as String
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         if(deviceTokenString != ""){
-            let defaults = NSUserDefaults .standardUserDefaults()
+            let defaults = UserDefaults.standard
             defaults.setValue(deviceTokenString, forKey: "deviceToken")
         }
         else{
@@ -270,60 +248,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        let result = userInfo["messageFrom"] as! NSDictionary
-        let defaults = NSUserDefaults .standardUserDefaults()
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        let result = userInfo["messageFrom"] as? NSDictionary
+        let defaults = UserDefaults.standard
         var checkFlag : Bool = false
-        if( application.applicationState == .Inactive )
+        if( application.applicationState == .inactive )
         {
             checkFlag = true
         }
-        if(result["type"] as! String == "delete" || result["type"] as! String == "media" )
+        if(result?["type"] as! NSString  == "delete" || result?["type"] as! NSString == "media" )
         {
             defaults.setValue("0", forKey: "notificationArrived")
-            NSNotificationCenter.defaultCenter().postNotificationName("MediaDelete", object: result)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "MediaDelete"), object:result)
             
-            if ( result["type"] as! String == "media")
+            if ( result?["type"] as! NSString == "media")
             {
                 
-                if(application.applicationState == .Inactive || application.applicationState == .Background)
+                if(application.applicationState == .inactive || application.applicationState == .background)
                 {
-                    deleteQueue.addObject(result)
+                    deleteQueue.add(result!)
                 }
             }
         }
-        else if ( (result["type"] as! String == "share") || (result["type"] as! String == "channel") || (result["type"] as! String == "liveStream") || (result["type"] as! String == "My Day Cleaning")){
+        else if ( (result?["type"] as! NSString == "share") || (result?["type"] as! NSString == "channel") || (result?["type"] as! NSString == "liveStream") || (result?["type"] as! NSString == "My Day Cleaning")){
             
-            if (result["type"] as! String == "share"){
+            if (result?["type"] as! NSString == "share"){
                 
-                NSUserDefaults.standardUserDefaults().setObject("share", forKey: "NotificationText")
-                let chid : String = "\(result["channelId"]!)"
+                UserDefaults.standard.set("share", forKey: "NotificationText")
+                let chid : String = "\(result!["channelId"]!)"
                 if(!checkFlag)
                 {
-                    updateCount(chid)
+                    updateCount(channelId: chid)
                 }
             }
-            if (result["type"] as! String == "channel"){
+            if (result?["type"] as! NSString == "channel"){
                 
-                if (result["subType"] as! String == "deleted")
+                if (result?["subType"] as! NSString == "deleted")
                 {
-                    let chid : String = "\(result["channelId"]!)"
+                    let chid : String = "\(result!["channelId"]!)"
                     defaults.setValue("0", forKey: "notificationArrived")
-                    NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
-                    removeEntryFromShare(chid)
-                    removeEntryFromGlobal(chid)
+                    
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotification"), object:result)
+                    
+                    removeEntryFromShare(channelId: chid)
+                    removeEntryFromGlobal(channelId: chid)
                 }
-                if(result["subType"] as! String == "useradded")
+                if(result?["subType"] as! NSString == "useradded")
                 {
                     defaults.setValue("0", forKey: "notificationArrived")
                     
-                    NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationChannelText")
-                    NSUserDefaults.standardUserDefaults().setObject(result["messageText"] as! String, forKey: "NotificationText")
+                    UserDefaults.standard.set(result?["messageText"] as! String, forKey: "NotificationChannelText")
+                    UserDefaults.standard.set(result?["messageText"] as! String, forKey: "NotificationText")
                 }
             }
-            else if (result["type"] as! String == "My Day Cleaning")
+            else if (result?["type"] as! NSString == "My Day Cleaning")
             {
-                let chid : String = "\(result["channelId"]!)"
+                let chid : String = "\(result!["channelId"]!)"
                 
                 for i in 0 ..< GlobalDataChannelList.sharedInstance.globalChannelDataSource.count
                 {
@@ -333,28 +313,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         {
                             let chanId = GlobalDataChannelList.sharedInstance.globalChannelDataSource[i][channelIdKey] as! String
                             if(chid == chanId){
-                            NSNotificationCenter.defaultCenter().postNotificationName("myDayCleanNotif", object: result)
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "myDayCleanNotif"), object:result)
                                 break
                             }
                         }
                     }
                 }
-                
-                myDayCleanUpChannel(chid)
+                myDayCleanUpChannel(channelId: chid)
             }
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
-                NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
-                
-                })
-        
-            
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotificationStream"), object:result)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotificationChannel"), object:result)
+            }
         }
         
-        if(result["type"] as! String == "liveStream")
+        if(result?["type"] as! NSString == "liveStream")
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("PushNotification", object: result)
-            if(result["subType"] as! String == "started"){
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotification"), object:result)
+            if(result?["subType"] as! NSString == "started"){
                 defaults.setValue("1", forKey: "notificationArrived")
                 
             }
@@ -362,62 +338,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
-        else if  (result["type"] as! String == "share")
+        else if  (result?["type"] as! NSString == "share")
         {
             defaults.setValue("1", forKey: "notificationArrived")
         }
-        else if (result["type"] as! String == "like")
+        else if (result?["type"] as! NSString == "like")
         {
-            if(result["subType"] as! String != "liveStream"){
+            if(result?["subType"] as! NSString != "liveStream"){
                 defaults.setValue("2", forKey: "notificationArrived")
             }
             else{
                 defaults.setValue("0", forKey: "notificationArrived")
             }
         }
-        
-        
     }
-//    
-//    func test()
-//    {
-//        let chid : String = "\(156)"
-//        myDayCleanUpChannel(chid)
-//        
-//        
-//        let result = ["channelId": 156, "type": "My Day Cleaning"]
-//
-//        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationStream", object: result)
-//        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationChannel", object: result)
-//    }
+    
     func myDayCleanUpChannel(channelId : String)
     {
-        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        let index  = getUpdateIndexChannel(channelIdValue: channelId, isCountArray: true)
         if(index != -1)
         {
             if(mediaShared.count > 0)
             {
                 let  latestCount : Int = 0
                 mediaShared[index][sharedMediaCount]  = "\(latestCount)"
-                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+                UserDefaults.standard.set(mediaShared, forKey: "Shared")
             }
-            print(mediaShared[index])
         }
-        let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
+        let indexOfChannelList =  getUpdateIndexChannel(channelIdValue: channelId, isCountArray: false)
         if(indexOfChannelList != -1)
         {
             var mediaImage : UIImage?
             mediaImage = UIImage()
-         ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][mediaImageKey] = mediaImage
-            
-            print(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList])
-
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][mediaImageKey] = mediaImage
         }
-        
     }
+    
     func updateCount( channelId : String)
     {
-        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        let index  = getUpdateIndexChannel(channelIdValue: channelId, isCountArray: true)
         if(index != -1)
         {
             if(mediaShared.count > 0)
@@ -425,11 +384,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let sharedCount = mediaShared[index][sharedMediaCount] as! String
                 let  latestCount : Int = Int(sharedCount)! + 1
                 mediaShared[index][sharedMediaCount]  = "\(latestCount)"
-                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+                UserDefaults.standard.set(mediaShared, forKey: "Shared")
             }
         }
         
-        let indexOfChannelList =  getUpdateIndexChannel(channelId, isCountArray: false)
+        let indexOfChannelList =  getUpdateIndexChannel(channelIdValue: channelId, isCountArray: false)
         if(indexOfChannelList != -1)
         {
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
@@ -437,63 +396,64 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][sharedMediaCount]  = "1"
             }
             let timeStamp = "created_time_stamp"
-
-            let dateFormatter = NSDateFormatter()
+            
+            let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            dateFormatter.timeZone = NSTimeZone(name: "UTC")
-            let currentDate = dateFormatter.stringFromDate(NSDate())
+            dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
+            let currentDate = dateFormatter.string(from: NSDate() as Date)
             ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList][timeStamp] = currentDate
             let filteredData = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.filter(thumbExists)
             let totalCount = filteredData.count
             let itemToMove = ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource[indexOfChannelList]
-            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(indexOfChannelList)
-            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, atIndex: totalCount)
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.remove(at: indexOfChannelList)
+            ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.insert(itemToMove, at: totalCount)
         }
-        
-        NSNotificationCenter.defaultCenter().postNotificationName("PushNotificationIphone", object: nil)
-        NSNotificationCenter.defaultCenter().postNotificationName("CountIncrementedPushNotification", object: channelId)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PushNotificationIphone"), object:nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "CountIncrementedPushNotification"), object:channelId)
     }
-    func thumbExists (item: [String : AnyObject]) -> Bool {
+    
+    func thumbExists (item: [String : Any]) -> Bool {
         let liveStreamStatus = "liveChannel"
         return item[liveStreamStatus] as! String == "1"
     }
+    
+    
     func removeEntryFromShare(channelId : String)
     {
-        let index  = getUpdateIndexChannel(channelId, isCountArray: true)
+        let index  = getUpdateIndexChannel(channelIdValue: channelId, isCountArray: true)
         if(index != -1)
         {
             if(mediaShared.count > 0)
             {
-                mediaShared.removeAtIndex(index)
-                NSUserDefaults.standardUserDefaults().setObject(mediaShared, forKey: "Shared")
+                mediaShared.remove(at: index)
+                UserDefaults.standard.set(mediaShared, forKey: "Shared")
             }
         }
     }
     
     func removeEntryFromGlobal(channelId : String)
     {
-        let index  = getUpdateIndexChannel(channelId, isCountArray: false)
+        let index  = getUpdateIndexChannel(channelIdValue: channelId, isCountArray: false)
         if(index != -1)
         {
             if(ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.count > 0)
             {
-                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.removeAtIndex(index)
+                ChannelSharedListAPI.sharedInstance.SharedChannelListDataSource.remove(at: index)
             }
         }
-
     }
     
     func getUpdateIndexChannel(channelIdValue : String , isCountArray : Bool) -> Int
     {
         let channelIdkey = "ch_detail_id"
-        var selectedArray : NSArray = NSArray()
+        var selectedArray = [[String: Any]]()
         var indexOfRow : Int = -1
         if(isCountArray)
         {
-            if (NSUserDefaults.standardUserDefaults().objectForKey("Shared") != nil)
+            if (UserDefaults.standard.object(forKey: "Shared") != nil)
             {
                 mediaShared.removeAll()
-                mediaShared = NSUserDefaults.standardUserDefaults().valueForKey("Shared") as! NSArray as! [[String : AnyObject]]
+                mediaShared = UserDefaults.standard.value(forKey: "Shared") as! [[String : Any]]
                 selectedArray = mediaShared as Array
             }
             else{
@@ -507,10 +467,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var  checkFlag : Bool = false
         var index : Int =  -1
         
-        for i in 0  ..< selectedArray.count 
+        for i in 0  ..< selectedArray.count
         {
             let channelId = selectedArray[i][channelIdkey]!
-            if "\(channelId!)"  == channelIdValue
+            if "\(channelId)"  == channelIdValue
             {
                 checkFlag = true
                 index = i
@@ -521,14 +481,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             indexOfRow = index
         }
-        
         return indexOfRow
     }
     
-    func convertStringToDictionary(text: String) -> [String:AnyObject]? {
-        if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
+    func convertStringToDictionary(text: String) -> [String:Any]? {
+        if let data = text.data(using: String.Encoding.utf8) {
             do {
-                return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String:AnyObject]
             } catch  _ as NSError {
             }
         }
@@ -536,7 +495,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     //Called if unable to register for APNS.
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
     }
 }
 

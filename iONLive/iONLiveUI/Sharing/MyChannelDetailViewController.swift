@@ -13,11 +13,11 @@ class MyChannelDetailViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let index =  NSUserDefaults.standardUserDefaults().valueForKey("tabToAppear")
+        let index =  UserDefaults.standard.value(forKey: "tabToAppear")
         self.selectedIndex = index as! Int
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
     }
     
@@ -25,6 +25,6 @@ class MyChannelDetailViewController: UITabBarController {
         super.didReceiveMemoryWarning()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
     }
 }

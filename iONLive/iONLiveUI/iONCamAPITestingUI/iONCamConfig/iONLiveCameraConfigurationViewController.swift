@@ -1,27 +1,20 @@
-//
-//  iONLiveCameraConfigurationViewController.swift
-//  iONLive
-//
-//  Created by Vinitha on 2/3/16.
-//  Copyright © 2016 Gadgeon. All rights reserved.
-//
 
 import UIKit
 
 class iONLiveCameraConfigurationViewController: UIViewController {
     
     static let identifier = "iONLiveCameraConfigurationViewController"
-
+    
     @IBOutlet var inputSingleClickTextField: UITextField!
     @IBOutlet var inputDoubleClickTextField: UITextField!
     @IBOutlet var inputScaleTextField: UITextField!
     @IBOutlet var inputQualityTextField: UITextField!
-
+    
     @IBOutlet var outputSingleClickTextField: UITextField!
     @IBOutlet var outputDoubleClickTextField: UITextField!
     @IBOutlet var outputScaleTextField: UITextField!
     @IBOutlet var outputQualityTextField: UITextField!
-
+    
     @IBOutlet var outPutView: UIView!
     
     //PRAGMA MARK:- class variables
@@ -32,24 +25,21 @@ class iONLiveCameraConfigurationViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
+        
         inputSingleClickTextField.text = ""
         inputDoubleClickTextField.text = ""
         inputQualityTextField.text = ""
         inputScaleTextField.text = ""
         
-        outPutView.hidden = true
+        outPutView.isHidden = true
     }
+    
     //PRAGMA MARK:- API Handler
-
     func iONLiveCamGetConfigSuccessHandler(response:AnyObject?)
     {
-        outPutView.hidden = false
-        print("entered config")
-        
+        outPutView.isHidden = false
         if let json = response as? [String: AnyObject]
         {
-            print("success")
             if let quality = json["quality"]
             {
                 let intVal = quality as! Int
@@ -72,32 +62,27 @@ class iONLiveCameraConfigurationViewController: UIViewController {
             }
         }
     }
-
-    @IBAction func didTapPutCameraConfiguration(sender: AnyObject) {
+    
+    @IBAction func didTapPutCameraConfiguration(_ sender: Any) {
         self.view.endEditing(true)
-         iONLiveCameraConfigManager.putIONLiveCameraConfiguration(inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
-            
-             self.iONLiveCamGetConfigSuccessHandler(response)
-            
-            }) { (error, code) -> () in
-            ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
-        }
-    }
-
-    @IBAction func didTapGetCameraConfiguration(sender: AnyObject) {
-        self.view.endEditing(true)
-
-        iONLiveCameraConfigManager.getiONLiveCameraConfiguration(inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
-            
-            self.iONLiveCamGetConfigSuccessHandler(response)
-            
-            }) { (error, code) -> () in
-                ErrorManager.sharedInstance.alert("Config Failed", message: "Failure to get config ")
+        iONLiveCameraConfigManager.putIONLiveCameraConfiguration(scale: inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
+            self.iONLiveCamGetConfigSuccessHandler(response: response)
+        }) { (error, code) -> () in
+            ErrorManager.sharedInstance.alert(title: "Config Failed", message: "Failure to get config ")
         }
     }
     
-    @IBAction func didTapBackButton(sender: AnyObject) {
+    @IBAction func didTapGetCameraConfiguration(_ sender: Any) {
+        self.view.endEditing(true)
         
-        self.navigationController?.popViewControllerAnimated(true)
+        iONLiveCameraConfigManager.getiONLiveCameraConfiguration(scale: inputScaleTextField.text, quality: inputQualityTextField.text, singleClick: inputSingleClickTextField.text, doubleClick: inputDoubleClickTextField.text, success: { (response) -> () in
+            self.iONLiveCamGetConfigSuccessHandler(response: response)
+        }) { (error, code) -> () in
+            ErrorManager.sharedInstance.alert(title: "Config Failed", message: "Failure to get config ")
+        }
+    }
+    
+    @IBAction func didTapBackButton(_ sender: Any) {
+        _ = self.navigationController?.popViewController(animated: true)
     }
 }

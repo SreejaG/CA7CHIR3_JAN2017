@@ -15,7 +15,7 @@ class AuthenticateNavigationController: UINavigationController {
     func customise()
     {
         if #available(iOS 8.2, *) {
-            UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.systemFontOfSize(18, weight: UIFontWeightRegular),NSForegroundColorAttributeName: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0)]
+            UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightRegular),NSForegroundColorAttributeName: UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0)]
         }
         else if #available(iOS 8.1, *)
         {
@@ -27,7 +27,7 @@ class AuthenticateNavigationController: UINavigationController {
         }
         
         UINavigationBar.appearance().tintColor = UIColor(red: 44.0/255, green: 214.0/255, blue: 229.0/255, alpha: 1.0)
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         UINavigationBar.appearance().shadowImage = UIImage()
     }
 }
