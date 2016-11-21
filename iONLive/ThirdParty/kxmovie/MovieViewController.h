@@ -25,7 +25,8 @@ extern NSString * const KxMovieParameterDisableDeinterlacing;   // BOOL
                                 timeDiff: (NSString *) timeDiff
                             likeCountStr: (NSString *) likeCountStr
                             selectedItem: (int) selectedItem
-                           pageIndicator: (int) pageIndicator;
+                           pageIndicator: (int) pageIndicator
+                            videoDuration: (NSString *) videoDuration;
 
 -(void) successFromSetUpView:( NSString *) count;
 -(void) closeView;

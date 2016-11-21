@@ -216,6 +216,8 @@ class MyChannelNotificationViewController: UIViewController {
     func authenticationSuccessHandler(response:AnyObject?)
     {
         UserDefaults.standard.setValue("0", forKey: "notificationArrived")
+        let image = UIImage(named: "noNotif") as UIImage?
+        notifImage.setImage(image, for: .normal)
         removeOverlay()
         if let json = response as? [String: AnyObject]
         {

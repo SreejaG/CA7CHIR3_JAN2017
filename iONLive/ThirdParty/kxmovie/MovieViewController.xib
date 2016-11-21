@@ -21,6 +21,7 @@
                 <outlet property="cameraSelectionButton" destination="lME-9O-IZZ" id="6cY-ph-zgr"/>
                 <outlet property="channelName" destination="7DN-bo-KMh" id="cOl-wL-eNs"/>
                 <outlet property="closeButton" destination="2sq-TW-cXt" id="Rbm-RH-rk7"/>
+                <outlet property="durationLabel" destination="CKU-mO-5ya" id="pZ8-h6-Iq3"/>
                 <outlet property="firstCircleButton" destination="f3D-sN-Bhz" id="yQ0-SY-7PT"/>
                 <outlet property="glView" destination="R2J-HD-A0s" id="pO5-Cs-rFc"/>
                 <outlet property="heartBottomDescView" destination="HwH-TP-m4n" id="24W-EF-B2y"/>
@@ -35,6 +36,7 @@
                 <outlet property="numberOfSharedChannels" destination="L40-1V-WGS" id="OTK-rh-hOY"/>
                 <outlet property="photoCollectionView" destination="amM-7M-BQR" id="pSb-NI-mQX"/>
                 <outlet property="profilePicture" destination="BMp-J9-C8j" id="4vf-dX-udw"/>
+                <outlet property="progressBottomConstraint" destination="YFY-M3-3dy" id="Kva-Q0-vNY"/>
                 <outlet property="secondCircleButton" destination="WbX-hr-Zxb" id="OLz-WO-P5h"/>
                 <outlet property="thirdCircleButton" destination="kF6-Vj-OCx" id="wgz-RR-ZT2"/>
                 <outlet property="topView" destination="BB9-od-AqJ" id="p7r-8Y-Ov3"/>
@@ -59,6 +61,16 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2J-HD-A0s" userLabel="glView" customClass="KxMovieGLView">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKU-mO-5ya">
+                                    <rect key="frame" x="5" y="502" width="100" height="12"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="12" id="6DO-lJ-V9C"/>
+                                        <constraint firstAttribute="width" constant="100" id="AOI-3O-5om"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KWR-bQ-XwK">
                                     <rect key="frame" x="0.0" y="516" width="320" height="2"/>
                                     <constraints>
@@ -370,6 +382,7 @@
                                 <constraint firstItem="JM0-t4-a8I" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="Dl2-EV-wus"/>
                                 <constraint firstAttribute="trailing" secondItem="JM0-t4-a8I" secondAttribute="trailing" id="Idw-DH-vOe"/>
                                 <constraint firstItem="JM0-t4-a8I" firstAttribute="top" secondItem="R2J-HD-A0s" secondAttribute="top" id="NsA-TJ-mPV"/>
+                                <constraint firstItem="CKU-mO-5ya" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" constant="5" id="Oe0-RP-hYm"/>
                                 <constraint firstItem="fVQ-mp-3vZ" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="Qv2-3C-8gJ"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="centerY" secondItem="R2J-HD-A0s" secondAttribute="centerY" id="R2N-W9-00b"/>
                                 <constraint firstItem="8cA-HV-eex" firstAttribute="leading" secondItem="R2J-HD-A0s" secondAttribute="leading" id="WeN-QK-2BA"/>
@@ -386,6 +399,7 @@
                                 <constraint firstAttribute="bottom" secondItem="8cA-HV-eex" secondAttribute="bottom" id="ptr-Me-t4l"/>
                                 <constraint firstAttribute="bottom" secondItem="amM-7M-BQR" secondAttribute="bottom" id="qse-Gk-wJy"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="R2J-HD-A0s" secondAttribute="leading" constant="10" id="re7-J8-Xkw"/>
+                                <constraint firstItem="5C7-am-vGG" firstAttribute="top" secondItem="CKU-mO-5ya" secondAttribute="bottom" constant="2" id="tfu-Vy-Tmb"/>
                                 <constraint firstItem="dwM-g7-MKl" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="v17-34-uuM"/>
                             </constraints>
                         </view>

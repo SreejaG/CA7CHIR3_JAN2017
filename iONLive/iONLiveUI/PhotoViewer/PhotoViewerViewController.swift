@@ -793,9 +793,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             else{
                 selectedItem = selectedItem - 1
             }
-            mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaIdKey] as! String)!
+           
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
                 if(totalCount > 0){
+                    mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaIdKey] as! String)!
                     deletButton.isHidden = false
                     addToButton.isHidden = false
                     let dict = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
@@ -803,6 +804,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 }
                 else{
                     if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count <= 0){
+                        mediaIdSelected = 0
                         removeOverlay()
                         addNoDataLabel()
                     }
