@@ -2964,7 +2964,7 @@ UIPanGestureRecognizer *afterPan;
         likeCountStrChk = @"";
         notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
         VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
-        videoDurationChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"video_duration"];
+        videoDurationChk = streamORChannelDict[indexForSwipe][@"video_duration"];
         SetUpView *setUpObj = [[SetUpView alloc]init];
         if(screenNumber == 1){
             [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
