@@ -261,6 +261,20 @@ int timerCount = 0;
             {
             }
             else{
+                if (shutterActionMode == SnapCamSelectionModeVideo)
+                {
+                    dispatch_async( dispatch_get_main_queue(), ^{
+                        if ([self.videoDeviceInput.device hasFlash]&&[self.videoDeviceInput.device hasTorch]) {
+                            if (self.videoDeviceInput.device.torchMode == AVCaptureTorchModeOff) {
+                            }else {
+                                [self.videoDeviceInput.device lockForConfiguration:nil];
+                                [self.videoDeviceInput.device setTorchMode:AVCaptureTorchModeOff];
+                                [self.videoDeviceInput.device unlockForConfiguration];
+                            }
+                        }
+                    });
+                    [self.movieFileOutput stopRecording];
+                }
                 _cameraButton.hidden = false;
                 if(flashFlag == 0){
                     _flashButton.hidden = false;
@@ -1111,6 +1125,7 @@ int timerCount = 0;
     }
     else if (shutterActionMode == SnapCamSelectionModeVideo)
     {
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
         [self startMovieRecording];
     }
     else if (shutterActionMode == SnapCamSelectionModeLiveStream)
