@@ -62,7 +62,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKU-mO-5ya">
-                                    <rect key="frame" x="5" y="502" width="100" height="12"/>
+                                    <rect key="frame" x="5" y="500" width="100" height="12"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="12" id="6DO-lJ-V9C"/>
                                         <constraint firstAttribute="width" constant="100" id="AOI-3O-5om"/>
@@ -399,7 +399,7 @@
                                 <constraint firstAttribute="bottom" secondItem="8cA-HV-eex" secondAttribute="bottom" id="ptr-Me-t4l"/>
                                 <constraint firstAttribute="bottom" secondItem="amM-7M-BQR" secondAttribute="bottom" id="qse-Gk-wJy"/>
                                 <constraint firstItem="KZE-R5-aYy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="R2J-HD-A0s" secondAttribute="leading" constant="10" id="re7-J8-Xkw"/>
-                                <constraint firstItem="5C7-am-vGG" firstAttribute="top" secondItem="CKU-mO-5ya" secondAttribute="bottom" constant="2" id="tfu-Vy-Tmb"/>
+                                <constraint firstItem="5C7-am-vGG" firstAttribute="top" secondItem="CKU-mO-5ya" secondAttribute="bottom" constant="4" id="tfu-Vy-Tmb"/>
                                 <constraint firstItem="dwM-g7-MKl" firstAttribute="centerX" secondItem="R2J-HD-A0s" secondAttribute="centerX" id="v17-34-uuM"/>
                             </constraints>
                         </view>
