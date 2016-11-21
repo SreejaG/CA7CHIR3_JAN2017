@@ -217,8 +217,8 @@
 		B2C223DD1D269698001C8516 /* MediaBeforeUploadComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C223DC1D269698001C8516 /* MediaBeforeUploadComplete.swift */; };
 		B2C46ADA1DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m in Sources */ = {isa = PBXBuildFile; fileRef = B2C46AD91DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m */; };
 		B2F0602E1D212825009DBFC0 /* PhotoViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */; };
-		B2FA6B501DE2BD09008986AA /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */; };
-		B2FA6B531DE2BDCB008986AA /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */; };
+		B2FA6B571DE2C282008986AA /* CustomInfiniteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B541DE2C282008986AA /* CustomInfiniteIndicator.swift */; };
+		B2FA6B581DE2C282008986AA /* UIScrollView+InfiniteScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = B2FA6B561DE2C282008986AA /* UIScrollView+InfiniteScroll.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -600,9 +600,9 @@
 		B2C46AD81DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ALAssetsLibrary+CustomPhotoAlbum.h"; sourceTree = "<group>"; };
 		B2C46AD91DC9C7F300792991 /* ALAssetsLibrary+CustomPhotoAlbum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAssetsLibrary+CustomPhotoAlbum.m"; sourceTree = "<group>"; };
 		B2F0602D1D212825009DBFC0 /* PhotoViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PhotoViewer.storyboard; sourceTree = "<group>"; };
-		B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+InfiniteScroll.m"; path = "../../../UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
-		B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+InfiniteScroll.h"; path = "../../../UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
-		B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomInfiniteIndicator.swift; path = ../../../CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
+		B2FA6B541DE2C282008986AA /* CustomInfiniteIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomInfiniteIndicator.swift; sourceTree = "<group>"; };
+		B2FA6B551DE2C282008986AA /* UIScrollView+InfiniteScroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+InfiniteScroll.h"; sourceTree = "<group>"; };
+		B2FA6B561DE2C282008986AA /* UIScrollView+InfiniteScroll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+InfiniteScroll.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1524,9 +1524,9 @@
 		B24FE4B81DDC93E800C3F8A4 /* Scroll */ = {
 			isa = PBXGroup;
 			children = (
-				B2FA6B521DE2BDCB008986AA /* CustomInfiniteIndicator.swift */,
-				B2FA6B511DE2BD52008986AA /* UIScrollView+InfiniteScroll.h */,
-				B2FA6B4F1DE2BD09008986AA /* UIScrollView+InfiniteScroll.m */,
+				B2FA6B541DE2C282008986AA /* CustomInfiniteIndicator.swift */,
+				B2FA6B551DE2C282008986AA /* UIScrollView+InfiniteScroll.h */,
+				B2FA6B561DE2C282008986AA /* UIScrollView+InfiniteScroll.m */,
 			);
 			path = Scroll;
 			sourceTree = "<group>";
@@ -1815,7 +1815,6 @@
 				16DA06EB1C7ED8A8004759D5 /* NBMetadataCoreTestMapper.m in Sources */,
 				59BC3F5B1BFF848600710905 /* AFHTTPRequestOperationManager.m in Sources */,
 				1633D2381C5F21FD00937FAD /* Entity+CoreDataProperties.swift in Sources */,
-				B2FA6B531DE2BDCB008986AA /* CustomInfiniteIndicator.swift in Sources */,
 				166455FC1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift in Sources */,
 				16B2D20E1C7DCDEF00668567 /* SignUpFindFriendsViewController.swift in Sources */,
 				B299465B1DC0B39800BD58B7 /* ResolutionTableViewCell.swift in Sources */,
@@ -1855,6 +1854,7 @@
 				16AED00E1CBE1B3D00D72C0F /* ContactListViewController.swift in Sources */,
 				1671A47B1C2BB32400C2E0B0 /* DeleteMediaSettingsHeaderCell.swift in Sources */,
 				160903F61C6C7ED1004E381D /* EditProfAccountInfoCell.swift in Sources */,
+				B2FA6B571DE2C282008986AA /* CustomInfiniteIndicator.swift in Sources */,
 				162ABFF91C3258D000625C89 /* MyChannelCell.swift in Sources */,
 				165D44E21CBBC0D700BEA24E /* ChannelsSharedController.swift in Sources */,
 				B2160A9F1DC33A12006F0724 /* ChannelItemListViewController.swift in Sources */,
@@ -1927,7 +1927,7 @@
 				599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */,
 				16D933BB1C61B99500FDA359 /* iONLiveCameraConfigurationViewController.swift in Sources */,
 				16DA06F41C7ED8A8004759D5 /* NBPhoneNumberUtil.m in Sources */,
-				B2FA6B501DE2BD09008986AA /* UIScrollView+InfiniteScroll.m in Sources */,
+				B2FA6B581DE2C282008986AA /* UIScrollView+InfiniteScroll.m in Sources */,
 				16DA06F01C7ED8A8004759D5 /* NBPhoneNumber.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
