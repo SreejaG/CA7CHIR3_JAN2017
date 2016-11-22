@@ -2914,6 +2914,7 @@ UIPanGestureRecognizer *afterPan;
     return CGSizeMake(50, 46);
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self checkVideoStatus];
     pinchFlag = false;
     CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
     imageVideoView.transform = transform;
