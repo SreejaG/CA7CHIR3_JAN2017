@@ -460,12 +460,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     func enlargeImageView(Recognizer:UITapGestureRecognizer){
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
-                if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
-                {
-                    let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
-                    if mediaType == "video"
+                if(totalCount > 0){
+                    if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] != nil
                     {
-                        downloadVideo(index: selectedItem)
+                        let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
+                        if mediaType == "video"
+                        {
+                            downloadVideo(index: selectedItem)
+                        }
                     }
                 }
             }
@@ -1027,6 +1029,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             let downloadRequest = URLRequest(url: videoDownloadUrl as URL)
             let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
             downloadTask = session.downloadTask(with: downloadRequest)
+            
+            progressViewDownload?.removeFromSuperview()
+            progressLabelDownload?.removeFromSuperview()
             
             progressViewDownload?.isHidden = false
             progressLabelDownload?.isHidden = false
