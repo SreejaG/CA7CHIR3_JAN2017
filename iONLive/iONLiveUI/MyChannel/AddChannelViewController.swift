@@ -110,10 +110,11 @@ class AddChannelViewController: UIViewController {
     func setChannelDetailsDummy()
     {
         fulldataSource.removeAll()
+        let defaults = UserDefaults.standard
+        let archiveChanelId = "\(defaults.value(forKey: archiveId) as! Int)"
         for element in GlobalDataChannelList.sharedInstance.globalChannelDataSource{
-            
             let channelId = element[channelIdKey] as! String
-            if(channelId != selectedChannelId)
+            if((channelId != selectedChannelId) && (channelId != archiveChanelId))
             {
                 fulldataSource.append(element)
             }

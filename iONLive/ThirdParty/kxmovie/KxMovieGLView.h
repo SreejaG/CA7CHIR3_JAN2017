@@ -16,8 +16,8 @@
 
 @interface KxMovieGLView : UIView
 
-- (id) initWithFrame:(CGRect)frame
-             decoder: (KxMovieDecoder *) decoder;
+//- (id) initWithFrame:(CGRect)frame
+//             decoder: (KxMovieDecoder *) decoder;
 - (BOOL) initWithDecoder:(KxMovieDecoder *) decoder;
 
 

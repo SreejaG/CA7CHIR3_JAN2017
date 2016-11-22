@@ -130,7 +130,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JiJ-jH-TVq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-346" y="220"/>
+            <point key="canvasLocation" x="-649" y="220"/>
         </scene>
         <!--Cam PictureAPI View Controller-->
         <scene sceneID="vDu-QR-9gO">
@@ -343,7 +343,7 @@
                             <constraint firstItem="zKB-E4-udL" firstAttribute="top" secondItem="j2v-a3-BJz" secondAttribute="bottom" id="ST7-fb-iyJ"/>
                             <constraint firstAttribute="trailing" secondItem="5Ox-Df-xKU" secondAttribute="trailing" id="a3M-Zq-U5w"/>
                             <constraint firstAttribute="trailing" secondItem="j2v-a3-BJz" secondAttribute="trailing" id="eB9-1x-NtQ"/>
-                            <constraint firstItem="SkW-Ij-kHF" firstAttribute="top" secondItem="zKB-E4-udL" secondAttribute="bottom" id="hgt-ia-GE9"/>
+                            <constraint firstItem="SkW-Ij-kHF" firstAttribute="top" secondItem="zKB-E4-udL" secondAttribute="bottom" id="sUx-s2-EmJ"/>
                             <constraint firstItem="5Ox-Df-xKU" firstAttribute="leading" secondItem="NIT-Bl-1EN" secondAttribute="leading" id="sot-FU-4Iz"/>
                             <constraint firstItem="j2v-a3-BJz" firstAttribute="leading" secondItem="NIT-Bl-1EN" secondAttribute="leading" id="uCE-zt-i93"/>
                         </constraints>
@@ -891,7 +891,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="c72-jv-Od3" id="MXl-Yt-piG">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Button Single Click" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5eQ-7e-jKO">
@@ -930,7 +930,7 @@
                                         <rect key="frame" x="0.0" y="72" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4QH-LV-U5c" id="LEh-1q-2w4">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="752" verticalHuggingPriority="752" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" text="Video Resolution" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="77Z-Cb-icD">
@@ -1038,11 +1038,11 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="404"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="61" id="p4S-wP-kKv" customClass="StreamPickerTableViewCell" customModule="CA7CH" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="StreamPickerTableViewCell" rowHeight="61" id="p4S-wP-kKv" customClass="StreamPickerTableViewCell" customModule="CA7CH" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="320" height="61"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p4S-wP-kKv" id="NdN-eb-Oay">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="61"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Framerate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qvn-sI-tS8">

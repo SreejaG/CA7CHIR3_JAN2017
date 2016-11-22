@@ -54,6 +54,8 @@
 	<string>Use Camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Use Microphones</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Use media Library</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>

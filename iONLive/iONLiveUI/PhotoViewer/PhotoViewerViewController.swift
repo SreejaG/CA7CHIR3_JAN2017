@@ -1036,10 +1036,11 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             
             view.addSubview(progressViewDownload!)
             self.playIconInFullView.isHidden = true
-            let frame = CGRect(x:(fullScrenImageView.center.x - 100), y:(fullScrenImageView.center.y - 100), width:200, height:50)
+            let frame = CGRect(x:(fullScrenImageView.center.x - 100), y:(fullScrenImageView.center.y - 30), width:200, height:20)
             progressLabelDownload?.frame = frame
             view.addSubview(progressLabelDownload!)
-            progressLabelDownload?.text = " "
+            progressLabelDownload?.text = "Downloading ..."
+            progressLabelDownload!.textAlignment = NSTextAlignment.center
             fullScrenImageView.alpha = 0.2
             downloadTask!.resume()
         }

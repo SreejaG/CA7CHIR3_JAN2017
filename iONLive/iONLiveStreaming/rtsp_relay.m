@@ -147,9 +147,9 @@ int init_streams(char *url_in ,char *url_out){
 
 int start_stream(){
     
-    int fun_ret,ret;
+    int fun_ret = 0,ret;
     EXIT_FLAG=0;
-	int i;
+	int i = 0;
     
     static  AVIOInterruptCB int_cb = {interrupt_cb , nil};
     m_informat->interrupt_callback = int_cb;

@@ -203,30 +203,6 @@
                                                     <outlet property="editChanelNameTextField" destination="3iY-xC-zMj" id="69C-63-YYh"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="gek-0N-A2c">
-                                                <rect key="frame" x="0.0" y="98" width="414" height="70"/>
-                                                <autoresizingMask key="autoresizingMask"/>
-                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gek-0N-A2c" id="cIP-Y2-HD3">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ize-xh-NqH">
-                                                            <rect key="frame" x="10" y="49" width="394" height="16"/>
-                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
-                                                            <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="0.89940732759999997" colorSpace="custom" customColorSpace="sRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstItem="Ize-xh-NqH" firstAttribute="leading" secondItem="cIP-Y2-HD3" secondAttribute="leading" constant="10" id="UVq-kI-YS9"/>
-                                                        <constraint firstAttribute="bottom" secondItem="Ize-xh-NqH" secondAttribute="bottom" constant="5" id="z7g-7C-5pm"/>
-                                                        <constraint firstItem="Ize-xh-NqH" firstAttribute="centerX" secondItem="cIP-Y2-HD3" secondAttribute="centerX" id="zfM-ha-EJs"/>
-                                                    </constraints>
-                                                </tableViewCellContentView>
-                                                <connections>
-                                                    <outlet property="headerTitleLabel" destination="Ize-xh-NqH" id="8lZ-h9-cXW"/>
-                                                </connections>
-                                            </tableViewCell>
                                         </prototypes>
                                         <connections>
                                             <outlet property="dataSource" destination="HHn-oS-sje" id="bM8-sF-m4h"/>
@@ -738,30 +714,6 @@
                                                     <outlet property="addChannelCountLabel" destination="Cqq-MZ-IVh" id="NL1-xH-nJW"/>
                                                     <outlet property="addChannelImageView" destination="koW-7h-ltn" id="FdQ-yi-VQg"/>
                                                     <outlet property="addChannelTextLabel" destination="xhv-H2-YWR" id="6eb-Fv-Z4r"/>
-                                                </connections>
-                                            </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="cvB-Pj-LXJ">
-                                                <rect key="frame" x="0.0" y="99" width="414" height="71"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cvB-Pj-LXJ" id="azZ-1H-zG3">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="71"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c17-Kl-BGu">
-                                                            <rect key="frame" x="10" y="49" width="394" height="16"/>
-                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
-                                                            <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="0.89940732759999997" colorSpace="custom" customColorSpace="sRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="bottom" secondItem="c17-Kl-BGu" secondAttribute="bottom" constant="6" id="9HW-yW-6Hb"/>
-                                                        <constraint firstItem="c17-Kl-BGu" firstAttribute="leading" secondItem="azZ-1H-zG3" secondAttribute="leading" constant="10" id="OGU-vU-PeS"/>
-                                                        <constraint firstItem="c17-Kl-BGu" firstAttribute="centerX" secondItem="azZ-1H-zG3" secondAttribute="centerX" id="yls-dr-ojP"/>
-                                                    </constraints>
-                                                </tableViewCellContentView>
-                                                <connections>
-                                                    <outlet property="headerTitleLabel" destination="c17-Kl-BGu" id="gyd-QJ-uJx"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
