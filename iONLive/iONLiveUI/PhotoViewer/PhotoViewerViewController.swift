@@ -581,7 +581,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
-        videoDurationLabel?.textColor = UIColor.white
         if (GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0)
         {
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count == 0
@@ -594,21 +593,21 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     swipeFlag = true
                     self.removeOverlay()
                     fullScrenImageView.isUserInteractionEnabled = true
-                    if (playHandleflag == 1)
-                    {
-                        playHandleflag = 0
-                        playIconInFullView.isHidden = false
-                        self.view.isUserInteractionEnabled = true
-                    }
-                    downloadTask?.cancel()
-                    fullScrenImageView.alpha = 1.0
-                    
-                    progressLabelDownload?.text = " ";
-                    progressLabelDownload?.removeFromSuperview()
-                    progressViewDownload?.removeFromSuperview()
-                    
-                    progressViewDownload?.isHidden=true;
-                    progressLabelDownload?.isHidden=true;
+//                    if (playHandleflag == 1)
+//                    {
+//                        playHandleflag = 0
+//                        playIconInFullView.isHidden = false
+//                        self.view.isUserInteractionEnabled = true
+//                    }
+//                    downloadTask?.cancel()
+//                    fullScrenImageView.alpha = 1.0
+//                    
+//                    progressLabelDownload?.text = " ";
+//                    progressLabelDownload?.removeFromSuperview()
+//                    progressViewDownload?.removeFromSuperview()
+//                    
+//                    progressViewDownload?.isHidden=true;
+//                    progressLabelDownload?.isHidden=true;
                     
                     if let swipeGesture = gesture as? UISwipeGestureRecognizer
                     {
@@ -617,6 +616,23 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                         case UISwipeGestureRecognizerDirection.left:
                             if(selectedItem < totalCount - 1)
                             {
+                                if (playHandleflag == 1)
+                                {
+                                    playHandleflag = 0
+                                    playIconInFullView.isHidden = false
+                                    self.view.isUserInteractionEnabled = true
+                                }
+                                downloadTask?.cancel()
+                                fullScrenImageView.alpha = 1.0
+                                videoDurationLabel?.textColor = UIColor.white
+                                
+                                progressLabelDownload?.text = " ";
+                                progressLabelDownload?.removeFromSuperview()
+                                progressViewDownload?.removeFromSuperview()
+                                
+                                progressViewDownload?.isHidden=true;
+                                progressLabelDownload?.isHidden=true;
+
                                 let backgroundQueue = DispatchQueue(label: "com.app.queue",
                                                                     qos: .background,
                                                                     target: nil)
@@ -632,12 +648,30 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             }
                             else if(selectedItem == totalCount - 1)
                             {
+                                swipeFlag = false
                                 self.removeOverlay()
                             }
                             
                         case UISwipeGestureRecognizerDirection.right:
                             if(selectedItem != 0)
                             {
+                                if (playHandleflag == 1)
+                                {
+                                    playHandleflag = 0
+                                    playIconInFullView.isHidden = false
+                                    self.view.isUserInteractionEnabled = true
+                                }
+                                downloadTask?.cancel()
+                                fullScrenImageView.alpha = 1.0
+                                videoDurationLabel?.textColor = UIColor.white
+                                
+                                progressLabelDownload?.text = " ";
+                                progressLabelDownload?.removeFromSuperview()
+                                progressViewDownload?.removeFromSuperview()
+                                
+                                progressViewDownload?.isHidden=true;
+                                progressLabelDownload?.isHidden=true;
+
                                 let backgroundQueue = DispatchQueue(label: "com.app.queue",
                                                                     qos: .background,
                                                                     target: nil)
@@ -653,6 +687,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             }
                             else if(self.selectedItem == 0)
                             {
+                                swipeFlag = false
                                 self.removeOverlay()
                             }
                             
@@ -797,7 +832,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             else{
                 selectedItem = selectedItem - 1
             }
-           
+            
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0){
                 if(totalCount > 0){
                     mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaIdKey] as! String)!
@@ -1048,7 +1083,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             progressViewDownload?.frame = frame1
             progressViewDownload?.transform =  CGAffineTransform(scaleX: 1.0, y: 3.0)
             
-//            progressViewDownload?.center = fullScrenImageView.center
+            //            progressViewDownload?.center = fullScrenImageView.center
             
             view.addSubview(progressViewDownload!)
             progressViewDownload?.isHidden = true
@@ -1421,11 +1456,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     }
                 }
             }
-            
-            self.view.bringSubview(toFront: photoThumpCollectionView)
-            self.view.bringSubview(toFront: playIconInFullView)
-            self.view.bringSubview(toFront: TopView)
-            self.view.bringSubview(toFront: BottomView)
+            DispatchQueue.main.async {
+                self.view.bringSubview(toFront: self.photoThumpCollectionView)
+                self.view.bringSubview(toFront: self.playIconInFullView)
+                self.view.bringSubview(toFront: self.TopView)
+                self.view.bringSubview(toFront: self.BottomView)
+            }
         }
     }
     
@@ -1593,43 +1629,53 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoThumbCollectionViewCell", for: indexPath as IndexPath) as! PhotoThumbCollectionViewCell
         cell.rotate360Degrees(duration: 2.0)
-        swipeFlag = false
-        
-        if (playHandleflag == 1)
-        {
-            playHandleflag = 0
-        }
-        self.selectedItem = indexPath.row
-        
-        progressLabelDownload?.text = " "
-        progressLabelDownload?.removeFromSuperview()
-        progressViewDownload?.removeFromSuperview()
-        
-        
-        //        DispatchQueue.main.async {
-        self.photoThumpCollectionView.reloadData()
-        //        }
-        
-        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
-        {
-            if(downloadTask?.state == .running)
+      
+        if(self.selectedItem != indexPath.row){
+            swipeFlag = false
+            self.selectedItem = indexPath.row
+            if (playHandleflag == 1)
             {
-                downloadTask?.cancel()
-                fullScrenImageView.alpha = 1.0
-                videoDurationLabel?.textColor = UIColor.white
-                progressLabelDownload?.text = " "
-                progressLabelDownload?.removeFromSuperview()
-                progressViewDownload?.removeFromSuperview()
-                
+                playHandleflag = 0
             }
+            progressLabelDownload?.text = " "
+            progressLabelDownload?.removeFromSuperview()
+            progressViewDownload?.removeFromSuperview()
+            
+            
+            //        DispatchQueue.main.async {
+            self.photoThumpCollectionView.reloadData()
+            //        }
+            
+            if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
+            {
+                if(downloadTask?.state == .running)
+                {
+                    downloadTask?.cancel()
+                    fullScrenImageView.alpha = 1.0
+                    videoDurationLabel?.textColor = UIColor.white
+                    progressLabelDownload?.text = " "
+                    progressLabelDownload?.removeFromSuperview()
+                    progressViewDownload?.removeFromSuperview()
+                    
+                }
+                
+                let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
+                
+                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+                                                    qos: .background,
+                                                    target: nil)
+                backgroundQueue.async {
+                    self.downloadFullImageWhenTapThumb(imageDict: dict, indexpaths: indexPath.row ,gestureIdentifier:0)
+                }
+
+            }
+            
+            self.fullScrenImageView.alpha = 1.0
         }
-        
-        self.fullScrenImageView.alpha = 1.0
         
         if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
         {
             self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
-            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row]
             
             let progres = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
             if(progres == 2.0 || progres == 2){
@@ -1639,12 +1685,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 MappingFailedImagesOnClick(mediaIDClick: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
             }
             
-            let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                qos: .background,
-                                                target: nil)
-            backgroundQueue.async {
-                self.downloadFullImageWhenTapThumb(imageDict: dict, indexpaths: indexPath.row ,gestureIdentifier:0)
-            }
+            
         }
     }
     

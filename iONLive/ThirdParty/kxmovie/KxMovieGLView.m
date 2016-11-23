@@ -639,7 +639,7 @@ exit:
     UIGraphicsBeginImageContext(CGSizeMake(self.bounds.size.width, (self.bounds.size.height+67.0)));
     NSLog(@"glView.bounds%f",self.bounds.size.height);
     [[UIImage imageNamed:@""] drawInRect:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, (self.bounds.size.height))];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+ //   UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 //    self.backgroundColor = [UIColor colorWithPatternImage:image];
     self.backgroundColor = [UIColor whiteColor];
