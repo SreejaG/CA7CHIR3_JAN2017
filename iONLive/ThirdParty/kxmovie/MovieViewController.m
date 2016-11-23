@@ -123,6 +123,7 @@ static NSMutableDictionary * gHistory;
     IBOutlet UILabel *channelName;
     
     
+    IBOutlet UILabel *progressLabel;
     IBOutlet UILabel *durationLabel;
     __weak IBOutlet UIImageView *avatarImage;
     
@@ -165,7 +166,6 @@ static NSMutableDictionary * gHistory;
     UITapGestureRecognizer *_tapGestureRecognizer;
     NSMutableDictionary *snapShotsDict;
     UrlManager *urlManager;
-    
 }
 
 @property (readwrite) BOOL playing;
@@ -240,7 +240,6 @@ UIPanGestureRecognizer *afterPan;
     return obj1;
 }
 
-
 - (id) initWithContentPath: (NSString *) path
                 parameters: (NSDictionary *) parameters
                  liveVideo:(BOOL)live
@@ -258,6 +257,9 @@ UIPanGestureRecognizer *afterPan;
         else{
             [self.view bringSubviewToFront:glView];
             videoProgressBar.hidden = true;
+            progressLabel.hidden = true;
+            durationLabel.hidden = true;
+            imageVideoView.alpha = 1.0;
             _liveVideo = live;
             rtspFilePath = path;
             NSString *channel = [parameters valueForKey:@"channelName"];
@@ -318,7 +320,6 @@ UIPanGestureRecognizer *afterPan;
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
-        
         _photoCollectionView.hidden = true;
         imageVideoView.userInteractionEnabled = YES;
         [self.view bringSubviewToFront:imageVideoView];
@@ -342,7 +343,6 @@ UIPanGestureRecognizer *afterPan;
         rightSwipe.direction = UISwipeGestureRecognizerDirectionRight;
         rightSwipe.delegate = self;
         [imageVideoView addGestureRecognizer:rightSwipe];
-        
         
         //Pan Gesture
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
@@ -433,11 +433,13 @@ UIPanGestureRecognizer *afterPan;
         durationLabel.text = videoDurationSelected;
         durationLabel.hidden = false;
         [glView bringSubviewToFront:durationLabel];
-        videoProgressBar.hidden = false;
+        videoProgressBar.hidden = true;
+        progressLabel.hidden = true;
+        durationLabel.hidden = false;
+        imageVideoView.alpha = 1.0;
         topView.hidden = false;
         imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
         mediaImage = VideoImageUrl;
-        videoProgressBar.hidden = true;
         [playIconView removeFromSuperview];
         playIconView = [[UIImageView alloc]init];
         playIconView.image = [UIImage imageNamed:@"Circled Play"];
@@ -462,7 +464,9 @@ UIPanGestureRecognizer *afterPan;
     }
     else{
         videoProgressBar.hidden = true;
+        progressLabel.hidden = true;
         durationLabel.hidden = true;
+        imageVideoView.alpha = 1.0;
         [playIconView removeFromSuperview];
         [self setUpImageVideo:mediaType mediaUrl:mediaUrlForReplay mediaDetailId:mediaDetailId];
     }
@@ -478,12 +482,27 @@ UIPanGestureRecognizer *afterPan;
 
 -(void) tapHeartView :(UITapGestureRecognizer *) tap
 {
+    if(![videoProgressBar isHidden]){
+        videoProgressBar.hidden = false;
+    }
+    else{
+        videoProgressBar.hidden = true;
+    }
+    
+    if(![progressLabel isHidden]){
+        imageVideoView.alpha = 0.4;
+        progressLabel.hidden = false;
+    }
+    else{
+        imageVideoView.alpha = 1.0;
+        progressLabel.hidden = true;
+    }
+    
     if(!tapHeartDescViewFlag)
     {
         _photoCollectionView.hidden = false;
         dispatch_async(dispatch_get_main_queue(), ^(void){
             if(indexForSwipe != -1){
-                
                 [_photoCollectionView reloadData];
                 if(screenNumber == 0){
                     if(indexForSwipe < totalCount){
@@ -535,6 +554,9 @@ UIPanGestureRecognizer *afterPan;
     [imageVideoView.layer addAnimation:transition forKey:nil];
     swipeFlag = false;
     dispatch_async(dispatch_get_main_queue(), ^(void){
+        videoProgressBar.hidden = true;
+        progressLabel.hidden = true;
+        imageVideoView.alpha = 1.0;
         if(indexForSwipe != -1){
             [_photoCollectionView reloadData];
             if(screenNumber == 0){
@@ -650,7 +672,6 @@ UIPanGestureRecognizer *afterPan;
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
 {
-    
     if((indexForSwipe == orgIndex) && (![mediaTypeSelected  isEqual: @"video"]))
     {
         [self removeOverlay];
@@ -661,6 +682,8 @@ UIPanGestureRecognizer *afterPan;
     imageVideoView.hidden = false;
     imageView.hidden = false;
     videoProgressBar.hidden = true;
+    progressLabel.hidden = true;
+    imageVideoView.alpha = 1.0;
     [self.view bringSubviewToFront:imageVideoView];
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
@@ -724,6 +747,8 @@ UIPanGestureRecognizer *afterPan;
     if(fileExistFlag == true)
     {
         videoProgressBar.hidden = true;
+        progressLabel.hidden = true;
+        imageVideoView.alpha = 1.0;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [[AVAudioSession sharedInstance] setActive: YES error: nil];
         NSURL *url = [NSURL fileURLWithPath:savingPath];
@@ -1058,7 +1083,11 @@ UIPanGestureRecognizer *afterPan;
     NSMutableURLRequest *downloadReq = [[NSMutableURLRequest alloc]initWithURL:url];
     NSURLSession *session = [NSURLSession sessionWithConfiguration: [NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     downloadTask = [session downloadTaskWithRequest:downloadReq];
-    videoProgressBar.hidden = false;
+    videoProgressBar.hidden = true;
+    progressLabel.hidden = false;
+    [glView bringSubviewToFront:progressLabel];
+    progressLabel.text = @"Downloading...";
+    imageVideoView.alpha = 0.4;
     videoProgressBar.progressViewStyle = UIProgressViewStyleDefault;
     videoProgressBar.progress = 0.0;
     [videoProgressBar setTransform:CGAffineTransformMakeScale(1.0, 3.0)];
@@ -1067,10 +1096,20 @@ UIPanGestureRecognizer *afterPan;
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
+    videoProgressBar.hidden = false;
+    progressLabel.hidden = false;
+    imageVideoView.alpha = 0.4;
     float progress = (float)totalBytesWritten / (float)totalBytesExpectedToWrite;
     videoProgressBar.progress = progress;
+    int y = (int)round(progress*100);
+    NSString *str1 = @"Downloading";
+    NSString *str2 = @"%";
+    NSString *mainStr = [NSString stringWithFormat:@"%@ %d %@", str1, y, str2];
+    progressLabel.text = mainStr;
     if(progress == 1.0)
     {
+        progressLabel.hidden = true;
+        imageVideoView.alpha = 1.0;
         videoProgressBar.hidden = true;
     }
 }
@@ -1146,7 +1185,8 @@ UIPanGestureRecognizer *afterPan;
     NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
     NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
     videoProgressBar.hidden = true;
-    
+    progressLabel.hidden = true;
+    imageVideoView.alpha = 1.0;
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [[AVAudioSession sharedInstance] setActive: YES error: nil];
     NSURL *url = [NSURL fileURLWithPath:savingPath];
@@ -1207,7 +1247,9 @@ UIPanGestureRecognizer *afterPan;
 -(void)setUpDefaultValues
 {
     videoProgressBar.hidden = true;
+    progressLabel.hidden = true;
     imageVideoView.hidden = true;
+    imageVideoView.alpha = 1.0;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
@@ -1217,10 +1259,11 @@ UIPanGestureRecognizer *afterPan;
 -(void)setUpInitialBlurView
 {
     UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
-    [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
+    [[UIImage imageNamed:@""] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    glView.backgroundColor = [UIColor colorWithPatternImage:image];
+//    glView.backgroundColor = [UIColor colorWithPatternImage:image];
+    glView.backgroundColor = [UIColor whiteColor];
 }
 
 #pragma mark : LoadView
@@ -1233,8 +1276,10 @@ UIPanGestureRecognizer *afterPan;
     tapFromDidSelectFlag = false;
     self.photoCollectionView.delegate = self;
     self.photoCollectionView.dataSource = self;
+    
     durationLabel.hidden = true;
-    mediaImage = [UIImage imageNamed:@"live_stream_blur.png"];
+    progressLabel.hidden = true;
+    imageVideoView.alpha = 1.0;
     
     [self.view bringSubviewToFront:self.photoCollectionView];
     [self.photoCollectionView registerNib:[UINib nibWithNibName:@"photoCell" bundle:nil] forCellWithReuseIdentifier:@"photoViewCell"];
@@ -1243,19 +1288,25 @@ UIPanGestureRecognizer *afterPan;
     flow.minimumInteritemSpacing = 3;
     flow.minimumLineSpacing = 3;
     _photoCollectionView.collectionViewLayout = flow;
+    
     imageVideoViewHeight = imageVideoView.frame.size.height;
+    
     pinchFlag = false;
     swipeFlag = false;
+    
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
+    
     [self setUpView];
     [self setUpThumbailImage];
+    
     self.photoCollectionView.hidden = true;
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChangedForFullscreenMedia:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    
     [self setGuiBasedOnOrientation];
     
     if (_liveVideo) {
@@ -1308,7 +1359,6 @@ UIPanGestureRecognizer *afterPan;
 
 
 #pragma mark : Methods to check ping server to check Wifi Connected
-
 -(void)timerToCheckWifiConnected
 {
     [self hideStatusMessage];
@@ -1464,7 +1514,9 @@ UIPanGestureRecognizer *afterPan;
 -(void)setUpGlViewForLive
 {
     videoProgressBar.hidden = true;
+    progressLabel.hidden = true;
     closeButton.hidden = true;
+    imageVideoView.alpha = 1.0;
     bottomView.hidden = false;
     noDataFound.text = @"Trying to connect camera";
     noDataFound.hidden = false;
@@ -1476,7 +1528,9 @@ UIPanGestureRecognizer *afterPan;
 -(void)setUpGlViewForPlayBack
 {
     videoProgressBar.hidden = true;
+    progressLabel.hidden = true;
     closeButton.hidden = true;
+    imageVideoView.alpha = 1.0;
     bottomView.hidden = true;
     noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
@@ -1525,7 +1579,9 @@ UIPanGestureRecognizer *afterPan;
 -(void)customiseViewForStreaming
 {
     videoProgressBar.hidden = true;
+    progressLabel.hidden = true;
     imageVideoView.hidden = true;
+    imageVideoView.alpha = 1.0;
     heartView.hidden = false;
     heartBottomDescView.hidden = false;
     numberOfSharedChannels.hidden = true;
@@ -1607,6 +1663,8 @@ UIPanGestureRecognizer *afterPan;
         
         if(fileExistFlag == false){
             videoProgressBar.hidden = true;
+            progressLabel.hidden = true;
+            imageVideoView.alpha = 1.0;
             NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
             [self downloadVideo:url];
         }
@@ -1646,6 +1704,8 @@ UIPanGestureRecognizer *afterPan;
         downloadTask = nil;
         videoProgressBar.hidden = true;
         videoProgressBar.progress = 0.0;
+        progressLabel.hidden = true;
+        imageVideoView.alpha = 1.0;
     }
     
     if([mediaTypeSelected  isEqual: @"live"])
@@ -2870,9 +2930,11 @@ UIPanGestureRecognizer *afterPan;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
     static NSString *cellIdentifier = @"photoViewCell";
     NSString * thumbImageKey = @"thumbImage";
     photoViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath]  ;
+    
     cell.layer.shouldRasterize = true;
     cell.layer.rasterizationScale = [[UIScreen mainScreen]scale];
     
@@ -2906,6 +2968,7 @@ UIPanGestureRecognizer *afterPan;
             cell.videoIconImgView.hidden = true;
         }
     }
+
     return cell;
 }
 
@@ -2915,28 +2978,30 @@ UIPanGestureRecognizer *afterPan;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [self checkVideoStatus];
+    if(pinchFlag == true){
+        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+        imageVideoView.transform = transform;
+        pinchFlag = false;
+        CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
+        finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
+        finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
+        afterPan.view.center = finalPoint;
+    }
     pinchFlag = false;
-    CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
-    imageVideoView.transform = transform;
-    
-    pinchFlag = false;
-    CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
-    finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
-    finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
-    afterPan.view.center = finalPoint;
-    
     if(indexForSwipe != (int)indexPath.row){
         orgIndex = -11;
         tapFromDidSelectFlag = false;
-        
         indexForSwipe = (int)indexPath.row;
-        dispatch_async(dispatch_get_main_queue(),^{
-            [self.photoCollectionView reloadData];
-        });
+        NSLog(@"Video%@", videoProgressBar.hidden? @"YES" : @"NO" );
         [self removeOverlay];
         [self showOverlay1];
-        
         [self setSelectionForPhotoView];
+        dispatch_async(dispatch_get_main_queue(),^{
+            progressLabel.hidden = true;
+            videoProgressBar.hidden = true;
+            imageVideoView.alpha = 1.0;
+            [self.photoCollectionView reloadData];
+        });
     }
 }
 -(void) setSelectionForPhotoView

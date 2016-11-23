@@ -171,6 +171,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 DispatchQueue.main.async {
                     self.addToButton.isHidden = true
                     self.deletButton.isHidden = true
+                    self.mediaTimeLabel.text = ""
                     self.fullScreenZoomView.image = UIImage()
                     self.fullScrenImageView.image = UIImage()
                     self.photoThumpCollectionView.reloadData()
@@ -580,6 +581,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     
     func handleSwipe(gesture: UIGestureRecognizer)
     {
+        videoDurationLabel?.textColor = UIColor.white
         if (GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0)
         {
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count == 0
@@ -1026,6 +1028,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             
         }
         else{
+            let bounds = UIScreen.main.bounds
+            let widths = bounds.size.width
+            let heights = bounds.size.height
+            
             let downloadRequest = URLRequest(url: videoDownloadUrl as URL)
             let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
             downloadTask = session.downloadTask(with: downloadRequest)
@@ -1033,14 +1039,22 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             progressViewDownload?.removeFromSuperview()
             progressLabelDownload?.removeFromSuperview()
             
-            progressViewDownload?.isHidden = false
             progressLabelDownload?.isHidden = false
             
+            videoDurationLabel?.textColor = UIColor.black
+            
             progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.default)
-            progressViewDownload?.center = fullScrenImageView.center
+            let frame1 = CGRect(x:0, y:(heights - (BottomView.frame.size.height + photoThumpCollectionView.frame.size.height + 4)), width:widths, height:3)
+            progressViewDownload?.frame = frame1
+            progressViewDownload?.transform =  CGAffineTransform(scaleX: 1.0, y: 3.0)
+            
+//            progressViewDownload?.center = fullScrenImageView.center
             
             view.addSubview(progressViewDownload!)
+            progressViewDownload?.isHidden = true
+            
             self.playIconInFullView.isHidden = true
+            
             let frame = CGRect(x:(fullScrenImageView.center.x - 100), y:(fullScrenImageView.center.y - 30), width:200, height:20)
             progressLabelDownload?.frame = frame
             view.addSubview(progressLabelDownload!)
@@ -1076,9 +1090,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        progressViewDownload?.isHidden = false
         let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
         let y = Int(round(progress*100))
-        
+        videoDurationLabel?.textColor = UIColor.black
         progressLabelDownload?.text = "Downloading  \(y) %"
         progressLabelDownload!.textAlignment = NSTextAlignment.center
         progressViewDownload!.progress = progress
@@ -1086,6 +1101,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         {
             fullScrenImageView.alpha = 1.0
             self.playIconInFullView.isHidden = false
+            videoDurationLabel?.textColor = UIColor.white
             progressLabelDownload?.text = " "
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
@@ -1515,6 +1531,8 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoThumbCollectionViewCell", for: indexPath as IndexPath) as! PhotoThumbCollectionViewCell
         
+        videoDurationLabel?.textColor = UIColor.white
+        
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.main.scale
         
@@ -1598,6 +1616,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             {
                 downloadTask?.cancel()
                 fullScrenImageView.alpha = 1.0
+                videoDurationLabel?.textColor = UIColor.white
                 progressLabelDownload?.text = " "
                 progressLabelDownload?.removeFromSuperview()
                 progressViewDownload?.removeFromSuperview()
