@@ -250,6 +250,14 @@ NSBlockOperation *likeOper;
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
+        
+        UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
+        [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        glView.backgroundColor = [UIColor colorWithPatternImage:image];
+        [self.view bringSubviewToFront:glView];
+        
         if(live){
             _liveVideo = live;
             rtspFilePath = path;
