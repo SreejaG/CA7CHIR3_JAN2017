@@ -152,8 +152,11 @@ import UIKit
     
     var profileImageUserForSelectedIndex : UIImage = UIImage()
     
-    func getProfileImageSelectedIndex(userIdKey: String ,objects: MovieViewController)
+    func getProfileImageSelectedIndex(userIdKey: String ,objects: MovieViewController, operObj: BlockOperation)
     {
+        if operObj.isCancelled == true{
+            return
+        }
         let profileImageNameBeforeNullChk =  UrlManager.sharedInstance.getProfileURL(userId: userIdKey)
         let profileImageName = self.nullToNil(value: profileImageNameBeforeNullChk)
         if("\(profileImageName)" != "")
@@ -191,8 +194,10 @@ import UIKit
         obj.success(fromSetUpViewProfileImage: profileImageUserForSelectedIndex)
     }
     
-    func getLikeCount(mediaType : String,mediaId: String, Objects:MovieViewController) {
-        
+    func getLikeCount(mediaType : String,mediaId: String, Objects:MovieViewController, operObjs: BlockOperation) {
+        if operObjs.isCancelled == true{
+            return
+        }
         let mediaTypeSelected : String = mediaType
         let defaults = UserDefaults.standard
         let userId = defaults.value(forKey: userLoginIdKey) as! String

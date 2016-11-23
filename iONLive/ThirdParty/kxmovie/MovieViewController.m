@@ -206,6 +206,10 @@ AVPlayerViewController *_AVPlayerViewController;
 int totalCount;
 UIPanGestureRecognizer *afterPan;
 
+NSOperationQueue *mainQueue;
+NSBlockOperation *profileOper;
+NSBlockOperation *likeOper;
+
 + (void)initialize
 {
     if (!gHistory)
@@ -321,6 +325,11 @@ UIPanGestureRecognizer *afterPan;
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
+        
+        mainQueue = [[NSOperationQueue alloc]init];
+        profileOper = [[NSBlockOperation alloc]init];
+        likeOper = [[NSBlockOperation alloc]init];
+        
         _photoCollectionView.hidden = true;
         imageVideoView.userInteractionEnabled = YES;
         [self.view bringSubviewToFront:imageVideoView];
@@ -1065,7 +1074,12 @@ UIPanGestureRecognizer *afterPan;
                         videoDurationChk = streamORChannelDict[indexForSwipe][@"video_duration"];
                         SetUpView *setUpObj = [[SetUpView alloc]init];
                         if(screenNumber == 1){
-//                            [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
+                            [profileOper cancel];
+                            profileOper = [NSBlockOperation blockOperationWithBlock:^{
+                                [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1 operObj:profileOper];
+                            }];
+                            [mainQueue addOperation:profileOper];
+
                             channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
                             userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
                             channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
@@ -1073,7 +1087,11 @@ UIPanGestureRecognizer *afterPan;
                         
                         if(screenNumber == 1 || screenNumber == 2){
                             likeTapFlag = false;
-//                            [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
+                            [likeOper cancel];
+                            likeOper = [NSBlockOperation blockOperationWithBlock:^{
+                                [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
+                            }];
+                            [mainQueue addOperation:likeOper];
                         }
                         
                         [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
@@ -1332,6 +1350,10 @@ UIPanGestureRecognizer *afterPan;
     [self setUpThumbailImage];
     
     self.photoCollectionView.hidden = true;
+    
+    mainQueue = [[NSOperationQueue alloc]init];
+    profileOper = [[NSBlockOperation alloc]init];
+    likeOper = [[NSBlockOperation alloc]init];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -3062,14 +3084,35 @@ UIPanGestureRecognizer *afterPan;
         videoDurationChk = streamORChannelDict[indexForSwipe][@"video_duration"];
         SetUpView *setUpObj = [[SetUpView alloc]init];
         if(screenNumber == 1){
-//            [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1];
+            if (screenNumber == 1)
+            {
+                [activityIndicatorProfile removeFromSuperview];
+                activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                activityIndicatorProfile.alpha = 1.0;
+                [heartView addSubview:activityIndicatorProfile];
+                activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
+                profilePicture.alpha = 0.2;
+                activityIndicatorProfile.color = [UIColor blueColor];
+                [activityIndicatorProfile stopAnimating];
+                [activityIndicatorProfile startAnimating];//to start animating
+            }
+
+            [profileOper cancel];
+            profileOper = [NSBlockOperation blockOperationWithBlock:^{
+                [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1 operObj:profileOper];
+            }];
+            [mainQueue addOperation:profileOper];
             channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
             userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
             channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
         }
         if(screenNumber == 1 || screenNumber == 2){
             likeTapFlag = false;
-//            [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1];
+            [likeOper cancel];
+            likeOper = [NSBlockOperation blockOperationWithBlock:^{
+               [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
+            }];
+            [mainQueue addOperation:likeOper];
         }
         
         [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
