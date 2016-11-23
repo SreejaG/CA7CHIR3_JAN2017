@@ -325,7 +325,7 @@ NSBlockOperation *likeOper;
     
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
-        
+        mediaImage = [UIImage imageNamed:@""];
         mainQueue = [[NSOperationQueue alloc]init];
         profileOper = [[NSBlockOperation alloc]init];
         likeOper = [[NSBlockOperation alloc]init];
