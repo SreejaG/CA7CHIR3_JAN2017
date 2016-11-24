@@ -252,7 +252,6 @@ class MyChannelNotificationViewController: UIViewController {
                     let timeDiff = getTimeDifference(dateStr: notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
-                    
                     dataSource.append(["mediaIdKey":mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased()])
                 }
             }
@@ -323,7 +322,7 @@ class MyChannelNotificationViewController: UIViewController {
                 else{
                     mediaImage = UIImage()
                 }
-                self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!])
+                self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!, "urlKey": mediaThumbUrl])
                 
                 DispatchQueue.main.async {
                     self.removeOverlay()
@@ -418,15 +417,30 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
         if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelNotificationCell.identifier, for:indexPath) as! MyChannelNotificationCell
-            
-            cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
+        
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
-            if fulldataSource[indexPath.row][mediaImageKey] != nil
-            {
-                cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
+            
+            if(fulldataSource[indexPath.row]["urlKey"] as! String != "nomedia"){
+                cell.NotificationImage.isHidden = false
+                cell.notificationText.isHidden = false
+                cell.notifcationTextFullscreen.isHidden = true
+                
+                cell.notificationText.text = fulldataSource[indexPath.row][messageKey] as? String
+                
+                if fulldataSource[indexPath.row][mediaImageKey] != nil
+                {
+                    cell.NotificationImage.image = fulldataSource[indexPath.row][mediaImageKey] as? UIImage
+                }
+                else{
+                    cell.NotificationImage.image = UIImage(named:"thumb12")
+                }
             }
             else{
-                cell.NotificationImage.image = UIImage(named:"thumb12")
+                cell.NotificationImage.isHidden = true
+                cell.notifcationTextFullscreen.isHidden = false
+                cell.notificationText.isHidden = true
+                
+                cell.notifcationTextFullscreen.text = fulldataSource[indexPath.row][messageKey] as? String
             }
             cell.selectionStyle = .none
             return cell

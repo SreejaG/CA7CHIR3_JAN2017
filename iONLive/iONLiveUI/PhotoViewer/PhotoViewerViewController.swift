@@ -739,7 +739,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         progressLabelDownload?.text = " "
         progressLabelDownload?.removeFromSuperview()
         progressViewDownload?.removeFromSuperview()
-        
+        videoDurationLabel.textColor = UIColor.white
+        fullScrenImageView.alpha = 1.0
         let alert = UIAlertController(title: "", message: "Are you sure you want to permanently delete this picture from all your channels?", preferredStyle: UIAlertControllerStyle.alert)
         
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {(

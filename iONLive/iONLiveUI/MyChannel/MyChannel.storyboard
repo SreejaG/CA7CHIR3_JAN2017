@@ -886,33 +886,44 @@
                                                             </constraints>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumb12" translatesAutoresizingMaskIntoConstraints="NO" id="PiX-fg-0mB">
-                                                            <rect key="frame" x="371" y="5" width="35" height="35"/>
+                                                            <rect key="frame" x="366" y="5" width="35" height="35"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="35" id="9M7-hs-bvV"/>
                                                                 <constraint firstAttribute="height" constant="35" id="XRz-5n-GDH"/>
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yCR-HB-IhG">
-                                                            <rect key="frame" x="56" y="-9" width="307" height="36"/>
+                                                            <rect key="frame" x="56" y="-15" width="307" height="36"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CYR-5v-3yb">
+                                                            <rect key="frame" x="56" y="-15" width="348" height="36"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="PiX-fg-0mB" secondAttribute="trailing" constant="8" id="1UP-7m-pxK"/>
+                                                        <constraint firstItem="CYR-5v-3yb" firstAttribute="top" secondItem="Ohu-D5-ehQ" secondAttribute="top" constant="-15" id="0tM-pg-VQa"/>
+                                                        <constraint firstAttribute="trailing" secondItem="PiX-fg-0mB" secondAttribute="trailing" constant="13" id="1UP-7m-pxK"/>
+                                                        <constraint firstAttribute="bottom" secondItem="CYR-5v-3yb" secondAttribute="bottom" constant="23" id="1pl-Ea-IoK"/>
                                                         <constraint firstItem="PiX-fg-0mB" firstAttribute="top" secondItem="Ohu-D5-ehQ" secondAttribute="top" constant="5" id="8SR-wy-7tB"/>
-                                                        <constraint firstAttribute="bottom" secondItem="yCR-HB-IhG" secondAttribute="bottom" constant="17" id="Cif-p0-V45"/>
+                                                        <constraint firstAttribute="bottom" secondItem="yCR-HB-IhG" secondAttribute="bottom" constant="23" id="Cif-p0-V45"/>
                                                         <constraint firstItem="Grn-lP-Ucd" firstAttribute="top" secondItem="Ohu-D5-ehQ" secondAttribute="top" constant="2" id="IhE-09-d5j"/>
                                                         <constraint firstItem="Grn-lP-Ucd" firstAttribute="leading" secondItem="Ohu-D5-ehQ" secondAttribute="leading" constant="8" id="WPY-J0-qg8"/>
                                                         <constraint firstItem="yCR-HB-IhG" firstAttribute="leading" secondItem="Grn-lP-Ucd" secondAttribute="trailing" constant="8" id="aJt-4K-A6H"/>
-                                                        <constraint firstItem="PiX-fg-0mB" firstAttribute="leading" secondItem="yCR-HB-IhG" secondAttribute="trailing" constant="8" id="imI-VF-8Fw"/>
-                                                        <constraint firstItem="yCR-HB-IhG" firstAttribute="top" secondItem="Ohu-D5-ehQ" secondAttribute="top" constant="-9" id="r6Q-Wp-1sn"/>
+                                                        <constraint firstAttribute="trailing" secondItem="CYR-5v-3yb" secondAttribute="trailing" constant="10" id="ib0-sH-U3l"/>
+                                                        <constraint firstItem="PiX-fg-0mB" firstAttribute="leading" secondItem="yCR-HB-IhG" secondAttribute="trailing" constant="3" id="imI-VF-8Fw"/>
+                                                        <constraint firstItem="yCR-HB-IhG" firstAttribute="top" secondItem="Ohu-D5-ehQ" secondAttribute="top" constant="-15" id="r6Q-Wp-1sn"/>
+                                                        <constraint firstItem="CYR-5v-3yb" firstAttribute="leading" secondItem="Grn-lP-Ucd" secondAttribute="trailing" constant="8" id="wk5-Pa-aGq"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <connections>
                                                     <outlet property="NotificationImage" destination="PiX-fg-0mB" id="f7z-Cd-dBi"/>
                                                     <outlet property="NotificationSenderImageView" destination="Grn-lP-Ucd" id="gd9-yh-mUu"/>
+                                                    <outlet property="notifcationTextFullscreen" destination="CYR-5v-3yb" id="wZl-xi-h8m"/>
                                                     <outlet property="notificationText" destination="yCR-HB-IhG" id="BJI-W0-eyX"/>
                                                 </connections>
                                             </tableViewCell>
