@@ -157,8 +157,6 @@
 		599964D61C057EF000D20FB2 /* kxmovie.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 599964C61C057EF000D20FB2 /* kxmovie.bundle */; };
 		599964D71C057EF000D20FB2 /* KxMovieDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 599964C81C057EF000D20FB2 /* KxMovieDecoder.m */; };
 		599964D81C057EF000D20FB2 /* KxMovieGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 599964CA1C057EF000D20FB2 /* KxMovieGLView.m */; };
-		599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 599964CC1C057EF000D20FB2 /* MovieViewController.m */; };
-		599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 599964CD1C057EF000D20FB2 /* MovieViewController.xib */; };
 		599964DC1C057FFF00D20FB2 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964DB1C057FFF00D20FB2 /* libiconv.tbd */; };
 		599964DE1C05801100D20FB2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964DD1C05801100D20FB2 /* libz.tbd */; };
 		599964E01C05801B00D20FB2 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 599964DF1C05801B00D20FB2 /* libbz2.tbd */; };
@@ -185,6 +183,8 @@
 		B2160A9D1DC339B2006F0724 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160A9C1DC339B2006F0724 /* PhotoViewerViewController.swift */; };
 		B2160A9F1DC33A12006F0724 /* ChannelItemListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160A9E1DC33A12006F0724 /* ChannelItemListViewController.swift */; };
 		B2160AA11DC33A44006F0724 /* MyChannelItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */; };
+		B22D87C01DE71A54000E368E /* MovieViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B22D87BE1DE71A54000E368E /* MovieViewController.m */; };
+		B22D87C11DE71A54000E368E /* MovieViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B22D87BF1DE71A54000E368E /* MovieViewController.xib */; };
 		B2355F111DD2E2C50022BADF /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CEBF491CCF9FAF005AE3AE /* MediaPlayer.framework */; };
 		B2355F121DD2E2CD0022BADF /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166B9CDD1CC8FF0E00396C4E /* CoreTelephony.framework */; };
 		B2355F131DD2E2D60022BADF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16DB09AC1CC7671F0092B742 /* QuartzCore.framework */; };
@@ -526,9 +526,6 @@
 		599964C81C057EF000D20FB2 /* KxMovieDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KxMovieDecoder.m; sourceTree = "<group>"; };
 		599964C91C057EF000D20FB2 /* KxMovieGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KxMovieGLView.h; sourceTree = "<group>"; };
 		599964CA1C057EF000D20FB2 /* KxMovieGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KxMovieGLView.m; sourceTree = "<group>"; };
-		599964CB1C057EF000D20FB2 /* MovieViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieViewController.h; sourceTree = "<group>"; };
-		599964CC1C057EF000D20FB2 /* MovieViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MovieViewController.m; sourceTree = "<group>"; };
-		599964CD1C057EF000D20FB2 /* MovieViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MovieViewController.xib; sourceTree = "<group>"; };
 		599964DB1C057FFF00D20FB2 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		599964DD1C05801100D20FB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		599964DF1C05801B00D20FB2 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -575,6 +572,9 @@
 		B2160A9C1DC339B2006F0724 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		B2160A9E1DC33A12006F0724 /* ChannelItemListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelItemListViewController.swift; sourceTree = "<group>"; };
 		B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyChannelItemDetailsViewController.swift; sourceTree = "<group>"; };
+		B22D87BD1DE71A54000E368E /* MovieViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovieViewController.h; sourceTree = "<group>"; };
+		B22D87BE1DE71A54000E368E /* MovieViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MovieViewController.m; sourceTree = "<group>"; };
+		B22D87BF1DE71A54000E368E /* MovieViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MovieViewController.xib; sourceTree = "<group>"; };
 		B2355F1B1DD329970022BADF /* CountryPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryPicker.swift; sourceTree = "<group>"; };
 		B2355F1C1DD329970022BADF /* CountryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryView.swift; sourceTree = "<group>"; };
 		B23F26671D409F9300A320BF /* GlobalDataChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalDataChannelList.swift; sourceTree = "<group>"; };
@@ -1412,6 +1412,9 @@
 		599964C11C057EF000D20FB2 /* kxmovie */ = {
 			isa = PBXGroup;
 			children = (
+				B22D87BD1DE71A54000E368E /* MovieViewController.h */,
+				B22D87BE1DE71A54000E368E /* MovieViewController.m */,
+				B22D87BF1DE71A54000E368E /* MovieViewController.xib */,
 				599964C21C057EF000D20FB2 /* KxAudioManager.h */,
 				599964C31C057EF000D20FB2 /* KxAudioManager.m */,
 				599964C41C057EF000D20FB2 /* KxLogger.h */,
@@ -1421,9 +1424,6 @@
 				599964C81C057EF000D20FB2 /* KxMovieDecoder.m */,
 				599964C91C057EF000D20FB2 /* KxMovieGLView.h */,
 				599964CA1C057EF000D20FB2 /* KxMovieGLView.m */,
-				599964CB1C057EF000D20FB2 /* MovieViewController.h */,
-				599964CC1C057EF000D20FB2 /* MovieViewController.m */,
-				599964CD1C057EF000D20FB2 /* MovieViewController.xib */,
 				067B99691DA227A3002B78BA /* photoViewCell.h */,
 				067B996A1DA227A3002B78BA /* photoViewCell.m */,
 				067B996D1DA2720C002B78BA /* photoCell.xib */,
@@ -1700,8 +1700,8 @@
 				164989EF1C0D5C1D007C912C /* Settings.storyboard in Resources */,
 				1674A9111C29073B00D547D7 /* sharing.storyboard in Resources */,
 				167AF0341BFDC1F6003CDF30 /* Main.storyboard in Resources */,
-				599964DA1C057EF000D20FB2 /* MovieViewController.xib in Resources */,
 				16DA06CA1C7ED830004759D5 /* CountryView.xib in Resources */,
+				B22D87C11DE71A54000E368E /* MovieViewController.xib in Resources */,
 				162F97431CC9F0C7009F68F8 /* IPhoneCameraView.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1808,7 +1808,6 @@
 				B29946611DC0B3D900BD58B7 /* Ca7chContactsTableViewCell.swift in Sources */,
 				1633D1EF1C5F1DD200937FAD /* GalleryModel.xcdatamodeld in Sources */,
 				59BC3F5F1BFF848600710905 /* AFURLConnectionOperation.m in Sources */,
-				599964D91C057EF000D20FB2 /* MovieViewController.m in Sources */,
 				166455F81C2A5B5F00D09FAE /* MyChannelDetailViewController.swift in Sources */,
 				165D44E41CBBC10100BEA24E /* ChannelSharedCell.swift in Sources */,
 				16EAA67A1C1987D3005F8242 /* SettingsToggleTableViewCell.swift in Sources */,
@@ -1861,6 +1860,7 @@
 				59BC3F631BFF848600710905 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				166455FE1C2A638600D09FAE /* MyChannelItemCell.swift in Sources */,
 				16D933BF1C61C24300FDA359 /* iONLiveCameraStatus.swift in Sources */,
+				B22D87C01DE71A54000E368E /* MovieViewController.m in Sources */,
 				16C668CF1CC109CB009DA7D9 /* OtherChannelViewController.swift in Sources */,
 				16EC54A71CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift in Sources */,
 				B299465A1DC0B39800BD58B7 /* ResolutionSelectionViewController.swift in Sources */,

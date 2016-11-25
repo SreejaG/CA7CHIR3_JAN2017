@@ -74,9 +74,8 @@ static NSMutableDictionary * gHistory;
 #define NETWORK_MIN_BUFFERED_DURATION 0.5
 #define NETWORK_MAX_BUFFERED_DURATION 2.0
 
-@interface MovieViewController () <StreamingProtocol>
+@interface MovieViewController () <StreamingProtocol, UIScrollViewDelegate>
 {
-    
     IBOutlet UIButton *cameraSelectionButton;
     IBOutlet UIButton *cameraButton;
     IBOutlet UIButton *closeButton;
@@ -84,16 +83,12 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIButton *secondCircleButton;
     IBOutlet UIButton *firstCircleButton;
     __weak IBOutlet UIButton *hidingHeartButton;
-    
-    
     IBOutlet UIButton *heart2Button;
-    
     IBOutlet UIButton *heart4Button;
     IBOutlet UIButton *heart3Button;
     IBOutlet UIImageView *activityImageView;
     IBOutlet UIImageView *imageView;
     IBOutlet KxMovieGLView *glView;
-    
     IBOutlet UIImageView *imageVideoView;
     IBOutlet UIView *topView;
     IBOutlet UIView *mainView;
@@ -101,34 +96,24 @@ static NSMutableDictionary * gHistory;
     IBOutlet UIView *liveView;
     __weak IBOutlet UIView *heartView;
     __weak IBOutlet UIView *heartBottomDescView;
-    
     IBOutlet UIButton *heartTapButton;
     IBOutlet UIButton *cameaThumbNailImage;
     IBOutlet UILabel *noDataFound;
     IBOutlet UILabel *numberOfSharedChannels;
     IBOutlet UIActivityIndicatorView *_activityIndicatorView;
-    
     IBOutlet UIProgressView *videoProgressBar;
     __weak IBOutlet NSLayoutConstraint *heartButtomBottomConstraint;
     IBOutlet NSLayoutConstraint *progressBottomConstraint;
-    
-    NSString *likeFlag;
-    BOOL likeTapFlag;
-    
     IBOutlet UIImageView *profilePicture;
-    
     IBOutlet UILabel *typeMedia;
     IBOutlet UILabel *userName;
-    
     IBOutlet UILabel *channelName;
-    
-    
+    IBOutlet UIScrollView *scrollViewZoom;
     IBOutlet UILabel *progressLabel;
     IBOutlet UILabel *durationLabel;
     __weak IBOutlet UIImageView *avatarImage;
-    
     __weak IBOutlet UILabel *likeCount;
-    NSDictionary *photoCollectionViewDatasource;
+    
     
     BOOL                _interrupted;
     NSURLSessionDownloadTask *downloadTask;
@@ -177,34 +162,34 @@ static NSMutableDictionary * gHistory;
 
 @end
 
-int indexForSwipe, screenNumber, orgIndex;
-int gestureId=0;
-int streamIdFlag;
-int otherChannelIdFlag;
-NSString *mediaTypeCheckString;
-UIPinchGestureRecognizer *pinchGesture;
-UIImage *videoThumbImage;
-BOOL pinchFlag;
-NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected,*notificationTypes,*mediaUrlForReplay, *videoDurationSelected;
-UIImageView *backgroundImage;
-UIImageView *playIconView;
-NSURL *urlForSwipe;
-UIImage *mediaImage;
-NSArray *streamORChannelDict;
-NSString *mediaURLChk,*mediaTypeChk,*mediaIdChk,*timeDiffChk,*likeCountStrChk,*notifTypeChk,*videoDurationChk;
 @implementation MovieViewController
-MovieViewController *obj1;
+
+int indexForSwipe, screenNumber, orgIndex;
+int gestureId = 0;
 int playHandleFlag = 0;
-float imageVideoViewHeight;
-UIActivityIndicatorView *activityIndicatorProfile;
+int orientationFlagForFullScreenMediaFlag;
+int totalCount;
+
+NSString *userId,*accessToken,*mediaDetailId,*notificationType,*channelIdSelected,*mediaTypeSelected,*notificationTypes,*mediaUrlForReplay, *videoDurationSelected;
+NSString *mediaURLChk,*mediaTypeChk,*mediaIdChk,*timeDiffChk,*likeCountStrChk,*notifTypeChk,*videoDurationChk;
+NSString *likeFlag;
+
+UIImageView *playIconView;
 UIView *loadingOverlay;
-bool swipeFlag;
+
+UIImage *mediaImage;
+
+NSArray *streamORChannelDict;
+
+MovieViewController *obj1;
+
+UIActivityIndicatorView *activityIndicatorProfile;
+
 bool tapHeartDescViewFlag;
 bool tapFromDidSelectFlag;
-int orientationFlagForFullScreenMediaFlag;
+BOOL likeTapFlag;
+
 AVPlayerViewController *_AVPlayerViewController;
-int totalCount;
-UIPanGestureRecognizer *afterPan;
 
 NSOperationQueue *mainQueue;
 NSBlockOperation *profileOper;
@@ -216,7 +201,9 @@ NSBlockOperation *likeOper;
         gHistory = [NSMutableDictionary dictionary];
 }
 
-- (BOOL)prefersStatusBarHidden { return NO; }
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
 
 + (id) movieViewControllerWithContentPath: (NSString *) path
                                parameters: (NSDictionary *) parameters
@@ -250,7 +237,6 @@ NSBlockOperation *likeOper;
 {
     self = [super initWithNibName:@"MovieViewController" bundle:nil];
     if (self) {
-        
         UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
         [[UIImage imageNamed:@"live_stream_blur.png"] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -272,7 +258,7 @@ NSBlockOperation *likeOper;
             progressLabel.hidden = true;
             progressLabel.text = @" ";
             durationLabel.hidden = true;
-            imageVideoView.alpha = 1.0;
+            scrollViewZoom.alpha = 1.0;
             _liveVideo = live;
             rtspFilePath = path;
             NSString *channel = [parameters valueForKey:@"channelName"];
@@ -362,21 +348,14 @@ NSBlockOperation *likeOper;
         rightSwipe.delegate = self;
         [imageVideoView addGestureRecognizer:rightSwipe];
         
-        //Pan Gesture
-        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecogniser:)];
-        panGesture.delegate = self;
-        [imageVideoView addGestureRecognizer:panGesture];
-        
-        //Pinch Zoom
-        pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchGestureRecogniserDetected:)];
-        pinchGesture.delegate = self;
-        [imageVideoView addGestureRecognizer:pinchGesture];
+        [self initializeScroll];
         
         streamORChannelDict = [[NSArray alloc]init];
         
         NSUserDefaults *standardDefaults = [[NSUserDefaults alloc]init];
         userId = [standardDefaults valueForKey:@"userLoginIdKey"];
         accessToken = [standardDefaults valueForKey:@"userAccessTockenKey"];
+        
         profilePicture.image = profileImage;
         channelName.text = channelname;
         userName.text = [NSString stringWithFormat:@"@%@",username];
@@ -392,6 +371,7 @@ NSBlockOperation *likeOper;
             likeCount.hidden = false;
             avatarImage.hidden = false;
         }
+        
         indexForSwipe = selectedItem;
         orgIndex = indexForSwipe;
         screenNumber = pageIndicator;
@@ -407,9 +387,26 @@ NSBlockOperation *likeOper;
             totalCount = (int)[setUpObj getMediaCountWithChannelId:channelIdSelected];
         }
         
+        
         [self setGUIChanges:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl videoDuration:videoDuration];
     }
     return self;
+}
+
+-(void) initializeScroll
+{
+    scrollViewZoom.contentSize = CGSizeMake(imageVideoView.frame.size.width, imageVideoView.frame.size.height);
+    scrollViewZoom.maximumZoomScale = 10.0;
+    scrollViewZoom.minimumZoomScale = 1.0;
+    scrollViewZoom.zoomScale = 1;
+    scrollViewZoom.clipsToBounds = YES;
+    scrollViewZoom.delegate = self;
+    scrollViewZoom.delaysContentTouches = NO;
+    scrollViewZoom.backgroundColor = [UIColor blackColor];
+}
+
+-(UIView *) viewForZoomingInScrollView:(UIScrollView *)inScroll {
+    return imageVideoView;
 }
 
 -(void) setGUIChanges: (NSString *) mediaType
@@ -455,7 +452,7 @@ NSBlockOperation *likeOper;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
         durationLabel.hidden = false;
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
         topView.hidden = false;
         imageVideoView.contentMode = UIViewContentModeScaleAspectFill;
         mediaImage = VideoImageUrl;
@@ -477,21 +474,17 @@ NSBlockOperation *likeOper;
         {
             [self setUpTransitionForSwipe];
         }
-        else{
-            swipeFlag = false;
-        }
     }
     else{
         videoProgressBar.hidden = true;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
         durationLabel.hidden = true;
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
         [playIconView removeFromSuperview];
         [self setUpImageVideo:mediaType mediaUrl:mediaUrlForReplay mediaDetailId:mediaDetailId];
     }
 }
-
 
 - (BOOL)gestureRecognizer:(UITapGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if ([touch.view isKindOfClass:[UIButton class]]){
@@ -510,11 +503,11 @@ NSBlockOperation *likeOper;
     }
     
     if(![progressLabel isHidden]){
-        imageVideoView.alpha = 0.4;
+        scrollViewZoom.alpha = 0.4;
         progressLabel.hidden = false;
     }
     else{
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
     }
@@ -573,12 +566,11 @@ NSBlockOperation *likeOper;
         transition.subtype = kCATransitionFromLeft;
     }
     [imageVideoView.layer addAnimation:transition forKey:nil];
-    swipeFlag = false;
     dispatch_async(dispatch_get_main_queue(), ^(void){
         videoProgressBar.hidden = true;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
         if(indexForSwipe != -1){
             [_photoCollectionView reloadData];
             if(screenNumber == 0){
@@ -602,6 +594,12 @@ NSBlockOperation *likeOper;
             }
         }
     });
+}
+
+-(void) scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view{
+}
+
+-(void) scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale{
 }
 
 -(void) setGuiBasedOnOrientation
@@ -706,7 +704,7 @@ NSBlockOperation *likeOper;
     videoProgressBar.hidden = true;
     progressLabel.hidden = true;
     progressLabel.text = @" ";
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     [self.view bringSubviewToFront:imageVideoView];
     NSURL *parentPath = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
     NSString *parentPathStr = [parentPath absoluteString];
@@ -720,9 +718,6 @@ NSBlockOperation *likeOper;
         if((indexForSwipe != orgIndex) && (![mediaTypeSelected  isEqual: @"video"]) && (!tapFromDidSelectFlag))
         {
             [self setUpTransitionForSwipe];
-        }
-        else{
-            swipeFlag = false;
         }
     }
     else{
@@ -766,13 +761,13 @@ NSBlockOperation *likeOper;
     NSString *mediaPath = [NSString stringWithFormat:@"/%@video.mov",mediaDetailId];
     NSString *savingPath = [parentPathStr stringByAppendingString:mediaPath];
     BOOL fileExistFlag = [[FileManagerViewController sharedInstance] fileExistWithMediaPath:savingPath];
-    
     if(fileExistFlag == true)
     {
         videoProgressBar.hidden = true;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
+        scrollViewZoom.zoomScale = 1.0;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [[AVAudioSession sharedInstance] setActive: YES error: nil];
         NSURL *url = [NSURL fileURLWithPath:savingPath];
@@ -836,75 +831,6 @@ NSBlockOperation *likeOper;
     imageVideoView.userInteractionEnabled = true;
 }
 
--(void)pinchGestureRecogniserDetected:(UIPinchGestureRecognizer *)pinchGestureDetected
-{
-    if(([mediaTypeSelected isEqualToString:@"image"]) && (playHandleFlag == 0))
-    {
-        UIGestureRecognizerState state = [pinchGestureDetected state];
-        if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged)
-        {
-            pinchFlag = true;
-            CGFloat scale;
-            scale = [pinchGestureDetected scale];
-            [pinchGestureDetected.view setTransform:CGAffineTransformScale(pinchGestureDetected.view.transform, scale, scale)];
-            [pinchGestureDetected setScale:1.0];
-        }
-        
-        if(state == UIGestureRecognizerStateEnded)
-        {
-            if( imageVideoView.frame.size.height < 600)
-            {
-                pinchFlag = false;
-                if ([pinchGestureDetected scale]<1.0f)
-                {
-                    [pinchGestureDetected setScale:1.0f];
-                }
-                CGAffineTransform transform = CGAffineTransformMakeScale([pinchGestureDetected scale],  [pinchGestureDetected scale]);
-                imageVideoView.transform = transform;
-            }
-        }
-    }
-}
-
--(void)panGestureRecogniser:(UIPanGestureRecognizer *)recognizer
-{
-    afterPan = recognizer;
-    if(pinchFlag == true && playHandleFlag == 0){
-        if( imageVideoView.frame.size.height > 600)
-        {
-            CGPoint translation = [recognizer translationInView:imageVideoView];
-            recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
-                                                 recognizer.view.center.y + translation.y);
-            [recognizer setTranslation:CGPointMake(0, 0) inView:imageVideoView];
-            
-            if (recognizer.state == UIGestureRecognizerStateEnded) {
-                
-                CGPoint velocity = [recognizer velocityInView:imageVideoView];
-                CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
-                CGFloat slideMult = magnitude / 200;
-                
-                float slideFactor = 0.1 * slideMult; // Increase for more of a slide
-                CGPoint finalPoint = CGPointMake(recognizer.view.center.x + (velocity.x * slideFactor),
-                                                 recognizer.view.center.y + (velocity.y * slideFactor));
-                finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
-                finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
-                
-                [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-                    recognizer.view.center = finalPoint;
-                } completion:nil];
-            }
-        }
-        else if( imageVideoView.frame.size.height < 600)
-        {
-            pinchFlag = false;
-            CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
-            finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
-            finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
-            recognizer.view.center = finalPoint;
-        }
-    }
-}
-
 -(void) playbackStateChange:(NSNotification *) notif
 {
     switch ([_moviePlayer playbackState]) {
@@ -950,174 +876,171 @@ NSBlockOperation *likeOper;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
-    if ((pinchFlag == false) && (swipeFlag == false))
+    if(scrollViewZoom.zoomScale != 1)
     {
-        tapFromDidSelectFlag = false;
-        [self removeOverlay];
-        swipeFlag = true;
-        [self showOverlay1];
-        orgIndex = -11;
-        UIImage *VideoImageUrlChk;
-        if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
+        [NSThread sleepForTimeInterval:0.7];
+    }
+    
+    scrollViewZoom.zoomScale = 1.0;
+    scrollViewZoom.minimumZoomScale = 1.0;
+    scrollViewZoom.maximumZoomScale = 10.0;
+    tapFromDidSelectFlag = false;
+    [self removeOverlay];
+    [self showOverlay1];
+    orgIndex = -11;
+    UIImage *VideoImageUrlChk;
+    if (swipeReceived.direction == UISwipeGestureRecognizerDirectionLeft)
+    {
+        gestureId = 0;
+    }
+    else if (swipeReceived.direction == UISwipeGestureRecognizerDirectionRight)  //Swipe Right Direction check starts
+    {
+        gestureId = 1;
+    }
+    if(screenNumber == 0)
+    {
+        if(gestureId == 0)
         {
-            gestureId = 0;
-        }
-        else if (swipeReceived.direction == UISwipeGestureRecognizerDirectionRight)  //Swipe Right Direction check starts
-        {
-            gestureId = 1;
-        }
-        if(screenNumber == 0)
-        {
-            if(gestureId == 0)
+            if(indexForSwipe < 0)
             {
-                if(indexForSwipe < 0)
-                {
-                    indexForSwipe = 0;
-                }
-                if(indexForSwipe < totalCount)
-                {
-                    indexForSwipe = indexForSwipe + 1;
-                }
+                indexForSwipe = 0;
             }
-            else
+            if(indexForSwipe < totalCount)
             {
-                if(indexForSwipe < 0)
-                {
-                    indexForSwipe = 0;
-                }
-                if (indexForSwipe == totalCount)
-                {
-                    indexForSwipe = (int)totalCount - 1;
-                }
-                indexForSwipe = indexForSwipe - 1;
-            }
-            
-            if(indexForSwipe != -1 && indexForSwipe < totalCount){
-                progressLabel.text = @" ";
-                [self checkVideoStatus];
-                
-                if(indexForSwipe < totalCount)
-                {
-                    if (indexForSwipe != -1)
-                    {
-                        mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"gcs_object_type"];
-                        mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
-                        NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_time_stamp"];
-                        timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifferenceWithDateStr:createdTime];
-                        likeCountStrChk = @"0";
-                        notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
-                        VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
-                        videoDurationChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"video_duration"];
-                        [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
-                    }
-                    else{
-                        swipeFlag = false;
-                        [self removeOverlay];
-                    }
-                }
-                else{
-                    swipeFlag = false;
-                    [self removeOverlay];
-                }
-                
-            }
-            else{
-                swipeFlag = false;
-                [self removeOverlay];
+                indexForSwipe = indexForSwipe + 1;
             }
         }
         else
         {
-            if(gestureId == 0)
+            if(indexForSwipe < 0)
             {
-                if(indexForSwipe < 0)
-                {
-                    indexForSwipe = 0;
-                }
-                if(indexForSwipe < [streamORChannelDict count])
-                {
-                    indexForSwipe = indexForSwipe + 1;
-                }
+                indexForSwipe = 0;
             }
-            else
+            if (indexForSwipe == totalCount)
             {
-                if(indexForSwipe < 0)
-                {
-                    indexForSwipe = 0;
-                }
-                if (indexForSwipe == [streamORChannelDict count])
-                {
-                    indexForSwipe = (int)[streamORChannelDict count] - 1;
-                }
-                indexForSwipe = indexForSwipe - 1;
+                indexForSwipe = (int)totalCount - 1;
             }
+            indexForSwipe = indexForSwipe - 1;
+        }
+        
+        if(indexForSwipe != -1 && indexForSwipe < totalCount){
+            progressLabel.text = @" ";
+            [self checkVideoStatus];
             
-            if(indexForSwipe != -1 && indexForSwipe < [streamORChannelDict count]){
-                progressLabel.text = @" ";
-                [self checkVideoStatus];
-                
-                if(indexForSwipe < [streamORChannelDict count])
+            if(indexForSwipe < totalCount)
+            {
+                if (indexForSwipe != -1)
                 {
-                    if (indexForSwipe != -1)
-                    {
-                        if (screenNumber == 1)
-                        {
-                            [activityIndicatorProfile removeFromSuperview];
-                            activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-                            activityIndicatorProfile.alpha = 1.0;
-                            [heartView addSubview:activityIndicatorProfile];
-                            activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
-                            profilePicture.alpha = 0.2;
-                            activityIndicatorProfile.color = [UIColor blueColor];
-                            [activityIndicatorProfile stopAnimating];
-                            [activityIndicatorProfile startAnimating];//to start animating
-                        }
-                        mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
-                        mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
-                        NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
-                        timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifferenceWithDateStr:createdTime];
-                        likeCountStrChk = @"";
-                        notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
-                        VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
-                        videoDurationChk = streamORChannelDict[indexForSwipe][@"video_duration"];
-                        SetUpView *setUpObj = [[SetUpView alloc]init];
-                        if(screenNumber == 1){
-                            [profileOper cancel];
-                            profileOper = [NSBlockOperation blockOperationWithBlock:^{
-                                [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1 operObj:profileOper];
-                            }];
-                            [mainQueue addOperation:profileOper];
-
-                            channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
-                            userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
-                            channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
-                        }
-                        
-                        if(screenNumber == 1 || screenNumber == 2){
-                            likeTapFlag = false;
-                            [likeOper cancel];
-                            likeOper = [NSBlockOperation blockOperationWithBlock:^{
-                                [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
-                            }];
-                            [mainQueue addOperation:likeOper];
-                        }
-                        
-                        [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
-                    }
-                    else{
-                        swipeFlag = false;
-                        [self removeOverlay];
-                    }
+                    mediaTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"gcs_object_type"];
+                    mediaIdChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"media_detail_id"];
+                    NSString *createdTime = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"created_time_stamp"];
+                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifferenceWithDateStr:createdTime];
+                    likeCountStrChk = @"0";
+                    notifTypeChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"notification_type"];
+                    VideoImageUrlChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"thumbImage"];
+                    videoDurationChk = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelIdSelected][indexForSwipe][@"video_duration"];
+                    [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
                 }
                 else{
-                    swipeFlag = false;
                     [self removeOverlay];
                 }
             }
             else{
-                swipeFlag = false;
                 [self removeOverlay];
             }
+        }
+        else{
+            [self removeOverlay];
+        }
+    }
+    else
+    {
+        if(gestureId == 0)
+        {
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                indexForSwipe = indexForSwipe + 1;
+            }
+        }
+        else
+        {
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if (indexForSwipe == [streamORChannelDict count])
+            {
+                indexForSwipe = (int)[streamORChannelDict count] - 1;
+            }
+            indexForSwipe = indexForSwipe - 1;
+        }
+        
+        if(indexForSwipe != -1 && indexForSwipe < [streamORChannelDict count]){
+            progressLabel.text = @" ";
+            [self checkVideoStatus];
+            
+            if(indexForSwipe < [streamORChannelDict count])
+            {
+                if (indexForSwipe != -1)
+                {
+                    if (screenNumber == 1)
+                    {
+                        [activityIndicatorProfile removeFromSuperview];
+                        activityIndicatorProfile = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+                        activityIndicatorProfile.alpha = 1.0;
+                        [heartView addSubview:activityIndicatorProfile];
+                        activityIndicatorProfile.frame =  CGRectMake(profilePicture.frame.origin.x + 5 , profilePicture.frame.origin.y + 7, 30.0,30.0);
+                        profilePicture.alpha = 0.2;
+                        activityIndicatorProfile.color = [UIColor blueColor];
+                        [activityIndicatorProfile stopAnimating];
+                        [activityIndicatorProfile startAnimating];//to start animating
+                    }
+                    mediaTypeChk = streamORChannelDict[indexForSwipe][@"mediaType"];
+                    mediaIdChk = streamORChannelDict[indexForSwipe][@"mediaId"];
+                    NSString *createdTime = streamORChannelDict[indexForSwipe][@"createdTime"];
+                    timeDiffChk = [[FileManagerViewController sharedInstance] getTimeDifferenceWithDateStr:createdTime];
+                    likeCountStrChk = @"";
+                    notifTypeChk = streamORChannelDict[indexForSwipe][@"notification"];
+                    VideoImageUrlChk = streamORChannelDict[indexForSwipe][@"mediaUrl"];
+                    videoDurationChk = streamORChannelDict[indexForSwipe][@"video_duration"];
+                    SetUpView *setUpObj = [[SetUpView alloc]init];
+                    if(screenNumber == 1){
+                        [profileOper cancel];
+                        profileOper = [NSBlockOperation blockOperationWithBlock:^{
+                            [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1 operObj:profileOper];
+                        }];
+                        [mainQueue addOperation:profileOper];
+                        
+                        channelName.text = streamORChannelDict[indexForSwipe][@"channel_name"];
+                        userName.text = [NSString stringWithFormat:@"@%@",streamORChannelDict[indexForSwipe][@"user_name"]];
+                        channelIdSelected = streamORChannelDict[indexForSwipe][@"ch_detail_id"];
+                    }
+                    
+                    if(screenNumber == 1 || screenNumber == 2){
+                        likeTapFlag = false;
+                        [likeOper cancel];
+                        likeOper = [NSBlockOperation blockOperationWithBlock:^{
+                            [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
+                        }];
+                        [mainQueue addOperation:likeOper];
+                    }
+                    
+                    [self setGUIChanges:mediaTypeChk mediaId:mediaIdChk timeDiff:timeDiffChk likeCountStr:likeCountStrChk notifType:notifTypeChk VideoImageUrl:VideoImageUrlChk videoDuration:videoDurationChk];
+                }
+                else{
+                    [self removeOverlay];
+                }
+            }
+            else{
+                [self removeOverlay];
+            }
+        }
+        else{
+            [self removeOverlay];
         }
     }
 }
@@ -1135,10 +1058,11 @@ NSBlockOperation *likeOper;
     downloadTask = [session downloadTaskWithRequest:downloadReq];
     videoProgressBar.hidden = true;
     progressLabel.hidden = false;
+    scrollViewZoom.zoomScale = 1.0;
+    scrollViewZoom.maximumZoomScale = 1.0;
     [glView bringSubviewToFront:progressLabel];
-  
     progressLabel.text = @"Downloading...";
-    imageVideoView.alpha = 0.4;
+    scrollViewZoom.alpha = 0.4;
     videoProgressBar.progressViewStyle = UIProgressViewStyleDefault;
     videoProgressBar.progress = 0.0;
     [videoProgressBar setTransform:CGAffineTransformMakeScale(1.0, 3.0)];
@@ -1148,9 +1072,10 @@ NSBlockOperation *likeOper;
 
 -(void) URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
+    scrollViewZoom.maximumZoomScale = 1.0;
     videoProgressBar.hidden = false;
     progressLabel.hidden = false;
-    imageVideoView.alpha = 0.4;
+    scrollViewZoom.alpha = 0.4;
     float progress = (float)totalBytesWritten / (float)totalBytesExpectedToWrite;
     videoProgressBar.progress = progress;
     int y = (int)round(progress*100);
@@ -1160,11 +1085,12 @@ NSBlockOperation *likeOper;
     progressLabel.text = mainStr;
     if(progress == 1.0)
     {
+        scrollViewZoom.maximumZoomScale = 10.0;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
         videoProgressBar.hidden = true;
-     
+        scrollViewZoom.zoomScale = 1.0;
     }
 }
 
@@ -1213,6 +1139,7 @@ NSBlockOperation *likeOper;
 
 -(void) playerDidFinish :(NSNotification *) notif
 {
+    scrollViewZoom.zoomScale = 1.0;
     [_AVPlayerViewController removeFromParentViewController];
     [self dismissViewControllerAnimated:_AVPlayerViewController completion:nil];
     [playIconView removeFromSuperview];
@@ -1241,7 +1168,7 @@ NSBlockOperation *likeOper;
     videoProgressBar.hidden = true;
     progressLabel.hidden = true;
     progressLabel.text = @" ";
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [[AVAudioSession sharedInstance] setActive: YES error: nil];
     NSURL *url = [NSURL fileURLWithPath:savingPath];
@@ -1305,7 +1232,7 @@ NSBlockOperation *likeOper;
     progressLabel.hidden = true;
     progressLabel.text = @" ";
     imageVideoView.hidden = true;
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     _snapCamMode = SnapCamSelectionModeSnapCam;
     _backGround =  false;
     [self.view.window setBackgroundColor:[UIColor grayColor]];
@@ -1316,7 +1243,7 @@ NSBlockOperation *likeOper;
 {
     UIGraphicsBeginImageContext(CGSizeMake(self.view.bounds.size.width, (self.view.bounds.size.height+67.0)));
     [[UIImage imageNamed:@""] drawInRect:CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y, self.view.bounds.size.width, (self.view.bounds.size.height+67.0))];
-  //  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    //  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     //    glView.backgroundColor = [UIColor colorWithPatternImage:image];
     glView.backgroundColor = [UIColor whiteColor];
@@ -1335,7 +1262,7 @@ NSBlockOperation *likeOper;
     
     durationLabel.hidden = true;
     progressLabel.hidden = true;
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     progressLabel.text = @" ";
     
     [self.view bringSubviewToFront:self.photoCollectionView];
@@ -1345,11 +1272,6 @@ NSBlockOperation *likeOper;
     flow.minimumInteritemSpacing = 3;
     flow.minimumLineSpacing = 3;
     _photoCollectionView.collectionViewLayout = flow;
-    
-    imageVideoViewHeight = imageVideoView.frame.size.height;
-    
-    pinchFlag = false;
-    swipeFlag = false;
     
     profilePicture.layer.cornerRadius = profilePicture.frame.size.width/2;
     profilePicture.layer.masksToBounds = YES;
@@ -1369,7 +1291,6 @@ NSBlockOperation *likeOper;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChangedForFullscreenMedia:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
     
     [self setGuiBasedOnOrientation];
-    
     if (_liveVideo) {
         activityImageView.image =  [UIImage animatedImageNamed:@"loader-" duration:1.0f];
         [super viewWillAppear:animated];
@@ -1578,7 +1499,7 @@ NSBlockOperation *likeOper;
     progressLabel.hidden = true;
     closeButton.hidden = true;
     progressLabel.text = @" ";
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     bottomView.hidden = false;
     noDataFound.text = @"Trying to connect camera";
     noDataFound.hidden = false;
@@ -1593,7 +1514,7 @@ NSBlockOperation *likeOper;
     progressLabel.hidden = true;
     progressLabel.text = @" ";
     closeButton.hidden = true;
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     bottomView.hidden = true;
     noDataFound.text = @"Retrieving stream";
     noDataFound.hidden = false;
@@ -1645,7 +1566,7 @@ NSBlockOperation *likeOper;
     progressLabel.hidden = true;
     imageVideoView.hidden = true;
     progressLabel.text = @" ";
-    imageVideoView.alpha = 1.0;
+    scrollViewZoom.alpha = 1.0;
     heartView.hidden = false;
     heartBottomDescView.hidden = false;
     numberOfSharedChannels.hidden = true;
@@ -1729,7 +1650,7 @@ NSBlockOperation *likeOper;
             videoProgressBar.hidden = true;
             progressLabel.hidden = true;
             progressLabel.text = @" ";
-            imageVideoView.alpha = 1.0;
+            scrollViewZoom.alpha = 1.0;
             NSURL *url = [self convertStringToUrl:mediaUrlForReplay];
             [self downloadVideo:url];
         }
@@ -1771,7 +1692,7 @@ NSBlockOperation *likeOper;
         videoProgressBar.progress = 0.0;
         progressLabel.hidden = true;
         progressLabel.text = @"";
-        imageVideoView.alpha = 1.0;
+        scrollViewZoom.alpha = 1.0;
     }
     
     if([mediaTypeSelected  isEqual: @"live"])
@@ -3036,16 +2957,10 @@ NSBlockOperation *likeOper;
     return CGSizeMake(50, 46);
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    if(pinchFlag == true){
-        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
-        imageVideoView.transform = transform;
-        pinchFlag = false;
-        CGPoint finalPoint = CGPointMake(glView.center.x,glView.center.y);
-        finalPoint.x = MIN(MAX(finalPoint.x, 0), imageVideoView.bounds.size.width);
-        finalPoint.y = MIN(MAX(finalPoint.y, 0), imageVideoView.bounds.size.height);
-        afterPan.view.center = finalPoint;
-    }
-    pinchFlag = false;
+    
+    scrollViewZoom.zoomScale = 1.0;
+    scrollViewZoom.minimumZoomScale = 1.0;
+    scrollViewZoom.maximumZoomScale = 10.0;
     if(indexForSwipe != (int)indexPath.row){
         [self checkVideoStatus];
         orgIndex = -11;
@@ -3058,7 +2973,7 @@ NSBlockOperation *likeOper;
             progressLabel.hidden = true;
             progressLabel.text = @" ";
             videoProgressBar.hidden = true;
-            imageVideoView.alpha = 1.0;
+            scrollViewZoom.alpha = 1.0;
             [self.photoCollectionView reloadData];
         });
     }
@@ -3104,7 +3019,7 @@ NSBlockOperation *likeOper;
                 [activityIndicatorProfile stopAnimating];
                 [activityIndicatorProfile startAnimating];//to start animating
             }
-
+            
             [profileOper cancel];
             profileOper = [NSBlockOperation blockOperationWithBlock:^{
                 [setUpObj getProfileImageSelectedIndexWithUserIdKey:[NSString stringWithFormat:@"%@",streamORChannelDict[indexForSwipe][@"user_name"]] objects:obj1 operObj:profileOper];
@@ -3118,7 +3033,7 @@ NSBlockOperation *likeOper;
             likeTapFlag = false;
             [likeOper cancel];
             likeOper = [NSBlockOperation blockOperationWithBlock:^{
-               [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
+                [setUpObj getLikeCountWithMediaType:mediaTypeChk mediaId:mediaIdChk Objects:obj1 operObjs:likeOper];
             }];
             [mainQueue addOperation:likeOper];
         }
