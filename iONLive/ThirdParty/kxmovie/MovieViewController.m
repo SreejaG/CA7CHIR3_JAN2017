@@ -876,14 +876,6 @@ NSBlockOperation *likeOper;
 
 -(void)swipeRecogniser:(UISwipeGestureRecognizer *)swipeReceived
 {
-    if(scrollViewZoom.zoomScale != 1)
-    {
-        [NSThread sleepForTimeInterval:0.7];
-    }
-    
-    scrollViewZoom.zoomScale = 1.0;
-    scrollViewZoom.minimumZoomScale = 1.0;
-    scrollViewZoom.maximumZoomScale = 10.0;
     tapFromDidSelectFlag = false;
     [self removeOverlay];
     [self showOverlay1];
@@ -924,6 +916,14 @@ NSBlockOperation *likeOper;
         }
         
         if(indexForSwipe != -1 && indexForSwipe < totalCount){
+            if(scrollViewZoom.zoomScale != 1)
+            {
+                [NSThread sleepForTimeInterval:0.7];
+            }
+            
+            scrollViewZoom.zoomScale = 1.0;
+            scrollViewZoom.minimumZoomScale = 1.0;
+            scrollViewZoom.maximumZoomScale = 10.0;
             progressLabel.text = @" ";
             [self checkVideoStatus];
             
@@ -980,6 +980,14 @@ NSBlockOperation *likeOper;
         }
         
         if(indexForSwipe != -1 && indexForSwipe < [streamORChannelDict count]){
+            if(scrollViewZoom.zoomScale != 1)
+            {
+                [NSThread sleepForTimeInterval:0.7];
+            }
+            
+            scrollViewZoom.zoomScale = 1.0;
+            scrollViewZoom.minimumZoomScale = 1.0;
+            scrollViewZoom.maximumZoomScale = 10.0;
             progressLabel.text = @" ";
             [self checkVideoStatus];
             
@@ -2957,7 +2965,6 @@ NSBlockOperation *likeOper;
     return CGSizeMake(50, 46);
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    
     scrollViewZoom.zoomScale = 1.0;
     scrollViewZoom.minimumZoomScale = 1.0;
     scrollViewZoom.maximumZoomScale = 10.0;
