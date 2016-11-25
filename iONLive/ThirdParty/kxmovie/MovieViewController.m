@@ -950,6 +950,14 @@ NSBlockOperation *likeOper;
             }
         }
         else{
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if (indexForSwipe == totalCount)
+            {
+                indexForSwipe = (int)totalCount - 1;
+            }
             [self removeOverlay];
         }
     }
@@ -1048,6 +1056,14 @@ NSBlockOperation *likeOper;
             }
         }
         else{
+            if(indexForSwipe < 0)
+            {
+                indexForSwipe = 0;
+            }
+            if (indexForSwipe == [streamORChannelDict count])
+            {
+                indexForSwipe = [streamORChannelDict count] - 1;
+            }
             [self removeOverlay];
         }
     }
@@ -2965,6 +2981,7 @@ NSBlockOperation *likeOper;
     return CGSizeMake(50, 46);
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
     scrollViewZoom.zoomScale = 1.0;
     scrollViewZoom.minimumZoomScale = 1.0;
     scrollViewZoom.maximumZoomScale = 10.0;
