@@ -1062,7 +1062,7 @@ NSBlockOperation *likeOper;
             }
             if (indexForSwipe == [streamORChannelDict count])
             {
-                indexForSwipe = [streamORChannelDict count] - 1;
+                indexForSwipe = (int)[streamORChannelDict count] - 1;
             }
             [self removeOverlay];
         }
