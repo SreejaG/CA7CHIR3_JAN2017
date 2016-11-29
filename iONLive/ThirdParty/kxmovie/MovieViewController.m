@@ -1165,7 +1165,8 @@ NSBlockOperation *likeOper;
 {
     scrollViewZoom.zoomScale = 1.0;
     [_AVPlayerViewController removeFromParentViewController];
-    [self dismissViewControllerAnimated:_AVPlayerViewController completion:nil];
+    [self dismissViewControllerAnimated:true completion:nil];
+    //    [self dismissViewControllerAnimated:_AVPlayerViewController completion:nil];
     [playIconView removeFromSuperview];
     playIconView = [[UIImageView alloc]init];
     playIconView.image = [UIImage imageNamed:@"Circled Play"];

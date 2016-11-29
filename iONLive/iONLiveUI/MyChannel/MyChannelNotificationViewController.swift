@@ -417,7 +417,7 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
         if fulldataSource.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelNotificationCell.identifier, for:indexPath) as! MyChannelNotificationCell
-        
+            
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
             
             if(fulldataSource[indexPath.row]["urlKey"] as! String != "nomedia"){

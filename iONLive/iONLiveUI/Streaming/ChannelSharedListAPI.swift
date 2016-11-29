@@ -259,7 +259,7 @@ class ChannelSharedListAPI: NSObject {
                             {
                                 mediaImage = createMediaThumb(mediaName: media1 as! String)
                                 if(mediaImage == nil){
-                                     mediaImage = UIImage()
+                                    mediaImage = UIImage()
                                 }
                             }
                             else{

@@ -593,21 +593,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     swipeFlag = true
                     self.removeOverlay()
                     fullScrenImageView.isUserInteractionEnabled = true
-//                    if (playHandleflag == 1)
-//                    {
-//                        playHandleflag = 0
-//                        playIconInFullView.isHidden = false
-//                        self.view.isUserInteractionEnabled = true
-//                    }
-//                    downloadTask?.cancel()
-//                    fullScrenImageView.alpha = 1.0
-//                    
-//                    progressLabelDownload?.text = " ";
-//                    progressLabelDownload?.removeFromSuperview()
-//                    progressViewDownload?.removeFromSuperview()
-//                    
-//                    progressViewDownload?.isHidden=true;
-//                    progressLabelDownload?.isHidden=true;
                     
                     if let swipeGesture = gesture as? UISwipeGestureRecognizer
                     {
@@ -632,7 +617,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                                 
                                 progressViewDownload?.isHidden=true;
                                 progressLabelDownload?.isHidden=true;
-
+                                
                                 let backgroundQueue = DispatchQueue(label: "com.app.queue",
                                                                     qos: .background,
                                                                     target: nil)
@@ -671,7 +656,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                                 
                                 progressViewDownload?.isHidden=true;
                                 progressLabelDownload?.isHidden=true;
-
+                                
                                 let backgroundQueue = DispatchQueue(label: "com.app.queue",
                                                                     qos: .background,
                                                                     target: nil)
@@ -1083,8 +1068,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             let frame1 = CGRect(x:0, y:(heights - (BottomView.frame.size.height + photoThumpCollectionView.frame.size.height + 4)), width:widths, height:3)
             progressViewDownload?.frame = frame1
             progressViewDownload?.transform =  CGAffineTransform(scaleX: 1.0, y: 3.0)
-            
-            //            progressViewDownload?.center = fullScrenImageView.center
             
             view.addSubview(progressViewDownload!)
             progressViewDownload?.isHidden = true
@@ -1630,7 +1613,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoThumbCollectionViewCell", for: indexPath as IndexPath) as! PhotoThumbCollectionViewCell
         cell.rotate360Degrees(duration: 2.0)
-      
+        
         if(self.selectedItem != indexPath.row){
             swipeFlag = false
             self.selectedItem = indexPath.row
@@ -1642,10 +1625,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             progressLabelDownload?.removeFromSuperview()
             progressViewDownload?.removeFromSuperview()
             
-            
-            //        DispatchQueue.main.async {
             self.photoThumpCollectionView.reloadData()
-            //        }
             
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
             {
@@ -1668,7 +1648,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
                 backgroundQueue.async {
                     self.downloadFullImageWhenTapThumb(imageDict: dict, indexpaths: indexPath.row ,gestureIdentifier:0)
                 }
-
+                
             }
             
             self.fullScrenImageView.alpha = 1.0
