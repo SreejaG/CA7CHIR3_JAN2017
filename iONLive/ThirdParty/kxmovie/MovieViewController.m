@@ -596,6 +596,12 @@ NSBlockOperation *likeOper;
     });
 }
 
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    if (scrollView.zoomScale < 1.0) {
+        scrollView.minimumZoomScale = 1.0;
+    }
+}
+
 -(void) scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view{
 }
 
