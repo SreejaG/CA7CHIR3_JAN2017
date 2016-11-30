@@ -396,7 +396,7 @@ NSBlockOperation *likeOper;
 -(void) initializeScroll
 {
     scrollViewZoom.contentSize = CGSizeMake(imageVideoView.frame.size.width, imageVideoView.frame.size.height);
-    scrollViewZoom.maximumZoomScale = 10.0;
+    scrollViewZoom.maximumZoomScale = 30.0;
     scrollViewZoom.minimumZoomScale = 1.0;
     scrollViewZoom.zoomScale = 1;
     scrollViewZoom.clipsToBounds = YES;
@@ -603,6 +603,14 @@ NSBlockOperation *likeOper;
 }
 
 -(void) scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view{
+    if([mediaTypeSelected  isEqual: @"video"]){
+        scrollViewZoom.minimumZoomScale = 1.0;
+        scrollViewZoom.maximumZoomScale = 1.0;
+    }
+    else{
+        scrollViewZoom.minimumZoomScale = 1.0;
+        scrollViewZoom.maximumZoomScale = 30.0;
+    }
 }
 
 -(void) scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale{
@@ -929,7 +937,7 @@ NSBlockOperation *likeOper;
             
             scrollViewZoom.zoomScale = 1.0;
             scrollViewZoom.minimumZoomScale = 1.0;
-            scrollViewZoom.maximumZoomScale = 10.0;
+            scrollViewZoom.maximumZoomScale = 30.0;
             progressLabel.text = @" ";
             [self checkVideoStatus];
             
@@ -1001,7 +1009,7 @@ NSBlockOperation *likeOper;
             
             scrollViewZoom.zoomScale = 1.0;
             scrollViewZoom.minimumZoomScale = 1.0;
-            scrollViewZoom.maximumZoomScale = 10.0;
+            scrollViewZoom.maximumZoomScale = 30.0;
             progressLabel.text = @" ";
             [self checkVideoStatus];
             
@@ -1115,7 +1123,7 @@ NSBlockOperation *likeOper;
     progressLabel.text = mainStr;
     if(progress == 1.0)
     {
-        scrollViewZoom.maximumZoomScale = 10.0;
+        scrollViewZoom.maximumZoomScale = 30.0;
         progressLabel.hidden = true;
         progressLabel.text = @" ";
         scrollViewZoom.alpha = 1.0;
@@ -2991,7 +2999,7 @@ NSBlockOperation *likeOper;
     
     scrollViewZoom.zoomScale = 1.0;
     scrollViewZoom.minimumZoomScale = 1.0;
-    scrollViewZoom.maximumZoomScale = 10.0;
+    scrollViewZoom.maximumZoomScale = 30.0;
     if(indexForSwipe != (int)indexPath.row){
         [self checkVideoStatus];
         orgIndex = -11;
