@@ -297,6 +297,9 @@ class FileManagerViewController: UIViewController {
                 {
                     profileImage = mediaImage1
                 }
+                else{
+                    profileImage = UIImage(named: "dummyUser")!
+                }
             }
             else
             {

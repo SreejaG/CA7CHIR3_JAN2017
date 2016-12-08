@@ -101,8 +101,12 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         let setFullscreenImage = Notification.Name("setFullscreenImage")
         NotificationCenter.default.addObserver(self, selector:#selector(PhotoViewerViewController.setFullscreenImage(notif:)), name: setFullscreenImage, object: nil)
         
+        let tokenExpired = Notification.Name("tokenExpired")
+        NotificationCenter.default.addObserver(self, selector:#selector(PhotoViewerViewController.loadInitialViewControllerTokenExpire(notif:)), name: tokenExpired, object: nil)
+        
         showOverlay()
         initialise()
+        
         archiveMediaCount = defaults.value(forKey: ArchiveCount) as! Int
         archiveChanelId = "\(defaults.value(forKey: archiveId) as! Int)"
         
@@ -245,8 +249,13 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         operationInMyMediaList.cancel()
         customView.stopAnimationg()
         customView.removeFromSuperview()
+        
         NotificationCenter.default.removeObserver(NSNotification.Name.UIDeviceOrientationDidChange)
         NotificationCenter.default.removeObserver(NSNotification.Name.AVPlayerItemDidPlayToEndTime)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("tokenExpired"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("removeActivityIndicatorMyChannel"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("setFullscreenImage"), object: nil)
+        
         if ((playHandleflag == 1) && (willEnterFlag == 1))
         {
         }
@@ -258,6 +267,89 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         if(downloadTask?.state == .running)
         {
             downloadTask?.cancel()
+        }
+    }
+    
+    func  loadInitialViewControllerTokenExpire(notif:NSNotification){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                operationInMyMediaList.cancel()
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    let code = notif.object as! String
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
+                }
+            }
+        }
+    }
+    
+    func  loadInitialViewController(code: String){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                operationInMyMediaList.cancel()
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
+                }
+            }
         }
     }
     
@@ -490,9 +582,9 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         operationInMyMediaList.cancel()
         let filteredData = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.filter(thumbExists)
         totalCount = filteredData.count
-        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]!.count > 0
+        if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
-            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![0]
+            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![0]
             self.downloadFullImageWhenTapThumb(imageDict: dict, indexpaths: selectedItem,gestureIdentifier:0)
         }
         else{
@@ -563,7 +655,14 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     mediaImage = mediaImage1
                 }
                 else{
-                    
+                    let failedString = String(data: imageData as Data, encoding: String.Encoding.utf8)
+                    let fullString  = failedString?.components(separatedBy: ",")
+                    let errorString = fullString?[1].components(separatedBy: ":")
+                    var orgString = errorString?[1]
+                    orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                    if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                        loadInitialViewController(code: orgString!)
+                    }
                     mediaImage = UIImage(named: "thumb12")!
                 }
                 
@@ -772,7 +871,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: {
-            (action:UIAlertAction!) in print("you have pressed the Cancel button")
+            (action:UIAlertAction!) in
             self.fullScrenImageView.alpha = 1.0
             if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.archiveChanelId]![self.selectedItem][mediaTypeKey] as! String == "video"){
                 self.playIconInFullView.isHidden = false
@@ -876,7 +975,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             ErrorManager.sharedInstance.noNetworkConnection()
         }
         else if code.isEmpty == false {
-            
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 loadInitialViewController(code: code)
             }
@@ -1020,7 +1118,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             DispatchQueue.main.async {
                 self.view.isUserInteractionEnabled = true
                 self.fullScrenImageView.isUserInteractionEnabled = true
-                
                 self.playHandleflag = 1
                 let player1 = AVPlayer(url: url1 as URL)
                 if #available(iOS 9.0, *) {
@@ -1130,43 +1227,55 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         let data = NSData(contentsOf: location as URL)
         if let imageData = data as NSData? {
-            let mediaIdForFilePath = "\( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![videoDownloadIntex][mediaIdKey]!)"
-            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-            let savingPath = parentPath! + "/" + mediaIdForFilePath + "video.mov"
-            let url = NSURL(fileURLWithPath: savingPath)
-            let writeFlag = imageData.write(to: url as URL, atomically: true)
-            if(writeFlag){
-                videoDownloadIntex = 0
-                DispatchQueue.main.async {
-                    self.view.isUserInteractionEnabled = true
-                    self.fullScrenImageView.isUserInteractionEnabled = true
-                    self.playHandleflag = 1
-                    self.view.isUserInteractionEnabled = true
-                    self.fullScrenImageView.isUserInteractionEnabled = true
-                    self.playHandleflag = 1
-                    let player1 = AVPlayer(url: url as URL)
-                    if #available(iOS 9.0, *) {
-                        self.playerViewController.delegate = self
-                    } else {
-                    }
-                    self.playerViewController.view.frame = CGRect(x:0, y:64, width:320, height:420)
-                    self.playerViewController.showsPlaybackControls = true
-                    player1.actionAtItemEnd = .none
-                    
-                    if #available(iOS 9.0, *) {
-                        self.playerViewController.allowsPictureInPicturePlayback = true
-                    } else {
-                    }
-                    self.playerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
-                    self.playerViewController.player = player1
-                    self.present(self.playerViewController, animated: true, completion: {
-                        self.playerViewController.player!.play()
-                        NotificationCenter.default.addObserver(self,
-                                                               selector:#selector(PhotoViewerViewController.playerDidFinishPlaying(notif:)),
-                                                               name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                                                               object: player1.currentItem)
+            let failedString = String(data: imageData as Data, encoding: String.Encoding.utf8)
+            if(failedString != nil)
+            {
+                let fullString = failedString?.components(separatedBy: ",")
+                let errorString = fullString?[1].components(separatedBy: ":")
+                var orgString = errorString?[1]
+                orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                    loadInitialViewController(code: orgString!)
+                }
+            }
+            else{
+                let mediaIdForFilePath = "\( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![videoDownloadIntex][mediaIdKey]!)"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let savingPath = parentPath! + "/" + mediaIdForFilePath + "video.mov"
+                let url = NSURL(fileURLWithPath: savingPath)
+                let writeFlag = imageData.write(to: url as URL, atomically: true)
+                if(writeFlag){
+                    videoDownloadIntex = 0
+                    DispatchQueue.main.async {
+                        self.view.isUserInteractionEnabled = true
+                        self.fullScrenImageView.isUserInteractionEnabled = true
+                        self.playHandleflag = 1
+                        self.view.isUserInteractionEnabled = true
+                        self.fullScrenImageView.isUserInteractionEnabled = true
+                        self.playHandleflag = 1
+                        let player1 = AVPlayer(url: url as URL)
+                        if #available(iOS 9.0, *) {
+                            self.playerViewController.delegate = self
+                        } else {
+                        }
+                        self.playerViewController.view.frame = CGRect(x:0, y:64, width:320, height:420)
+                        self.playerViewController.showsPlaybackControls = true
+                        player1.actionAtItemEnd = .none
                         
-                    })
+                        if #available(iOS 9.0, *) {
+                            self.playerViewController.allowsPictureInPicturePlayback = true
+                        } else {
+                        }
+                        self.playerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+                        self.playerViewController.player = player1
+                        self.present(self.playerViewController, animated: true, completion: {
+                            self.playerViewController.player!.play()
+                            NotificationCenter.default.addObserver(self,
+                                                                   selector:#selector(PhotoViewerViewController.playerDidFinishPlaying(notif:)),
+                                                                   name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
+                                                                   object: player1.currentItem)
+                        })
+                    }
                 }
             }
         }
@@ -1183,6 +1292,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     
     func uploadMediaProgress(notif:NSNotification)
     {
+        archiveChanelId = "\(defaults.value(forKey: archiveId) as! Int)"
         let dict = notif.object as! [String:Any]
         dictMediaId = dict[mediaIdKey] as! String
         dictProgress = dict[progressKey] as! Float
@@ -1205,6 +1315,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     
     func setFullscreenImage(notif:NSNotification)
     {
+        archiveChanelId = "\(defaults.value(forKey: archiveId) as! Int)"
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0
         {
             DispatchQueue.main.async {
@@ -1502,39 +1613,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             break
         }
         return orientedImage
-    }
-    
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults .standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
     }
 }
 

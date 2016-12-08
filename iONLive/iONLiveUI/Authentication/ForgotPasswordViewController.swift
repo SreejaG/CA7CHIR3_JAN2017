@@ -209,18 +209,17 @@ class ForgotPasswordViewController: UIViewController{
                 _ = FileManagerViewController.sharedInstance.createParentDirectory()
             }
             
-            let defaults = UserDefaults.standard
+            let defaults = UserDefaults .standard
             let deviceToken = defaults.value(forKey: "deviceToken") as! String
             defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             defaults.setValue(deviceToken, forKey: "deviceToken")
             defaults.set(1, forKey: "shutterActionMode");
+            defaults.setValue("false", forKey: "tokenValid")
             
             let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
+            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
             channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                
-            }
+            self.navigationController?.pushViewController(channelItemListVC, animated: false)
         }
     }
 }

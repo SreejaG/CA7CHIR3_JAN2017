@@ -455,39 +455,6 @@ class ChannelsSharedController: UIViewController  {
         }
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults.standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
-    }
-    
     func showOverlay(){
         let loadingOverlayController:IONLLoadingView=IONLLoadingView(nibName:"IONLLoadingOverlay", bundle: nil)
         loadingOverlayController.view.frame = CGRect(x:0, y:64, width:self.view.frame.width, height:(self.view.frame.height - (64 + 50)))

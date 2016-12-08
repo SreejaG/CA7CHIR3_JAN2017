@@ -387,7 +387,6 @@ NSBlockOperation *likeOper;
             totalCount = (int)[setUpObj getMediaCountWithChannelId:channelIdSelected];
         }
         
-        
         [self setGUIChanges:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl videoDuration:videoDuration];
     }
     return self;
@@ -741,6 +740,18 @@ NSBlockOperation *likeOper;
             if(data != nil)
             {
                 mediaImage = [[UIImage alloc]initWithData:data];
+                if(mediaImage == nil){
+                    NSString *failedString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    NSArray *fullString = [failedString componentsSeparatedByString:@","];
+                    NSArray *errorString = [fullString[1] componentsSeparatedByString:@":"];
+                    NSString *orgString = errorString[1];
+                    NSCharacterSet *invertCharSet = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+                    orgString = [orgString stringByTrimmingCharactersInSet:invertCharSet];
+                    if(([orgString  isEqual: @"USER004"]) || ([orgString  isEqual: @"USER005"]) || ([orgString  isEqual: @"USER006"])){
+                        [self loadInitialView];
+                    }
+                    mediaImage = [UIImage imageNamed:@"thumb12"];
+                }
             }
             else{
                 mediaImage = [UIImage imageNamed:@"thumb12"];
@@ -753,6 +764,43 @@ NSBlockOperation *likeOper;
                 [[FileManagerViewController sharedInstance] saveImageToFilePathWithMediaName:mediaNamePath mediaImage:mediaImage];
             });
         });
+    }
+}
+
+-(void) loadInitialView
+{
+    if([[NSUserDefaults standardUserDefaults] valueForKey:@"tokenValid"] != nil)
+    {
+        NSString *tokenValid = [[NSUserDefaults standardUserDefaults] valueForKey:@"tokenValid"];
+        if([tokenValid isEqual:@"true"]){
+            dispatch_async( dispatch_get_main_queue(), ^{
+                NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+                NSString *path = documentsPath.absoluteString;
+                
+                if([[NSFileManager defaultManager] fileExistsAtPath:path]){
+                    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+                }
+                [[FileManagerViewController sharedInstance] createParentDirectory];
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                NSString *accessToken = [defaults valueForKey:@"deviceToken"];
+                NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
+                [defaults removePersistentDomainForName:iden];
+                [defaults setValue:accessToken forKey:@"deviceToken"];
+                [defaults setInteger:1 forKey:@"shutterActionMode"];
+                [defaults setValue:@"false" forKey:@"tokenValid"];
+                
+                //                [[ErrorManager sharedInstance] tockenExpired];
+                
+                UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
+                UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateNavigationController"];
+                authenticate.navigationController.navigationBarHidden = true;
+                //                [[self navigationController] pushViewController:authenticate animated:false];
+                
+                [self presentViewController:authenticate animated:false completion:^{
+                    [[ErrorManager sharedInstance] invalidTockenError];
+                }];
+            });
+        }
     }
 }
 
@@ -1142,35 +1190,48 @@ NSBlockOperation *likeOper;
     NSURL *fileURL = [NSURL fileURLWithPath:savingPath];
     if(data!= nil)
     {
-        bool write = [data writeToURL:fileURL atomically:YES];
-        if(write)
-        {
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-            [[AVAudioSession sharedInstance] setActive: YES error: nil];
-            NSURL *url = [NSURL fileURLWithPath:savingPath];
-            _AVPlayerViewController = [AVPlayerViewController new];
-            _AVPlayerViewController.delegate = self;
-            _AVPlayerViewController.showsPlaybackControls = YES;
-            _AVPlayerViewController.allowsPictureInPicturePlayback = YES;
-            _AVPlayerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
-            _AVPlayerViewController.player = [AVPlayer playerWithURL:url];
-            [_AVPlayerViewController.player play];
-            _AVPlayerViewController.player.closedCaptionDisplayEnabled = NO;
-            [self presentViewController:_AVPlayerViewController animated:NO completion:nil];
-            
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(playerDidFinish:)
-                                                         name:AVPlayerItemDidPlayToEndTimeNotification
-                                                       object:[_AVPlayerViewController.player currentItem]];
-            topView.hidden = false;
-            cameraSelectionButton.hidden = true;
-            liveView.hidden = true;
-            numberOfSharedChannels.hidden = true;
-            playIconView.hidden = false;
-            topView.backgroundColor = [UIColor clearColor];
-            [glView bringSubviewToFront:heartView];
-            [glView bringSubviewToFront:topView];
-            playHandleFlag = 1;
+        NSString *failedString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if(failedString != nil){
+            NSArray *fullString = [failedString componentsSeparatedByString:@","];
+            NSArray *errorString = [fullString[1] componentsSeparatedByString:@":"];
+            NSString *orgString = errorString[1];
+            NSCharacterSet *invertCharSet = [[NSCharacterSet alphanumericCharacterSet] invertedSet];
+            orgString = [orgString stringByTrimmingCharactersInSet:invertCharSet];
+            if(([orgString  isEqual: @"USER004"]) || ([orgString  isEqual: @"USER005"]) || ([orgString  isEqual: @"USER006"])){
+                [self loadInitialView];
+            }
+        }
+        else{
+            bool write = [data writeToURL:fileURL atomically:YES];
+            if(write)
+            {
+                [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+                [[AVAudioSession sharedInstance] setActive: YES error: nil];
+                NSURL *url = [NSURL fileURLWithPath:savingPath];
+                _AVPlayerViewController = [AVPlayerViewController new];
+                _AVPlayerViewController.delegate = self;
+                _AVPlayerViewController.showsPlaybackControls = YES;
+                _AVPlayerViewController.allowsPictureInPicturePlayback = YES;
+                _AVPlayerViewController.videoGravity = AVLayerVideoGravityResizeAspect;
+                _AVPlayerViewController.player = [AVPlayer playerWithURL:url];
+                [_AVPlayerViewController.player play];
+                _AVPlayerViewController.player.closedCaptionDisplayEnabled = NO;
+                [self presentViewController:_AVPlayerViewController animated:NO completion:nil];
+                
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(playerDidFinish:)
+                                                             name:AVPlayerItemDidPlayToEndTimeNotification
+                                                           object:[_AVPlayerViewController.player currentItem]];
+                topView.hidden = false;
+                cameraSelectionButton.hidden = true;
+                liveView.hidden = true;
+                numberOfSharedChannels.hidden = true;
+                playIconView.hidden = false;
+                topView.backgroundColor = [UIColor clearColor];
+                [glView bringSubviewToFront:heartView];
+                [glView bringSubviewToFront:topView];
+                playHandleFlag = 1;
+            }
         }
     }
 }
@@ -1346,7 +1407,9 @@ NSBlockOperation *likeOper;
 - (void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:UIDeviceOrientationDidChangeNotification];
+    [[NSNotificationCenter defaultCenter] removeObserver:@"tokenExpiredInMovie"];
     [self hideProgressBar];
     LoggerStream(1, @"viewWillDisappear %@", self);
 }
@@ -1493,6 +1556,10 @@ NSBlockOperation *likeOper;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(addHeartPushNotification:)
                                                  name:@"pushNotificationLike"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(loadInitialView)
+                                                 name:@"tokenExpiredInMovie"
                                                object:nil];
 }
 

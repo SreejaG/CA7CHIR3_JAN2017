@@ -909,11 +909,11 @@
 			children = (
 				B299465C1DC0B3D900BD58B7 /* ContactInvitaion */,
 				1674A9101C29073B00D547D7 /* sharing.storyboard */,
-				B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */,
 				1674A9121C29077D00D547D7 /* MySharedChannelsViewController.swift */,
 				1674A9141C291BE200D547D7 /* MySharedChannelsCell.swift */,
 				1674A9161C29207600D547D7 /* MySharedChannelsHeaderCell.swift */,
 				166455F71C2A5B5F00D09FAE /* MyChannelDetailViewController.swift */,
+				B2160AA01DC33A44006F0724 /* MyChannelItemDetailsViewController.swift */,
 				166455FB1C2A5BA000D09FAE /* MyChannelSharingDetailsViewController.swift */,
 				166455FD1C2A638600D09FAE /* MyChannelItemCell.swift */,
 				16EC54A61CBD1C7100E6B6BA /* contactSharingHeaderTableViewCell.swift */,

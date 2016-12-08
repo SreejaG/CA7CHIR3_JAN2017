@@ -16,6 +16,9 @@ class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         continueButton.isHidden = true
+        
+        UserDefaults.standard.setValue("true", forKey: "tokenValid")
+        
         initialise()
     }
     

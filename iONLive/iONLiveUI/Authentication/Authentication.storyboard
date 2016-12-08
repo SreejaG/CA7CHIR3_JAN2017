@@ -29,7 +29,7 @@
         <!--Authenticate View Controller-->
         <scene sceneID="PIa-0v-rFP">
             <objects>
-                <viewController storyboardIdentifier="AuthenticateViewController" id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="AuthenticateViewController" storyboardIdentifier="AuthenticateViewController" id="TWr-aO-I8M" customClass="AuthenticateViewController" customModule="CA7CH" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jZK-O0-9hG"/>
                         <viewControllerLayoutGuide type="bottom" id="ild-vM-hCo"/>
@@ -875,7 +875,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="24j-LG-LOB">
-                                                    <rect key="frame" x="10" y="38" width="580" height="16"/>
+                                                    <rect key="frame" x="10" y="38" width="300" height="16"/>
                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
                                                     <color key="textColor" red="0.85490196080000003" green="0.85490196080000003" blue="0.85490196080000003" alpha="0.89940732759999997" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -905,7 +905,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2K5-7i-XEb">
-                                                    <rect key="frame" x="525" y="0.0" width="60" height="60"/>
+                                                    <rect key="frame" x="245" y="0.0" width="60" height="60"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="60" id="Cej-6I-mZz"/>
                                                         <constraint firstAttribute="width" constant="60" id="oWg-Qq-woX"/>

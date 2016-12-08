@@ -41,7 +41,7 @@ class SignUpVerifyPhoneViewController: UIViewController
             countryPicker.selectRow(232, inComponent: 0, animated: true)
         }
         else{
-             countryPicker.selectRow(230, inComponent: 0, animated: true)
+            countryPicker.selectRow(230, inComponent: 0, animated: true)
         }
         continuButton.isHidden = true
         initialiseCountryPicker()
@@ -324,39 +324,6 @@ class SignUpVerifyPhoneViewController: UIViewController
         }
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults.standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
-    }
-    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         removeOverlay()
@@ -387,7 +354,6 @@ class SignUpVerifyPhoneViewController: UIViewController
         else if code.isEmpty == false
         {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code: code)
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)

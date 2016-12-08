@@ -89,21 +89,28 @@ class GlobalStreamList: NSObject {
         }
     }
     
-    
     func authenticationFailureHandlerStream(error: NSError?, code: String)
     {
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:code)
+                    }
+                }
             }
             else{
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
             }
         }
         else{
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stream"), object:"failure")
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }

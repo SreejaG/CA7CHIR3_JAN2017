@@ -40,9 +40,15 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
     }
     
     func initialise(){
-        userId = defaults.value(forKey: userLoginIdKey) as! String
-        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
-        getMediaFromDB()
+        if defaults.value(forKey: userLoginIdKey) != nil
+        {
+            userId = defaults.value(forKey: userLoginIdKey) as! String
+            if defaults.value(forKey: userAccessTockenKey) != nil
+            {
+                accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+                getMediaFromDB()
+            }
+        }
     }
     
     //get image from local db
@@ -69,8 +75,6 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
         else{
             videoDuration = ""
         }
-        userId = defaults.value(forKey: userLoginIdKey) as! String
-        accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         self.imageUploadManager.getSignedURL(userName: userId, accessToken: accessToken, mediaType: media, videoDuration: videoDuration, success: { (response) -> () in
             self.authenticationSuccessHandlerSignedURL(response: response)
         }, failure: { (error, message) -> () in
@@ -127,7 +131,14 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        let notificationName = Notification.Name("refreshLogin")
+                        NotificationCenter.default.post(name: notificationName, object: self)
+                    }
+                }
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
@@ -226,7 +237,6 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
                         if(result == "Success"){
                             self.imageAfterConversionThumbnail = UIImage()
                             GlobalChannelToImageMapping.sharedInstance.removeUploadSuccessMediaDetails(mediaId: self.mediaId)
-                            //                            self.mediaBeforeUploadCompleteManager.deleteRowFromDataSource(mediaId: self.mediaId)
                             self.mapMediaToDefaultChannels()
                         }
                         else{
@@ -346,13 +356,19 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
     //after uploading map media to channels
     func mapMediaToDefaultChannels(){
         if self.requestManager.validConnection() {
-            userId = defaults.value(forKey: userLoginIdKey) as! String
-            accessToken = defaults.value(forKey: userAccessTockenKey) as! String
-            imageUploadManager.setDefaultMediaChannelMapping(userName: userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
-                self.authenticationSuccessHandlerAfterMapping(response: response)
-            }, failure: { (error, message) -> () in
-                self.authenticationFailureHandlerMapping(error: error, code: message)
-            })
+            if defaults.value(forKey: userLoginIdKey) != nil
+            {
+                userId = defaults.value(forKey: userLoginIdKey) as! String
+                if defaults.value(forKey: userAccessTockenKey) != nil
+                {
+                    accessToken = defaults.value(forKey: userAccessTockenKey) as! String
+                    imageUploadManager.setDefaultMediaChannelMapping(userName: userId, accessToken: accessToken, objectName: mediaId , success: { (response) -> () in
+                        self.authenticationSuccessHandlerAfterMapping(response: response)
+                    }, failure: { (error, message) -> () in
+                        self.authenticationFailureHandlerMapping(error: error, code: message)
+                    })
+                }
+            }
         }
         else{
             self.updateProgressToDefault(progress: Float(4.0), mediaIds: mediaId)
@@ -403,7 +419,14 @@ class uploadMediaToGCS: UIViewController, URLSessionDelegate, URLSessionTaskDele
         }
         else if code.isEmpty == false {
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        let notificationName = Notification.Name("refreshLogin")
+                        NotificationCenter.default.post(name: notificationName, object: self)
+                    }
+                }
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)

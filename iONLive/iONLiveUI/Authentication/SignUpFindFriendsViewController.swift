@@ -193,39 +193,6 @@ class SignUpFindFriendsViewController: UIViewController{
         }
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults.standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
-    }
-    
     func authenticationSuccessHandler(response:AnyObject?)
     {
         if let json = response as? [String: AnyObject]
@@ -257,15 +224,15 @@ class SignUpFindFriendsViewController: UIViewController{
                 loadContactViewController()
             }
             else{
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-                if code == "CONTACT001"{
-                    
-                    contactExist = false
-                    loadContactViewController()
+                if((code == "USER004") || (code == "USER005") || (code == "USER006")){
                 }
-            }
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code: code)
+                else{
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    if code == "CONTACT001"{
+                        contactExist = false
+                        loadContactViewController()
+                    }
+                }
             }
         }
         else{

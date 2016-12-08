@@ -461,12 +461,26 @@ class UrlManager : NSObject {
 extension NSObject{
     func getUserId() -> String
     {
-        return UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        var ids = String()
+        if UserDefaults.standard.value(forKey: userLoginIdKey) != nil{
+            ids = UserDefaults.standard.value(forKey: userLoginIdKey) as! String
+        }
+        else{
+            ids = ""
+        }
+        return ids
     }
     
     func getAccessTocken() -> String
     {
-        return UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
+        var tok = String()
+        if UserDefaults.standard.value(forKey: userAccessTockenKey) != nil{
+            tok = UserDefaults.standard.value(forKey: userAccessTockenKey) as! String
+        }
+        else{
+            tok = ""
+        }
+        return tok
     }
 }
 

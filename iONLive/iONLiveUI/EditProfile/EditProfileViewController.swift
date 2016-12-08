@@ -119,7 +119,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        NotificationCenter.default.removeObserver(self)
     }
     
     func initialise()
@@ -187,14 +186,59 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         else{
             ErrorManager.sharedInstance.inValidResponseError()
         }
-        if((dataSource?.count)! > 0)
-        {
-            dataSource![0][0][displayNameKey] = fullNames
-            dataSource![2][0][privateInfoKey] = emails
-            dataSource![2][1][privateInfoKey] = mobileNo
-            dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
+        
+        if((code == "USER004") || (code == "USER005") || (code == "USER006")){
         }
-        editProfTableView.reloadData()
+        else{
+            if((dataSource?.count)! > 0)
+            {
+                dataSource![0][0][displayNameKey] = fullNames
+                dataSource![2][0][privateInfoKey] = emails
+                dataSource![2][1][privateInfoKey] = mobileNo
+                dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
+            }
+            editProfTableView.reloadData()
+        }
+    }
+    
+    func  loadInitialViewController(code: String){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
+                }
+            }
+        }
     }
     
     func setUserDetails()
@@ -242,39 +286,6 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let zoneName = NSTimeZone.local.identifier
         let timeValue = NSTimeZone.local.localizedName(for: .shortStandard, locale: NSLocale.init(localeIdentifier: zoneName) as Locale)
         return timeValue!
-    }
-    
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults.standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
     }
     
     func showOverlay(){

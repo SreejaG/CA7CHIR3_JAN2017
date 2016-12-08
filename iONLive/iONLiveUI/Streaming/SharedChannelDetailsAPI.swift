@@ -185,14 +185,26 @@ class SharedChannelDetailsAPI: NSObject {
     
     func authenticationFailureHandler(error: NSError?, code: String)
     {
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
         if !RequestManager.sharedInstance.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
         }
         else if code.isEmpty == false {
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:code)
+                    }
+                }
+            }
+            else{
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
+            }
         }
         else{
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:"failure")
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
@@ -208,13 +220,24 @@ class SharedChannelDetailsAPI: NSObject {
                 if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
+                    completion(mediaImage)
                 }
                 else{
-                    
-                    mediaImage = UIImage(named: "thumb12")!
+                    let failedString = String(data: imageData as Data, encoding: String.Encoding.utf8)
+                    let fullString = failedString?.components(separatedBy: ",")
+                    let errorString = fullString?[1].components(separatedBy: ":")
+                    var orgString = errorString?[1]
+                    orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                    if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                        {
+                            if tokenValid as! String == "true"
+                            {
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "SharedChannelMediaDetail"), object:orgString)
+                            }
+                        }
+                    }
                 }
-                
-                completion(mediaImage)
             }
             else
             {

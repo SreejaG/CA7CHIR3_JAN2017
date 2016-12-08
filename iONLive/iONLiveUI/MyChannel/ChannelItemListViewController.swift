@@ -75,6 +75,9 @@ class ChannelItemListViewController: UIViewController, CAAnimationDelegate {
         let myDayCleanNotif = Notification.Name("myDayCleanNotif")
         NotificationCenter.default.addObserver(self, selector:#selector(ChannelItemListViewController.cleanMyDayNotif(notification:)), name: myDayCleanNotif, object: nil)
         
+        let tokenExpired = Notification.Name("tokenExpired")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelItemListViewController.loadInitialViewControllerTokenExpire(notif:)), name: tokenExpired, object: nil)
+        
         //        NSTimer.scheduledTimerWithTimeInterval(30.0, target: self, selector: #selector(ChannelItemListViewController.cleanMyDay), userInfo: nil, repeats: true)
         
         showOverlay()
@@ -232,6 +235,9 @@ class ChannelItemListViewController: UIViewController, CAAnimationDelegate {
         self.channelItemCollectionView.alpha = 1.0
         customView.stopAnimationg()
         customView.removeFromSuperview()
+        
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("removeActivityIndicatorMyChannel"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("tokenExpired"), object: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -296,34 +302,85 @@ class ChannelItemListViewController: UIViewController, CAAnimationDelegate {
         }
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
+    func  loadInitialViewControllerTokenExpire(notif:NSNotification){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
             {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
+                operationInChannelImageList.cancel()
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    let code = notif.object as! String
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
                 }
-                catch _ as NSError {
+            }
+        }
+    }
+    
+    func  loadInitialViewController(code: String){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                operationInChannelImageList.cancel()
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
                 }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let deviceToken = self.defaults.value(forKey: "deviceToken") as! String
-            self.defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            self.defaults.setValue(deviceToken, forKey: "deviceToken")
-            self.defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
             }
         }
     }
@@ -448,7 +505,7 @@ class ChannelItemListViewController: UIViewController, CAAnimationDelegate {
             
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: {
-            (action:UIAlertAction!) in print("you have pressed the Cancel button")
+            (action:UIAlertAction!) in
         }))
         self.present(alert, animated: true, completion: nil)
         

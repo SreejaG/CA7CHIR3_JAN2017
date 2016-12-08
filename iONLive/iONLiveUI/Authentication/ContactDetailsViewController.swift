@@ -134,38 +134,6 @@ class ContactDetailsViewController: UIViewController {
         }
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch  _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let deviceToken = self.defaults.value(forKey: "deviceToken") as! String
-            self.defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            self.defaults.setValue(deviceToken, forKey: "deviceToken")
-            self.defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
-    }
-    
     func authenticationSuccessHandlerInvite(response:AnyObject?)
     {
         removeOverlay()
@@ -211,7 +179,6 @@ class ContactDetailsViewController: UIViewController {
                 loadIphoneCameraController()
             }
             if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code: code)
             }
         }
         else{
@@ -237,6 +204,7 @@ class ContactDetailsViewController: UIViewController {
     
     func loadIphoneCameraController(){
         UserDefaults.standard.setValue("initialCall", forKey: "CallingAPI")
+        UserDefaults.standard.setValue("0", forKey: "notificationArrived")
         GlobalDataChannelList.sharedInstance.initialise()
         ChannelSharedListAPI.sharedInstance.initialisedata()
         
@@ -365,8 +333,7 @@ class ContactDetailsViewController: UIViewController {
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
                 setContactDetails()
             }
-            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-                loadInitialViewController(code: code)
+            else if((code == "USER004") || (code == "USER005") || (code == "USER006")){
             }
         }
         else{

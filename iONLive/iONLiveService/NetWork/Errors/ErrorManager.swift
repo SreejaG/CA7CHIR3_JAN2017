@@ -7,6 +7,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     let signUpErrorTitle = "Sign Up Error"
     let StreamingErrortitle = "Streaming Error"
     let ContactErrortitle = "Contact Error"
+    var errorCodeGlobal : String = String()
     
     class var sharedInstance: ErrorManager {
         struct Singleton {
@@ -200,7 +201,7 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     }
     func failedToUpdatepassword()
     {
-        alert(title: "Error", message: "Failed to update password")
+        alert(title: "Failed", message: "Failed to update your password")
         
     }
     func missingFullNameError()
@@ -266,12 +267,18 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
             message = "\nWe're sorry, but an error occurred. Please try again."
         }
         let alertView = SwiftAlertView(title: title, message: "\n"+(message)!, delegate: self, cancelButtonTitle: nil)
+        
         alertView.appearType = SwiftAlertViewAppearType.FadeIn
         alertView.disappearType = SwiftAlertViewDisappearType.FadeOut
         alertView.appearTime = 0.2
         alertView.disappearTime = 0.2
         alertView.show()
-        self.perform(#selector(ErrorManager.dismissAlert(alert:)), with: alertView, afterDelay: 2)
+        if((errorCodeGlobal == "USER004") || (errorCodeGlobal == "USER005") || (errorCodeGlobal == "USER006")){
+            self.perform(#selector(ErrorManager.dismissAlert(alert:)), with: alertView, afterDelay: 2.5)
+        }
+        else{
+            self.perform(#selector(ErrorManager.dismissAlert(alert:)), with: alertView, afterDelay: 2)
+        }
     }
     
     // MARK: SwiftAlertViewDelegate
@@ -396,6 +403,12 @@ class ErrorManager: NSObject, SwiftAlertViewDelegate {
     //PRAGMA MARK:- Error code mapping
     func mapErorMessageToErrorCode(errorCode:String)
     {
+        if(errorCode != ""){
+            errorCodeGlobal = errorCode
+        }
+        else{
+            errorCodeGlobal = "no error code"
+        }
         switch errorCode
         {
         case "USER001": //userAllreadyRegisterd

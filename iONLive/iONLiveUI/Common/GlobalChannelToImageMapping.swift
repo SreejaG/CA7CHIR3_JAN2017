@@ -37,7 +37,10 @@ class GlobalChannelToImageMapping: NSObject {
     {
         let success = Notification.Name("success")
         NotificationCenter.default.addObserver(self, selector:#selector(GlobalChannelToImageMapping.display(notif:)), name: success, object: nil)
+        dummy.removeAll()
+        GlobalChannelImageDict.removeAll()
         dummy = source
+        dataSourceCount = 0
         getMediaByChannelId()
     }
     
@@ -51,6 +54,7 @@ class GlobalChannelToImageMapping: NSObject {
         else if dataSourceCount == dummy.count - 1
         {
             let codeString = "Success"
+            NotificationCenter.default.removeObserver(self, name: Notification.Name("success"), object: nil)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stopInitialising"), object:codeString)
         }
     }
@@ -115,6 +119,7 @@ class GlobalChannelToImageMapping: NSObject {
                     return time1! > time2!
                 })
                 GlobalChannelImageDict.updateValue(imageDataSource, forKey: channelDetailId)
+                
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "success"), object:channelDetailId)
             }
         }
@@ -230,12 +235,27 @@ class GlobalChannelToImageMapping: NSObject {
                 if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
+                    completion(mediaImage)
                 }
                 else{
-                    
-                    mediaImage = UIImage(named: "thumb12")!
+                    let failedString = String(data: imageData as Data, encoding: String.Encoding.utf8)
+                    let fullString = failedString?.components(separatedBy: ",")
+                    let errorString = fullString?[1].components(separatedBy: ":")
+                    var orgString = errorString?[1]
+                    orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                    if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                        {
+                            if tokenValid as! String == "true"
+                            {
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "tokenExpired"), object:orgString)
+                            }
+                        }
+                    }
+                    else{
+                        completion(UIImage(named: "thumb12")!)
+                    }
                 }
-                completion(mediaImage)
             }
             else
             {
@@ -293,19 +313,19 @@ class GlobalChannelToImageMapping: NSObject {
                             }
                             archCount = archCount + 1
                             UserDefaults.standard.set( archCount, forKey: ArchiveCount)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "setFullscreenImage"), object:nil)
+                            
                         }
                     }
                 }
             }
         }
-        
         GlobalDataChannelList.sharedInstance.globalChannelDataSource.sort(by: { p1, p2 in
             let time1 = p1[ChannelCreatedTimeKey] as! String
             let time2 = p2[ChannelCreatedTimeKey] as! String
             return time1 > time2
         })
         
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "setFullscreenImage"), object:nil)
     }
     
     // Add media from one channel to other channels

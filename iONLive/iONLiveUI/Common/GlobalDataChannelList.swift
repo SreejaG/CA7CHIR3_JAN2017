@@ -110,6 +110,10 @@ class GlobalDataChannelList: NSObject {
         var url: NSURL = NSURL()
         for i in 0 ..< globalChannelDataSource.count
         {
+            if operationInChannelList.isCancelled
+            {
+                return
+            }
             var imageForMedia : UIImage = UIImage()
             if(i < globalChannelDataSource.count){
                 if let mediaIdChk = globalChannelDataSource[i][mediaIdKey]
@@ -166,13 +170,22 @@ class GlobalDataChannelList: NSObject {
                 if let mediaImage1 = UIImage(data: imageData as Data)
                 {
                     mediaImage = mediaImage1
+                    completion(mediaImage)
                 }
                 else{
-                    
-                    mediaImage = UIImage(named: "thumb12")!
+                    let failedString = String(data: imageData as Data, encoding: String.Encoding.utf8)
+                    let fullString = failedString?.components(separatedBy: ",")
+                    let errorString = fullString?[1].components(separatedBy: ":")
+                    var orgString = errorString?[1]
+                    orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                    if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                        operationInChannelList.cancel()
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "stopInitialising"), object:orgString)
+                    }
+                    else{
+                        completion(UIImage(named: "thumb12")!)
+                    }
                 }
-                
-                completion(mediaImage)
             }
             else
             {

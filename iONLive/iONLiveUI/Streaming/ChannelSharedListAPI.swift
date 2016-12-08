@@ -215,6 +215,7 @@ class ChannelSharedListAPI: NSObject {
             ChannelManager.sharedInstance.getChannelSharedPullToRefresh(userName: userId, accessToken:    accessToken, channelSubId: subID, success: { (response) in
                 self.authenticationSuccessHandler(response: response)
             }) { (error, code) in
+                self.authenticationFailureHandler(error: error, code: code)
             }
         }
     }
@@ -296,7 +297,6 @@ class ChannelSharedListAPI: NSObject {
                     pullToRefreshSource.append([ch_channelIdkey:self.dataSource[i][ch_channelIdkey]!,ch_channelNameKey:self.dataSource[i][ch_channelNameKey]!,sharedMediaCount:self.dataSource[i][sharedMediaCount]!,timeStamp:self.dataSource[i][timeStamp]!,usernameKey:self.dataSource[i][usernameKey]!,liveStreamStatus:self.dataSource[i][liveStreamStatus]!,streamTockenKey:self.dataSource[i][streamTockenKey]!,profileImageKey:profileImage!,mediaImageKey:mediaImage!,subChannelIdKey:self.dataSource[i][subChannelIdKey]!])
                 }
             }
-            
         }
         
         /* if data available while pull to refresh no need to add data to global here
@@ -386,7 +386,12 @@ class ChannelSharedListAPI: NSObject {
         let url: NSURL = convertStringtoURL(url: profileName)
         if let data = NSData(contentsOf: url as URL){
             let imageDetailsData = (data as NSData?)!
-            profileImage = UIImage(data: imageDetailsData as Data)!
+            if let profile = UIImage(data: imageDetailsData as Data){
+                profileImage = profile
+            }
+            else{
+                profileImage = UIImage(named: "dummyUser")!
+            }
         }
         else{
             profileImage = UIImage(named: "dummyUser")!

@@ -32,6 +32,16 @@ import UIKit
         channelManager.getLoggedInDetails(userName: userName, accessToken: token, success: { (response) in
             self.authenticationSuccessHandlerList(response: response)
         }) { (error, code) in
+            if((code == "USER004") || (code == "USER005") || (code == "USER006")){
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        let notificationName = Notification.Name("refreshLogin")
+                        NotificationCenter.default.post(name: notificationName, object: self)
+                    }
+                }
+            }
         }
     }
     
@@ -77,11 +87,15 @@ import UIKit
                 {
                     let url: NSURL = convertStringtoURL(url: thumbUrl)
                     if let data = NSData(contentsOf: url as URL){
-                        var convertImage : UIImage = UIImage()
                         let imageDetailsData = (data as NSData?)!
-                        convertImage = UIImage(data: imageDetailsData as Data)!
-                        let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFill: sizeThumb)
-                        image = imageAfterConversionThumbnail!
+                        if let convertImage = UIImage(data: imageDetailsData as Data)
+                        {
+                            let imageAfterConversionThumbnail = cameraController.thumbnaleImage(convertImage, scaledToFill: sizeThumb)
+                            image = imageAfterConversionThumbnail!
+                        }
+                        else{
+                            image = UIImage(named: "dummyUser")!
+                        }
                     }
                     else{
                         image = UIImage(named: "dummyUser")!
@@ -103,6 +117,16 @@ import UIKit
             self.authenticationSuccessHandlerSetMedia(response: response,obj: objects)
             
         }) { (error, message) in
+            if((message == "USER004") || (message == "USER005") || (message == "USER006")){
+                if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                {
+                    if tokenValid as! String == "true"
+                    {
+                        let notificationName = Notification.Name("tokenExpiredInMovie")
+                        NotificationCenter.default.post(name: notificationName, object: self)
+                    }
+                }
+            }
             let count = UserDefaults.standard.value(forKey: "likeCountFlag") as! String
             objects.success(fromSetUpView: count)
         }
@@ -163,17 +187,38 @@ import UIKit
         {
             let url: NSURL = self.convertStringtoURL(url: profileImageName! as! String)
             if let data = NSData(contentsOf: url as URL){
-                let imageDetailsData = (data as NSData?)!
-                profileImageUserForSelectedIndex = UIImage(data: imageDetailsData as Data)!
+                if let imageDetailsData = UIImage(data: data as Data)
+                {
+                    profileImageUserForSelectedIndex = imageDetailsData
+                    objects.success(fromSetUpViewProfileImage: profileImageUserForSelectedIndex)
+                }
+                else{
+                    let failedString = String(data: data as Data, encoding: String.Encoding.utf8)
+                    let fullString = failedString?.components(separatedBy: ",")
+                    let errorString = fullString?[1].components(separatedBy: ":")
+                    var orgString = errorString?[1]
+                    orgString = orgString?.trimmingCharacters(in: NSCharacterSet.alphanumerics.inverted)
+                    if((orgString == "USER004") || (orgString == "USER005") || (orgString == "USER006")){
+                        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+                        {
+                            if tokenValid as! String == "true"
+                            {
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "tokenExpiredInMovie"), object:nil)
+                            }
+                        }
+                    }
+                }
             }
             else{
                 profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+                objects.success(fromSetUpViewProfileImage: profileImageUserForSelectedIndex)
             }
         }
         else{
             profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+            objects.success(fromSetUpViewProfileImage: profileImageUserForSelectedIndex)
         }
-        objects.success(fromSetUpViewProfileImage: profileImageUserForSelectedIndex)
+        
     }
     
     func successHandlerForProfileImage(response:Any?,obj: MovieViewController)

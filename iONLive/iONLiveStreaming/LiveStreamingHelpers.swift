@@ -180,10 +180,12 @@ class LiveStreamingHelpers: NSObject
         }
         else if message.isEmpty == false {
             if(message != "STREAM001"){
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: message)
                 if((message == "USER004") || (message == "USER005") || (message == "USER006")){
                     let notificationName = Notification.Name("refreshLogin")
                     NotificationCenter.default.post(name: notificationName, object: self)
+                }
+                else{
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: message)
                 }
             }
         }

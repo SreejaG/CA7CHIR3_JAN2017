@@ -938,6 +938,15 @@ class StreamsListViewController: UIViewController{
                 self.streamListCollectionView.reloadData()
             }
         }
+        else if((success == "USER004") || (success == "USER005") || (success == "USER006")){
+            if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+            {
+                if tokenValid as! String == "true"
+                {
+                    loadInitialViewController(code: success)
+                }
+            }
+        }
         else
         {
             DispatchQueue.main.async {
@@ -974,36 +983,6 @@ class StreamsListViewController: UIViewController{
         super.didReceiveMemoryWarning()
     }
     
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults.standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
-    }
     
     func convertStringtoURL(url : String) -> NSURL
     {
@@ -1141,6 +1120,46 @@ class StreamsListViewController: UIViewController{
         }
     }
     
+    func  loadInitialViewController(code: String){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
+                }
+            }
+        }
+    }
+    
     func nullToNil(value : Any?) -> Any? {
         if value is NSNull {
             return ""
@@ -1243,7 +1262,13 @@ class StreamsListViewController: UIViewController{
                 let url: NSURL = self.convertStringtoURL(url: profileImageName! as! String)
                 if let data = NSData(contentsOf: url as URL){
                     let imageDetailsData = (data as NSData?)!
-                    profileImageUserForSelectedIndex = UIImage(data: imageDetailsData as Data)!
+                    if let profile = UIImage(data: imageDetailsData as Data)
+                    {
+                        profileImageUserForSelectedIndex = profile
+                    }
+                    else{
+                        profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
+                    }
                 }
                 else{
                     profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!

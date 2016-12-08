@@ -42,9 +42,6 @@ class MyChannelItemDetailsViewController: UIViewController {
         
         self.channelItemsCollectionView.alwaysBounceVertical = true
         
-        let removeActivityIndicatorMyChannel = Notification.Name("removeActivityIndicatorMyChannel")
-        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(notif:)), name: removeActivityIndicatorMyChannel, object: nil)
-        
         let myDayCleanUp = Notification.Name("myDayCleanUp")
         NotificationCenter.default.addObserver(self, selector:#selector(MyChannelItemDetailsViewController.myDayCleanUp(notif:)), name: myDayCleanUp, object: nil)
         
@@ -53,6 +50,13 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        let tokenExpired = Notification.Name("tokenExpired")
+        NotificationCenter.default.addObserver(self, selector:#selector(ChannelItemListViewController.loadInitialViewControllerTokenExpire(notif:)), name: tokenExpired, object: nil)
+        
+        let removeActivityIndicatorMyChannel = Notification.Name("removeActivityIndicatorMyChannel")
+        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelItemDetailsViewController.removeActivityIndicator(notif:)), name: removeActivityIndicatorMyChannel, object: nil)
+        
         UserDefaults.standard.set(0, forKey: "tabToAppear")
         self.tabBarItem.selectedImage = UIImage(named:"all_media_blue")?.withRenderingMode(.alwaysOriginal)
         if let channelName = channelName
@@ -65,6 +69,51 @@ class MyChannelItemDetailsViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         self.channelItemsCollectionView.alpha = 1.0
+        
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("removeActivityIndicatorMyChannel"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("tokenExpired"), object: nil)
+    }
+    
+    func  loadInitialViewControllerTokenExpire(notif:NSNotification){
+        if let tokenValid = UserDefaults.standard.value(forKey: "tokenValid")
+        {
+            if tokenValid as! String == "true"
+            {
+                operationInSharingImageList.cancel()
+                DispatchQueue.main.async {
+                    let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
+                    
+                    if(FileManager.default.fileExists(atPath: documentsPath))
+                    {
+                        let fileManager = FileManager.default
+                        do {
+                            try fileManager.removeItem(atPath: documentsPath)
+                        }
+                        catch _ as NSError {
+                        }
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.createParentDirectory()
+                    }
+                    
+                    let defaults = UserDefaults .standard
+                    let deviceToken = defaults.value(forKey: "deviceToken") as! String
+                    defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+                    defaults.setValue(deviceToken, forKey: "deviceToken")
+                    defaults.set(1, forKey: "shutterActionMode");
+                    defaults.setValue("false", forKey: "tokenValid")
+                    
+                    let code = notif.object as! String
+                    ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                    
+                    let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
+                    let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateViewController") as! AuthenticateViewController
+                    channelItemListVC.navigationController?.isNavigationBarHidden = true
+                    self.navigationController?.pushViewController(channelItemListVC, animated: false)
+                }
+            }
+        }
     }
     
     @IBAction func backClicked(_ sender: Any)
@@ -245,39 +294,6 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     func removeOverlay(){
         self.loadingOverlay?.removeFromSuperview()
-    }
-    
-    func  loadInitialViewController(code: String){
-        DispatchQueue.main.async {
-            let documentsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] + "/GCSCA7CH"
-            
-            if(FileManager.default.fileExists(atPath: documentsPath))
-            {
-                let fileManager = FileManager.default
-                do {
-                    try fileManager.removeItem(atPath: documentsPath)
-                }
-                catch _ as NSError {
-                }
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            else{
-                _ = FileManagerViewController.sharedInstance.createParentDirectory()
-            }
-            
-            let defaults = UserDefaults .standard
-            let deviceToken = defaults.value(forKey: "deviceToken") as! String
-            defaults.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-            defaults.setValue(deviceToken, forKey: "deviceToken")
-            defaults.set(1, forKey: "shutterActionMode");
-            
-            let sharingStoryboard = UIStoryboard(name:"Authentication", bundle: nil)
-            let channelItemListVC = sharingStoryboard.instantiateViewController(withIdentifier: "AuthenticateNavigationController") as! AuthenticateNavigationController
-            channelItemListVC.navigationController?.isNavigationBarHidden = true
-            self.present(channelItemListVC, animated: false) { () -> Void in
-                ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
-            }
-        }
     }
 }
 

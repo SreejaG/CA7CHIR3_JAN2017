@@ -112,6 +112,7 @@ int timerCount = 0;
     });
 }
 
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -121,6 +122,9 @@ int timerCount = 0;
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"refreshLogin" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"stopInitialising" object:nil];
     
     if([self isStreamStarted]){
         [liveStreaming stopStreamingClicked];
@@ -173,9 +177,10 @@ int timerCount = 0;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopInitialisation:) name:@"stopInitialising" object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkCountForLabel) name:@"PushNotificationIphone" object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadInitialView) name:@"refreshLogin" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkCountForLabel) name:@"PushNotificationIphone" object:nil];
 }
 
 - (void) orientationChanged2:(NSNotification *)note
@@ -319,27 +324,40 @@ int timerCount = 0;
 
 -(void) loadInitialView
 {
-    dispatch_async( dispatch_get_main_queue(), ^{
-        NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
-        NSString *path = documentsPath.absoluteString;
-        
-        if([[NSFileManager defaultManager] fileExistsAtPath:path]){
-            [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    if([[NSUserDefaults standardUserDefaults] valueForKey:@"tokenValid"] != nil)
+    {
+        NSString *tokenValid = [[NSUserDefaults standardUserDefaults] valueForKey:@"tokenValid"];
+        if([tokenValid isEqual:@"true"]){
+            [self stopTimer];
+            dispatch_async( dispatch_get_main_queue(), ^{
+                NSURL *documentsPath  = [[FileManagerViewController sharedInstance] getParentDirectoryPath];
+                NSString *path = documentsPath.absoluteString;
+                
+                if([[NSFileManager defaultManager] fileExistsAtPath:path]){
+                    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+                }
+                [[FileManagerViewController sharedInstance] createParentDirectory];
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                NSString *accessToken = [defaults valueForKey:@"deviceToken"];
+                NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
+                [defaults removePersistentDomainForName:iden];
+                [defaults setValue:accessToken forKey:@"deviceToken"];
+                [defaults setInteger:1 forKey:@"shutterActionMode"];
+                [defaults setValue:@"false" forKey:@"tokenValid"];
+                
+                [[ErrorManager sharedInstance] invalidTockenError];
+                
+                UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
+                UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateViewController"];
+                authenticate.navigationController.navigationBarHidden = true;
+                [[self navigationController] pushViewController:authenticate animated:false];
+                
+                //                [[self navigationController] presentViewController:authenticate animated:false completion:^{
+                //                    [[ErrorManager sharedInstance] tockenExpired];
+                //                }];
+            });
         }
-        [[FileManagerViewController sharedInstance] createParentDirectory];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *accessToken = [defaults valueForKey:@"deviceToken"];
-        NSString *iden = [[NSBundle mainBundle] bundleIdentifier];
-        [defaults removePersistentDomainForName:iden];
-        [defaults setValue:accessToken forKey:@"deviceToken"];
-        [defaults setInteger:1 forKey:@"shutterActionMode"];
-        UIStoryboard  *login = [UIStoryboard storyboardWithName:@"Authentication" bundle:nil];
-        UIViewController *authenticate = [login instantiateViewControllerWithIdentifier:@"AuthenticateNavigationController"];
-        authenticate.navigationController.navigationBarHidden = true;
-        [[self navigationController] presentViewController:authenticate animated:false completion:^{
-            [[ErrorManager sharedInstance] tockenExpired];
-        }];
-    });
+    }
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
@@ -358,6 +376,7 @@ int timerCount = 0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.playiIconView.hidden = YES;
@@ -530,8 +549,8 @@ int timerCount = 0;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [timer invalidate];
+        timer = nil;
     });
-    timer = nil;
     timeSec = 0 ;
 }
 
@@ -1517,21 +1536,21 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
 -(void)screenCapture
 {
     dispatch_async( dispatch_get_main_queue(), ^{
-    CGSize size = CGSizeMake(_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
-    
-    UIGraphicsBeginImageContextWithOptions(size, NO, 7);
-    CGRect rec = CGRectMake(0,0,_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
-    
-        [self.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
- 
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
+        CGSize size = CGSizeMake(_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
         
-    [self saveThumbnailImageLive:image1];
-    [self uploadThumbToCloud:image1];
+        UIGraphicsBeginImageContextWithOptions(size, NO, 7);
+        CGRect rec = CGRectMake(0,0,_liveSteamSession.previewView.bounds.size.width,_liveSteamSession.previewView.bounds.size.height);
+        
+        [self.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+        
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        UIImage *image1 = [self thumbnaleImage:image scaledToFillSize:CGSizeMake(70, 70)];
+        
+        [self saveThumbnailImageLive:image1];
+        [self uploadThumbToCloud:image1];
     });
-  
+    
 }
 
 -(void) saveThumbnailImageLive:(UIImage *)liveThumbImage{
