@@ -482,16 +482,19 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         if(GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict.count > 0){
             if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
             {
-                let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
-                
-                if mediaType != "video"
+                if totalCount > 0
                 {
-                    if (fullScreenScrollView.zoomScale > fullScreenScrollView.minimumZoomScale) {
-                        fullScreenScrollView.setZoomScale(fullScreenScrollView.minimumZoomScale, animated: true)
-                    } else {
-                        let zoomRect = self.zoomRectForScale(scale: fullScreenScrollView.minimumZoomScale+1, center: recognizer.location(in: recognizer.view))
-                        self.fullScreenScrollView.zoom(to: zoomRect, animated: true);
-                        
+                    let mediaType = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem][mediaTypeKey] as! String
+                    
+                    if mediaType != "video"
+                    {
+                        if (fullScreenScrollView.zoomScale > fullScreenScrollView.minimumZoomScale) {
+                            fullScreenScrollView.setZoomScale(fullScreenScrollView.minimumZoomScale, animated: true)
+                        } else {
+                            let zoomRect = self.zoomRectForScale(scale: fullScreenScrollView.minimumZoomScale+1, center: recognizer.location(in: recognizer.view))
+                            self.fullScreenScrollView.zoom(to: zoomRect, animated: true);
+                            
+                        }
                     }
                 }
             }
