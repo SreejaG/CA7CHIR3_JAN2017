@@ -181,15 +181,18 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             }
             else{
                 ErrorManager.sharedInstance.mapErorMessageToErrorCode(errorCode: code)
+                if((dataSource?.count)! > 0)
+                {
+                    dataSource![0][0][displayNameKey] = fullNames
+                    dataSource![2][0][privateInfoKey] = emails
+                    dataSource![2][1][privateInfoKey] = mobileNo
+                    dataSource![1][3][titleKey] = timeZoneOffsetInUTCOriginal
+                }
+                editProfTableView.reloadData()
             }
         }
         else{
             ErrorManager.sharedInstance.inValidResponseError()
-        }
-        
-        if((code == "USER004") || (code == "USER005") || (code == "USER006")){
-        }
-        else{
             if((dataSource?.count)! > 0)
             {
                 dataSource![0][0][displayNameKey] = fullNames

@@ -139,6 +139,11 @@ class GlobalChannelToImageMapping: NSObject {
                     return
                 }
                 if(k < localDataSource.count){
+                    let requestManager = RequestManager.sharedInstance
+                    if !requestManager.validConnection() {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "removeActivityIndicatorMyChannel"), object:nil)
+                        return
+                    }
                     var imageForMedia : UIImage = UIImage()
                     if let mediaIdChk = localDataSource[k][mediaIdKey]
                     {
