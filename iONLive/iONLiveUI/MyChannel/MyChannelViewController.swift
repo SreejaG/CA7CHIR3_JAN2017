@@ -434,6 +434,7 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
         channelManager.deleteChannelDetails(userName: userName, accessToken: token, deleteChannelId: channelId, success: { (response) -> () in
             self.authenticationSuccessHandlerDelete(response: response,index: index)
         }) { (error, message) -> () in
+            self.serachBarHideDuringChannelUpdateFlag = false
             self.authenticationFailureHandlerDelete(error: error, code: message)
             return
         }
@@ -500,7 +501,13 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
         self.searchFlagForUpdateChannel = false
         self.searchActive = false
         self.longPressIndexPathRow = -1
-        myChannelSearchBar.isHidden = false
+        if(serachBarHideDuringChannelUpdateFlag){
+            myChannelSearchBar.isHidden = true
+        }
+        else{
+            myChannelSearchBar.isHidden = false
+        }
+        serachBarHideDuringChannelUpdateFlag = false
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
