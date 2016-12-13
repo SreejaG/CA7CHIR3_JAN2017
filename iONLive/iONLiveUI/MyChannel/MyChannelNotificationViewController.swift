@@ -259,7 +259,7 @@ class MyChannelNotificationViewController: UIViewController {
                     let timeDiff = getTimeDifference(dateStr: notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
-                    dataSource.append(["mediaIdKey":mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased()])
+                    dataSource.append([mediaIdKey:mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased()])
                 }
             }
             
@@ -329,7 +329,7 @@ class MyChannelNotificationViewController: UIViewController {
                 else{
                     mediaImage = UIImage()
                 }
-                self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,"mediaIdKey":self.dataSource[i]["mediaIdKey"]!, "urlKey": mediaThumbUrl])
+                self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,mediaIdKey:self.dataSource[i][mediaIdKey]!, mediaUrlKey: mediaThumbUrl])
                 
                 DispatchQueue.main.async {
                     self.removeOverlay()
@@ -427,7 +427,7 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
             
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
             
-            if(fulldataSource[indexPath.row]["urlKey"] as! String != "nomedia"){
+            if(fulldataSource[indexPath.row][mediaUrlKey] as! String != "nomedia"){
                 cell.NotificationImage.isHidden = false
                 cell.notificationText.isHidden = false
                 cell.notifcationTextFullscreen.isHidden = true
@@ -457,5 +457,6 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        print(fulldataSource[indexPath.row])
     }
 }
