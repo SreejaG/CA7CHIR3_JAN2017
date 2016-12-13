@@ -2,7 +2,7 @@
 import UIKit
 import Foundation
 
-class MyChannelViewController: UIViewController,UIScrollViewDelegate {
+class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var myChannelSearchBar: UISearchBar!
     @IBOutlet weak var myChannelTableView: UITableView!
@@ -16,6 +16,7 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
     @IBOutlet var addChannelView: UIView!
     
     @IBOutlet var channelTextField: UITextField!
+    var activeField: UITextField = UITextField()
     
     @IBOutlet var channelUpdateSaveButton: UIButton!
     @IBOutlet var channelUpdateCancelButton: UIButton!
@@ -603,6 +604,14 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
         self.loadingOverlay?.removeFromSuperview()
     }
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        activeField = textField
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        activeField = UITextField()
+    }
+    
     func textFieldDidChange(_ textField: UITextField)
     {
         if let text = textField.text, !text.isEmpty
@@ -638,6 +647,18 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
         if tableViewBottomConstraint.constant == 0
         {
             self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
+        }
+        if(longPressFlag){
+            if activeField.tag >= 3
+            {
+                var info: NSDictionary = NSDictionary()
+                info = notification.userInfo! as NSDictionary
+                let kbSize : CGSize = (info.object(forKey: UIKeyboardFrameBeginUserInfoKey)! as AnyObject).cgRectValue.size
+                var bkgndRect:CGRect = (activeField.frame)
+                bkgndRect.size.height += kbSize.height
+                activeField.superview?.frame = bkgndRect
+                myChannelTableView.setContentOffset(CGPoint(x:0, y:(activeField.frame.origin.y + kbSize.height)), animated: true)
+            }
         }
     }
     
@@ -697,13 +718,14 @@ extension MyChannelViewController: UITableViewDelegate, UITableViewDataSource
         if dataSourceTmp!.count > indexPath.row
         {
             let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelCell.identifier, for:indexPath) as! MyChannelCell
-            
+            cell.editChanelNameTextField.tag = indexPath.row
             let channleName = dataSourceTmp![indexPath.row][channelNameKey] as? String
             if ((channleName == "My Day") || (channleName == "Archive"))
             {
                 cell.removeGestureRecognizer(longPressRecognizer)
             }
             else{
+                cell.editChanelNameTextField.delegate = self
                 longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MyChannelViewController.handleChannelLongPress(longPressGestureRecognizer:)))
                 cell.addGestureRecognizer(longPressRecognizer)
             }
@@ -790,6 +812,7 @@ extension MyChannelViewController: UITableViewDelegate, UITableViewDataSource
                     channelUpdateSaveButton.isHidden = false
                     backButton.isHidden = true
                     myChannelTableView.reloadData()
+                    myChannelTableView.scrollToRow(at: longPressIndexPath, at: .bottom, animated: true)
                 }
             }
         }
