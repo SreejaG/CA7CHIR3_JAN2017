@@ -41,6 +41,7 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
     var searchActive : Bool = false
     var longPressFlag : Bool = false
     var searchFlagForUpdateChannel : Bool = false
+    var serachBarHideDuringChannelUpdateFlag : Bool = false
     
     var longPressIndexPathRow : Int = Int()
     
@@ -209,7 +210,13 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
         searchDataSource.removeAll()
         searchFlagForUpdateChannel = false
         UserDefaults.standard.setValue("", forKey: "editedValue")
-        myChannelSearchBar.isHidden = false
+        if(serachBarHideDuringChannelUpdateFlag){
+            myChannelSearchBar.isHidden = true
+        }
+        else{
+            myChannelSearchBar.isHidden = false
+        }
+        serachBarHideDuringChannelUpdateFlag = false
         self.myChannelTableView.reloadData()
     }
     
@@ -283,7 +290,13 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
             searchFlagForUpdateChannel = false
             longPressIndexPathRow = -1
             cellChannelUpdatedNameStr = ""
-            myChannelSearchBar.isHidden = false
+            if(serachBarHideDuringChannelUpdateFlag){
+                myChannelSearchBar.isHidden = true
+            }
+            else{
+                myChannelSearchBar.isHidden = false
+            }
+            serachBarHideDuringChannelUpdateFlag = false
             UserDefaults.standard.setValue("", forKey: "editedValue")
             DispatchQueue.main.async {
                 self.notifImage.isHidden = false
@@ -303,7 +316,13 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate {
             searchFlagForUpdateChannel = false
             longPressIndexPathRow = -1
             cellChannelUpdatedNameStr = ""
-            myChannelSearchBar.isHidden = false
+            if(serachBarHideDuringChannelUpdateFlag){
+                myChannelSearchBar.isHidden = true
+            }
+            else{
+                myChannelSearchBar.isHidden = false
+            }
+            serachBarHideDuringChannelUpdateFlag = false
             UserDefaults.standard.setValue("", forKey: "editedValue")
             DispatchQueue.main.async {
                 self.notifImage.isHidden = false
@@ -751,6 +770,12 @@ extension MyChannelViewController: UITableViewDelegate, UITableViewDataSource
                 }
                 else
                 {
+                    if(myChannelSearchBar.isHidden){
+                        serachBarHideDuringChannelUpdateFlag = true
+                    }
+                    else{
+                        serachBarHideDuringChannelUpdateFlag = false
+                    }
                     myChannelSearchBar.isHidden = true
                     notifImage.isHidden = true
                     channelAddButton.isHidden = true
