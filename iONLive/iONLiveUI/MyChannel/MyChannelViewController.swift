@@ -217,7 +217,6 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
         else{
             myChannelSearchBar.isHidden = false
         }
-        serachBarHideDuringChannelUpdateFlag = false
         self.myChannelTableView.reloadData()
     }
     
@@ -297,7 +296,6 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
             else{
                 myChannelSearchBar.isHidden = false
             }
-            serachBarHideDuringChannelUpdateFlag = false
             UserDefaults.standard.setValue("", forKey: "editedValue")
             DispatchQueue.main.async {
                 self.notifImage.isHidden = false
@@ -323,7 +321,6 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
             else{
                 myChannelSearchBar.isHidden = false
             }
-            serachBarHideDuringChannelUpdateFlag = false
             UserDefaults.standard.setValue("", forKey: "editedValue")
             DispatchQueue.main.async {
                 self.notifImage.isHidden = false
@@ -508,7 +505,6 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
         else{
             myChannelSearchBar.isHidden = false
         }
-        serachBarHideDuringChannelUpdateFlag = false
         if !self.requestManager.validConnection() {
             ErrorManager.sharedInstance.noNetworkConnection()
         }
@@ -812,7 +808,6 @@ extension MyChannelViewController: UITableViewDelegate, UITableViewDataSource
                     channelUpdateSaveButton.isHidden = false
                     backButton.isHidden = true
                     myChannelTableView.reloadData()
-                    myChannelTableView.scrollToRow(at: longPressIndexPath, at: .bottom, animated: true)
                 }
             }
         }
