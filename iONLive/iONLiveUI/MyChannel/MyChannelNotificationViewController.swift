@@ -146,7 +146,7 @@ class MyChannelNotificationViewController: UIViewController {
         loadingOverlayController.view.frame = CGRect(x:0, y:72, width:self.view.frame.width, height:self.view.frame.height - 72)
         loadingOverlayController.startLoading()
         self.loadingOverlay = loadingOverlayController.view
-        self.view .addSubview(self.loadingOverlay!)
+        self.view.addSubview(self.loadingOverlay!)
     }
     
     func removeOverlay(){
@@ -354,7 +354,6 @@ class MyChannelNotificationViewController: UIViewController {
                 self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,mediaIdKey:self.dataSource[i][mediaIdKey]!, mediaUrlKey: mediaThumbUrl])
                 
                 DispatchQueue.main.async {
-                    self.removeOverlay()
                     self.NotificationTableView.reloadData()
                 }
             }
