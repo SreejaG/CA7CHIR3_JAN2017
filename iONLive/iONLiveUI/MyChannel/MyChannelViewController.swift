@@ -199,6 +199,7 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
     }
     
     @IBAction func didTapChanelUpdateCancel(_ sender: Any) {
+        view.endEditing(true)
         self.notifImage.isHidden = false
         self.channelAddButton.isHidden = false
         self.channelUpdateCancelButton.isHidden = true
@@ -221,6 +222,7 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
     }
     
     @IBAction func didTapChannelUpdateSave(_ sender: Any) {
+        view.endEditing(true)
         let indexPath = IndexPath(row: longPressIndexPathRow, section: 0)
         let cell : MyChannelCell? = self.myChannelTableView.cellForRow(at: indexPath) as! MyChannelCell?
         if((cell?.editChanelNameTextField.text)!.characters.count > 15 || (cell?.editChanelNameTextField.text)!.characters.count <= 3){
@@ -642,24 +644,17 @@ class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFiel
         let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         if tableViewBottomConstraint.constant == 0
         {
-            self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
-        }
-        if(longPressFlag){
-            if activeField.tag >= 3
-            {
-                var info: NSDictionary = NSDictionary()
-                info = notification.userInfo! as NSDictionary
-                let kbSize : CGSize = (info.object(forKey: UIKeyboardFrameBeginUserInfoKey)! as AnyObject).cgRectValue.size
-                var bkgndRect:CGRect = (activeField.frame)
-                bkgndRect.size.height += kbSize.height
-                activeField.superview?.frame = bkgndRect
-                myChannelTableView.setContentOffset(CGPoint(x:0, y:(activeField.frame.origin.y + kbSize.height)), animated: true)
+            if(longPressFlag){
+                myChannelTableView.contentInset =  UIEdgeInsetsMake(0, 0, keyboardFrame.size.height, 0);
+                myChannelTableView.scrollToRow(at: NSIndexPath(row: activeField.tag, section: 0) as IndexPath, at: .none, animated: true)
             }
+//            self.tableViewBottomConstraint.constant = self.tableViewBottomConstraint.constant + keyboardFrame.size.height
         }
     }
     
     func keyboardDidHide()
     {
+        myChannelTableView.contentInset =  UIEdgeInsetsMake(0, 0, 0, 0);
         if tableViewBottomConstraint.constant != 0
         {
             self.tableViewBottomConstraint.constant = 0
