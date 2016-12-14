@@ -259,7 +259,7 @@ class MyChannelNotificationViewController: UIViewController {
                     let timeDiff = getTimeDifference(dateStr: notTime)
                     let messageFromCloud = element["message"] as! String
                     let message = "\(messageFromCloud)  \(timeDiff)"
-                    dataSource.append([mediaIdKey:mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased()])
+                    dataSource.append([mediaIdKey:mediaId,messageKey:message,profileImageKey:profileImageName,mediaImageKey:mediaThumbUrl, notificationTimeKey:notTime, notificationTypeKey:notifType.lowercased(),usernameKey:userName])
                 }
             }
             
@@ -307,13 +307,35 @@ class MyChannelNotificationViewController: UIViewController {
                 var mediaImage : UIImage?
                 var profileImage : UIImage?
                 
-                let profileImageName = dataSource[i][profileImageKey] as! String
-                if(profileImageName != "")
-                {
-                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                let user = dataSource[i][usernameKey] as! String
+                let savingPath = "\(user)Profile"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let profileImagePath = parentPath! + "/" + savingPath
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
+                
+                if fileExistFlag == true{
+                    let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
+                    profileImage = profileImageFromFile!
                 }
                 else{
-                    profileImage = UIImage(named: "dummyUser")
+                    let profileImageName = dataSource[i][profileImageKey] as! String
+                    if(profileImageName != "")
+                    {
+                        profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                        let profileImageData = UIImageJPEGRepresentation(profileImage!, 0.5)
+                        let profileImageDataAsNsdata = (profileImageData as NSData?)!
+                        let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+                        let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+                        if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+                        }
+                        else{
+                            _ =
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: savingPath, mediaImage: profileImage!)
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "dummyUser")
+                    }
                 }
                 
                 let mediaThumbUrl = dataSource[i][mediaImageKey] as! String
