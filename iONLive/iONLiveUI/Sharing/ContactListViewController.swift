@@ -79,6 +79,10 @@ class ContactListViewController: UIViewController
         super.didReceiveMemoryWarning()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        operationInSharingContactList.cancel()
+    }
+
     func addKeyboardObservers()
     {
         NotificationCenter.default.addObserver(self,
@@ -473,8 +477,23 @@ class ContactListViewController: UIViewController
             for element in responseArr{
                 let userName = element["user_name"] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                let profileImage = UIImage(named: "dummyUser")
-                dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!])
+                
+                var profileImage : UIImage?
+                
+                let savingPath = "\(userName)Profile"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let profileImagePath = parentPath! + "/" + savingPath
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
+                
+                if fileExistFlag == true{
+                    let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
+                    profileImage = profileImageFromFile!
+                    print("profile user ====>  \(userName)")
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!, "profileFlag" : fileExistFlag])
             }
             
             self.contactListTableView.reloadData()
@@ -509,15 +528,32 @@ class ContactListViewController: UIViewController
                     return
                 }
                 var profileImage : UIImage?
-                let profileImageName = localArray[i][profileImageUrlKey] as! String
-                if(profileImageName != "")
+                let fileFlag = localArray[i]["profileFlag"] as! Bool
+                if(!fileFlag)
                 {
-                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                    let user = localArray[i][userNameKey] as! String
+                    print("no profile user ====>  \(user)")
+                    let savingPath = "\(user)Profile"
+                    let profileImageName = localArray[i][profileImageUrlKey] as! String
+                    if(profileImageName != "")
+                    {
+                        profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                        let profileImageData = UIImageJPEGRepresentation(profileImage!, 0.5)
+                        let profileImageDataAsNsdata = (profileImageData as NSData?)!
+                        let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+                        let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+                        if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+                        }
+                        else{
+                            _ =
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: savingPath, mediaImage: profileImage!)
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "dummyUser")
+                    }
+                    localArray[i][profileImageKey] = profileImage
                 }
-                else{
-                    profileImage = UIImage(named: "dummyUser")
-                }
-                localArray[i][profileImageKey] = profileImage
             }
         }
         for j in 0 ..< dataSource.count

@@ -267,8 +267,29 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
         let actualImage = userDetails["actual_image"] as! String
         if actualImage != ""
         {
-            let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-            imageForProfile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: thumbUrl)
+            let savingPath = "\(userName)Profile"
+            
+            let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+            let profileImagePath = parentPath! + "/" + savingPath
+            let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
+            
+            if fileExistFlag == true{
+                let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
+                imageForProfile = profileImageFromFile!
+            }
+            else{
+                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+                imageForProfile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: thumbUrl)
+                let profileImageData = UIImageJPEGRepresentation(imageForProfile, 0.5)
+                let profileImageDataAsNsdata = (profileImageData as NSData?)!
+                let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+                let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+                if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+                }
+                else{
+                    _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: savingPath, mediaImage: imageForProfile)
+                }
+            }
         }
         else{
             imageForProfile = UIImage(named: "dummyUser")!

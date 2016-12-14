@@ -137,7 +137,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     @IBAction func inviteContacts(_ sender: Any) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: ContactListViewController.identifier) as! ContactListViewController
+        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: OtherContactListViewController.identifier) as! OtherContactListViewController
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
@@ -263,8 +263,23 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let userName = element["user_name"] as! String
                 let imageName = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
                 let subscriptionValue =  (element["sub_enable_ind"] as! Bool).hashValue
-                let profileImage = UIImage(named: "dummyUser")
-                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue, profileImageKey: profileImage!])
+                
+                let savingPath = "\(userName)Profile"
+                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                let profileImagePath = parentPath! + "/" + savingPath
+                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
+                
+                var profileImage : UIImage?
+
+                if fileExistFlag == true{
+                    let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
+                    profileImage = profileImageFromFile!
+                    print("profile user ====>  \(userName)")
+                }
+                else{
+                    profileImage = UIImage(named: "dummyUser")
+                }
+                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue, profileImageKey: profileImage!,"profileFlag" : fileExistFlag])
             }
             contactTableView.reloadData()
             if(dataSource.count > 0){
@@ -297,15 +312,32 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             if(i < localArray.count){
                 var profileImage : UIImage?
-                let profileImageName = localArray[i][profileImageUrlKey] as! String
-                if(profileImageName != "")
+                let fileFlag = localArray[i]["profileFlag"] as! Bool
+                if(!fileFlag)
                 {
-                    profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                    let user = localArray[i][userNameKey] as! String
+                    print("no profile user ====>  \(user)")
+                    let savingPath = "\(user)Profile"
+                    let profileImageName = localArray[i][profileImageUrlKey] as! String
+                    if(profileImageName != "")
+                    {
+                        profileImage = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileImageName)
+                        let profileImageData = UIImageJPEGRepresentation(profileImage!, 0.5)
+                        let profileImageDataAsNsdata = (profileImageData as NSData?)!
+                        let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+                        let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+                        if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+                        }
+                        else{
+                            _ =
+                                FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: savingPath, mediaImage: profileImage!)
+                        }
+                    }
+                    else{
+                        profileImage = UIImage(named: "dummyUser")
+                    }
+                    localArray[i][profileImageKey] = profileImage
                 }
-                else{
-                    profileImage = UIImage(named: "dummyUser")
-                }
-                localArray[i][profileImageKey] = profileImage
             }
         }
         for j in 0 ..< dataSource.count

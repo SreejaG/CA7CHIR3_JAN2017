@@ -130,7 +130,7 @@ class MyChannelItemDetailsViewController: UIViewController {
     
     @IBAction func inviteContacts(_ sender: Any) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: ContactListViewController.identifier) as! ContactListViewController
+        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: OtherContactListViewController.identifier) as! OtherContactListViewController
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
@@ -365,7 +365,8 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 self.channelItemsCollectionView.alpha = 0.4
                 var imageForProfile : UIImage = UIImage()
                 let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-                let savingPath = parentPath! + "/" + userId + "Profile"
+                let profilePath = "\(userId)Profile"
+                let savingPath =  parentPath! + "/" + profilePath
                 let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
                 if fileExistFlag == true{
                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
@@ -375,6 +376,15 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                     let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
                     let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileUrl )
                     imageForProfile = mediaImageFromFile
+                    let profileImageData = UIImageJPEGRepresentation(imageForProfile, 0.5)
+                    let profileImageDataAsNsdata = (profileImageData as NSData?)!
+                    let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+                    let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+                    if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+                    }
+                    else{
+                        _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: profilePath, mediaImage: imageForProfile)
+                    }
                 }
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
