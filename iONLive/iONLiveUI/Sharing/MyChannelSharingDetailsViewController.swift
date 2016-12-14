@@ -67,7 +67,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
-        operationInSharingScreenContactList.cancel()
+        //        operationInSharingScreenContactList.cancel()
     }
     
     func addKeyboardObservers()
@@ -274,11 +274,10 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
                 
                 var profileImage : UIImage?
-
+                
                 if fileExistFlag == true{
                     let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
                     profileImage = profileImageFromFile!
-                    print("profile user ====>  \(userName)")
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -292,12 +291,12 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 })
                 self.operationQueueObjInSharingContactList.addOperation(operationInSharingScreenContactList)
                 
-//                let backgroundQueue = DispatchQueue(label: "com.app.queue",
-//                                                    qos: .background,
-//                                                    target: nil)
-//                backgroundQueue.async {
-//                    self.downloadMediaFromGCS()
-//                }
+                //                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+                //                                                    qos: .background,
+                //                                                    target: nil)
+                //                backgroundQueue.async {
+                //                    self.downloadMediaFromGCS()
+                //                }
             }
             else
             {
@@ -328,7 +327,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 if(!fileFlag)
                 {
                     let user = localArray[i][userNameKey] as! String
-                    print("no profile user ====>  \(user)")
                     let savingPath = "\(user)Profile"
                     let profileImageName = localArray[i][profileImageUrlKey] as! String
                     if(profileImageName != "")

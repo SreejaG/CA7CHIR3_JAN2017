@@ -82,7 +82,7 @@ class ContactListViewController: UIViewController
     override func viewWillDisappear(_ animated: Bool) {
         operationInSharingContactList.cancel()
     }
-
+    
     func addKeyboardObservers()
     {
         NotificationCenter.default.addObserver(self,
@@ -488,7 +488,6 @@ class ContactListViewController: UIViewController
                 if fileExistFlag == true{
                     let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
                     profileImage = profileImageFromFile!
-                    print("profile user ====>  \(userName)")
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
@@ -532,7 +531,6 @@ class ContactListViewController: UIViewController
                 if(!fileFlag)
                 {
                     let user = localArray[i][userNameKey] as! String
-                    print("no profile user ====>  \(user)")
                     let savingPath = "\(user)Profile"
                     let profileImageName = localArray[i][profileImageUrlKey] as! String
                     if(profileImageName != "")

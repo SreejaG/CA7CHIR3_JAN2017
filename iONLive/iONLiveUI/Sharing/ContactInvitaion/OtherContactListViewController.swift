@@ -403,7 +403,7 @@ class OtherContactListViewController: UIViewController {
             for element in responseArr{
                 let userName = element["user_name"] as! String
                 let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-
+                
                 var profileImage : UIImage?
                 
                 let savingPath = "\(userName)Profile"
@@ -414,12 +414,11 @@ class OtherContactListViewController: UIViewController {
                 if fileExistFlag == true{
                     let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
                     profileImage = profileImageFromFile!
-                    print("profile user ====>  \(userName)")
                 }
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-
+                
                 ca7chContactSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl,"tempSelected": 0, "orgSelected" : 0, profileImageKey : profileImage!, "profileFlag" : fileExistFlag])
             }
             
@@ -455,7 +454,6 @@ class OtherContactListViewController: UIViewController {
                 if(!fileFlag)
                 {
                     let user = localArray[i][userNameKey] as! String
-                    print("no profile user ====>  \(user)")
                     let savingPath = "\(user)Profile"
                     let profileImageName = localArray[i][profileImageUrlKey] as! String
                     if(profileImageName != "")
