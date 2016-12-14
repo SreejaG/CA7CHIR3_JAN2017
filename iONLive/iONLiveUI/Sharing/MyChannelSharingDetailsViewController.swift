@@ -38,6 +38,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     var NoContactsAddedList : UILabel = UILabel()
     
+    var operationQueueObjInSharingContactList = OperationQueue()
+    var operationInSharingScreenContactList = BlockOperation()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,6 +67,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
+        operationInSharingScreenContactList.cancel()
     }
     
     func addKeyboardObservers()
@@ -137,7 +141,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     @IBAction func inviteContacts(_ sender: Any) {
         let sharingStoryboard = UIStoryboard(name:"sharing", bundle: nil)
-        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: OtherContactListViewController.identifier) as! OtherContactListViewController
+        let inviteContactsVC = sharingStoryboard.instantiateViewController(withIdentifier: ContactListViewController.identifier) as! ContactListViewController
         inviteContactsVC.channelId = channelId
         inviteContactsVC.channelName = channelName
         inviteContactsVC.totalMediaCount = totalMediaCount
@@ -283,12 +287,17 @@ class MyChannelSharingDetailsViewController: UIViewController {
             }
             contactTableView.reloadData()
             if(dataSource.count > 0){
-                let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                    qos: .background,
-                                                    target: nil)
-                backgroundQueue.async {
-                    self.downloadMediaFromGCS()
-                }
+                operationInSharingScreenContactList  = BlockOperation (block: {
+                    self.downloadMediaFromGCS(operationObj: self.operationInSharingScreenContactList)
+                })
+                self.operationQueueObjInSharingContactList.addOperation(operationInSharingScreenContactList)
+                
+//                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+//                                                    qos: .background,
+//                                                    target: nil)
+//                backgroundQueue.async {
+//                    self.downloadMediaFromGCS()
+//                }
             }
             else
             {
@@ -302,7 +311,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         }
     }
     
-    func downloadMediaFromGCS(){
+    func downloadMediaFromGCS(operationObj: BlockOperation){
         var localArray = [[String:Any]]()
         for i in 0 ..< dataSource.count
         {
@@ -311,6 +320,9 @@ class MyChannelSharingDetailsViewController: UIViewController {
         for i in 0 ..< localArray.count
         {
             if(i < localArray.count){
+                if operationObj.isCancelled == true{
+                    return
+                }
                 var profileImage : UIImage?
                 let fileFlag = localArray[i]["profileFlag"] as! Bool
                 if(!fileFlag)
