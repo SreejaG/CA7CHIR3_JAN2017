@@ -271,6 +271,7 @@ class MyChannelNotificationViewController: UIViewController {
                     return time1 > time2
                 })
                 if(dataSource.count > 0){
+                    fulldataSource.removeAll()
                     operationInNotif  = BlockOperation (block: {
                         self.downloadMediaFromGCS(operationObj: self.operationInNotif)
                     })
@@ -296,7 +297,6 @@ class MyChannelNotificationViewController: UIViewController {
     }
     
     func downloadMediaFromGCS(operationObj: BlockOperation){
-        fulldataSource.removeAll()
         for i in 0 ..< dataSource.count
         {
             if i < dataSource.count
@@ -351,6 +351,7 @@ class MyChannelNotificationViewController: UIViewController {
                 else{
                     mediaImage = UIImage()
                 }
+                
                 self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,mediaIdKey:self.dataSource[i][mediaIdKey]!, mediaUrlKey: mediaThumbUrl])
                 
                 DispatchQueue.main.async {
@@ -464,10 +465,10 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
                 }
             }
             else{
+                cell.NotificationImage.image = UIImage()
                 cell.NotificationImage.isHidden = true
                 cell.notifcationTextFullscreen.isHidden = false
                 cell.notificationText.isHidden = true
-                
                 cell.notifcationTextFullscreen.text = fulldataSource[indexPath.row][messageKey] as? String
             }
             cell.selectionStyle = .none
@@ -478,6 +479,6 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        print(fulldataSource[indexPath.row])
+//        print(fulldataSource[indexPath.row])
     }
 }
