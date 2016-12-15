@@ -401,7 +401,7 @@ NSBlockOperation *likeOper;
     scrollViewZoom.clipsToBounds = YES;
     scrollViewZoom.delegate = self;
     scrollViewZoom.delaysContentTouches = NO;
-    scrollViewZoom.backgroundColor = [UIColor blackColor];
+    scrollViewZoom.backgroundColor = [UIColor lightGrayColor];
 }
 
 -(UIView *) viewForZoomingInScrollView:(UIScrollView *)inScroll {
@@ -665,7 +665,9 @@ NSBlockOperation *likeOper;
             default:
                 break;
         }
-        imageVideoView.image = orientedImage;
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            imageVideoView.image = orientedImage;
+        });
     }
     else{
         [self setGuiBasedOnOrientationForVideo];
@@ -700,7 +702,9 @@ NSBlockOperation *likeOper;
         default:
             break;
     }
-    imageVideoView.image = orientedImage;
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        imageVideoView.image = orientedImage;
+    });
 }
 
 -(void) setUpImageVideo : (NSString*) mediaType mediaUrl:(NSString *) mediaUrl mediaDetailId: (NSString *) mediaDetailId
@@ -878,19 +882,29 @@ NSBlockOperation *likeOper;
 
 -(void) showOverlay1
 {
+    scrollViewZoom.userInteractionEnabled = false;
     imageVideoView.userInteractionEnabled = false;
     [self.view bringSubviewToFront:topView];
     IONLLoadingView *loadingOverlayController = [[IONLLoadingView alloc]initWithNibName:@"IONLLoadingOverlay" bundle:nil];
-    loadingOverlayController.view.frame = CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height);
+    loadingOverlayController.view.frame = CGRectMake(0, 0, imageVideoView.frame.size.width,imageVideoView.frame.size.height + heartView.frame.size.height);
     [loadingOverlayController startLoading];
     loadingOverlay = [[UIView alloc]init];
     loadingOverlay = loadingOverlayController.view;
-    [self.view addSubview:loadingOverlay];
+    [imageVideoView addSubview:loadingOverlay];
+    _photoCollectionView.userInteractionEnabled = false;
+    heartView.userInteractionEnabled = false;
+    _photoCollectionView.alpha = 0.5;
+    heartView.alpha = 0.5;
 }
 
 -(void) removeOverlay{
+    scrollViewZoom.userInteractionEnabled = true;
     [loadingOverlay removeFromSuperview];
     imageVideoView.userInteractionEnabled = true;
+    _photoCollectionView.userInteractionEnabled = true;
+    heartView.userInteractionEnabled = true;
+    _photoCollectionView.alpha = 1.0;
+    heartView.alpha = 1.0;
 }
 
 -(void) playbackStateChange:(NSNotification *) notif
