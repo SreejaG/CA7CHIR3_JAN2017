@@ -391,13 +391,13 @@ extension MyChannelItemDetailsViewController : UICollectionViewDataSource,UIColl
                 
                 let index = Int32(indexPath.row)
                 
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.vc = MovieViewController.movieViewController(withImageVideo: self.channelName, channelId: self.channelId as String, userName: userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem: index,pageIndicator: 0 , videoDuration:  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][videoDurationKey] as? String) as! MovieViewController
                     self.present(self.vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemsCollectionView.alpha = 1.0
                     }
-                }
+//                }
             }
         }
     }

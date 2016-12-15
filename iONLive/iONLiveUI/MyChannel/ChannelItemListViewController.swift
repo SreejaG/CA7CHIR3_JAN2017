@@ -778,19 +778,21 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
                         _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: profilePath, mediaImage: imageForProfile)
                     }
                 }
-                
+
                 let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
                 let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
                 
                 let index = Int32(indexPath.row)
-                
-                DispatchQueue.main.async {
+
+//                DispatchQueue.main.async {
                     self.vc = MovieViewController.movieViewController(withImageVideo: self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0, videoDuration:  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][videoDurationKey] as? String) as! MovieViewController
                     self.present(self.vc, animated: false) { () -> Void in
                         self.removeOverlay()
                         self.channelItemCollectionView.alpha = 1.0
                     }
-                }
+//                }
+                
+                
             }
         }
     }

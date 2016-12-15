@@ -704,7 +704,13 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
             {
                 showOverlay()
                 channelItemsCollectionView.alpha = 0.4
-                didSelectExtension(indexPathRow: indexPath.row)
+                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+                                                    qos: .background,
+                                                    target: nil)
+                backgroundQueue.async {
+                    self.didSelectExtension(indexPathRow: indexPath.row)
+                }
+//                didSelectExtension(indexPathRow: indexPath.row)
             }
         }
     }
