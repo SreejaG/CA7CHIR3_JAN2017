@@ -117,16 +117,16 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 for i in 0 ..< searchDataSource.count
                 {
                     if(i < searchDataSource.count){
-                        let selectionValue : Int = searchDataSource[i]["orgSelected"] as! Int
-                        searchDataSource[i]["tempSelected"] = selectionValue
+                        let selectionValue : Int = searchDataSource[i][sharedOriginalKey] as! Int
+                        searchDataSource[i][sharedTemporaryKey] = selectionValue
                     }
                 }
             }
             for i in 0 ..< dataSource.count
             {
                 if(i < dataSource.count){
-                    let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                    dataSource[i]["tempSelected"] = selectionValue
+                    let selectionValue : Int = dataSource[i][sharedOriginalKey] as! Int
+                    dataSource[i][sharedTemporaryKey] = selectionValue
                 }
             }
             contactTableView.reloadData()
@@ -161,7 +161,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
         {
             if(i < dataSource.count){
                 let userId = dataSource[i][userNameKey] as! String
-                let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
+                let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
                 if(selectionValue == 1){
                     addUserArray.add(userId)
                 }
@@ -205,8 +205,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 for i in 0 ..< dataSource.count
                 {
                     if(i < dataSource.count){
-                        let selectionValue : Int = dataSource[i]["tempSelected"] as! Int
-                        dataSource[i]["orgSelected"] = selectionValue
+                        let selectionValue : Int = dataSource[i][sharedTemporaryKey] as! Int
+                        dataSource[i][sharedOriginalKey] = selectionValue
                     }
                 }
                 contactTableView.reloadData()
@@ -282,7 +282,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                 else{
                     profileImage = UIImage(named: "dummyUser")
                 }
-                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, "tempSelected": subscriptionValue, "orgSelected": subscriptionValue, profileImageKey: profileImage!,"profileFlag" : fileExistFlag])
+                dataSource.append([userNameKey:userName, profileImageUrlKey: imageName, sharedTemporaryKey: subscriptionValue, sharedOriginalKey: subscriptionValue, profileImageKey: profileImage!,"profileFlag" : fileExistFlag])
             }
             contactTableView.reloadData()
             if(dataSource.count > 0){
@@ -302,6 +302,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
             {
                 removeOverlay()
                 addNoDataLabel()
+                doneButton.isHidden = true
+                inviteButton.isHidden = false
             }
         }
         else
@@ -396,8 +398,8 @@ class MyChannelSharingDetailsViewController: UIViewController {
         for i in 0 ..< dataSource.count
         {
             if(i < dataSource.count){
-                let selectionValue : Int = dataSource[i]["orgSelected"] as! Int
-                dataSource[i]["tempSelected"] = selectionValue
+                let selectionValue : Int = dataSource[i][sharedOriginalKey] as! Int
+                dataSource[i][sharedTemporaryKey] = selectionValue
             }
         }
         contactTableView.reloadData()
@@ -453,14 +455,14 @@ class MyChannelSharingDetailsViewController: UIViewController {
         if(searchActive)
         {
             if(indexpath < searchDataSource.count){
-                let selectedValue =  searchDataSource[indexpath]["tempSelected"] as! Int
+                let selectedValue =  searchDataSource[indexpath][sharedTemporaryKey] as! Int
                 if(selectedValue == 1)
                 {
-                    searchDataSource[indexpath]["tempSelected"] = 0
+                    searchDataSource[indexpath][sharedTemporaryKey] = 0
                 }
                 else
                 {
-                    searchDataSource[indexpath]["tempSelected"] = 1
+                    searchDataSource[indexpath][sharedTemporaryKey] = 1
                 }
                 
                 let selecteduserId =  searchDataSource[indexpath][userNameKey] as! String
@@ -470,7 +472,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
                         let dataSourceUserId = dataSource[i][userNameKey] as! String
                         if(selecteduserId == dataSourceUserId)
                         {
-                            dataSource[i]["tempSelected"] = searchDataSource[indexpath]["tempSelected"]
+                            dataSource[i][sharedTemporaryKey] = searchDataSource[indexpath][sharedTemporaryKey]
                         }
                     }
                 }
@@ -479,15 +481,39 @@ class MyChannelSharingDetailsViewController: UIViewController {
         else
         {
             if(indexpath < dataSource.count){
-                let selectedValue =  dataSource[indexpath]["tempSelected"] as! Int
+                let selectedValue =  dataSource[indexpath][sharedTemporaryKey] as! Int
                 if(selectedValue == 1){
-                    dataSource[indexpath]["tempSelected"] = 0
+                    dataSource[indexpath][sharedTemporaryKey] = 0
                 }
                 else{
-                    dataSource[indexpath]["tempSelected"] = 1
+                    dataSource[indexpath][sharedTemporaryKey] = 1
                 }
             }
         }
+        
+        var doneButtonHideFlag : Bool  = false
+        for k in 0 ..< dataSource.count
+        {
+            if k < dataSource.count
+            {
+                let temp =  dataSource[k][sharedTemporaryKey] as! Int
+                let org = dataSource[k][sharedOriginalKey] as! Int
+                if temp != org
+                {
+                    doneButtonHideFlag = true
+                    break
+                }
+            }
+        }
+        if(doneButtonHideFlag){
+            doneButton.isHidden = false
+            inviteButton.isHidden = true
+        }
+        else{
+            doneButton.isHidden = true
+            inviteButton.isHidden = false
+        }
+        
         contactTableView.reloadData()
     }
     
@@ -549,9 +575,36 @@ class MyChannelSharingDetailsViewController: UIViewController {
                     dataSource.remove(at: index)
                 }
             }
+            
             if dataSource.count == 0
             {
                 addNoDataLabel()
+                doneButton.isHidden = true
+                inviteButton.isHidden = false
+            }
+            else{
+                var doneButtonHideFlag : Bool  = false
+                for k in 0 ..< dataSource.count
+                {
+                    if k < dataSource.count
+                    {
+                        let temp =  dataSource[k][sharedTemporaryKey] as! Int
+                        let org = dataSource[k][sharedOriginalKey] as! Int
+                        if temp != org
+                        {
+                            doneButtonHideFlag = true
+                            break
+                        }
+                    }
+                }
+                if(doneButtonHideFlag){
+                    doneButton.isHidden = false
+                    inviteButton.isHidden = true
+                }
+                else{
+                    doneButton.isHidden = true
+                    inviteButton.isHidden = false
+                }
             }
             contactTableView.reloadData()
         }
@@ -608,7 +661,7 @@ extension MyChannelSharingDetailsViewController:UITableViewDelegate,UITableViewD
             cell.contactProfileImage.image = imageName as? UIImage
             cell.subscriptionButton.tag = indexPath.row
             
-            let selectionValue : Int = dataSourceTmp![indexPath.row]["tempSelected"] as! Int
+            let selectionValue : Int = dataSourceTmp![indexPath.row][sharedTemporaryKey] as! Int
             if(selectionValue == 1){
                 cell.subscriptionButton.setImage(UIImage(named:"CheckOn"), for:.normal)
             }

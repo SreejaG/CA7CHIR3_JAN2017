@@ -132,10 +132,10 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cbN-lg-RZy">
-                                                            <rect key="frame" x="542" y="3" width="50" height="50"/>
+                                                            <rect key="frame" x="252" y="-2" width="60" height="60"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="50" id="AkV-O4-B6g"/>
-                                                                <constraint firstAttribute="height" constant="50" id="j4e-gb-TDy"/>
+                                                                <constraint firstAttribute="width" constant="60" id="AkV-O4-B6g"/>
+                                                                <constraint firstAttribute="height" constant="60" id="j4e-gb-TDy"/>
                                                             </constraints>
                                                             <state key="normal" image="red-circle"/>
                                                             <connections>
@@ -173,7 +173,7 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dpk-zV-1lX">
-                                                            <rect key="frame" x="10" y="38" width="580" height="16"/>
+                                                            <rect key="frame" x="10" y="38" width="300" height="16"/>
                                                             <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
                                                             <color key="textColor" red="0.85490196078431369" green="0.85490196078431369" blue="0.85490196078431369" alpha="0.8994073275862069" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
@@ -348,7 +348,7 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DdL-2w-vDi">
-                                                            <rect key="frame" x="10" y="39" width="580" height="16"/>
+                                                            <rect key="frame" x="10" y="39" width="300" height="16"/>
                                                             <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
                                                             <color key="textColor" red="0.85490196080000003" green="0.85490196080000003" blue="0.85490196080000003" alpha="0.89940732759999997" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
@@ -378,7 +378,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4s1-sK-fXZ">
-                                                            <rect key="frame" x="525" y="0.0" width="60" height="60"/>
+                                                            <rect key="frame" x="245" y="0.0" width="60" height="60"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="60" id="OUT-O0-REo"/>
                                                                 <constraint firstAttribute="width" constant="60" id="k5C-uh-ESN"/>

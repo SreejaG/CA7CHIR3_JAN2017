@@ -632,6 +632,45 @@ class OtherContactListViewController: UIViewController {
                 }
             }
         }
+        
+        var doneButtonHideFlagZero : Bool  = false
+        var doneButtonHideFlagOne : Bool  = false
+        for k in 0 ..< contactSource[0].count
+        {
+            if k < contactSource[0].count
+            {
+                let temp =  contactSource[0][k][sharedTemporaryKey] as! Int
+                if temp != 0
+                {
+                    doneButtonHideFlagZero = true
+                    break
+                }
+            }
+        }
+        if(doneButtonHideFlagZero){
+            doneButton.isHidden = false
+        }
+        else{
+            for l in 0 ..< contactSource[1].count
+            {
+                if l < contactSource[1].count
+                {
+                    let temp =  contactSource[1][l][sharedTemporaryKey] as! Int
+                    if temp != 0
+                    {
+                        doneButtonHideFlagOne = true
+                        break
+                    }
+                }
+            }
+            if(doneButtonHideFlagOne){
+                doneButton.isHidden = false
+            }
+            else{
+                doneButton.isHidden = true
+            }
+        }
+
         ca7chTableView.reloadData()
     }
     
@@ -718,7 +757,6 @@ class OtherContactListViewController: UIViewController {
         ca7chTableView.reloadData()
         ca7chTableView.layoutIfNeeded()
         
-        
         addUserArray.removeAllObjects()
         
         for i in 0 ..< contactSource[0].count
@@ -748,6 +786,10 @@ class OtherContactListViewController: UIViewController {
         if addUserArray.count > 0
         {
             inviteContactList(userName: userId, accessToken: accessToken, channelid: channelId, addUser: addUserArray)
+        }
+        else if inviteUserArray.count > 0
+        {
+            loadMychannelDetailController()
         }
     }
     

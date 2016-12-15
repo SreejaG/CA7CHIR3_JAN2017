@@ -390,6 +390,28 @@ class MySharedChannelsViewController: UIViewController {
                 dataSource[indexpath][sharedTemporaryKey] = 1
             }
         }
+        
+        var doneButtonHideFlag : Bool  = false
+        for k in 0 ..< dataSource.count
+        {
+            if k < dataSource.count
+            {
+                let temp =  dataSource[k][sharedTemporaryKey] as! Int
+                let org = dataSource[k][sharedOriginalKey] as! Int
+                if temp != org
+                {
+                    doneButtonHideFlag = true
+                    break
+                }
+            }
+        }
+        if(doneButtonHideFlag){
+            doneButton.isHidden = false
+        }
+        else{
+            doneButton.isHidden = true
+        }
+        
         sharedChannelsTableView.reloadData()
     }
 }
