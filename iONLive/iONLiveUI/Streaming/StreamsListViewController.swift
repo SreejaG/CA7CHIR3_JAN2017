@@ -103,9 +103,12 @@ class StreamsListViewController: UIViewController{
         UserDefaults.standard.set(1, forKey: "SelectedTab")
         GlobalStreamList.sharedInstance.cancelOperationQueue()
         self.customView.removeFromSuperview()
-        removeOverlay()
-        streamListCollectionView.alpha = 1.0
-        operationInRedirection.cancel()
+        if mediaAndLiveArray.count > 0
+        {
+            removeOverlay()
+            streamListCollectionView.alpha = 1.0
+            operationInRedirection.cancel()
+        }
     }
     
     func closeMovieView(notif : NSNotification)
