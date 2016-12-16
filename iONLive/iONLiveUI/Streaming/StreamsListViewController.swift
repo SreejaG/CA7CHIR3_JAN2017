@@ -36,6 +36,11 @@ class StreamsListViewController: UIViewController{
     var customView = CustomInfiniteIndicator()
     let isWatched = "isWatched"
     
+    
+    var operationQueueObjRedirection = OperationQueue()
+    var operationInRedirection = BlockOperation()
+    
+    
     @IBOutlet weak var streamListCollectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +103,9 @@ class StreamsListViewController: UIViewController{
         UserDefaults.standard.set(1, forKey: "SelectedTab")
         GlobalStreamList.sharedInstance.cancelOperationQueue()
         self.customView.removeFromSuperview()
+        removeOverlay()
+        streamListCollectionView.alpha = 1.0
+        operationInRedirection.cancel()
     }
     
     func closeMovieView(notif : NSNotification)
@@ -1243,17 +1251,23 @@ class StreamsListViewController: UIViewController{
         self.navigationController?.pushViewController(iPhoneCameraVC, animated: false)
     }
     
-    func  didSelectExtension(indexPathRow: Int)
+    func  didSelectExtension(indexPathRow: Int, operation: BlockOperation)
     {
-        getProfileImageSelectedIndex(indexpathRow: indexPathRow)
+        if(operation.isCancelled){
+            return
+        }
+        getProfileImageSelectedIndex(indexpathRow: indexPathRow,operation: operation)
     }
     
     var profileImageUserForSelectedIndex : UIImage = UIImage()
     
-    func getProfileImageSelectedIndex(indexpathRow: Int)
+    func getProfileImageSelectedIndex(indexpathRow: Int, operation: BlockOperation)
     {
         if(mediaAndLiveArray.count > 0)
         {
+            if(operation.isCancelled){
+                return
+            }
             let subUserName = mediaAndLiveArray[indexpathRow][userIdKey] as! String
             let profileImageNameBeforeNullChk =  UrlManager.sharedInstance.getProfileURL(userId: subUserName)
             let profileImageName = self.nullToNil(value: profileImageNameBeforeNullChk)
@@ -1282,53 +1296,70 @@ class StreamsListViewController: UIViewController{
         else{
             profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
         }
-        getLikeCountForSelectedIndex(indexpathRow: indexpathRow,profile: profileImageUserForSelectedIndex)
+        getLikeCountForSelectedIndex(indexpathRow: indexpathRow,profile: profileImageUserForSelectedIndex,operation: operation)
     }
     
-    func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int)
+    func failureHandlerForprofileImage(error: NSError?, code: String,indexPathRow:Int, operation: BlockOperation)
     {
+        if(operation.isCancelled){
+            return
+        }
         profileImageUserForSelectedIndex = UIImage(named: "dummyUser")!
-        getLikeCountForSelectedIndex(indexpathRow: indexPathRow,profile: profileImageUserForSelectedIndex)
+        getLikeCountForSelectedIndex(indexpathRow: indexPathRow,profile: profileImageUserForSelectedIndex,operation: operation)
     }
     
-    func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage)  {
+    func getLikeCountForSelectedIndex(indexpathRow:Int,profile:UIImage, operation: BlockOperation)  {
+        if(operation.isCancelled){
+            return
+        }
         let mediaId = mediaAndLiveArray[indexpathRow][stream_mediaIdKey] as! String
-        getLikeCount(mediaId: mediaId, indexpathRow: indexpathRow, profile: profile)
+        getLikeCount(mediaId: mediaId, indexpathRow: indexpathRow, profile: profile,operation: operation)
     }
     
-    func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage) {
+    func getLikeCount(mediaId: String,indexpathRow:Int,profile:UIImage, operation: BlockOperation) {
+        if(operation.isCancelled){
+            return
+        }
         let mediaTypeSelected : String = mediaAndLiveArray[indexpathRow][stream_mediaTypeKey] as! String
         let defaults = UserDefaults .standard
         
         let userId = defaults.value(forKey: userLoginIdKey) as! String
         let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         channelManager.getMediaLikeCountDetails(userName: userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
-            self.successHandlerForMediaCount(response: response,indexpathRow:indexpathRow,profile: profile)
+            self.successHandlerForMediaCount(response: response,indexpathRow:indexpathRow,profile: profile,operation: operation)
         }, failure: { (error, message) -> () in
-            self.failureHandlerForMediaCount(error: error, code: message,indexPathRow:indexpathRow,profile: profile)
+            self.failureHandlerForMediaCount(error: error, code: message,indexPathRow:indexpathRow,profile: profile,operation: operation)
             return
         })
     }
     
     var likeCountSelectedIndex : String = "0"
     
-    func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int,profile:UIImage)
+    func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int,profile:UIImage, operation: BlockOperation)
     {
+        if(operation.isCancelled){
+            return
+        }
         if let json = response as? [String: AnyObject]
         {
             likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
-        loadmovieViewController(indexPathRow: indexpathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexpathRow, profileImage: profile, likeCount: likeCountSelectedIndex,operation: operation)
     }
     
-    func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int,profile:UIImage)
+    func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int,profile:UIImage, operation: BlockOperation)
     {
+        if(operation.isCancelled){
+            return
+        }
         likeCountSelectedIndex = "0"
-        loadmovieViewController(indexPathRow: indexPathRow, profileImage: profile, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexPathRow, profileImage: profile, likeCount: likeCountSelectedIndex,operation: operation)
     }
     
-    func loadmovieViewController(indexPathRow:Int,profileImage:UIImage,likeCount:String) {
-        
+    func loadmovieViewController(indexPathRow:Int,profileImage:UIImage,likeCount:String, operation: BlockOperation) {
+        if(operation.isCancelled){
+            return
+        }
         self.removeOverlay()
         streamListCollectionView.alpha = 1.0
         let index = Int32(indexPathRow)
@@ -1431,13 +1462,17 @@ extension StreamsListViewController:UICollectionViewDataSource,UICollectionViewD
             {
                 collectionView.alpha = 0.4
                 showOverlay()
-                let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                    qos: .background,
-                                                    target: nil)
-                backgroundQueue.async {
-                    self.didSelectExtension(indexPathRow: indexPath.row)
-                }
-//                didSelectExtension(indexPathRow: indexPath.row)
+                operationInRedirection  = BlockOperation (block: {
+                    self.didSelectExtension(indexPathRow: indexPath.row,operation:self.operationInRedirection)
+                })
+                self.operationQueueObjRedirection.addOperation(operationInRedirection)
+
+//                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+//                                                    qos: .background,
+//                                                    target: nil)
+//                backgroundQueue.async {
+//                    self.didSelectExtension(indexPathRow: indexPath.row)
+//                }
             }
         }
     }

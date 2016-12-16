@@ -35,6 +35,10 @@ class OtherChannelViewController: UIViewController  {
     var vc : MovieViewController = MovieViewController()
     var customView = CustomInfiniteIndicator()
     
+    var operationQueueObjRedirectionOtherChannel = OperationQueue()
+    var operationInRedirectionOtherChannel = BlockOperation()
+
+    
     @IBOutlet weak var notificationLabel: UILabel!
     override func viewDidLoad()
     {
@@ -85,9 +89,10 @@ class OtherChannelViewController: UIViewController  {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
+        operationQueueObjRedirectionOtherChannel.cancelAllOperations()
         channelItemsCollectionView.alpha = 1.0
         self.customView.removeFromSuperview()
-        
+        removeOverlay()
         NotificationCenter.default.removeObserver(self, name: Notification.Name("SharedChannelMediaDetail"), object: nil)
     }
     func dismissFullView(notif: NSNotification)
@@ -549,49 +554,67 @@ class OtherChannelViewController: UIViewController  {
         }
     }
     
-    func  didSelectExtension(indexPathRow: Int)
+    func  didSelectExtension(indexPathRow: Int, operation: BlockOperation)
     {
-        getLikeCountForSelectedIndex(indexpathRow: indexPathRow)
+        if(operation.isCancelled){
+            return
+        }
+        getLikeCountForSelectedIndex(indexpathRow: indexPathRow, operation: operation)
     }
     
-    func getLikeCountForSelectedIndex(indexpathRow:Int)  {
+    func getLikeCountForSelectedIndex(indexpathRow:Int, operation: BlockOperation)  {
+        if(operation.isCancelled){
+            return
+        }
         let mediaId = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaIdKey] as! String
-        getLikeCount(mediaId: mediaId, indexpathRow: indexpathRow)
+        getLikeCount(mediaId: mediaId, indexpathRow: indexpathRow, operation:operation)
     }
     
-    func getLikeCount(mediaId: String,indexpathRow:Int) {
+    func getLikeCount(mediaId: String,indexpathRow:Int, operation:BlockOperation) {
+        if(operation.isCancelled){
+            return
+        }
         let defaults = UserDefaults.standard
         let userId = defaults.value(forKey: userLoginIdKey) as! String
         let accessToken = defaults.value(forKey: userAccessTockenKey) as! String
         let mediaTypeSelected : String = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexpathRow][stream_mediaTypeKey] as! String
         channelManager.getMediaLikeCountDetails(userName: userId, accessToken: accessToken, mediaId: mediaId, mediaType: mediaTypeSelected, success: { (response) in
-            self.successHandlerForMediaCount(response: response,indexpathRow:indexpathRow)
+            self.successHandlerForMediaCount(response: response,indexpathRow:indexpathRow, operation:operation)
         }, failure: { (error, message) -> () in
-            self.failureHandlerForMediaCount(error: error, code: message,indexPathRow:indexpathRow)
+            self.failureHandlerForMediaCount(error: error, code: message,indexPathRow:indexpathRow,operation:operation)
             return
         })
     }
     
     var likeCountSelectedIndex : String = "0"
     
-    func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int)
+    func successHandlerForMediaCount(response:AnyObject?,indexpathRow:Int, operation:BlockOperation)
     {
+        if(operation.isCancelled){
+            return
+        }
         if let json = response as? [String: AnyObject]
         {
             likeCountSelectedIndex = "\(json["likeCount"]!)"
         }
-        loadmovieViewController(indexPathRow: indexpathRow, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexpathRow, likeCount: likeCountSelectedIndex,operation:operation)
     }
     
-    func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int)
+    func failureHandlerForMediaCount(error: NSError?, code: String,indexPathRow:Int, operation:BlockOperation)
     {
+        if(operation.isCancelled){
+            return
+        }
         likeCountSelectedIndex = "0"
-        loadmovieViewController(indexPathRow: indexPathRow, likeCount: likeCountSelectedIndex)
+        loadmovieViewController(indexPathRow: indexPathRow, likeCount: likeCountSelectedIndex,operation:operation)
     }
     
-    func loadmovieViewController(indexPathRow:Int,likeCount:String) {
+    func loadmovieViewController(indexPathRow:Int,likeCount:String, operation:BlockOperation) {
         self.removeOverlay()
         channelItemsCollectionView.alpha = 1.0
+        if(operation.isCancelled){
+            return
+        }
         if (SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource.count > 0)
         {
             let type = SharedChannelDetailsAPI.sharedInstance.selectedSharedChannelMediaSource[indexPathRow][stream_mediaTypeKey] as! String
@@ -704,12 +727,16 @@ extension OtherChannelViewController : UICollectionViewDataSource,UICollectionVi
             {
                 showOverlay()
                 channelItemsCollectionView.alpha = 0.4
-                let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                    qos: .background,
-                                                    target: nil)
-                backgroundQueue.async {
-                    self.didSelectExtension(indexPathRow: indexPath.row)
-                }
+                operationInRedirectionOtherChannel  = BlockOperation (block: {
+                    self.didSelectExtension(indexPathRow: indexPath.row,operation:self.operationInRedirectionOtherChannel)
+                })
+                self.operationQueueObjRedirectionOtherChannel.addOperation(operationInRedirectionOtherChannel)
+//                let backgroundQueue = DispatchQueue(label: "com.app.queue",
+//                                                    qos: .background,
+//                                                    target: nil)
+//                backgroundQueue.async {
+//                    self.didSelectExtension(indexPathRow: indexPath.row)
+//                }
 //                didSelectExtension(indexPathRow: indexPath.row)
             }
         }
