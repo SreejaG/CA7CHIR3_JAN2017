@@ -40,7 +40,8 @@ class MyChannelNotificationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationController?.view.layer.removeAllAnimations()
+        self.navigationController?.view.layer.layoutIfNeeded()
         if let notifFlag = defaults.value(forKey: "notificationArrived")
         {
             if notifFlag as! String == "0"
@@ -81,7 +82,6 @@ class MyChannelNotificationViewController: UIViewController {
     }
     
     func initialise(){
-        
         channelDataSource.removeAll()
         mediaDataSource.removeAll()
         fulldataSource.removeAll()
@@ -228,7 +228,7 @@ class MyChannelNotificationViewController: UIViewController {
         UserDefaults.standard.setValue("0", forKey: "notificationArrived")
         let image = UIImage(named: "noNotif") as UIImage?
         notifImage.setImage(image, for: .normal)
-        removeOverlay()
+//        removeOverlay()
         if let json = response as? [String: AnyObject]
         {
             let mediaResponseArr = json["notification Details"] as! [[String:AnyObject]]
@@ -283,11 +283,13 @@ class MyChannelNotificationViewController: UIViewController {
                 }
             }
             else{
+                removeOverlay()
                 addNoDataLabel()
             }
         }
         else
         {
+            removeOverlay()
             ErrorManager.sharedInstance.inValidResponseError()
         }
     }
@@ -308,8 +310,6 @@ class MyChannelNotificationViewController: UIViewController {
                 if operationObj.isCancelled == true{
                     return
                 }
-                print("datasource count  \(dataSource.count)")
-                print("i ==== \(i)")
                 var mediaImage : UIImage?
                 var profileImage : UIImage?
                 
@@ -359,16 +359,11 @@ class MyChannelNotificationViewController: UIViewController {
                 }
                 
                 self.fulldataSource.append([self.notificationTypeKey:self.dataSource[i][self.notificationTypeKey]!,self.messageKey:self.dataSource[i][self.messageKey]!, self.profileImageKey:profileImage!, self.mediaImageKey:mediaImage!,self.notificationTimeKey:self.dataSource[i][self.notificationTimeKey]!,mediaIdKey:self.dataSource[i][mediaIdKey]!, mediaUrlKey: mediaThumbUrl])
-                
-                DispatchQueue.main.async {
-                    if i < self.fulldataSource.count
-                    {
-                        print("fulldataSource value  \(self.fulldataSource[i])")
-                        print("i in dispatch ==== \(i)")
-                        self.NotificationTableView.reloadData()
-                    }
-                }
             }
+        }
+        DispatchQueue.main.async {
+            self.removeOverlay()
+            self.NotificationTableView.reloadData()
         }
     }
     
@@ -459,9 +454,6 @@ extension MyChannelNotificationViewController: UITableViewDelegate, UITableViewD
             let cell = tableView.dequeueReusableCell(withIdentifier: MyChannelNotificationCell.identifier, for:indexPath) as! MyChannelNotificationCell
             
             cell.NotificationSenderImageView.image = fulldataSource[indexPath.row][profileImageKey] as? UIImage
-            
-            print("full datasource count  \(fulldataSource.count)")
-            print("index path ==== \(indexPath.row)")
             
             if(fulldataSource[indexPath.row][mediaUrlKey] as! String != "nomedia"){
                 cell.NotificationImage.isHidden = false

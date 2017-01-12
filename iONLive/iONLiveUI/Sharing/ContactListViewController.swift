@@ -26,6 +26,7 @@ class ContactListViewController: UIViewController
     let contactManagers = contactManager.sharedInstance
     
     var dataSource:[[String:Any]] = [[String:Any]]()
+//    var dummySource:[[String:Any]] = [[String:Any]]()
     var searchDataSource:[[String:Any]] = [[String:Any]]()
     
     let defaults = UserDefaults.standard
@@ -238,6 +239,7 @@ class ContactListViewController: UIViewController
         case .denied, .restricted:
             generateContactSynchronizeAlert()
         case .authorized:
+//            dataSource.removeAll()
             self.initialise()
         case .notDetermined:
             promptForAddressBookRequestAccess()
@@ -262,6 +264,7 @@ class ContactListViewController: UIViewController
             if !granted {
                 self.generateContactSynchronizeAlert()
             } else {
+//                self.dataSource.removeAll()
                 self.initialise()
             }
             }
@@ -475,28 +478,52 @@ class ContactListViewController: UIViewController
         
         if let json = response as? [String: AnyObject]
         {
+//            if dataSource.count > 0
+//            {
+//                for ele in dataSource{
+//                    dummySource.append(ele)
+//                }
+//            }
             dataSource.removeAll()
             let responseArr = json["contactList"] as! [AnyObject]
             for element in responseArr{
                 let userName = element["user_name"] as! String
-                let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
-                
-                var profileImage : UIImage?
-                
-                let savingPath = "\(userName)Profile"
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-                let profileImagePath = parentPath! + "/" + savingPath
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
-                
-                if fileExistFlag == true{
-                    let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
-                    profileImage = profileImageFromFile!
+//                var dummyFlag = false
+//                if dummySource.count > 0
+//                {
+//                    for ele in dummySource
+//                    {
+//                        let dummyName = ele[userNameKey] as! String
+//                        if dummyName == userName
+//                        {
+//                            dummyFlag = true
+//                            break
+//                        }
+//                        else{
+//                            dummyFlag = false
+//                        }
+//                    }
+//                }
+//                if dummyFlag == false{
+                    let thumbUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userName
+                    
+                    var profileImage : UIImage?
+                    
+                    let savingPath = "\(userName)Profile"
+                    let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+                    let profileImagePath = parentPath! + "/" + savingPath
+                    let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: profileImagePath)
+                    
+                    if fileExistFlag == true{
+                        let profileImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: profileImagePath)
+                        profileImage = profileImageFromFile!
+                    }
+                    else{
+                        profileImage = UIImage(named: "dummyUser")
+                    }
+                    dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl, sharedTemporaryKey: 0, sharedOriginalKey : 0, profileImageKey : profileImage!, "profileFlag" : fileExistFlag])
                 }
-                else{
-                    profileImage = UIImage(named: "dummyUser")
-                }
-                dataSource.append([userNameKey:userName, profileImageUrlKey: thumbUrl, sharedTemporaryKey: 0, sharedOriginalKey : 0, profileImageKey : profileImage!, "profileFlag" : fileExistFlag])
-            }
+//            }
             
             self.contactListTableView.reloadData()
             
@@ -507,7 +534,18 @@ class ContactListViewController: UIViewController
                 self.operationQueueObjInSharingContactList.addOperation(operationInSharingContactList)
             }
             else{
-                addNoDataLabel()
+//                if dummySource.count > 0
+//                {
+//                    for ele in dummySource
+//                    {
+//                        dataSource.append(ele)
+//                    }
+//                    dummySource.removeAll()
+//                    self.contactListTableView.reloadData()
+//                }
+//                else{
+                    addNoDataLabel()
+//                }
             }
         }
         else
@@ -519,10 +557,20 @@ class ContactListViewController: UIViewController
     
     func downloadMediaFromGCS(operationObj: BlockOperation){
         var localArray = [[String:Any]]()
+//        if dummySource.count > 0
+//        {
+//            for ele in dummySource
+//            {
+//                dataSource.append(ele)
+//            }
+//        }
+//        dummySource.removeAll()
+        
         for i in 0 ..< dataSource.count
         {
             localArray.append(dataSource[i])
         }
+        
         for i in 0 ..< localArray.count
         {
             if(i < localArray.count){
