@@ -250,7 +250,9 @@ NSBlockOperation *likeOper;
             _parameters = nil;
             [self setUpDefaultValues];
             closeButton.hidden = true;
+            [self setUpInitialGLView];
             [self startDecoder];
+            
         }
         else{
             [self.view bringSubviewToFront:glView];
@@ -1470,7 +1472,7 @@ NSBlockOperation *likeOper;
 
 -(void)restartDecoder
 {
-    noDataFound.hidden = true;
+//    noDataFound.hidden = true;
     if (alertViewTemp.isVisible) {
         [alertViewTemp dismissWithClickedButtonIndex:0 animated:false];
     }
@@ -1483,7 +1485,6 @@ NSBlockOperation *likeOper;
 -(void)reInitialiseDecoder
 {
     [self showProgressBar];
-    
     dispatch_after (dispatch_time (DISPATCH_TIME_NOW, (int64_t) (3 * NSEC_PER_SEC)), dispatch_get_main_queue (), ^ {
         [self restartDecoder];
     });
@@ -1497,6 +1498,7 @@ NSBlockOperation *likeOper;
     activityImageView.hidden = false;
     [_activityIndicatorView startAnimating];
     _activityIndicatorView.hidden = false;
+    noDataFound.hidden = false;
 }
 
 -(void)hideProgressBar
@@ -1504,6 +1506,7 @@ NSBlockOperation *likeOper;
     activityImageView.hidden = true;
     [_activityIndicatorView stopAnimating];
     _activityIndicatorView.hidden = true;
+    noDataFound.hidden = true;
 }
 
 #pragma mark : Customize View
@@ -1536,7 +1539,9 @@ NSBlockOperation *likeOper;
 -(void)setUpView
 {
     [self setUpInitialBlurView];
-    [self setUpInitialGLView];
+    if(_liveVideo == false){
+        [self setUpInitialGLView];
+    }
     [self addApplicationObservers];
     [self setUpPresentViewAndRestorePlay];
     [self addTapGestures];
@@ -1755,7 +1760,6 @@ NSBlockOperation *likeOper;
     if (_backGround) {
         _backGround = false;
         if(_liveVideo){
-            
             [self reInitialiseDecoder];
         }
     }

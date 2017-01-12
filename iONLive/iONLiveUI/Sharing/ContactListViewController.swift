@@ -81,6 +81,9 @@ class ContactListViewController: UIViewController
     
     override func viewWillDisappear(_ animated: Bool) {
         operationInSharingContactList.cancel()
+        searchDataSource.removeAll()
+        dataSource.removeAll()
+        addUserArray.removeAllObjects()
     }
     
     func addKeyboardObservers()
