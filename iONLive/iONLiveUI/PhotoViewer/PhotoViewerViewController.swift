@@ -70,6 +70,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     let playerViewController = AVPlayerViewController()
     var videoThumbImage : UIImage = UIImage()
     var customView = CustomInfiniteIndicator()
+    var downloadingStartedFlag : Bool = false
+    
     class var sharedInstance: PhotoViewerViewController {
         struct Singleton {
             static let instance = PhotoViewerViewController()
@@ -91,6 +93,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         self.fullScreenZoomView.image = UIImage()
         playHandleflag = 0
         videoDurationLabel.isHidden = true
+        downloadingStartedFlag = false
         
         let removeActivityIndicatorMyChannel = Notification.Name("removeActivityIndicatorMyChannel")
         NotificationCenter.default.addObserver(self, selector:#selector(PhotoViewerViewController.removeActivityIndicatorMyMedia(notif:)), name: removeActivityIndicatorMyChannel, object: nil)
@@ -703,6 +706,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                         case UISwipeGestureRecognizerDirection.left:
                             if(selectedItem < totalCount - 1)
                             {
+                                downloadingStartedFlag = false
+                                
                                 if (playHandleflag == 1)
                                 {
                                     playHandleflag = 0
@@ -742,6 +747,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                         case UISwipeGestureRecognizerDirection.right:
                             if(selectedItem != 0)
                             {
+                                downloadingStartedFlag = false
+                                
                                 if (playHandleflag == 1)
                                 {
                                     playHandleflag = 0
@@ -1149,45 +1156,50 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
             
         }
         else{
-            let bounds = UIScreen.main.bounds
-            let widths = bounds.size.width
-            let heights = bounds.size.height
-            
-            let downloadRequest = URLRequest(url: videoDownloadUrl as URL)
-            let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
-            downloadTask = session.downloadTask(with: downloadRequest)
-            
-            progressViewDownload?.removeFromSuperview()
-            progressLabelDownload?.removeFromSuperview()
-            
-            progressLabelDownload?.isHidden = false
-            
-            videoDurationLabel?.textColor = UIColor.black
-            
-            progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.default)
-            let frame1 = CGRect(x:0, y:(heights - (BottomView.frame.size.height + photoThumpCollectionView.frame.size.height + 4)), width:widths, height:3)
-            progressViewDownload?.frame = frame1
-            progressViewDownload?.transform =  CGAffineTransform(scaleX: 1.0, y: 3.0)
-            
-            view.addSubview(progressViewDownload!)
-            progressViewDownload?.isHidden = true
-            
-            self.playIconInFullView.isHidden = true
-            
-            let frame = CGRect(x:(fullScrenImageView.center.x - 100), y:(fullScrenImageView.center.y - 30), width:200, height:20)
-            progressLabelDownload?.frame = frame
-            view.addSubview(progressLabelDownload!)
-            progressLabelDownload?.text = "Downloading ..."
-            progressLabelDownload!.textAlignment = NSTextAlignment.center
-            fullScrenImageView.alpha = 0.2
-            downloadTask!.resume()
+            if downloadingStartedFlag == false
+            {
+                downloadingStartedFlag = true
+                
+                let bounds = UIScreen.main.bounds
+                let widths = bounds.size.width
+                let heights = bounds.size.height
+                
+                let downloadRequest = URLRequest(url: videoDownloadUrl as URL)
+                let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: OperationQueue.main)
+                downloadTask = session.downloadTask(with: downloadRequest)
+                
+                progressViewDownload?.removeFromSuperview()
+                progressLabelDownload?.removeFromSuperview()
+                
+                progressLabelDownload?.isHidden = false
+                
+                videoDurationLabel?.textColor = UIColor.black
+                
+                progressViewDownload = UIProgressView(progressViewStyle: UIProgressViewStyle.default)
+                let frame1 = CGRect(x:0, y:(heights - (BottomView.frame.size.height + photoThumpCollectionView.frame.size.height + 4)), width:widths, height:3)
+                progressViewDownload?.frame = frame1
+                progressViewDownload?.transform =  CGAffineTransform(scaleX: 1.0, y: 3.0)
+                
+                view.addSubview(progressViewDownload!)
+                progressViewDownload?.isHidden = true
+                
+                self.playIconInFullView.isHidden = true
+                
+                let frame = CGRect(x:(fullScrenImageView.center.x - 100), y:(fullScrenImageView.center.y - 30), width:200, height:20)
+                progressLabelDownload?.frame = frame
+                view.addSubview(progressLabelDownload!)
+                progressLabelDownload?.text = "Downloading ..."
+                progressLabelDownload!.textAlignment = NSTextAlignment.center
+                fullScrenImageView.alpha = 0.2
+                downloadTask!.resume()
+            }
         }
     }
     
     func playerDidFinishPlaying(notif: NSNotification) {
         self.playerViewController.removeFromParentViewController()
         self.playerViewController.dismiss(animated: true, completion: nil)
-        
+        self.fullScrenImageView.isUserInteractionEnabled = true
         self.fullScrenImageView.image = self.setOrientationForVideo()
         self.fullScreenZoomView.image = self.setOrientationForVideo()
     }
@@ -1250,12 +1262,16 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 if(writeFlag){
                     videoDownloadIntex = 0
                     DispatchQueue.main.async {
+                        self.downloadingStartedFlag = false
                         self.view.isUserInteractionEnabled = true
                         self.fullScrenImageView.isUserInteractionEnabled = true
                         self.playHandleflag = 1
                         self.view.isUserInteractionEnabled = true
                         self.fullScrenImageView.isUserInteractionEnabled = true
                         self.playHandleflag = 1
+                        self.playerViewController.removeFromParentViewController()
+                        self.playerViewController.dismiss(animated: false, completion: nil)
+                        
                         let player1 = AVPlayer(url: url as URL)
                         if #available(iOS 9.0, *) {
                             self.playerViewController.delegate = self
@@ -1697,6 +1713,7 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
         
         if(self.selectedItem != indexPath.row){
             swipeFlag = false
+            downloadingStartedFlag = false
             self.selectedItem = indexPath.row
             if (playHandleflag == 1)
             {
