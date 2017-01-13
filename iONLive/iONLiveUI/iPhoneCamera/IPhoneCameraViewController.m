@@ -1750,7 +1750,7 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
                             NSInteger isSave  = [[NSUserDefaults standardUserDefaults] integerForKey:@"SaveToCameraRoll"];
                             if (isSave != 0)
                             {
-                                [self.assetsLibrary saveVideo:outputFileURL toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
+                                [self.assetsLibrary saveVideo:videoUrl toAlbum:@"CA7CH" completion:^(NSURL *assetURL, NSError *error)
                                  {
                                  } failure:^(NSError *error)
                                  {
@@ -1758,15 +1758,15 @@ UIImage* rotate(UIImage* src, UIImageOrientation orientation)
                             }
                         }
                     });
-                    if ([PHAssetResourceCreationOptions class] ) {
-                        PHAssetResourceCreationOptions *options = [[PHAssetResourceCreationOptions alloc] init];
-                        options.shouldMoveFile = YES;
-                        PHAssetCreationRequest *changeRequest = [PHAssetCreationRequest creationRequestForAsset];
-                        [changeRequest addResourceWithType:PHAssetResourceTypeVideo fileURL:outputFileURL options:options];
-                    }
-                    else {
-                        [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:outputFileURL];
-                    }
+//                    if ([PHAssetResourceCreationOptions class] ) {
+//                        PHAssetResourceCreationOptions *options = [[PHAssetResourceCreationOptions alloc] init];
+//                        options.shouldMoveFile = YES;
+//                        PHAssetCreationRequest *changeRequest = [PHAssetCreationRequest creationRequestForAsset];
+//                        [changeRequest addResourceWithType:PHAssetResourceTypeVideo fileURL:videoUrl options:options];
+//                    }
+//                    else {
+//                        [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:videoUrl];
+//                    }
                 } completionHandler:^( BOOL success, NSError *error ) {
                     if ( ! success ) {
                     }
