@@ -56,6 +56,9 @@ class ChannelItemListViewController: UIViewController, CAAnimationDelegate {
     
     var vc = MovieViewController()
     
+    var operationQueueObjRedirectionCh = OperationQueue()
+    var operationInRedirectionCh = BlockOperation()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -754,45 +757,55 @@ extension ChannelItemListViewController : UICollectionViewDataSource,UICollectio
             {
                 self.showOverlay()
                 self.channelItemCollectionView.alpha = 0.4
-                
-                var imageForProfile : UIImage = UIImage()
-                let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
-                let profilePath = "\(userId)Profile"
-                let savingPath =  parentPath! + "/" + profilePath
-                let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
-                if fileExistFlag == true{
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
-                    imageForProfile = mediaImageFromFile!
-                }
-                else{
-                    let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
-                    let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileUrl )
-                    imageForProfile = mediaImageFromFile
-                    let profileImageData = UIImageJPEGRepresentation(imageForProfile, 0.5)
-                    let profileImageDataAsNsdata = (profileImageData as NSData?)!
-                    let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
-                    let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
-                    if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
-                    }
-                    else{
-                        _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: profilePath, mediaImage: imageForProfile)
-                    }
-                }
-
-                let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
-                let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
-                
-                let index = Int32(indexPath.row)
-
-//                DispatchQueue.main.async {
-                    self.vc = MovieViewController.movieViewController(withImageVideo: self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0, videoDuration:  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][videoDurationKey] as? String) as! MovieViewController
-                    self.present(self.vc, animated: false) { () -> Void in
-                        self.removeOverlay()
-                        self.channelItemCollectionView.alpha = 1.0
-                    }
-//                }
-                
-                
+                operationInRedirectionCh.cancel()
+                operationInRedirectionCh  = BlockOperation (block: {
+                    self.redirectToFullview(indexPath: indexPath)
+                })
+                self.operationQueueObjRedirectionCh.addOperation(operationInRedirectionCh)
+            }
+        }
+    }
+    
+    func redirectToFullview(indexPath:IndexPath)
+    {
+        if operationInRedirectionCh.isCancelled
+        {
+            return
+        }
+        var imageForProfile : UIImage = UIImage()
+        let parentPath = FileManagerViewController.sharedInstance.getParentDirectoryPath().absoluteString
+        let profilePath = "\(userId)Profile"
+        let savingPath =  parentPath! + "/" + profilePath
+        let fileExistFlag = FileManagerViewController.sharedInstance.fileExist(mediaPath: savingPath)
+        if fileExistFlag == true{
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getImageFromFilePath(mediaPath: savingPath)
+            imageForProfile = mediaImageFromFile!
+        }
+        else{
+            let profileUrl = UrlManager.sharedInstance.getUserProfileImageBaseURL() + userId + "/" + accessToken + "/" + userId
+            let mediaImageFromFile = FileManagerViewController.sharedInstance.getProfileImage(profileNameURL: profileUrl )
+            imageForProfile = mediaImageFromFile
+            let profileImageData = UIImageJPEGRepresentation(imageForProfile, 0.5)
+            let profileImageDataAsNsdata = (profileImageData as NSData?)!
+            let imageFromDefault = UIImageJPEGRepresentation(UIImage(named: "dummyUser")!, 0.5)
+            let imageFromDefaultAsNsdata = (imageFromDefault as NSData?)!
+            if(profileImageDataAsNsdata.isEqual(imageFromDefaultAsNsdata)){
+            }
+            else{
+                _ = FileManagerViewController.sharedInstance.saveImageToFilePath(mediaName: profilePath, mediaImage: imageForProfile)
+            }
+        }
+        
+        let dateString = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[channelId]![indexPath.row][mediaCreatedTimeKey] as! String
+        let imageTakenTime = FileManagerViewController.sharedInstance.getTimeDifference(dateStr: dateString)
+        
+        let index = Int32(indexPath.row)
+        
+        DispatchQueue.main.async {
+            self.vc = MovieViewController.movieViewController(withImageVideo: self.channelName, channelId: self.channelId as String, userName: self.userId, mediaType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaTypeKey] as! String, profileImage: imageForProfile, videoImageUrl: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][tImageKey] as! UIImage, notifType: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][notifTypeKey] as! String,mediaId: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][mediaIdKey] as! String, timeDiff: imageTakenTime,likeCountStr: "0",selectedItem:index,pageIndicator: 0, videoDuration:  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[self.channelId]![indexPath.row][videoDurationKey] as? String) as! MovieViewController
+            self.present(self.vc, animated: false) { () -> Void in
+                self.removeOverlay()
+                self.channelItemCollectionView.alpha = 1.0
             }
         }
     }
