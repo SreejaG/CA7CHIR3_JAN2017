@@ -67,6 +67,7 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("refreshContactSharingTableView"), object: nil)
         //        operationInSharingScreenContactList.cancel()
     }
     

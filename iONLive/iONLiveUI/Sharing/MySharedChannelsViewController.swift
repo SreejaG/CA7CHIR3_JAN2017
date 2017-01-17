@@ -36,7 +36,6 @@ class MySharedChannelsViewController: UIViewController {
         
         doneButton.isHidden = true
         
-        dataSource.removeAll()
         addChannelArray.removeAllObjects()
         deleteChannelArray.removeAllObjects()
         
@@ -63,6 +62,7 @@ class MySharedChannelsViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         NotificationCenter.default.removeObserver(self, name: Notification.Name("removeActivityIndicatorMyChannelList"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("refreshMySharedChannelTableView"), object: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -95,6 +95,7 @@ class MySharedChannelsViewController: UIViewController {
                 dataSource.append(element)
             }
         }
+        print("Data in did load   \(dataSource)")
         if dataSource.count > 0{
             sharedChannelsTableView.reloadData()
         }

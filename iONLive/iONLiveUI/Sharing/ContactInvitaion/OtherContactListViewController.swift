@@ -84,6 +84,7 @@ class OtherContactListViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         operationInSharingContactList.cancel()
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("refreshCa7chContactsListTableView"), object: nil)
     }
     
     func addKeyboardObservers()

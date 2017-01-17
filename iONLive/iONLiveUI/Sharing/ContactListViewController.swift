@@ -85,6 +85,7 @@ class ContactListViewController: UIViewController
         searchDataSource.removeAll()
         dataSource.removeAll()
         addUserArray.removeAllObjects()
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("refreshContactListTableView"), object: nil)
     }
     
     func addKeyboardObservers()
