@@ -388,7 +388,7 @@ NSBlockOperation *likeOper;
             SetUpView *setUpObj = [[SetUpView alloc]init];
             totalCount = (int)[setUpObj getMediaCountWithChannelId:channelIdSelected];
         }
-        
+        likeTapFlag = false;
         [self setGUIChanges:mediaType mediaId:mediaId timeDiff:timeDiff likeCountStr:likeCountStr notifType:notifType VideoImageUrl:VideoImageUrl videoDuration:videoDuration];
     }
     return self;
