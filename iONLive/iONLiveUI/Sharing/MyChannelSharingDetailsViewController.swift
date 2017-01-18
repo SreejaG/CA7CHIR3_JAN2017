@@ -44,9 +44,6 @@ class MyChannelSharingDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let refreshContactSharing = Notification.Name("refreshContactSharingTableView")
-        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelSharingDetailsViewController.callRefreshContactSharingTableView(notif:)), name: refreshContactSharing, object: nil)
-        
         self.contactTableView.alwaysBounceVertical = true
         initialise()
     }
@@ -57,18 +54,21 @@ class MyChannelSharingDetailsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
         UserDefaults.standard.set(1, forKey: "tabToAppear")
         self.tabBarItem.selectedImage = UIImage(named:"friend_avatar_blue")?.withRenderingMode(.alwaysOriginal)
         if let channelName = channelName
         {
             channelTitleLabel.text = channelName.uppercased()
         }
+        
+        let refreshContactSharing = Notification.Name("refreshContactSharingTableView")
+        NotificationCenter.default.addObserver(self, selector:#selector(MyChannelSharingDetailsViewController.callRefreshContactSharingTableView(notif:)), name: refreshContactSharing, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         NotificationCenter.default.removeObserver(self, name: Notification.Name("refreshContactSharingTableView"), object: nil)
-        //        operationInSharingScreenContactList.cancel()
     }
     
     func addKeyboardObservers()
