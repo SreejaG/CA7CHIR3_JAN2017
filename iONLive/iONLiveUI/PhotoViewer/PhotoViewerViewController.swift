@@ -635,6 +635,17 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 {
                     if self.downloadingFlag == false
                     {
+                        if totalCount > 9
+                        {
+                            DispatchQueue.main.async {
+                                let attributes: UICollectionViewLayoutAttributes = self.photoThumpCollectionView.layoutAttributesForItem(at: IndexPath(row: self.totalCount - 1, section: 0))!
+                                self.customView.stopAnimationg()
+                                self.customView.removeFromSuperview()
+                                self.customView = CustomInfiniteIndicator(frame: CGRect(x:(attributes.frame.origin.x + 50), y:(self.photoThumpCollectionView.layer.frame.height/2 - 12), width:30, height:30))
+                                self.photoThumpCollectionView.addSubview(self.customView)
+                                self.customView.startAnimating()
+                            }
+                        }
                         self.downloadingFlag = true
                         downloadImagesFromGlobalChannelImageMapping(limit: 12)
                     }
