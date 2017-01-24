@@ -16,7 +16,7 @@ class SnapCamSelectViewController: UIViewController {
     @IBOutlet var activityLabel: UILabel!
     @IBOutlet var activityImageView: UIImageView!
     
-    var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone","TestAPI"]
+    var dataSource = ["Live Stream", "Photos", "Video" , "Catch gif", "Time lapse", "Switch to iPhone"]
     
     @IBOutlet var iPhoneSnapCamImageView: UIImageView!
     @IBOutlet var blurView: UIView!
@@ -59,9 +59,9 @@ class SnapCamSelectViewController: UIViewController {
         case 5:
             snapCamMode = .iPhone
             break
-        case 6:
-            snapCamMode = .TestAPI
-            break
+//        case 6:
+//            snapCamMode = .TestAPI
+//            break
         default :
             break
         }
@@ -133,9 +133,9 @@ extension SnapCamSelectViewController:UITableViewDataSource,UITableViewDelegate
             }
             break
             
-        case 6:
-            loadAPITestView()
-            break
+//        case 6:
+//            loadAPITestView()
+//            break
             
         default :
             let cameraViewStoryboard = UIStoryboard(name:"IPhoneCameraView" , bundle: nil)
@@ -392,9 +392,9 @@ extension SnapCamSelectViewController
         case 5:
             changeSelectedSnapCamMode(selectedMode: .iPhone)
             break
-        case 6:
-            changeSelectedSnapCamMode(selectedMode: .TestAPI)
-            break
+//        case 6:
+//            changeSelectedSnapCamMode(selectedMode: .TestAPI)
+//            break
         default :
             break
         }
