@@ -3,7 +3,7 @@ import UIKit
 import Foundation
 
 class MyChannelViewController: UIViewController,UIScrollViewDelegate, UITextFieldDelegate {
-    
+    //just change
     @IBOutlet weak var myChannelSearchBar: UISearchBar!
     @IBOutlet weak var myChannelTableView: UITableView!
     
