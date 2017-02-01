@@ -1,7 +1,7 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate,UITextFieldDelegate {
+class EditProfileViewController: UIViewController, UINavigationControllerDelegate,UIImagePickerControllerDelegate,URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate,UITextFieldDelegate, UIScrollViewDelegate {
     
     static let identifier = "EditProfileViewController"
     @IBOutlet weak var editProfileTableView: UITableView!
@@ -566,6 +566,10 @@ class EditProfileViewController: UIViewController, UINavigationControllerDelegat
             self.tableViewBottomConstaint.constant = 0
         }
         isKeyBoardUp = false
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        view.endEditing(true)
     }
 }
 
