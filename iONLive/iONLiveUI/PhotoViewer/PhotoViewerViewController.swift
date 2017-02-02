@@ -724,7 +724,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             if(selectedItem < totalCount - 1)
                             {
                                 downloadingStartedFlag = false
-                                
+                                playIconInFullView.isHidden = true
                                 if (playHandleflag == 1)
                                 {
                                     playHandleflag = 0
@@ -765,7 +765,8 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             if(selectedItem != 0)
                             {
                                 downloadingStartedFlag = false
-                                
+                                playIconInFullView.isHidden = true
+
                                 if (playHandleflag == 1)
                                 {
                                     playHandleflag = 0
