@@ -377,6 +377,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
     
     func orientaionChanged(notification:NSNotification)
     {
+        if totalCount <= 0
+        {
+            self.Orgimage = nil
+        }
         var orientedImage = Orgimage
         DispatchQueue.main.async {
             if(self.Orgimage != nil && self.totalCount > 0){
@@ -1464,6 +1468,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         default:
             break;
         }
+        self.Orgimage = orientedImage
         return orientedImage
     }
     
