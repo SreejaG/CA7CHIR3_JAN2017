@@ -641,7 +641,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 {
                     if self.downloadingFlag == false
                     {
-                        if totalCount > 9
+                        if totalCount > 8
                         {
                             DispatchQueue.main.async {
                                 let attributes: UICollectionViewLayoutAttributes = self.photoThumpCollectionView.layoutAttributesForItem(at: IndexPath(row: self.totalCount - 1, section: 0))!
@@ -961,6 +961,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     }
                     else{
                         DispatchQueue.main.async {
+                            self.mediaTimeLabel.text = ""
                             self.showOverlay()
                             self.customView.stopAnimationg()
                             self.customView.removeFromSuperview()
