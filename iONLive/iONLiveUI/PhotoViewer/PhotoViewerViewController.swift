@@ -1,4 +1,3 @@
-
 import UIKit
 import MediaPlayer
 import Foundation
@@ -388,61 +387,59 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                 if(viewController.restorationIdentifier == "PhotoViewerViewController"){
                     if(self.mediaTypeSelected != "video")
                     {
-                        if ((self.Orgimage!.size.width > 0.0) && (self.Orgimage!.size.height > 0.0))
-                        {
-                            let transition : CATransition = CATransition()
-                            transition.duration = 0.3;
-                            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                            transition.type = kCATransitionFade;
-                            transition.delegate = self;
-                            self.fullScrenImageView.layer.add(transition, forKey: nil)
-                            
-                            let device: UIDevice = notification.object as! UIDevice
-                            switch device.orientation {
-                            case .portrait,.portraitUpsideDown:
-                                self.orientationFlag = 1;
-                                if self.Orgimage!.size.width > self.Orgimage!.size.height
-                                {
-                                    self.fullScrenImageView.contentMode = .scaleAspectFit
-                                }
-                                else{
-                                    self.fullScrenImageView.contentMode = .scaleAspectFill
-                                }
-                                orientedImage = self.Orgimage
-                                break;
-                            case .landscapeLeft:
-                                self.orientationFlag = 2;
-                                if self.Orgimage!.size.width > self.Orgimage!.size.height
-                                {
-                                    self.fullScrenImageView.contentMode = .scaleAspectFit
-                                    orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
-                                                            orientation: .right)
-                                }
-                                else{
-                                    self.fullScrenImageView.contentMode = .scaleAspectFit
-                                    orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
-                                                            orientation: .down)
-                                }
-                                break;
-                            case .landscapeRight:
-                                self.orientationFlag = 3;
-                                if self.Orgimage!.size.width > self.Orgimage!.size.height
-                                {
-                                    self.fullScrenImageView.contentMode = .scaleAspectFit
-                                    orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
-                                                            orientation: .left)
-                                }
-                                else{
-                                    self.fullScrenImageView.contentMode = .scaleAspectFit
-                                    orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
-                                                            orientation: .up)
-                                }
-                                break;
-                            default:
-                                self.orientationFlag = 1
-                                break;
+                        let transition : CATransition = CATransition()
+                        transition.duration = 0.3;
+                        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                        transition.type = kCATransitionFade;
+                        transition.delegate = self;
+                        self.fullScrenImageView.layer.add(transition, forKey: nil)
+                        
+                        let device: UIDevice = notification.object as! UIDevice
+                        switch device.orientation {
+                        case .portrait,.portraitUpsideDown:
+                            self.orientationFlag = 1;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .scaleAspectFit
                             }
+                            else{
+                                self.fullScrenImageView.contentMode = .scaleAspectFill
+                            }
+                            orientedImage = self.Orgimage
+                            break;
+                        case .landscapeLeft:
+                            self.orientationFlag = 2;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .scaleAspectFit
+                                orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
+                                                        orientation: .right)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .scaleAspectFit
+                                orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
+                                                        orientation: .down)
+                            }
+                            break;
+                        case .landscapeRight:
+                            self.orientationFlag = 3;
+                            if self.Orgimage!.size.width > self.Orgimage!.size.height
+                            {
+                                self.fullScrenImageView.contentMode = .scaleAspectFit
+                                orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
+                                                        orientation: .left)
+                            }
+                            else{
+                                self.fullScrenImageView.contentMode = .scaleAspectFit
+                                orientedImage = UIImage(cgImage: self.Orgimage!.cgImage!, scale: CGFloat(1.0),
+                                                        orientation: .up)
+                            }
+                            break;
+                        default:
+                            self.orientationFlag = 1
+                            break;
                         }
+                        
                     }
                     else{
                         orientedImage = self.setOrientationForVideo()
@@ -596,7 +593,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         totalCount = filteredData.count
         if GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > 0
         {
-            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![0]
+            let dict =  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![selectedItem]
             self.downloadFullImageWhenTapThumb(imageDict: dict, indexpaths: selectedItem,gestureIdentifier:0)
         }
         else{
@@ -766,7 +763,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             {
                                 downloadingStartedFlag = false
                                 playIconInFullView.isHidden = true
-
+                                
                                 if (playHandleflag == 1)
                                 {
                                     playHandleflag = 0
@@ -962,10 +959,10 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                     }
                     else{
                         DispatchQueue.main.async {
-                            self.mediaTimeLabel.text = ""
                             self.showOverlay()
                             self.customView.stopAnimationg()
                             self.customView.removeFromSuperview()
+                            self.mediaTimeLabel.text = ""
                         }
                     }
                     DispatchQueue.main.async {
@@ -1470,7 +1467,6 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
         default:
             break;
         }
-        self.Orgimage = orientedImage
         return orientedImage
     }
     
@@ -1515,7 +1511,7 @@ class PhotoViewerViewController: UIViewController,UIGestureRecognizerDelegate,UR
                             self.fullScrenImageView.layer.add(animation, forKey: "imageTransition")
                         }
                         self.videoThumbImage = fullImage as! UIImage
-                        
+                        self.Orgimage = fullImage as? UIImage
                         self.fullScrenImageView.image = (self.setOrientationForVideo())
                         self.fullScreenZoomView.image = (self.setOrientationForVideo())
                         
@@ -1772,20 +1768,20 @@ extension PhotoViewerViewController:UICollectionViewDelegate,UICollectionViewDel
             self.fullScrenImageView.alpha = 1.0
         }
         
-        if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
-        {
-            self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
-            
-            let progres = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
-            if(progres == 2.0 || progres == 2){
-                uploadFailedImagesOnClick(mediaIDClick: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
-            }
-            else if(progres == 4.0 || progres == 4){
-                MappingFailedImagesOnClick(mediaIDClick: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
-            }
-            
-            
-        }
+                if  GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]!.count > indexPath.row
+                {
+                    self.mediaIdSelected = Int( GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)!
+        
+                    let progres = GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][progressKey] as! Float
+                    if(progres == 2.0 || progres == 2){
+                        uploadFailedImagesOnClick(mediaIDClick: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
+                    }
+                    else if(progres == 4.0 || progres == 4){
+                        MappingFailedImagesOnClick(mediaIDClick: GlobalChannelToImageMapping.sharedInstance.GlobalChannelImageDict[archiveChanelId]![indexPath.row][mediaIdKey] as! String)
+                    }
+        
+        
+                }
     }
     
     func uploadFailedImagesOnClick(mediaIDClick: String)
